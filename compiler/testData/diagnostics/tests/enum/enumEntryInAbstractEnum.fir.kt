@@ -4,7 +4,7 @@ enum class EnumClass {
         override val bar: String = "a"
     },
 
-    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>E2<!> {
+    <!ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY!>E2<!> {
 
     };
 

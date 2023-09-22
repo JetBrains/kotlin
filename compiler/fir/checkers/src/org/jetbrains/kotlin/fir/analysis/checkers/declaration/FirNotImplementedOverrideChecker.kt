@@ -18,13 +18,17 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRAC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_IMPLEMENTED_BY_INHERITED_VAL
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.delegatedWrapperData
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
@@ -32,6 +36,8 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.util.ImplementationStatus
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 object FirNotImplementedOverrideChecker : FirClassChecker() {
 
@@ -126,7 +132,18 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             val notImplemented = (notImplementedSymbols.firstOrNull { !it.isFromInterfaceOrEnum(context) } ?: notImplementedSymbols.first())
                 .unwrapFakeOverrides()
             if (notImplemented.isFromInterfaceOrEnum(context)) {
-                reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplemented, context)
+                val containingDeclaration = context.containingDeclarations.lastOrNull()
+                if (declaration.isInitializerOfEnumEntry(containingDeclaration)) {
+                    reporter.reportOn(
+                        source,
+                        ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
+                        containingDeclaration.symbol,
+                        notImplementedSymbols,
+                        context
+                    )
+                } else {
+                    reporter.reportOn(source, ABSTRACT_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplemented, context)
+                }
             } else {
                 reporter.reportOn(source, ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplemented, context)
             }
@@ -181,6 +198,15 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                 reporter.reportOn(source, MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED, classSymbol, notImplementedIntersectionSymbol, context)
             }
         }
+    }
+
+    @OptIn(ExperimentalContracts::class)
+    private fun FirClass.isInitializerOfEnumEntry(containingDeclaration: FirDeclaration?): Boolean {
+        contract {
+            returns(true) implies (containingDeclaration is FirEnumEntry)
+        }
+        return containingDeclaration is FirEnumEntry &&
+                containingDeclaration.initializer.let { it is FirAnonymousObjectExpression && it.anonymousObject == this }
     }
 
     private fun FirCallableSymbol<*>.isFromInterfaceOrEnum(context: CheckerContext): Boolean =
