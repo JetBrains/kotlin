@@ -196,7 +196,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @Argument(value = "-Xmulti-platform", description = "Enable experimental language support for multi-platform projects")
+    @Argument(value = "-Xmulti-platform", description = "Enable language support for multi-platform projects")
     var multiPlatform = false
         set(value) {
             checkFrozen()
