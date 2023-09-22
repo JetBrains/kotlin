@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.GraphEnterNodeMarker
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.GraphExitNodeMarker
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.test.Assertions
 
@@ -41,6 +38,7 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
                 assertions.assertContainsElements(from.followingNodes, node)
             }
             assertions.assertFalse(node.followingNodes.isEmpty() && node.previousNodes.isEmpty()) { "Unconnected CFG node: $node" }
+            assertions.assertTrue(node is ClassExitNode || node.flowInitialized) { "All nodes must have a flow: $node" }
         }
     }
 

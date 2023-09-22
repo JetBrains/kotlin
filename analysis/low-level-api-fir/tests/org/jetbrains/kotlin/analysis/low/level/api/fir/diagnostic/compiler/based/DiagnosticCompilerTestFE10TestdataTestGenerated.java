@@ -6985,6 +6985,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("reassignmentInLambda.kt")
+            public void testReassignmentInLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInLambda.kt");
+            }
+
+            @Test
             @TestMetadata("reassignmentInTryCatch.kt")
             public void testReassignmentInTryCatch() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/reassignmentInTryCatch.kt");

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -182,6 +181,7 @@ abstract class FirDataFlowAnalyzer(
 
         val (node, graph) = graphBuilder.exitFunction(function)
         node.mergeIncomingFlow()
+        graph.completePostponedNodes()
         if (!graphBuilder.isTopLevel) {
             for (valueParameter in function.valueParameters) {
                 variableStorage.removeRealVariable(valueParameter.symbol)
@@ -211,6 +211,7 @@ abstract class FirDataFlowAnalyzer(
         } else {
             resetReceivers()
         }
+        graph?.completePostponedNodes()
         return graph
     }
 
@@ -231,6 +232,7 @@ abstract class FirDataFlowAnalyzer(
         } else {
             resetReceivers() // to state before class initialization
         }
+        graph?.completePostponedNodes()
         return graph
     }
 
@@ -247,6 +249,7 @@ abstract class FirDataFlowAnalyzer(
     fun exitScript(): ControlFlowGraph {
         val (node, graph) = graphBuilder.exitScript()
         node.mergeIncomingFlow()
+        graph.completePostponedNodes()
         return graph
     }
 
@@ -266,6 +269,7 @@ abstract class FirDataFlowAnalyzer(
     fun exitCodeFragment(): ControlFlowGraph {
         val (node, graph) = graphBuilder.exitCodeFragment()
         node.mergeIncomingFlow()
+        graph.completePostponedNodes()
         return graph
     }
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
@@ -280,6 +284,7 @@ abstract class FirDataFlowAnalyzer(
         val (innerNode, outerNode, graph) = graphBuilder.exitValueParameter(valueParameter) ?: return null
         innerNode.mergeIncomingFlow()
         outerNode.mergeIncomingFlow()
+        graph.completePostponedNodes()
         return graph
     }
 
@@ -292,6 +297,7 @@ abstract class FirDataFlowAnalyzer(
     fun exitProperty(property: FirProperty): ControlFlowGraph? {
         val (node, graph) = graphBuilder.exitProperty(property) ?: return null
         node.mergeIncomingFlow()
+        graph.completePostponedNodes()
         return graph
     }
 
@@ -304,6 +310,7 @@ abstract class FirDataFlowAnalyzer(
     fun exitField(field: FirField): ControlFlowGraph? {
         val (node, graph) = graphBuilder.exitField(field) ?: return null
         node.mergeIncomingFlow()
+        graph.completePostponedNodes()
         return graph
     }
 
@@ -1101,6 +1108,7 @@ abstract class FirDataFlowAnalyzer(
     fun exitInitBlock(): ControlFlowGraph {
         val (node, controlFlowGraph) = graphBuilder.exitInitBlock()
         node.mergeIncomingFlow()
+        controlFlowGraph.completePostponedNodes()
         return controlFlowGraph
     }
 
@@ -1307,6 +1315,17 @@ abstract class FirDataFlowAnalyzer(
         return when (path) {
             FlowPath.Default -> flow
             else -> getAlternateFlow(path) ?: error("no alternate flow for $path")
+        }
+    }
+
+    private fun ControlFlowGraph.completePostponedNodes() {
+        for (subGraph in subGraphs) {
+            subGraph.completePostponedNodes()
+        }
+        for (node in nodes) {
+            if (node !is ClassExitNode && !node.flowInitialized) {
+                node.mergeIncomingFlow()
+            }
         }
     }
 

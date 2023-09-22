@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.FlowPath
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isNothing
-import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -117,6 +115,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
      * be used for all type resolutions at this node.
      */
     private var _flow: PersistentFlow? = null
+    open val flowInitialized: Boolean get() = _flow != null
     open var flow: PersistentFlow
         get() = _flow ?: throw IllegalStateException("flow for $this not initialized - traversing nodes in wrong order?")
         @CfgInternals
@@ -264,17 +263,6 @@ class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnon
 }
 
 class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int) : CFGNode<FirElement>(owner, level) {
-
-    private var _flowInitialized = false
-    val flowInitialized: Boolean get() = _flowInitialized
-    override var flow: PersistentFlow
-        get() = super.flow
-        @CfgInternals
-        set(value) {
-            super.flow = value
-            _flowInitialized = true
-        }
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitMergePostponedLambdaExitsNode(this, data)
     }
@@ -780,6 +768,7 @@ class StubNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, le
 
     override val fir: FirStub get() = FirStub
 
+    override val flowInitialized: Boolean get() = firstPreviousNode.flowInitialized
     override var flow: PersistentFlow
         get() = firstPreviousNode.flow
         @CfgInternals
