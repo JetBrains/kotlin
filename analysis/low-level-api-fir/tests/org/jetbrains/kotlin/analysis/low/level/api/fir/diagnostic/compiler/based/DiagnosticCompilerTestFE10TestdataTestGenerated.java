@@ -34559,6 +34559,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("outerTypeParameterAsBound.kt")
+            public void testOuterTypeParameterAsBound() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/outerTypeParameterAsBound.kt");
+            }
+
+            @Test
             @TestMetadata("propertyTypeParameters.kt")
             public void testPropertyTypeParameters() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/propertyTypeParameters.kt");
