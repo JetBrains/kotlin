@@ -18,7 +18,3 @@ suspend fun test() = foo(A("O", "K")) { (x_param, y_param) -> x_param + y_param 
 // JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
 // 1 LOCALVARIABLE x_param\\2 Ljava/lang/String;
 // 1 LOCALVARIABLE y_param\\2 Ljava/lang/String;
-
-// JVM_TEMPLATES_WITH_INLINE_SCOPES
-// 1 LOCALVARIABLE x_param\\2 Ljava/lang/String;
-// 1 LOCALVARIABLE y_param\\2 Ljava/lang/String;

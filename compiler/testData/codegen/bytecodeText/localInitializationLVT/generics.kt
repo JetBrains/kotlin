@@ -25,8 +25,3 @@ fun test() {
 // 4 ASTORE 2
 // 1 LOCALVARIABLE t Ljava/lang/Object;
 // 1 LOCALVARIABLE t\\1 Ljava/lang/Object;
-
-// JVM_TEMPLATES_WITH_INLINE_SCOPES
-// 4 ASTORE 2
-// 1 LOCALVARIABLE t Ljava/lang/Object;
-// 1 LOCALVARIABLE t\\1 Ljava/lang/Object;

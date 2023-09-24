@@ -65,8 +65,6 @@ class BlackBoxCodegenSuppressor(
                 TargetBackend.ANY in ignoredBackends -> SuppressionResult(true, null)
                 targetBackend == TargetBackend.JVM_IR_WITH_INLINE_SCOPES && TargetBackend.JVM_IR in ignoredBackends ->
                     SuppressionResult(true, null)
-                targetBackend == TargetBackend.JVM_WITH_INLINE_SCOPES && TargetBackend.JVM in ignoredBackends ->
-                    SuppressionResult(true, null)
                 else -> SuppressionResult.NO_MUTE
             }
         }

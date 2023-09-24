@@ -18,7 +18,7 @@ suspend fun box() {
     hasLocal()
 }
 
-// EXPECTATIONS JVM_WITH_INLINE_SCOPES JVM_IR_WITH_INLINE_SCOPES
+// EXPECTATIONS JVM_IR_WITH_INLINE_SCOPES
 // test.kt:10 box:
 // test.kt:12 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:8 h: $completion:kotlin.coroutines.Continuation=TestKt$box$1

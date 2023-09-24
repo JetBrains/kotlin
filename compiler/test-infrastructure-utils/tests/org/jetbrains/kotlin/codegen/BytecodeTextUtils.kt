@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.isInlineScopesBackend
 import java.io.File
 import java.util.ArrayList
 import java.util.regex.Matcher
@@ -18,7 +17,6 @@ private val AT_OUTPUT_FILE_PATTERN = Pattern.compile("^\\s*//\\s*@(.*):$")
 private val EXPECTED_OCCURRENCES_PATTERN = Pattern.compile("^\\s*//\\s*(\\d+)\\s*(.*)$")
 private const val JVM_TEMPLATES = "// JVM_TEMPLATES"
 private const val JVM_IR_TEMPLATES = "// JVM_IR_TEMPLATES"
-private const val JVM_TEMPLATES_WITH_INLINE_SCOPES = "// JVM_TEMPLATES_WITH_INLINE_SCOPES"
 private const val JVM_IR_TEMPLATES_WITH_INLINE_SCOPES = "// JVM_IR_TEMPLATES_WITH_INLINE_SCOPES"
 
 class OccurrenceInfo constructor(private val numberOfOccurrences: Int, private val needle: String, val backend: TargetBackend) {
@@ -44,7 +42,6 @@ fun readExpectedOccurrences(lines: List<String>): List<OccurrenceInfo> {
     var backend = TargetBackend.ANY
     for (line in lines) {
         when {
-            line.contains(JVM_TEMPLATES_WITH_INLINE_SCOPES) -> backend = TargetBackend.JVM_WITH_INLINE_SCOPES
             line.contains(JVM_IR_TEMPLATES_WITH_INLINE_SCOPES) -> backend = TargetBackend.JVM_IR_WITH_INLINE_SCOPES
             line.contains(JVM_TEMPLATES) -> backend = TargetBackend.JVM
             line.contains(JVM_IR_TEMPLATES) -> backend = TargetBackend.JVM_IR
@@ -69,7 +66,6 @@ fun readExpectedOccurrencesForMultiFileTest(
     var backend = TargetBackend.ANY
     for (line in fileContent.split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
         when {
-            line.contains(JVM_TEMPLATES_WITH_INLINE_SCOPES) -> backend = TargetBackend.JVM_WITH_INLINE_SCOPES
             line.contains(JVM_IR_TEMPLATES_WITH_INLINE_SCOPES) -> backend = TargetBackend.JVM_IR_WITH_INLINE_SCOPES
             line.contains(JVM_TEMPLATES) -> backend = TargetBackend.JVM
             line.contains(JVM_IR_TEMPLATES) -> backend = TargetBackend.JVM_IR
@@ -114,7 +110,6 @@ fun checkGeneratedTextAgainstExpectedOccurrences(
             when (info.backend) {
                 TargetBackend.JVM -> JVM_TEMPLATES
                 TargetBackend.JVM_IR -> JVM_IR_TEMPLATES
-                TargetBackend.JVM_WITH_INLINE_SCOPES -> JVM_TEMPLATES_WITH_INLINE_SCOPES
                 TargetBackend.JVM_IR_WITH_INLINE_SCOPES -> JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
                 else -> error("Common part should be first one: ${expectedOccurrences.joinToString("\n")}")
             }.also {
@@ -159,6 +154,6 @@ private fun OccurrenceInfo.shouldIncludeAsInlineScopesCompatibleBackend(
     currentBackend: TargetBackend,
     allOccurrences: List<OccurrenceInfo>
 ): Boolean =
-    currentBackend.isInlineScopesBackend() &&
+    currentBackend == TargetBackend.JVM_IR_WITH_INLINE_SCOPES &&
             currentBackend.compatibleWith == backend &&
-            allOccurrences.all { !it.backend.isInlineScopesBackend() }
+            allOccurrences.all { it.backend != TargetBackend.JVM_IR_WITH_INLINE_SCOPES }

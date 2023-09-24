@@ -30,6 +30,3 @@ class MyBlockingAdapter() {
 
 // JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
 // 1 LOCALVARIABLE \$this\$extensionFun\\2 LAtomicInt;
-
-// JVM_TEMPLATES_WITH_INLINE_SCOPES
-// 1 LOCALVARIABLE \$this\$extensionFun\\2 LAtomicInt;

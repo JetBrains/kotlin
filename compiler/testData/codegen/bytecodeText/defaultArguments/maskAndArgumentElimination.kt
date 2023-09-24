@@ -19,9 +19,6 @@ fun box() : String {
 // JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
 // 1 LOCALVARIABLE p\\1 Ljava/lang/String; L2 L4 0
 
-// JVM_TEMPLATES_WITH_INLINE_SCOPES
-// 1 LOCALVARIABLE p\\1 Ljava/lang/String; L2 L4 0
-
 // JVM_TEMPLATES
 // 1 LOCALVARIABLE p\$iv Ljava/lang/String; L2 L4 0
 // 1 LDC "OK"\s*ASTORE 0\s*L2

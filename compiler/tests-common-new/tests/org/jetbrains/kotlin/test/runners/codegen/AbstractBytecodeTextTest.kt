@@ -56,10 +56,8 @@ abstract class AbstractBytecodeTextTestBase<R : ResultingArtifact.FrontendOutput
     }
 }
 
-open class AbstractBytecodeTextTest(
-    targetBackend: TargetBackend = TargetBackend.JVM
-) : AbstractBytecodeTextTestBase<ClassicFrontendOutputArtifact, ClassicBackendInput>(
-    targetBackend = targetBackend,
+open class AbstractBytecodeTextTest : AbstractBytecodeTextTestBase<ClassicFrontendOutputArtifact, ClassicBackendInput>(
+    targetBackend = TargetBackend.JVM,
     targetFrontend = FrontendKinds.ClassicFrontend
 ) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>

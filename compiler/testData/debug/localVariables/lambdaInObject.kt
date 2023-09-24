@@ -26,7 +26,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM_IR_WITH_INLINE_SCOPES JVM_WITH_INLINE_SCOPES
+// EXPECTATIONS JVM_IR_WITH_INLINE_SCOPES
 // test.kt:20 box:
 // test.kt:3 box: $i$f$foo\1:int=0:int
 // test.kt:3 <init>:
@@ -43,9 +43,6 @@ fun box() {
 // test.kt:25 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2\1\0:int=0:int
 // EXPECTATIONS JVM_IR_WITH_INLINE_SCOPES
 // test.kt:26 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2\1\0:int=0:int, d\1:int=4:int
-// EXPECTATIONS JVM_WITH_INLINE_SCOPES
-// test.kt:26 baz: param:int=6:int, b:int=2:int, $i$a$-bar-TestKt$box$2\1\0:int=0:int
-// EXPECTATIONS JVM_IR_WITH_INLINE_SCOPES JVM_WITH_INLINE_SCOPES
 // test.kt:14 baz: param:int=6:int, b:int=2:int
 // test.kt:15 baz: param:int=6:int, b:int=2:int
 // test.kt:17 box: $i$f$bar\2:int=0:int

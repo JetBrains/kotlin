@@ -27,11 +27,7 @@ enum class TargetBackend(
     JVM_IR_WITH_OLD_EVALUATOR(true),
     JVM_WITH_IR_EVALUATOR(false),
     JVM_IR_WITH_IR_EVALUATOR(true),
-    JVM_WITH_INLINE_SCOPES(false, JVM),
     JVM_IR_WITH_INLINE_SCOPES(true, JVM_IR);
 
     val compatibleWith get() = compatibleWithTargetBackend ?: ANY
 }
-
-fun TargetBackend.isInlineScopesBackend(): Boolean =
-    this == TargetBackend.JVM_IR_WITH_INLINE_SCOPES || this == TargetBackend.JVM_WITH_INLINE_SCOPES
