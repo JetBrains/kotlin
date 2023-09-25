@@ -2288,11 +2288,17 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
-    private fun IrBlock.withReplaceableGroupStatements(scope: Scope.BlockScope): IrExpression {
+    private fun IrBlock.withReplaceableGroupStatements(
+        scope: Scope.BlockScope,
+        insertAt: Int = 0
+    ): IrExpression {
         currentFunctionScope.metrics.recordGroup()
         scope.realizeGroup {
             irEndReplaceableGroup(scope = scope)
         }
+
+        val prefix = statements.subList(0, insertAt)
+        val suffix = statements.subList(insertAt, statements.size)
         return when {
             // if the scope ends with a return call, then it will get properly ended if we
             // just push the end call on the scope because of the way returns get transformed in
@@ -2302,7 +2308,7 @@ class ComposableFunctionBodyTransformer(
                 endOffset,
                 type,
                 origin,
-                listOf(irStartReplaceableGroup(this, scope)) + statements
+                prefix + listOf(irStartReplaceableGroup(this, scope)) + suffix
             )
             // otherwise, we want to push an end call for any early returns/jumps, but also add
             // an end call to the end of the group
@@ -2311,14 +2317,14 @@ class ComposableFunctionBodyTransformer(
                 endOffset,
                 type,
                 origin,
-                listOf(
+                prefix + listOf(
                     irStartReplaceableGroup(
                         this,
                         scope,
                         startOffset = startOffset,
                         endOffset = endOffset
                     )
-                ) + statements + listOf(irEndReplaceableGroup(startOffset, endOffset, scope))
+                ) + suffix + listOf(irEndReplaceableGroup(startOffset, endOffset, scope))
             )
         }
     }
@@ -3531,7 +3537,27 @@ class ComposableFunctionBodyTransformer(
             if (loopScope.needsGroupPerIteration && loopScope.hasComposableCalls) {
                 val current = loop.body
                 if (current is IrBlock) {
-                    loop.body = current.withReplaceableGroupStatements(loopScope)
+                    /*
+                     * Kotlin optimizes for loops by separating them into three pieces
+                     *   #1: The "header"
+                     *   val it = <someIterable>.iterator()
+                     *
+                     *   #2: The condition
+                     *   while (it.hasNext()) {
+                     *       val loopVar = it.next()
+                     *       #3: The loop body
+                     *   }
+                     *
+                     * We need to generate groups inside the "body", otherwise the behavior is
+                     * undefined, so we find the loopVar and insert groups after it.
+                     */
+                    val forLoopVariableIndex = current.statements.indexOfFirst {
+                        (it as? IrVariable)?.origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE
+                    }
+                    loop.body = current.withReplaceableGroupStatements(
+                        loopScope,
+                        insertAt = forLoopVariableIndex + 1
+                    )
                 } else {
                     loop.body = current?.asReplaceableGroup(loopScope)
                 }
