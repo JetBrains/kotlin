@@ -247,8 +247,10 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     // All the mutations (incl. allocations) after this method will be subject for the next GC.
 #ifdef CUSTOM_ALLOCATOR
     // This should really be done by each individual thread while waiting
+    int threadCount = 0;
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
         thread.gc().impl().alloc().PrepareForGC();
+        ++threadCount;
     }
     auto& heap = mm::GlobalData::Instance().gc().impl().gc().heap();
     heap.PrepareForGC();
@@ -268,12 +270,14 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
 
+    size_t allocatorOverheadBytes;
 #ifndef CUSTOM_ALLOCATOR
     gc::SweepExtraObjects<SweepTraits>(gcHandle, *extraObjectFactoryIterable);
     extraObjectFactoryIterable = std::nullopt;
     auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, *objectFactoryIterable);
     objectFactoryIterable = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
+    allocatorOverheadBytes = 0;
 #else
     // also sweeps extraObjects
     auto finalizerQueue = heap_.Sweep(gcHandle);
@@ -281,8 +285,9 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
         finalizerQueue.TransferAllFrom(thread.gc().impl().alloc().ExtractFinalizerQueue());
     }
     finalizerQueue.TransferAllFrom(heap_.ExtractFinalizerQueue());
+    allocatorOverheadBytes = threadCount * heap.EstimateOverheadPerThread();
 #endif
-    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes());
+    scheduler.onGCFinish(epoch, gcHandle.getKeptSizeBytes() + allocatorOverheadBytes);
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
