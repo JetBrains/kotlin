@@ -116,6 +116,16 @@ std::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
     return unfinalized;
 }
 
+size_t Heap::EstimateOverheadPerThread() noexcept {
+    size_t overHeadPerThread = 0;
+    if (!nextFitPages_.isEmpty()) overHeadPerThread += NEXT_FIT_PAGE_SIZE;
+    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+        if (!fixedBlockPages_[blockSize].isEmpty()) overHeadPerThread += FIXED_BLOCK_PAGE_SIZE;
+    }
+    if (!extraObjectPages_.isEmpty()) overHeadPerThread += EXTRA_OBJECT_PAGE_SIZE;
+    return  overHeadPerThread;
+}
+
 void Heap::ClearForTests() noexcept {
     for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
         fixedBlockPages_[blockSize].ClearForTests();

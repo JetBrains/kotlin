@@ -31,6 +31,10 @@ public:
         triggerHeapBytes_ = targetHeapBytes_ * config_.heapTriggerCoefficient.load(std::memory_order_relaxed);
     }
 
+    void unsetBoundaries() noexcept {
+        targetHeapBytes_ = triggerHeapBytes_ = std::numeric_limits<int64_t>::max();
+    }
+
     // Can be called by any thread.
     MemoryBoundary boundaryForHeapSize(size_t totalAllocatedBytes) noexcept {
         if (totalAllocatedBytes >= targetHeapBytes_) {
