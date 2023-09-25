@@ -6,6 +6,7 @@
 #include "AllocatorImpl.hpp"
 
 #include "GCApi.hpp"
+#include "Heap.hpp"
 
 using namespace kotlin;
 
@@ -48,6 +49,10 @@ void alloc::Allocator::prepareForGC() noexcept {
 
 void alloc::Allocator::clearForTests() noexcept {
     impl_->heap().ClearForTests();
+}
+
+size_t alloc::Allocator::estimateOverheadPerThread() noexcept {
+    return impl_->heap().EstimateOverheadPerThread();
 }
 
 void alloc::initObjectPool() noexcept {}

@@ -51,6 +51,10 @@ void alloc::Allocator::clearForTests() noexcept {
     impl_->objectFactory().ClearForTests();
 }
 
+size_t alloc::Allocator::estimateOverheadPerThread() noexcept {
+    return 0;
+}
+
 gc::GC::ObjectData& alloc::objectDataForObject(ObjHeader* object) noexcept {
     return ObjectFactoryImpl::NodeRef::From(object).ObjectData();
 }

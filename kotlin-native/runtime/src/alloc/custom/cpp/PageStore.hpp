@@ -78,6 +78,13 @@ public:
         return page;
     }
 
+    bool isEmpty() noexcept {
+        return empty_.isEmpty() &&
+            ready_.isEmpty() &&
+            used_.isEmpty() &&
+            unswept_.isEmpty();
+    }
+
     ~PageStore() noexcept {
         T* page;
         while ((page = empty_.Pop())) page->Destroy();
