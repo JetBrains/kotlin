@@ -98,18 +98,18 @@ method global$fun_testClassFunctionOverloading$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var anonymous$0: Ref
-  var local1$b: Ref
+  var local0$b: Ref
   var anonymous$1: Ref
   var anonymous$2: dom$Unit
   var anonymous$3: Ref
   var anonymous$4: dom$Unit
   anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
-  local1$b := anonymous$0
+  local0$b := anonymous$0
   anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
-  anonymous$2 := class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(local1$b,
+  anonymous$2 := class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(local0$b,
     anonymous$1)
   anonymous$3 := class_scope_global$class_Bar$constructor$fun_take$$return$T_class_global$class_Bar()
-  anonymous$4 := class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(local1$b,
+  anonymous$4 := class_scope_global$class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(local0$b,
     anonymous$3)
   label label$ret$0
 }

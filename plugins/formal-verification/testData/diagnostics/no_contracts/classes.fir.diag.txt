@@ -7,22 +7,22 @@ method global$fun_createFoo$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var anonymous$0: Ref
-  var local1$f: Ref
+  var local0$f: Ref
   var anonymous$1: Int
-  var local1$fa: Int
+  var local0$fa: Int
   var anonymous$2: Int
-  var local1$fb: Int
+  var local0$fb: Int
   anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
     20)
-  local1$f := anonymous$0
-  inhale acc(local1$f.class_scope_global$class_Foo$member_a, write)
-  anonymous$1 := local1$f.class_scope_global$class_Foo$member_a
-  exhale acc(local1$f.class_scope_global$class_Foo$member_a, write)
-  local1$fa := anonymous$1
-  inhale acc(local1$f.class_scope_global$class_Foo$member_b, write)
-  anonymous$2 := local1$f.class_scope_global$class_Foo$member_b
-  exhale acc(local1$f.class_scope_global$class_Foo$member_b, write)
-  local1$fb := anonymous$2
+  local0$f := anonymous$0
+  inhale acc(local0$f.class_scope_global$class_Foo$member_a, write)
+  anonymous$1 := local0$f.class_scope_global$class_Foo$member_a
+  exhale acc(local0$f.class_scope_global$class_Foo$member_a, write)
+  local0$fa := anonymous$1
+  inhale acc(local0$f.class_scope_global$class_Foo$member_b, write)
+  anonymous$2 := local0$f.class_scope_global$class_Foo$member_b
+  exhale acc(local0$f.class_scope_global$class_Foo$member_b, write)
+  local0$fb := anonymous$2
   label label$ret$0
 }
 
@@ -39,10 +39,10 @@ method global$fun_createBar$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var anonymous$0: Ref
-  var local1$b: Ref
+  var local0$b: Ref
   anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_global$class_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
     dom$Type$special$Nullable(dom$Type$global$class_Bar())): dom$Nullable[Ref]))
-  local1$b := anonymous$0
+  local0$b := anonymous$0
   label label$ret$0
 }
 

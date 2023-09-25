@@ -41,11 +41,11 @@ method global$fun_function_assignment$fun_take$fun_take$$return$T_Int$return$T_U
   ensures old(local$f.special$function_object_call_counter) <=
     local$f.special$function_object_call_counter
 {
-  var local1$g: Ref
+  var local0$g: Ref
   var anonymous$0: Bool
   var anonymous$1: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  local1$g := local$f
+  local0$g := local$f
   label label$continue$0
   anonymous$1 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   anonymous$0 := anonymous$1
@@ -56,7 +56,7 @@ method global$fun_function_assignment$fun_take$fun_take$$return$T_Int$return$T_U
   {
     var anonymous$2: Int
     var anonymous$3: Bool
-    special$invoke_function_object(local1$g)
+    special$invoke_function_object(local0$g)
     anonymous$3 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
     anonymous$0 := anonymous$3
   }
@@ -84,16 +84,18 @@ method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$r
     local$h.special$function_object_call_counter
 {
   var anonymous$0: Ref
-  var local1$g: Ref
+  var local0$g: Ref
   var anonymous$1: Bool
   var anonymous$2: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$h): dom$Type), dom$Type$Function())
-  if (local$b) {
-    anonymous$0 := local$f
-  } else {
-    anonymous$0 := local$h}
-  local1$g := anonymous$0
+  if (true) {
+    if (local$b) {
+      anonymous$0 := local$f
+    } else {
+      anonymous$0 := local$h}
+  }
+  local0$g := anonymous$0
   label label$continue$0
   anonymous$2 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   anonymous$1 := anonymous$2
@@ -107,7 +109,7 @@ method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$r
   {
     var anonymous$3: Int
     var anonymous$4: Bool
-    special$invoke_function_object(local1$g)
+    special$invoke_function_object(local0$g)
     anonymous$4 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
     anonymous$1 := anonymous$4
   }

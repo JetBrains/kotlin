@@ -99,3 +99,10 @@ fun <!VIPER_TEXT!>when_subject_val_nested<!>() {
         else -> 6
     }
 }
+
+fun <!VIPER_TEXT!>when_subject_var_shadowing<!>() {
+    val x = 0
+    when (val x = 1) {
+        else -> x
+    }
+}

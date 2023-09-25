@@ -16,32 +16,19 @@ import org.jetbrains.kotlin.name.Name
  * This is a stacked resolver: the resolver for the innermost scope contains a reference
  * to the resolver for the outer scopes, and automatically searches them.
  */
-sealed class BasePropertyNameResolver {
-    abstract val parent: BasePropertyNameResolver?
-    abstract fun tryResolveLocalPropertyName(name: Name): ScopedKotlinName?
-    abstract fun registerLocalPropertyName(name: Name)
-
-    fun innerScope(scopeDepth: Int) = ChildPropertyNameResolver(scopeDepth, this)
-}
-
-data object RootPropertyNameResolver : BasePropertyNameResolver() {
-    override val parent: BasePropertyNameResolver? = null
-
-    override fun tryResolveLocalPropertyName(name: Name): ScopedKotlinName? = null
-    override fun registerLocalPropertyName(name: Name) {}
-}
-
-class ChildPropertyNameResolver(private val scopeDepth: Int, override val parent: BasePropertyNameResolver) : BasePropertyNameResolver() {
+class PropertyNameResolver(private val scopeDepth: Int, val parent: PropertyNameResolver? = null) {
     private val names: MutableSet<Name> = mutableSetOf()
 
-    override fun tryResolveLocalPropertyName(name: Name): ScopedKotlinName? =
+    fun tryResolveLocalPropertyName(name: Name): ScopedKotlinName? =
         if (names.contains(name)) {
             ScopedKotlinName(LocalScope(scopeDepth), SimpleKotlinName(name))
         } else {
-            parent.tryResolveLocalPropertyName(name)
+            parent?.tryResolveLocalPropertyName(name)
         }
 
-    override fun registerLocalPropertyName(name: Name) {
+    fun registerLocalPropertyName(name: Name) {
         names.add(name)
     }
+
+    fun innerScope(scopeDepth: Int) = PropertyNameResolver(scopeDepth, this)
 }

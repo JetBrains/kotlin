@@ -312,6 +312,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("try_catch.kt")
+        public void testTry_catch() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/try_catch.kt");
+        }
+
+        @Test
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/when.kt");

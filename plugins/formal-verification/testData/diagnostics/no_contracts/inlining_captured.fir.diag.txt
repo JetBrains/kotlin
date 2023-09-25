@@ -32,15 +32,15 @@ method global$fun_capture_arg$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
 /inlining_captured.kt:(207,218): info: Generated Viper text for capture_var:
 method global$fun_capture_var$fun_take$$return$T_Int() returns (ret: Int)
 {
-  var local1$x: Int
+  var local0$x: Int
   var anonymous$0: Int
-  local1$x := 1
+  local0$x := 1
   if (true) {
     var anonymous$1: Int
     var anonymous$2: Int
     anonymous$2 := 0
     if (true) {
-      anonymous$1 := anonymous$2 + local1$x
+      anonymous$1 := anonymous$2 + local0$x
       goto label$ret$2
       label label$ret$2
     }
@@ -63,11 +63,11 @@ method global$fun_capture_and_shadow$fun_take$T_Int$return$T_Int(local$x: Int)
     var anonymous$2: Int
     anonymous$2 := 0
     if (true) {
-      var local3$y: Int
-      var local3$x: Int
-      local3$y := local$x
-      local3$x := 1
-      anonymous$1 := anonymous$2 + local3$x + local3$y
+      var local2$y: Int
+      var local2$x: Int
+      local2$y := local$x
+      local2$x := 1
+      anonymous$1 := anonymous$2 + local2$x + local2$y
       goto label$ret$2
       label label$ret$2
     }
@@ -86,17 +86,17 @@ method global$fun_capture_var_clash$fun_take$T_Int$return$T_Int(local$x: Int)
 {
   var anonymous$0: Int
   if (true) {
-    var local2$x: Int
+    var local1$x: Int
     var anonymous$1: Int
     var anonymous$2: Int
-    local2$x := 1
+    local1$x := 1
     anonymous$2 := 0
     if (true) {
       anonymous$1 := anonymous$2 * local$x
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1 + local2$x
+    anonymous$0 := anonymous$1 + local1$x
     goto label$ret$1
     label label$ret$1
   }
@@ -111,21 +111,21 @@ method global$fun_capture_and_shadow_clash$fun_take$T_Int$return$T_Int(local$x: 
 {
   var anonymous$0: Int
   if (true) {
-    var local2$x: Int
+    var local1$x: Int
     var anonymous$1: Int
     var anonymous$2: Int
-    local2$x := 1
+    local1$x := 1
     anonymous$2 := 0
     if (true) {
-      var local3$y: Int
-      var local3$x: Int
-      local3$y := local$x
-      local3$x := 2
-      anonymous$1 := local3$x + local3$y + anonymous$2
+      var local2$y: Int
+      var local2$x: Int
+      local2$y := local$x
+      local2$x := 2
+      anonymous$1 := local2$x + local2$y + anonymous$2
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1 + local2$x
+    anonymous$0 := anonymous$1 + local1$x
     goto label$ret$1
     label label$ret$1
   }
@@ -140,39 +140,39 @@ method global$fun_nested_lambda_shadowing$fun_take$T_Int$return$T_Int(local$x: I
 {
   var anonymous$0: Int
   if (true) {
-    var local2$x: Int
+    var local1$x: Int
     var anonymous$1: Int
     var anonymous$2: Int
-    local2$x := 1
+    local1$x := 1
     anonymous$2 := 0
     if (true) {
       var anonymous$3: Int
-      var local3$y: Int
-      var local3$x: Int
+      var local2$y: Int
+      var local2$x: Int
       if (true) {
-        var local4$x: Int
+        var local3$x: Int
         var anonymous$4: Int
         var anonymous$5: Int
-        local4$x := 1
+        local3$x := 1
         anonymous$5 := 0
         if (true) {
-          var local5$x: Int
-          local5$x := 3
-          anonymous$4 := local5$x + anonymous$5
+          var local4$x: Int
+          local4$x := 3
+          anonymous$4 := local4$x + anonymous$5
           goto label$ret$4
           label label$ret$4
         }
-        anonymous$3 := anonymous$4 + local4$x
+        anonymous$3 := anonymous$4 + local3$x
         goto label$ret$3
         label label$ret$3
       }
-      local3$y := local$x
-      local3$x := 4
-      anonymous$1 := local3$x + local3$y + anonymous$2
+      local2$y := local$x
+      local2$x := 4
+      anonymous$1 := local2$x + local2$y + anonymous$2
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1 + local2$x
+    anonymous$0 := anonymous$1 + local1$x
     goto label$ret$1
     label label$ret$1
   }
@@ -193,17 +193,17 @@ method global$fun_call_double_invoke$fun_take$T_Int$return$T_Int(local$x: Int)
     var anonymous$4: Int
     anonymous$2 := 0
     if (true) {
-      var local3$x: Int
-      local3$x := anonymous$2
-      anonymous$1 := local3$x
+      var local2$x: Int
+      local2$x := anonymous$2
+      anonymous$1 := local2$x
       goto label$ret$2
       label label$ret$2
     }
     anonymous$4 := 1
     if (true) {
-      var local3$x: Int
-      local3$x := anonymous$4
-      anonymous$3 := local3$x
+      var local2$x: Int
+      local2$x := anonymous$4
+      anonymous$3 := local2$x
       goto label$ret$3
       label label$ret$3
     }

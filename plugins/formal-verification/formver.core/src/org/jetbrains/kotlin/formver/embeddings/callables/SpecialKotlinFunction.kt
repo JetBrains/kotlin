@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.name.Name
  * offers more possibilities for reasoning about the code.
  */
 interface SpecialKotlinFunction : FunctionEmbedding {
+    override val canThrow: Boolean
+        get() = false
+
     val packageName: List<String>
     val className: String?
         get() = null

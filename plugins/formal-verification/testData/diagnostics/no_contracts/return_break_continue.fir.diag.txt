@@ -30,18 +30,18 @@ method global$fun_return_from_loop$fun_take$$return$T_Int()
 method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Bool)
   returns (ret: Int)
 {
-  var local1$i: Int
+  var local0$i: Int
   var anonymous$0: Bool
-  local1$i := 0
+  local0$i := 0
   label label$continue$0
   anonymous$0 := local$b
   while (anonymous$0) {
-    local1$i := 1
+    local0$i := 1
     goto label$break$0
     anonymous$0 := local$b
   }
   label label$break$0
-  ret := local1$i
+  ret := local0$i
   goto label$ret$0
   label label$ret$0
 }
@@ -50,15 +50,15 @@ method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Bool)
 method global$fun_while_continue$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$b: Bool
+  var local0$b: Bool
   var anonymous$0: Bool
-  local1$b := true
+  local0$b := true
   label label$continue$0
-  anonymous$0 := local1$b
+  anonymous$0 := local0$b
   while (anonymous$0) {
-    local1$b := false
+    local0$b := false
     goto label$continue$0
-    anonymous$0 := local1$b
+    anonymous$0 := local0$b
   }
   label label$break$0
   label label$ret$0

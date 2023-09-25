@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -18,34 +15,40 @@ import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.name.Name
 
-interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConversionContext, SeqnBuildContext, ResultTrackingContext,
-    WhileStackContext<RTC> {
+/**
+ * Interface for statement conversion.
+ *
+ * Naming convention:
+ * - Functions that return a new `StmtConversionContext` should describe what change they make (`addResult`, `removeResult`...)
+ * - Functions that take a lambda to execute should describe what extra state the lambda will have (`withResult`...)
+ */
+interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConversionContext, SeqnBuildContext, ResultTrackingContext {
     val resultCtx: RTC
+    val continueLabel: Label
+    val breakLabel: Label
     val whenSubject: VariableEmbedding?
+    val activeCatchLabels: List<Label>
 
     fun convert(stmt: FirStatement): ExpEmbedding
     fun store(exp: ExpEmbedding): VariableEmbedding
 
-    fun newBlock(): StmtConversionContext<RTC>
-    fun withoutResult(): StmtConversionContext<NoopResultTracker>
-    fun withResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext>
+    fun removeResult(): StmtConversionContext<NoopResultTracker>
+    fun addResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext>
 
-    fun withMethodContext(newCtx: MethodConversionContext): StmtConversionContext<RTC>
+    fun withNewScopeToBlock(action: StmtConversionContext<RTC>.() -> Unit): Stmt.Seqn
+    fun <R> withMethodCtx(factory: MethodContextFactory, action: StmtConversionContext<RTC>.() -> R): R
 
-    fun withResult(type: TypeEmbedding, action: StmtConversionContext<VarResultTrackingContext>.() -> Unit): VariableEmbedding {
-        val ctx = withResult(type)
-        ctx.action()
-        return ctx.resultCtx.resultVar
-    }
-
-    fun withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> Unit)
-    fun inNewScope(action: StmtConversionContext<RTC>.() -> ExpEmbedding): ExpEmbedding
+    fun <R> withFreshWhile(action: StmtConversionContext<RTC>.() -> R): R
+    fun <R> withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> R): R
+    fun withCatches(catches: List<FirCatch>, action: StmtConversionContext<RTC>.(exitLabel: Label) -> Unit): CatchBlockListData
 }
 
 fun StmtConversionContext<ResultTrackingContext>.convertAndStore(exp: FirExpression): VariableEmbedding = store(convert(exp))
+
 fun StmtConversionContext<ResultTrackingContext>.convertAndCapture(exp: FirExpression) {
     resultCtx.capture(convert(exp))
 }
@@ -87,6 +90,26 @@ fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedSetter(symbol:
         else -> CustomSetter(embedFunction(setter.symbol))
     }
 
+fun StmtConversionContext<ResultTrackingContext>.withResult(
+    type: TypeEmbedding,
+    action: StmtConversionContext<VarResultTrackingContext>.() -> Unit,
+): VariableEmbedding {
+    val ctx = addResult(type)
+    ctx.action()
+    return ctx.resultCtx.resultVar
+}
+
+fun <RTC : ResultTrackingContext, R> StmtConversionContext<RTC>.withNewScope(action: StmtConversionContext<RTC>.() -> R): R {
+    // Funny, if we could put a contract on `withNewScopeToBlock` we could do this with `val`, but we can't because of inheritance.
+    var result: R? = null
+    val block = withNewScopeToBlock {
+        result = action()
+    }
+    // NOTE: Putting the block inside the then branch of an if-true statement is a little hack to make Viper respect the scoping
+    addStatement(Stmt.If(Exp.BoolLit(true), block, Stmt.Seqn()))
+    return result!!
+}
+
 fun StmtConversionContext<ResultTrackingContext>.getInlineFunctionCallArgs(
     args: List<ExpEmbedding>,
 ): List<ExpEmbedding> = args.map { exp ->
@@ -109,15 +132,14 @@ fun StmtConversionContext<ResultTrackingContext>.insertInlineFunctionCall(
     val callArgs = getInlineFunctionCallArgs(args)
     val subs = paramNames.zip(callArgs).toMap()
     val returnLabelName = returnLabelNameProducer.getFresh()
-    val newMethodCtx = MethodConverter(
-        this, calleeSignature,
+    val methodCtxFactory = MethodContextFactory(
+        calleeSignature,
         InlineParameterResolver(this.resultCtx.resultVar.name, returnLabelName, subs),
         parentCtx
     )
-    val inlineCtx = this.newBlock().withMethodContext(newMethodCtx)
-    inlineCtx.convert(body)
-    inlineCtx.addDeclaration(inlineCtx.returnLabel.toDecl())
-    inlineCtx.addStatement(inlineCtx.returnLabel.toStmt())
-    // NOTE: Putting the block inside the then branch of an if-true statement is a little hack to make Viper respect the scoping
-    addStatement(Stmt.If(Exp.BoolLit(true), inlineCtx.block, Stmt.Seqn(listOf(), listOf())))
+    withMethodCtx(methodCtxFactory) {
+        convert(body)
+        addDeclaration(returnLabel.toDecl())
+        addStatement(returnLabel.toStmt())
+    }
 }

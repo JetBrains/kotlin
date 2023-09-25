@@ -5,13 +5,13 @@ method global$fun_testGetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var anonymous$0: Ref
-  var local1$wrapper: Ref
+  var local0$wrapper: Ref
   var anonymous$1: Int
-  var local1$succ: Int
+  var local0$succ: Int
   anonymous$0 := class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
-  local1$wrapper := anonymous$0
-  anonymous$1 := pkg$special$global$getter_accessor(local1$wrapper)
-  local1$succ := anonymous$1
+  local0$wrapper := anonymous$0
+  anonymous$1 := pkg$special$global$getter_accessor(local0$wrapper)
+  local0$succ := anonymous$1
   label label$ret$0
 }
 
@@ -34,36 +34,36 @@ method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
   var anonymous$0: Ref
-  var local1$foo: Ref
+  var local0$foo: Ref
   var anonymous$1: Ref
-  var local1$bar: Ref
+  var local0$bar: Ref
   var anonymous$2: Ref
   var anonymous$3: Int
-  var local1$bfa: Int
+  var local0$bfa: Int
   var anonymous$4: Ref
   var anonymous$5: Int
-  var local1$bfb: Int
+  var local0$bfb: Int
   anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
     20)
-  local1$foo := anonymous$0
-  anonymous$1 := class_scope_global$class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local1$foo)
-  local1$bar := anonymous$1
-  inhale acc(local1$bar.class_scope_global$class_Bar$member_f, write)
-  anonymous$2 := local1$bar.class_scope_global$class_Bar$member_f
+  local0$foo := anonymous$0
+  anonymous$1 := class_scope_global$class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local0$foo)
+  local0$bar := anonymous$1
+  inhale acc(local0$bar.class_scope_global$class_Bar$member_f, write)
+  anonymous$2 := local0$bar.class_scope_global$class_Bar$member_f
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$global$class_Foo())
-  exhale acc(local1$bar.class_scope_global$class_Bar$member_f, write)
+  exhale acc(local0$bar.class_scope_global$class_Bar$member_f, write)
   inhale acc(anonymous$2.class_scope_global$class_Foo$member_a, write)
   anonymous$3 := anonymous$2.class_scope_global$class_Foo$member_a
   exhale acc(anonymous$2.class_scope_global$class_Foo$member_a, write)
-  local1$bfa := anonymous$3
-  inhale acc(local1$bar.class_scope_global$class_Bar$member_f, write)
-  anonymous$4 := local1$bar.class_scope_global$class_Bar$member_f
+  local0$bfa := anonymous$3
+  inhale acc(local0$bar.class_scope_global$class_Bar$member_f, write)
+  anonymous$4 := local0$bar.class_scope_global$class_Bar$member_f
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$4): dom$Type), dom$Type$global$class_Foo())
-  exhale acc(local1$bar.class_scope_global$class_Bar$member_f, write)
+  exhale acc(local0$bar.class_scope_global$class_Bar$member_f, write)
   inhale acc(anonymous$4.class_scope_global$class_Foo$member_b, write)
   anonymous$5 := anonymous$4.class_scope_global$class_Foo$member_b
   exhale acc(anonymous$4.class_scope_global$class_Foo$member_b, write)
-  local1$bfb := anonymous$5
+  local0$bfb := anonymous$5
   label label$ret$0
 }
 
@@ -88,19 +88,19 @@ method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
 {
   var anonymous$0: Ref
   var anonymous$1: Ref
-  var local1$wrapper: Ref
+  var local0$wrapper: Ref
   var anonymous$2: Ref
   var anonymous$3: Int
-  var local1$succ: Int
+  var local0$succ: Int
   anonymous$0 := class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
   anonymous$1 := class_scope_global$class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(anonymous$0)
-  local1$wrapper := anonymous$1
-  inhale acc(local1$wrapper.class_scope_global$class_IntWrapperContainer$member_i, write)
-  anonymous$2 := local1$wrapper.class_scope_global$class_IntWrapperContainer$member_i
+  local0$wrapper := anonymous$1
+  inhale acc(local0$wrapper.class_scope_global$class_IntWrapperContainer$member_i, write)
+  anonymous$2 := local0$wrapper.class_scope_global$class_IntWrapperContainer$member_i
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$global$class_IntWrapper())
-  exhale acc(local1$wrapper.class_scope_global$class_IntWrapperContainer$member_i, write)
+  exhale acc(local0$wrapper.class_scope_global$class_IntWrapperContainer$member_i, write)
   anonymous$3 := pkg$special$global$getter_accessor(anonymous$2)
-  local1$succ := anonymous$3
+  local0$succ := anonymous$3
   label label$ret$0
 }
 

@@ -43,3 +43,5 @@ abstract class NumberedLabelName(kind: String, n: Int) : MangledName {
 data class ReturnLabelName(val scopeDepth: Int) : NumberedLabelName("ret", scopeDepth)
 data class BreakLabelName(val n: Int) : NumberedLabelName("break", n)
 data class ContinueLabelName(val n: Int) : NumberedLabelName("continue", n)
+data class CatchLabelName(val n: Int) : NumberedLabelName("catch", n)
+data class TryExitLabelName(val n: Int) : NumberedLabelName("try_exit", n)

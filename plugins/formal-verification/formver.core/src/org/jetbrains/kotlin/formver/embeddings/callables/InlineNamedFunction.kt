@@ -16,6 +16,8 @@ class InlineNamedFunction(
     val signature: FullNamedFunctionSignature,
     val symbol: FirFunctionSymbol<*>,
 ) : CallableEmbedding, FullNamedFunctionSignature by signature {
+    override val canThrow: Boolean = false
+
     @OptIn(SymbolInternals::class)
     override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val inlineBody = symbol.fir.body ?: throw Exception("Function symbol $symbol has a null body")

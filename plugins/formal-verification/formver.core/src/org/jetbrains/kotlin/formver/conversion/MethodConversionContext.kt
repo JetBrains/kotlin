@@ -24,7 +24,7 @@ interface MethodConversionContext : ProgramConversionContext {
     fun resolveLocalPropertyName(name: Name): MangledName
     fun registerLocalPropertyName(name: Name)
 
-    fun <R> withScope(scopeDepth: Int, action: () -> R): R
+    fun <R> withScopeImpl(scopeDepth: Int, action: () -> R): R
 }
 
 fun MethodConversionContext.embedLocalProperty(symbol: FirPropertySymbol): VariableEmbedding =

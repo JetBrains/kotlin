@@ -25,6 +25,8 @@ interface ProgramConversionContext {
     val anonNameProducer: FreshEntityProducer<AnonymousName>
     val whileIndexProducer: FreshEntityProducer<Int>
     val returnLabelNameProducer: FreshEntityProducer<ReturnLabelName>
+    val catchLabelNameProducer: FreshEntityProducer<CatchLabelName>
+    val tryExitLabelNameProducer: FreshEntityProducer<TryExitLabelName>
 
     fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding
     fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature

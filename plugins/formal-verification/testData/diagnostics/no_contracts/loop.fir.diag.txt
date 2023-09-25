@@ -6,10 +6,10 @@ method global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   label label$continue$0
   anonymous$0 := local$b
   while (anonymous$0) {
-    var local2$a: Int
-    var local2$c: Int
-    local2$a := 1
-    local2$c := 2
+    var local1$a: Int
+    var local1$c: Int
+    local1$a := 1
+    local1$c := 2
     anonymous$0 := local$b
   }
   label label$break$0

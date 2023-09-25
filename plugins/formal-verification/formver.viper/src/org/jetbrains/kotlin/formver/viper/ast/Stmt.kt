@@ -111,15 +111,15 @@ sealed interface Stmt : IntoSilver<viper.silver.ast.Stmt> {
     }
 
     data class Seqn(
-        val stmts: List<Stmt>,
-        val scopedStmtsDeclaration: List<Declaration>,
+        val stmts: List<Stmt> = listOf(),
+        val scopedSeqnDeclarations: List<Declaration> = listOf(),
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
     ) : Stmt {
         override fun toSilver(): viper.silver.ast.Seqn = viper.silver.ast.Seqn(
             stmts.toSilver().toScalaSeq(),
-            scopedStmtsDeclaration.toSilver().toScalaSeq(),
+            scopedSeqnDeclarations.toSilver().toScalaSeq(),
             position.toSilver(),
             info.toSilver(),
             trafos.toSilver()

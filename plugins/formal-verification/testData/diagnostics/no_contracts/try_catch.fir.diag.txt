@@ -1,0 +1,186 @@
+/try_catch.kt:(139,148): info: Generated Viper text for try_catch:
+method global$fun_try_catch$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
+{
+  if (true) {
+    var anonymous$0: Bool
+    var anonymous$1: dom$Unit
+    var anonymous$2: Bool
+    var anonymous$3: dom$Unit
+    if (anonymous$0) {
+      goto label$catch$0
+    }
+    anonymous$1 := global$fun_call$fun_take$T_Int$return$T_Unit(0)
+    if (anonymous$2) {
+      goto label$catch$0
+    }
+    anonymous$3 := global$fun_call$fun_take$T_Int$return$T_Unit(1)
+    goto label$try_exit$0
+  }
+  if (true) {
+    var anonymous$4: dom$Unit
+    label label$catch$0
+    anonymous$4 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
+    goto label$try_exit$0
+  }
+  label label$try_exit$0
+  label label$ret$0
+}
+
+method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
+  returns (ret: dom$Unit)
+
+
+/try_catch.kt:(253,269): info: Generated Viper text for nested_try_catch:
+method global$fun_nested_try_catch$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
+{
+  if (true) {
+    var anonymous$0: Bool
+    var anonymous$1: dom$Unit
+    if (anonymous$0) {
+      goto label$catch$0
+    }
+    anonymous$1 := global$fun_call$fun_take$T_Int$return$T_Unit(0)
+    if (true) {
+      var anonymous$2: Bool
+      var anonymous$3: Bool
+      var anonymous$4: dom$Unit
+      if (anonymous$2) {
+        goto label$catch$0
+      }
+      if (anonymous$3) {
+        goto label$catch$1
+      }
+      anonymous$4 := global$fun_call$fun_take$T_Int$return$T_Unit(1)
+      goto label$try_exit$1
+    }
+    if (true) {
+      var anonymous$5: Bool
+      var anonymous$6: dom$Unit
+      label label$catch$1
+      if (anonymous$5) {
+        goto label$catch$0
+      }
+      anonymous$6 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
+      goto label$try_exit$1
+    }
+    label label$try_exit$1
+    goto label$try_exit$0
+  }
+  if (true) {
+    label label$catch$0
+    goto label$try_exit$0
+  }
+  label label$try_exit$0
+  label label$ret$0
+}
+
+method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
+  returns (ret: dom$Unit)
+
+
+/try_catch.kt:(559,580): info: Generated Viper text for try_catch_with_inline:
+method global$fun_try_catch_with_inline$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
+{
+  if (true) {
+    var anonymous$0: dom$Unit
+    if (true) {
+      var anonymous$1: Bool
+      var anonymous$2: dom$Unit
+      var anonymous$3: Bool
+      var anonymous$4: dom$Unit
+      if (anonymous$1) {
+        goto label$catch$0
+      }
+      anonymous$2 := global$fun_call$fun_take$T_Int$return$T_Unit(0)
+      if (anonymous$3) {
+        goto label$catch$0
+      }
+      anonymous$4 := global$fun_call$fun_take$T_Int$return$T_Unit(1)
+      label label$ret$1
+    }
+    goto label$try_exit$0
+  }
+  if (true) {
+    var anonymous$5: dom$Unit
+    label label$catch$0
+    anonymous$5 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
+    goto label$try_exit$0
+  }
+  label label$try_exit$0
+  label label$ret$0
+}
+
+method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
+  returns (ret: dom$Unit)
+
+
+/try_catch.kt:(674,693): info: Generated Viper text for try_catch_shadowing:
+method global$fun_try_catch_shadowing$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
+{
+  var local0$x: Int
+  local0$x := 0
+  if (true) {
+    var local1$x: Int
+    local1$x := 1
+    goto label$try_exit$0
+  }
+  if (true) {
+    var local1$x: Int
+    label label$catch$0
+    local1$x := 2
+    goto label$try_exit$0
+  }
+  label label$try_exit$0
+  label label$ret$0
+}
+
+/try_catch.kt:(804,820): info: Generated Viper text for multiple_catches:
+method global$fun_multiple_catches$fun_take$$return$T_Unit()
+  returns (ret: dom$Unit)
+{
+  if (true) {
+    var anonymous$0: Bool
+    var anonymous$1: Bool
+    var anonymous$2: dom$Unit
+    var anonymous$3: Bool
+    var anonymous$4: Bool
+    var anonymous$5: dom$Unit
+    if (anonymous$0) {
+      goto label$catch$0
+    }
+    if (anonymous$1) {
+      goto label$catch$1
+    }
+    anonymous$2 := global$fun_call$fun_take$T_Int$return$T_Unit(0)
+    if (anonymous$3) {
+      goto label$catch$0
+    }
+    if (anonymous$4) {
+      goto label$catch$1
+    }
+    anonymous$5 := global$fun_call$fun_take$T_Int$return$T_Unit(1)
+    goto label$try_exit$0
+  }
+  if (true) {
+    var anonymous$6: dom$Unit
+    label label$catch$0
+    anonymous$6 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
+    goto label$try_exit$0
+  }
+  if (true) {
+    var anonymous$7: dom$Unit
+    label label$catch$1
+    anonymous$7 := global$fun_call$fun_take$T_Int$return$T_Unit(3)
+    goto label$try_exit$0
+  }
+  label label$try_exit$0
+  label label$ret$0
+}
+
+method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
+  returns (ret: dom$Unit)
+

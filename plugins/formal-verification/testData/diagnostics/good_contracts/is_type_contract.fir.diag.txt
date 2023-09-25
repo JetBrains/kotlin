@@ -73,18 +73,20 @@ method global$fun_typeOfField$fun_take$T_class_global$class_Foo$return$T_Boolean
   returns (ret: Bool)
   ensures ret == true
 {
-  var anonymous$0: Ref
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
-  inhale acc(local$foo.class_scope_global$class_Foo$member_bar, write)
-  anonymous$0 := local$foo.class_scope_global$class_Foo$member_bar
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())
-  exhale acc(local$foo.class_scope_global$class_Foo$member_bar, write)
-  if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())) {
-    ret := true
-    goto label$ret$0
-  } else {
-    ret := false
-    goto label$ret$0
+  if (true) {
+    var anonymous$0: Ref
+    inhale acc(local$foo.class_scope_global$class_Foo$member_bar, write)
+    anonymous$0 := local$foo.class_scope_global$class_Foo$member_bar
+    inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())
+    exhale acc(local$foo.class_scope_global$class_Foo$member_bar, write)
+    if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())) {
+      ret := true
+      goto label$ret$0
+    } else {
+      ret := false
+      goto label$ret$0
+    }
   }
   label label$ret$0
 }

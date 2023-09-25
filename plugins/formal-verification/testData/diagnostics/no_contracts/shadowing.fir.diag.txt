@@ -2,21 +2,23 @@
 method global$fun_shadow_local$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
-  var local1$foo: Int
-  var local1$x: Int
-  local1$x := 0
-  if (local1$x == 0) {
-    var local2$x: Int
-    local1$foo := local1$x
-    local2$x := 1
-    local1$foo := local2$x
-  } else {
-    var local2$x: Int
-    local1$foo := local1$x
-    local2$x := 2
-    local1$foo := local2$x
+  var local0$foo: Int
+  var local0$x: Int
+  local0$x := 0
+  if (true) {
+    if (local0$x == 0) {
+      var local2$x: Int
+      local0$foo := local0$x
+      local2$x := 1
+      local0$foo := local2$x
+    } else {
+      var local2$x: Int
+      local0$foo := local0$x
+      local2$x := 2
+      local0$foo := local2$x
+    }
   }
-  local1$foo := local1$x
+  local0$foo := local0$x
   label label$ret$0
 }
 
@@ -24,11 +26,11 @@ method global$fun_shadow_local$fun_take$$return$T_Unit()
 method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local1$foo: Int
-  var local1$x: Int
-  local1$foo := local$x
-  local1$x := 0
-  local1$foo := local1$x
+  var local0$foo: Int
+  var local0$x: Int
+  local0$foo := local$x
+  local0$x := 0
+  local0$foo := local0$x
   label label$ret$0
 }
 
@@ -36,29 +38,31 @@ method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Int)
 method global$fun_shadow_nested$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local1$foo: Int
-  var local1$x: Int
-  local1$foo := local$x
-  local1$x := 0
-  local1$foo := local1$x
+  var local0$foo: Int
+  var local0$x: Int
+  local0$foo := local$x
+  local0$x := 0
+  local0$foo := local0$x
   if (true) {
-    var local2$x: Int
-    var anonymous$0: Bool
-    local1$foo := local1$x
-    local2$x := 1
-    local1$foo := local2$x
-    label label$continue$0
-    anonymous$0 := true
-    while (anonymous$0) {
-      var local3$x: Int
-      local1$foo := local2$x
-      local3$x := 2
-      local1$foo := local3$x
+    if (true) {
+      var local2$x: Int
+      var anonymous$0: Bool
+      local0$foo := local0$x
+      local2$x := 1
+      local0$foo := local2$x
+      label label$continue$0
       anonymous$0 := true
+      while (anonymous$0) {
+        var local3$x: Int
+        local0$foo := local2$x
+        local3$x := 2
+        local0$foo := local3$x
+        anonymous$0 := true
+      }
+      label label$break$0
+      local0$foo := local2$x
     }
-    label label$break$0
-    local1$foo := local2$x
   }
-  local1$foo := local1$x
+  local0$foo := local0$x
   label label$ret$0
 }

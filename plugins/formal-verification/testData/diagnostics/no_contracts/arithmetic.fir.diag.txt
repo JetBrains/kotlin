@@ -2,8 +2,8 @@
 method global$fun_addition$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local1$y: Int
-  local1$y := local$x + local$x
+  var local0$y: Int
+  local0$y := local$x + local$x
   label label$ret$0
 }
 
@@ -11,8 +11,8 @@ method global$fun_addition$fun_take$T_Int$return$T_Unit(local$x: Int)
 method global$fun_subtraction$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local1$y: Int
-  local1$y := local$x - local$x
+  var local0$y: Int
+  local0$y := local$x - local$x
   label label$ret$0
 }
 
@@ -20,8 +20,8 @@ method global$fun_subtraction$fun_take$T_Int$return$T_Unit(local$x: Int)
 method global$fun_multiplication$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local1$y: Int
-  local1$y := local$x * local$x
+  var local0$y: Int
+  local0$y := local$x * local$x
   label label$ret$0
 }
 
@@ -29,8 +29,8 @@ method global$fun_multiplication$fun_take$T_Int$return$T_Unit(local$x: Int)
 method global$fun_division$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 {
-  var local1$y: Int
+  var local0$y: Int
   inhale local$x != 0
-  local1$y := local$x / local$x
+  local0$y := local$x / local$x
   label label$ret$0
 }

@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.formver.viper.ast.Label
 
-interface WhileStackContext<out RTC : ResultTrackingContext> {
-    val continueLabel: Label
-    val breakLabel: Label
-    fun inNewWhileBlock(action: (StmtConversionContext<RTC>) -> Unit)
-}
+class CatchBlockData(val entryLabel: Label, val firCatch: FirCatch)
+class CatchBlockListData(val exitLabel: Label, val blocks: List<CatchBlockData>)

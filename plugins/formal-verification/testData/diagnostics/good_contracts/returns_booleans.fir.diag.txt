@@ -60,11 +60,11 @@ method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(lo
   ensures ret == true
 {
   var anonymous$0: Bool
-  var local1$a: Bool
+  var local0$a: Bool
   anonymous$0 := global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$b,
     local$b)
-  local1$a := anonymous$0
-  ret := local1$a
+  local0$a := anonymous$0
+  ret := local0$a
   goto label$ret$0
   label label$ret$0
 }

@@ -26,11 +26,12 @@ class MethodConverter(
     private val programCtx: ProgramConversionContext,
     override val signature: FunctionSignature,
     private val paramResolver: ParameterResolver,
+    scopeDepth: Int,
     private val parent: MethodConversionContext? = null,
 ) : MethodConversionContext, ProgramConversionContext by programCtx {
-    private var propertyResolver: BasePropertyNameResolver = RootPropertyNameResolver
+    private var propertyResolver = PropertyNameResolver(scopeDepth)
 
-    override fun <R> withScope(scopeDepth: Int, action: () -> R): R {
+    override fun <R> withScopeImpl(scopeDepth: Int, action: () -> R): R {
         propertyResolver = propertyResolver.innerScope(scopeDepth)
         val result = action()
         propertyResolver = propertyResolver.parent!!
