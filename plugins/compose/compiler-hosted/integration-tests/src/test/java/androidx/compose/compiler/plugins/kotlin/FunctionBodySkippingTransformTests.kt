@@ -807,9 +807,9 @@ class FunctionBodySkippingTransformTests(
               Call(%composer, 0)
               val <iterator> = 0 .. 1.iterator()
               while (<iterator>.hasNext()) {
+                val index = <iterator>.next()
                 %composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "<Call()>,<Call()>")
-                val index = <iterator>.next()
                 Call(%composer, 0)
                 if (condition()) {
                   %composer.endReplaceableGroup()
