@@ -34,28 +34,6 @@ class ControlFlowTransformTestsNoSource(
               A(a)
               A(b)
             }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                A(a, %composer, 0)
-                A(b, %composer, 0)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -67,28 +45,6 @@ class ControlFlowTransformTestsNoSource(
               A(a)
               A(b)
             }
-        """,
-        """
-            @Composable
-            private fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                A(a, %composer, 0)
-                A(b, %composer, 0)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-
         """
     )
 
@@ -99,42 +55,6 @@ class ControlFlowTransformTestsNoSource(
             fun Test() {
               W {
                 A()
-              }
-            }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                W(ComposableSingletons%TestKt.lambda-1, %composer, 0b0110)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-            internal object ComposableSingletons%TestKt {
-              val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
-                  A(%composer, 0)
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                }
               }
             }
         """
@@ -149,34 +69,11 @@ class ControlFlowTransformTestsNoSource(
                 A()
               }
             }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                IW({ %composer: Composer?, %changed: Int ->
-                  A(%composer, 0)
-                }, %composer, 0)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
     @Test
-    fun verifyEarlyExitFromMultiLevelNestedInlineFunction() = verifyComposeIrTransform(
+    fun verifyEarlyExitFromMultiLevelNestedInlineFunction() = verifyGoldenComposeIrTransform(
         source = """
             import androidx.compose.runtime.*
 
@@ -194,40 +91,6 @@ class ControlFlowTransformTestsNoSource(
                     Text("After inner")
                 }
                 Text("Before outer")
-            }
-        """,
-        expectedTransformed = """
-            @Composable
-            @NonRestartableComposable
-            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Test)")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              Text("Before outer", %composer, 0b0110)
-              InlineLinearA({ %composer: Composer?, %changed: Int ->
-                val tmp0_marker = %composer.currentMarker
-                %composer.startReplaceableGroup(<>)
-                Text("Before inner", %composer, 0b0110)
-                InlineLinearB({ %composer: Composer?, %changed: Int ->
-                  %composer.startReplaceableGroup(<>)
-                  Text("Before return", %composer, 0b0110)
-                  if (condition) {
-                    %composer.endToMarker(tmp0_marker)
-                    return@InlineLinearA
-                  }
-                  Text("After return", %composer, 0b0110)
-                  %composer.endReplaceableGroup()
-                }, %composer, 0)
-                Text("After inner", %composer, 0b0110)
-                %composer.endReplaceableGroup()
-              }, %composer, 0)
-              Text("Before outer", %composer, 0b0110)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
             }
         """,
         extra = """

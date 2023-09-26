@@ -1,0 +1,29 @@
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Test(x: Foo) {
+    A(x)
+}
+
+/********
+ * TRANSFORMED
+ ********/
+
+@Composable
+fun Test(x: Foo, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)<A(x)>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  A(x, %composer, 0b1000)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(x, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

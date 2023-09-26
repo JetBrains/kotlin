@@ -379,46 +379,11 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
                     override fun bar(): Int { return 1 }
                 }
             }
-        """,
-        """
-            interface Foo {
-              abstract fun bar(): Int
-            }
-            fun a(): Foo {
-              return object : Foo {
-                override fun bar(): Int {
-                  return LiveLiterals%TestKt.Int%fun-bar%class-%no-name-provided%%fun-a()
-                }
-              }
-            }
-            @LiveLiteralFileInfo(file = "/Test.kt")
-            internal object LiveLiterals%TestKt {
-              val Int%fun-bar%class-%no-name-provided%%fun-a: Int = 1
-              var State%Int%fun-bar%class-%no-name-provided%%fun-a: State<Int>?
-              @LiveLiteralInfo(key = "Int%fun-bar%class-%no-name-provided%%fun-a", offset = 159)
-              fun Int%fun-bar%class-%no-name-provided%%fun-a(): Int {
-                if (!isLiveLiteralsEnabled) {
-                  return Int%fun-bar%class-%no-name-provided%%fun-a
-                }
-                val tmp0 = State%Int%fun-bar%class-%no-name-provided%%fun-a
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%fun-bar%class-%no-name-provided%%fun-a", Int%fun-bar%class-%no-name-provided%%fun-a)
-                  State%Int%fun-bar%class-%no-name-provided%%fun-a = tmp1
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-            }
         """
     )
 
     @Test
     fun testBasicTransform() {
-        // String constant start offsets are off by one in K2.
-        // TODO: Inline the non-K2 offset once fixed.
-        val stringConstantOffset = if (useFir) 85 else 86
         assertTransform(
             """
             """,
@@ -433,141 +398,6 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
                     print(1.0f)
                   }
                   print(3)
-                }
-            """,
-            """
-                fun A() {
-                  print(LiveLiterals%TestKt.Int%arg-0%call-print%fun-A())
-                  print(LiveLiterals%TestKt.String%arg-0%call-print-1%fun-A())
-                  if (LiveLiterals%TestKt.Boolean%cond%if%fun-A()) {
-                    print(LiveLiterals%TestKt.Int%arg-0%call-print%branch%if%fun-A())
-                  }
-                  if (LiveLiterals%TestKt.Boolean%cond%if-1%fun-A()) {
-                    print(LiveLiterals%TestKt.Float%arg-0%call-print%branch%if-1%fun-A())
-                  }
-                  print(LiveLiterals%TestKt.Int%arg-0%call-print-2%fun-A())
-                }
-                @LiveLiteralFileInfo(file = "/Test.kt")
-                internal object LiveLiterals%TestKt {
-                  val Int%arg-0%call-print%fun-A: Int = 1
-                  var State%Int%arg-0%call-print%fun-A: State<Int>?
-                  @LiveLiteralInfo(key = "Int%arg-0%call-print%fun-A", offset = 70)
-                  fun Int%arg-0%call-print%fun-A(): Int {
-                    if (!isLiveLiteralsEnabled) {
-                      return Int%arg-0%call-print%fun-A
-                    }
-                    val tmp0 = State%Int%arg-0%call-print%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Int%arg-0%call-print%fun-A", Int%arg-0%call-print%fun-A)
-                      State%Int%arg-0%call-print%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                  val String%arg-0%call-print-1%fun-A: String = "Hello World"
-                  var State%String%arg-0%call-print-1%fun-A: State<String>?
-                  @LiveLiteralInfo(key = "String%arg-0%call-print-1%fun-A", offset = $stringConstantOffset)
-                  fun String%arg-0%call-print-1%fun-A(): String {
-                    if (!isLiveLiteralsEnabled) {
-                      return String%arg-0%call-print-1%fun-A
-                    }
-                    val tmp0 = State%String%arg-0%call-print-1%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("String%arg-0%call-print-1%fun-A", String%arg-0%call-print-1%fun-A)
-                      State%String%arg-0%call-print-1%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                  val Boolean%cond%if%fun-A: Boolean = true
-                  var State%Boolean%cond%if%fun-A: State<Boolean>?
-                  @LiveLiteralInfo(key = "Boolean%cond%if%fun-A", offset = 110)
-                  fun Boolean%cond%if%fun-A(): Boolean {
-                    if (!isLiveLiteralsEnabled) {
-                      return Boolean%cond%if%fun-A
-                    }
-                    val tmp0 = State%Boolean%cond%if%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Boolean%cond%if%fun-A", Boolean%cond%if%fun-A)
-                      State%Boolean%cond%if%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                  val Int%arg-0%call-print%branch%if%fun-A: Int = 4
-                  var State%Int%arg-0%call-print%branch%if%fun-A: State<Int>?
-                  @LiveLiteralInfo(key = "Int%arg-0%call-print%branch%if%fun-A", offset = 132)
-                  fun Int%arg-0%call-print%branch%if%fun-A(): Int {
-                    if (!isLiveLiteralsEnabled) {
-                      return Int%arg-0%call-print%branch%if%fun-A
-                    }
-                    val tmp0 = State%Int%arg-0%call-print%branch%if%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Int%arg-0%call-print%branch%if%fun-A", Int%arg-0%call-print%branch%if%fun-A)
-                      State%Int%arg-0%call-print%branch%if%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                  val Boolean%cond%if-1%fun-A: Boolean = true
-                  var State%Boolean%cond%if-1%fun-A: State<Boolean>?
-                  @LiveLiteralInfo(key = "Boolean%cond%if-1%fun-A", offset = 153)
-                  fun Boolean%cond%if-1%fun-A(): Boolean {
-                    if (!isLiveLiteralsEnabled) {
-                      return Boolean%cond%if-1%fun-A
-                    }
-                    val tmp0 = State%Boolean%cond%if-1%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Boolean%cond%if-1%fun-A", Boolean%cond%if-1%fun-A)
-                      State%Boolean%cond%if-1%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                  val Float%arg-0%call-print%branch%if-1%fun-A: Float = 1.0f
-                  var State%Float%arg-0%call-print%branch%if-1%fun-A: State<Float>?
-                  @LiveLiteralInfo(key = "Float%arg-0%call-print%branch%if-1%fun-A", offset = 175)
-                  fun Float%arg-0%call-print%branch%if-1%fun-A(): Float {
-                    if (!isLiveLiteralsEnabled) {
-                      return Float%arg-0%call-print%branch%if-1%fun-A
-                    }
-                    val tmp0 = State%Float%arg-0%call-print%branch%if-1%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Float%arg-0%call-print%branch%if-1%fun-A", Float%arg-0%call-print%branch%if-1%fun-A)
-                      State%Float%arg-0%call-print%branch%if-1%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                  val Int%arg-0%call-print-2%fun-A: Int = 3
-                  var State%Int%arg-0%call-print-2%fun-A: State<Int>?
-                  @LiveLiteralInfo(key = "Int%arg-0%call-print-2%fun-A", offset = 201)
-                  fun Int%arg-0%call-print-2%fun-A(): Int {
-                    if (!isLiveLiteralsEnabled) {
-                      return Int%arg-0%call-print-2%fun-A
-                    }
-                    val tmp0 = State%Int%arg-0%call-print-2%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Int%arg-0%call-print-2%fun-A", Int%arg-0%call-print-2%fun-A)
-                      State%Int%arg-0%call-print-2%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
                 }
             """
         )
@@ -584,48 +414,6 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
                 fun A() {
                     print(3 + 4)
                 }
-            """,
-            """
-                fun A() {
-                  print(LiveLiterals%TestKt.Int%%this%call-plus%arg-0%call-print%fun-A() + LiveLiterals%TestKt.Int%arg-0%call-plus%arg-0%call-print%fun-A())
-                }
-                @LiveLiteralFileInfo(file = "/Test.kt")
-                internal object LiveLiterals%TestKt {
-                  val Int%%this%call-plus%arg-0%call-print%fun-A: Int = 3
-                  var State%Int%%this%call-plus%arg-0%call-print%fun-A: State<Int>?
-                  @LiveLiteralInfo(key = "Int%%this%call-plus%arg-0%call-print%fun-A", offset = 72)
-                  fun Int%%this%call-plus%arg-0%call-print%fun-A(): Int {
-                    if (!isLiveLiteralsEnabled) {
-                      return Int%%this%call-plus%arg-0%call-print%fun-A
-                    }
-                    val tmp0 = State%Int%%this%call-plus%arg-0%call-print%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Int%%this%call-plus%arg-0%call-print%fun-A", Int%%this%call-plus%arg-0%call-print%fun-A)
-                      State%Int%%this%call-plus%arg-0%call-print%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                  val Int%arg-0%call-plus%arg-0%call-print%fun-A: Int = 4
-                  var State%Int%arg-0%call-plus%arg-0%call-print%fun-A: State<Int>?
-                  @LiveLiteralInfo(key = "Int%arg-0%call-plus%arg-0%call-print%fun-A", offset = 76)
-                  fun Int%arg-0%call-plus%arg-0%call-print%fun-A(): Int {
-                    if (!isLiveLiteralsEnabled) {
-                      return Int%arg-0%call-plus%arg-0%call-print%fun-A
-                    }
-                    val tmp0 = State%Int%arg-0%call-plus%arg-0%call-print%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Int%arg-0%call-plus%arg-0%call-print%fun-A", Int%arg-0%call-plus%arg-0%call-print%fun-A)
-                      State%Int%arg-0%call-plus%arg-0%call-print%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                }
             """
         )
     }
@@ -641,37 +429,12 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
                 fun A() {
                     print(3 + 4)
                 }
-            """,
-            """
-                fun A() {
-                  print(LiveLiterals%TestKt.Int%arg-0%call-print%fun-A())
-                }
-                @LiveLiteralFileInfo(file = "/Test.kt")
-                internal object LiveLiterals%TestKt {
-                  val Int%arg-0%call-print%fun-A: Int = 7
-                  var State%Int%arg-0%call-print%fun-A: State<Int>?
-                  @LiveLiteralInfo(key = "Int%arg-0%call-print%fun-A", offset = 74)
-                  fun Int%arg-0%call-print%fun-A(): Int {
-                    if (!isLiveLiteralsEnabled) {
-                      return Int%arg-0%call-print%fun-A
-                    }
-                    val tmp0 = State%Int%arg-0%call-print%fun-A
-                    return if (tmp0 == null) {
-                      val tmp1 = liveLiteral("Int%arg-0%call-print%fun-A", Int%arg-0%call-print%fun-A)
-                      State%Int%arg-0%call-print%fun-A = tmp1
-                      tmp1
-                    } else {
-                      tmp0
-                    }
-                    .value
-                  }
-                }
             """
         )
     }
 
     @Test
-    fun testComposeIrSkippingWithDefaultsRelease() = verifyComposeIrTransform(
+    fun testComposeIrSkippingWithDefaultsRelease() = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.ui.text.input.TextFieldValue
             import androidx.compose.runtime.*
@@ -693,152 +456,6 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
                     Text("${'$'}keyboardActions2")
                 }
             }
-        """.trimIndent(),
-        """
-            @StabilityInferred(parameters = 0)
-            object Ui {
-              static val %stable: Int = LiveLiterals%TestKt.Int%class-Ui()
-            }
-            @Composable
-            @ComposableTarget(applier = "androidx.compose.ui.UiComposable")
-            fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(UiTextField)")
-              val %dirty = %changed
-              if (%changed and 0b01110000 == 0) {
-                %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(isError)) 0b00100000 else 0b00010000
-              }
-              if (%changed and 0b001110000000 == 0) {
-                %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(keyboardActions2)) 0b000100000000 else 0b10000000
-              }
-              if (%dirty and 0b001011010001 != 0b10010000 || !%composer.skipping) {
-                %composer.startDefaults()
-                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0001 != 0) {
-                    isError = LiveLiterals%TestKt.Boolean%param-isError%fun-UiTextField()
-                    %dirty = %dirty and 0b01110000.inv()
-                  }
-                  if (%default and 0b0010 != 0) {
-                    keyboardActions2 = LiveLiterals%TestKt.Boolean%param-keyboardActions2%fun-UiTextField()
-                    %dirty = %dirty and 0b001110000000.inv()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                  if (%default and 0b0001 != 0) {
-                    %dirty = %dirty and 0b01110000.inv()
-                  }
-                  if (%default and 0b0010 != 0) {
-                    %dirty = %dirty and 0b001110000000.inv()
-                  }
-                }
-                %composer.endDefaults()
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                println("%{LiveLiterals%TestKt.String%0%str%arg-0%call-println%fun-UiTextField()}%isError")
-                println("%{LiveLiterals%TestKt.String%0%str%arg-0%call-println-1%fun-UiTextField()}%keyboardActions2")
-                Column(null, null, null, { %composer: Composer?, %changed: Int ->
-                  Text("%isError", null, <unsafe-coerce>(0L), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, 0, null, null, %composer, 0, 0, 0b00011111111111111110)
-                  Text("%keyboardActions2", null, <unsafe-coerce>(0L), <unsafe-coerce>(0L), null, null, null, <unsafe-coerce>(0L), null, null, <unsafe-coerce>(0L), <unsafe-coerce>(0), false, 0, 0, null, null, %composer, 0, 0, 0b00011111111111111110)
-                }, %composer, 0, 0b0111)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                UiTextField(isError, keyboardActions2, %composer, updateChangedFlags(%changed or 0b0001), %default)
-              }
-            }
-            @LiveLiteralFileInfo(file = "/Test.kt")
-            internal object LiveLiterals%TestKt {
-              val Int%class-Ui: Int = 0
-              var State%Int%class-Ui: State<Int>?
-              @LiveLiteralInfo(key = "Int%class-Ui", offset = -1)
-              fun Int%class-Ui(): Int {
-                if (!isLiveLiteralsEnabled) {
-                  return Int%class-Ui
-                }
-                val tmp0 = State%Int%class-Ui
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Int%class-Ui", Int%class-Ui)
-                  State%Int%class-Ui = tmp1
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-              val Boolean%param-isError%fun-UiTextField: Boolean = false
-              var State%Boolean%param-isError%fun-UiTextField: State<Boolean>?
-              @LiveLiteralInfo(key = "Boolean%param-isError%fun-UiTextField", offset = 292)
-              fun Boolean%param-isError%fun-UiTextField(): Boolean {
-                if (!isLiveLiteralsEnabled) {
-                  return Boolean%param-isError%fun-UiTextField
-                }
-                val tmp0 = State%Boolean%param-isError%fun-UiTextField
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Boolean%param-isError%fun-UiTextField", Boolean%param-isError%fun-UiTextField)
-                  State%Boolean%param-isError%fun-UiTextField = tmp1
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-              val Boolean%param-keyboardActions2%fun-UiTextField: Boolean = false
-              var State%Boolean%param-keyboardActions2%fun-UiTextField: State<Boolean>?
-              @LiveLiteralInfo(key = "Boolean%param-keyboardActions2%fun-UiTextField", offset = 331)
-              fun Boolean%param-keyboardActions2%fun-UiTextField(): Boolean {
-                if (!isLiveLiteralsEnabled) {
-                  return Boolean%param-keyboardActions2%fun-UiTextField
-                }
-                val tmp0 = State%Boolean%param-keyboardActions2%fun-UiTextField
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("Boolean%param-keyboardActions2%fun-UiTextField", Boolean%param-keyboardActions2%fun-UiTextField)
-                  State%Boolean%param-keyboardActions2%fun-UiTextField = tmp1
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-              val String%0%str%arg-0%call-println%fun-UiTextField: String = "t41 insideFunction "
-              var State%String%0%str%arg-0%call-println%fun-UiTextField: State<String>?
-              @LiveLiteralInfo(key = "String%0%str%arg-0%call-println%fun-UiTextField", offset = 355)
-              fun String%0%str%arg-0%call-println%fun-UiTextField(): String {
-                if (!isLiveLiteralsEnabled) {
-                  return String%0%str%arg-0%call-println%fun-UiTextField
-                }
-                val tmp0 = State%String%0%str%arg-0%call-println%fun-UiTextField
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("String%0%str%arg-0%call-println%fun-UiTextField", String%0%str%arg-0%call-println%fun-UiTextField)
-                  State%String%0%str%arg-0%call-println%fun-UiTextField = tmp1
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-              val String%0%str%arg-0%call-println-1%fun-UiTextField: String = "t41 insideFunction "
-              var State%String%0%str%arg-0%call-println-1%fun-UiTextField: State<String>?
-              @LiveLiteralInfo(key = "String%0%str%arg-0%call-println-1%fun-UiTextField", offset = 398)
-              fun String%0%str%arg-0%call-println-1%fun-UiTextField(): String {
-                if (!isLiveLiteralsEnabled) {
-                  return String%0%str%arg-0%call-println-1%fun-UiTextField
-                }
-                val tmp0 = State%String%0%str%arg-0%call-println-1%fun-UiTextField
-                return if (tmp0 == null) {
-                  val tmp1 = liveLiteral("String%0%str%arg-0%call-println-1%fun-UiTextField", String%0%str%arg-0%call-println-1%fun-UiTextField)
-                  State%String%0%str%arg-0%call-println-1%fun-UiTextField = tmp1
-                  tmp1
-                } else {
-                  tmp0
-                }
-                .value
-              }
-            }
-        """
+        """.trimIndent()
     )
 }

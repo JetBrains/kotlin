@@ -1,0 +1,44 @@
+
+            import androidx.compose.runtime.*
+
+            fun interface A {
+                fun compute(value: Int): Unit
+            }
+
+            @Composable
+            fun Example(a: A) {
+                Example { it -> a.compute(it) }
+            }
+        
+/********
+ * TRANSFORMED
+ ********/
+
+interface A {
+  abstract fun compute(value: Int)
+}
+@Composable
+fun Example(a: A, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Example)<Exampl...>:Test.kt")
+  val %dirty = %changed
+  if (%changed and 0b1110 == 0) {
+    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+  }
+  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %dirty, -1, <>)
+    }
+    Example(A { it: Int ->
+      a.compute(it)
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Example(a, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
