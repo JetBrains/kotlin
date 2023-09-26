@@ -108,14 +108,12 @@ abstract class AbstractLiveLiteralTransformTests(
     protected fun assertTransform(
         unchecked: String,
         checked: String,
-        expectedTransformed: String,
         dumpTree: Boolean = false
-    ) = verifyComposeIrTransform(
+    ) = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
             $checked
         """.trimIndent(),
-        expectedTransformed,
         """
             import androidx.compose.runtime.Composable
             $unchecked

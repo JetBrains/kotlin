@@ -31,16 +31,14 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         unchecked: String,
         @Language("kotlin")
         checked: String,
-        expectedTransformed: String,
         dumpTree: Boolean = false
-    ) = verifyComposeIrTransform(
+    ) = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
             import androidx.compose.runtime.remember
 
             $checked
         """.trimIndent(),
-        expectedTransformed,
         """
             import androidx.compose.runtime.Composable
 
@@ -76,46 +74,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val a = if (x) { remember { 1 } } else { 2 }
                 val b = remember { 2 }
             }
-        """,
-        """
-            @Composable
-            @NonRestartableComposable
-            fun app(x: Boolean, %composer: Composer?, %changed: Int) {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(app):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val a = <block>{
-                %composer.startReplaceableGroup(<>)
-                val tmp1_group = if (x) {
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(app):Test.kt")
-                  val tmp0_group = %composer.cache(false) {
-                    1
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                } else {
-                  2
-                }
-                %composer.endReplaceableGroup()
-                tmp1_group
-              }
-              val b = <block>{
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "C(app):Test.kt")
-                val tmp2_group = %composer.cache(false) {
-                  2
-                }
-                %composer.endReplaceableGroup()
-                tmp2_group
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
-            }
         """
     )
 
@@ -134,37 +92,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     123
                 }
                 return deferred > 10
-            }
-        """,
-        """
-            @Composable
-            fun <T> loadResourceInternal(key: String, pendingResource: T?, failedResource: T?, %composer: Composer?, %changed: Int, %default: Int): Boolean {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(loadResourceInternal)P(1,2):Test.kt")
-              if (%default and 0b0010 != 0) {
-                pendingResource = null
-              }
-              if (%default and 0b0100 != 0) {
-                failedResource = null
-              }
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val deferred = <block>{
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "C(loadResourceInternal)P(1,2):Test.kt")
-                val tmp1_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(key) || %changed and 0b0110 == 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(pendingResource) || %changed and 0b00110000 == 0b00100000 or %changed and 0b001110000000 xor 0b000110000000 > 256 && %composer.changed(failedResource) || %changed and 0b000110000000 == 0b000100000000) {
-                  123
-                }
-                %composer.endReplaceableGroup()
-                tmp1_group
-              }
-              val tmp0 = deferred > 10
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
-              return tmp0
             }
         """
     )
@@ -188,87 +115,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             @Composable
             fun test3(x: Uncertain) {
                 remember(x) { 1 }
-            }
-        """,
-        """
-            @Composable
-            fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(test1):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "C(test1):Test.kt")
-                val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
-                  1
-                }
-                %composer.endReplaceableGroup()
-                tmp0_group
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                test1(x, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-            @Composable
-            fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(test2):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(test2):Test.kt")
-              val tmp0_group = %composer.cache(%composer.changed(x)) {
-                1
-              }
-              %composer.endReplaceableGroup()
-              tmp0_group
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                test2(x, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-            @Composable
-            fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(test3):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "C(test3):Test.kt")
-                val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changed(x)) {
-                  1
-                }
-                %composer.endReplaceableGroup()
-                tmp0_group
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                test3(x, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -298,68 +144,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun test3(x: Uncertain) {
                 remember(x) { 1 }
             }
-        """,
-        """
-            @Composable
-            @NonRestartableComposable
-            fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(test1):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(test1):Test.kt")
-              val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(x) || %changed and 0b0110 == 0b0100) {
-                1
-              }
-              %composer.endReplaceableGroup()
-              tmp0_group
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
-            }
-            @Composable
-            @NonRestartableComposable
-            fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(test2):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(test2):Test.kt")
-              val tmp0_group = %composer.cache(%composer.changed(x)) {
-                1
-              }
-              %composer.endReplaceableGroup()
-              tmp0_group
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
-            }
-            @Composable
-            @NonRestartableComposable
-            fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(test3):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(test3):Test.kt")
-              val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(x) || %changed and 0b0110 == 0b0100) {
-                1
-              }
-              %composer.endReplaceableGroup()
-              tmp0_group
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
-            }
         """
     )
 
@@ -371,30 +155,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
         """
             @Composable
             fun rememberFoo(a: Int, b: Int) = remember(a, b) { Foo(a, b) }
-        """,
-        """
-            @Composable
-            fun rememberFoo(a: Int, b: Int, %composer: Composer?, %changed: Int): Foo {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(rememberFoo):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val tmp0 = <block>{
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "C(rememberFoo):Test.kt")
-                val tmp1_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(a) || %changed and 0b0110 == 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(b) || %changed and 0b00110000 == 0b00100000) {
-                  Foo(a, b)
-                }
-                %composer.endReplaceableGroup()
-                tmp1_group
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
-              return tmp0
-            }
         """
     )
 
@@ -412,54 +172,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 A()
                 val bam = remember { Foo() }
             }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<A()>:Test.kt")
-                  val tmp0_group = %composer.cache(false) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                val bar = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp1_group = %composer.cache(false) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp1_group
-                }
-                A(%composer, 0)
-                val bam = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp2_group = %composer.cache(false) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp2_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -476,37 +188,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val b = someInt()
                 val foo = remember(a, b) { Foo(a, b) }
             }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                val a = someInt()
-                val b = someInt()
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(%composer.changed(a) or %composer.changed(b)) {
-                    Foo(a, b)
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -520,35 +201,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             @Composable
             fun Test() {
                 val foo = remember(CInt()) { Foo() }
-            }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<CInt()...>:Test.kt")
-                  val tmp0_group = %composer.cache(%composer.changed(CInt(%composer, 0))) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -568,36 +220,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val bar = compositionLocalBar.current
                 val foo = remember(bar) { Foo() }
             }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                val bar = compositionLocalBar.<get-current>(%composer, 0b0110)
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<curren...>:Test.kt")
-                  val tmp0_group = %composer.cache(%composer.changed(bar)) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -615,35 +237,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Test() {
                 val foo = remember(compositionLocalBar.current) { Foo() }
             }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<curren...>:Test.kt")
-                  val tmp0_group = %composer.cache(%composer.changed(compositionLocalBar.<get-current>(%composer, 0b0110))) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -658,36 +251,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Test() {
                 A()
                 val foo = remember { Foo() }
-            }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                A(%composer, 0)
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<A()>:Test.kt")
-                  val tmp0_group = %composer.cache(false) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -706,42 +269,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     val foo = remember { Foo() }
                 }
             }
-        """,
-        """
-            @Composable
-            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                A(%composer, 0)
-                if (condition) {
-                  val foo = <block>{
-                    %composer.startReplaceableGroup(<>)
-                    sourceInformation(%composer, "C(Test)<A()>:Test.kt")
-                    val tmp0_group = %composer.cache(false) {
-                      Foo()
-                    }
-                    %composer.endReplaceableGroup()
-                    tmp0_group
-                  }
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -759,42 +286,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     val foo = remember { Foo() }
                 }
             }
-        """,
-        """
-            @Composable
-            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                if (condition) {
-                  A(%composer, 0)
-                  val foo = <block>{
-                    %composer.startReplaceableGroup(<>)
-                    sourceInformation(%composer, "C(Test)<A()>:Test.kt")
-                    val tmp0_group = %composer.cache(false) {
-                      Foo()
-                    }
-                    %composer.endReplaceableGroup()
-                    tmp0_group
-                  }
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -811,37 +302,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     print(foo)
                     print(item)
                 }
-            }
-        """,
-        """
-            @Composable
-            fun Test(items: List<Int>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val <iterator> = items.iterator()
-              while (<iterator>.hasNext()) {
-                val item = <iterator>.next()
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(false) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                print(foo)
-                print(item)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(items, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -862,38 +322,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                     print(item)
                 }
             }
-        """,
-        """
-            @Composable
-            fun Test(items: List<Int>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val <iterator> = items.iterator()
-              while (<iterator>.hasNext()) {
-                val item = <iterator>.next()
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)*<A()>:Test.kt")
-                  val tmp0_group = %composer.cache(false) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                A(%composer, 0)
-                print(foo)
-                print(item)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(items, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -907,32 +335,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Test(items: List<Int>) {
                 val foo = remember { Foo() }
                 used(items)
-            }
-        """,
-        """
-            @Composable
-            fun Test(items: List<Int>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val foo = <block>{
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "C(Test):Test.kt")
-                val tmp0_group = %composer.cache(false) {
-                  Foo()
-                }
-                %composer.endReplaceableGroup()
-                tmp0_group
-              }
-              used(items)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(items, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -948,48 +350,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Test(a: Int, b: Int, c: Bar, d: Boolean) {
                 val foo = remember(a, b, c, d) { Foo() }
             }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, b: Int, c: Bar, d: Boolean, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%changed and 0b01110000 == 0) {
-                %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
-              }
-              if (%changed and 0b001110000000 == 0) {
-                %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
-              }
-              if (%changed and 0b0001110000000000 == 0) {
-                %dirty = %dirty or if (%composer.changed(d)) 0b100000000000 else 0b010000000000
-              }
-              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000 or %dirty and 0b001110000000 == 0b000100000000 or %dirty and 0b0001110000000000 == 0b100000000000) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, b, c, d, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -1003,25 +363,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             @Composable
             fun Test(items: Array<Bar>) {
                 val foo = remember(*items) { Foo() }
-            }
-        """,
-        """
-            @Composable
-            fun Test(items: Array<Bar>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val foo = remember(*items, {
-                Foo()
-              }, %composer, 0)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(items, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -1037,40 +378,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Test(inlineInt: InlineInt) {
                 val a = InlineInt(123)
                 val foo = remember(inlineInt, a) { Foo() }
-            }
-        """,
-        """
-            @Composable
-            fun Test(inlineInt: InlineInt, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)P(0:InlineInt):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(inlineInt))) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                val a = InlineInt(123)
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)P(0:InlineInt):Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(inlineInt, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -1091,48 +398,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val d = someInt()
                 val bar = remember(c, d) { Foo(c, d) }
             }
-        """,
-        """
-            @Composable
-            fun Test(%composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                val a = someInt()
-                val b = someInt()
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(%composer.changed(a) or %composer.changed(b)) {
-                    Foo(a, b)
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                val c = someInt()
-                val d = someInt()
-                val bar = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp1_group = %composer.cache(%composer.changed(c) or %composer.changed(d)) {
-                    Foo(c, d)
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp1_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(%composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -1147,40 +412,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Test(a: Int) {
                 val b = someInt()
                 val foo = remember(a, b) { Foo(a, b) }
-            }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                val b = someInt()
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %composer.changed(b)) {
-                    Foo(a, b)
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -1197,31 +428,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val b = someInt()
                 return remember(a, b) { Foo(a, b) }
             }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, %composer: Composer?, %changed: Int): Foo {
-              %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              val b = someInt()
-              val tmp0 = <block>{
-                %composer.startReplaceableGroup(<>)
-                sourceInformation(%composer, "C(Test):Test.kt")
-                val tmp1_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(a) || %changed and 0b0110 == 0b0100 or %composer.changed(b)) {
-                  Foo(a, b)
-                }
-                %composer.endReplaceableGroup()
-                tmp1_group
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endReplaceableGroup()
-              return tmp0
-            }
         """
     )
 
@@ -1232,40 +438,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             @Composable
             fun Test(a: Int) {
                 used { a }
-            }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                used(<block>{
-                  %composer.startReplaceableGroup(<>)
-                  val tmpCache = %composer.cache(%composer.changed(a)) {
-                    {
-                      a
-                    }
-                  }
-                  %composer.endReplaceableGroup()
-                  tmpCache
-                })
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -1280,37 +452,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Test(a: Int) {
                 used(remember(a, ::effect))
             }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                used(<block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100, effect)
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                })
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -1324,39 +465,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             fun Test(a: Int) {
                 used(remember(a, ::effect))
             }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                used(<block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
-                    effect()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                })
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
     @Test
@@ -1368,37 +476,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             @Composable
             fun Test(a: A) {
                 used(remember(a, a::value))
-            }
-        """,
-        """
-            @Composable
-            fun Test(a: A, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                used(<block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100, a::value)
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                })
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -1416,54 +493,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 used(foo)
                 used(a)
             }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                %composer.startDefaults()
-                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0001 != 0) {
-                    a = someInt()
-                    %dirty = %dirty and 0b1110.inv()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                  if (%default and 0b0001 != 0) {
-                    %dirty = %dirty and 0b1110.inv()
-                  }
-                }
-                %composer.endDefaults()
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                val foo = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(false) {
-                    Foo()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                used(foo)
-                used(a)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, updateChangedFlags(%changed or 0b0001), %default)
-              }
-            }
         """
     )
 
@@ -1474,52 +503,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             @Composable
             fun Test(a: Int = remember { 0 }) {
                 used(a)
-            }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                %composer.startDefaults()
-                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0001 != 0) {
-                    a = <block>{
-                      %composer.startReplaceableGroup(<>)
-                      sourceInformation(%composer, "C(Test):Test.kt")
-                      val tmp0_group = %composer.cache(false) {
-                        0
-                      }
-                      %composer.endReplaceableGroup()
-                      tmp0_group
-                    }
-                    %dirty = %dirty and 0b1110.inv()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                  if (%default and 0b0001 != 0) {
-                    %dirty = %dirty and 0b1110.inv()
-                  }
-                }
-                %composer.endDefaults()
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                used(a)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, %composer, updateChangedFlags(%changed or 0b0001), %default)
-              }
             }
         """
     )
@@ -1536,82 +519,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 used(a)
                 used(b)
                 used(c)
-            }
-        """,
-        """
-            @Composable
-            fun Test(a: Int, b: Int, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%changed and 0b01110000 == 0) {
-                %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(b)) 0b00100000 else 0b00010000
-              }
-              if (%changed and 0b001110000000 == 0) {
-                %dirty = %dirty or if (%default and 0b0100 == 0 && %composer.changed(c)) 0b000100000000 else 0b10000000
-              }
-              if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
-                %composer.startDefaults()
-                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0001 != 0) {
-                    a = <block>{
-                      %composer.startReplaceableGroup(<>)
-                      sourceInformation(%composer, "C(Test)<SomeCo...>:Test.kt")
-                      val tmp0_group = %composer.cache(false) {
-                        0
-                      }
-                      %composer.endReplaceableGroup()
-                      tmp0_group
-                    }
-                    %dirty = %dirty and 0b1110.inv()
-                  }
-                  if (%default and 0b0010 != 0) {
-                    b = SomeComposable(%composer, 0)
-                    %dirty = %dirty and 0b01110000.inv()
-                  }
-                  if (%default and 0b0100 != 0) {
-                    c = <block>{
-                      %composer.startReplaceableGroup(<>)
-                      sourceInformation(%composer, "C(Test):Test.kt")
-                      val tmp1_group = %composer.cache(false) {
-                        0
-                      }
-                      %composer.endReplaceableGroup()
-                      tmp1_group
-                    }
-                    %dirty = %dirty and 0b001110000000.inv()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                  if (%default and 0b0001 != 0) {
-                    %dirty = %dirty and 0b1110.inv()
-                  }
-                  if (%default and 0b0010 != 0) {
-                    %dirty = %dirty and 0b01110000.inv()
-                  }
-                  if (%default and 0b0100 != 0) {
-                    %dirty = %dirty and 0b001110000000.inv()
-                  }
-                }
-                %composer.endDefaults()
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                used(a)
-                used(b)
-                used(c)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
-              }
             }
         """
     )
@@ -1640,58 +547,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 used(dismissModifier)
             }
         }
-        """,
-        """
-            @Composable
-            fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)P(!1,2)<someCo...>:Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%changed and 0b01110000 == 0) {
-                %dirty = %dirty or if (%composer.changed(visible)) 0b00100000 else 0b00010000
-              }
-              if (%changed and 0b001110000000 == 0) {
-                %dirty = %dirty or if (%composer.changedInstance(onDismiss)) 0b000100000000 else 0b10000000
-              }
-              if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                if (a) {
-                  val a = someComposableValue(%composer, 0)
-                  used(a)
-                  val m = Modifier()
-                  val dismissModifier = if (visible) {
-                    m.pointerInput(Unit, <block>{
-                      %composer.startReplaceableGroup(<>)
-                      val tmpCache = %composer.cache(%composer.changedInstance(onDismiss)) {
-                        {
-                          detectTapGestures {
-                            onDismiss()
-                          }
-                        }
-                      }
-                      %composer.endReplaceableGroup()
-                      tmpCache
-                    })
-                  } else {
-                    m
-                  }
-                  used(dismissModifier)
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, visible, onDismiss, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -1718,61 +573,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val s = remember(a, b, c) { Any() }
                 used(s)
             }
-        """,
-        expectedTransformed = """
-            @Composable
-            fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%default and 0b0001 != 0) {
-                %dirty = %dirty or 0b0110
-              } else if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%default and 0b0010 != 0) {
-                %dirty = %dirty or 0b00110000
-              } else if (%changed and 0b01110000 == 0) {
-                %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
-              }
-              if (%default and 0b0100 != 0) {
-                %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b001110000000 == 0) {
-                %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
-              }
-              if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
-                if (%default and 0b0001 != 0) {
-                  a = 1
-                }
-                if (%default and 0b0010 != 0) {
-                  b = Foo.B
-                }
-                if (%default and 0b0100 != 0) {
-                  c = swizzle(1, 2)
-                }
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                val s = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<used(s...>:Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000 or %dirty and 0b001110000000 == 0b000100000000) {
-                    Any()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                used(s, %composer, 0b1000)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
-              }
-            }
         """
     )
 
@@ -1798,74 +598,11 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val s = remember(a, b, c) { Any() }
                 used(s)
             }
-        """,
-        expectedTransformed = """
-            @Composable
-            fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%default and 0b0001 != 0) {
-                %dirty = %dirty or 0b0110
-              } else if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
-              }
-              if (%default and 0b0010 != 0) {
-                %dirty = %dirty or 0b00110000
-              } else if (%changed and 0b01110000 == 0) {
-                %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
-              }
-              if (%changed and 0b001110000000 == 0) {
-                %dirty = %dirty or if (%default and 0b0100 == 0 && %composer.changed(c)) 0b000100000000 else 0b10000000
-              }
-              if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
-                %composer.startDefaults()
-                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0001 != 0) {
-                    a = 1
-                  }
-                  if (%default and 0b0010 != 0) {
-                    b = Foo.B
-                  }
-                  if (%default and 0b0100 != 0) {
-                    c = swizzle(1, 2)
-                    %dirty = %dirty and 0b001110000000.inv()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                  if (%default and 0b0100 != 0) {
-                    %dirty = %dirty and 0b001110000000.inv()
-                  }
-                }
-                %composer.endDefaults()
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                val s = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<used(s...>:Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000 or %dirty and 0b001110000000 == 0b000100000000) {
-                    Any()
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                used(s, %composer, 0b1000)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(a, b, c, %composer, updateChangedFlags(%changed or 0b0001), %default)
-              }
-            }
         """
     )
 
     @Test
-    fun testForEarlyExit() = verifyComposeIrTransform(
+    fun testForEarlyExit() = verifyGoldenComposeIrTransform(
         source = """
             import androidx.compose.runtime.*
 
@@ -1877,62 +614,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 Text("Text ${'$'}{value.value}, ${'$'}{value2.value}")
             }
         """,
-        expectedTransformed = """
-            @Composable
-            fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                val value = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<Text("...>:Test.kt")
-                  val tmp0_group = %composer.cache(false) {
-                    mutableStateOf(
-                      value = false
-                    )
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (!value.value && !condition) {
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
-                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                    Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
-                  }
-                  return
-                }
-                val value2 = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp1_group = %composer.cache(false) {
-                    mutableStateOf(
-                      value = false
-                    )
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp1_group
-                }
-                Text("Text %{value.value}, %{value2.value}", %composer, 0)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(condition, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-        """,
         extra = """
             import androidx.compose.runtime.*
 
@@ -1942,7 +623,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
     )
 
     @Test
-    fun testVarargsIntrinsicRemember() = verifyComposeIrTransform(
+    fun testVarargsIntrinsicRemember() = verifyGoldenComposeIrTransform(
         source = """
             import androidx.compose.runtime.*
 
@@ -1959,56 +640,11 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
             @Composable
             fun Text(value: String) { }
-        """,
-        expectedTransformed = """
-            @Composable
-            fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test):Test.kt")
-              val %dirty = %changed
-              %composer.startMovableGroup(<>, strings.size)
-              val <iterator> = strings.iterator()
-              while (<iterator>.hasNext()) {
-                val value = <iterator>.next()
-                %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
-              }
-              %composer.endMovableGroup()
-              if (%dirty and 0b1110 == 0) {
-                %dirty = %dirty or 0b0010
-              }
-              if (%dirty and 0b0001 != 0 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                val show = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test)<Text("...>:Test.kt")
-                  val tmp0_group = %composer.cache(false) {
-                    mutableStateOf(
-                      value = false
-                    )
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp0_group
-                }
-                if (show.value) {
-                  Text("Showing", %composer, 0b0110)
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                Test(*strings, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
     @Test // regression test for b/267586102
-    fun testRememberInALoop() = verifyComposeIrTransform(
+    fun testRememberInALoop() = verifyGoldenComposeIrTransform(
         source = """
             import androidx.compose.runtime.*
 
@@ -2024,47 +660,11 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
             val count = 0
             class SomeUnstableClass(val a: Any = "abc")
-        """,
-        expectedTransformed = """
-            val content: Function3<@[ParameterName(name = 'a')] SomeUnstableClass, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-            internal object ComposableSingletons%TestKt {
-              val lambda-1: Function3<${if (useFir) "@[ParameterName(name = 'a')] " else ""}SomeUnstableClass, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: ${if (useFir) "@[ParameterName(name = 'a')] " else ""}SomeUnstableClass, %composer: Composer?, %changed: Int ->
-                sourceInformation(%composer, "C:Test.kt")
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                %composer.startReplaceableGroup(<>)
-                val <iterator> = 0 until count.iterator()
-                while (<iterator>.hasNext()) {
-                  val index = <iterator>.next()
-                  val i = <block>{
-                    %composer.startReplaceableGroup(<>)
-                    val tmp0_group = %composer.cache(false) {
-                      index
-                    }
-                    %composer.endReplaceableGroup()
-                    tmp0_group
-                  }
-                }
-                %composer.endReplaceableGroup()
-                val a = <block>{
-                  %composer.startReplaceableGroup(<>)
-                  val tmp1_group = %composer.cache(false) {
-                    1
-                  }
-                  %composer.endReplaceableGroup()
-                  tmp1_group
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              }
-            }
         """
     )
 
     @Test // Regression test for b/267586102 to ensure the fix doesn't insert unnecessary groups
-    fun testRememberInALoop_NoTrailingRemember() = verifyComposeIrTransform(
+    fun testRememberInALoop_NoTrailingRemember() = verifyGoldenComposeIrTransform(
         source = """
             import androidx.compose.runtime.*
 
@@ -2079,32 +679,6 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
 
                 val count = 0
                 class SomeUnstableClass(val a: Any = "abc")
-            """,
-        expectedTransformed = """
-            val content: Function3<@[ParameterName(name = 'a')] SomeUnstableClass, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-            internal object ComposableSingletons%TestKt {
-              val lambda-1: Function3<${if (useFir) "@[ParameterName(name = 'a')] " else ""}SomeUnstableClass, Composer, Int, Unit> = composableLambdaInstance(<>, false) { it: ${if (useFir) "@[ParameterName(name = 'a')] " else ""}SomeUnstableClass, %composer: Composer?, %changed: Int ->
-                sourceInformation(%composer, "C:Test.kt")
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
-                }
-                val <iterator> = 0 until count.iterator()
-                while (<iterator>.hasNext()) {
-                  val index = <iterator>.next()
-                  val i = <block>{
-                    %composer.startReplaceableGroup(<>)
-                    val tmp0_group = %composer.cache(false) {
-                      index
-                    }
-                    %composer.endReplaceableGroup()
-                    tmp0_group
-                  }
-                }
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              }
-            }
-        """
+            """
     )
 }

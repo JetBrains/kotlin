@@ -1,0 +1,39 @@
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.State
+
+@Composable
+fun <T> provided(value: T): State<T> = remember { mutableStateOf(value) }.apply {
+    this.value = value
+}
+
+/********
+ * TRANSFORMED
+ ********/
+
+@Composable
+fun <T> provided(value: T, %composer: Composer?, %changed: Int): State<T> {
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "C(provided)*<rememb...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = remember({
+    mutableStateOf(
+      value = value
+    )
+  }, %composer, 0).apply {
+    %this%apply.value = value
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceableGroup()
+  return tmp0
+}

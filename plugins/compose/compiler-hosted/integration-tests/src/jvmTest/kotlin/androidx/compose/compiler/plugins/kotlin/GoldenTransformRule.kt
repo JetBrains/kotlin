@@ -82,7 +82,8 @@ class GoldenTransformRule(
         }
 
         Assert.assertEquals(
-            "Transformed source does not match golden file ${goldenFile.name}",
+            "Transformed source does not match golden file ${goldenFile.name}\n" +
+                "To regenerate golden files, pass GENERATE_GOLDEN=true as an env variable.",
             loadedTestInfo.transformed,
             testInfo.transformed
         )

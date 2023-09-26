@@ -1048,12 +1048,6 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     fun testEmptyClass() = assertTransform(
         """
             class Foo
-        """,
-        """
-            @StabilityInferred(parameters = 0)
-            class Foo {
-              static val %stable: Int = 0
-            }
         """
     )
 
@@ -1102,103 +1096,11 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             class UnstableDelegateProp {
                 var p1 by UnstableDelegate()
             }
-        """,
-        """
-            @Stable
-            class StableDelegate {
-              fun setValue(thisObj: Any?, property: KProperty<*>, value: Int) { }
-              fun getValue(thisObj: Any?, property: KProperty<*>): Int {
-                return 10
-              }
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class UnstableDelegate {
-              var value: Int = 0
-              fun setValue(thisObj: Any?, property: KProperty<*>, value: Int) {
-                value = value
-              }
-              fun getValue(thisObj: Any?, property: KProperty<*>): Int {
-                return 10
-              }
-              static val %stable: Int = 8
-            }
-            @StabilityInferred(parameters = 0)
-            class Unstable {
-              var value: Int = 0
-              static val %stable: Int = 8
-            }
-            @StabilityInferred(parameters = 0)
-            class EmptyClass {
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class SingleStableVal(val p1: Int) {
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 1)
-            class SingleParamProp<T> (val p1: T) {
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class SingleParamNonProp<T> (p1: T) {
-              val p2: Int = p1.hashCode()
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 1)
-            class DoubleParamSingleProp<T, V> (val p1: T, p2: V) {
-              val p3: Int = p2.hashCode()
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class X<T> (val p1: List<T>) {
-              static val %stable: Int = 8
-            }
-            @StabilityInferred(parameters = 0)
-            class NonBackingFieldUnstableProp {
-              val p1: Unstable
-                get() {
-                  TODO()
-                }
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class NonBackingFieldUnstableVarProp {
-              var p1: Unstable
-                get() {
-                  TODO()
-                }
-                set(value) {
-                }
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class StableDelegateProp {
-              var p1: StableDelegate = StableDelegate()
-                get() {
-                  return <this>.p1%delegate.getValue(<this>, ::p1)
-                }
-                set(value) {
-                  <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
-                }
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class UnstableDelegateProp {
-              var p1: UnstableDelegate = UnstableDelegate()
-                get() {
-                  return <this>.p1%delegate.getValue(<this>, ::p1)
-                }
-                set(value) {
-                  <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
-                }
-              static val %stable: Int = 8
-            }
         """
     )
 
     @Test
-    fun testStabilityPropagationOfVariousTypes() = verifyCrossModuleComposeIrTransform(
+    fun testStabilityPropagationOfVariousTypes() = verifyGoldenCrossModuleComposeIrTransform(
         """
             package a
             import androidx.compose.runtime.Stable
@@ -1275,58 +1177,13 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                 A(StableDelegateProp())
                 A(UnstableDelegateProp())
             }
-        """,
-        """
-            @Composable
-            fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(A)<A()>,<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
-              val %dirty = %changed
-              if (%default and 0b0001 != 0) {
-                %dirty = %dirty or 0b0010
-              }
-              if (%default and 0b0001 != 0b0001 || %dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (%default and 0b0001 != 0) {
-                  y = null
-                }
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                used(y)
-                A(null, %composer, 0, 0b0001)
-                A(EmptyClass(), %composer, EmptyClass.%stable, 0)
-                A(SingleStableValInt(123), %composer, SingleStableValInt.%stable, 0)
-                A(SingleStableVal(StableClass()), %composer, SingleStableVal.%stable, 0)
-                A(SingleParamProp(StableClass()), %composer, SingleParamProp.%stable or StableClass.%stable, 0)
-                A(SingleParamProp(UnstableClass()), %composer, SingleParamProp.%stable or UnstableClass.%stable, 0)
-                A(SingleParamNonProp(StableClass()), %composer, SingleParamNonProp.%stable, 0)
-                A(SingleParamNonProp(UnstableClass()), %composer, SingleParamNonProp.%stable, 0)
-                A(DoubleParamSingleProp(StableClass(), StableClass()), %composer, DoubleParamSingleProp.%stable or StableClass.%stable, 0)
-                A(DoubleParamSingleProp(UnstableClass(), StableClass()), %composer, DoubleParamSingleProp.%stable or UnstableClass.%stable, 0)
-                A(DoubleParamSingleProp(StableClass(), UnstableClass()), %composer, DoubleParamSingleProp.%stable or StableClass.%stable, 0)
-                A(DoubleParamSingleProp(UnstableClass(), UnstableClass()), %composer, DoubleParamSingleProp.%stable or UnstableClass.%stable, 0)
-                A(X(listOf(StableClass())), %composer, X.%stable, 0)
-                A(X(listOf(StableClass())), %composer, X.%stable, 0)
-                A(NonBackingFieldUnstableVal(), %composer, NonBackingFieldUnstableVal.%stable, 0)
-                A(NonBackingFieldUnstableVar(), %composer, NonBackingFieldUnstableVar.%stable, 0)
-                A(StableDelegateProp(), %composer, StableDelegateProp.%stable, 0)
-                A(UnstableDelegateProp(), %composer, UnstableDelegateProp.%stable, 0)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, %composer, updateChangedFlags(%changed or 0b0001), %default)
-              }
-            }
         """
     )
 
     @Test
-    fun testStabilityPropagationOfVariousTypesInSameModule() = verifyCrossModuleComposeIrTransform(
-        """
+    fun testStabilityPropagationOfVariousTypesInSameModule() =
+        verifyGoldenCrossModuleComposeIrTransform(
+            """
             package a
             import androidx.compose.runtime.Stable
             import kotlin.reflect.KProperty
@@ -1370,7 +1227,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             }
             fun used(x: Any?) {}
         """,
-        """
+            """
             import a.*
             import androidx.compose.runtime.Composable
 
@@ -1387,57 +1244,11 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                 A(StableDelegateProp())
                 A(UnstableDelegateProp())
             }
-        """,
         """
-            @StabilityInferred(parameters = 0)
-            class X<T> (val p1: List<T>) {
-              static val %stable: Int = 8
-            }
-            @StabilityInferred(parameters = 0)
-            class StableDelegateProp {
-              var p1: StableDelegate = StableDelegate()
-                get() {
-                  return <this>.p1%delegate.getValue(<this>, ::p1)
-                }
-                set(value) {
-                  <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
-                }
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class UnstableDelegateProp {
-              var p1: UnstableDelegate = UnstableDelegate()
-                get() {
-                  return <this>.p1%delegate.getValue(<this>, ::p1)
-                }
-                set(value) {
-                  <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
-                }
-              static val %stable: Int = UnstableDelegate.%stable
-            }
-            @Composable
-            fun A(y: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              used(y)
-              A(X(listOf(StableClass())), %composer, 0b1000)
-              A(StableDelegateProp(), %composer, 0)
-              A(UnstableDelegateProp(), %composer, UnstableDelegate.%stable)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-        """
-    )
+        )
 
     @Test
-    fun testEmptyClassAcrossModules() = verifyCrossModuleComposeIrTransform(
+    fun testEmptyClassAcrossModules() = verifyGoldenCrossModuleComposeIrTransform(
         """
             package a
             class Wrapper<T>(value: T) {
@@ -1454,36 +1265,19 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                 used(y)
                 A(Wrapper(Foo()))
             }
-        """,
-        """
-            @Composable
-            fun A(y: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(A)<A(Wrap...>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              used(y)
-              A(Wrapper(Foo()), %composer, Wrapper.%stable)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
     @Test
-    fun testLocalParameterBasedTypeParameterSubstitution() = verifyCrossModuleComposeIrTransform(
-        """
+    fun testLocalParameterBasedTypeParameterSubstitution() =
+        verifyGoldenCrossModuleComposeIrTransform(
+            """
             package a
             import androidx.compose.runtime.Composable
             class Wrapper<T>(val value: T)
             @Composable fun A(y: Any) {}
         """,
-        """
+            """
             import a.*
             import androidx.compose.runtime.Composable
 
@@ -1499,88 +1293,6 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                     A(Wrapper(item))
                 }
             }
-        """,
-        """
-            @Composable
-            fun <V> B(value: V, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(B)<A(Wrap...>:Test.kt")
-              val %dirty = %changed
-              if (%changed and 0b1110 == 0) {
-                %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
-              }
-              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
-                if (isTraceInProgress()) {
-                  traceEventStart(<>, %dirty, -1, <>)
-                }
-                A(Wrapper(value), %composer, Wrapper.%stable or 0b1000 and %dirty)
-                if (isTraceInProgress()) {
-                  traceEventEnd()
-                }
-              } else {
-                %composer.skipToGroupEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(value, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-            @Composable
-            @ComposableInferredTarget(scheme = "[0[0]]")
-            fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(X)P(1)*<itemCo...>:Test.kt")
-              val %dirty = %changed
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %dirty, -1, <>)
-              }
-              val <iterator> = items.iterator()
-              while (<iterator>.hasNext()) {
-                val item = <iterator>.next()
-                itemContent(item, %composer, 0b01110000 and %dirty)
-              }
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                X(items, itemContent, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-            @Composable
-            fun C(items: List<String>, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(C)<X(item...>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              X(items, ComposableSingletons%TestKt.lambda-1, %composer, 0b00111000)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                C(items, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-            internal object ComposableSingletons%TestKt {
-              val lambda-1: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
-                sourceInformation(%composer, "C<A(item...>,<A(Wrap...>:Test.kt")
-                val %dirty = %changed
-                if (%changed and 0b1110 == 0) {
-                  %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
-                }
-                if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %dirty, -1, <>)
-                  }
-                  A(item, %composer, 0b1110 and %dirty)
-                  A(Wrapper(item), %composer, Wrapper.%stable or 0)
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                }
-              }
-            }
         """
     )
 
@@ -1589,16 +1301,6 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         """
             class Stable(val bar: Int)
             class Unstable(var bar: Int)
-        """,
-        """
-            @StabilityInferred(parameters = 0)
-            class Stable(val bar: Int) {
-              static val %stable: Int = 0
-            }
-            @StabilityInferred(parameters = 0)
-            class Unstable(var bar: Int) {
-              static val %stable: Int = 8
-            }
         """
     )
 
@@ -1615,43 +1317,6 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             @Composable fun B(x: Any) {
                 used(x)
             }
-        """,
-        """
-            @StabilityInferred(parameters = 0)
-            class Foo {
-              static val %stable: Int = 0
-            }
-            @Composable
-            fun A(y: Int, x: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(A)P(1)<B(x)>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              used(y)
-              B(x, %composer, 0b1000)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, x, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-            @Composable
-            fun B(x: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(B):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              used(x)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(x, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
         """
     )
 
@@ -1667,43 +1332,6 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             }
             @Composable fun B(x: Any) {
                 used(x)
-            }
-        """,
-        """
-            @StabilityInferred(parameters = 0)
-            class Foo(var bar: Int = 0) {
-              static val %stable: Int = 8
-            }
-            @Composable
-            fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(A)P(1)<B(x)>:Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              used(y)
-              B(x, %composer, 0b1000)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                A(y, x, %composer, updateChangedFlags(%changed or 0b0001))
-              }
-            }
-            @Composable
-            fun B(x: Any, %composer: Composer?, %changed: Int) {
-              %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(B):Test.kt")
-              if (isTraceInProgress()) {
-                traceEventStart(<>, %changed, -1, <>)
-              }
-              used(x)
-              if (isTraceInProgress()) {
-                traceEventEnd()
-              }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-                B(x, %composer, updateChangedFlags(%changed or 0b0001))
-              }
             }
         """
     )
@@ -1911,12 +1539,10 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     private fun assertTransform(
         @Language("kotlin")
         checked: String,
-        expectedTransformed: String,
         unchecked: String = "",
         dumpTree: Boolean = false
-    ) = verifyComposeIrTransform(
+    ) = verifyGoldenComposeIrTransform(
         checked,
-        expectedTransformed,
         """
             $unchecked
             fun used(x: Any?) {}

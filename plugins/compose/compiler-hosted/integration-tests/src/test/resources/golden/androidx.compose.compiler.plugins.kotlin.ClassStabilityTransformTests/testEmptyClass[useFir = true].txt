@@ -1,0 +1,11 @@
+
+            class Foo
+        
+/********
+ * TRANSFORMED
+ ********/
+
+@StabilityInferred(parameters = 0)
+class Foo {
+  static val %stable: Int = 0
+}

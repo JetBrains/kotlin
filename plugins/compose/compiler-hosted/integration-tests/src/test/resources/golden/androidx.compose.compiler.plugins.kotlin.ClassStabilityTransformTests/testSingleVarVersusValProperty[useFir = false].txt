@@ -1,0 +1,16 @@
+
+            class Stable(val bar: Int)
+            class Unstable(var bar: Int)
+        
+/********
+ * TRANSFORMED
+ ********/
+
+@StabilityInferred(parameters = 0)
+class Stable(val bar: Int) {
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 0)
+class Unstable(var bar: Int) {
+  static val %stable: Int = 8
+}

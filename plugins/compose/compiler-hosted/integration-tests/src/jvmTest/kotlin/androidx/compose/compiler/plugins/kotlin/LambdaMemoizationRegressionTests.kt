@@ -28,41 +28,18 @@ import org.junit.Test
  */
 class LambdaMemoizationRegressionTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     @Test
-    fun testNestedComposableSingletonsClass() = verifyComposeIrTransform(
+    fun testNestedComposableSingletonsClass() = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
             class A {
                 val x = @Composable {}
             }
-        """,
-        """
-            @StabilityInferred(parameters = 0)
-            class A {
-              val x: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-              static val %stable: Int = 0
-            }
-            internal object ComposableSingletons%TestKt {
-              val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-                sourceInformation(%composer, "C:Test.kt")
-                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
-                  Unit
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                }
-              }
-            }
         """
     )
 
     @Test
-    fun testNestedComposableSingletonsClass2() = verifyComposeIrTransform(
+    fun testNestedComposableSingletonsClass2() = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
 
@@ -71,62 +48,16 @@ class LambdaMemoizationRegressionTests(useFir: Boolean) : AbstractIrTransformTes
                     val x = @Composable {}
                 }
             }
-        """,
-        """
-            @StabilityInferred(parameters = 0)
-            class A {
-              @StabilityInferred(parameters = 0)
-              class B {
-                val x: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-                static val %stable: Int = 0
-              }
-              static val %stable: Int = 0
-            }
-            internal object ComposableSingletons%TestKt {
-              val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-                sourceInformation(%composer, "C:Test.kt")
-                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
-                  Unit
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                }
-              }
-            }
         """
     )
 
     @Test
-    fun testJvmNameComposableSingletons() = verifyComposeIrTransform(
+    fun testJvmNameComposableSingletons() = verifyGoldenComposeIrTransform(
         """
             @file:JvmName("A")
             import androidx.compose.runtime.Composable
 
             val x = @Composable {}
-        """,
-        """
-            val x: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
-            internal object ComposableSingletons%TestKt {
-              val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-                sourceInformation(%composer, "C:Test.kt")
-                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
-                  }
-                  Unit
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
-                }
-              }
-            }
         """
     )
 }
