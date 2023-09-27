@@ -114,7 +114,11 @@ private val systemTmpDir = System.getProperty("java.io.tmpdir")
 
 // TODO: File(..).deleteOnExit() does not work on Windows. May be use FILE_FLAG_DELETE_ON_CLOSE?
 private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDaemon: Boolean): Boolean {
-    val fullLibraryPath = Paths.get(dir, fullLibraryName)
+    val fullLibraryPath = try {
+        Paths.get(dir, fullLibraryName)
+    } catch (ignored: InvalidPathException) {
+        return false
+    }
     if (!Files.exists(fullLibraryPath)) return false
 
     fun createTempDirWithLibrary() = if (runFromDaemon) {
