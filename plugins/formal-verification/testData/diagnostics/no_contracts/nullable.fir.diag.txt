@@ -77,3 +77,66 @@ method global$fun_null_comparison$fun_take$NT_Int$return$T_Boolean(local$x: dom$
   goto label$ret$0
   label label$ret$0
 }
+
+/nullable.kt:(409,423): info: Generated Viper text for elvis_operator:
+method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
+  returns (ret: Int)
+{
+  var anonymous$0: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  if (local$x == (dom$Nullable$null(): dom$Nullable[Int])) {
+    anonymous$0 := 3
+  } else {
+    anonymous$0 := (dom$Casting$cast(local$x, dom$Type$Int()): Int)}
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}
+
+/nullable.kt:(465,487): info: Generated Viper text for elvis_operator_complex:
+method global$fun_elvis_operator_complex$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
+  returns (ret: Int)
+{
+  var anonymous$0: dom$Nullable[Int]
+  var anonymous$1: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  anonymous$0 := global$fun_pass_nullable_parameter$fun_take$NT_Int$return$NT_Int(local$x)
+  if (anonymous$0 == (dom$Nullable$null(): dom$Nullable[Int])) {
+    var anonymous$2: Int
+    anonymous$2 := global$fun_elvis_operator$fun_take$NT_Int$return$T_Int((dom$Casting$cast(2,
+      dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int]))
+    anonymous$1 := anonymous$2
+  } else {
+    anonymous$1 := (dom$Casting$cast(anonymous$0, dom$Type$Int()): Int)}
+  ret := anonymous$1
+  goto label$ret$0
+  label label$ret$0
+}
+
+method global$fun_pass_nullable_parameter$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
+  returns (ret: dom$Nullable[Int])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+
+
+method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
+  returns (ret: Int)
+
+
+/nullable.kt:(570,591): info: Generated Viper text for evlis_operator_return:
+method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
+  returns (ret: Int)
+{
+  var anonymous$0: Int
+  var local0$y: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  if (local$x == (dom$Nullable$null(): dom$Nullable[Int])) {
+    ret := 0
+    goto label$ret$0
+    anonymous$0 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
+  } else {
+    anonymous$0 := (dom$Casting$cast(local$x, dom$Type$Int()): Int)}
+  local0$y := anonymous$0
+  ret := local0$y
+  goto label$ret$0
+  label label$ret$0
+}

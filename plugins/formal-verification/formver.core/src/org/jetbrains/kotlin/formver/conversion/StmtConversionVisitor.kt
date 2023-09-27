@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
 import org.jetbrains.kotlin.formver.calleeCallableSymbol
@@ -340,6 +341,29 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         }
         data.addStatement(catchData.exitLabel.toStmt())
         return UnitLit
+    }
+
+    override fun visitElvisExpression(
+        elvisExpression: FirElvisExpression,
+        data: StmtConversionContext<ResultTrackingContext>
+    ): ExpEmbedding {
+        val lhs = data.convert(elvisExpression.lhs)
+        val expType = data.embedType(elvisExpression.resolvedType)
+        return data.withResult(expType) {
+            val elseBlock = withNewScopeToBlock {
+                convertAndCapture(elvisExpression.rhs)
+            }
+            val nonNullBranch = withNewScopeToBlock {
+                capture(lhs.withType(expType))
+            }
+            addStatement(
+                Stmt.If(
+                    EqCmp(lhs, (lhs.type as NullableTypeEmbedding).nullVal).toViper(),
+                    elseBlock,
+                    nonNullBranch
+                )
+            )
+        }
     }
 
     private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
