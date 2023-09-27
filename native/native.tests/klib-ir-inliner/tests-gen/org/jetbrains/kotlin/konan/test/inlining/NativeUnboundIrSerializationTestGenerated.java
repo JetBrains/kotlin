@@ -38843,6 +38843,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
           runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
         }
       }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
+      @TestDataPath("$PROJECT_ROOT")
+      @Tag("klib")
+      public class CatchParameter {
+        @Test
+        @TestMetadata("tryCatchReifiedType.kt")
+        public void testTryCatchReifiedType() {
+          runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
+        }
+      }
     }
 
     @Nested

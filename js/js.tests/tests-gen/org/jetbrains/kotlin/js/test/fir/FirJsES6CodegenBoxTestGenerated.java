@@ -41099,6 +41099,23 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("es6")
+    public class CatchParameter {
+      @Test
+      public void testAllFilesPresentInCatchParameter() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Test
+      @TestMetadata("tryCatchReifiedType.kt")
+      public void testTryCatchReifiedType() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
+      }
+    }
   }
 
   @Nested

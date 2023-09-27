@@ -40839,6 +40839,24 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
       }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("legacy-frontend")
+    @Tag("es6")
+    public class CatchParameter {
+      @Test
+      public void testAllFilesPresentInCatchParameter() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+      }
+
+      @Test
+      @TestMetadata("tryCatchReifiedType.kt")
+      public void testTryCatchReifiedType() {
+        runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
+      }
+    }
   }
 
   @Nested
