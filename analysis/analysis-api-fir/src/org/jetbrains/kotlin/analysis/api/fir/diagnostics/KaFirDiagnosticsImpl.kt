@@ -2215,11 +2215,6 @@ internal class CatchParameterWithDefaultValueImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CatchParameterWithDefaultValue
 
-internal class ReifiedTypeInCatchClauseImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReifiedTypeInCatchClause
-
 internal class TypeParameterInCatchClauseImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

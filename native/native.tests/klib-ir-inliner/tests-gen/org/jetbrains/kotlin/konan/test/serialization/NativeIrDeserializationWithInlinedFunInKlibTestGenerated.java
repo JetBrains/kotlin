@@ -8380,6 +8380,12 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
       }
 
       @Test
+      @TestMetadata("tryCatchReifiedType.kt")
+      public void testTryCatchReifiedType() {
+        runTest("compiler/testData/codegen/box/controlStructures/tryCatchReifiedType.kt");
+      }
+
+      @Test
       @TestMetadata("tryFinally.kt")
       public void testTryFinally() {
         runTest("compiler/testData/codegen/box/controlStructures/tryFinally.kt");
