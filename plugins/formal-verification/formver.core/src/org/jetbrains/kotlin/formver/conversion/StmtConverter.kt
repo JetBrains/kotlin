@@ -28,11 +28,12 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
     private val resultCtxFactory: ResultTrackerFactory<RTC>,
     private val whileIndex: Int = 0,
     override val whenSubject: VariableEmbedding? = null,
+    override val checkedSafeCallSubject: ExpEmbedding? = null,
     private val scopeDepth: Int = 0,
     override val activeCatchLabels: List<Label> = listOf(),
 ) : StmtConversionContext<RTC>, SeqnBuildContext by seqnCtx, MethodConversionContext by methodCtx, ResultTrackingContext {
     private fun <NewRTC : ResultTrackingContext> withResultFactory(newFactory: ResultTrackerFactory<NewRTC>): StmtConverter<NewRTC> =
-        StmtConverter(this, seqnCtx, newFactory, whileIndex, whenSubject, scopeDepth, activeCatchLabels)
+        StmtConverter(this, seqnCtx, newFactory, whileIndex, whenSubject, checkedSafeCallSubject, scopeDepth, activeCatchLabels)
 
     override val resultCtx: RTC
         get() = resultCtxFactory.build(this)
@@ -86,6 +87,9 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
 
     override fun <R> withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> R): R =
         copy(whenSubject = subject).action()
+
+    override fun <R> withCheckedSafeCallSubject(subject: ExpEmbedding?, action: StmtConversionContext<RTC>.() -> R): R =
+        copy(checkedSafeCallSubject = subject).action()
 
     override fun withCatches(catches: List<FirCatch>, action: StmtConversionContext<RTC>.(exitLabel: Label) -> Unit): CatchBlockListData {
         val newCatchLabels = catches.map { Label(catchLabelNameProducer.getFresh(), listOf()) }

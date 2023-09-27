@@ -31,6 +31,13 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     val continueLabel: Label
     val breakLabel: Label
     val whenSubject: VariableEmbedding?
+
+    /**
+     * In a safe call `callSubject?.foo()` we evaluate the call subject first to check for nullness.
+     * In case it is not null, we evaluate the call to `callSubject.foo()`. Here we don't want to evaluate
+     * the `callSubject` again to we store it in the `StmtConversionContext`.
+     */
+    val checkedSafeCallSubject: ExpEmbedding?
     val activeCatchLabels: List<Label>
 
     fun convert(stmt: FirStatement): ExpEmbedding
@@ -44,6 +51,7 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
 
     fun <R> withFreshWhile(action: StmtConversionContext<RTC>.() -> R): R
     fun <R> withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> R): R
+    fun <R> withCheckedSafeCallSubject(subject: ExpEmbedding?, action: StmtConversionContext<RTC>.() -> R): R
     fun withCatches(catches: List<FirCatch>, action: StmtConversionContext<RTC>.(exitLabel: Label) -> Unit): CatchBlockListData
 }
 

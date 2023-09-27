@@ -366,6 +366,58 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         }
     }
 
+    override fun visitSafeCallExpression(
+        safeCallExpression: FirSafeCallExpression,
+        data: StmtConversionContext<ResultTrackingContext>
+    ): ExpEmbedding {
+        val selector = safeCallExpression.selector
+        val receiver = data.convert(safeCallExpression.receiver)
+
+        val checkedSafeCallSubjectType = data.embedType(safeCallExpression.checkedSubjectRef.value.resolvedType)
+
+        return if (selector is FirExpression) {
+            val expType = data.embedType(safeCallExpression.resolvedType)
+            data.withResult(expType) {
+                val whenNotNullCall = withNewScopeToBlock {
+                    withCheckedSafeCallSubject(receiver.withType(checkedSafeCallSubjectType)) {
+                        convertAndCapture(selector)
+                    }
+                }
+
+                val whenNull = withNewScopeToBlock {
+                    capture((expType as NullableTypeEmbedding).nullVal)
+                }
+                addStatement(
+                    Stmt.If(
+                        EqCmp(receiver, (receiver.type as NullableTypeEmbedding).nullVal).toViper(),
+                        whenNull,
+                        whenNotNullCall
+                    )
+                )
+            }
+        } else {
+            val whenNotNullCall = data.withNewScopeToBlock {
+                withCheckedSafeCallSubject(receiver.withType(checkedSafeCallSubjectType)) {
+                    convert(selector)
+                }
+            }
+            data.addStatement(
+                Stmt.If(
+                    NeCmp(receiver, (receiver.type as NullableTypeEmbedding).nullVal).toViper(),
+                    whenNotNullCall,
+                    Stmt.Seqn(),
+                )
+            )
+            UnitLit
+        }
+    }
+
+    override fun visitCheckedSafeCallSubject(
+        checkedSafeCallSubject: FirCheckedSafeCallSubject,
+        data: StmtConversionContext<ResultTrackingContext>
+    ): ExpEmbedding = data.checkedSafeCallSubject
+        ?: throw IllegalArgumentException("Trying to resolve checked subject $checkedSafeCallSubject which was not captured in StmtConversionContext")
+
     private fun handleUnimplementedElement(msg: String, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
         when (data.config.behaviour) {
             UnsupportedFeatureBehaviour.THROW_EXCEPTION ->

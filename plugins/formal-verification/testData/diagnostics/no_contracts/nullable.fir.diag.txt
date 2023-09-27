@@ -1,4 +1,4 @@
-/nullable.kt:(4,22): info: Generated Viper text for use_nullable_twice:
+/nullable.kt:(61,79): info: Generated Viper text for use_nullable_twice:
 method global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
@@ -13,7 +13,7 @@ method global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x: dom$
   label label$ret$0
 }
 
-/nullable.kt:(88,111): info: Generated Viper text for pass_nullable_parameter:
+/nullable.kt:(145,168): info: Generated Viper text for pass_nullable_parameter:
 method global$fun_pass_nullable_parameter$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
   returns (ret: dom$Nullable[Int])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
@@ -31,7 +31,7 @@ method global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x: dom$
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 
 
-/nullable.kt:(175,203): info: Generated Viper text for nullable_nullable_comparison:
+/nullable.kt:(232,260): info: Generated Viper text for nullable_nullable_comparison:
 method global$fun_nullable_nullable_comparison$fun_take$NT_Int$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
   returns (ret: Bool)
@@ -48,7 +48,7 @@ method global$fun_nullable_nullable_comparison$fun_take$NT_Int$NT_Int$return$T_B
   label label$ret$0
 }
 
-/nullable.kt:(258,290): info: Generated Viper text for nullable_non_nullable_comparison:
+/nullable.kt:(315,347): info: Generated Viper text for nullable_non_nullable_comparison:
 method global$fun_nullable_non_nullable_comparison$fun_take$NT_Int$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
   returns (ret: Bool)
@@ -61,7 +61,7 @@ method global$fun_nullable_non_nullable_comparison$fun_take$NT_Int$NT_Int$return
   label label$ret$0
 }
 
-/nullable.kt:(345,360): info: Generated Viper text for null_comparison:
+/nullable.kt:(402,417): info: Generated Viper text for null_comparison:
 method global$fun_null_comparison$fun_take$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int])
   returns (ret: Bool)
 {
@@ -78,7 +78,7 @@ method global$fun_null_comparison$fun_take$NT_Int$return$T_Boolean(local$x: dom$
   label label$ret$0
 }
 
-/nullable.kt:(409,423): info: Generated Viper text for elvis_operator:
+/nullable.kt:(466,480): info: Generated Viper text for elvis_operator:
 method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
   returns (ret: Int)
 {
@@ -93,7 +93,7 @@ method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nulla
   label label$ret$0
 }
 
-/nullable.kt:(465,487): info: Generated Viper text for elvis_operator_complex:
+/nullable.kt:(522,544): info: Generated Viper text for elvis_operator_complex:
 method global$fun_elvis_operator_complex$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
   returns (ret: Int)
 {
@@ -122,7 +122,7 @@ method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nulla
   returns (ret: Int)
 
 
-/nullable.kt:(570,591): info: Generated Viper text for evlis_operator_return:
+/nullable.kt:(627,648): info: Generated Viper text for evlis_operator_return:
 method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
   returns (ret: Int)
 {
@@ -140,3 +140,94 @@ method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: do
   goto label$ret$0
   label label$ret$0
 }
+
+/nullable.kt:(711,720): info: Generated Viper text for safe_call:
+field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
+
+method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
+  returns (ret: dom$Unit)
+{
+  var anonymous$0: dom$Nullable[Int]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$s): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$global$class_String()))
+  if (local$s == (dom$Nullable$null(): dom$Nullable[Ref])) {
+    anonymous$0 := (dom$Nullable$null(): dom$Nullable[Int])
+  } else {
+    var anonymous$1: Int
+    anonymous$1 := pkg$kotlin$class_scope_pkg$kotlin$global$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int((dom$Casting$cast((dom$Casting$cast(local$s,
+      dom$Type$pkg$kotlin$global$class_String()): Ref), dom$Type$Any()): dom$Any))
+    anonymous$0 := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  }
+  label label$ret$0
+}
+
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int(this: dom$Any)
+  returns (ret: Int)
+
+
+/nullable.kt:(760,778): info: Generated Viper text for safe_call_property:
+field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
+
+method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
+  returns (ret: dom$Unit)
+{
+  var anonymous$0: dom$Nullable[Int]
+  var local0$l: dom$Nullable[Int]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$s): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$global$class_String()))
+  if (local$s == (dom$Nullable$null(): dom$Nullable[Ref])) {
+    anonymous$0 := (dom$Nullable$null(): dom$Nullable[Int])
+  } else {
+    var anonymous$1: Int
+    inhale acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length, write)
+    anonymous$1 := (dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length
+    exhale acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length, write)
+    anonymous$0 := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  }
+  local0$l := anonymous$0
+  label label$ret$0
+}
+
+/nullable.kt:(899,914): info: Generated Viper text for safe_call_chain:
+field class_scope_global$class_Foo$member_v: Int
+
+method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: dom$Nullable[Ref])
+  returns (ret: dom$Nullable[Int])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+{
+  var anonymous$0: dom$Nullable[Ref]
+  var anonymous$2: dom$Nullable[Ref]
+  var anonymous$4: dom$Nullable[Int]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
+  if (local$foo == (dom$Nullable$null(): dom$Nullable[Ref])) {
+    anonymous$0 := (dom$Nullable$null(): dom$Nullable[Ref])
+  } else {
+    var anonymous$1: dom$Nullable[Ref]
+    anonymous$1 := class_scope_global$class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(local$foo,
+      dom$Type$global$class_Foo()): Ref))
+    anonymous$0 := anonymous$1
+  }
+  if (anonymous$0 == (dom$Nullable$null(): dom$Nullable[Ref])) {
+    anonymous$2 := (dom$Nullable$null(): dom$Nullable[Ref])
+  } else {
+    var anonymous$3: dom$Nullable[Ref]
+    anonymous$3 := class_scope_global$class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(anonymous$0,
+      dom$Type$global$class_Foo()): Ref))
+    anonymous$2 := anonymous$3
+  }
+  if (anonymous$2 == (dom$Nullable$null(): dom$Nullable[Ref])) {
+    anonymous$4 := (dom$Nullable$null(): dom$Nullable[Int])
+  } else {
+    var anonymous$5: Int
+    inhale acc((dom$Casting$cast(anonymous$2, dom$Type$global$class_Foo()): Ref).class_scope_global$class_Foo$member_v, write)
+    anonymous$5 := (dom$Casting$cast(anonymous$2, dom$Type$global$class_Foo()): Ref).class_scope_global$class_Foo$member_v
+    exhale acc((dom$Casting$cast(anonymous$2, dom$Type$global$class_Foo()): Ref).class_scope_global$class_Foo$member_v, write)
+    anonymous$4 := (dom$Casting$cast(anonymous$5, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  }
+  ret := anonymous$4
+  goto label$ret$0
+  label label$ret$0
+}
+
+method class_scope_global$class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo(this: Ref)
+  returns (ret: dom$Nullable[Ref])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
+
