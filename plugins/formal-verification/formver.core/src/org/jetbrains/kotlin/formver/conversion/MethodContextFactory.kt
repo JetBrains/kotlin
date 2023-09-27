@@ -11,9 +11,10 @@ class MethodContextFactory(
     private val signature: FunctionSignature,
     private val paramResolver: ParameterResolver,
     private val parent: MethodConversionContext? = null,
+    private val returnPointName: String?
 ) {
     fun create(
         programCtx: ProgramConversionContext,
         scopeDepth: Int,
-    ): MethodConversionContext = MethodConverter(programCtx, signature, paramResolver, scopeDepth, parent)
+    ): MethodConversionContext = MethodConverter(programCtx, signature, paramResolver, scopeDepth, parent, returnPointName)
 }

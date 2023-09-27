@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
-import org.jetbrains.kotlin.formver.conversion.ReturnVariableName
-import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
-import org.jetbrains.kotlin.formver.embeddings.toViper
+import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Info
 import org.jetbrains.kotlin.formver.viper.ast.Position
@@ -18,6 +14,12 @@ import org.jetbrains.kotlin.formver.viper.ast.Trafos
 
 interface NamedFunctionSignature : FunctionSignature {
     val name: MangledName
+    override val sourceName: String?
+        get() = when (val signatureName = name) {
+            is FunctionKotlinName -> signatureName.name.asString()
+            is ScopedKotlinName -> (signatureName.name as? FunctionKotlinName)?.name?.asString()
+            else -> null
+        }
 }
 
 fun NamedFunctionSignature.toMethodCall(

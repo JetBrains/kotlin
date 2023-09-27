@@ -128,6 +128,7 @@ fun StmtConversionContext<ResultTrackingContext>.insertInlineFunctionCall(
     args: List<ExpEmbedding>,
     body: FirBlock,
     parentCtx: MethodConversionContext? = null,
+    returnPointName: String? = null,
 ): ExpEmbedding = withResult(calleeSignature.returnType) {
     val callArgs = getInlineFunctionCallArgs(args)
     val subs = paramNames.zip(callArgs).toMap()
@@ -135,7 +136,8 @@ fun StmtConversionContext<ResultTrackingContext>.insertInlineFunctionCall(
     val methodCtxFactory = MethodContextFactory(
         calleeSignature,
         InlineParameterResolver(this.resultCtx.resultVar.name, returnLabelName, subs),
-        parentCtx
+        parentCtx,
+        returnPointName
     )
     withMethodCtx(methodCtxFactory) {
         convert(body)

@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 interface FunctionSignature : CallableSignature {
     val receiver: VariableEmbedding?
     val params: List<VariableEmbedding>
+    val sourceName: String?
+        get() = null
 
     val returnVar
         get() = VariableEmbedding(ReturnVariableName, returnType)

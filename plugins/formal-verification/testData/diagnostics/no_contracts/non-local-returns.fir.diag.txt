@@ -1,0 +1,132 @@
+/non-local-returns.kt:(136,149): info: Generated Viper text for simple_return:
+method global$fun_simple_return$fun_take$$return$T_Int() returns (ret: Int)
+{
+  var anonymous$0: Int
+  if (true) {
+    var anonymous$1: Int
+    var anonymous$2: Int
+    anonymous$2 := 0
+    if (true) {
+      ret := 1
+      goto label$ret$0
+      anonymous$1 := anonymous$2
+      goto label$ret$2
+      label label$ret$2
+    }
+    anonymous$0 := anonymous$1
+    goto label$ret$1
+    label label$ret$1
+  }
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}
+
+/non-local-returns.kt:(220,236): info: Generated Viper text for return_at_inline:
+method global$fun_return_at_inline$fun_take$$return$T_Int()
+  returns (ret: Int)
+{
+  var anonymous$0: Int
+  if (true) {
+    var anonymous$1: Int
+    var anonymous$2: Int
+    anonymous$2 := 0
+    if (true) {
+      anonymous$1 := 1
+      goto label$ret$2
+      anonymous$1 := anonymous$2
+      goto label$ret$2
+      label label$ret$2
+    }
+    anonymous$0 := anonymous$1
+    goto label$ret$1
+    label label$ret$1
+  }
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}
+
+/non-local-returns.kt:(314,327): info: Generated Viper text for double_invoke:
+method global$fun_double_invoke$fun_take$$return$T_Int() returns (ret: Int)
+{
+  var anonymous$0: Int
+  if (true) {
+    var anonymous$1: Int
+    var anonymous$2: Int
+    anonymous$2 := 0
+    if (true) {
+      var anonymous$3: Int
+      if (true) {
+        var anonymous$4: Int
+        var anonymous$5: Int
+        anonymous$5 := 0
+        if (true) {
+          anonymous$4 := 1
+          goto label$ret$4
+          anonymous$4 := anonymous$5
+          goto label$ret$4
+          label label$ret$4
+        }
+        anonymous$3 := anonymous$4
+        goto label$ret$3
+        label label$ret$3
+      }
+      anonymous$1 := 2
+      goto label$ret$2
+      anonymous$1 := anonymous$2
+      goto label$ret$2
+      label label$ret$2
+    }
+    anonymous$0 := anonymous$1
+    goto label$ret$1
+    label label$ret$1
+  }
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}
+
+/non-local-returns.kt:(552,558): info: Generated Viper text for nested:
+method global$fun_nested$fun_take$$return$T_Int() returns (ret: Int)
+{
+  var anonymous$0: Int
+  if (true) {
+    var anonymous$1: Int
+    var anonymous$2: Int
+    anonymous$2 := 0
+    if (true) {
+      var anonymous$3: Int
+      if (true) {
+        var anonymous$4: Int
+        var anonymous$5: Int
+        anonymous$5 := 1
+        if (true) {
+          anonymous$4 := 2
+          goto label$ret$4
+          anonymous$1 := 3
+          goto label$ret$2
+          ret := 4
+          goto label$ret$0
+          anonymous$4 := anonymous$5
+          goto label$ret$4
+          label label$ret$4
+        }
+        anonymous$3 := anonymous$4
+        goto label$ret$3
+        label label$ret$3
+      }
+      anonymous$1 := 5
+      goto label$ret$2
+      anonymous$1 := anonymous$2
+      goto label$ret$2
+      label label$ret$2
+    }
+    anonymous$0 := anonymous$1
+    goto label$ret$1
+    label label$ret$1
+  }
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}

@@ -28,6 +28,7 @@ class MethodConverter(
     private val paramResolver: ParameterResolver,
     scopeDepth: Int,
     private val parent: MethodConversionContext? = null,
+    private val returnPointName: String?, // null while converting the body of an inline function
 ) : MethodConversionContext, ProgramConversionContext by programCtx {
     private var propertyResolver = PropertyNameResolver(scopeDepth)
 
@@ -50,6 +51,13 @@ class MethodConverter(
         paramResolver.tryEmbedParameter(symbol) ?: parent?.embedParameter(symbol)
         ?: throw IllegalArgumentException("Parameter $symbol not found in scope.")
 
-    override val resolvedReturnLabelName: ReturnLabelName = paramResolver.resolvedReturnLabelName
     override val resolvedReturnVarName: MangledName = paramResolver.resolvedReturnVarName
+    override val resolvedReturnLabelName: ReturnLabelName = paramResolver.resolvedReturnLabelName
+    override fun resolveReturnTarget(sourceName: String?): ReturnTarget {
+        return if (returnPointName == null || sourceName == null || returnPointName == sourceName) {
+            ReturnTarget(returnVar, returnLabel)
+        } else {
+            parent?.resolveReturnTarget(sourceName) ?: throw IllegalArgumentException("Cannot resolve returnTarget of $sourceName")
+        }
+    }
 }

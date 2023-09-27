@@ -36,3 +36,17 @@ fun <!VIPER_TEXT!>nested_call<!>(f: (Int) -> Int, g: (Int) -> Int): Int {
     }
     return invoke { f(g(it)) }
 }
+
+@OptIn(ExperimentalContracts::class)
+@Suppress("WRONG_INVOCATION_KIND", "LEAKED_IN_PLACE_LAMBDA")
+fun <!VIPER_TEXT!>non_local_return<!>(g: () -> Unit): Int {
+    contract {
+        callsInPlace(g, EXACTLY_ONCE)
+    }
+    return invoke {
+        g()
+        return@invoke 1
+        g()
+        it
+    }
+}

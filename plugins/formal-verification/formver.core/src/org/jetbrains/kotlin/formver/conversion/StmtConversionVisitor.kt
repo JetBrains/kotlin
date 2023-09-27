@@ -48,8 +48,11 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding {
         val expr = data.convert(returnExpression.result)
-        data.returnVar.setValue(expr, data)
-        data.addStatement(data.returnLabel.toGoto())
+        // returnTarget is null when it is the implicit return of a lambda
+        val returnTargetName = returnExpression.target.labelName
+        val (retVar, retLabel) = data.resolveReturnTarget(returnTargetName)
+        retVar.setValue(expr, data)
+        data.addStatement(retLabel.toGoto())
         return UnitLit
     }
 

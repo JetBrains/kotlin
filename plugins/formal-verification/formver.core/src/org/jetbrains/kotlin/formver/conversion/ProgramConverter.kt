@@ -136,6 +136,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private fun embedFullSignature(symbol: FirFunctionSymbol<*>): FullNamedFunctionSignature {
         val subSignature = object : NamedFunctionSignature, FunctionSignature by embedFunctionSignature(symbol) {
             override val name = symbol.embedName(this@ProgramConverter)
+            override val sourceName: String?
+                get() = super<NamedFunctionSignature>.sourceName
         }
         val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, subSignature)
 
@@ -177,7 +179,14 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     private fun convertMethodWithBody(declaration: FirSimpleFunction, signature: FullNamedFunctionSignature): Method {
         val body = declaration.body?.let {
-            val methodCtx = MethodConverter(this, signature, RootParameterResolver(this, returnLabelNameProducer.getFresh()), 0)
+            val methodCtx =
+                MethodConverter(
+                    this,
+                    signature,
+                    RootParameterResolver(this, returnLabelNameProducer.getFresh()),
+                    0,
+                    returnPointName = signature.sourceName
+                )
             val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory)
             signature.formalArgs.forEach { arg ->
                 // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.

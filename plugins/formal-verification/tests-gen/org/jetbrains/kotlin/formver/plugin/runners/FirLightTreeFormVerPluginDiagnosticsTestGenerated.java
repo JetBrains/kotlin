@@ -282,6 +282,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("non-local-returns.kt")
+        public void testNon_local_returns() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/non-local-returns.kt");
+        }
+
+        @Test
         @TestMetadata("nullable.kt")
         public void testNullable() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/nullable.kt");

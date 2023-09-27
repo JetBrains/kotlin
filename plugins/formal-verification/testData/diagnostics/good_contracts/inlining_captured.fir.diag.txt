@@ -113,3 +113,39 @@ method global$fun_nested_call$fun_take$fun_take$T_Int$return$T_Int$fun_take$T_In
   goto label$ret$0
   label label$ret$0
 }
+
+/inlining_captured.kt:(1158,1174): info: Generated Viper text for non_local_return:
+method global$fun_non_local_return$fun_take$fun_take$$return$T_Unit$return$T_Int(local$g: Ref)
+  returns (ret: Int)
+  requires acc(local$g.special$function_object_call_counter, write)
+  ensures acc(local$g.special$function_object_call_counter, write)
+  ensures old(local$g.special$function_object_call_counter) <=
+    local$g.special$function_object_call_counter
+  ensures local$g.special$function_object_call_counter ==
+    old(local$g.special$function_object_call_counter) + 1
+{
+  var anonymous$0: Int
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
+  if (true) {
+    var anonymous$1: Int
+    var anonymous$2: Int
+    anonymous$2 := 0
+    if (true) {
+      var anonymous$3: dom$Unit
+      var anonymous$4: dom$Unit
+      special$invoke_function_object(local$g)
+      anonymous$1 := 1
+      goto label$ret$2
+      special$invoke_function_object(local$g)
+      anonymous$1 := anonymous$2
+      goto label$ret$2
+      label label$ret$2
+    }
+    anonymous$0 := anonymous$1
+    goto label$ret$1
+    label label$ret$1
+  }
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}
