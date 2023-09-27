@@ -60,9 +60,11 @@ class ComposeIrGenerationExtension(
     private val validateIr: Boolean = false,
     private val useK2: Boolean = false,
     private val strongSkippingEnabled: Boolean = false,
-    private val stableTypeMatchers: Set<FqNameMatcher> = emptySet()
+    private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
+    private val moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
+        private set
 
     override fun generate(
         moduleFragment: IrModuleFragment,
@@ -71,7 +73,10 @@ class ComposeIrGenerationExtension(
         val isKlibTarget = !pluginContext.platform.isJvm()
         VersionChecker(pluginContext).check()
 
-        val stabilityInferencer = StabilityInferencer(stableTypeMatchers)
+        val stabilityInferencer = StabilityInferencer(
+            pluginContext.moduleDescriptor,
+            stableTypeMatchers,
+        )
 
         // Input check.  This should always pass, else something is horribly wrong upstream.
         // Necessary because oftentimes the issue is upstream (compiler bug, prior plugin, etc)
@@ -85,7 +90,9 @@ class ComposeIrGenerationExtension(
             moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
         }
 
-        if (metricsDestination != null || reportsDestination != null) {
+        if (moduleMetricsFactory != null) {
+            metrics = moduleMetricsFactory.invoke(stabilityInferencer)
+        } else if (metricsDestination != null || reportsDestination != null) {
             metrics = ModuleMetricsImpl(moduleFragment.name.asString()) {
                 stabilityInferencer.stabilityOf(it)
             }

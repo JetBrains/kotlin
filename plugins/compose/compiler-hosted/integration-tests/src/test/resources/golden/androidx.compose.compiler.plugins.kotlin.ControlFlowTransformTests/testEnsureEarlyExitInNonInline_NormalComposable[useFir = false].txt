@@ -25,7 +25,7 @@ fun Test(condition: Boolean) {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 object obj {
   val condition: Boolean = true
   static val %stable: Int = 0

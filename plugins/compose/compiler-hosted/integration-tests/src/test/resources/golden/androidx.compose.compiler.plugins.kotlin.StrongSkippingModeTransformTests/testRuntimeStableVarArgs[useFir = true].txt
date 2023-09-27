@@ -18,7 +18,7 @@ class Holder<T> {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 2)
 class Holder<T>  {
   @Composable
   fun Test(x: Array<out T>, %composer: Composer?, %changed: Int) {

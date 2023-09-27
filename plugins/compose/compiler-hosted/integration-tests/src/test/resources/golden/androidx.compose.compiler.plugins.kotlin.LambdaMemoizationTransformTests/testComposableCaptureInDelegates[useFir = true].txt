@@ -12,7 +12,7 @@ class Test(val value: Int) : Delegate by Impl({
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class Test(val value: Int) : Delegate {
   val content: Function2<Composer, Int, Unit>
     get() {

@@ -19,7 +19,7 @@ class Bar: Foo() {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 open class Foo {
   @NonRestartableComposable
   @Composable
@@ -39,7 +39,7 @@ open class Foo {
   }
   static val %stable: Int = 0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class Bar : Foo {
   @NonRestartableComposable
   @Composable

@@ -29,7 +29,7 @@ fun Calculate(condition: Boolean): Boolean {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 object obj {
   val condition: Boolean = false
   static val %stable: Int = 0
