@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.extractUsedReifiedParameters
 import org.jetbrains.kotlin.codegen.generateAsCast
 import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
+import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
@@ -49,7 +50,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     private val unifiedNullChecks: Boolean,
 ) {
     enum class OperationKind {
-        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF;
+        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF, CATCH;
 
         val id: Int get() = ordinal
     }
@@ -147,12 +148,11 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     fun reifyInstructions(node: MethodNode): ReifiedTypeParametersUsages {
         if (!hasReifiedParameters) return ReifiedTypeParametersUsages()
 
-        val instructions = node.instructions
         maxStackSize = 0
         val result = ReifiedTypeParametersUsages()
-        for (insn in instructions.toArray()) {
+        for (insn in node.instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
-                val newNames = processReifyMarker(insn as MethodInsnNode, instructions)
+                val newNames = processReifyMarker(insn as MethodInsnNode, node)
                 if (newNames != null) {
                     result.mergeAll(newNames)
                 }
@@ -163,7 +163,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         return result
     }
 
-    private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): ReifiedTypeParametersUsages? {
+    private fun processReifyMarker(insn: MethodInsnNode, node: MethodNode): ReifiedTypeParametersUsages? {
         val operationKind = insn.operationKind ?: return null
         val reificationArgument = insn.reificationArgument ?: return null
         val mapping = parametersMapping?.get(reificationArgument.parameterName) ?: return null
@@ -179,6 +179,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         // To properly support those cases, we need to partially reify them even if we don't know the entire type yet.
         // Otherwise nullability on all but the innermost dimension of a multidimensional array will be lost,
         // and reified type parameters used as arguments to classifier types will never be reified.
+        val instructions = node.instructions
         if (mapping.reificationArgument == null || operationKind == OperationKind.TYPE_OF) {
             val processed = (isPluginNext(insn) && processPlugin(insn, instructions, type)) || when (operationKind) {
                 // TODO: if `process*` returns false, then the marked sequence is invalid - simply leaving the marker in place
@@ -191,6 +192,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
                 OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
                 OperationKind.ENUM_REIFIED -> processSpecialEnumFunction(insn, instructions, type, asmType)
                 OperationKind.TYPE_OF -> processTypeOf(insn, instructions, type)
+                OperationKind.CATCH -> processCatch(insn, node, asmType)
             }
 
             if (processed) {
@@ -286,6 +288,32 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         instructions.remove(stubConstNull)
 
         maxStackSize = max(maxStackSize, newMethodNode.maxStack)
+        return true
+    }
+
+    private fun processCatch(
+        insn: MethodInsnNode,
+        node: MethodNode,
+        asmType: Type,
+    ): Boolean {
+        var labelInsn = insn.findPreviousOrNull { it is LabelNode } as LabelNode?
+            ?: error("cannot locate label of catch block handler")
+
+        var catchBlock = node.tryCatchBlocks.find { it.handler == labelInsn && it.type != null }
+
+        // there might be a LABEL and LINE_NUMBER before the actual start of the handler
+        if (catchBlock == null && labelInsn.next is LineNumberNode) {
+            labelInsn = labelInsn.findPreviousOrNull { it is LabelNode } as LabelNode?
+                ?: error("cannot locate label of catch block handler before line number")
+
+            catchBlock = node.tryCatchBlocks.find { it.handler == labelInsn && it.type != null } ?: return false
+        }
+
+        if (catchBlock == null) error("cannot identify catch block")
+
+        // null-check is not require for catch
+        catchBlock.type = asmType.internalName
+
         return true
     }
 

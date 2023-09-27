@@ -8389,6 +8389,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
       runTest("compiler/testData/codegen/box/controlStructures/tryCatchFinallyChain.kt");
     }
 
+    @TestMetadata("tryCatchReifiedType.kt")
+    public void testTryCatchReifiedType() {
+      runTest("compiler/testData/codegen/box/controlStructures/tryCatchReifiedType.kt");
+    }
+
     @TestMetadata("tryFinally.kt")
     public void testTryFinally() {
       runTest("compiler/testData/codegen/box/controlStructures/tryFinally.kt");

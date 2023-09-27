@@ -361,6 +361,7 @@ enum class LanguageFeature(
     ForbidFieldAnnotationsOnAnnotationParameters(KOTLIN_2_2, kind = BUG_FIX), // KT-70233
     ForbidParenthesizedLhsInAssignments(KOTLIN_2_2, kind = BUG_FIX), // KT-70507
     ProhibitConstructorAndSupertypeOnTypealiasWithTypeProjection(KOTLIN_2_2, kind = BUG_FIX), // KT-60305
+    AllowReifiedTypeInCatchClause(KOTLIN_2_2, kind = BUG_FIX), // KT-54363
 
     // 2.3
 
