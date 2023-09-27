@@ -17,3 +17,11 @@ fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>i
     escape(f)
 }
 
+@Suppress("LEAKED_IN_PLACE_LAMBDA")
+@OptIn(ExperimentalContracts::class)
+fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>function_object_call<!>(f: (() -> Unit) -> Unit, g: () -> Unit) {
+    contract {
+        callsInPlace(g)
+    }
+    return f(g)
+}

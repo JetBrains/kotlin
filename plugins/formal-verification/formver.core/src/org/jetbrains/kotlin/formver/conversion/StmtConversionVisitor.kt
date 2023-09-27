@@ -182,20 +182,25 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
     ): ExpEmbedding {
         val receiverSymbol = implicitInvokeCall.dispatchReceiver?.calleeSymbol
             ?: throw NotImplementedError("Implicit invoke calls only support a limited range of receivers at the moment.")
+        val args = implicitInvokeCall.argumentList.arguments.map(data::convert)
         return when (val exp = data.embedLocalSymbol(receiverSymbol)) {
             is LambdaExp -> {
                 // The lambda is already the receiver, so we do not need to convert it.
                 // TODO: do this more uniformly: convert the receiver, see it is a lambda, use insertCall on it.
-                val args = implicitInvokeCall.argumentList.arguments.map(data::convert)
                 exp.insertCall(args, data)
             }
             else -> {
                 val retType = implicitInvokeCall.calleeCallableSymbol.resolvedReturnType
-                val args = implicitInvokeCall.functionCallArguments.map(data::convert)
+                args.filter { it.type is UnspecifiedFunctionTypeEmbedding }
+                    .forEach {
+                        val leakFunctionObjectCall = Stmt.Assert(DuplicableFunction.toFuncApp(listOf(it.toViper())))
+                        data.addStatement(leakFunctionObjectCall)
+                    }
                 data.withResult(data.embedType(retType)) {
                     // NOTE: Since it is only relevant to update the number of times that a function object is called,
                     // the function call invocation is intentionally not assigned to the return variable
-                    data.addStatement(InvokeFunctionObjectMethod.toMethodCall(args.take(1).toViper(), listOf()))
+                    val receiver = listOfNotNull(implicitInvokeCall.dispatchReceiver).map(data::convert)
+                    data.addStatement(InvokeFunctionObjectMethod.toMethodCall(receiver.toViper(), listOf()))
                 }
             }
         }
