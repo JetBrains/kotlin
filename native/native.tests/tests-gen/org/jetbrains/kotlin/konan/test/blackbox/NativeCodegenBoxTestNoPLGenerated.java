@@ -8260,6 +8260,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("tryCatchReifiedType.kt")
+            public void testTryCatchReifiedType() throws Exception {
+                runTest("compiler/testData/codegen/box/controlStructures/tryCatchReifiedType.kt");
+            }
+
+            @Test
             @TestMetadata("tryFinally.kt")
             public void testTryFinally() throws Exception {
                 runTest("compiler/testData/codegen/box/controlStructures/tryFinally.kt");

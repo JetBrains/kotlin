@@ -19,5 +19,5 @@ fun <T : Throwable> test() {
 }
 
 inline fun <reified T> anotherTest() {
-    try {} catch (<!REIFIED_TYPE_IN_CATCH_CLAUSE, THROWABLE_TYPE_MISMATCH!>e: T<!>) {}
+    try {} catch (<!THROWABLE_TYPE_MISMATCH!>e: T<!>) {}
 }

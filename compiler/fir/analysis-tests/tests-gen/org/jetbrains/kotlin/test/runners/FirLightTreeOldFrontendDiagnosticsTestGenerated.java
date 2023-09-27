@@ -8411,6 +8411,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("catchReifiedTypeAllowed.kt")
+            public void testCatchReifiedTypeAllowed() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/catchReifiedTypeAllowed.kt");
+            }
+
+            @Test
+            @TestMetadata("catchReifiedTypeForbidden.kt")
+            public void testCatchReifiedTypeForbidden() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlStructures/catchReifiedTypeForbidden.kt");
+            }
+
+            @Test
             @TestMetadata("catchWithDefault.kt")
             public void testCatchWithDefault() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlStructures/catchWithDefault.kt");
