@@ -52,7 +52,10 @@ abstract class AbstractLiveLiteralTransformTests(
                         ) {
                             val symbolRemapper = DeepCopySymbolRemapper()
                             val keyVisitor = DurableKeyVisitor(builtKeys)
-                            val stabilityInferencer = StabilityInferencer(emptySet())
+                            val stabilityInferencer = StabilityInferencer(
+                                pluginContext.moduleDescriptor,
+                                emptySet()
+                            )
                             val transformer = object : LiveLiteralTransformer(
                                 liveLiteralsEnabled || liveLiteralsV2Enabled,
                                 liveLiteralsV2Enabled,

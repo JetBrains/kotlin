@@ -43,7 +43,7 @@ import androidx.compose.runtime.NonRestartableComposable
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class Foo {
   static val %stable: Int = 0
 }
@@ -61,7 +61,7 @@ fun Foo.getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %c
   %composer.endReplaceableGroup()
   return tmp0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class FooDelegate {
   @Composable
   fun getValue(thisObj: Any?, property: KProperty<*>, %composer: Composer?, %changed: Int): FooDelegate {
@@ -79,7 +79,7 @@ class FooDelegate {
   }
   static val %stable: Int = 0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class Bar {
   val foo: Foo = Foo()
     @Composable @JvmName(name = "getFoo")

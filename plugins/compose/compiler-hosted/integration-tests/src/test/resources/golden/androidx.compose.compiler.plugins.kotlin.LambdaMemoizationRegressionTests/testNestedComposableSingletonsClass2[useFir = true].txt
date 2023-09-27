@@ -14,9 +14,9 @@ class A {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class A {
-  @StabilityInferred(parameters = 0)
+  @StabilityInferred(parameters = 1)
   class B {
     val x: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
     static val %stable: Int = 0

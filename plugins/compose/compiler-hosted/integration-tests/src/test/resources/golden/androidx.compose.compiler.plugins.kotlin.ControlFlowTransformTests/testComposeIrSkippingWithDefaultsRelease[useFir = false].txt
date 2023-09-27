@@ -27,7 +27,7 @@ fun Ui.UiTextField(
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 object Ui {
   static val %stable: Int = 0
 }

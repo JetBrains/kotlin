@@ -27,7 +27,7 @@ class UnstableDelegateProp {
 class X<T> (val p1: List<T>) {
   static val %stable: Int = 8
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class StableDelegateProp {
   var p1: StableDelegate = StableDelegate()
     get() {

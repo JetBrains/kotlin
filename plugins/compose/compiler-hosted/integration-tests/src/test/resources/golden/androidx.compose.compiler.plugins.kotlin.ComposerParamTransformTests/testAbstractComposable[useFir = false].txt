@@ -29,14 +29,14 @@ class FooImpl : BaseFoo() {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 abstract class BaseFoo {
   @NonRestartableComposable
   @Composable
   abstract fun bar(%composer: Composer?, %changed: Int)
   static val %stable: Int = 0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class FooImpl : BaseFoo {
   @NonRestartableComposable
   @Composable

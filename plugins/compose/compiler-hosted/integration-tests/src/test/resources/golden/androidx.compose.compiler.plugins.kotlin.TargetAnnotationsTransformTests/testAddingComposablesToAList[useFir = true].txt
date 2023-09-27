@@ -15,7 +15,7 @@ class Scope {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class Scope {
   val list: IntervalList<@[ExtensionFunctionType] Function2<Scope, Int, Function2<Composer, Int, Unit>>> = IntervalList()
   fun item(content: @[ExtensionFunctionType] Function3<Scope, Composer, Int, Unit>) {

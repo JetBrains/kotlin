@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.k1.ComposableCallChecker
 import androidx.compose.compiler.plugins.kotlin.k1.ComposableDeclarationChecker
 import androidx.compose.compiler.plugins.kotlin.k1.ComposableTargetChecker
@@ -353,7 +354,8 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
         }
 
         fun createComposeIrExtension(
-            configuration: CompilerConfiguration
+            configuration: CompilerConfiguration,
+            moduleMetricsFactory: ((StabilityInferencer) -> ModuleMetrics)? = null
         ): ComposeIrGenerationExtension {
             val liveLiteralsEnabled = configuration.getBoolean(
                 ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
@@ -420,7 +422,8 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 validateIr = validateIr,
                 useK2 = useK2,
                 strongSkippingEnabled = strongSkippingEnabled,
-                stableTypeMatchers = stableTypeMatchers
+                stableTypeMatchers = stableTypeMatchers,
+                moduleMetricsFactory = moduleMetricsFactory
             )
         }
     }
