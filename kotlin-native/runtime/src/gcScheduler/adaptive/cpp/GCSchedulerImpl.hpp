@@ -64,7 +64,6 @@ public:
 
     void onGCStart() noexcept {
         regularIntervalPacer_.OnPerformFullGC();
-        heapGrowthController_.unsetBoundaries();
         timer_.restart(config_.regularGcInterval());
     }
 
