@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.CallableCopySubstitution
 import org.jetbrains.kotlin.fir.scopes.callableCopySubstitutionForTypeUpdater
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -121,7 +122,7 @@ object FirFakeOverrideGenerator {
         checkStatusIsResolved(baseFunction)
 
         return buildSimpleFunction {
-            source = baseFunction.source
+            source = baseFunction.source ?: derivedClassLookupTag?.toSymbol(session)?.source
             moduleData = session.nullableModuleData ?: baseFunction.moduleData
             this.origin = origin
             name = baseFunction.name
@@ -161,6 +162,7 @@ object FirFakeOverrideGenerator {
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
             annotations += baseConstructor.annotations
+            source = baseConstructor.source ?: derivedClassLookupTag?.toSymbol(session)?.source
             moduleData = session.nullableModuleData ?: baseConstructor.moduleData
             this.origin = origin
             receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
@@ -187,7 +189,6 @@ object FirFakeOverrideGenerator {
             dispatchReceiverType = newDispatchReceiverType
 
             resolvePhase = baseConstructor.resolvePhase
-            source = baseConstructor.source
             attributes = baseConstructor.attributes.copy()
             deprecationsProvider = baseConstructor.deprecationsProvider
         }.apply {
@@ -301,6 +302,7 @@ object FirFakeOverrideGenerator {
         ) { valueParameter, newType ->
             buildValueParameterCopy(valueParameter) {
                 this.origin = origin
+                source = source ?: this@configureAnnotationsAndSignature.source
                 returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                 symbol = FirValueParameterSymbol(valueParameter.name)
                 containingFunctionSymbol = fakeFunctionSymbol
@@ -369,7 +371,7 @@ object FirFakeOverrideGenerator {
         checkStatusIsResolved(baseProperty)
 
         return buildProperty {
-            source = baseProperty.source
+            source = baseProperty.source ?: derivedClassLookupTag?.toSymbol(session)?.source
             moduleData = session.nullableModuleData ?: baseProperty.moduleData
             this.origin = origin
             name = baseProperty.name
