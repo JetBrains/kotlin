@@ -377,6 +377,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     fun delegateAccess() = buildPropertyAccessExpression {
         source = fakeSource
         calleeReference = buildDelegateFieldReference {
+            source = fakeSource
             resolvedSymbol = delegateFieldSymbol
         }
         if (ownerRegularOrAnonymousObjectSymbol != null) {
