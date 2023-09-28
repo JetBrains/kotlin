@@ -528,6 +528,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                             arguments += thisRef()
                             arguments += propertyRef()
                             arguments += buildPropertyAccessExpression {
+                                source = fakeSource
                                 calleeReference = buildResolvedNamedReference {
                                     source = fakeSource
                                     name = SpecialNames.IMPLICIT_SET_PARAMETER
