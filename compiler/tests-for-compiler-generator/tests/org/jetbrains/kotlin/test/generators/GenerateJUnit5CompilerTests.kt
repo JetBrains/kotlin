@@ -379,6 +379,14 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("ir/irText")
             }
 
+            testClass<AbstractFirLightTreeJvmIrSourceRangesTest> {
+                model("ir/sourceRanges")
+            }
+
+            testClass<AbstractFirPsiJvmIrSourceRangesTest> {
+                model("ir/sourceRanges")
+            }
+
             testClass<AbstractFirLightTreeBytecodeTextTest> {
                 model("codegen/bytecodeText")
             }
