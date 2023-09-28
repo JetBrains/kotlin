@@ -2683,6 +2683,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         }
 
         @Test
+        @TestMetadata("elvisOnBackingFieldInGetter.kt")
+        public void testElvisOnBackingFieldInGetter() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/elvisOnBackingFieldInGetter.kt");
+        }
+
+        @Test
         @TestMetadata("emptyWhen.kt")
         public void testEmptyWhen() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/emptyWhen.kt");
