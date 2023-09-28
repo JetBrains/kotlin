@@ -1,4 +1,4 @@
-@0:0..68:32 FILE fqName:test fileName:/topLevelProperties.kt
+@0:0..69:0 FILE fqName:test fileName:/topLevelProperties.kt
   @3:0..14 PROPERTY name:test0 visibility:public modality:FINAL [val]
     @3:0..14 FIELD PROPERTY_BACKING_FIELD name:test0 type:kotlin.Int visibility:private [final,static]
       @3:12..14 EXPRESSION_BODY

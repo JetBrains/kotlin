@@ -1,4 +1,4 @@
-@0:0..33:1 FILE fqName:<root> fileName:/comments.kt
+@0:0..34:0 FILE fqName:<root> fileName:/comments.kt
   @1:0..33:1 CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]
     @1:0..33:1 CONSTRUCTOR visibility:public <> () returnType:<root>.Foo [primary]
       @1:0..33:1 BLOCK_BODY

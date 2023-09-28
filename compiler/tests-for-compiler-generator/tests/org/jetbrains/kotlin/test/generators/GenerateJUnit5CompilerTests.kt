@@ -123,6 +123,10 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("ir/irText")
             }
 
+            testClass<AbstractClassicJvmIrSourceRangesTest> {
+                model("ir/sourceRanges")
+            }
+
             testClass<AbstractBytecodeTextTest> {
                 model("codegen/bytecodeText")
             }

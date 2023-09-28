@@ -1,4 +1,4 @@
-@0:0..4:1 FILE fqName:<root> fileName:/synthesizedDataClassMembers.kt
+@0:0..5:0 FILE fqName:<root> fileName:/synthesizedDataClassMembers.kt
   @0:0..4:1 CLASS CLASS name:C modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     @0:5..4:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.C [primary]
       @1:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int

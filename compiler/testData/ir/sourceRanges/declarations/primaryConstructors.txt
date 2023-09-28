@@ -1,4 +1,4 @@
-@0:0..13:23 FILE fqName:<root> fileName:/primaryConstructors.kt
+@0:0..14:0 FILE fqName:<root> fileName:/primaryConstructors.kt
   @0:0..23 CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]
     @0:0..23 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test1 [primary]
       @0:12..22 VALUE_PARAMETER name:x index:0 type:kotlin.Int

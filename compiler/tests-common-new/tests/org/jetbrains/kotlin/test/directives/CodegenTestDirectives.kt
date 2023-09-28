@@ -147,6 +147,10 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Dumps generated backend IR in pretty kotlin dump (enables ${IrPrettyKotlinDumpHandler::class})"
     )
 
+    val DUMP_SOURCE_RANGES_IR by directive(
+        description = "Dumps generated backend IR together with elements source ranges (enables ${IrSourceRangesDumpHandler::class})"
+    )
+
     val SKIP_KT_DUMP by directive(
         description = "Skips check pretty kt IR dump (disables ${IrPrettyKotlinDumpHandler::class})"
     )

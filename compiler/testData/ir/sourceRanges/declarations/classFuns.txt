@@ -1,4 +1,4 @@
-@0:0..23:1 FILE fqName:test fileName:/classFuns.kt
+@0:0..24:0 FILE fqName:test fileName:/classFuns.kt
   @3:0..23:1 CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[kotlin.Any]
     @3:0..23:1 CONSTRUCTOR visibility:public <> () returnType:test.Test [primary]
       @3:0..23:1 BLOCK_BODY

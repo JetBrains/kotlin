@@ -1,4 +1,4 @@
-@0:0..13:1 FILE fqName:<root> fileName:/secondaryConstructors.kt
+@0:0..14:0 FILE fqName:<root> fileName:/secondaryConstructors.kt
   @0:0..13:1 CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     @1:4..27 CONSTRUCTOR visibility:public <> () returnType:<root>.C
       @1:4..27 BLOCK_BODY
