@@ -20,7 +20,7 @@ class Test {
         }
       }
       return { // BLOCK
-        val <elvis>: Nothing? = <this>.#resourceTable
+        val <elvis>: ResourceTable? = <this>.#resourceTable
         when {
           EQEQ(arg0 = <elvis>, arg1 = null) -> ResourceTable()
           else -> <elvis>

@@ -161,9 +161,8 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         if (originalFir is FirThisReceiverExpression) return PropertyStability.STABLE_VALUE
         when (this) {
             is FirAnonymousObjectSymbol -> return null
-            is FirFunctionSymbol<*>,
-            is FirClassSymbol<*>,
-            is FirBackingFieldSymbol -> return PropertyStability.STABLE_VALUE
+            is FirFunctionSymbol<*>, is FirClassSymbol<*> -> return PropertyStability.STABLE_VALUE
+            is FirBackingFieldSymbol -> return if (isVal) PropertyStability.STABLE_VALUE else PropertyStability.MUTABLE_PROPERTY
         }
         if (this !is FirVariableSymbol<*>) return null
         if (this is FirFieldSymbol && !this.isFinal) return PropertyStability.MUTABLE_PROPERTY
