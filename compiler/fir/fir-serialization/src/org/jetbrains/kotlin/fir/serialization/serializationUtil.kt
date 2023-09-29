@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -54,4 +56,6 @@ fun FirMemberDeclaration.isNotExpectOrShouldBeSerialized(actualizedExpectDeclara
 
 fun FirMemberDeclaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib: Boolean): Boolean {
     return !produceHeaderKlib || visibility.isPublicAPI
+            // Always keep private interfaces as they can be part of public type hierarchies.
+            || (this as? FirClass)?.isInterface == true
 }

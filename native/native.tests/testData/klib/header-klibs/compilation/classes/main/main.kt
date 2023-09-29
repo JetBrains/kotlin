@@ -7,6 +7,10 @@ fun useI(i: I) {
     i.iMethod()
 }
 
+fun useK(k: A) {
+    k.kMethod()
+}
+
 fun useA(a: A) {
     a.iProperty
     a.iMethod()
@@ -37,6 +41,7 @@ fun useC(b: String) {
 
 fun runAppAndReturnOk(): String {
     useI(A())
+    useK(A())
     useA(A())
     useB(B())
     useC("test")

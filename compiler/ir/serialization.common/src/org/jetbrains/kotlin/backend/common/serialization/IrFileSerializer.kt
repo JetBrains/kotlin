@@ -1271,6 +1271,8 @@ open class IrFileSerializer(
 
     private fun skipIfPrivate(declaration: IrDeclaration) =
         skipPrivateApi && (declaration as? IrDeclarationWithVisibility)?.visibility?.isPublicAPI != true
+                // Always keep private interfaces as they can be part of public type hierarchies.
+                && (declaration as? IrClass)?.isInterface != true
 
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
