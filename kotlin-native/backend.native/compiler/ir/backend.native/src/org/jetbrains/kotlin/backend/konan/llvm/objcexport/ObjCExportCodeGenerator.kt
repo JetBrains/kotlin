@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
-import kotlinx.cinterop.toCValues
 import kotlinx.cinterop.toKString
 import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
@@ -1287,7 +1286,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
         assert(baseMethod.symbol !is IrConstructorSymbol)
 
         fun rethrow() {
-            val error = load(errorOutPtr!!)
+            val error = load(llvm.int8PtrType, errorOutPtr!!)
             val exception = callFromBridge(
                     llvm.Kotlin_ObjCExport_NSErrorAsException,
                     listOf(error),
@@ -1326,7 +1325,7 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
             is MethodBridge.ReturnValue.WithError.ZeroForError -> {
                 if (returnBridge.successMayBeZero) {
-                    val error = load(errorOutPtr!!)
+                    val error = load(llvm.int8PtrType, errorOutPtr!!)
                     ifThen(icmpNe(error, llvm.kNullInt8Ptr)) {
                         // error is not null, so targetResult should be null => no need for objc_release on it.
                         rethrow()

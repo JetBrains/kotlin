@@ -208,8 +208,9 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
 
 internal object VirtualTablesLookup {
     private fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
-        val interfaceTableSize = load(structGep(typeInfo, 9 /* interfaceTableSize_ */))
-        val interfaceTable = load(structGep(typeInfo, 10 /* interfaceTable_ */))
+        val interfaceTableRecordPtrType = pointerType(runtime.interfaceTableRecordType)
+        val interfaceTableSize = load(llvm.int32Type, structGep(typeInfo, 9 /* interfaceTableSize_ */))
+        val interfaceTable = load(interfaceTableRecordPtrType, structGep(typeInfo, 10 /* interfaceTable_ */))
 
         fun fastPath(): LLVMValueRef {
             // The fastest optimistic version.
@@ -231,7 +232,7 @@ internal object VirtualTablesLookup {
             val takeResBB = basicBlock("take_res", startLocationInfo)
             condBr(icmpGe(interfaceTableSize, llvm.kImmInt32Zero), fastPathBB, slowPathBB)
             positionAtEnd(takeResBB)
-            val resultPhi = phi(pointerType(runtime.interfaceTableRecordType))
+            val resultPhi = phi(interfaceTableRecordPtrType)
             appendingTo(fastPathBB) {
                 val fastValue = fastPath()
                 br(takeResBB)
@@ -259,7 +260,7 @@ internal object VirtualTablesLookup {
             // Essentially: typeInfo.itable[place(interfaceId)].id == interfaceId
             val interfaceId = dstHierarchyInfo.interfaceId
             val interfaceTableRecord = getInterfaceTableRecord(objTypeInfo, interfaceId)
-            icmpEq(load(structGep(interfaceTableRecord, 0 /* id */)), llvm.int32(interfaceId))
+            icmpEq(load(llvm.int32Type, structGep(interfaceTableRecord, 0 /* id */)), llvm.int32(interfaceId))
         }
     }
 
@@ -277,23 +278,26 @@ internal object VirtualTablesLookup {
         val canCallViaVtable = !owner.isInterface
         val layoutBuilder = generationState.context.getLayoutBuilder(owner)
 
+        val functionPtrType = pointerType(codegen.getLlvmFunctionType(irFunction))
+        val functionPtrPtrType = pointerType(functionPtrType)
         val llvmMethod = when {
             canCallViaVtable -> {
                 val index = layoutBuilder.vtableIndex(irFunction)
                 val vtablePlace = gep(typeInfoPtr, llvm.int32(1)) // typeInfoPtr + 1
                 val vtable = bitcast(llvm.int8PtrPtrType, vtablePlace)
                 val slot = gep(vtable, llvm.int32(index))
-                load(slot)
+                load(functionPtrType, bitcast(functionPtrPtrType, slot))
             }
 
             else -> {
                 // Essentially: typeInfo.itable[place(interfaceId)].vtable[method]
                 val itablePlace = layoutBuilder.itablePlace(irFunction)
                 val interfaceTableRecord = getInterfaceTableRecord(typeInfoPtr, itablePlace.interfaceId)
-                load(gep(load(structGep(interfaceTableRecord, 2 /* vtable */)), llvm.int32(itablePlace.methodIndex)))
+                val vtable = load(llvm.int8PtrPtrType, structGep(interfaceTableRecord, 2 /* vtable */))
+                val slot = gep(vtable, llvm.int32(itablePlace.methodIndex))
+                load(functionPtrType, bitcast(functionPtrPtrType, slot))
             }
         }
-        val functionPtrType = pointerType(codegen.getLlvmFunctionType(irFunction))
         return LlvmCallable(
                 bitcast(functionPtrType, llvmMethod),
                 LlvmFunctionSignature(irFunction, this)
@@ -707,15 +711,18 @@ internal abstract class FunctionGenerationContext(
 
     fun param(index: Int): LLVMValueRef = function.param(index)
 
-    fun load(address: LLVMValueRef, name: String = "",
-             memoryOrder: LLVMAtomicOrdering? = null, alignment: Int? = null
-    ): LLVMValueRef {
-        val value = LLVMBuildLoad(builder, address, name)!!
+    private fun applyMemoryOrderAndAlignment(value: LLVMValueRef, memoryOrder: LLVMAtomicOrdering?, alignment: Int?): LLVMValueRef {
         memoryOrder?.let { LLVMSetOrdering(value, it) }
         alignment?.let { LLVMSetAlignment(value, it) }
         // Use loadSlot() API for that.
         assert(!isObjectRef(value))
         return value
+    }
+
+    fun load(type: LLVMTypeRef, address: LLVMValueRef, name: String = "",
+             memoryOrder: LLVMAtomicOrdering? = null, alignment: Int? = null
+    ): LLVMValueRef {
+        return applyMemoryOrderAndAlignment(LLVMBuildLoad2(builder, type, address, name)!!, memoryOrder, alignment)
     }
 
     fun loadSlot(address: LLVMValueRef, isVar: Boolean, resultSlot: LLVMValueRef? = null, name: String = "",
@@ -1274,13 +1281,14 @@ internal abstract class FunctionGenerationContext(
             LLVMAtomicOrdering.LLVMAtomicOrderingAcquire
         }
 
-        val typeInfoOrMetaWithFlags = load(typeInfoOrMetaPtr, memoryOrder = memoryOrder)
+        // TODO: Get rid of the bitcast here by supplying the type in the GEP above.
+        val typeInfoOrMetaPtrRaw = bitcast(pointerType(codegen.intPtrType), typeInfoOrMetaPtr)
+        val typeInfoOrMetaWithFlags = load(codegen.intPtrType, typeInfoOrMetaPtrRaw, memoryOrder = memoryOrder)
         // Clear two lower bits.
-        val typeInfoOrMetaWithFlagsRaw = ptrToInt(typeInfoOrMetaWithFlags, codegen.intPtrType)
-        val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlagsRaw, codegen.immTypeInfoMask)
+        val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlags, codegen.immTypeInfoMask)
         val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
         val typeInfoPtrPtr = structGep(typeInfoOrMeta, 0 /* typeInfo */)
-        return load(typeInfoPtrPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
+        return load(codegen.kTypeInfoPtr, typeInfoPtrPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -1330,9 +1338,9 @@ internal abstract class FunctionGenerationContext(
             }
 
             val classInfo = codegen.kotlinObjCClassInfo(irClass)
-            val classPointerGlobal = load(structGep(classInfo, KotlinObjCClassInfoGenerator.createdClassFieldIndex))
+            val classPointerGlobal = load(llvm.int8PtrPtrType, structGep(classInfo, KotlinObjCClassInfoGenerator.createdClassFieldIndex))
 
-            val storedClass = this.load(classPointerGlobal)
+            val storedClass = this.load(llvm.int8PtrType, classPointerGlobal)
 
             val storedClassIsNotNull = this.icmpNe(storedClass, llvm.kNullInt8Ptr)
 
@@ -1346,7 +1354,7 @@ internal abstract class FunctionGenerationContext(
         }
     }
 
-    private fun getObjCClass(binaryName: String) = load(codegen.objCDataGenerator!!.genClassRef(binaryName).llvm)
+    private fun getObjCClass(binaryName: String) = load(llvm.int8PtrType, codegen.objCDataGenerator!!.genClassRef(binaryName).llvm)
 
     fun getObjCClassFromNativeRuntime(binaryName: String): LLVMValueRef {
         generationState.dependenciesTracker.addNativeRuntime()
