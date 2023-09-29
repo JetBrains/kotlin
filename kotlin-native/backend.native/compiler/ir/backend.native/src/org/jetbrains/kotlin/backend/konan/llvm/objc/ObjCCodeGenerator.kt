@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm.objc
 
 import kotlinx.cinterop.signExtend
 import kotlinx.cinterop.toCValues
+import llvm.LLVMGetElementType
 import llvm.LLVMGetInlineAsm
 import llvm.LLVMInlineAsmDialect
 import llvm.LLVMValueRef
@@ -24,7 +25,7 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     fun FunctionGenerationContext.genGetLinkedClass(name: String): LLVMValueRef {
         val classRef = dataGenerator.genClassRef(name)
-        return load(classRef.llvm)
+        return load(llvm.int8PtrType, classRef.llvm)
     }
 
     private val objcMsgSend = llvm.externalNativeRuntimeFunction(
@@ -88,5 +89,6 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 internal fun FunctionGenerationContext.genObjCSelector(selector: String): LLVMValueRef {
     val selectorRef = codegen.objCDataGenerator!!.genSelectorRef(selector)
     // TODO: clang emits it with `invariant.load` metadata.
-    return load(selectorRef.llvm)
+    // TODO: Propagate the type here without using the typed pointer.
+    return load(LLVMGetElementType(selectorRef.llvmType)!!, selectorRef.llvm)
 }
