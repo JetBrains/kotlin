@@ -35,6 +35,8 @@ public:
 
     void PrepareForGC() noexcept;
 
+    void AssistGC() noexcept;
+
     FinalizerQueue ExtractFinalizerQueue() noexcept;
 
     static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;

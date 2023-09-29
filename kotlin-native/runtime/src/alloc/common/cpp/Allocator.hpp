@@ -33,6 +33,7 @@ public:
         void destroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
 
         void prepareForGC() noexcept;
+        void assistGC() noexcept;
 
         // TODO: Move into AllocatorTestSupport.hpp
         void clearForTests() noexcept;

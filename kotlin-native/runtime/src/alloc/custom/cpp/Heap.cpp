@@ -58,6 +58,28 @@ FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
     return finalizerQueue;
 }
 
+void Heap::AssistGC(FinalizerQueue& finalizerQueue) noexcept {
+    auto handle = gc::GCHandle::currentEpoch();
+    if (!handle.has_value()) return;
+    auto gcHandle = *handle;
+    ScopeGuard counterGuard(
+            [&]() { ++concurrentSweepersCount_; },
+            [&]() { --concurrentSweepersCount_; }
+    );
+    {
+        auto sweepHandle = gcHandle.sweep();
+        for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+            fixedBlockPages_[blockSize].Sweep(sweepHandle, finalizerQueue);
+        }
+        nextFitPages_.Sweep(sweepHandle, finalizerQueue);
+        singleObjectPages_.SweepAndFree(sweepHandle, finalizerQueue);
+    }
+    {
+        auto sweepHandle = gcHandle.sweepExtraObjects();
+        extraObjectPages_.Sweep(sweepHandle, finalizerQueue);
+    }
+}
+
 NextFitPage* Heap::GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("Heap::GetNextFitPage()");
     return nextFitPages_.GetPage(cellCount, finalizerQueue, concurrentSweepersCount_);

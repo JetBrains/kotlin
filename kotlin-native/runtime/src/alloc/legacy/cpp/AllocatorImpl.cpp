@@ -35,6 +35,8 @@ void alloc::Allocator::ThreadData::prepareForGC() noexcept {
     impl_->objectFactoryThreadQueue().Publish();
 }
 
+void alloc::Allocator::ThreadData::assistGC() noexcept {}
+
 void alloc::Allocator::ThreadData::clearForTests() noexcept {
     impl_->extraObjectDataFactoryThreadQueue().ClearForTests();
     impl_->objectFactoryThreadQueue().ClearForTests();

@@ -21,6 +21,7 @@ void gcScheduler::internal::MutatorAssists::ThreadData::safePoint() noexcept {
     {
         std::unique_lock guard(owner_.m_);
         RuntimeLogDebug({kTagGC}, "Thread is assisting for epoch %" PRId64, epoch);
+        thread_.allocator().assistGC();
         owner_.cv_.wait(guard, noNeedToWait);
         RuntimeLogDebug({kTagGC}, "Thread has assisted for epoch %" PRId64, epoch);
     }

@@ -103,6 +103,10 @@ void CustomAllocator::PrepareForGC() noexcept {
     extraObjectPage_ = nullptr;
 }
 
+void CustomAllocator::AssistGC() noexcept {
+    heap_.AssistGC(finalizerQueue_);
+}
+
 // static
 size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
     RuntimeAssert(object->heap(), "Object must be a heap object");
