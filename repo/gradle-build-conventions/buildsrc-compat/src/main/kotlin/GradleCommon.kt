@@ -632,7 +632,7 @@ fun Project.addBomCheckTask() {
             project(":gradle:kotlin-compiler-args-properties").path,
             project(":kotlin-gradle-build-metrics").path,
             project(":kotlin-gradle-statistics").path,
-            project(":fus-statistics-gradle-plugin").path
+            project(":gradle:fus-statistics-gradle-plugin").path
         )
         val projectPath = this@addBomCheckTask.path
 

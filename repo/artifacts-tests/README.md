@@ -6,9 +6,10 @@ To reproduce locally build all artifacts first:
 
 ```shell
 # clean local m2 from old artifacts to avoid unrelated failures
-find ~/.m2/repository/org/jetbrains/kotlin -name "*-1.9.255*" -delete
+# up-to-date version is in defaultSnapshotVersion property and should be used instead of "*-2.0.255*"
+find ~/.m2/repository/org/jetbrains/kotlin -name "*-2.0.255*" -delete
 
 ./gradlew install
 cd libraries
-mvn install -DskipTests
+./mvnw install -DskipTests
 ```
