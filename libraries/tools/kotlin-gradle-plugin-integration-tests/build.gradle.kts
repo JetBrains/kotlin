@@ -183,22 +183,6 @@ projectTest(
 }
 
 if (splitGradleIntegrationTestTasks) {
-    projectTest(
-        "testNative",
-        shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        includeNative(true)
-    }
-
-    projectTest(
-        "testAdvanceGradleVersionNative",
-        shortenTempRootName = shortenTempRootName,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        advanceGradleVersion()
-        includeNative(true)
-    }
 
     projectTest(
         "testMppAndAndroid",
@@ -320,8 +304,6 @@ tasks.named<Task>("check") {
     if (splitGradleIntegrationTestTasks) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
-        dependsOn("testNative")
-        dependsOn("testAdvanceGradleVersionNative")
     }
 }
 
