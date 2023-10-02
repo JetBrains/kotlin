@@ -85,6 +85,12 @@ public class ClassicJvmIrSourceRangesTestGenerated extends AbstractClassicJvmIrS
         runTest("compiler/testData/ir/sourceRanges/postfixIncrementDecrement.kt");
     }
 
+    @Test
+    @TestMetadata("this.kt")
+    public void testThis() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/this.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/ir/sourceRanges/declarations")
     @TestDataPath("$PROJECT_ROOT")
