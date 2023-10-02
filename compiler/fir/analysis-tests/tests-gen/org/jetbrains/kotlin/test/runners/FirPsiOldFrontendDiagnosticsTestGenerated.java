@@ -24043,6 +24043,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("AssignOperatorAmbiguityExtension.kt")
+            public void testAssignOperatorAmbiguityExtension() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignOperatorAmbiguityExtension.kt");
+            }
+
+            @Test
             @TestMetadata("AssignmentOperations.kt")
             public void testAssignmentOperations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/AssignmentOperations.kt");

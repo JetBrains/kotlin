@@ -1,0 +1,30 @@
+package
+
+private operator fun X?.plus(/*0*/ p: kotlin.Int): X
+private operator fun X?.plusAssign(/*0*/ p: kotlin.Int): kotlin.Unit
+
+public final class C {
+    public constructor C()
+    private final val map: HashMap<kotlin.String, X>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun f(): kotlin.Any?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class HashMap</*0*/ K, /*1*/ V> {
+    public constructor HashMap</*0*/ K, /*1*/ V>(/*0*/ defaultValue: V)
+    private final val defaultValue: V
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun get(/*0*/ key: K): V
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun set(/*0*/ key: K, /*1*/ value: V): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+private final class X {
+    public constructor X()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
