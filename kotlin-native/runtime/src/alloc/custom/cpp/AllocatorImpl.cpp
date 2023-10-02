@@ -52,6 +52,7 @@ void alloc::Allocator::clearForTests() noexcept {
 }
 
 size_t alloc::Allocator::estimateOverheadPerThread() noexcept {
+    if (compiler::disableAllocatorOverheadEstimate()) return 0;
     return impl_->heap().EstimateOverheadPerThread();
 }
 

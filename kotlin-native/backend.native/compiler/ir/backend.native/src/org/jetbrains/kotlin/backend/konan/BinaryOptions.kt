@@ -64,6 +64,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val objcDisposeOnMain by booleanOption()
 
     val disableMmap by booleanOption()
+
+    val disableAllocatorOverheadEstimate by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
