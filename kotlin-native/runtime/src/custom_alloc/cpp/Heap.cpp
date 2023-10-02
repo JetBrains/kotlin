@@ -123,6 +123,8 @@ std_support::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
 // estimate has two-sided error, and there are still pathological allocation
 // patterns that would lead to constant GC triggering.
 size_t Heap::EstimateOverheadPerThread() noexcept {
+    if (compiler::disableAllocatorOverheadEstimate()) return 0;
+
     size_t overHeadPerThread = 0;
     if (!nextFitPages_.isEmpty()) overHeadPerThread += NEXT_FIT_PAGE_SIZE;
     for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
