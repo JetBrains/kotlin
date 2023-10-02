@@ -583,26 +583,9 @@ configure([bundleRegular, bundlePrebuilt]) {
     }
 }
 
-tasks.register("tc-dist", (isWindows()) ? Zip : Tar) {
-    dependsOn('dist')
-    dependsOn('distSources')
-    def simpleOsName = HostManager.platformName()
-    archiveBaseName.set("kotlin-native-dist-$simpleOsName")
-    archiveVersion.set(kotlinVersion)
-    from(UtilsKt.getKotlinNativeDist(project)) {
-        include '**'
-        exclude 'dependencies'
-        into "${archiveBaseName.get()}-${archiveVersion.get()}"
-    }
-
-    destinationDirectory.set(file('.'))
-
-    if (isWindows()) {
-        zip64 true
-    } else {
-        archiveExtension.set('tar.gz')
-        compression = Compression.GZIP
-    }
+tasks.register("tc-dist") {
+    // Make it an alias for the TC builds
+    dependsOn('bundleRegular')
 }
 
 tasks.register("samples") {
