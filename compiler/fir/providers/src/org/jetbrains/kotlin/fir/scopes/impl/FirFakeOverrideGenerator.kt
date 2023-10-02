@@ -26,9 +26,11 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 
 object FirFakeOverrideGenerator {
     fun createSubstitutionOverrideFunction(
@@ -44,7 +46,7 @@ object FirFakeOverrideGenerator {
         newParameterTypes: List<ConeKotlinType?>? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
         isExpect: Boolean = baseFunction.isExpect,
-        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null
+        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
     ): FirNamedFunctionSymbol {
         createSubstitutionOverrideFunction(
             symbolForSubstitutionOverride, session, baseFunction, derivedClassLookupTag,
@@ -114,7 +116,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
-        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null
+        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
     ): FirSimpleFunction {
         checkStatusIsResolved(baseFunction)
 
@@ -151,7 +153,7 @@ object FirFakeOverrideGenerator {
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newTypeParameters: List<FirTypeParameterRef>?,
         isExpect: Boolean,
-        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?
+        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?,
     ): FirConstructor {
         checkStatusIsResolved(baseConstructor)
 
@@ -328,7 +330,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType? = null,
         newTypeParameters: List<FirTypeParameter>? = null,
         isExpect: Boolean = baseProperty.isExpect,
-        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null
+        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
     ): FirPropertySymbol {
         createCopyForFirProperty(
             symbolForSubstitutionOverride, baseProperty, derivedClassLookupTag, session, origin,
@@ -362,7 +364,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
-        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null
+        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
     ): FirProperty {
         checkStatusIsResolved(baseProperty)
 
@@ -513,7 +515,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
-        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null
+        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution? = null,
     ): FirField {
         return buildField {
             source = baseField.source
@@ -544,7 +546,7 @@ object FirFakeOverrideGenerator {
         newReceiverType: ConeKotlinType?,
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
-        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?
+        callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?,
     ): List<FirTypeParameter> {
         return when {
             baseProperty.typeParameters.isEmpty() -> {
@@ -584,7 +586,7 @@ object FirFakeOverrideGenerator {
         newReceiverType: ConeKotlinType?,
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
-        substitutor: ConeSubstitutor
+        substitutor: ConeSubstitutor,
     ): Triple<ConeKotlinType?, List<ConeKotlinType?>, Maybe<ConeKotlinType?>> {
         val copiedReceiverType = newReceiverType?.let {
             substitutor.substituteOrNull(it)
@@ -617,7 +619,7 @@ object FirFakeOverrideGenerator {
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         callableCopySubstitutionForTypeUpdater: CallableCopySubstitution?,
-        updateReceiver: Boolean = true
+        updateReceiver: Boolean = true,
     ) {
         annotations += baseVariable.annotations
 
@@ -688,7 +690,7 @@ object FirFakeOverrideGenerator {
         symbolForOverride: FirBasedSymbol<*>,
         substitutor: ConeSubstitutor,
         origin: FirDeclarationOrigin,
-        forceTypeParametersRecreation: Boolean = true
+        forceTypeParametersRecreation: Boolean = true,
     ): Pair<List<FirTypeParameterRef>, ConeSubstitutor> {
         if (member.typeParameters.isEmpty()) return Pair(member.typeParameters, substitutor)
         val newTypeParameters = member.typeParameters.map { typeParameterRef ->
@@ -749,10 +751,16 @@ object FirFakeOverrideGenerator {
     }
 
     private fun checkStatusIsResolved(member: FirCallableDeclaration) {
-        check(member.status is FirResolvedDeclarationStatus) {
-            "Status should be resolved for a declaration to create it fake override, " +
-                    "otherwise the status of the fake override will never be resolved." +
-                    "The status was unresolved for ${member::class.java.simpleName}"
+        checkWithAttachment(
+            member.status is FirResolvedDeclarationStatus,
+            message = {
+                "Status should be resolved for a declaration to create its fake override, " +
+                        "otherwise the status of the fake override will never be resolved." +
+                        "The status was unresolved for ${member::class.java.simpleName}"
+            }
+        ) {
+            withFirEntry("declaration", member)
+            withEntry("declarationStatus", member.status) { it.toString() }
         }
     }
 }
