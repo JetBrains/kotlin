@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE")
 package androidx.compose.compiler.plugins.kotlin.debug
 
 import androidx.compose.compiler.plugins.kotlin.AbstractCodegenTest
