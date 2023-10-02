@@ -329,8 +329,8 @@ class TryK2IT : KGPBaseTest() {
                     assertOutputContains(
                         """
                             |##### 'kotlin.experimental.tryK2' results #####
-                            |:lib:compileKotlinLinuxX64: 2.0 language version
                             |:lib:compileCommonMainKotlinMetadata: 2.0 language version
+                            |:lib:compileKotlinLinuxX64: 2.0 language version
                             |:lib:compileTestKotlinLinuxX64: 2.0 language version
                             |##### 100% (3/3) tasks have been compiled with Kotlin 2.0 #####
                         """.trimMargin().normalizeLineEndings()
