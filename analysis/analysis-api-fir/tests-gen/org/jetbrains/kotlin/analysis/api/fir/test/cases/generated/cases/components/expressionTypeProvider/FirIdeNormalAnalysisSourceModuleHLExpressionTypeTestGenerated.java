@@ -101,6 +101,12 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
     }
 
     @Test
+    @TestMetadata("incompleteGet.kt")
+    public void testIncompleteGet() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/incompleteGet.kt");
+    }
+
+    @Test
     @TestMetadata("insideStringTemplate.kt")
     public void testInsideStringTemplate() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/insideStringTemplate.kt");
