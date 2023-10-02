@@ -18,8 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import android.widget.TextView
 import androidx.compose.runtime.Composer
-import com.intellij.openapi.util.io.FileUtil
-import java.io.File
 import java.net.URLClassLoader
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Assert.assertEquals
@@ -1240,8 +1238,3 @@ class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     @Rule
     val classesDirectory = TemporaryFolder()
 }
-
-fun OutputFile.writeToDir(directory: File) =
-    FileUtil.writeToFile(File(directory, relativePath), asByteArray())
-
-fun Collection<OutputFile>.writeToDir(directory: File) = forEach { it.writeToDir(directory) }
