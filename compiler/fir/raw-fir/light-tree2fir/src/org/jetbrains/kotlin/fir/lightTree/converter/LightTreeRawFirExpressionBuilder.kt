@@ -1339,7 +1339,7 @@ class LightTreeRawFirExpressionBuilder(
                 with(components) {
                     val trueBranch = convertLoopBody(thenBlock)
                     branches += buildWhenBranch {
-                        source = thenBlock?.toFirSourceElement()
+                        source = firCondition?.source
                         condition = firCondition ?: buildErrorExpression(
                             null,
                             ConeSyntaxDiagnostic("If statement should have condition")

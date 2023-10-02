@@ -8,7 +8,7 @@
       @3:4..46 FIELD PROPERTY_BACKING_FIELD name:maybeThis type:<root>.Klass? visibility:private [final]
         @3:20..46 EXPRESSION_BODY
           @3:20..46 WHEN type=<root>.Klass? origin=IF
-            @3:32..36 BRANCH
+            @3:24..30 BRANCH
               @3:24..30 CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 @3:24..25 CONST Int type=kotlin.Int value=1
                 @3:29..30 CONST Int type=kotlin.Int value=1
