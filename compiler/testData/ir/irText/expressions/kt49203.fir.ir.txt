@@ -140,11 +140,11 @@ FILE fqName:<root> fileName:/kt49203.kt
   FUN name:test visibility:public modality:FINAL <> (b:<root>.B) returnType:kotlin.Unit
     VALUE_PARAMETER name:b index:0 type:<root>.B
     BLOCK_BODY
-      CALL 'public final fun plusAssign (data: kotlin.String): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign (data: kotlin.String): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=PLUSEQ
         $this: CALL 'public final fun <get-x> (): <root>.X declared in <root>.B' type=<root>.X origin=GET_PROPERTY
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         data: CONST String type=kotlin.String value="x"
-      CALL 'public final fun plusAssign (data: kotlin.String): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign (data: kotlin.String): kotlin.Unit declared in <root>.X' type=kotlin.Unit origin=PLUSEQ
         $this: CALL 'public final fun <get-y> (): <root>.X declared in <root>.B' type=<root>.X origin=GET_PROPERTY
           $this: GET_VAR 'b: <root>.B declared in <root>.test' type=<root>.B origin=null
         data: CONST String type=kotlin.String value="y"

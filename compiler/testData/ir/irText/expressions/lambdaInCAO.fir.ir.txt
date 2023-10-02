@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      CALL 'public final fun plusAssign (lambda: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign (lambda: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         $receiver: GET_VAR 'a: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
         lambda: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit

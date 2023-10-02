@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -494,6 +495,15 @@ internal fun FirReference.statementOrigin(): IrStatementOrigin? = when (this) {
 
             source?.kind is KtFakeSourceElementKind.DesugaredComponentFunctionCall ->
                 IrStatementOrigin.COMPONENT_N.withIndex(name.asString().removePrefix(DATA_CLASS_COMPONENT_PREFIX).toInt())
+
+            source?.kind is KtFakeSourceElementKind.DesugaredCompoundAssignment -> when (name) {
+                OperatorNameConventions.PLUS_ASSIGN -> IrStatementOrigin.PLUSEQ
+                OperatorNameConventions.MINUS_ASSIGN -> IrStatementOrigin.MINUSEQ
+                OperatorNameConventions.TIMES_ASSIGN -> IrStatementOrigin.MULTEQ
+                OperatorNameConventions.DIV_ASSIGN -> IrStatementOrigin.DIVEQ
+                OperatorNameConventions.MOD_ASSIGN, OperatorNameConventions.REM_ASSIGN -> IrStatementOrigin.PERCEQ
+                else -> null
+            }
 
             else ->
                 null

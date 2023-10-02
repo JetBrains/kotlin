@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
     FUN name:test1 visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host
       BLOCK_BODY
-        CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+        CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=PLUSEQ
           $this: GET_VAR '<this>: <root>.Host declared in <root>.Host.test1' type=<root>.Host origin=null
           x: CONST Int type=kotlin.Int value=1
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -35,18 +35,18 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
   FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.Host) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Host
     BLOCK_BODY
-      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=PLUSEQ
         $this: GET_VAR '<this>: <root>.Host declared in <root>.test2' type=<root>.Host origin=null
         x: CONST Int type=kotlin.Int value=1
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=PLUSEQ
         $this: CALL 'public final fun foo (): <root>.Host declared in <root>' type=<root>.Host origin=null
         x: CONST Int type=kotlin.Int value=1
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<<root>.Host>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<<root>.Host>
     BLOCK_BODY
-      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=PLUSEQ
         $this: CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=<root>.Host origin=INVOKE
           $this: GET_VAR 'a: kotlin.Function0<<root>.Host> declared in <root>.test4' type=kotlin.Function0<<root>.Host> origin=VARIABLE_AS_FUNCTION
         x: CONST Int type=kotlin.Int value=1

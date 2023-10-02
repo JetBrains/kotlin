@@ -247,7 +247,7 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Host
     VALUE_PARAMETER name:v index:0 type:<root>.B
     BLOCK_BODY
-      CALL 'public final fun plusAssign (b: <root>.B): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=null
+      CALL 'public final fun plusAssign (b: <root>.B): kotlin.Unit declared in <root>.Host' type=kotlin.Unit origin=PLUSEQ
         $this: GET_VAR '<this>: <root>.Host declared in <root>.test3' type=<root>.Host origin=null
         $receiver: GET_VAR 'v: <root>.B declared in <root>.test3' type=<root>.B origin=null
         b: CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.Int) declared in <root>.B' type=<root>.B origin=null

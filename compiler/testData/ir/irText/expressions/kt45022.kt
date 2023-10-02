@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // SKIP_KT_DUMP
 
 typealias AX = X

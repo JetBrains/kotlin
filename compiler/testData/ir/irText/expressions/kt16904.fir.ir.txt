@@ -77,7 +77,7 @@ FILE fqName:<root> fileName:/kt16904.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[<root>.A]'
-        CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=null
+        CALL 'public final fun plusAssign (x: kotlin.Int): kotlin.Unit declared in <root>.B' type=kotlin.Unit origin=PLUSEQ
           $this: CALL 'public final fun <get-x> (): <root>.B declared in <root>.Test1' type=<root>.B origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1' type=<root>.Test1 origin=null
           x: CONST Int type=kotlin.Int value=42
