@@ -1525,6 +1525,63 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         )
     }
 
+    @Test
+    fun testTransformCombinedClassWithUnstableParametrizedClass() {
+        verifyCrossModuleComposeIrTransform(
+            dependencySource = """
+                class SomeFoo(val value: Int)
+                class ParametrizedFoo<K>(var value: K)
+            """,
+            source = """
+                class CombinedUnstable<T>(val first: T, val second: ParametrizedFoo<SomeFoo>)
+            """,
+            expectedTransformed = """
+                @StabilityInferred(parameters = 1)
+                class CombinedUnstable<T> (val first: T, val second: ParametrizedFoo<SomeFoo>) {
+                  static val %stable: Int = ParametrizedFoo.%stable or 0
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testTransformCombinedClassWithRuntimeStableParametrizedClass() {
+        verifyCrossModuleComposeIrTransform(
+            dependencySource = """
+            class SomeFoo(val value: Int)
+            class ParametrizedFoo<K>(val value: K)
+        """,
+            source = """
+            class CombinedStable<T>(val first: T, val second: ParametrizedFoo<SomeFoo>)
+        """,
+            expectedTransformed = """
+            @StabilityInferred(parameters = 1)
+            class CombinedStable<T> (val first: T, val second: ParametrizedFoo<SomeFoo>) {
+              static val %stable: Int = SomeFoo.%stable or ParametrizedFoo.%stable or 0
+            }
+        """
+        )
+    }
+
+    @Test
+    fun testTransformCombinedClassWithMultiplyTypeParameters() {
+        verifyCrossModuleComposeIrTransform(
+            dependencySource = """
+            class SomeFoo(val value: Int)
+            class ParametrizedFoo<K>(val value: K)
+        """,
+            source = """
+            class CombinedStable<T, K>(val first: T, val second: ParametrizedFoo<K>)
+        """,
+            expectedTransformed = """
+            @StabilityInferred(parameters = 3)
+            class CombinedStable<T, K> (val first: T, val second: ParametrizedFoo<K>) {
+              static val %stable: Int = 0 or ParametrizedFoo.%stable or 0
+            }
+        """
+        )
+    }
+
     private fun assertStability(
         externalSrc: String,
         localSrc: String,

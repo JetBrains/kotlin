@@ -180,7 +180,7 @@ fun Stability.normalize(): Stability {
             }
 
             is Stability.Parameter -> {
-                if (parameters.contains(stability.parameter.symbol)) {
+                if (stability.parameter.symbol !in parameters) {
                     parameters.add(stability.parameter.symbol)
                     parts.add(stability)
                 }
