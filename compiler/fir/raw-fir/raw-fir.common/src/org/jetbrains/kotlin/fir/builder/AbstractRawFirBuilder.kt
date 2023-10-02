@@ -11,12 +11,14 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -972,6 +974,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                     source,
                     currentDispatchReceiverType(),
                     zippedParameters,
+                    createResolvedStatus = false,
                     createClassTypeRefWithSourceKind,
                     createParameterTypeRefWithSourceKind,
                     { src, kind -> src?.toFirSourceElement(kind) },
@@ -1110,6 +1113,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     sourceElement: TSource,
     dispatchReceiver: ConeClassLikeType?,
     zippedParameters: List<Pair<TParameter, FirProperty>>,
+    createResolvedStatus: Boolean,
     createClassTypeRefWithSourceKind: (KtFakeSourceElementKind) -> FirTypeRef,
     createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
     toFirSource: (TBase?, KtFakeSourceElementKind) -> KtSourceElement?,
@@ -1146,10 +1150,14 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         origin = FirDeclarationOrigin.Synthetic.DataClassMember
         returnTypeRef = classTypeRef
         name = StandardNames.DATA_CLASS_COPY
-        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
         symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
         dispatchReceiverType = dispatchReceiver
         resolvePhase = this@createDataClassCopyFunction.resolvePhase
+        status = if (createResolvedStatus) {
+            FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL, EffectiveVisibility.Public)
+        } else {
+            FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+        }
         for ((ktParameter, firProperty) in zippedParameters) {
             val propertyName = firProperty.name
             val parameterSource = toFirSource(ktParameter, KtFakeSourceElementKind.DataClassGeneratedMembers)

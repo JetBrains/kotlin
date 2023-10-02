@@ -1,0 +1,20 @@
+KtTypeScope:
+fun component1(): kotlin.Int
+fun component2(): kotlin.Int
+fun copy(first: kotlin.Int, second: kotlin.Int): kotlin.Pair<kotlin.Int, kotlin.Int>
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+val first: kotlin.Int
+val second: kotlin.Int
+
+
+Declaration Scope:
+fun component1(): A
+fun component2(): B
+fun copy(first: A, second: B): kotlin.Pair<A, B>
+fun equals(other: kotlin.Any?): kotlin.Boolean
+fun hashCode(): kotlin.Int
+fun toString(): kotlin.String
+val first: A
+val second: B

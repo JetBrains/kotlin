@@ -77,6 +77,12 @@ public class FirIdeDependentAnalysisSourceModuleTypeScopeTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("substitutedTypeFromLib.kt")
+    public void testSubstitutedTypeFromLib() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/substitutedTypeFromLib.kt");
+    }
+
+    @Test
     @TestMetadata("typeParamList.kt")
     public void testTypeParamList() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/typeScope/typeParamList.kt");

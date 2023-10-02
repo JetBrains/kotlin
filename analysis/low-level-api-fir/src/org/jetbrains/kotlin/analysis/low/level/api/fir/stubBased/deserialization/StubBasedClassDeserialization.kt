@@ -226,13 +226,14 @@ internal fun deserializeClassToSymbol(
                     classOrObject,
                     context.dispatchReceiver,
                     zippedParameters,
+                    createResolvedStatus = true,
                     createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
                     createParameterTypeRefWithSourceKind = { property, newKind ->
                         property.returnTypeRef.copyWithNewSourceKind(newKind)
                     },
                     toFirSource = { src, kind -> KtFakeSourceElement(src as PsiElement, kind) },
                     addValueParameterAnnotations = { annotations += context.annotationDeserializer.loadAnnotations(it) },
-                    isVararg = { it.isVarArg }
+                    isVararg = { it.isVarArg },
                 )
             )
         }

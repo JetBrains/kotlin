@@ -1,0 +1,441 @@
+expression: el
+KtType: kotlin.Pair<kotlin.Int, kotlin.Int>
+
+KtTypeScope:
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/Pair.component1(<dispatch receiver>: kotlin.Pair<A, B>): A
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/Pair.component1
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/Pair.component2(<dispatch receiver>: kotlin.Pair<A, B>): B
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/Pair.component2
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Pair<kotlin.Int, kotlin.Int>
+  symbol = kotlin/Pair.copy(<dispatch receiver>: kotlin.Pair<A, B>, first: A, second: B): kotlin.Pair<A, B>
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = first
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = first: A
+      callableIdIfNonLocal = null,
+    KtVariableLikeSignature:
+      name = second
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = second: B
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/Pair.copy
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Boolean
+  symbol = kotlin/Pair.equals(<dispatch receiver>: kotlin.Pair<A, B>, other: kotlin.Any?): kotlin.Boolean
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = other
+      receiverType = null
+      returnType = kotlin.Any?
+      symbol = other: kotlin.Any?
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/Pair.equals
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/Pair.hashCode(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.Int
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/Pair.hashCode
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.String
+  symbol = kotlin/Pair.toString(<dispatch receiver>: kotlin.Pair<A, B>): kotlin.String
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/Pair.toString
+KtVariableLikeSignature:
+  name = first
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = val first: A
+  callableIdIfNonLocal = kotlin/Pair.first
+KtVariableLikeSignature:
+  name = second
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = val second: B
+  callableIdIfNonLocal = kotlin/Pair.second
+
+
+Declaration Scope:
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Pair.component1
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: component1
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtTypeParameterType:
+    annotationsList: []
+    type: A
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Pair.component2
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: component2
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtTypeParameterType:
+    annotationsList: []
+    type: B
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Pair.copy
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: copy
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: A
+      KtTypeParameterType:
+        annotationsList: []
+        type: B
+    ]
+    type: kotlin/Pair<A, B>
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: true
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: first
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: A
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: true
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: second
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: B
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Pair.equals
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: other
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Any?
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Pair.hashCode
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Pair.toString
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/String
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtKotlinPropertySymbol:
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(kotlin/Pair.first)
+    receiverParameter: null
+    returnType: KtTypeParameterType:
+      annotationsList: []
+      type: A
+    symbolKind: LOCAL
+    typeParameters: []
+  callableIdIfNonLocal: kotlin/Pair.first
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtTypeParameterType:
+      annotationsList: []
+      type: A
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: first
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtTypeParameterType:
+    annotationsList: []
+    type: A
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+KtKotlinPropertySymbol:
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(kotlin/Pair.second)
+    receiverParameter: null
+    returnType: KtTypeParameterType:
+      annotationsList: []
+      type: B
+    symbolKind: LOCAL
+    typeParameters: []
+  callableIdIfNonLocal: kotlin/Pair.second
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: FINAL
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtTypeParameterType:
+      annotationsList: []
+      type: B
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+  hasBackingField: true
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: second
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtTypeParameterType:
+    annotationsList: []
+    type: B
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+
