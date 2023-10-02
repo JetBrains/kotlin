@@ -76,7 +76,9 @@ val irrelevantFolders = listOf(
 )
 
 @Serializable
-class TestsCollection {
+class TestsCollection(
+    val commitHash: String,
+) {
     val alongsideIdenticalTests = mutableListOf<String>()
     val alongsideNonIdenticalTests = mutableListOf<String>()
     val categories = mutableMapOf<String, MutableList<String>>()
@@ -93,7 +95,7 @@ val File.analogousK2File: File
 val File.hasAnalogousK2File get() = analogousK2File.isFile
 
 fun collectTestsStats(projectDirectory: File): TestsCollection {
-    val tests = TestsCollection()
+    val tests = TestsCollection(currentCommitHash)
 
     projectDirectory.forEachChildRecursively(
         shouldIgnoreDirectory = { file ->

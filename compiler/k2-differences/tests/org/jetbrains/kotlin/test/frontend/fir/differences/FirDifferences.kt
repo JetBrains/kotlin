@@ -1223,7 +1223,7 @@ fun printDiagnosticsGroupsStatistics() {
 }
 
 fun main() {
-    val tests = deserializeOrGenerate(build.child("testsStats.json")) {
+    val tests = deserializeIfSameHashOrGenerate(build.child("testsStats.json")) {
         collectTestsStats(projectDirectory)
     }
 

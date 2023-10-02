@@ -39,6 +39,15 @@ inline fun <reified T> deserializeOrGenerate(file: File, block: () -> T): T {
     }
 }
 
+inline fun deserializeIfSameHashOrGenerate(file: File, block: () -> TestsCollection): TestsCollection {
+    val existing = deserializeOrGenerate(file, block)
+
+    return when {
+        existing.commitHash != currentCommitHash -> block()
+        else -> existing
+    }
+}
+
 fun File.child(name: String) = File(path + File.separator + name)
 
 fun File.forEachChildRecursively(
@@ -78,4 +87,8 @@ fun diagnosticsWithinRequest(url: String): Set<String> {
         .findAll(response)
         .map { it.groupValues.last() }
         .toSet()
+}
+
+val currentCommitHash by lazy {
+    Runtime.getRuntime().exec("git rev-parse HEAD").inputStream.reader().readText().trim()
 }

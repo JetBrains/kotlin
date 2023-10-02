@@ -60,4 +60,8 @@ kotlin {
     // Otherwise sometimes there will be:
     // `Internal Server Error: Please provide a valid jdkVersion`
     jvmToolchain(17)
+
+    javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
