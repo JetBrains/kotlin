@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface T {
     val x: Int
         <!CONFLICTING_JVM_DECLARATIONS!>get() = 1<!>

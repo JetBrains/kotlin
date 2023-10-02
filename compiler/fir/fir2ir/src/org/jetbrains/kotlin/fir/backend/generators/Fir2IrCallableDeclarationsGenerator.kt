@@ -359,35 +359,39 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                         if (irParent != null) {
                             backingField?.parent = irParent
                         }
-                        this.getter = createIrPropertyAccessor(
-                            getter, property, this, type, irParent, false,
-                            when {
-                                origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                                origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
-                                delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                                origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
-                                origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
-                                getter == null || getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                                else -> origin
-                            },
-                            startOffset, endOffset,
-                            dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
-                            property.unwrapFakeOverrides().getter,
-                        )
-                        if (property.isVar) {
-                            this.setter = createIrPropertyAccessor(
-                                setter, property, this, type, irParent, true,
+                        this.getter = getter.convertWithOffsets(startOffset, endOffset) { startOffset, endOffset ->
+                            createIrPropertyAccessor(
+                                getter, property, this, type, irParent, false,
                                 when {
+                                    origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
+                                    origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> origin
                                     delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
                                     origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
                                     origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
-                                    setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                                    getter == null || getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                                     else -> origin
                                 },
                                 startOffset, endOffset,
                                 dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
-                                property.unwrapFakeOverrides().setter,
+                                property.unwrapFakeOverrides().getter,
                             )
+                        }
+                        if (property.isVar) {
+                            this.setter = setter.convertWithOffsets(startOffset, endOffset) { startOffset, endOffset ->
+                                createIrPropertyAccessor(
+                                    setter, property, this, type, irParent, true,
+                                    when {
+                                        delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                                        origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                                        origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
+                                        setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                                        else -> origin
+                                    },
+                                    startOffset, endOffset,
+                                    dontUseSignature = signature == null, fakeOverrideOwnerLookupTag,
+                                    property.unwrapFakeOverrides().setter,
+                                )
+                            }
                         }
                     }
                 }

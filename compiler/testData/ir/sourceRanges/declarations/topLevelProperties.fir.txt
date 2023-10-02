@@ -36,22 +36,22 @@
         @18:0..19:14 RETURN type=kotlin.Nothing from='private final fun <get-test3> (): kotlin.Int declared in test'
           @18:0..19:14 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   @22:0..20 PROPERTY name:test4 visibility:public modality:FINAL [val]
-    @22:0..20 FUN name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    @22:10..20 FUN name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.Int
       @22:18..20 BLOCK_BODY
         @22:20..20 RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in test'
           @22:18..20 CONST Int type=kotlin.Int value=42
   @25:0..26:14 PROPERTY name:test5 visibility:public modality:FINAL [val]
-    @25:0..26:14 FUN name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    @26:4..14 FUN name:<get-test5> visibility:public modality:FINAL <> () returnType:kotlin.Int
       @26:12..14 BLOCK_BODY
         @26:14..14 RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in test'
           @26:12..14 CONST Int type=kotlin.Int value=42
   @29:0..33:14 PROPERTY name:test6 visibility:public modality:FINAL [val]
-    @29:0..33:14 FUN name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    @33:4..14 FUN name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.Int
       @33:12..14 BLOCK_BODY
         @33:14..14 RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Int declared in test'
           @33:12..14 CONST Int type=kotlin.Int value=42
   @36:0..40:14 PROPERTY name:test7 visibility:public modality:FINAL [val]
-    @36:0..40:14 FUN name:<get-test7> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    @37:4..40:14 FUN name:<get-test7> visibility:public modality:FINAL <> () returnType:kotlin.Int
       annotations:
         @37:4..39:5 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
           @38:8..25 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String
@@ -80,11 +80,11 @@
       @46:0..27 BLOCK_BODY
         @46:0..27 RETURN type=kotlin.Nothing from='public final fun <get-test9> (): kotlin.Int declared in test'
           @46:0..27 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
-    @46:0..27 FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test9> visibility:private modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
-      @46:0..27 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
-      @46:0..27 BLOCK_BODY
-        @46:0..27 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
-          @46:0..27 GET_VAR '<set-?>: kotlin.Int declared in test.<set-test9>' type=kotlin.Int origin=null
+    @46:16..27 FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test9> visibility:private modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
+      @46:16..27 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      @46:16..27 BLOCK_BODY
+        @46:16..27 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          @46:16..27 GET_VAR '<set-?>: kotlin.Int declared in test.<set-test9>' type=kotlin.Int origin=null
   @49:0..50:15 PROPERTY name:test10 visibility:public modality:FINAL [var]
     @49:0..50:15 FIELD PROPERTY_BACKING_FIELD name:test10 type:kotlin.Int visibility:private [static]
       @49:13..15 EXPRESSION_BODY
@@ -93,11 +93,11 @@
       @49:0..50:15 BLOCK_BODY
         @49:0..50:15 RETURN type=kotlin.Nothing from='public final fun <get-test10> (): kotlin.Int declared in test'
           @49:0..50:15 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test10 type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
-    @49:0..50:15 FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test10> visibility:private modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
-      @49:0..50:15 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
-      @49:0..50:15 BLOCK_BODY
-        @49:0..50:15 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test10 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
-          @49:0..50:15 GET_VAR '<set-?>: kotlin.Int declared in test.<set-test10>' type=kotlin.Int origin=null
+    @50:4..15 FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test10> visibility:private modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
+      @50:4..15 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      @50:4..15 BLOCK_BODY
+        @50:4..15 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test10 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          @50:4..15 GET_VAR '<set-?>: kotlin.Int declared in test.<set-test10>' type=kotlin.Int origin=null
   @53:0..54:32 PROPERTY name:test11 visibility:public modality:FINAL [var]
     @53:0..54:32 FIELD PROPERTY_BACKING_FIELD name:test11 type:kotlin.Int visibility:private [static]
       @53:13..15 EXPRESSION_BODY
@@ -106,7 +106,7 @@
       @53:0..54:32 BLOCK_BODY
         @53:0..54:32 RETURN type=kotlin.Nothing from='public final fun <get-test11> (): kotlin.Int declared in test'
           @53:0..54:32 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test11 type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
-    @53:0..54:32 FUN name:<set-test11> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
+    @54:4..32 FUN name:<set-test11> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       @54:8..13 VALUE_PARAMETER name:value index:0 type:kotlin.Int
       @54:15..32 BLOCK_BODY
         @54:17..30 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test11 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=EQ
@@ -119,7 +119,7 @@
       @57:0..61:32 BLOCK_BODY
         @57:0..61:32 RETURN type=kotlin.Nothing from='public final fun <get-test12> (): kotlin.Int declared in test'
           @57:0..61:32 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test12 type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
-    @57:0..61:32 FUN name:<set-test12> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
+    @61:4..32 FUN name:<set-test12> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       @61:8..13 VALUE_PARAMETER name:value index:0 type:kotlin.Int
       @61:15..32 BLOCK_BODY
         @61:17..30 SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test12 type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=EQ
@@ -132,7 +132,7 @@
       @64:0..68:32 BLOCK_BODY
         @64:0..68:32 RETURN type=kotlin.Nothing from='public final fun <get-test13> (): kotlin.Int declared in test'
           @64:0..68:32 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test13 type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
-    @64:0..68:32 FUN name:<set-test13> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
+    @65:4..68:32 FUN name:<set-test13> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
       annotations:
         @65:4..67:5 CONSTRUCTOR_CALL 'public constructor <init> (vararg names: kotlin.String) [primary] declared in kotlin.Suppress' type=kotlin.Suppress origin=null
           @66:8..25 VARARG type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String

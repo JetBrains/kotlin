@@ -19,7 +19,7 @@
         @3:0..28 RETURN type=kotlin.Nothing from='public final fun <get-bangBangExpr> (): kotlin.Int declared in <root>'
           @3:0..28 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bangBangExpr type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   @5:0..6:13 PROPERTY name:x visibility:public modality:FINAL [val]
-    @5:0..6:13 FUN name:<get-x> visibility:public modality:FINAL <> () returnType:kotlin.Int
+    @6:4..13 FUN name:<get-x> visibility:public modality:FINAL <> () returnType:kotlin.Int
       @6:12..13 BLOCK_BODY
         @6:13..13 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>'
           @6:12..13 CONST Int type=kotlin.Int value=5

@@ -75,6 +75,12 @@ internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffse
     return source.convertWithOffsets(f)
 }
 
+internal inline fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
+    defaultStartOffset: Int, defaultEndOffset: Int, f: (startOffset: Int, endOffset: Int) -> T
+): T {
+    return if (this == null) return f(defaultStartOffset, defaultEndOffset) else source.convertWithOffsets(f)
+}
+
 internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     val startOffset: Int
     val endOffset: Int
