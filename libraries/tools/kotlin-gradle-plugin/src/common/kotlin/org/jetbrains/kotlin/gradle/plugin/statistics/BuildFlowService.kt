@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -38,7 +39,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
     }
 
     interface Parameters : BuildServiceParameters {
-        val configurationMetrics: Property<MetricContainer>
+        val configurationMetrics: ListProperty<MetricContainer>
         val fusStatisticsAvailable: Property<Boolean>
     }
 
@@ -58,9 +59,15 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
             project: Project,
         ): Provider<BuildFlowService> {
 
+            val isProjectIsolationEnabled = project.isProjectIsolationEnabled
+
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
-                return it.service as Provider<BuildFlowService>
+                return (it.service as Provider<BuildFlowService>).also {
+                    it.get().parameters.configurationMetrics.add(project.provider {
+                        KotlinBuildStatsService.getInstance()?.collectStartMetrics(project, isProjectIsolationEnabled)
+                    })
+                }
             }
 
             val fusStatisticsAvailable = fusStatisticsAvailable(project)
@@ -69,7 +76,6 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
             // so there is a change that no VariantImplementationFactory will be found
-            val isProjectIsolationEnabled = project.isProjectIsolationEnabled
             return project.gradle.sharedServices.registerIfAbsent(serviceName, BuildFlowService::class.java) { spec ->
                 if (fusStatisticsAvailable) {
                     KotlinBuildStatsService.applyIfInitialised {
@@ -77,7 +83,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                     }
                 }
 
-                spec.parameters.configurationMetrics.set(project.provider {
+                spec.parameters.configurationMetrics.add(project.provider {
                     KotlinBuildStatsService.getInstance()?.collectStartMetrics(project, isProjectIsolationEnabled)
                 })
                 spec.parameters.fusStatisticsAvailable.set(fusStatisticsAvailable)
@@ -113,7 +119,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
 
     internal fun recordBuildFinished(action: String?, buildFailed: Boolean) {
         KotlinBuildStatsService.applyIfInitialised {
-            it.recordBuildFinish(action, buildFailed, parameters.configurationMetrics.orElse(MetricContainer()).get())
+            it.recordBuildFinish(action, buildFailed, parameters.configurationMetrics.orElse(emptyList()).get())
         }
     }
 }

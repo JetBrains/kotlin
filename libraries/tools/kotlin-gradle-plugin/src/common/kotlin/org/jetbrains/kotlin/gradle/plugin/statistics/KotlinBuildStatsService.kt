@@ -190,7 +190,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
     /**
      * Collects metrics at the end of a build
      */
-    open fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {}
+    open fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: List<MetricContainer>) {}
 
     /**
      * Collect project general and configuration metrics at the start of a build
@@ -307,7 +307,7 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
 
     //only one jmx bean service should report global metrics
-    override fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
+    override fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: List<MetricContainer>) {
         KotlinBuildStatHandler().reportGlobalMetrics(sessionLogger)
         KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
     }

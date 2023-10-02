@@ -16,25 +16,9 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.util.*
 
-class MetricsContainer(private val forceValuesValidation: Boolean = false) : IStatisticsValuesConsumer {
-    data class MetricDescriptor(val name: String, val projectHash: String?) : Comparable<MetricDescriptor> {
-        override fun compareTo(other: MetricDescriptor): Int {
-            val compareNames = name.compareTo(other.name)
-            return when {
-                compareNames != 0 -> compareNames
-                projectHash == other.projectHash -> 0
-                else -> (projectHash ?: "").compareTo(other.projectHash ?: "")
-            }
-        }
-    }
+class MetricsContainer(private val forceValuesValidation: Boolean = false) : NonSynchronizedMetricsContainer() {
 
     private val metricsLock = Object()
-
-    private val numericalMetrics = TreeMap<MetricDescriptor, IMetricContainer<Long>>()
-
-    private val booleanMetrics = TreeMap<MetricDescriptor, IMetricContainer<Boolean>>()
-
-    private val stringMetrics = TreeMap<MetricDescriptor, IMetricContainer<String>>()
 
     companion object {
         private const val BUILD_SESSION_SEPARATOR = "BUILD FINISHED"
@@ -107,40 +91,27 @@ class MetricsContainer(private val forceValuesValidation: Boolean = false) : ISt
         if (subprojectName == null) null else processProjectName(subprojectName, perProject)
 
     override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?): Boolean {
-        val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
-            val metricContainer = booleanMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
-                .also { booleanMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-            metricContainer.addValue(metric.anonymization.anonymize(value), weight)
+            return super.report(metric, value, subprojectName, weight)
         }
-        return true
     }
 
     override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?, weight: Long?): Boolean {
-        val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
-            val metricContainer = numericalMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
-                .also { numericalMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-            metricContainer.addValue(metric.anonymization.anonymize(value), weight)
+            return super.report(metric, value, subprojectName, weight)
         }
-        return true
     }
 
     override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?): Boolean {
-        val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
-            val metricContainer = stringMetrics[MetricDescriptor(metric.name, projectHash)] ?: metric.type.newMetricContainer()
-                .also { stringMetrics[MetricDescriptor(metric.name, projectHash)] = it }
-
             val anonymizedValue = metric.anonymization.anonymize(value)
             if (forceValuesValidation && !metric.anonymization.anonymizeOnIdeSize()) {
                 if (anonymizedValue.contains(UNEXPECTED_VALUE) || !anonymizedValue.matches(Regex(metric.anonymization.validationRegexp()))) {
                     throw MetricValueValidationFailed("Metric ${metric.name} has value [${value}], after anonymization [${anonymizedValue}]. Validation regex: ${metric.anonymization.validationRegexp()}.")
                 }
             }
-            metricContainer.addValue(anonymizedValue, weight)
+           return super.report(metric, value, subprojectName, weight)
         }
-        return true
     }
 
     fun flush(trackingFile: IRecordLogger?) {
