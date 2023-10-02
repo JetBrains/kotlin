@@ -6,7 +6,7 @@ import java.util.*
 class PropertiesProvider(val project: Project) {
     private val localProperties by lazy {
         Properties().apply {
-            project.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
+            project.rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
                 load(it)
             }
         }
