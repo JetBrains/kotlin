@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -118,6 +119,7 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside() {
     useAfterAnalysisCheckers(
         ::FirIdenticalChecker,
         ::FirFailingTestSuppressor,
+        ::FirTestDataConsistencyHandler,
     )
     useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
 }
