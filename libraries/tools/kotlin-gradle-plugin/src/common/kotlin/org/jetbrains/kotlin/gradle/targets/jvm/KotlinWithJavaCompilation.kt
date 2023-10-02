@@ -29,11 +29,11 @@ open class KotlinWithJavaCompilation<KotlinOptionsType : KotlinCommonOptions, CO
     override val compilerOptions: HasCompilerOptions<CO> =
         compilation.compilerOptions as HasCompilerOptions<CO>
 
-    fun compilerOptions(configure: CO.() -> Unit) {
+    internal fun compilerOptions(configure: CO.() -> Unit) {
         compilerOptions.configure(configure)
     }
 
-    fun compilerOptions(configure: Action<CO>) {
+    internal fun compilerOptions(configure: Action<CO>) {
         configure.execute(compilerOptions.options)
     }
 

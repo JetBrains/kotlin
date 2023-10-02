@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 abstract class KotlinMetadataTarget @Inject constructor(
-    project: Project
+    project: Project,
 ) : KotlinOnlyTarget<KotlinCompilation<*>>(project, KotlinPlatformType.common) {
 
     override val artifactsTaskName: String
@@ -38,17 +38,18 @@ abstract class KotlinMetadataTarget @Inject constructor(
         emptySet()
     }
 
+    @Suppress("RedundantVisibilityModifier")
     @ExperimentalKotlinGradlePluginApi
-    override val compilerOptions: KotlinCommonCompilerOptions = project.objects
+    internal override val compilerOptions: KotlinCommonCompilerOptions = project.objects
         .newInstance<KotlinCommonCompilerOptionsDefault>()
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 }

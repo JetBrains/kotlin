@@ -28,7 +28,7 @@ internal class ExternalKotlinTargetImpl internal constructor(
     override val targetName: String,
     override val platformType: KotlinPlatformType,
     override val publishable: Boolean,
-    override val compilerOptions: KotlinCommonCompilerOptions,
+    val compilerOptions: KotlinCommonCompilerOptions,
     val apiElementsConfiguration: Configuration,
     val runtimeElementsConfiguration: Configuration,
     val sourcesElementsConfiguration: Configuration,

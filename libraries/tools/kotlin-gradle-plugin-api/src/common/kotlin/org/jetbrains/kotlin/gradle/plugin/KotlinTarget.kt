@@ -64,9 +64,6 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     val preset: KotlinTargetPreset<out KotlinTarget>?
 
     override fun getName(): String = targetName
-
-    @ExperimentalKotlinGradlePluginApi
-    val compilerOptions: KotlinCommonCompilerOptions
 }
 
 interface KotlinTargetWithTests<E : KotlinExecution.ExecutionSource, T : KotlinTargetTestRun<E>> : KotlinTarget {

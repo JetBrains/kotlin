@@ -44,11 +44,11 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
     override val compilerOptions: HasCompilerOptions<KotlinNativeCompilerOptions>
         get() = compilation.compilerOptions as HasCompilerOptions<KotlinNativeCompilerOptions>
 
-    fun compilerOptions(configure: KotlinNativeCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinNativeCompilerOptions.() -> Unit) {
         compilerOptions.configure(configure)
     }
 
-    fun compilerOptions(configure: Action<KotlinNativeCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinNativeCompilerOptions>) {
         configure.execute(compilerOptions.options)
     }
 

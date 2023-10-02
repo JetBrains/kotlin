@@ -332,20 +332,21 @@ abstract class KotlinAndroidTarget @Inject constructor(
         attribute: Attribute<*>,
     ): Boolean = attribute.name != "com.android.build.api.attributes.AgpVersionAttr"
 
+    @Suppress("RedundantVisibilityModifier")
     @ExperimentalKotlinGradlePluginApi
-    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+    internal override val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance<KotlinJvmCompilerOptionsDefault>()
         .apply {
             DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(this, project)
         }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 }

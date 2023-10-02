@@ -26,18 +26,4 @@ class PrototypeAndroidTarget(
     @Suppress("unchecked_cast")
     override val compilations: NamedDomainObjectContainer<PrototypeAndroidCompilation>
         get() = super.compilations as NamedDomainObjectContainer<PrototypeAndroidCompilation>
-
-    @ExperimentalKotlinGradlePluginApi
-    override val compilerOptions: KotlinJvmCompilerOptions
-        get() = super.compilerOptions as KotlinJvmCompilerOptions
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
-        configure.execute(compilerOptions)
-    }
 }

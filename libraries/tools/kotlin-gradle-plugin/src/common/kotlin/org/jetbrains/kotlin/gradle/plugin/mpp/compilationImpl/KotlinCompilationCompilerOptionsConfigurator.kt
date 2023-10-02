@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptionsHelper
-import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 
@@ -92,13 +90,13 @@ internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinC
         commonCompilerOptions: KotlinCommonCompilerOptions
     ) {
         KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(
-            target.compilerOptions,
+            target.internal.compilerOptions,
             commonCompilerOptions
         )
     }
 
     private inline fun <reified T : KotlinCommonCompilerOptions> DecoratedKotlinCompilation<*>.requireTargetCompilerOptionsType(): T {
-        val targetCompilerOptions = compilation.target.compilerOptions
+        val targetCompilerOptions = compilation.target.internal.compilerOptions
         require(targetCompilerOptions is T) {
             "${compilation.compilationName} target ${compilation.target.name}:${compilation.target::class.qualifiedName} has incorrect 'compilerOptions' type " +
                     "${targetCompilerOptions::class.qualifiedName}"

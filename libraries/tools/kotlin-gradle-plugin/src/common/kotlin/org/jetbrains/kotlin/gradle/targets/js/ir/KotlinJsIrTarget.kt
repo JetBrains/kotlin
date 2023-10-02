@@ -477,8 +477,9 @@ constructor(
             }
     }
 
+    @Suppress("RedundantVisibilityModifier")
     @ExperimentalKotlinGradlePluginApi
-    override val compilerOptions: KotlinJsCompilerOptions = project.objects
+    internal override val compilerOptions: KotlinJsCompilerOptions = project.objects
         .newInstance<KotlinJsCompilerOptionsDefault>()
         .apply {
             configureJsDefaultOptions(platformType)

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -298,6 +299,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
+    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     @DisplayName("Android target compiler options override project level compiler options")
     @AndroidGradlePluginTests
     @GradleAndroidTest
@@ -445,6 +447,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_70)
     @AndroidGradlePluginTests
+    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     fun mppAndroidModuleName(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -478,6 +481,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
+    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     @GradleTest
     @DisplayName("Multiplatform compiler option DSL hierarchy")
     @JvmGradlePluginTests
@@ -555,6 +559,8 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
+
+    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     @DisplayName("KT-61303: Multiplatform/Android module name is changed")
     @AndroidGradlePluginTests
     @GradleAndroidTest

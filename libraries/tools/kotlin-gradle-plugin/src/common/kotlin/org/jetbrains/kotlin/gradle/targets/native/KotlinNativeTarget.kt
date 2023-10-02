@@ -136,7 +136,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         get() = konanTarget.enabledOnCurrentHost
 
     @ExperimentalKotlinGradlePluginApi
-    override val compilerOptions: KotlinNativeCompilerOptions = project.objects
+    internal override val compilerOptions: KotlinNativeCompilerOptions = project.objects
         .newInstance<KotlinNativeCompilerOptionsDefault>()
         .apply {
             moduleName.convention(
@@ -147,12 +147,12 @@ abstract class KotlinNativeTarget @Inject constructor(
         }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinNativeCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinNativeCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinNativeCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinNativeCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 

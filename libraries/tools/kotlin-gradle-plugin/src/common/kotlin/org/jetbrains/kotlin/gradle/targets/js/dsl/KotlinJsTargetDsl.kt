@@ -66,19 +66,6 @@ interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
     override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
-
-    @ExperimentalKotlinGradlePluginApi
-    override val compilerOptions: KotlinJsCompilerOptions
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinJsCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinJsCompilerOptions>) {
-        configure.execute(compilerOptions)
-    }
 }
 
 interface KotlinTargetWithNodeJsDsl {
