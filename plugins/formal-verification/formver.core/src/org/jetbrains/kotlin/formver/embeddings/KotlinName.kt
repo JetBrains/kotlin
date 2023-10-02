@@ -28,6 +28,8 @@ data class FunctionKotlinName(val name: Name) : PrefixedKotlinName("fun", name)
 data class MemberKotlinName(val name: Name) : PrefixedKotlinName("member", name)
 data class GetterKotlinName(val name: Name) : PrefixedKotlinName("getter", name)
 data class SetterKotlinName(val name: Name) : PrefixedKotlinName("setter", name)
+data class ExtensionSetterKotlinName(val name: Name) : PrefixedKotlinName("ext_setter", name)
+data class ExtensionGetterKotlinName(val name: Name) : PrefixedKotlinName("ext_getter", name)
 
 data class ClassKotlinName(val name: Name) : KotlinName {
     override val mangled: String = "class_${name.asStringStripSpecialMarkers()}"

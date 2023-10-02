@@ -69,11 +69,16 @@ fun StmtConversionContext<ResultTrackingContext>.embedPropertyAccess(symbol: Fir
     when (val calleeSymbol = symbol.calleeSymbol) {
         is FirValueParameterSymbol -> embedParameter(calleeSymbol).asPropertyAccess()
         is FirPropertySymbol ->
-            when (val receiverFir = symbol.dispatchReceiver) {
-                null -> embedLocalProperty(calleeSymbol)
-                else -> ClassPropertyAccess(convert(receiverFir), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
+            when {
+                symbol.dispatchReceiver != null -> {
+                    ClassPropertyAccess(convert(symbol.dispatchReceiver!!), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
+                }
+                symbol.extensionReceiver != null -> {
+                    ClassPropertyAccess(convert(symbol.extensionReceiver!!), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
+                }
+                else -> embedLocalProperty(calleeSymbol)
             }
-        else -> throw Exception("Property access symbol $calleeSymbol has unsupported type.")
+        else -> throw IllegalStateException("Property access symbol $calleeSymbol has unsupported type.")
     }
 
 @OptIn(SymbolInternals::class)

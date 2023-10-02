@@ -198,6 +198,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("extension_properties.kt")
+        public void testExtension_properties() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/extension_properties.kt");
+        }
+
+        @Test
         @TestMetadata("full_viper_dump.kt")
         public void testFull_viper_dump() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/full_viper_dump.kt");

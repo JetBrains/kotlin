@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.ErrorCollector
 import org.jetbrains.kotlin.formver.PluginConfiguration
@@ -119,7 +116,9 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     // Note: keep in mind that this function is necessary to resolve the name of the function!
     override fun embedType(symbol: FirFunctionSymbol<*>): TypeEmbedding = FunctionTypeEmbedding(embedFunctionSignature(symbol).asData)
 
-    override fun getField(field: FirPropertySymbol): FieldEmbedding? = fields[field.callableId.embedMemberPropertyName()]
+    override fun getField(field: FirPropertySymbol): FieldEmbedding? = field.isExtension.ifFalse {
+        fields[field.callableId.embedMemberPropertyName()]
+    }
 
     override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
         val retType = symbol.resolvedReturnTypeRef.type
@@ -155,9 +154,12 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     }
 
     private val FirFunctionSymbol<*>.receiverType: ConeKotlinType?
-        get() = when (this) {
-            is FirPropertyAccessorSymbol -> propertySymbol.dispatchReceiverType
-            else -> dispatchReceiverType ?: resolvedReceiverTypeRef?.type
+        get() {
+            val symbol = when (this) {
+                is FirPropertyAccessorSymbol -> propertySymbol
+                else -> this
+            }
+            return symbol.dispatchReceiverType ?: symbol.resolvedReceiverTypeRef?.type
         }
 
     private fun processClass(symbol: FirRegularClassSymbol) {
