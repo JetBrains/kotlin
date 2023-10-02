@@ -64,7 +64,13 @@ class IrSourceRangesDumpHandler(
         val elementRenderer = RenderIrElementVisitor()
 
         private fun printElement(element: IrElement) {
-            val sourceRangeInfo = fileEntry.getSourceRangeInfo(element.startOffset, element.endOffset)
+            var sourceRangeInfo = fileEntry.getSourceRangeInfo(element.startOffset, element.endOffset)
+            if (element.startOffset < 0) {
+                sourceRangeInfo = sourceRangeInfo.copy(startLineNumber = -1, startColumnNumber = -1)
+            }
+            if (element.endOffset < 0) {
+                sourceRangeInfo = sourceRangeInfo.copy(endLineNumber = -1, endColumnNumber = -1)
+            }
             printer.println("@${sourceRangeInfo.render()} ${element.accept(elementRenderer, null)}")
         }
 
