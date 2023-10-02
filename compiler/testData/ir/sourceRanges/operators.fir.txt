@@ -1,8 +1,8 @@
 @0:0..8:0 FILE fqName:<root> fileName:/operators.kt
   @2:0..27 PROPERTY name:addExpr visibility:public modality:FINAL [val]
     @2:0..27 FIELD PROPERTY_BACKING_FIELD name:addExpr type:kotlin.Int visibility:private [final,static]
-      @2:20..27 EXPRESSION_BODY
-        @2:20..27 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+      @2:14..27 EXPRESSION_BODY
+        @2:14..27 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
           @2:14..19 CONST Int type=kotlin.Int value=12345
           @2:22..27 CONST Int type=kotlin.Int value=67890
     @2:0..27 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-addExpr> visibility:public modality:FINAL <> () returnType:kotlin.Int

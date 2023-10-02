@@ -18,8 +18,8 @@ annotation class Nested(val a: TypeAnnotation)
 @Retention(AnnotationRetention.BINARY)
 annotation class NestedArray(val a: Array<TypeAnnotation>)
 
-val a: @Nested(TypeAnnotation("Int" <!EVALUATED("IntAnno")!>+ "Anno"<!>)) Int = 1
-val b: @NestedArray([TypeAnnotation("Element1" <!EVALUATED("Element1Anno")!>+ "Anno"<!>), TypeAnnotation("Element2" <!EVALUATED("Element2Anno")!>+ "Anno"<!>)]) Int = 1
+val a: @Nested(TypeAnnotation(<!EVALUATED("IntAnno")!>"Int" + "Anno"<!>)) Int = 1
+val b: @NestedArray([TypeAnnotation(<!EVALUATED("Element1Anno")!>"Element1" + "Anno"<!>), TypeAnnotation(<!EVALUATED("Element2Anno")!>"Element2" + "Anno"<!>)]) Int = 1
 
 // MODULE: main
 // FILE: main.kt

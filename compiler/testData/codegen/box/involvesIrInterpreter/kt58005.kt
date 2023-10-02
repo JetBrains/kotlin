@@ -32,9 +32,9 @@ public @interface ComponentScan {
 @ComponentScans(
     value = [
         ComponentScan(
-            a = ["String" <!EVALUATED("StringA")!>+ "A"<!>],
-            c = ["String" <!EVALUATED("StringC")!>+ "C"<!>],
-            b = ["String" <!EVALUATED("StringB")!>+ "B"<!>],
+            a = [<!EVALUATED("StringA")!>"String" + "A"<!>],
+            c = [<!EVALUATED("StringC")!>"String" + "C"<!>],
+            b = [<!EVALUATED("StringB")!>"String" + "B"<!>],
         )
     ]
 )
@@ -53,9 +53,9 @@ annotation class KtComponentScan(
 @ComponentScans(
     value = [
         ComponentScan(
-            a = ["String" <!EVALUATED("StringA")!>+ "A"<!>],
-            c = ["String" <!EVALUATED("StringC")!>+ "C"<!>],
-            b = ["String" <!EVALUATED("StringB")!>+ "B"<!>],
+            a = [<!EVALUATED("StringA")!>"String" + "A"<!>],
+            c = [<!EVALUATED("StringC")!>"String" + "C"<!>],
+            b = [<!EVALUATED("StringB")!>"String" + "B"<!>],
         )
     ]
 )

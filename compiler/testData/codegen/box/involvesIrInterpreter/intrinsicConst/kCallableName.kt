@@ -18,7 +18,7 @@ const val methodName = A::foo.<!EVALUATED("foo")!>name<!>
 const val suspendMethodName = A::bar.<!EVALUATED("bar")!>name<!>
 const val className = ::A.<!EVALUATED("<init>")!>name<!>
 const val topLevelPropName = ::topLevelProp.<!EVALUATED("topLevelProp")!>name<!>
-const val nameInComplexExpression = A::OK.name <!EVALUATED("OK!")!>+ "!"<!>
+const val nameInComplexExpression = <!EVALUATED("OK!")!>A::OK.name + "!"<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

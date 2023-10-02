@@ -31,7 +31,7 @@
         @27:8..25 VALUE_PARAMETER name:<this> type:<root>.Foo
         @27:16..25 BLOCK_BODY
           @27:25..25 RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Foo'
-            @27:22..25 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
+            @27:16..25 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
               @27:16..21 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=GET_PROPERTY
                 @27:16..21 GET_VAR '<this>: <root>.Foo declared in <root>.Foo.<get-x>' type=<root>.Foo origin=null
               @27:24..25 CONST Int type=kotlin.Int value=1

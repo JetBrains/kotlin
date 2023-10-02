@@ -31,8 +31,7 @@ class ConstValueProviderImpl(
         if (firExpression is FirVarargArgumentsExpression) return null
 
         val fileName = firFile.packageFqName.child(Name.identifier(firFile.name)).asString()
-        return if (firExpression is FirQualifiedAccessExpression) {
-            // TODO check that this behavior is expected in ConversionUtils and if not fix it
+        return if (firExpression is FirQualifiedAccessExpression && firExpression.shouldUseCalleeReferenceAsItsSourceInIr()) {
             val calleeReference = firExpression.calleeReference
             val start = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
             val end = firExpression.source?.endOffset ?: return null

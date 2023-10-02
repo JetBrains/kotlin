@@ -35,11 +35,11 @@
     @28:10..37:1 BLOCK_BODY
       @30:4..10 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         @30:4..10 GET_ENUM 'ENUM_ENTRY name:SINGLE' type=<root>.E
-      @33:4..7 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        @33:4..7 FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.O' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
+      @32:4..33:7 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        @32:4..33:7 FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.O' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null reflectionTarget=<same>
           @32:4..5 GET_OBJECT 'CLASS OBJECT name:O modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.O
-      @36:4..8 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        @36:4..8 FUNCTION_REFERENCE 'public final fun fail (): kotlin.String declared in <root>' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
+      @35:4..36:8 TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        @35:4..36:8 FUNCTION_REFERENCE 'public final fun fail (): kotlin.String declared in <root>' type=kotlin.reflect.KFunction0<kotlin.String> origin=null reflectionTarget=<same>
           @35:4..6 CONST String type=kotlin.String value=""
   @39:0..41:1 CLASS ENUM_CLASS name:E modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.E>]
     @39:0..41:1 CONSTRUCTOR visibility:private <> () returnType:<root>.E [primary]

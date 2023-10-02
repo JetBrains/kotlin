@@ -5,11 +5,11 @@
 // WITH_STDLIB
 
 object A {
-    const val recursive1: Int = 1 <!EVALUATION_ERROR!>+ B.recursive2<!>
+    const val recursive1: Int = <!EVALUATION_ERROR!>1 + B.recursive2<!>
 }
 
 class B {
     companion object {
-        const val recursive2: Int = A.recursive1 <!EVALUATION_ERROR!>+ 2<!>
+        const val recursive2: Int = <!EVALUATION_ERROR!>A.recursive1 + 2<!>
     }
 }

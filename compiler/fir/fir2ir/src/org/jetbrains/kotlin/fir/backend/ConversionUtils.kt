@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -97,7 +96,28 @@ internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (star
 }
 
 internal inline fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
-    return convertWithOffsets(this.calleeReference, f)
+    if (shouldUseCalleeReferenceAsItsSourceInIr()) {
+        return convertWithOffsets(calleeReference, f)
+    }
+    return (this as FirElement).convertWithOffsets(f)
+}
+
+/**
+ * This function determines which source should be used for IR counterpart of this FIR expression.
+ *
+ * At the moment, this function reproduces (~) K1 logic.
+ * Currently, K1 uses full qualified expression source (from receiver to selector)
+ * in case of an operator call, an infix call, a callable reference, or a referenced class/object.
+ * Otherwise, only selector is used as a source.
+ *
+ * See also KT-60111 about an operator call case (xxx + yyy).
+ */
+fun FirQualifiedAccessExpression.shouldUseCalleeReferenceAsItsSourceInIr(): Boolean {
+    return when {
+        this is FirFunctionCall && origin != FirFunctionCallOrigin.Regular -> false
+        this is FirCallableReferenceAccess -> false
+        else -> (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol is FirCallableSymbol
+    }
 }
 
 internal inline fun <T : IrElement> FirThisReceiverExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {

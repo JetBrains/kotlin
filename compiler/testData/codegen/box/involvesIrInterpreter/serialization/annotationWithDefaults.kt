@@ -22,7 +22,7 @@ annotation class IntegerNumberValid(
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class AnnotationWithDefault(val str: String = "Str" <!EVALUATED("String")!>+ "ing"<!>)
+annotation class AnnotationWithDefault(val str: String = <!EVALUATED("String")!>"Str" + "ing"<!>)
 
 @AnnotationWithDefault()
 class A
