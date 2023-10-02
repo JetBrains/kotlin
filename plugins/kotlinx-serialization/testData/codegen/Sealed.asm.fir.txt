@@ -219,16 +219,14 @@ public final class Container : java/lang/Object {
           LDC (r)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-        LINENUMBER (18)
+        LINENUMBER (19)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
-        LABEL (L2)
-        LINENUMBER (19)
           ALOAD (0)
           ALOAD (1)
           PUTFIELD (Container, r, LResult;)
           RETURN
-        LABEL (L3)
+        LABEL (L2)
     }
 
     public void <init>(int seen0, Result r, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {

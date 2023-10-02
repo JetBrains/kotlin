@@ -3,7 +3,7 @@
     @0:20..2:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test1 [primary]
       @1:4..14 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @0:20..2:1 BLOCK_BODY
-        @0:0..3:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @0:20..2:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @0:20..2:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
     @1:4..14 PROPERTY name:x visibility:public modality:FINAL [val]
       @1:4..14 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -27,7 +27,7 @@
     @7:11..9:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test2 [primary]
       @8:4..14 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @7:11..9:1 BLOCK_BODY
-        @5:0..14:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @7:11..9:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @7:11..9:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
     @8:4..14 PROPERTY name:x visibility:public modality:FINAL [val]
       @8:4..14 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -44,7 +44,7 @@
         @11:19..13:5 VALUE_PARAMETER name:<this> type:<root>.Test2
         @12:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int
         @11:19..13:5 BLOCK_BODY
-          @10:4..13:5 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          @11:19..13:5 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
           @11:19..13:5 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
       @12:8..18 PROPERTY name:x visibility:public modality:FINAL [val]
         @12:8..18 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]

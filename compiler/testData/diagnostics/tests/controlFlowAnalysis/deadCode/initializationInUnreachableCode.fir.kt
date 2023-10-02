@@ -1,13 +1,12 @@
-// COMPARE_WITH_LIGHT_TREE
 // ISSUE: KT-40851
 
 fun error(): Nothing = throw Exception()
 
-<!UNREACHABLE_CODE{LT}!>class Some<!UNREACHABLE_CODE{PSI}!>()<!> {
+class Some<!UNREACHABLE_CODE!>()<!> {
     var x: Int
-    val y: Int =<!> error()
+    val y: Int = error()
 
-    <!UNREACHABLE_CODE{LT}!>init {
+    init {
         <!UNREACHABLE_CODE!>x = 1<!>;
     }
-}<!>
+}

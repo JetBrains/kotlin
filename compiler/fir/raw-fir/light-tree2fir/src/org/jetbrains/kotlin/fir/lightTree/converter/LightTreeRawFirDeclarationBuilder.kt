@@ -920,7 +920,9 @@ class LightTreeRawFirDeclarationBuilder(
                 arguments: List<FirExpression>,
             ): FirDelegatedConstructorCall {
                 return buildDelegatedConstructorCall {
-                    source = delegatedConstructorSource ?: selfTypeSource?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                    source = delegatedConstructorSource
+                        ?: primaryConstructor?.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                                ?: selfTypeSource?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                     constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
                     isThis = false
                     calleeReference = buildExplicitSuperReference {

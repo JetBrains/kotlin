@@ -3,7 +3,7 @@
     @0:11..23 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test1 [primary]
       @0:12..22 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @0:11..23 BLOCK_BODY
-        @0:0..23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @0:11..23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @0:11..23 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @0:12..22 PROPERTY name:x visibility:public modality:FINAL [val]
       @0:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -27,7 +27,7 @@
     @3:0..32 CONSTRUCTOR visibility:internal <> (x:kotlin.Int) returnType:<root>.Test2 [primary]
       @3:21..31 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @3:0..32 BLOCK_BODY
-        @2:0..3:32 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @3:0..32 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @3:0..32 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @3:21..31 PROPERTY name:x visibility:public modality:FINAL [val]
       @3:21..31 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -51,7 +51,7 @@
     @9:0..23 CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.Test3 [primary]
       @9:12..22 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @9:0..23 BLOCK_BODY
-        @5:0..9:23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @9:0..23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @9:0..23 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @9:12..22 PROPERTY name:x visibility:public modality:FINAL [val]
       @9:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
@@ -79,7 +79,7 @@
             @12:10..27 CONST String type=kotlin.String value="UNUSED_VARIABLE"
       @13:12..22 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @12:0..13:23 BLOCK_BODY
-        @11:0..13:23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @12:0..13:23 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         @12:0..13:23 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public superTypes:[kotlin.Any]'
     @13:12..22 PROPERTY name:x visibility:public modality:FINAL [val]
       @13:12..22 FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]

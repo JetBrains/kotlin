@@ -1,4 +1,3 @@
-// COMPARE_WITH_LIGHT_TREE
 // ISSUE: KT-40851
 
 fun error(): Nothing = throw Exception()
