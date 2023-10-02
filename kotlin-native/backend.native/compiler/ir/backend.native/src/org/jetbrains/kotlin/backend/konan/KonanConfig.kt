@@ -110,6 +110,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
     }
+    val disableAllocatorOverheadEstimate: Boolean by lazy {
+        configuration.get(BinaryOptions.disableAllocatorOverheadEstimate) ?: false
+    }
     val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)?.also {
         if (it != WorkerExceptionHandling.USE_HOOK) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Legacy exception handling in workers is deprecated")

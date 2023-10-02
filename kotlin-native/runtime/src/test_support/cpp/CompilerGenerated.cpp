@@ -73,6 +73,7 @@ extern const int32_t Kotlin_disableMmap = 1;
 #else
 extern const int32_t Kotlin_disableMmap = 0;
 #endif
+extern const int32_t Kotlin_disableAllocatorOverheadEstimate = 0;
 extern const char* const Kotlin_runtimeLogs = nullptr;
 extern const int32_t Kotlin_concurrentWeakSweep = 1;
 #if KONAN_WINDOWS

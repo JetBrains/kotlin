@@ -25,6 +25,7 @@
 extern "C" const int32_t Kotlin_needDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
 extern "C" const int32_t Kotlin_disableMmap;
+extern "C" const int32_t Kotlin_disableAllocatorOverheadEstimate;
 extern "C" const char* const Kotlin_runtimeLogs;
 extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
@@ -75,6 +76,10 @@ ALWAYS_INLINE inline bool runtimeAssertsEnabled() noexcept {
 
 ALWAYS_INLINE inline bool disableMmap() noexcept {
     return Kotlin_disableMmap != 0;
+}
+
+ALWAYS_INLINE inline bool disableAllocatorOverheadEstimate() noexcept {
+    return Kotlin_disableAllocatorOverheadEstimate != 0;
 }
 
 ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
