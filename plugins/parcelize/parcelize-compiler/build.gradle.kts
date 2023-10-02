@@ -65,6 +65,7 @@ dependencies {
 
     parcelizeRuntimeForTests(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
     parcelizeRuntimeForTests(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
+    parcelizeRuntimeForTests(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
     layoutLib("org.jetbrains.intellij.deps.android.tools:layoutlib:26.5.0") { isTransitive = false }
     layoutLibApi("com.android.tools.layoutlib:layoutlib-api:26.5.0") { isTransitive = false }

@@ -152,6 +152,12 @@ public class ParcelizeIrBytecodeListingTestGenerated extends AbstractParcelizeIr
     }
 
     @Test
+    @TestMetadata("simplePersistentList.kt")
+    public void testSimplePersistentList() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/codegen/simplePersistentList.kt");
+    }
+
+    @Test
     @TestMetadata("size.kt")
     public void testSize() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/codegen/size.kt");

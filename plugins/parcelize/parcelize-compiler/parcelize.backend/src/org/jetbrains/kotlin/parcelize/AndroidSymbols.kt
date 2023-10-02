@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize
 
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
@@ -32,10 +34,11 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
 // hence contain just enough information to produce correct JVM bytecode for *calls*. In particular, we omit generic types and
 // supertypes, which are not needed to produce correct bytecode.
 class AndroidSymbols(
-    val irBuiltIns: IrBuiltIns,
-    private val moduleFragment: IrModuleFragment
+    private val pluginContext: IrPluginContext,
+    private val moduleFragment: IrModuleFragment,
 ) {
     private val irFactory: IrFactory = IrFactoryImpl
+    val irBuiltIns: IrBuiltIns = pluginContext.irBuiltIns
 
     private val javaIo: IrPackageFragment = createPackage("java.io")
     private val javaLang: IrPackageFragment = createPackage("java.lang")
@@ -498,6 +501,36 @@ class AndroidSymbols(
         type = androidOsParcelableCreator.defaultType
         isStatic = true
     }.symbol
+
+    private val kotlinxCollectionsImmutable = FqName(kotlinxImmutable())
+    private val kotlinCollections = FqName("kotlin.collections")
+    private val kotlinIterable: FqName = kotlinCollections.child(Name.identifier("Iterable"))
+    private val kotlinMap: FqName = kotlinCollections.child(Name.identifier("Map"))
+
+    private fun findKotlinxImmutableCollectionExtensionFunction(
+        receiver: FqName,
+        functionName: String,
+    ): IrSimpleFunctionSymbol {
+        val callableId = CallableId(kotlinxCollectionsImmutable, Name.identifier(functionName))
+        return pluginContext.referenceFunctions(callableId)
+            .firstOrNull {
+                it.owner.extensionReceiverParameter?.type?.classFqName == receiver &&
+                        it.owner.valueParameters.isEmpty()
+            }
+            ?: error("Function from kotlinx.collections.immutable is not found on classpath: $callableId")
+    }
+
+    val kotlinIterableToPersistentListExtension: IrSimpleFunctionSymbol by lazy {
+        findKotlinxImmutableCollectionExtensionFunction(kotlinIterable, "toPersistentList")
+    }
+
+    val kotlinIterableToPersistentSetExtension: IrSimpleFunctionSymbol by lazy {
+        findKotlinxImmutableCollectionExtensionFunction(kotlinIterable, "toPersistentSet")
+    }
+
+    val kotlinMapToPersistentMapExtension: IrSimpleFunctionSymbol by lazy {
+        findKotlinxImmutableCollectionExtensionFunction(kotlinMap, "toPersistentMap")
+    }
 
     val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol =
         irFactory.buildFun {

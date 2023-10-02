@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 class ParcelizeIrGeneratorExtension : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
-        val androidSymbols = AndroidSymbols(pluginContext.irBuiltIns, moduleFragment)
+        val androidSymbols = AndroidSymbols(pluginContext, moduleFragment)
         ParcelizeIrTransformer(pluginContext, androidSymbols).transform(moduleFragment)
     }
 }
