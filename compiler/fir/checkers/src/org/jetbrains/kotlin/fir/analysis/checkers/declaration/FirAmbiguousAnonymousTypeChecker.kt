@@ -43,8 +43,12 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
          */
         val (type, source) = when (declaration) {
             is FirProperty -> {
-                declaration.initializer?.resolvedType?.let { it to declaration.source }
-                    ?: (declaration.getter?.body?.singleExpressionType to declaration.getter?.source)
+                declaration.initializer?.resolvedType?.let { it to declaration.source } ?: run {
+                    val getter = declaration.getter
+                    // Getter can have delegate call as the source, but diagnostic must be reported on KtDeclaration
+                    val getterDeclarationSource = if (declaration.delegate != null) declaration.source else getter?.source
+                    (getter?.body?.singleExpressionType to getterDeclarationSource)
+                }
             }
             is FirFunction -> declaration.body?.singleExpressionType to declaration.source
             else -> error("Should not be there")

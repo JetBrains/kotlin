@@ -566,22 +566,24 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
     ): IrField = convertCatching(firProperty) {
         val inferredType = type ?: firInitializerExpression!!.resolvedType.toIrType()
         return declareIrField { symbol ->
-            irFactory.createField(
-                startOffset = irProperty.startOffset,
-                endOffset = irProperty.endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                symbol = symbol,
-                type = inferredType,
-                isFinal = isFinal,
-                isStatic = firProperty.isStatic || !(irProperty.parent is IrClass || irProperty.parent is IrScript),
-                isExternal = firProperty.isExternal,
-            ).also {
-                it.correspondingPropertySymbol = irProperty.symbol
-            }.apply {
-                metadata = FirMetadataSource.Property(firProperty)
-                convertAnnotationsForNonDeclaredMembers(firProperty, origin)
+            (firProperty.delegate ?: firProperty.backingField ?: firProperty).convertWithOffsets { startOffset: Int, endOffset: Int ->
+                irFactory.createField(
+                    startOffset = startOffset,
+                    endOffset = endOffset,
+                    origin = origin,
+                    name = name,
+                    visibility = visibility,
+                    symbol = symbol,
+                    type = inferredType,
+                    isFinal = isFinal,
+                    isStatic = firProperty.isStatic || !(irProperty.parent is IrClass || irProperty.parent is IrScript),
+                    isExternal = firProperty.isExternal,
+                ).also {
+                    it.correspondingPropertySymbol = irProperty.symbol
+                }.apply {
+                    metadata = FirMetadataSource.Property(firProperty)
+                    convertAnnotationsForNonDeclaredMembers(firProperty, origin)
+                }
             }
         }
     }
