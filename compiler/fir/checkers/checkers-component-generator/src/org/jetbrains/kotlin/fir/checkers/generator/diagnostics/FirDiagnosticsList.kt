@@ -768,6 +768,13 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val IMPLICIT_NOTHING_RETURN_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
         val IMPLICIT_NOTHING_PROPERTY_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
 
+        val ABBREVIATED_NOTHING_RETURN_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER) {
+            isSuppressible = true
+        }
+        val ABBREVIATED_NOTHING_PROPERTY_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER) {
+            isSuppressible = true
+        }
+
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
 
         val FINITE_BOUNDS_VIOLATION by error<PsiElement>()

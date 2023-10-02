@@ -1678,6 +1678,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ImplicitNothingPropertyType::class
     }
 
+    interface AbbreviatedNothingReturnType : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = AbbreviatedNothingReturnType::class
+    }
+
+    interface AbbreviatedNothingPropertyType : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = AbbreviatedNothingPropertyType::class
+    }
+
     interface CyclicGenericUpperBound : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CyclicGenericUpperBound::class
     }

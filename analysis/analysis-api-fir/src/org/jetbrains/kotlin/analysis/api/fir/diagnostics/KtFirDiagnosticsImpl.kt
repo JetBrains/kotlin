@@ -2017,6 +2017,16 @@ internal class ImplicitNothingPropertyTypeImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ImplicitNothingPropertyType
 
+internal class AbbreviatedNothingReturnTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.AbbreviatedNothingReturnType
+
+internal class AbbreviatedNothingPropertyTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.AbbreviatedNothingPropertyType
+
 internal class CyclicGenericUpperBoundImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
