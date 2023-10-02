@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -29,6 +30,10 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
+    internal val scopeStack = mutableListOf<Scope>()
+
+    @PublishedApi
+    @PrivateForInline
     internal val containingFirClassStack = mutableListOf<FirClass>()
 
     @PublishedApi
@@ -37,9 +42,15 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     inline fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
         parentStack += parent
+        if (parent is IrDeclaration) {
+            scopeStack += Scope(parent.symbol)
+        }
         try {
             return parent.f()
         } finally {
+            if (parent is IrDeclaration) {
+                scopeStack.removeAt(scopeStack.size - 1)
+            }
             parentStack.removeAt(parentStack.size - 1)
         }
     }
@@ -68,6 +79,8 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
     }
 
     fun parentFromStack(): IrDeclarationParent = parentStack.last()
+
+    fun scope(): Scope = scopeStack.last()
 
     fun parentAccessorOfPropertyFromStack(propertySymbol: IrPropertySymbol): IrSimpleFunction {
         // It is safe to access an owner of property symbol here, because this function may be called

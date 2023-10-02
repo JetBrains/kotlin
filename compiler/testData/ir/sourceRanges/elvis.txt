@@ -1,4 +1,4 @@
-@0:0..3:0 FILE fqName:<root> fileName:/elvis.kt
+@0:0..5:0 FILE fqName:<root> fileName:/elvis.kt
   @0:0..23 FUN name:intN visibility:public modality:FINAL <> () returnType:kotlin.Int?
     @0:19..23 BLOCK_BODY
       @0:23..23 RETURN type=kotlin.Nothing from='public final fun intN (): kotlin.Int? declared in <root>'
