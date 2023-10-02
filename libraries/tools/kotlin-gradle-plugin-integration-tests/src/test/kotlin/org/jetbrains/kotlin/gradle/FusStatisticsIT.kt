@@ -166,6 +166,26 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @DisplayName("fus metric for multiproject")
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+    )
+    fun testFusStatisticsForMultiproject(gradleVersion: GradleVersion) {
+        project(
+            "incrementalMultiproject", gradleVersion,
+        ) {
+            //after KT-58768 and KT-62616 are done it will be possible to check build metrics also
+            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertFileContains(
+                    fusStatisticsPath,
+                    "CONFIGURATION_IMPLEMENTATION_COUNT=2",
+                    "NUMBER_OF_SUBPROJECTS=2",
+                )
+            }
+        }
+    }
+
     @DisplayName("general fields with configuration cache")
     @GradleTest
     @GradleTestVersions(

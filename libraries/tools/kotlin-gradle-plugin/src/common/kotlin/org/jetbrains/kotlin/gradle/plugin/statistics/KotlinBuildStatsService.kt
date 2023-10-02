@@ -103,7 +103,8 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
                         kotlinBuildStatsServicesRegistry = it
                     }
 
-                    val defaultServiceName = KotlinBuildStatsServicesRegistry.getBeanName(KotlinBuildStatsServicesRegistry.DEFAULT_SERVICE_QUALIFIER)
+                    val defaultServiceName =
+                        KotlinBuildStatsServicesRegistry.getBeanName(KotlinBuildStatsServicesRegistry.DEFAULT_SERVICE_QUALIFIER)
                     val instance = kotlinBuildStatsServicesRegistry?.getDefaultService()
                     if (instance != null) {
                         registry.logger.debug("$defaultServiceName is already instantiated. Current instance is $instance")
@@ -191,12 +192,17 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
     /**
      * Collects metrics at the end of a build
      */
-    open fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {}
+    open fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: List<MetricContainer>) {}
 
     /**
-     * Collect project general and configuration metrics at the start of a build
+     * Collect project's configuration metrics
      */
-    open fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean, buildReportOutputs: List<BuildReportType>): MetricContainer = MetricContainer()
+    open fun collectProjectConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean): MetricContainer = MetricContainer()
+
+    /**
+     * Collect general configuration metrics
+     */
+    open fun collectGeneralConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean, buildReportOutputs: List<BuildReportType>): MetricContainer = MetricContainer()
 
     open fun recordProjectsEvaluated(gradle: Gradle) {}
 }
@@ -308,12 +314,14 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
 
     //only one jmx bean service should report global metrics
-    override fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: MetricContainer) {
+    override fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: List<MetricContainer>) {
         KotlinBuildStatHandler().reportGlobalMetrics(sessionLogger)
         KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
     }
 
-    override fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean, buildReportOutputs: List<BuildReportType>) =
-        KotlinBuildStatHandler().collectConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled, buildReportOutputs)
+    override fun collectProjectConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean) =
+        KotlinBuildStatHandler().collectProjectConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled)
 
+    override fun collectGeneralConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean, buildReportOutputs: List<BuildReportType>) =
+        KotlinBuildStatHandler().collectGeneralConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled, buildReportOutputs)
 }

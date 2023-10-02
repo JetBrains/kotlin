@@ -73,120 +73,134 @@ class KotlinBuildStatHandler {
         sessionLogger: BuildSessionLogger,
         action: String?,
         buildFailed: Boolean,
-        configurationMetrics: MetricContainer,
+        configurationMetrics: List<MetricContainer>,
     ) {
         runSafe("${KotlinBuildStatHandler::class.java}.reportBuildFinish") {
-            configurationMetrics.report(sessionLogger)
+            configurationMetrics.forEach { it.report(sessionLogger) }
             sessionLogger.finishBuildSession(action, buildFailed)
         }
     }
 
-    internal fun collectConfigurationTimeMetrics(
+    internal fun collectGeneralConfigurationTimeMetrics(
         project: Project,
         sessionLogger: BuildSessionLogger,
         isProjectIsolationEnabled: Boolean,
         buildReportOutputs: List<BuildReportType>,
     ): MetricContainer {
-        val gradle = project.gradle
         val configurationTimeMetrics = MetricContainer()
-        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
-        configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
-        buildReportOutputs.forEach {
-            when (it) {
-                BuildReportType.BUILD_SCAN -> configurationTimeMetrics.put(BooleanMetrics.BUILD_SCAN_BUILD_REPORT, true)
-                BuildReportType.FILE -> configurationTimeMetrics.put(BooleanMetrics.FILE_BUILD_REPORT, true)
-                BuildReportType.HTTP -> configurationTimeMetrics.put(BooleanMetrics.HTTP_BUILD_REPORT, true)
-                BuildReportType.SINGLE_FILE -> configurationTimeMetrics.put(BooleanMetrics.SINGLE_FILE_BUILD_REPORT, true)
-                BuildReportType.TRY_K2_CONSOLE -> {}//ignore
+
+        val statisticOverhead = measureTimeMillis {
+            buildReportOutputs.forEach {
+                when (it) {
+                    BuildReportType.BUILD_SCAN -> configurationTimeMetrics.put(BooleanMetrics.BUILD_SCAN_BUILD_REPORT, true)
+                    BuildReportType.FILE -> configurationTimeMetrics.put(BooleanMetrics.FILE_BUILD_REPORT, true)
+                    BuildReportType.HTTP -> configurationTimeMetrics.put(BooleanMetrics.HTTP_BUILD_REPORT, true)
+                    BuildReportType.SINGLE_FILE -> configurationTimeMetrics.put(BooleanMetrics.SINGLE_FILE_BUILD_REPORT, true)
+                    BuildReportType.TRY_K2_CONSOLE -> {}//ignore
+                }
+            }
+            val gradle = project.gradle
+            configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
+            configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
+            if (!isProjectIsolationEnabled) {
+                gradle.taskGraph.whenReady { taskExecutionGraph ->
+                    val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
+                    configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+                }
             }
         }
+        sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
+
+        return configurationTimeMetrics
+
+    }
+
+    internal fun collectProjectConfigurationTimeMetrics(
+        project: Project,
+        sessionLogger: BuildSessionLogger,
+        isProjectIsolationEnabled: Boolean,
+    ): MetricContainer {
+        val configurationTimeMetrics = MetricContainer()
 
         if (isProjectIsolationEnabled) { //support project isolation - KT-58768
             return configurationTimeMetrics
         }
 
-        gradle.taskGraph.whenReady { taskExecutionGraph ->
-            val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
-            configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
-        }// constants are saved in IDEA plugin and could not be accessed directly
-        fun buildSrcExists(project: Project) = File(project.projectDir, "buildSrc").exists()
-        configurationTimeMetrics.put(BooleanMetrics.BUILD_SRC_EXISTS, buildSrcExists(gradle.rootProject))
-
         val statisticOverhead = measureTimeMillis {
-            gradle.allprojects { project ->
-                collectAppliedPluginsStatistics(project, configurationTimeMetrics)
+            collectAppliedPluginsStatistics(project, configurationTimeMetrics)
 
-                val configurations = project.configurations.asMap.values
-                for (configuration in configurations) {
-                    try {
-                        val configurationName = configuration.name
-                        val dependencies = configuration.dependencies
+            val configurations = project.configurations.asMap.values
+            for (configuration in configurations) {
+                try {
+                    val configurationName = configuration.name
+                    val dependencies = configuration.dependencies
 
-                        when (configurationName) {
-                            "KoverEngineConfig" -> {
-                                configurationTimeMetrics.put(BooleanMetrics.ENABLED_KOVER, true)
-                            }
-                            "kapt" -> {
-                                configurationTimeMetrics.put(BooleanMetrics.ENABLED_KAPT, true)
-                                for (dependency in dependencies) {
-                                    when (dependency.group) {
-                                        "com.google.dagger" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DAGGER, true)
-                                        "com.android.databinding" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DATABINDING, true)
-                                    }
+                    when (configurationName) {
+                        "KoverEngineConfig" -> {
+                            configurationTimeMetrics.put(BooleanMetrics.ENABLED_KOVER, true)
+                        }
+                        "kapt" -> {
+                            configurationTimeMetrics.put(BooleanMetrics.ENABLED_KAPT, true)
+                            for (dependency in dependencies) {
+                                when (dependency.group) {
+                                    "com.google.dagger" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DAGGER, true)
+                                    "com.android.databinding" -> configurationTimeMetrics.put(BooleanMetrics.ENABLED_DATABINDING, true)
                                 }
                             }
-                            API -> {
-                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_API_COUNT, 1)
-                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                            }
-                            IMPLEMENTATION -> {
-                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_IMPLEMENTATION_COUNT, 1)
-                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                            }
-                            COMPILE -> {
-                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
-                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                            }
-                            COMPILE_ONLY -> {
-                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_ONLY_COUNT, 1)
-                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                            }
-                            RUNTIME -> {
-                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
-                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                            }
-                            RUNTIME_ONLY -> {
-                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_ONLY_COUNT, 1)
-                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
-                            }
                         }
-                    } catch (e: Throwable) {
-                        // log?
+                        API -> {
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_API_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                        }
+                        IMPLEMENTATION -> {
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_IMPLEMENTATION_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                        }
+                        COMPILE -> {
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                        }
+                        COMPILE_ONLY -> {
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_ONLY_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                        }
+                        RUNTIME -> {
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                        }
+                        RUNTIME_ONLY -> {
+                            configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_ONLY_COUNT,1)
+                            reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                        }
                     }
+                } catch (e: Throwable) {
+                    // log?
                 }
-                val taskNames = project.tasks.names.toList()
+            }
 
-                configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
-                configurationTimeMetrics.put(
-                    BooleanMetrics.KOTLIN_KTS_USED,
-                    project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
-                )
-                configurationTimeMetrics.put(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
-                configurationTimeMetrics.put(
-                    NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
-                    taskNames.count { name ->
-                        try {
-                            project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
-                        } catch (_: Exception) {
-                            true
-                        }
-                    }.toLong()
-                )
+            configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
 
-                if (project.name == "buildSrc") {
-                    configurationTimeMetrics.put(NumericalMetrics.BUILD_SRC_COUNT, 1)
-                    configurationTimeMetrics.put(BooleanMetrics.BUILD_SRC_EXISTS, true)
-                }
+            val taskNames = project.tasks.names.toList()
+
+            configurationTimeMetrics.put(
+                BooleanMetrics.KOTLIN_KTS_USED,
+                project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
+            )
+            configurationTimeMetrics.put(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
+            configurationTimeMetrics.put(
+                NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
+                taskNames.count { name ->
+                    try {
+                        project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
+                    } catch (_: Exception) {
+                        true
+                    }
+                }.toLong()
+            )
+
+            if (project.name == "buildSrc") {
+                configurationTimeMetrics.put(NumericalMetrics.BUILD_SRC_COUNT, 1)
+                configurationTimeMetrics.put(BooleanMetrics.BUILD_SRC_EXISTS, true)
             }
         }
         sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)

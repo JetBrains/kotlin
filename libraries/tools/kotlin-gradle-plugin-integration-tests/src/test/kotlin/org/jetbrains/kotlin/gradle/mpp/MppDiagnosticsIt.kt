@@ -123,10 +123,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     fun testSuppressGradlePluginFatals(gradleVersion: GradleVersion) {
         project("suppressGradlePluginFatals", gradleVersion) {
             buildAndFail("assemble") {
-                // Gradle 8.0+ for some reason renders exception twice in the build log
-                val testDataSuffixIfAny = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "gradle-6.8.3" else null
-
-                assertEqualsToFile(expectedOutputFile(testDataSuffixIfAny), extractProjectsAndTheirDiagnostics())
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirDiagnostics())
             }
         }
     }
