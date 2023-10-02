@@ -95,6 +95,12 @@ public class FirPsiJvmIrSourceRangesTestGenerated extends AbstractFirPsiJvmIrSou
         }
 
         @Test
+        @TestMetadata("delegatedProperties.kt")
+        public void testDelegatedProperties() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/delegatedProperties.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverrides.kt")
         public void testFakeOverrides() throws Exception {
             runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides.kt");
