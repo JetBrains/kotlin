@@ -23,13 +23,14 @@ private fun taskOutputRegexForDebugLog(
 @Language("RegExp")
 private fun taskOutputRegexForInfoLog(
     taskName: String,
-) = """
-    ^\s*$
-    ^> Task $taskName$
-    ([\s\S]+?)
-    ^\s*$
+) =
+    """
+    ^\s*$\r?
+    ^> Task $taskName$\r?
+    ([\s\S]+?)\r?
+    ^\s*$\r?
     """.trimIndent()
-    .toRegex(RegexOption.MULTILINE)
+        .toRegex(RegexOption.MULTILINE)
 
 /**
  * Gets the output produced by a specific task during a Gradle build.
