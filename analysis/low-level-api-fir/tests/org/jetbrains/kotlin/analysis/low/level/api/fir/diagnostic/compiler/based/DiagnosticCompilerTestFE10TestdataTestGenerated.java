@@ -26059,6 +26059,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("flexibleTypeReceiver.kt")
+            public void testFlexibleTypeReceiver() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/flexibleTypeReceiver.kt");
+            }
+
+            @Test
             @TestMetadata("inferPropertyTypeFromGetter.kt")
             public void testInferPropertyTypeFromGetter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/properties/inferPropertyTypeFromGetter.kt");

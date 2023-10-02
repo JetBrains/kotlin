@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
@@ -179,8 +180,8 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             property.modality != Modality.FINAL -> {
                 val dispatchReceiver = (originalFir.unwrapElement() as? FirQualifiedAccessExpression)?.dispatchReceiver ?: return null
 
-                val receiverType = (dispatchReceiver.resolvedType as? ConeClassLikeType)?.fullyExpandedType(session) ?: return null
-                val receiverSymbol = receiverType.lookupTag.toSymbol(session) ?: return null
+                val receiverType = dispatchReceiver.resolvedType.lowerBoundIfFlexible().fullyExpandedType(session)
+                val receiverSymbol = (receiverType as? ConeClassLikeType)?.lookupTag?.toSymbol(session) ?: return null
                 when (val receiverFir = receiverSymbol.fir) {
                     is FirAnonymousObject -> PropertyStability.STABLE_VALUE
                     is FirRegularClass -> if (receiverFir.modality == Modality.FINAL) PropertyStability.STABLE_VALUE else PropertyStability.PROPERTY_WITH_GETTER
