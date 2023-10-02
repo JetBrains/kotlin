@@ -62,6 +62,12 @@ public class ClassicJvmIrSourceRangesTestGenerated extends AbstractClassicJvmIrS
     }
 
     @Test
+    @TestMetadata("operators.kt")
+    public void testOperators() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/operators.kt");
+    }
+
+    @Test
     @TestMetadata("postfixIncrementDecrement.kt")
     public void testPostfixIncrementDecrement() throws Exception {
         runTest("compiler/testData/ir/sourceRanges/postfixIncrementDecrement.kt");
