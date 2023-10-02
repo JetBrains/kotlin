@@ -244,7 +244,7 @@ abstract class KotlinMultiplatformExtension
     }
 
     @ExperimentalKotlinGradlePluginApi
-    val compilerOptions: KotlinCommonCompilerOptions = project.objects
+    internal val compilerOptions: KotlinCommonCompilerOptions = project.objects
         .newInstance<KotlinCommonCompilerOptionsDefault>()
         .configureExperimentalTryK2(project)
         .also {
@@ -252,12 +252,12 @@ abstract class KotlinMultiplatformExtension
         }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 }

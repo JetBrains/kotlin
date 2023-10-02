@@ -13,6 +13,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -35,6 +36,8 @@ abstract class AbstractKotlinTarget(
     private val attributeContainer = HierarchyAttributeContainer(parent = null)
 
     override fun getAttributes(): AttributeContainer = attributeContainer
+
+    internal abstract val compilerOptions: KotlinCommonCompilerOptions
 
     @Deprecated("Scheduled for removal with Kotlin 2.2")
     override var useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true

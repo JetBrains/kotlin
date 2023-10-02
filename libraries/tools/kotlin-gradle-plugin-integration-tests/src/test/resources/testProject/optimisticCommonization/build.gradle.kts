@@ -8,8 +8,10 @@ repositories {
 }
 
 kotlin {
-    compilerOptions {
-        optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
+    sourceSets.all {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
     }
 
     linuxArm64("shortPlatform") {

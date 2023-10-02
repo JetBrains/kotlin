@@ -31,11 +31,11 @@ open class KotlinJsCompilation @Inject internal constructor(
     final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
         get() = compilation.compilerOptions as HasCompilerOptions<KotlinJsCompilerOptions>
 
-    fun compilerOptions(configure: KotlinJsCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinJsCompilerOptions.() -> Unit) {
         compilerOptions.configure(configure)
     }
 
-    fun compilerOptions(configure: Action<KotlinJsCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinJsCompilerOptions>) {
         configure.execute(compilerOptions.options)
     }
 

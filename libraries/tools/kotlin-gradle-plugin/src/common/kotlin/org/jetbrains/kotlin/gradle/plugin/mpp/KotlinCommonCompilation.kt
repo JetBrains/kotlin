@@ -36,11 +36,11 @@ open class KotlinCommonCompilation @Inject internal constructor(compilation: Kot
 
     internal var forceCompilationToKotlinMetadata: Boolean = false
 
-    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
         compilerOptions.configure(configure)
     }
 
-    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
         configure.execute(compilerOptions.options)
     }
 }

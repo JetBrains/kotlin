@@ -25,13 +25,6 @@ class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate) {
     @Suppress("UNCHECKED_CAST")
     override val compilations: NamedDomainObjectContainer<FakeCompilation>
         get() = super.compilations as NamedDomainObjectContainer<FakeCompilation>
-
-    override val compilerOptions: KotlinJvmCompilerOptions
-        get() = super.compilerOptions as KotlinJvmCompilerOptions
-
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
 }
 
 fun ExternalKotlinTargetDescriptorBuilder<FakeTarget>.defaults() {

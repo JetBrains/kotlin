@@ -336,8 +336,9 @@ abstract class KotlinJvmTarget @Inject constructor(
     private fun areRuntimeOrCompileConfigurationsAvailable(): Boolean =
         GradleVersion.version(project.gradle.gradleVersion) <= GradleVersion.version("6.8.3")
 
+    @Suppress("RedundantVisibilityModifier")
     @ExperimentalKotlinGradlePluginApi
-    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+    internal override val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance<KotlinJvmCompilerOptionsDefault>()
         .apply {
             DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(
@@ -347,12 +348,12 @@ abstract class KotlinJvmTarget @Inject constructor(
         }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 
     @ExperimentalKotlinGradlePluginApi
-    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 }
