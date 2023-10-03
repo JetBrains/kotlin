@@ -63,7 +63,10 @@ fun printUsage() {
                remove                Remove the library from the local repository
                dump-ir               Dump the intermediate representation (IR) of all declarations in the library
                                        (to be used for debugging purposes only)
-               signatures            Dump IR signatures of all public declarations in the library
+               dump-ir-signatures    Dump IR signatures of all public declarations in the library and all public declarations consumed
+                                       by this library (as two separate lists). This command relies purely on the data in IR.
+               signatures            [DEPRECATED] Please, use "dump-ir-signatures" instead.
+                                       Dump IR signatures of all public declarations in the library
                                        Note that this command renders the signatures from the metadata. Signatures for certain
                                        declarations in the metadata and in IR may differ if compiler plugins (such as Compose)
                                        were applied during library compilation.
@@ -71,6 +74,9 @@ fun printUsage() {
 
             and the options are:
                -repository <path>    Work with the specified repository
+               -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}
+                                     Render IR signatures of a specific version. By default, the most up-to-date signature version
+                                       supported in the library is used.
                -print-signatures {true|false}
                                      Print IR signature for every declaration (only for "contents" and "dump-ir" commands)
             """.trimIndent()
@@ -104,7 +110,18 @@ class Command(args: Array<String>) {
 
     val verb = args[0]
     val library = args[1]
-    val options = parseArgs(args.drop(2).toTypedArray())
+    val options: Map<String, List<String>> = parseArgs(args.drop(2).toTypedArray())
+}
+
+private fun Command.parseSignatureVersion(): KotlinIrSignatureVersion? {
+    val rawSignatureVersion = options["-signature-version"]?.last() ?: return null
+    val signatureVersion = rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion)
+            ?: error("Invalid signature version: $rawSignatureVersion")
+
+    if (signatureVersion !in KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS)
+        error("Unsupported signature version: ${signatureVersion.number}")
+
+    return signatureVersion
 }
 
 fun warn(text: String) {
@@ -264,10 +281,27 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun signatures(output: Appendable) {
+        output.append("WARNING: \"signatures\" is deprecated. Please, use \"dump-ir-signatures\" instead.\n\n")
+
         val module = loadModule()
         val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer())
 
         printer.print(module)
+    }
+
+    fun dumpIrSignatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
+        val library = libraryInCurrentDir(libraryNameOrPath)
+        signatureVersion?.checkSupportedInLibrary(library)
+
+        val signatures = IrSignaturesExtractor(library).extract()
+        IrSignaturesRenderer(output, signatureVersion).render(signatures)
+    }
+
+    private fun KotlinIrSignatureVersion.checkSupportedInLibrary(library: KotlinLibrary) {
+        val supportedSignatureVersions = library.versions.irSignatureVersions
+        if (this !in supportedSignatureVersions)
+            error("Signature version ${this.number} is not supported in library ${library.libraryFile}." +
+                    " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}")
     }
 
     private fun loadModule(): ModuleDescriptor {
@@ -314,10 +348,13 @@ fun main(args: Array<String>) {
     val repository = command.options["-repository"]?.last()
     val printSignatures = command.options["-print-signatures"]?.last()?.toBoolean() == true
 
+    val signatureVersion = command.parseSignatureVersion()
+
     val library = Library(command.library, repository)
 
     when (command.verb) {
         "dump-ir" -> library.ir(System.out, printSignatures)
+        "dump-ir-signatures" -> library.dumpIrSignatures(System.out, signatureVersion)
         "contents" -> library.contents(System.out, printSignatures)
         "signatures" -> library.signatures(System.out)
         "info" -> library.info()
