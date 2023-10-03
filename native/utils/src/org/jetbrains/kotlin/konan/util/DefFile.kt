@@ -120,6 +120,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
             properties.getSpaceSeparated("exportForwardDeclarations")
         }
 
+        val allowedOverloadsForCFunctions by lazy {
+            properties.getSpaceSeparated("allowedOverloadsForCFunctions")
+        }
+
         val disableDesignatedInitializerChecks by lazy {
             properties.getProperty("disableDesignatedInitializerChecks")?.toBoolean() ?: false
         }

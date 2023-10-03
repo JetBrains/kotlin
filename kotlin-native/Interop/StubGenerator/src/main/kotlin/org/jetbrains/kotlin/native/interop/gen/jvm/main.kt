@@ -324,6 +324,7 @@ private fun processCLib(
             nonStrictEnums = def.config.nonStrictEnums.toSet(),
             noStringConversion = def.config.noStringConversion.toSet(),
             exportForwardDeclarations = def.config.exportForwardDeclarations,
+            allowedOverloadsForCFunctions = def.config.allowedOverloadsForCFunctions.toSet(),
             disableDesignatedInitializerChecks = def.config.disableDesignatedInitializerChecks,
             disableExperimentalAnnotation = cinteropArguments.disableExperimentalAnnotation ?: false,
             target = target
