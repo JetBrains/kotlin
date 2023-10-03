@@ -42,8 +42,8 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             build("build") {
                 checkIrCompilationMessage()
 
-                assertFileInProjectExists("build/kotlin2js/main/lib.js")
-                val dts = projectPath.resolve("build/kotlin2js/main/lib.d.ts")
+                assertFileInProjectExists("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.js")
+                val dts = projectPath.resolve("build/js/packages/kotlin2JsIrDtsGeneration/kotlin/kotlin2JsIrDtsGeneration.d.ts")
                 assertFileExists(dts)
                 assertFileContains(dts, "function bar(): string")
             }
@@ -696,26 +696,6 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         assertOutputContains(USING_JS_IR_BACKEND_MESSAGE)
     }
 
-    @DisplayName("js customized output is included into jar")
-    @GradleTest
-    fun testJarIncludesJsOutputSetExplicitly(gradleVersion: GradleVersion) {
-        project("kotlin2JsModuleKind", gradleVersion) {
-            build(":jar") {
-                checkIrCompilationMessage()
-
-                assertTasksExecuted(":compileKotlin2Js")
-                val jarPath = projectPath.resolve("build/libs/kotlin2JsModuleKind.jar")
-                assertFileExists(jarPath)
-                ZipFile(jarPath.toFile()).use { jar ->
-                    assertEquals(
-                        1, jar.entries().asSequence().count { it.name == "app.js" },
-                        "The jar should contain an entry `app.js` with no duplicates"
-                    )
-                }
-            }
-        }
-    }
-
     @DisplayName("test compilation can access main compilation")
     @GradleTest
     fun testCompileTestCouldAccessProduction(gradleVersion: GradleVersion) {
@@ -724,12 +704,12 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 checkIrCompilationMessage()
 
                 assertTasksExecuted(
-                    ":compileKotlin2Js",
-                    ":compileTestKotlin2Js"
+                    ":compileKotlinJs",
+                    ":compileTestKotlinJs"
                 )
-                assertFileInProjectExists("build/kotlin2js/main/default/manifest")
+                assertFileInProjectExists("build/classes/kotlin/main/default/manifest")
 
-                assertFileInProjectExists("build/kotlin2js/test/module-tests.js")
+                assertFileInProjectExists("build/js/packages/kotlin2JsProjectWithTests-test/kotlin/kotlin2JsProjectWithTests-test.js")
             }
         }
     }
