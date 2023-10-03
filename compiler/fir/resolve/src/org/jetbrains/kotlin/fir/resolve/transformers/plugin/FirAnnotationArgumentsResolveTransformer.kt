@@ -97,6 +97,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
             .transformReceiverParameter(transformer, data)
             .transformValueParameters(transformer, data)
             .transformAnnotations(transformer, data)
+            .transformTypeParameters(transformer, data)
         return simpleFunction
     }
 

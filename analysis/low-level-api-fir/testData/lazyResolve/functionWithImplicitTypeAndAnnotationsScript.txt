@@ -349,8 +349,8 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val receiverTypeProperty: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val typeParameterProperty: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val typeParameterProperty: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
@@ -389,8 +389,8 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndAnnotationsScript.kts
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val receiverTypeProperty: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val typeParameterProperty: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val typeParameterProperty: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val valueParameterTypeProperty: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
