@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.components
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
-import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
-import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
-import org.jetbrains.kotlin.analysis.api.components.ShortenOption
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -42,8 +40,8 @@ internal class KtFe10ReferenceShortener(
             override val targetFile: SmartPsiElementPointer<KtFile> get() = ktFilePointer
             override val importsToAdd: Set<FqName> get() = emptySet()
             override val starImportsToAdd: Set<FqName> get() = emptySet()
-            override val typesToShorten: List<SmartPsiElementPointer<KtUserType>> get() = emptyList()
-            override val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>> get() = emptyList()
+            override val listOfTypeToShortenInfo: List<TypeToShortenInfo> get() = emptyList()
+            override val listOfQualifierToShortenInfo: List<QualifierToShortenInfo> get() = emptyList()
             override val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>> get() = emptyList()
 
             override val isEmpty: Boolean get() = true
