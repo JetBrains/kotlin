@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Compatible
@@ -29,7 +30,7 @@ object ExpectedActualResolver {
                             // TODO: support non-source definitions (e.g. from Java)
                             actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualChecker.getCallablesCompatibility(
+                    AbstractExpectActualMatcher.getCallablesCompatibility(
                         expected,
                         actual,
                         parentSubstitutor = null,
@@ -43,7 +44,7 @@ object ExpectedActualResolver {
                 context.findClassifiersFromModule(expected.classId, platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect && actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualChecker.getClassifiersCompatibility(
+                    AbstractExpectActualMatcher.getClassifiersCompatibility(
                         expected,
                         actual,
                         checkClassScopesCompatibility = true,
