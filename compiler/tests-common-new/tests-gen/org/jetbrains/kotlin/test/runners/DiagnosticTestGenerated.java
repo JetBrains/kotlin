@@ -5389,6 +5389,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("UselessCastOnSecondSmartcast.kt")
+            public void testUselessCastOnSecondSmartcast() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/cast/UselessCastOnSecondSmartcast.kt");
+            }
+
+            @Test
             @TestMetadata("UselessSafeCast.kt")
             public void testUselessSafeCast() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/cast/UselessSafeCast.kt");

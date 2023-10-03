@@ -1393,19 +1393,23 @@ class LightTreeRawFirExpressionBuilder(
 
     private val LighterASTNode.usedAsExpression: Boolean
         get() {
-            var parent = getParent() ?: return true
-            while (parent.elementType == ANNOTATED_EXPRESSION ||
-                parent.elementType == LABELED_EXPRESSION
-            ) {
-                parent = parent.getParent() ?: return true
+            var relevantParent = getParent() ?: return true
+            while (true) {
+                relevantParent = when (relevantParent.elementType) {
+                    ANNOTATED_EXPRESSION,
+                    LABELED_EXPRESSION,
+                    PARENTHESIZED,
+                    POSTFIX_EXPRESSION -> relevantParent.getParent() ?: return true
+                    THEN,
+                    ELSE,
+                    WHEN_ENTRY -> relevantParent.getParent()?.getParent() ?: return true
+                    BLOCK -> return false
+                    else -> break
+                }
             }
-            val parentTokenType = parent.tokenType
-            if (parentTokenType == BLOCK) return false
-            if (parentTokenType == THEN || parentTokenType == ELSE || parentTokenType == WHEN_ENTRY) {
-                return parent.getParent()?.usedAsExpression ?: true
-            }
-            if (parentTokenType != BODY) return true
-            val type = parent.getParent()?.tokenType ?: return true
+
+            if (relevantParent.tokenType != BODY) return true
+            val type = relevantParent.getParent()?.tokenType ?: return true
             return !(type == FOR || type == WHILE || type == DO_WHILE)
         }
 

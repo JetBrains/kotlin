@@ -2540,22 +2540,25 @@ open class PsiRawFirBuilder(
 
         private val KtExpression.usedAsExpression: Boolean
             get() {
-                var parent = parent
-                while (parent.elementType == KtNodeTypes.ANNOTATED_EXPRESSION ||
-                    parent.elementType == KtNodeTypes.LABELED_EXPRESSION
-                ) {
-                    parent = parent.parent
-                }
-                if (parent is KtBlockExpression) return false
-                when (parent.elementType) {
-                    KtNodeTypes.THEN, KtNodeTypes.ELSE, KtNodeTypes.WHEN_ENTRY -> {
-                        return (parent.parent as? KtExpression)?.usedAsExpression ?: true
+                var relevantParent = parent
+                while (true) {
+                    relevantParent = when (relevantParent.elementType) {
+                        KtNodeTypes.ANNOTATED_EXPRESSION,
+                        KtNodeTypes.LABELED_EXPRESSION,
+                        KtNodeTypes.PARENTHESIZED,
+                        KtNodeTypes.POSTFIX_EXPRESSION -> relevantParent.parent
+                        KtNodeTypes.THEN,
+                        KtNodeTypes.ELSE,
+                        KtNodeTypes.WHEN_ENTRY -> relevantParent.parent.parent
+                        KtNodeTypes.BLOCK -> return false
+                        else -> break
                     }
                 }
-                if (parent is KtScriptInitializer) return false
+
+                if (relevantParent is KtScriptInitializer) return false
                 // Here we check that when used is a single statement of a loop
-                if (parent !is KtContainerNodeForControlStructureBody) return true
-                val type = parent.parent.elementType
+                if (relevantParent !is KtContainerNodeForControlStructureBody) return true
+                val type = relevantParent.parent.elementType
                 return !(type == KtNodeTypes.FOR || type == KtNodeTypes.WHILE || type == KtNodeTypes.DO_WHILE)
             }
 
