@@ -57,9 +57,15 @@ internal object IdeJvmAndAndroidSourceDependencyResolver : IdeDependencyResolver
 
         return sourceSet.resolveMetadata<MetadataDependencyResolution>()
             /**
+             * Only care about project dependencies as this resolver tries to provide source dependencies
+             */
+            .filter { metadataDependencyResolution -> metadataDependencyResolution.projectDependency(sourceSet.project) != null }
+            /**
              * See [IdeVisibleMultiplatformSourceDependencyResolver] on why this could happen
              */
             .filter { metadataDependencyResolution -> metadataDependencyResolution.projectDependency(sourceSet.project) != sourceSet.project }
+
+
             .flatMap { metadataDependencyResolution ->
 
                 when (metadataDependencyResolution) {

@@ -199,6 +199,34 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     }
 
     @Test
+    fun `test - KT-62029 - transitive dependencies form project dependency`() {
+        val root = buildProject { enableDefaultStdlibDependency(false) }
+        val producer = buildProject({ withName("producer").withParent(root) }) { configureAndroidAndMultiplatform() }
+        val consumer = buildProject({ withName("consumer").withParent(root) }) { configureAndroidAndMultiplatform() }
+
+        producer.multiplatformExtension.sourceSets.commonMain.dependencies {
+            api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
+        }
+
+        consumer.multiplatformExtension.sourceSets.commonMain.dependencies {
+            implementation(producer)
+        }
+
+        root.evaluate()
+        producer.evaluate()
+        consumer.evaluate()
+
+        consumer.kotlinIdeMultiplatformImport.resolveDependencies("commonMain").assertMatches(
+            regularSourceDependency(":producer/commonMain"),
+            regularSourceDependency(":producer/jvmAndAndroidMain"),
+            binaryCoordinates(Regex(".*stdlib.*")),
+            binaryCoordinates(Regex("org.jetbrains:annotations.*")),
+            binaryCoordinates("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.7.2")
+        )
+
+    }
+
+    @Test
     fun `test - default stdlib with no other dependencies`() {
         val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
         project.evaluate()
