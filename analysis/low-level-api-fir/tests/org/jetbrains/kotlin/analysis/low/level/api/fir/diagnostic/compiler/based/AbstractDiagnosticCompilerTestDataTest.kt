@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 
 abstract class AbstractDiagnosticCompilerTestDataTest : AbstractCompilerBasedTestForFir() {
     override fun TestConfigurationBuilder.configureTest() {
-        baseFirDiagnosticTestConfiguration(frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve))
+        baseFirDiagnosticTestConfiguration(
+            frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithoutPreresolve),
+            testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
+        )
         useAfterAnalysisCheckers(::ContractViolationSuppressor)
         useAfterAnalysisCheckers(::DiagnosticSuppressor)
     }
