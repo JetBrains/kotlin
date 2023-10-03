@@ -51,21 +51,32 @@ import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import kotlin.system.exitProcess
 
-internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
+private val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
 fun printUsage() {
-    println("Usage: klib <command> <library> <options>")
-    println("where the commands are:")
-    println("\tinfo\tgeneral information about the library")
-    println("\tinstall\tinstall the library to the local repository")
-    println("\tdump-ir\tprint out the intermediate representation (IR) for the library (to be used for debugging purposes only)")
-    println("\tcontents\tlist contents of the library")
-    println("\tsignatures\tlist of ID signatures in the library")
-    println("\tremove\tremove the library from the local repository")
-    println("and the options are:")
-    println("\t-repository <path>\twork with the specified repository")
-    println("\t-target <name>\tinspect specifics of the given target")
-    println("\t-print-signatures [true|false]\tprint ID signature for every declaration (only for \"contents\" and \"dump-ir\" commands)")
+    println(
+            """
+            Usage: klib <command> <library> [<option>]
+
+            where the commands are:
+               info                  General information about the library
+               install               Install the library to the local repository
+               remove                Remove the library from the local repository
+               dump-ir               Dump the intermediate representation (IR) of all declarations in the library
+                                       (to be used for debugging purposes only)
+               signatures            Dump IR signatures of all public declarations in the library
+                                       Note that this command renders the signatures from the metadata. Signatures for certain
+                                       declarations in the metadata and in IR may differ if compiler plugins (such as Compose)
+                                       were applied during library compilation.
+               contents              Dump the metadata of all public declarations in the library in the form of Kotlin-alike code
+
+            and the options are:
+               -repository <path>    Work with the specified repository
+               -target <name>        Inspect specifics of the given target
+               -print-signatures {true|false}
+                                     Print IR signature for every declaration (only for "contents" and "dump-ir" commands)
+            """.trimIndent()
+    )
 }
 
 private fun parseArgs(args: Array<String>): Map<String, List<String>> {
@@ -248,7 +259,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
 
     fun contents(output: Appendable, printSignatures: Boolean) {
         val module = loadModule()
-        val signatureRenderer = if (printSignatures) DefaultKlibSignatureRenderer("// ID signature: ") else KlibSignatureRenderer.NO_SIGNATURE
+        val signatureRenderer = if (printSignatures) DefaultKlibSignatureRenderer("// Signature: ") else KlibSignatureRenderer.NO_SIGNATURE
         val printer = DeclarationPrinter(output, DefaultDeclarationHeaderRenderer, signatureRenderer)
 
         printer.print(module)
