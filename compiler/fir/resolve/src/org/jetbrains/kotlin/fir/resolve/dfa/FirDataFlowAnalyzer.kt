@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -439,7 +440,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun processEqConst(
         flow: MutableFlow,
-        expression: FirExpression,
+        expression: FirEqualityOperatorCall,
         operand: FirExpression,
         const: FirConstExpression<*>,
         isEq: Boolean
@@ -450,6 +451,7 @@ abstract class FirDataFlowAnalyzer(
 
         val operandVariable = variableStorage.getOrCreateIfReal(flow, operand) ?: return
         val expressionVariable = variableStorage.createSynthetic(expression)
+
         if (const.kind == ConstantValueKind.Boolean && operand.resolvedType.isBooleanOrNullableBoolean) {
             val expected = (const.value as Boolean)
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq expected))
@@ -459,6 +461,11 @@ abstract class FirDataFlowAnalyzer(
         } else {
             // expression == non-null const -> expression != null
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable notEq null))
+        }
+
+        // We can imply type information if the constant is the left operand and is a supported primitive type.
+        if (operandVariable is RealVariable && const == expression.arguments[0] && isSmartcastPrimitive(const.resolvedType.classId)) {
+            flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeEq const.resolvedType))
         }
     }
 
@@ -542,8 +549,9 @@ abstract class FirDataFlowAnalyzer(
         val status = resolvedStatus
         if (checkModality && status.modality != Modality.FINAL) return true
         if (status.isExpect) return true
+        if (isSmartcastPrimitive(classId)) return false
         when (classId) {
-            StandardClassIds.Any, StandardClassIds.String -> return false
+            StandardClassIds.Any -> return false
             // Float and Double effectively had non-trivial `equals` semantics while they don't have explicit overrides (see KT-50535)
             StandardClassIds.Float, StandardClassIds.Double -> return true
         }
@@ -560,6 +568,21 @@ abstract class FirDataFlowAnalyzer(
         ).getFunctions(OperatorNameConventions.EQUALS).any {
             !it.isSubstitutionOrIntersectionOverride && it.fir.isEquals(session) &&
                     it.dispatchReceiverClassLookupTagOrNull() == this.toLookupTag()
+        }
+    }
+
+    /**
+     * Determines if type smart-casting to the specified [ClassId] can be performed when values are
+     * compared via equality. Because this is determined using the ClassId, only standard built-in
+     * types are considered.
+     */
+    private fun isSmartcastPrimitive(classId: ClassId?): Boolean {
+        return when (classId) {
+            // Support other primitives as well: KT-62246.
+            StandardClassIds.String,
+            -> true
+
+            else -> false
         }
     }
 
