@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
@@ -69,7 +70,7 @@ object FirExpectActualResolver {
                     candidates.filter { expectSymbol ->
                         actualSymbol != expectSymbol && expectSymbol.isExpect
                     }.groupBy { expectDeclaration ->
-                        AbstractExpectActualChecker.getCallablesCompatibility(
+                        AbstractExpectActualMatcher.getCallablesCompatibility(
                             expectDeclaration,
                             actualSymbol as CallableSymbolMarker,
                             parentSubstitutor,
@@ -88,13 +89,13 @@ object FirExpectActualResolver {
                 is FirClassLikeSymbol<*> -> {
                     val expectClassSymbol = useSiteSession.dependenciesSymbolProvider
                         .getClassLikeSymbolByClassId(actualSymbol.classId) as? FirRegularClassSymbol ?: return emptyMap()
-                    val compatibility = AbstractExpectActualChecker.getClassifiersCompatibility(
-                        expectClassSymbol,
-                        actualSymbol,
-                        checkClassScopesCompatibility = true,
-                        context
-                    )
-                    mapOf(compatibility to listOf(expectClassSymbol))
+                    //val compatibility = AbstractExpectActualChecker.getClassifiersCompatibility(
+                    //    expectClassSymbol,
+                    //    actualSymbol,
+                    //    checkClassScopesCompatibility = true,
+                    //    context
+                    //)
+                    mapOf((ExpectActualCompatibility.Compatible as ExpectActualCompatibility<FirBasedSymbol<*>>) to listOf(expectClassSymbol))
                 }
                 else -> emptyMap()
             }

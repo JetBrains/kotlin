@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -70,7 +71,7 @@ private fun checkExpectActualScopeDiff(
     declaration: KtClassLikeDeclaration,
     descriptor: ClassifierDescriptorWithTypeParameters,
 ) {
-    val scopeDiff = calculateExpectActualScopeDiff(expect, actual)
+    val scopeDiff = calculateExpectActualScopeDiff(expect, actual, context.languageVersionSettings)
     if (scopeDiff.isNotEmpty()) {
         context.trace.report(
             Errors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING.on(
@@ -164,7 +165,8 @@ private fun calculateExpectActualScopeDiff(
                         classTypeSubstitutor,
                         expect,
                         actual,
-                        matchingContext
+                        matchingContext,
+                        languageVersionSettings
                     )
                 }
                 .takeIf { kinds -> kinds.all { it != K1ExpectActualCompatibility.Compatible } }

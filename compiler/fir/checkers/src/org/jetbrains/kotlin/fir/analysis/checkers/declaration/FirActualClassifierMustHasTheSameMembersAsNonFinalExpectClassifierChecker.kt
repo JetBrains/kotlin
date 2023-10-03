@@ -185,7 +185,8 @@ private fun calculateExpectActualScopeDiff(
                         classTypeSubstitutor,
                         expect,
                         actual,
-                        matchingContext
+                        matchingContext,
+                        context.languageVersionSettings
                     )
                 }
                 .takeIf { kinds -> kinds.all { it != ExpectActualCompatibility.Compatible } }
