@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
@@ -158,7 +158,7 @@ private fun calculateExpectActualScopeDiff(
         } else {
             potentialExpects
                 .map { expectMember ->
-                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+                    AbstractExpectActualChecker.getCallablesCompatibility(
                         expectMember,
                         actualMember,
                         classTypeSubstitutor,

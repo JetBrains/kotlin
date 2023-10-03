@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Compatible
@@ -29,7 +29,7 @@ object ExpectedActualResolver {
                             // TODO: support non-source definitions (e.g. from Java)
                             actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+                    AbstractExpectActualChecker.getCallablesCompatibility(
                         expected,
                         actual,
                         parentSubstitutor = null,
@@ -43,7 +43,7 @@ object ExpectedActualResolver {
                 context.findClassifiersFromModule(expected.classId, platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect && actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
+                    AbstractExpectActualChecker.getClassifiersCompatibility(
                         expected,
                         actual,
                         checkClassScopesCompatibility = true,
@@ -147,7 +147,7 @@ object ExpectedActualResolver {
                     }
                     else -> null
                 }
-            AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+            AbstractExpectActualChecker.getCallablesCompatibility(
                 expectDeclaration = declaration,
                 actualDeclaration = actual,
                 parentSubstitutor = substitutor,
@@ -167,7 +167,7 @@ object ExpectedActualResolver {
         return candidates.filter { declaration ->
             actual != declaration && declaration is ClassDescriptor && declaration.isExpect
         }.groupBy { expected ->
-            AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
+            AbstractExpectActualChecker.getClassifiersCompatibility(
                 expected as ClassDescriptor,
                 actual,
                 checkClassScopesCompatibility,
