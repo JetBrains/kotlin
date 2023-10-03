@@ -494,7 +494,7 @@ object KotlinToolingDiagnostics {
                       ${trace.shortcut}()
                   }
                 
-                Please declare the required targets explicitly: 
+                Please declare the required targets explicitly:
                 
                   kotlin {
                       ${trace.shortcut}X64()
