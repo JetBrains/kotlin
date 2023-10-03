@@ -394,37 +394,48 @@ public class DefaultErrorMessages {
                 "{0}: expect and corresponding actual are declared in the same module, which will be prohibited in Kotlin 2.0. See https://youtrack.jetbrains.com/issue/KT-55177",
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM);
 
-        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER,
+        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING,
                 "{0}: actual class and its non-final expect class must declare exactly the same non-private members. " +
                 "The following non-private members in actual class are mismatched:{1}\n" +
                 "This error happens because the expect class ''{2}'' is non-final. " +
+                "This warning will become an error in future releases.\n" +
                 "Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 ExpectActualScopeDiffsRenderer.TEXT,
                 NAME);
-        MAP.put(NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
-        MAP.put(RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
-        MAP.put(MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
-        MAP.put(VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
-        MAP.put(PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
-        MAP.put(PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
-        MAP.put(LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
-        MAP.put(SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
-        MAP.put(TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION,
-                "{0}. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details", ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
 
-        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER,
+        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING,
                 "{0}: actual class and its non-final expect class must declare exactly the same supertypes. " +
-                "Actual class declares the following supertypes that are not presented in expect class: {1}. " +
+                "Actual class declares the following supertypes that are not presented in expect class: {1}.\n" +
                 "This error happens because the expect class ''{2}'' is non-final. " +
+                "This warning will become an error in future releases.\n" +
                 "Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 new ListRenderer<>(TO_STRING, (elem) -> "'" + elem + "'"),

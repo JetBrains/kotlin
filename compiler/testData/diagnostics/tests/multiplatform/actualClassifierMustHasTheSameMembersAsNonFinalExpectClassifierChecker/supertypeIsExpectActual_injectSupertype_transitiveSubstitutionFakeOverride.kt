@@ -20,7 +20,7 @@ actual open class Base<T> {
 
 open class Transitive : Base<String>()
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> : Transitive() {
+actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>class Foo<!> : Transitive() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }
