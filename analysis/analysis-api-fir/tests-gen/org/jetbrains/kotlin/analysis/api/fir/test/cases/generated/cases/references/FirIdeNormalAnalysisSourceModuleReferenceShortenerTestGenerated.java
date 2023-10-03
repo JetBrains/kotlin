@@ -275,6 +275,36 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     }
 
     @Test
+    @TestMetadata("importAliasAndStarImport.kt")
+    public void testImportAliasAndStarImport() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/importAliasAndStarImport.kt");
+    }
+
+    @Test
+    @TestMetadata("importAliasForFunction.kt")
+    public void testImportAliasForFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/importAliasForFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("importAliasForProperty.kt")
+    public void testImportAliasForProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/importAliasForProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("importAliasForType.kt")
+    public void testImportAliasForType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/importAliasForType.kt");
+    }
+
+    @Test
+    @TestMetadata("importAliasForTypeQualifier.kt")
+    public void testImportAliasForTypeQualifier() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/importAliasForTypeQualifier.kt");
+    }
+
+    @Test
     @TestMetadata("kdoc.kt")
     public void testKdoc() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/kdoc.kt");
@@ -308,6 +338,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     @TestMetadata("multipleImport.kt")
     public void testMultipleImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/multipleImport.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleImportAlias.kt")
+    public void testMultipleImportAlias() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/multipleImportAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleImportAlias2.kt")
+    public void testMultipleImportAlias2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/multipleImportAlias2.kt");
     }
 
     @Test
@@ -488,6 +530,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     @TestMetadata("shortenAlreadyImportedFunction4.kt")
     public void testShortenAlreadyImportedFunction4() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/shortenAlreadyImportedFunction4.kt");
+    }
+
+    @Test
+    @TestMetadata("starImport.kt")
+    public void testStarImport() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/starImport.kt");
     }
 
     @Test

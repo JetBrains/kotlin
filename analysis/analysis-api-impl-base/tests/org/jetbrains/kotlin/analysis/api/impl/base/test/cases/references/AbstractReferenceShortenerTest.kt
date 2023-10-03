@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.services.assertions
  * Note that it tests shortening only a single expression between <expr> and </expr> in the first file.
  */
 abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedSingleModuleTest() {
+
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val element = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(ktFiles.first())
 

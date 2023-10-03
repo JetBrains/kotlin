@@ -152,14 +152,41 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
         }
 }
 
+/**
+ * A class to keep a [KtUserType] to shorten and what shape the shortened result has to be. [shortenedReference] is the expected result of
+ * shortening in a string form. If [shortenedReference] is null, it means the shortening will simply delete the qualifier. Note that
+ * currently the only usage of [shortenedReference] is the case we have the import-alias. For example, [shortenedReference] will be
+ * "AliasType" when we shorten:
+ * ```
+ * import my.package.NewType as AliasType
+ * ... my.package.Ne<caret>wType ... // -> we can replace this with `AliasType`.
+ * ```
+ */
+public data class TypeToShortenInfo(val typeToShorten: SmartPsiElementPointer<KtUserType>, val shortenedReference: String?)
+
+/**
+ * A class to keep a [KtDotQualifiedExpression] to shorten and what shape the shortened result has to be. [shortenedReference] is the
+ * expected result of shortening in a string form. If [shortenedReference] is null, it means the shortening will simply delete the
+ * qualifier. Note that currently the only usage of [shortenedReference] is the case we have the import-alias. For example,
+ * [shortenedReference] will be "bar" when we shorten:
+ * ```
+ * import my.package.foo as bar
+ * ... my.package.fo<caret>o ... // -> we can replace this with `bar`.
+ * ```
+ */
+public data class QualifierToShortenInfo(
+    val qualifierToShorten: SmartPsiElementPointer<KtDotQualifiedExpression>,
+    val shortenedReference: String?,
+)
+
 public interface ShortenCommand {
     public val targetFile: SmartPsiElementPointer<KtFile>
     public val importsToAdd: Set<FqName>
     public val starImportsToAdd: Set<FqName>
-    public val typesToShorten: List<SmartPsiElementPointer<KtUserType>>
-    public val qualifiersToShorten: List<SmartPsiElementPointer<KtDotQualifiedExpression>>
+    public val listOfTypeToShortenInfo: List<TypeToShortenInfo>
+    public val listOfQualifierToShortenInfo: List<QualifierToShortenInfo>
     public val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>>
 
     public val isEmpty: Boolean
-        get() = typesToShorten.isEmpty() && qualifiersToShorten.isEmpty() && kDocQualifiersToShorten.isEmpty()
+        get() = listOfTypeToShortenInfo.isEmpty() && listOfQualifierToShortenInfo.isEmpty() && kDocQualifiersToShorten.isEmpty()
 }
