@@ -11,7 +11,7 @@ expect open class Foo {
 
 open class InjectedEmptySuperClass()
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> : InjectedEmptySuperClass() {
+actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>class Foo<!> : InjectedEmptySuperClass() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }

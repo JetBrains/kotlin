@@ -49,7 +49,7 @@ private fun checkSupertypes(
 
     if (addedSupertypes.isNotEmpty()) {
         context.trace.report(
-            Errors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER.on(
+            Errors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING.on(
                 declaration,
                 descriptor,
                 addedSupertypes.map(FqName::shortName),
@@ -69,7 +69,7 @@ private fun checkExpectActualScopeDiff(
     val scopeDiff = calculateExpectActualScopeDiff(expect, actual)
     if (scopeDiff.isNotEmpty()) {
         context.trace.report(
-            Errors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER.on(
+            Errors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING.on(
                 declaration,
                 descriptor,
                 scopeDiff,
@@ -210,23 +210,23 @@ private fun BindingTrace.reportIfPossible(diff: ExpectActualMemberDiff<CallableM
     val psi = diff.actualMember.psiIfReal ?: return
     val diagnostic = when (diff.kind) {
         ExpectActualMemberDiff.Kind.NonPrivateCallableAdded ->
-            Errors.NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION.on(psi, diff)
+            Errors.NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.ReturnTypeChangedInOverride ->
-            Errors.RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.on(psi, diff)
+            Errors.RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.ModalityChangedInOverride ->
-            Errors.MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.on(psi, diff)
+            Errors.MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.VisibilityChangedInOverride ->
-            Errors.VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.on(psi, diff)
+            Errors.VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.SetterVisibilityChangedInOverride ->
-            Errors.SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.on((psi as? KtProperty)?.setter ?: return, diff)
+            Errors.SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on((psi as? KtProperty)?.setter ?: return, diff)
         ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride ->
-            Errors.PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.on(psi, diff)
+            Errors.PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.PropertyKindChangedInOverride ->
-            Errors.PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.on(psi, diff)
+            Errors.PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.LateinitChangedInOverride ->
-            Errors.LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.on(psi, diff)
+            Errors.LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride ->
-            Errors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION.on(psi, diff)
+            Errors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
     }
     report(diagnostic)
 }
