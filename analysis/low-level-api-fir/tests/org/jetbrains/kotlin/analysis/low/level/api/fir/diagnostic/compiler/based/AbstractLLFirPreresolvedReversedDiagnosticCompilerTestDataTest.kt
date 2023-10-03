@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.test.utils.llFirTestDataFile
 abstract class AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest : AbstractCompilerBasedTestForFir() {
     override fun TestConfigurationBuilder.configureTest() {
         baseFirDiagnosticTestConfiguration(
-            frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder)
+            frontendFacade = ::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder),
+            testDataConsistencyHandler = ::ReversedFirIdenticalChecker,
         )
 
         useAfterAnalysisCheckers(::FirReversedSuppressor)
         useMetaTestConfigurators(::ReversedDiagnosticsConfigurator)
-        useAfterAnalysisCheckers(::ReversedFirIdenticalChecker)
     }
 }
 

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.frontend.fir.*
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -115,11 +116,13 @@ open class AbstractFirPsiWithActualizerDiagnosticsTest : AbstractFirWithActualiz
 
 open class AbstractFirLightTreeWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.LightTree)
 
-fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside() {
+fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside(
+    testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
+) {
     useAfterAnalysisCheckers(
         ::FirIdenticalChecker,
         ::FirFailingTestSuppressor,
-        ::FirTestDataConsistencyHandler,
+        testDataConsistencyHandler,
     )
     useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
 }
@@ -127,7 +130,8 @@ fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside() {
 // `baseDir` is used in Kotlin plugin from IJ infra
 fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     baseDir: String = ".",
-    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade
+    frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>> = ::FirFrontendFacade,
+    testDataConsistencyHandler: Constructor<AfterAnalysisChecker> = ::FirTestDataConsistencyHandler,
 ) {
     globalDefaults {
         frontend = FrontendKinds.FIR
@@ -162,7 +166,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
 
     forTestsMatching("compiler/testData/diagnostics/*") {
-        configurationForClassicAndFirTestsAlongside()
+        configurationForClassicAndFirTestsAlongside(testDataConsistencyHandler)
     }
 
     forTestsMatching("compiler/fir/analysis-tests/testData/*") {
