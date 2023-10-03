@@ -14,7 +14,7 @@ Please declare the required targets explicitly:
       /* ... */
   }
 
-After that, replace `by getting` with a static accessor:
+After that, replace `by getting` with static accessors:
 
   sourceSets {
       commonMain { ... }
