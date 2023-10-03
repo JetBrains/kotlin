@@ -14,14 +14,14 @@ internal object ShorteningResultsRenderer {
             return
         }
 
-        shortening.typesToShorten.forEach { userType ->
+        shortening.listOfTypeToShortenInfo.forEach { (userType, shortenedRef) ->
             userType.element?.text?.let {
-                appendLine("[type] $it")
+                appendLine("[type] $it${shortenedRef?.let { ref -> " -> $ref" } ?: ""}")
             }
         }
-        shortening.qualifiersToShorten.forEach { qualifier ->
+        shortening.listOfQualifierToShortenInfo.forEach { (qualifier, shortenedRef) ->
             qualifier.element?.text?.let {
-                appendLine("[qualifier] $it")
+                appendLine("[qualifier] $it${shortenedRef?.let { ref -> " -> $ref" } ?: ""}")
             }
         }
         shortening.kDocQualifiersToShorten.forEach { kdoc ->
