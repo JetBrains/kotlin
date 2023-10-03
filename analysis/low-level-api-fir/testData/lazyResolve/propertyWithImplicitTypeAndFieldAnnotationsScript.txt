@@ -314,8 +314,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
         @R|myPack/Anno|[Types](propertyProperty#) field:@FIELD:R|myPack/Anno|[Types](fieldProperty#) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @R|myPack/Anno|[Types](getterProperty#) public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
@@ -350,8 +350,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
         @R|myPack/Anno|[Types](propertyProperty#) field:@FIELD:R|myPack/Anno|[Types](fieldProperty#) public final [ResolvedTo(CONTRACTS)] var variableToResolve: <implicit> = <strcat>(IntegerLiteral(42))
             @R|myPack/Anno|[Types](getterProperty#) public [ResolvedTo(CONTRACTS)] get(): <implicit> {
@@ -520,3 +520,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndFieldAnnotationsScri
             @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) value: R|kotlin/String|): R|kotlin/Unit| {
                 ^ Q|kotlin/Unit|
             }
+

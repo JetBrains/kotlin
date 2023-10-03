@@ -217,8 +217,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
         public [ResolvedTo(STATUS)] get(): <implicit>
     @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(STATUS)] get(): <implicit>
-    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): <implicit>
     @R|myPack/Anno|[Types](propertyProperty#) field:@FIELD:R|myPack/Anno|[Types](fieldProperty#) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var variableToResolve: <implicit> = LAZY_EXPRESSION
         @R|myPack/Anno|[Types](getterProperty#) public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
         @R|myPack/Anno|[Types](setterProperty#) public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] @R|myPack/Anno|[Types](setterParameterProperty#) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
@@ -242,8 +242,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
         public [ResolvedTo(STATUS)] get(): <implicit>
     @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(STATUS)] get(): <implicit>
-    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        public [ResolvedTo(STATUS)] get(): <implicit>
     @R|myPack/Anno|[Types](propertyProperty#) field:@FIELD:R|myPack/Anno|[Types](fieldProperty#) public final [ResolvedTo(CONTRACTS)] var variableToResolve: <implicit> = <strcat>(IntegerLiteral(42))
         @R|myPack/Anno|[Types](getterProperty#) public [ResolvedTo(CONTRACTS)] get(): <implicit> {
             ^ field#.plus#(String(str))

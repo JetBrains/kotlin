@@ -129,7 +129,14 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
             .transformGetter(transformer, data)
             .transformSetter(transformer, data)
             .transformTypeParameters(transformer, data)
+            .transformBackingField(transformer, data)
+
         return property
+    }
+
+    override fun transformBackingField(backingField: FirBackingField, data: ResolutionMode): FirBackingField {
+        backingField.transformAnnotations(transformer, data)
+        return backingField
     }
 
     override fun transformPropertyAccessor(
