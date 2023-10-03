@@ -12,7 +12,7 @@ expect open class Foo {
 actual open class Foo {
     actual fun foo() {}
 
-    // Expected: NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION.
+    // Expected: NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING.
     // But it doesn't work because context receivers are not yet supported in expect actual matcher KT-61447
     context(Int)
     fun <!ACTUAL_MISSING!>foo<!>() {}

@@ -15,4 +15,4 @@ interface Bar {
 val bar: Bar
     get() = null!!
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> : Bar by bar
+actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>class Foo<!> : Bar by bar
