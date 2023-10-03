@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.calls.mpp
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -24,18 +23,18 @@ import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import java.util.*
 
 object AbstractExpectActualMatcher {
-    fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
-        expectClassSymbol: RegularClassSymbolMarker,
-        actualClassLikeSymbol: ClassLikeSymbolMarker,
-        checkClassScopesCompatibility: Boolean,
-        context: ExpectActualMatchingContext<T>,
-    ): ExpectActualCompatibility<T> {
-        val result = with(context) {
-            getClassifiersCompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor = null, checkClassScopesCompatibility)
-        }
-        @Suppress("UNCHECKED_CAST")
-        return result as ExpectActualCompatibility<T>
-    }
+    //fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
+    //    expectClassSymbol: RegularClassSymbolMarker,
+    //    actualClassLikeSymbol: ClassLikeSymbolMarker,
+    //    checkClassScopesCompatibility: Boolean,
+    //    context: ExpectActualMatchingContext<T>,
+    //): ExpectActualCompatibility<T> {
+    //    val result = with(context) {
+    //        getClassifiersCompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor = null, checkClassScopesCompatibility)
+    //    }
+    //    @Suppress("UNCHECKED_CAST")
+    //    return result as ExpectActualCompatibility<T>
+    //}
 
     fun <T : DeclarationSymbolMarker> getCallablesCompatibility(
         expectDeclaration: CallableSymbolMarker,
@@ -70,95 +69,95 @@ object AbstractExpectActualMatcher {
         }
     }
 
-    context(ExpectActualMatchingContext<*>)
-    @Suppress("warnings")
-    private fun getClassifiersCompatibility(
-        expectClassSymbol: RegularClassSymbolMarker,
-        actualClassLikeSymbol: ClassLikeSymbolMarker,
-        parentSubstitutor: TypeSubstitutorMarker?,
-        checkClassScopes: Boolean,
-    ): ExpectActualCompatibility<*> = getClassifiersIncompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor, checkClassScopes)
-        ?: ExpectActualCompatibility.Compatible
+    //context(ExpectActualMatchingContext<*>)
+    //@Suppress("warnings")
+    //private fun getClassifiersCompatibility(
+    //    expectClassSymbol: RegularClassSymbolMarker,
+    //    actualClassLikeSymbol: ClassLikeSymbolMarker,
+    //    parentSubstitutor: TypeSubstitutorMarker?,
+    //    checkClassScopes: Boolean,
+    //): ExpectActualCompatibility<*> = getClassifiersIncompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor, checkClassScopes)
+    //    ?: ExpectActualCompatibility.Compatible
 
-    context(ExpectActualMatchingContext<*>)
-    @Suppress("warnings")
-    private fun getClassifiersIncompatibility(
-        expectClassSymbol: RegularClassSymbolMarker,
-        actualClassLikeSymbol: ClassLikeSymbolMarker,
-        parentSubstitutor: TypeSubstitutorMarker?,
-        checkClassScopesCompatibility: Boolean,
-    ): ExpectActualCompatibility.Incompatible.ExpectActualCheckingIncompatible<*>? {
-        // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
-        require(expectClassSymbol.name == actualClassLikeSymbol.name) {
-            "This function should be invoked only for declarations with the same name: $expectClassSymbol, $actualClassLikeSymbol"
-        }
+    //context(ExpectActualMatchingContext<*>)
+    //@Suppress("warnings")
+    //private fun getClassifiersIncompatibility(
+    //    expectClassSymbol: RegularClassSymbolMarker,
+    //    actualClassLikeSymbol: ClassLikeSymbolMarker,
+    //    parentSubstitutor: TypeSubstitutorMarker?,
+    //    checkClassScopesCompatibility: Boolean,
+    //): ExpectActualCompatibility.Incompatible.ExpectActualCheckingIncompatible<*>? {
+    //    // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
+    //    require(expectClassSymbol.name == actualClassLikeSymbol.name) {
+    //        "This function should be invoked only for declarations with the same name: $expectClassSymbol, $actualClassLikeSymbol"
+    //    }
+    //
+    //    val actualClass = when (actualClassLikeSymbol) {
+    //        is RegularClassSymbolMarker -> actualClassLikeSymbol
+    //        is TypeAliasSymbolMarker -> actualClassLikeSymbol.expandToRegularClass()
+    //            ?: return null // do not report extra error on erroneous typealias
+    //        else -> error("Incorrect actual classifier for $expectClassSymbol: $actualClassLikeSymbol")
+    //    }
+    //
+    //    if (!areCompatibleClassKinds(expectClassSymbol, actualClass)) return Incompatible.ClassKind
+    //
+    //    if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInline || it.isValue) }) {
+    //        return Incompatible.ClassModifiers
+    //    }
+    //
+    //    if (expectClassSymbol.isFun && !actualClass.isFun && actualClass.isNotSamInterface()) {
+    //        return Incompatible.FunInterfaceModifier
+    //    }
+    //
+    //    val expectTypeParameterSymbols = expectClassSymbol.typeParameters
+    //    val actualTypeParameterSymbols = actualClass.typeParameters
+    //    if (expectTypeParameterSymbols.size != actualTypeParameterSymbols.size) {
+    //        return Incompatible.ClassTypeParameterCount
+    //    }
+    //
+    //    if (!areCompatibleModalities(expectClassSymbol.modality, actualClass.modality)) {
+    //        return Incompatible.Modality
+    //    }
+    //
+    //    if (!areCompatibleClassVisibilities(expectClassSymbol, actualClass)) {
+    //        return Incompatible.Visibility
+    //    }
+    //
+    //    val substitutor = createExpectActualTypeParameterSubstitutor(
+    //        (expectTypeParameterSymbols zipIfSizesAreEqual actualTypeParameterSymbols)
+    //            ?: error("expect/actual type parameters sizes are checked earlier"),
+    //        parentSubstitutor
+    //    )
+    //
+    //    if (!areCompatibleTypeParameterUpperBounds(expectTypeParameterSymbols, actualTypeParameterSymbols, substitutor)) {
+    //        return Incompatible.ClassTypeParameterUpperBounds
+    //    }
+    //
+    //    getTypeParametersVarianceOrReifiedIncompatibility(expectTypeParameterSymbols, actualTypeParameterSymbols)
+    //        ?.let { return it }
+    //
+    //    if (!areCompatibleSupertypes(expectClassSymbol, actualClass, substitutor)) {
+    //        return Incompatible.Supertypes
+    //    }
+    //
+    //    if (checkClassScopesCompatibility) {
+    //        getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor)?.let { return it }
+    //    }
+    //
+    //    return null
+    //}
 
-        val actualClass = when (actualClassLikeSymbol) {
-            is RegularClassSymbolMarker -> actualClassLikeSymbol
-            is TypeAliasSymbolMarker -> actualClassLikeSymbol.expandToRegularClass()
-                ?: return null // do not report extra error on erroneous typealias
-            else -> error("Incorrect actual classifier for $expectClassSymbol: $actualClassLikeSymbol")
-        }
-
-        if (!areCompatibleClassKinds(expectClassSymbol, actualClass)) return Incompatible.ClassKind
-
-        if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInline || it.isValue) }) {
-            return Incompatible.ClassModifiers
-        }
-
-        if (expectClassSymbol.isFun && !actualClass.isFun && actualClass.isNotSamInterface()) {
-            return Incompatible.FunInterfaceModifier
-        }
-
-        val expectTypeParameterSymbols = expectClassSymbol.typeParameters
-        val actualTypeParameterSymbols = actualClass.typeParameters
-        if (expectTypeParameterSymbols.size != actualTypeParameterSymbols.size) {
-            return Incompatible.ClassTypeParameterCount
-        }
-
-        if (!areCompatibleModalities(expectClassSymbol.modality, actualClass.modality)) {
-            return Incompatible.Modality
-        }
-
-        if (!areCompatibleClassVisibilities(expectClassSymbol, actualClass)) {
-            return Incompatible.Visibility
-        }
-
-        val substitutor = createExpectActualTypeParameterSubstitutor(
-            (expectTypeParameterSymbols zipIfSizesAreEqual actualTypeParameterSymbols)
-                ?: error("expect/actual type parameters sizes are checked earlier"),
-            parentSubstitutor
-        )
-
-        if (!areCompatibleTypeParameterUpperBounds(expectTypeParameterSymbols, actualTypeParameterSymbols, substitutor)) {
-            return Incompatible.ClassTypeParameterUpperBounds
-        }
-
-        getTypeParametersVarianceOrReifiedIncompatibility(expectTypeParameterSymbols, actualTypeParameterSymbols)
-            ?.let { return it }
-
-        if (!areCompatibleSupertypes(expectClassSymbol, actualClass, substitutor)) {
-            return Incompatible.Supertypes
-        }
-
-        if (checkClassScopesCompatibility) {
-            getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor)?.let { return it }
-        }
-
-        return null
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleSupertypes(
-        expectClassSymbol: RegularClassSymbolMarker,
-        actualClassSymbol: RegularClassSymbolMarker,
-        substitutor: TypeSubstitutorMarker,
-    ): Boolean {
-        return when (allowTransitiveSupertypesActualization) {
-            false -> areCompatibleSupertypesOneByOne(expectClassSymbol, actualClassSymbol, substitutor)
-            true -> areCompatibleSupertypesTransitive(expectClassSymbol, actualClassSymbol, substitutor)
-        }
-    }
+    //context(ExpectActualMatchingContext<*>)
+    //private fun areCompatibleSupertypes(
+    //    expectClassSymbol: RegularClassSymbolMarker,
+    //    actualClassSymbol: RegularClassSymbolMarker,
+    //    substitutor: TypeSubstitutorMarker,
+    //): Boolean {
+    //    return when (allowTransitiveSupertypesActualization) {
+    //        false -> areCompatibleSupertypesOneByOne(expectClassSymbol, actualClassSymbol, substitutor)
+    //        true -> areCompatibleSupertypesTransitive(expectClassSymbol, actualClassSymbol, substitutor)
+    //    }
+    //}
 
     context(ExpectActualMatchingContext<*>)
     private fun areCompatibleSupertypesOneByOne(
@@ -259,12 +258,13 @@ object AbstractExpectActualMatcher {
 
                 is RegularClassSymbolMarker -> {
                     val parentSubstitutor = substitutor?.takeIf { !innerClassesCapturesOuterTypeParameters }
-                    getClassifiersCompatibility(
-                        expectMember,
-                        actualMember as ClassLikeSymbolMarker,
-                        parentSubstitutor,
-                        checkClassScopesCompatibility,
-                    )
+                    //getClassifiersCompatibility(
+                    //    expectMember,
+                    //    actualMember as ClassLikeSymbolMarker,
+                    //    parentSubstitutor,
+                    //    checkClassScopesCompatibility,
+                    //)
+                    ExpectActualCompatibility.Compatible
                 }
                 else -> error("Unsupported declaration: $expectMember ($actualMembers)")
             }
@@ -316,13 +316,6 @@ object AbstractExpectActualMatcher {
 
         // We must prioritize to return STRONG incompatible over WEAK incompatible (because STRONG incompatibility allows to search for overloads)
         return getCallablesStrongIncompatibility(expectDeclaration, actualDeclaration, parentSubstitutor)
-            ?: getCallablesWeakIncompatibility(
-                expectDeclaration,
-                actualDeclaration,
-                parentSubstitutor,
-                expectContainingClass,
-                actualContainingClass
-            )
             ?: ExpectActualCompatibility.Compatible
     }
 
@@ -380,104 +373,104 @@ object AbstractExpectActualMatcher {
         return null
     }
 
-    context(ExpectActualMatchingContext<*>)
-    private fun getCallablesWeakIncompatibility(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        parentSubstitutor: TypeSubstitutorMarker?,
-        expectContainingClass: RegularClassSymbolMarker?,
-        actualContainingClass: RegularClassSymbolMarker?,
-    ): Incompatible.ExpectActualCheckingIncompatible<*>? {
-        val expectedTypeParameters = expectDeclaration.typeParameters
-        val actualTypeParameters = actualDeclaration.typeParameters
-        val expectedValueParameters = expectDeclaration.valueParameters
-        val actualValueParameters = actualDeclaration.valueParameters
-
-        if (shouldCheckReturnTypesOfCallables) {
-            val substitutor = createExpectActualTypeParameterSubstitutor(
-                (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
-                    ?: error("expect/actual type parameters sizes are checked earlier"),
-                parentSubstitutor
-            )
-
-            if (!areCompatibleExpectActualTypes(substitutor.safeSubstitute(expectDeclaration.returnType), actualDeclaration.returnType)) {
-                return Incompatible.ReturnType
-            }
-        }
-
-        if (actualDeclaration.hasStableParameterNames && !equalsBy(expectedValueParameters, actualValueParameters) { it.name }) {
-            return Incompatible.ParameterNames
-        }
-
-        if (!equalsBy(expectedTypeParameters, actualTypeParameters) { it.name }) {
-            return Incompatible.TypeParameterNames
-        }
-
-        val expectModality = expectDeclaration.modality
-        val actualModality = actualDeclaration.modality
-        if (
-            !areCompatibleModalities(
-                expectModality,
-                actualModality,
-                expectContainingClass?.modality,
-                actualContainingClass?.modality
-            )
-        ) {
-            return Incompatible.Modality
-        }
-
-        if (!areCompatibleCallableVisibilities(expectDeclaration.visibility, expectModality, actualDeclaration.visibility)) {
-            return Incompatible.Visibility
-        }
-
-        getTypeParametersVarianceOrReifiedIncompatibility(expectedTypeParameters, actualTypeParameters)?.let { return it }
-
-        if (shouldCheckAbsenceOfDefaultParamsInActual) {
-            // "Default parameters in actual" check is required only for functions, because only functions can have parameters
-            if (actualDeclaration is FunctionSymbolMarker && expectDeclaration is FunctionSymbolMarker) {
-                // Actual annotation constructors can have default argument values; their consistency with arguments in the expected annotation
-                // is checked in ExpectedActualDeclarationChecker.checkAnnotationConstructors
-                if (!actualDeclaration.isAnnotationConstructor() &&
-                    // If default params came from common supertypes of actual class and expect class then it's a valid code.
-                    // Here we filter out such default params.
-                    (actualDeclaration.allOverriddenDeclarationsRecursive() - expectDeclaration.allOverriddenDeclarationsRecursive().toSet())
-                        .flatMap { it.valueParameters }.any { it.hasDefaultValue }
-                ) {
-                    return Incompatible.ActualFunctionWithDefaultParameters
-                }
-            }
-        }
-
-        if (!equalsBy(expectedValueParameters, actualValueParameters) { it.isVararg }) {
-            return Incompatible.ValueParameterVararg
-        }
-
-        // Adding noinline/crossinline to parameters is disallowed, except if the expected declaration was not inline at all
-        if (expectDeclaration is SimpleFunctionSymbolMarker && expectDeclaration.isInline) {
-            if (expectedValueParameters.indices.any { i -> !expectedValueParameters[i].isNoinline && actualValueParameters[i].isNoinline }) {
-                return Incompatible.ValueParameterNoinline
-            }
-            if (expectedValueParameters.indices.any { i -> !expectedValueParameters[i].isCrossinline && actualValueParameters[i].isCrossinline }) {
-                return Incompatible.ValueParameterCrossinline
-            }
-        }
-
-        when {
-            expectDeclaration is FunctionSymbolMarker && actualDeclaration is FunctionSymbolMarker ->
-                getFunctionsIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
-
-            expectDeclaration is PropertySymbolMarker && actualDeclaration is PropertySymbolMarker ->
-                getPropertiesIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
-
-            expectDeclaration is EnumEntrySymbolMarker && actualDeclaration is EnumEntrySymbolMarker -> {
-                // do nothing, entries are matched only by name
-            }
-
-            else -> error("Unsupported declarations: $expectDeclaration, $actualDeclaration")
-        }
-
-        return null
-    }
+    //context(ExpectActualMatchingContext<*>)
+    //private fun getCallablesWeakIncompatibility(
+    //    expectDeclaration: CallableSymbolMarker,
+    //    actualDeclaration: CallableSymbolMarker,
+    //    parentSubstitutor: TypeSubstitutorMarker?,
+    //    expectContainingClass: RegularClassSymbolMarker?,
+    //    actualContainingClass: RegularClassSymbolMarker?,
+    //): Incompatible.ExpectActualCheckingIncompatible<*>? {
+    //    val expectedTypeParameters = expectDeclaration.typeParameters
+    //    val actualTypeParameters = actualDeclaration.typeParameters
+    //    val expectedValueParameters = expectDeclaration.valueParameters
+    //    val actualValueParameters = actualDeclaration.valueParameters
+    //
+    //    if (shouldCheckReturnTypesOfCallables) {
+    //        val substitutor = createExpectActualTypeParameterSubstitutor(
+    //            (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
+    //                ?: error("expect/actual type parameters sizes are checked earlier"),
+    //            parentSubstitutor
+    //        )
+    //
+    //        if (!areCompatibleExpectActualTypes(substitutor.safeSubstitute(expectDeclaration.returnType), actualDeclaration.returnType)) {
+    //            return Incompatible.ReturnType
+    //        }
+    //    }
+    //
+    //    if (actualDeclaration.hasStableParameterNames && !equalsBy(expectedValueParameters, actualValueParameters) { it.name }) {
+    //        return Incompatible.ParameterNames
+    //    }
+    //
+    //    if (!equalsBy(expectedTypeParameters, actualTypeParameters) { it.name }) {
+    //        return Incompatible.TypeParameterNames
+    //    }
+    //
+    //    val expectModality = expectDeclaration.modality
+    //    val actualModality = actualDeclaration.modality
+    //    if (
+    //        !areCompatibleModalities(
+    //            expectModality,
+    //            actualModality,
+    //            expectContainingClass?.modality,
+    //            actualContainingClass?.modality
+    //        )
+    //    ) {
+    //        return Incompatible.Modality
+    //    }
+    //
+    //    if (!areCompatibleCallableVisibilities(expectDeclaration.visibility, expectModality, actualDeclaration.visibility)) {
+    //        return Incompatible.Visibility
+    //    }
+    //
+    //    getTypeParametersVarianceOrReifiedIncompatibility(expectedTypeParameters, actualTypeParameters)?.let { return it }
+    //
+    //    if (shouldCheckAbsenceOfDefaultParamsInActual) {
+    //        // "Default parameters in actual" check is required only for functions, because only functions can have parameters
+    //        if (actualDeclaration is FunctionSymbolMarker && expectDeclaration is FunctionSymbolMarker) {
+    //            // Actual annotation constructors can have default argument values; their consistency with arguments in the expected annotation
+    //            // is checked in ExpectedActualDeclarationChecker.checkAnnotationConstructors
+    //            if (!actualDeclaration.isAnnotationConstructor() &&
+    //                // If default params came from common supertypes of actual class and expect class then it's a valid code.
+    //                // Here we filter out such default params.
+    //                (actualDeclaration.allOverriddenDeclarationsRecursive() - expectDeclaration.allOverriddenDeclarationsRecursive().toSet())
+    //                    .flatMap { it.valueParameters }.any { it.hasDefaultValue }
+    //            ) {
+    //                return Incompatible.ActualFunctionWithDefaultParameters
+    //            }
+    //        }
+    //    }
+    //
+    //    if (!equalsBy(expectedValueParameters, actualValueParameters) { it.isVararg }) {
+    //        return Incompatible.ValueParameterVararg
+    //    }
+    //
+    //    // Adding noinline/crossinline to parameters is disallowed, except if the expected declaration was not inline at all
+    //    if (expectDeclaration is SimpleFunctionSymbolMarker && expectDeclaration.isInline) {
+    //        if (expectedValueParameters.indices.any { i -> !expectedValueParameters[i].isNoinline && actualValueParameters[i].isNoinline }) {
+    //            return Incompatible.ValueParameterNoinline
+    //        }
+    //        if (expectedValueParameters.indices.any { i -> !expectedValueParameters[i].isCrossinline && actualValueParameters[i].isCrossinline }) {
+    //            return Incompatible.ValueParameterCrossinline
+    //        }
+    //    }
+    //
+    //    when {
+    //        expectDeclaration is FunctionSymbolMarker && actualDeclaration is FunctionSymbolMarker ->
+    //            getFunctionsIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
+    //
+    //        expectDeclaration is PropertySymbolMarker && actualDeclaration is PropertySymbolMarker ->
+    //            getPropertiesIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
+    //
+    //        expectDeclaration is EnumEntrySymbolMarker && actualDeclaration is EnumEntrySymbolMarker -> {
+    //            // do nothing, entries are matched only by name
+    //        }
+    //
+    //        else -> error("Unsupported declarations: $expectDeclaration, $actualDeclaration")
+    //    }
+    //
+    //    return null
+    //}
 
     context(ExpectActualMatchingContext<*>)
     private fun valueParametersCountCompatible(
@@ -554,20 +547,20 @@ object AbstractExpectActualMatcher {
         Modality.SEALED to enumSetOf(Modality.SEALED),
     )
 
-    private fun areCompatibleCallableVisibilities(
-        expectVisibility: Visibility,
-        expectModality: Modality?,
-        actualVisibility: Visibility,
-    ): Boolean {
-        val compare = Visibilities.compare(expectVisibility, actualVisibility)
-        return if (expectModality != Modality.FINAL) {
-            // For overridable declarations visibility should match precisely, see KT-19664
-            compare == 0
-        } else {
-            // For non-overridable declarations actuals are allowed to have more permissive visibility
-            compare != null && compare <= 0
-        }
-    }
+    //private fun areCompatibleCallableVisibilities(
+    //    expectVisibility: Visibility,
+    //    expectModality: Modality?,
+    //    actualVisibility: Visibility,
+    //): Boolean {
+    //    val compare = Visibilities.compare(expectVisibility, actualVisibility)
+    //    return if (expectModality != Modality.FINAL) {
+    //        // For overridable declarations visibility should match precisely, see KT-19664
+    //        compare == 0
+    //    } else {
+    //        // For non-overridable declarations actuals are allowed to have more permissive visibility
+    //        compare != null && compare <= 0
+    //    }
+    //}
 
     context(ExpectActualMatchingContext<*>)
     private fun areCompatibleClassVisibilities(
@@ -623,49 +616,49 @@ object AbstractExpectActualMatcher {
         return null
     }
 
-    context(ExpectActualMatchingContext<*>)
-    private fun getFunctionsIncompatibility(
-        expectFunction: CallableSymbolMarker,
-        actualFunction: CallableSymbolMarker,
-    ): Incompatible.ExpectActualCheckingIncompatible<*>? {
-        if (!equalBy(expectFunction, actualFunction) { f -> f.isSuspend }) {
-            return Incompatible.FunctionModifiersDifferent
-        }
+    //context(ExpectActualMatchingContext<*>)
+    //private fun getFunctionsIncompatibility(
+    //    expectFunction: CallableSymbolMarker,
+    //    actualFunction: CallableSymbolMarker,
+    //): Incompatible.ExpectActualCheckingIncompatible<*>? {
+    //    if (!equalBy(expectFunction, actualFunction) { f -> f.isSuspend }) {
+    //        return Incompatible.FunctionModifiersDifferent
+    //    }
+    //
+    //    if (
+    //        expectFunction.isInfix && !actualFunction.isInfix ||
+    //        expectFunction.isInline && !actualFunction.isInline ||
+    //        expectFunction.isOperator && !actualFunction.isOperator
+    //    ) {
+    //        return Incompatible.FunctionModifiersNotSubset
+    //    }
+    //
+    //    return null
+    //}
 
-        if (
-            expectFunction.isInfix && !actualFunction.isInfix ||
-            expectFunction.isInline && !actualFunction.isInline ||
-            expectFunction.isOperator && !actualFunction.isOperator
-        ) {
-            return Incompatible.FunctionModifiersNotSubset
-        }
+    //context(ExpectActualMatchingContext<*>)
+    //private fun getPropertiesIncompatibility(
+    //    expected: PropertySymbolMarker,
+    //    actual: PropertySymbolMarker,
+    //): Incompatible.ExpectActualCheckingIncompatible<*>? {
+    //    return when {
+    //        !equalBy(expected, actual) { p -> p.isVar } -> Incompatible.PropertyKind
+    //        !equalBy(expected, actual) { p -> p.isLateinit } -> Incompatible.PropertyLateinitModifier
+    //        expected.isConst && !actual.isConst -> Incompatible.PropertyConstModifier
+    //        !arePropertySettersWithCompatibleVisibilities(expected, actual) -> Incompatible.PropertySetterVisibility
+    //        else -> null
+    //    }
+    //}
 
-        return null
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun getPropertiesIncompatibility(
-        expected: PropertySymbolMarker,
-        actual: PropertySymbolMarker,
-    ): Incompatible.ExpectActualCheckingIncompatible<*>? {
-        return when {
-            !equalBy(expected, actual) { p -> p.isVar } -> Incompatible.PropertyKind
-            !equalBy(expected, actual) { p -> p.isLateinit } -> Incompatible.PropertyLateinitModifier
-            expected.isConst && !actual.isConst -> Incompatible.PropertyConstModifier
-            !arePropertySettersWithCompatibleVisibilities(expected, actual) -> Incompatible.PropertySetterVisibility
-            else -> null
-        }
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun arePropertySettersWithCompatibleVisibilities(
-        expected: PropertySymbolMarker,
-        actual: PropertySymbolMarker,
-    ): Boolean {
-        val expectedSetter = expected.setter ?: return true
-        val actualSetter = actual.setter ?: return true
-        return areCompatibleCallableVisibilities(expectedSetter.visibility, expectedSetter.modality, actualSetter.visibility)
-    }
+    //context(ExpectActualMatchingContext<*>)
+    //private fun arePropertySettersWithCompatibleVisibilities(
+    //    expected: PropertySymbolMarker,
+    //    actual: PropertySymbolMarker,
+    //): Boolean {
+    //    val expectedSetter = expected.setter ?: return true
+    //    val actualSetter = actual.setter ?: return true
+    //    return areCompatibleCallableVisibilities(expectedSetter.visibility, expectedSetter.modality, actualSetter.visibility)
+    //}
 
     // ---------------------------------------- Utils ----------------------------------------
 
