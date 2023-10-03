@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import java.io.File
 
@@ -219,7 +219,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
         actualSymbols: List<IrSymbol>,
         context: MatchingContext
     ) {
-        AbstractExpectActualCompatibilityChecker.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+        AbstractExpectActualChecker.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
             expectSymbol,
             actualSymbols,
             context,
