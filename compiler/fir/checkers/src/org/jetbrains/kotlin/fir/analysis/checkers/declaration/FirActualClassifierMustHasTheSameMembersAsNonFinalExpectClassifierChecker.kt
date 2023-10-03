@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.createExpectActualTypeParameterSubstitutor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.resolve.multiplatform.toMemberDiffKind
@@ -179,7 +179,7 @@ private fun calculateExpectActualScopeDiff(
         } else {
             potentialExpects
                 .map { expectMember ->
-                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+                    AbstractExpectActualChecker.getCallablesCompatibility(
                         expectMember,
                         actualMember,
                         classTypeSubstitutor,
