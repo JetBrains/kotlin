@@ -23,6 +23,9 @@ public object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
+    override val testPrefix: String?
+        get() = "standalone.fir"
+
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         with(builder) {
             useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
