@@ -24,9 +24,9 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         // there is `String?.equals` extension
-        get().equals("")
+        get()<!UNSAFE_CALL!>.<!>equals("")
     }
     val ret2 = build {
         emit(1)
@@ -35,11 +35,11 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         val x = get()
         x?.hashCode()
-        x?.<!NONE_APPLICABLE!>equals<!>(1)
-        x.equals("")
+        x?.equals(1)
+        x<!UNSAFE_CALL!>.<!>equals("")
     }
     val ret3 = build {
         emit(1)
@@ -48,10 +48,10 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         val x = get()
         x?.hashCode()
-        x?.<!NONE_APPLICABLE!>equals<!>(1)
+        x?.equals(1)
 
         if (get() == null) {}
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>get() === null<!>) {}
@@ -104,7 +104,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            x<!UNSAFE_CALL!>.<!>test()
+            x.test()
         }
 
         ""
@@ -144,7 +144,7 @@ fun test() {
         emit(null)
         val x = get()
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
-            x<!UNSAFE_CALL!>.<!>test()
+            x.test()
         }
 
         ""
@@ -153,7 +153,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        x.test()
+        x<!UNSAFE_CALL!>.<!>test()
 
         ""
     }
@@ -164,43 +164,43 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         val x = get()
         x?.hashCode()
-        x?.<!NONE_APPLICABLE!>equals<!>(1)
+        x?.equals(1)
 
         if (get() == null) {}
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>get() === null<!>) {}
 
         if (x == null) {
-            x?.hashCode()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
         }
 
-        if (x == null) {
-            x?.<!NONE_APPLICABLE!>equals<!>(1)
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
         }
 
-        if (x == null) {
-            x?.test2()
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
         }
 
-        if (x == null) {
+        if (<!SENSELESS_COMPARISON!>x == null<!>) {
             x.test2()
         }
 
-        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
-            x?.hashCode()
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === null<!>) {
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
         }
 
-        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
-            x?.<!NONE_APPLICABLE!>equals<!>(1)
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === null<!>) {
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
         }
 
-        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
-            x?.test2()
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === null<!>) {
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
         }
 
-        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x === null<!>) {
             x.test2()
         }
 
@@ -239,7 +239,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            x<!UNSAFE_CALL!>.<!>test()
+            x.test()
         }
         ""
     }
@@ -276,7 +276,7 @@ fun test() {
         emit(null)
         val x = get()
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
-            x<!UNSAFE_CALL!>.<!>test()
+            x.test()
         }
         ""
     }
@@ -284,7 +284,7 @@ fun test() {
         emit(1)
         emit(null)
         val x = get()
-        x.test()
+        x<!UNSAFE_CALL!>.<!>test()
         ""
     }
     val ret51 = build {
@@ -294,18 +294,18 @@ fun test() {
         get()?.test2()
         get().test2()
         get()?.hashCode()
-        get()?.<!NONE_APPLICABLE!>equals<!>(1)
+        get()?.equals(1)
         val x = get()
         x?.hashCode()
-        x?.<!NONE_APPLICABLE!>equals<!>(1)
+        x?.equals(1)
 
         if (get() == null) {}
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>get() === null<!>) {}
 
         if (x == null) {
-            x?.hashCode()
-            x?.<!NONE_APPLICABLE!>equals<!>(1)
-            x?.test2()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 
