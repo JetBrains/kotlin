@@ -67,10 +67,7 @@ public inline val Path.pathString: String
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalPathApi::class)
 public val Path.invariantSeparatorsPathString: String
-    get() {
-        val separator = fileSystem.separator
-        return if (separator != "/") toString().replace(separator, "/") else toString()
-    }
+    get() = toString().replace('\\', '/')
 
 @SinceKotlin("1.4")
 @ExperimentalPathApi
