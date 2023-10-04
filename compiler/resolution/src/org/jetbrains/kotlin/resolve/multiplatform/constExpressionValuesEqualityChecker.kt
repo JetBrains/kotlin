@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 
 internal fun ClassicExpectActualMatchingContext.areExpressionConstValuesEqual(
     expectValue: Any?,
     actualValue: Any?,
-    collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
+    collectionArgumentsCompatibilityCheckStrategy: K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
 ): Boolean {
     return when {
         expectValue is AnnotationDescriptor && actualValue is AnnotationDescriptor -> {

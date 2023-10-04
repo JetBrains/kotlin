@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
+import org.jetbrains.kotlin.resolve.multiplatform.K1AbstractExpectActualAnnotationMatchChecker
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isPrimaryConstructorOfInlineClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.*
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.*
+import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
@@ -286,7 +286,7 @@ class ExpectedActualDeclarationChecker(
     }
 
     private fun MemberDescriptor.hasNoActualWithDiagnostic(
-        compatibility: Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>
+        compatibility: Map<K1ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>
     ): Boolean {
         return compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
             val expectedOnes = ExpectedActualResolver.findExpectedForActual(actual, onlyFromThisModule(module))
@@ -406,7 +406,7 @@ class ExpectedActualDeclarationChecker(
     }
 
     private fun checkAmbiguousExpects(
-        compatibility: Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>,
+        compatibility: Map<K1ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>,
         trace: BindingTrace,
         reportOn: KtNamedDeclaration,
         descriptor: MemberDescriptor
@@ -514,7 +514,7 @@ class ExpectedActualDeclarationChecker(
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
         val matchingContext = ClassicExpectActualMatchingContext(actualDescriptor.module)
         val incompatibility =
-            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectDescriptor, actualDescriptor, matchingContext) ?: return
+            K1AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectDescriptor, actualDescriptor, matchingContext) ?: return
         val actualAnnotationTargetSourceElement = (incompatibility.actualAnnotationTargetElement as ClassicSourceElement).element
         context.trace.report(
             Errors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.on(
@@ -528,9 +528,9 @@ class ExpectedActualDeclarationChecker(
     }
 
     companion object {
-        fun Map<out ExpectActualCompatibility<MemberDescriptor>, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
+        fun Map<out K1ExpectActualCompatibility<MemberDescriptor>, Collection<MemberDescriptor>>.allStrongIncompatibilities(): Boolean =
             this.keys.all { it is Incompatible.StrongIncompatible }
     }
 }
 
-private typealias ActualsMap = Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>
+private typealias ActualsMap = Map<K1ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>
