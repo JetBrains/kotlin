@@ -1,6 +1,7 @@
 // ISSUE: KT-55828
 // DUMP_IR
-// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61386
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: extra overridden symbols for declarations in MyMutableList.
+//   ^ This is most likely not a problem, and IR dump can be changed once IR fake override generation is enabled by default.
 
 interface MyCollection {
     fun foo(): String
