@@ -220,6 +220,7 @@ private class RemapFakeOverridesVisitor(val fakeOverridesMap: Map<IrSymbol, IrSy
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
         expression.symbol = expression.symbol.remap()
+        expression.reflectionTarget = expression.reflectionTarget?.remap()
         expression.acceptChildrenVoid(this)
     }
 
