@@ -48,6 +48,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         collectVariablesFromContext: Boolean = false,
         analyze: (PostponedResolvedAtom) -> Unit,
     ) = with(c) {
+//        outerTypeVariables?.let {
+//            return withTypeVariablesThatAreNotCountedAsProperTypes(allTypeVariables.keys - it) {
+//                runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
+//            }
+//        }
+
         runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
     }
 
