@@ -9,13 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
-import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
-import org.jetbrains.kotlin.gradle.targets.native.internal.*
+import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
 
 private typealias SourceSetName = String
 
@@ -34,7 +32,7 @@ private class ProjectMetadataProviderImpl(
 ) : ProjectMetadataProvider() {
 
     override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection? {
-        val metadataOutputs = sourceSetMetadataOutputs[sourceSetName] ?: error("Unexpected source set '$sourceSetName'")
+        val metadataOutputs = sourceSetMetadataOutputs[sourceSetName] ?: return null
         return metadataOutputs.metadata
     }
 
@@ -64,14 +62,10 @@ internal suspend fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetNam
 }
 
 private suspend fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection?> {
-    return awaitSourceSets().associateWith { sourceSet ->
-        when (val compilation = project.findMetadataCompilation(sourceSet)) {
-            null -> null
-            is KotlinCommonCompilation -> compilation.output.classesDirs
-            is KotlinSharedNativeCompilation -> compilation.output.classesDirs
-            else -> error("Unexpected compilation type: $compilation")
-        }
-    }
+    val metadataTarget = metadata() as KotlinMetadataTarget
+    return metadataTarget
+        .awaitMetadataCompilationsCreated()
+        // TODO: KT-62332/Stop-Creating-legacy-metadata-compilation-with-name-main
+        .filter { if (it is KotlinCommonCompilation) it.isKlibCompilation else true }
+        .associate { it.defaultSourceSet to it.output.classesDirs }
 }
-
-
