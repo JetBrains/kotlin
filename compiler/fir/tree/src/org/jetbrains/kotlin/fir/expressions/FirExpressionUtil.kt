@@ -151,6 +151,16 @@ fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
 val FirElement.calleeReference: FirReference?
     get() = (this as? FirResolvable)?.calleeReference ?: (this as? FirVariableAssignment)?.calleeReference
 
+fun FirExpression.unwrapExpression(): FirExpression =
+    when (this) {
+        is FirWhenSubjectExpression -> whenRef.value.subject?.unwrapExpression() ?: this
+        is FirSmartCastExpression -> originalExpression.unwrapExpression()
+        is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapExpression()
+        is FirCheckNotNullCall -> argument.unwrapExpression()
+        is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.unwrapExpression()
+        else -> this
+    }
+
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
     when (this) {
         is FirSmartCastExpression -> originalExpression

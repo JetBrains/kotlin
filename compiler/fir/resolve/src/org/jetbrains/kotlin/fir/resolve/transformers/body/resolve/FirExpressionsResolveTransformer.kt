@@ -839,7 +839,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
         if (firClass.typeParameters.isEmpty()) return this
 
-        val originalType = argument.unwrapSmartcastExpression().resolvedType
+        val originalType = argument.unwrapExpression().resolvedType
         val newType = components.computeRepresentativeTypeForBareType(type, originalType)
             ?: if (firClass.isLocal && (operation == FirOperation.AS || operation == FirOperation.SAFE_AS)) {
                 (firClass as FirClass).defaultType()
