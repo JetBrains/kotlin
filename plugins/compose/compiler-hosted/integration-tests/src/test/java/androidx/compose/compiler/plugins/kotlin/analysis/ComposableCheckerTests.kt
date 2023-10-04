@@ -1499,4 +1499,41 @@ class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
             """
         )
     }
+
+    @Test
+    fun testComposableInsideInlineWithOverload() {
+        check(
+            """
+                import androidx.compose.runtime.Composable
+
+                @Composable
+                fun ListTest(list: List<Any>) {
+                    list.flatMap { Test(it) }
+                }
+
+                @Composable
+                fun Test(any: Any): List<Any> = TODO(any.toString())
+            """
+        )
+    }
+
+    @Test
+    fun testComposableInsideInlineInsideLocal() {
+        check(
+            """
+                import androidx.compose.runtime.Composable
+
+                @Composable
+                fun ListTest(list: List<Any>) {
+                    fun <!COMPOSABLE_EXPECTED!>test<!>() {
+                        list.flatMap { <!COMPOSABLE_INVOCATION!>Test<!>(it) }
+                    }
+                    test()
+                }
+
+                @Composable
+                fun Test(any: Any): List<Any> = TODO(any.toString())
+            """
+        )
+    }
 }
