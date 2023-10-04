@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.resolve.calls.mpp
+package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.mpp.*
@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType as IncompatibilityType
 
-object AbstractExpectActualAnnotationMatchChecker {
+object K1AbstractExpectActualAnnotationMatchChecker {
     private val SKIPPED_CLASS_IDS = setOf(
         StandardClassIds.Annotations.Deprecated,
         StandardClassIds.Annotations.DeprecatedSinceKotlin,
@@ -45,19 +44,18 @@ object AbstractExpectActualAnnotationMatchChecker {
          * Needed for the implementation of IDE intention.
          */
         val actualAnnotationTargetElement: SourceElementMarker,
-        val type: IncompatibilityType<ExpectActualMatchingContext.AnnotationCallInfo>,
+        val type: IncompatibilityType<K1ExpectActualMatchingContext.AnnotationCallInfo>,
     )
 
     fun areAnnotationsCompatible(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
-        context: ExpectActualMatchingContext<*>,
+        context: K1ExpectActualMatchingContext<*>,
     ): Incompatibility? = with(context) {
         areAnnotationsCompatible(expectSymbol, actualSymbol)
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsCompatible(
+    private fun K1ExpectActualMatchingContext<*>.areAnnotationsCompatible(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
@@ -72,8 +70,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areCallableAnnotationsCompatible(
+    private fun K1ExpectActualMatchingContext<*>.areCallableAnnotationsCompatible(
         expectSymbol: CallableSymbolMarker,
         actualSymbol: CallableSymbolMarker,
     ): Incompatibility? {
@@ -87,8 +84,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun arePropertyGetterAndSetterAnnotationsCompatible(
+    private fun K1ExpectActualMatchingContext<*>.arePropertyGetterAndSetterAnnotationsCompatible(
         expectSymbol: PropertySymbolMarker,
         actualSymbol: PropertySymbolMarker,
     ): Incompatibility? {
@@ -106,8 +102,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areClassAnnotationsCompatible(
+    private fun K1ExpectActualMatchingContext<*>.areClassAnnotationsCompatible(
         expectSymbol: RegularClassSymbolMarker,
         actualSymbol: ClassLikeSymbolMarker,
     ): Incompatibility? {
@@ -129,8 +124,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun commonForClassAndCallableChecks(
+    private fun K1ExpectActualMatchingContext<*>.commonForClassAndCallableChecks(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
@@ -140,8 +134,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsOnValueParametersCompatible(
+    private fun K1ExpectActualMatchingContext<*>.areAnnotationsOnValueParametersCompatible(
         expectSymbol: CallableSymbolMarker,
         actualSymbol: CallableSymbolMarker,
     ): Incompatibility? {
@@ -158,8 +151,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsOnTypeParametersCompatible(
+    private fun K1ExpectActualMatchingContext<*>.areAnnotationsOnTypeParametersCompatible(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
@@ -183,8 +175,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun areAnnotationsSetOnDeclarationsCompatible(
+    private fun K1ExpectActualMatchingContext<*>.areAnnotationsSetOnDeclarationsCompatible(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
@@ -227,16 +218,15 @@ object AbstractExpectActualAnnotationMatchChecker {
     }
 
     private fun getAnnotationCollectionArgumentsCompatibilityChecker(annotationClassId: ClassId):
-            ExpectActualCollectionArgumentsCompatibilityCheckStrategy {
+            K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy {
         return if (annotationClassId == StandardClassIds.Annotations.Target) {
-            ExpectActualCollectionArgumentsCompatibilityCheckStrategy.ExpectIsSubsetOfActual
+            K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy.ExpectIsSubsetOfActual
         } else {
-            ExpectActualCollectionArgumentsCompatibilityCheckStrategy.Default
+            K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy.Default
         }
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun checkAnnotationsInClassMemberScope(
+    private fun K1ExpectActualMatchingContext<*>.checkAnnotationsInClassMemberScope(
         expectClass: RegularClassSymbolMarker,
         actualClass: RegularClassSymbolMarker,
     ): Incompatibility? {
@@ -252,7 +242,7 @@ object AbstractExpectActualAnnotationMatchChecker {
                 //    so we are sure that we found the right member.
                 checkClassScopesCompatibility = false,
             )
-            val expectMember = expectToCompatibilityMap.filter { it.value == ExpectActualCompatibility.Compatible }.keys.singleOrNull()
+            val expectMember = expectToCompatibilityMap.filter { it.value == K1ExpectActualCompatibility.Compatible }.keys.singleOrNull()
             // Check also incompatible members if only one is found
                 ?: expectToCompatibilityMap.keys.singleOrNull()
                 ?: continue
@@ -261,8 +251,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         return null
     }
 
-    context (ExpectActualMatchingContext<*>)
-    private fun checkAnnotationsOnEnumEntries(
+    private fun K1ExpectActualMatchingContext<*>.checkAnnotationsOnEnumEntries(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassSymbol: RegularClassSymbolMarker,
     ): Incompatibility? {

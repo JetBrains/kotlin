@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.psiSafe
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility
 
 internal class KtFe10MultiplatformInfoProvider(
     override val analysisSession: KtFe10AnalysisSession,
@@ -28,7 +28,7 @@ internal class KtFe10MultiplatformInfoProvider(
         val expectedCompatibilityMap =
             ExpectedActualResolver.findExpectedForActual(memberDescriptor) ?: return emptyList()
 
-        val expectsForActual = (expectedCompatibilityMap[ExpectActualCompatibility.Compatible]
+        val expectsForActual = (expectedCompatibilityMap[K1ExpectActualCompatibility.Compatible]
             ?: expectedCompatibilityMap.values.flatten())
         return expectsForActual.map { it.toKtSymbol(analysisContext) as KtDeclarationSymbol }
     }

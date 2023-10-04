@@ -6,10 +6,9 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Compatible
+import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility.Compatible
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -18,7 +17,7 @@ object ExpectedActualResolver {
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor,
         moduleVisibilityFilter: ModuleFilter = allModulesProvidingActualsFor(expected.module, platformModule),
-    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
+    ): Map<K1ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         val context = ClassicExpectActualMatchingContext(platformModule)
         return when (expected) {
             is CallableMemberDescriptor -> {
@@ -29,7 +28,7 @@ object ExpectedActualResolver {
                             // TODO: support non-source definitions (e.g. from Java)
                             actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+                    K1AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
                         expected,
                         actual,
                         parentSubstitutor = null,
@@ -43,7 +42,7 @@ object ExpectedActualResolver {
                 context.findClassifiersFromModule(expected.classId, platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect && actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
+                    K1AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
                         expected,
                         actual,
                         checkClassScopesCompatibility = true,
@@ -61,7 +60,7 @@ object ExpectedActualResolver {
         expectClass: ClassDescriptor,
         checkClassScopesCompatibility: Boolean,
         context: ClassicExpectActualMatchingContext,
-    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>> {
+    ): Map<K1ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>> {
         val candidates = with(context) {
             expectClass.getMembersForExpectClass(actual.name)
         }
@@ -90,7 +89,7 @@ object ExpectedActualResolver {
         actual: MemberDescriptor,
         moduleFilter: (ModuleDescriptor) -> Boolean = allModulesProvidingExpectsFor(actual.module),
         shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false,
-    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
+    ): Map<K1ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         val context = ClassicExpectActualMatchingContext(actual.module, shouldCheckAbsenceOfDefaultParamsInActual)
         return when (actual) {
             is CallableMemberDescriptor -> {
@@ -124,7 +123,7 @@ object ExpectedActualResolver {
         candidates: Collection<CallableMemberDescriptor>,
         container: DeclarationDescriptor,
         context: ClassicExpectActualMatchingContext,
-    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<CallableMemberDescriptor>> {
+    ): Map<K1ExpectActualCompatibility<MemberDescriptor>, List<CallableMemberDescriptor>> {
         return candidates.filter { declaration ->
             actual != declaration && declaration.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE && declaration.isExpect
         }.groupBy { declaration ->
@@ -147,7 +146,7 @@ object ExpectedActualResolver {
                     }
                     else -> null
                 }
-            AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+            K1AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
                 expectDeclaration = declaration,
                 actualDeclaration = actual,
                 parentSubstitutor = substitutor,
@@ -163,11 +162,11 @@ object ExpectedActualResolver {
         candidates: Collection<ClassifierDescriptorWithTypeParameters>,
         checkClassScopesCompatibility: Boolean,
         context: ClassicExpectActualMatchingContext,
-    ): Map<ExpectActualCompatibility<MemberDescriptor>, List<ClassifierDescriptorWithTypeParameters>> {
+    ): Map<K1ExpectActualCompatibility<MemberDescriptor>, List<ClassifierDescriptorWithTypeParameters>> {
         return candidates.filter { declaration ->
             actual != declaration && declaration is ClassDescriptor && declaration.isExpect
         }.groupBy { expected ->
-            AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
+            K1AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
                 expected as ClassDescriptor,
                 actual,
                 checkClassScopesCompatibility,
