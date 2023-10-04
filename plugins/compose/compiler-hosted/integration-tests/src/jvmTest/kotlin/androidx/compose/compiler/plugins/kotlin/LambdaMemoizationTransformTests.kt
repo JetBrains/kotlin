@@ -16,9 +16,24 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.junit.Test
 
 class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
+        languageVersionSettings = LanguageVersionSettingsImpl(
+            languageVersion = languageVersionSettings.languageVersion,
+            apiVersion = languageVersionSettings.apiVersion,
+            specificFeatures = mapOf(
+                LanguageFeature.ContextReceivers to LanguageFeature.State.ENABLED
+            )
+        )
+    }
+
     @Test
     fun testCapturedThisFromFieldInitializer() = verifyGoldenComposeIrTransform(
         """
@@ -541,4 +556,205 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             """
         )
     }
+
+    @Test
+    fun testNonComposableFunctionReferenceWithNoArgumentsMemoization() {
+        verifyComposeIrTransform(
+            source = """
+                import androidx.compose.runtime.Composable
+                import androidx.compose.runtime.remember
+
+                class Stable { fun qux() {} }
+
+                @Composable
+                fun Something() {
+                    val x = remember { Stable() }
+                    val shouldMemoize = x::qux
+                }
+            """,
+            expectedTransformed = """
+                @StabilityInferred(parameters = 1)
+                class Stable {
+                  fun qux() { }
+                  static val %stable: Int = 0
+                }
+                @Composable
+                fun Something(%composer: Composer?, %changed: Int) {
+                  %composer = %composer.startRestartGroup(<>)
+                  sourceInformation(%composer, "C(Something)<rememb...>:Test.kt")
+                  if (%changed != 0 || !%composer.skipping) {
+                    if (isTraceInProgress()) {
+                      traceEventStart(<>, %changed, -1, <>)
+                    }
+                    val x = remember({
+                      Stable()
+                    }, %composer, 0)
+                    val shouldMemoize = <block>{
+                      val tmp0 = x
+                      %composer.startReplaceableGroup(<>)
+                      val tmpCache = %composer.cache(%composer.changed(tmp0)) {
+                        tmp0::qux
+                      }
+                      %composer.endReplaceableGroup()
+                      tmpCache
+                    }
+                    if (isTraceInProgress()) {
+                      traceEventEnd()
+                    }
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                    Something(%composer, updateChangedFlags(%changed or 0b0001))
+                  }
+                }
+            """
+        )
+    }
+
+    // Validate fix for b/302680514.
+    @Test
+    fun testNonComposableFunctionReferenceWithArgumentsMemoization() {
+        verifyComposeIrTransform(
+            source = """
+                import androidx.compose.runtime.Composable
+                import androidx.compose.runtime.remember
+
+                class Stable { fun qux(arg1: Any) {} }
+
+                @Composable
+                fun Something() {
+                    val x = remember { Stable() }
+                    val shouldMemoize = x::qux
+                }
+            """,
+            expectedTransformed = """
+                @StabilityInferred(parameters = 1)
+                class Stable {
+                  fun qux(arg1: Any) { }
+                  static val %stable: Int = 0
+                }
+                @Composable
+                fun Something(%composer: Composer?, %changed: Int) {
+                  %composer = %composer.startRestartGroup(<>)
+                  sourceInformation(%composer, "C(Something)<rememb...>:Test.kt")
+                  if (%changed != 0 || !%composer.skipping) {
+                    if (isTraceInProgress()) {
+                      traceEventStart(<>, %changed, -1, <>)
+                    }
+                    val x = remember({
+                      Stable()
+                    }, %composer, 0)
+                    val shouldMemoize = <block>{
+                      val tmp0 = x
+                      %composer.startReplaceableGroup(<>)
+                      val tmpCache = %composer.cache(%composer.changed(tmp0)) {
+                        tmp0::qux
+                      }
+                      %composer.endReplaceableGroup()
+                      tmpCache
+                    }
+                    if (isTraceInProgress()) {
+                      traceEventEnd()
+                    }
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                    Something(%composer, updateChangedFlags(%changed or 0b0001))
+                  }
+                }
+            """
+        )
+    }
+
+    // Reference to function with context receivers does not currently support memoization.
+    @Test
+    fun testNonComposableFunctionReferenceWithStableContextReceiverNotMemoized() {
+        verifyComposeIrTransform(
+            source = """
+                import androidx.compose.runtime.Composable
+                import androidx.compose.runtime.remember
+
+                class StableReceiver
+                class Stable {
+                    context(StableReceiver)
+                    fun qux() {}
+                }
+
+                @Composable
+                fun Something() {
+                    val x = remember { Stable() }
+                    val shouldNotMemoize = x::qux
+                }
+            """,
+            expectedTransformed = """
+                @StabilityInferred(parameters = 1)
+                class StableReceiver {
+                  static val %stable: Int = 0
+                }
+                @StabilityInferred(parameters = 1)
+                class Stable {
+                  fun qux(%context_receiver_0: StableReceiver) { }
+                  static val %stable: Int = 0
+                }
+                @Composable
+                fun Something(%composer: Composer?, %changed: Int) {
+                  %composer = %composer.startRestartGroup(<>)
+                  sourceInformation(%composer, "C(Something)<rememb...>:Test.kt")
+                  if (%changed != 0 || !%composer.skipping) {
+                    if (isTraceInProgress()) {
+                      traceEventStart(<>, %changed, -1, <>)
+                    }
+                    val x = remember({
+                      Stable()
+                    }, %composer, 0)
+                    val shouldNotMemoize = x::qux
+                    if (isTraceInProgress()) {
+                      traceEventEnd()
+                    }
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                    Something(%composer, updateChangedFlags(%changed or 0b0001))
+                  }
+                }
+            """
+        )
+    }
+
+    @Test
+    fun testUnstableReceiverFunctionReferenceNotMemoized() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Something() {
+                val x = unstable::method
+            }
+        """,
+        """
+            class Unstable(var qux: Int = 0) { fun method(arg1: Int) {} }
+            val unstable = Unstable()
+        """
+    )
+
+    @Test
+    fun testUnstableExtensionReceiverFunctionReferenceNotMemoized() =
+        verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Something() {
+                val x = unstable::method
+            }
+        """,
+        """
+            class Unstable(var foo: Int = 0)
+            fun Unstable.method(arg1: Int) {}
+            val unstable = Unstable()
+        """
+    )
 }
