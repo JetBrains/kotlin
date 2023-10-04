@@ -23,7 +23,7 @@ FILE: localDeclarationsInEnumEntry.kt
             }
 
             local final? [ContainingClassKey=<anonymous>] class Nested : R|kotlin/Any| {
-                public? [ContainingClassKey=Nested] constructor(): R|<local>/Nested| {
+                public? [ContainingClassKey=Nested] constructor(): R|<local>/<anonymous>.Nested| {
                     super<R|kotlin/Any|>()
                 }
 
