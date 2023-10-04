@@ -35329,6 +35329,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("privateInFileInDifferentModule.kt")
+            public void testPrivateInFileInDifferentModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/privateInFileInDifferentModule.kt");
+            }
+
+            @Test
             @TestMetadata("projectionsInTypeAliasConstructor.kt")
             public void testProjectionsInTypeAliasConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/projectionsInTypeAliasConstructor.kt");
