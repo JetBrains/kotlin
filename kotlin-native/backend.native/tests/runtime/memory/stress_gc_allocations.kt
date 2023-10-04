@@ -59,7 +59,7 @@ fun allocateGarbage() {
         val obj: Any = when {
             i == 50_000 -> ArrayOfBytesWithFinalizer(1_000_000) // ~1MiB
             i % 10_000 == 0 -> ArrayOfBytes(1_000_000) // ~1MiB
-            i % 10 == 0 -> ArrayOfBytesWithFinalizer(((i / 100) % 10) * 80) // ~1-100 pointers
+            i % 40 == 0 -> ArrayOfBytesWithFinalizer(((i / 100) % 10) * 80) // ~1-100 pointers
             else -> ArrayOfBytes(((i / 100) % 10) * 80) // ~1-100 pointers
         }
         Blackhole.consume(obj)
