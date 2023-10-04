@@ -72,7 +72,7 @@ To run the full build:
     ./gradlew :kotlin-native:bundle
 
 This will produce compiler and libraries for all supported targets.
-The full build can take about an hour on a Macbook Pro.
+The full build can take about an hour on a Macbook Pro, but the duration can vary based on your system configuration.
 
 After any of the commands above, `./dist` will contain Kotlin/Native distribution.
 You can use it like a distribution of
