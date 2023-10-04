@@ -52,9 +52,11 @@ class TypeVariableDependencyInformationProvider(
         relatedToTopLevelType.contains(variable) || isRelatedToOuterType(variable)
 
     private fun isRelatedToOuterType(variable: TypeConstructorMarker): Boolean {
-        val outerTypeVariables = outerTypeVariables ?: return false
-        val myDependent = getDeeplyDependentVariables(variable) ?: return false
-        return myDependent.any { it in outerTypeVariables }
+        variable.hashCode()
+        return false
+//        val outerTypeVariables = outerTypeVariables ?: return false
+//        val myDependent = getDeeplyDependentVariables(variable) ?: return false
+//        return myDependent.any { it in outerTypeVariables }
     }
 
     fun isVariableRelatedToAnyOutputType(variable: TypeConstructorMarker) = relatedToAllOutputTypes.contains(variable)
