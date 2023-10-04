@@ -105,13 +105,14 @@ class PostponedArgumentsAnalyzer(
             return ReturnArgumentsAnalysisResult(lambda.returnStatements, inferenceSession = null)
         }
 
-        (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.let { builderInferenceSession ->
-            lambda.receiver?.let { builderInferenceSession.fixVariablesForMemberScope(it, candidate) }
-            // TODO: context receivers
-        }
+        val additionalBinding =
+            (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.let { builderInferenceSession ->
+                lambda.receiver?.let { builderInferenceSession.fixVariablesForMemberScope(it, candidate.system) }
+                // TODO: context receivers
+            }
 
         val unitType = components.session.builtinTypes.unitType.type
-        val currentSubstitutor = c.buildCurrentSubstitutor(emptyMap()) as ConeSubstitutor
+        val currentSubstitutor = c.buildCurrentSubstitutor(additionalBinding?.let { mapOf(it) } ?: emptyMap()) as ConeSubstitutor
 
         fun substitute(type: ConeKotlinType) = (currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType).independentInstance()
 
