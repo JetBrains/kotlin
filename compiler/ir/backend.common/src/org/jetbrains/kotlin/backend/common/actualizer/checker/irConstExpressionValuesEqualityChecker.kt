@@ -28,7 +28,8 @@ internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(
             getClassIdAfterActualization(classId)
         }
 
-        a is IrGetEnumValue && b is IrGetEnumValue -> equalBy(a, b) { it.symbol.signature?.toString() }
+        a is IrGetEnumValue && b is IrGetEnumValue ->
+            areCompatibleExpectActualTypes(a.type, b.type) && equalBy(a, b) { it.symbol.owner.name }
 
         a is IrVararg && b is IrVararg -> {
             collectionArgumentsCompatibilityCheckStrategy.areCompatible(a.elements, b.elements) { f, s ->

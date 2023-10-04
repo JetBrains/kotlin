@@ -24062,6 +24062,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("annotationsViaActualTypeAliasExpectEnumArg.kt")
+                public void testAnnotationsViaActualTypeAliasExpectEnumArg() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationsViaActualTypeAliasExpectEnumArg.kt");
+                }
+
+                @Test
                 @TestMetadata("companionMethodViaActualTypealias.kt")
                 public void testCompanionMethodViaActualTypealias() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/companionMethodViaActualTypealias.kt");
