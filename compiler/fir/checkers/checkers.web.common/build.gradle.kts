@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -7,7 +5,6 @@ plugins {
 
 dependencies {
     api(project(":compiler:fir:checkers"))
-    api(project(":compiler:fir:checkers:checkers.web.common"))
     api(project(":core:compiler.common.wasm"))
 
     /*
@@ -26,15 +23,4 @@ sourceSets {
         generatedDir()
     }
     "test" { none() }
-}
-
-tasks.named("compileKotlin").configure {
-    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        this.module.generatedSourceDirs.add(projectDir.resolve("gen"))
-    }
 }
