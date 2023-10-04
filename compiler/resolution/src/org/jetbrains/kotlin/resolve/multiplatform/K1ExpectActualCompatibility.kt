@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.resolve.multiplatform
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-sealed class ExpectActualCompatibility<out D> {
+sealed class K1ExpectActualCompatibility<out D> {
 
     // Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
-    sealed class Incompatible<out D>(val reason: String?) : ExpectActualCompatibility<D>() {
+    sealed class Incompatible<out D>(val reason: String?) : K1ExpectActualCompatibility<D>() {
 
         sealed class WeakIncompatible<out D>(reason: String?) : Incompatible<D>(reason)
 
@@ -96,20 +96,20 @@ sealed class ExpectActualCompatibility<out D> {
         )
     }
 
-    object Compatible : ExpectActualCompatibility<Nothing>()
+    object Compatible : K1ExpectActualCompatibility<Nothing>()
 }
 
-val ExpectActualCompatibility<*>.isCompatibleOrWeaklyIncompatible: Boolean
-    get() = this is ExpectActualCompatibility.Compatible
-            || this is ExpectActualCompatibility.Incompatible.WeakIncompatible
+val K1ExpectActualCompatibility<*>.isCompatibleOrWeaklyIncompatible: Boolean
+    get() = this is K1ExpectActualCompatibility.Compatible
+            || this is K1ExpectActualCompatibility.Incompatible.WeakIncompatible
 
-val ExpectActualCompatibility<*>.compatible: Boolean
-    get() = this == ExpectActualCompatibility.Compatible
+val K1ExpectActualCompatibility<*>.compatible: Boolean
+    get() = this == K1ExpectActualCompatibility.Compatible
 
 @OptIn(ExperimentalContracts::class)
-fun ExpectActualCompatibility<*>.isIncompatible(): Boolean {
+fun K1ExpectActualCompatibility<*>.isIncompatible(): Boolean {
     contract {
-        returns(true) implies (this@isIncompatible is ExpectActualCompatibility.Incompatible<*>)
+        returns(true) implies (this@isIncompatible is K1ExpectActualCompatibility.Incompatible<*>)
     }
     return !compatible
 }
