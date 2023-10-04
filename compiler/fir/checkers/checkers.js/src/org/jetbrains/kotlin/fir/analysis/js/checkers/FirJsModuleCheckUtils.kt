@@ -22,11 +22,10 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 @NoMutableState
 class FirJsModuleKind(val moduleKind: ModuleKind) : FirSessionComponent
 
-private val FirSession.jsModuleKindComponent: FirJsModuleKind by FirSession.sessionComponentAccessor()
+private val FirSession.jsModuleKindComponent: FirJsModuleKind? by FirSession.nullableSessionComponentAccessor()
 
-private val FirSession.jsModuleKind: ModuleKind
-    get() = jsModuleKindComponent.moduleKind
-
+private val FirSession.jsModuleKind: ModuleKind?
+    get() = jsModuleKindComponent?.moduleKind
 
 internal fun checkJsModuleUsage(
     callee: FirBasedSymbol<*>,
@@ -34,7 +33,7 @@ internal fun checkJsModuleUsage(
     reporter: DiagnosticReporter,
     source: AbstractKtSourceElement?
 ) {
-    val moduleKind = context.session.jsModuleKind
+    val moduleKind = context.session.jsModuleKind ?: return
 
     val calleeSession = callee.moduleData.session
     val calleeRoot = getRootClassLikeSymbolOrSelf(callee, calleeSession)
