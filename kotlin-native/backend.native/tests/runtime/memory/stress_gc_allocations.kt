@@ -52,14 +52,14 @@ fun allocateGarbage() {
     // Total amount of objects here:
     // - 1 big object with finalizer
     // - 9 big objects
-    // - 9990 small objects with finalizers
-    // - 90000 small objects without finalizers
+    // - 2490 small objects with finalizers
+    // - 97500 small objects without finalizers
     // And total size is ~50MiB
     for (i in 0..100_000) {
         val obj: Any = when {
             i == 50_000 -> ArrayOfBytesWithFinalizer(1_000_000) // ~1MiB
             i % 10_000 == 0 -> ArrayOfBytes(1_000_000) // ~1MiB
-            i % 10 == 0 -> ArrayOfBytesWithFinalizer(((i / 100) % 10) * 80) // ~1-100 pointers
+            i % 40 == 0 -> ArrayOfBytesWithFinalizer(((i / 100) % 10) * 80) // ~1-100 pointers
             else -> ArrayOfBytes(((i / 100) % 10) * 80) // ~1-100 pointers
         }
         Blackhole.consume(obj)
