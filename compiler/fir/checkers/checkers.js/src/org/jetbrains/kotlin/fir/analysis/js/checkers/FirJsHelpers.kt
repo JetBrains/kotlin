@@ -31,30 +31,6 @@ import org.jetbrains.kotlin.js.common.isES5IdentifierPart
 import org.jetbrains.kotlin.js.common.isES5IdentifierStart
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-private val FirBasedSymbol<*>.isExternal
-    get() = when (this) {
-        is FirCallableSymbol<*> -> isExternal
-        is FirClassSymbol<*> -> isExternal
-        else -> false
-    }
-
-fun FirBasedSymbol<*>.isEffectivelyExternal(session: FirSession): Boolean {
-    if (fir is FirMemberDeclaration && isExternal) return true
-
-    if (this is FirPropertyAccessorSymbol) {
-        val property = propertySymbol
-        if (property.isEffectivelyExternal(session)) return true
-    }
-
-    if (this is FirPropertySymbol) {
-        if (getterSymbol?.isExternal == true && (!isVar || setterSymbol?.isExternal == true)) {
-            return true
-        }
-    }
-
-    return getContainingClassSymbol(session)?.isEffectivelyExternal(session) == true
-}
-
 fun FirBasedSymbol<*>.isEffectivelyExternalMember(session: FirSession): Boolean {
     return fir is FirMemberDeclaration && isEffectivelyExternal(session)
 }

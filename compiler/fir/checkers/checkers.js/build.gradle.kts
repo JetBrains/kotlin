@@ -9,6 +9,7 @@ dependencies {
     api(project(":core:compiler.common.js"))
     api(project(":js:js.ast"))
     api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:checkers:checkers.web.common"))
 
     // FE checks for modules use ModuleKind
     // This dependency can be removed when we stop supporting PLAIN and UMD module systems
