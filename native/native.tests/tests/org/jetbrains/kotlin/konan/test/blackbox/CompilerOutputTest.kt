@@ -17,16 +17,17 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompi
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 
-@TestDataPath("\$PROJECT_ROOT")
-@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-@EnforcedProperty(ClassLevelProperty.PIPELINE_TYPE, "DEFAULT")
-class CompilerOutputTest : AbstractNativeSimpleTest() {
+abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     @Test
-    fun testReleaseCompilerAgainstPreReleaseLibrary() = muteForK2(isK2 = true) { // TODO: unmute after fix of KT-61773
+    fun testReleaseCompilerAgainstPreReleaseLibrary() {
         // We intentionally use JS testdata, because the compilers should behave the same way in such a test.
         // To be refactored later, after CompileKotlinAgainstCustomBinariesTest.testReleaseCompilerAgainstPreReleaseLibraryJs is fixed.
         val rootDir = File("compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibraryJs")
@@ -54,28 +55,39 @@ class CompilerOutputTest : AbstractNativeSimpleTest() {
             "-Xsuppress-version-warnings"
         )
         val library = compileLibrary(
+            settings = object : Settings(testRunSettings, listOf(PipelineType.DEFAULT)) {},
             source = rootDir.resolve("library"),
             freeCompilerArgs = libraryOptions,
             dependencies = emptyList()
         ).assertSuccess().resultingArtifact
 
+        val pipelineType: PipelineType = testRunSettings.get()
+
         val compilationResult = compileLibrary(
+            testRunSettings,
             source = rootDir.resolve("source.kt"),
-            freeCompilerArgs = additionalOptions + listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString),
+            freeCompilerArgs = additionalOptions + pipelineType.compilerFlags,
             dependencies = listOf(library)
         )
 
-        KotlinTestUtils.assertEqualsToFile(rootDir.resolve("output.txt"), compilationResult.toOutput())
+        val goldenData = when (pipelineType) {
+            PipelineType.K2 -> rootDir.resolve("output.fir.txt").takeIf { it.exists() } ?: rootDir.resolve("output.txt")
+            PipelineType.K1 -> rootDir.resolve("output.txt")
+            PipelineType.DEFAULT -> rootDir.resolve("output.fir.txt").takeIf { it.exists() && LanguageVersion.LATEST_STABLE.usesK2 } ?: rootDir.resolve("output.txt")
+        }
+
+        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
     }
 
     private fun compileLibrary(
+        settings: Settings,
         source: File,
         freeCompilerArgs: List<String>,
         dependencies: List<TestCompilationArtifact.KLIB>
     ): TestCompilationResult<out TestCompilationArtifact.KLIB> {
         val testCase = generateTestCaseWithSingleModule(source, TestCompilerArgs(freeCompilerArgs))
         val compilation = LibraryCompilation(
-            settings = testRunSettings,
+            settings = settings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
             dependencies = dependencies.map { it.asLibraryDependency() },
@@ -101,3 +113,13 @@ class CompilerOutputTest : AbstractNativeSimpleTest() {
         )
     }
 }
+
+@TestDataPath("\$PROJECT_ROOT")
+@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
+class ClassicCompilerOutputTest : CompilerOutputTestBase()
+
+@FirPipeline
+@Tag("frontend-fir")
+@TestDataPath("\$PROJECT_ROOT")
+@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
+class FirCompilerOutputTest : CompilerOutputTestBase()
