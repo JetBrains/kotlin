@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -59,7 +61,6 @@ class Merger(
 
                 rename(f.initializers)
                 rename(f.eagerInitializers)
-                f.mainFunction?.let { rename(it) }
                 f.testFunInvocation?.let { rename(it) }
                 f.suiteFn?.let { f.suiteFn = rename(it) }
             }
@@ -247,7 +248,9 @@ class Merger(
             moduleBody.endRegion()
         }
 
-        val callToMain = fragments.sortedBy { it.packageFqn }.firstNotNullOfOrNull { it.mainFunction }
+        val fragmentWithMainFunction = JsMainFunctionDetector.pickMainFunctionFromCandidates(fragments) {
+            JsMainFunctionDetector.MainFunctionCandidate(it.packageFqn, it.mainFunction)
+        }
 
         val exportStatements = declareAndCallJsExporter() + additionalExports + transitiveJsExport()
 
@@ -267,8 +270,10 @@ class Merger(
                 statements.addWithComment("block: imports", importStatements)
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements)
-                if (generateCallToMain) {
-                    callToMain?.let { this.statements += it }
+                if (generateCallToMain && fragmentWithMainFunction != null) {
+                    val mainFunctionTag = fragmentWithMainFunction.mainFunction ?: error("Expect to have main function signature at this point")
+                    val mainFunctionName = fragmentWithMainFunction.nameBindings[mainFunctionTag] ?: error("Expect to have name binding for tag $mainFunctionTag")
+                    statements += JsInvocation(mainFunctionName.makeRef()).makeStmt()
                 }
                 this.statements += JsReturn(internalModuleName.makeRef())
             }

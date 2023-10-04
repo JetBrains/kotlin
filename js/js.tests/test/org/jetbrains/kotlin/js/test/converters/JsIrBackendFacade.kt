@@ -138,10 +138,13 @@ class JsIrBackendFacade(
             PhaseConfig(jsPhases)
         }
 
+        val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
+            .run { if (shouldBeGenerated()) arguments() else null }
 
         val loweredIr = compileIr(
             irModuleFragment.apply { resolveTestPaths() },
             MainModule.Klib(inputArtifact.outputFile.absolutePath),
+            mainArguments,
             configuration,
             dependencyModules.onEach { it.resolveTestPaths() },
             emptyMap(),
@@ -157,12 +160,10 @@ class JsIrBackendFacade(
             granularity = granularity,
         )
 
-        return loweredIr2JsArtifact(module, loweredIr)
+        return loweredIr2JsArtifact(module, loweredIr, mainArguments != null)
     }
 
-    private fun loweredIr2JsArtifact(module: TestModule, loweredIr: LoweredIr): BinaryArtifacts.Js {
-        val mainArguments = JsEnvironmentConfigurator.getMainCallParametersForModule(module)
-            .run { if (shouldBeGenerated()) arguments() else null }
+    private fun loweredIr2JsArtifact(module: TestModule, loweredIr: LoweredIr, shouldReferMainFunction: Boolean): BinaryArtifacts.Js {
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
         val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
         val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
@@ -178,12 +179,12 @@ class JsIrBackendFacade(
 
         val transformer = IrModuleToJsTransformer(
             loweredIr.context,
-            mainArguments,
             moduleToName = runIf(isEsModules) {
                 loweredIr.allModules.associateWith {
                     "./${getJsArtifactSimpleName(testServices, it.safeName)}_v5".minifyIfNeed()
                 }
-            } ?: emptyMap()
+            } ?: emptyMap(),
+            shouldReferMainFunction,
         )
         // If runIrDce then include DCE results
         // If perModuleOnly then skip whole program
@@ -290,7 +291,7 @@ class JsIrBackendFacade(
         val tmpBuildDir = rootDir.resolve("tmp-build")
         // CompilationOutputs keeps the `outputDir` clean by removing all outdated JS and other unknown files.
         // To ensure that useful files around `outputFile`, such as irdump, are not removed, use `tmpBuildDir` instead.
-        val allJsFiles = writeAll(tmpBuildDir, outputFile.nameWithoutExtension, false, moduleId, moduleKind).filter {
+        val allJsFiles = writeAll(tmpBuildDir, outputFile.nameWithoutExtension, TsCompilationStrategy.NONE, moduleId, moduleKind).filter {
             it.extension == "js" || it.extension == "mjs"
         }
 

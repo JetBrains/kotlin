@@ -20,6 +20,12 @@ val ModuleKind.extension: String
         else -> REGULAR_EXTENSION
     }
 
+enum class TsCompilationStrategy {
+    NONE,
+    MERGED,
+    EACH_FILE
+}
+
 abstract class CompilationOutputs {
     var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
 
@@ -31,7 +37,7 @@ abstract class CompilationOutputs {
 
     fun createWrittenFilesContainer(): MutableSet<File> = LinkedHashSet(2 * (dependencies.size + 1) + 1)
 
-    open fun writeAll(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind): Collection<File> {
+    open fun writeAll(outputDir: File, outputName: String, dtsStrategy: TsCompilationStrategy, moduleName: String, moduleKind: ModuleKind): Collection<File> {
         val writtenFiles = createWrittenFilesContainer()
 
         fun File.writeAsJsFile(out: CompilationOutputs) {
@@ -43,6 +49,12 @@ abstract class CompilationOutputs {
 
             writtenFiles += jsFile
             writtenFiles += jsMapFile
+
+            out.tsDefinitions.takeIf { dtsStrategy == TsCompilationStrategy.EACH_FILE }?.let {
+                val tsFile = jsFile.dtsForJsFile
+                tsFile.writeText(listOf(it).toTypeScript(name, moduleKind))
+                writtenFiles += tsFile
+            }
         }
 
         dependencies.forEach { (name, content) ->
@@ -52,7 +64,7 @@ abstract class CompilationOutputs {
         val outputJsFile = outputDir.resolve("$outputName${moduleKind.extension}")
         outputJsFile.writeAsJsFile(this)
 
-        if (genDTS) {
+        if (dtsStrategy == TsCompilationStrategy.MERGED) {
             val dtsFile = outputJsFile.dtsForJsFile
             dtsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
             writtenFiles += dtsFile
@@ -109,40 +121,6 @@ class CompilationOutputsBuilt(
         sourceMap?.let { outputJsMapFile?.writeText(it) }
         outputJsFile.writeText(rawJsCode)
         return CompilationOutputsBuiltForCache(outputJsFile, outputJsMapFile, this)
-    }
-}
-
-// The output emulates the main module that has all the dependencies. In per-module we expect that the last processed module is a main module
-// and after the compilation we rename it with the provided [outputName] and save all of its dependencies, but with the per-file mode we don't have
-// this last "main" module, as a result we need to emulate it with the output. Also, it helps to save .d.ts files file-by-file instead of the generating
-// one big main .d.ts file
-class PerFileEntryPointCompilationOutput : CompilationOutputs() {
-    override val tsDefinitions: TypeScriptFragment? = null
-    override val jsProgram: JsProgram? = null
-
-    override fun writeJsCode(outputJsFile: File, outputJsMapFile: File) {}
-
-    override fun writeAll(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind): Collection<File> {
-        val writtenFiles = createWrittenFilesContainer()
-
-        dependencies.forEach { (name, content) ->
-            val dependencyFile = outputDir.resolve("$name${moduleKind.extension}").also { it.parentFile.mkdirs() }
-            val jsMapFile = dependencyFile.mapForJsFile
-            val jsFile = dependencyFile.normalizedAbsoluteFile
-            val tsFile = jsFile.dtsForJsFile
-
-            content.writeJsCode(jsFile, jsMapFile)
-
-            writtenFiles += jsFile
-            writtenFiles += jsMapFile
-
-            content.tsDefinitions.takeIf { genDTS }?.let {
-                tsFile.writeText(listOf(it).toTypeScript(name, moduleKind))
-                writtenFiles += tsFile
-            }
-        }
-
-        return writtenFiles.also { deleteNonWrittenFiles(outputDir, it) }
     }
 }
 

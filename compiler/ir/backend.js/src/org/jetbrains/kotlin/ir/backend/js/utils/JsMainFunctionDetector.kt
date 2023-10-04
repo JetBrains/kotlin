@@ -71,6 +71,17 @@ class JsMainFunctionDetector(val context: JsCommonBackendContext) {
 
         return resultPair?.second
     }
+
+    class MainFunctionCandidate(val packageFqn: String, val mainFunctionTag: String?)
+    companion object {
+        inline fun <T> pickMainFunctionFromCandidates(candidates: List<T>, convertToCandidate: (T) -> MainFunctionCandidate): T? {
+            return candidates
+                .map { it to convertToCandidate(it) }
+                .sortedBy { it.second.packageFqn }
+                .firstOrNull { it.second.mainFunctionTag != null }
+                ?.first
+        }
+    }
 }
 
 

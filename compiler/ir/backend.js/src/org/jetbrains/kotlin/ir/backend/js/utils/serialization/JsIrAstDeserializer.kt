@@ -104,7 +104,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
             readRepeated { classes[nameTable[readInt()]] = readIrIcClassModel() }
 
             ifTrue { testFunInvocation = readStatement() }
-            ifTrue { mainFunction = readStatement() }
+            ifTrue { mainFunction = readString() }
             ifTrue { dts = TypeScriptFragment(readString()) }
             ifTrue { suiteFn = nameTable[readInt()] }
 

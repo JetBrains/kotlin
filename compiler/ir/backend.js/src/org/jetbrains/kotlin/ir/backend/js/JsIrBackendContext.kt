@@ -62,12 +62,13 @@ class JsIrBackendContext(
     val additionalExportedDeclarationNames: Set<FqName>,
     keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
+    val mainCallArguments: List<String>?,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     override val mapping: JsMapping = JsMapping(),
     val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
-    val incrementalCacheEnabled: Boolean = false
+    val incrementalCacheEnabled: Boolean = false,
 ) : JsCommonBackendContext {
     override val scriptMode: Boolean get() = false
 

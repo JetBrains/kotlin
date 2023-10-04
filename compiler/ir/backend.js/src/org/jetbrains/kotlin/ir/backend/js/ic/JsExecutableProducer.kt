@@ -61,9 +61,7 @@ class JsExecutableProducer(
         stopwatch.startNext("Loading JS IR modules with updated cross module references")
         jsMultiArtifactCache.loadRequiredJsIrModules(crossModuleReferences)
 
-        fun CacheInfo?.compileModule(moduleName: String, generateCallToMain: Boolean): CompilationOutputs {
-            if (this == null) return jsMultiArtifactCache.fetchCompiledJsCodeForNullCacheInfo()
-
+        fun CacheInfo.compileModule(moduleName: String, isMainModule: Boolean): CompilationOutputs {
             if (jsIrHeader.associatedModule == null) {
                 stopwatch.startNext("Fetching cached JS code")
                 val compilationOutputs = jsMultiArtifactCache.fetchCompiledJsCode(this)
@@ -85,7 +83,7 @@ class JsExecutableProducer(
                 moduleKind = moduleKind,
                 associatedModule.fragments,
                 sourceMapsInfo = sourceMapsInfo,
-                generateCallToMain = generateCallToMain,
+                generateCallToMain = isMainModule,
                 crossModuleReferences = crossRef,
                 outJsProgram = outJsProgram
             )
@@ -95,12 +93,13 @@ class JsExecutableProducer(
             return jsMultiArtifactCache.commitCompiledJsCode(this, compiledModule)
         }
 
-        val (cachedMainModule, cachedOtherModules) = jsMultiArtifactCache.getMainModuleAndDependencies(cachedProgram)
+        val cachedMainModule = cachedProgram.last()
+        val cachedOtherModules = cachedProgram.dropLast(1)
 
         val mainModuleCompilationOutput = cachedMainModule
             .compileModule(mainModuleName, true)
             .apply {
-                dependencies = cachedOtherModules.map {
+                dependencies += cachedOtherModules.map {
                     it.jsIrHeader.externalModuleName to it.compileModule(it.jsIrHeader.externalModuleName, false)
                 }
             }

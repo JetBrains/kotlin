@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.jsPhases
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
@@ -44,6 +41,7 @@ import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.junit.ComparisonFailure
 import org.junit.jupiter.api.AfterEach
 import java.io.File
@@ -313,11 +311,16 @@ abstract class AbstractInvalidationTest(
             )
         }
 
-        private fun writeJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs): List<String> {
+        private fun writeJsCode(
+            stepId: Int,
+            mainModuleName: String,
+            jsOutput: CompilationOutputs,
+            dtsStrategy: TsCompilationStrategy
+        ): List<String> {
             val compiledJsFiles = jsOutput.writeAll(
                 jsDir,
                 mainModuleName,
-                true,
+                dtsStrategy,
                 mainModuleName,
                 projectInfo.moduleKind
             ).filter {
@@ -341,6 +344,12 @@ abstract class AbstractInvalidationTest(
         fun execute() {
             if (granularity in projectInfo.ignoredGranularities) return
 
+            val mainArguments = runIf(projectInfo.callMain) { emptyList<String>() }
+            val dtsStrategy = when (granularity) {
+                JsGenerationGranularity.PER_FILE -> TsCompilationStrategy.EACH_FILE
+                else -> TsCompilationStrategy.MERGED
+            }
+
             for (projStep in projectInfo.steps) {
                 val testInfo = projStep.order.map { setupTestStep(projStep, it) }
 
@@ -363,10 +372,10 @@ abstract class AbstractInvalidationTest(
                     cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
-                    mainArguments = null,
                     compilerInterfaceFactory = { mainModule, cfg ->
                         JsIrCompilerWithIC(
                             mainModule,
+                            mainArguments,
                             cfg,
                             granularity,
                             getPhaseConfig(projStep.id),
@@ -390,7 +399,7 @@ abstract class AbstractInvalidationTest(
                 )
 
                 val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(granularity, outJsProgram = true)
-                val writtenFiles = writeJsCode(projStep.id, mainModuleName, jsOutput)
+                val writtenFiles = writeJsCode(projStep.id, mainModuleName, jsOutput, dtsStrategy)
 
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, dirtyData)
                 verifyJsCode(projStep.id, mainModuleName, writtenFiles)

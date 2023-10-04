@@ -605,14 +605,15 @@ class GenerateIrRuntime {
             symbolTable,
             additionalExportedDeclarationNames = emptySet(),
             keep = emptySet(),
-            configuration
+            configuration,
+            null
         )
 
         ExternalDependenciesGenerator(symbolTable, listOf(jsLinker)).generateUnboundSymbolsAsDependencies()
 
         jsPhases.invokeToplevel(phaseConfig, context, listOf(module))
 
-        val transformer = IrModuleToJsTransformer(context, null)
+        val transformer = IrModuleToJsTransformer(context, shouldReferMainFunction = false)
 
         return transformer.generateModule(listOf(module), setOf(TranslationMode.PER_MODULE_DEV), false)
     }

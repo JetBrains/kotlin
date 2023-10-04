@@ -344,6 +344,12 @@ public class JsIrInvalidationPerFileTestGenerated extends AbstractJsIrInvalidati
     }
 
     @Test
+    @TestMetadata("mainFunction")
+    public void testMainFunction() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/mainFunction/");
+    }
+
+    @Test
     @TestMetadata("mainModuleInvalidation")
     public void testMainModuleInvalidation() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/mainModuleInvalidation/");

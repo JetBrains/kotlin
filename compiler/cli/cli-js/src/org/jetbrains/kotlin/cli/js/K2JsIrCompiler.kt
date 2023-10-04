@@ -72,6 +72,13 @@ private val K2JSCompilerArguments.granularity: JsGenerationGranularity
         else -> JsGenerationGranularity.WHOLE_PROGRAM
     }
 
+private val K2JSCompilerArguments.dtsStrategy: TsCompilationStrategy
+    get() = when {
+        !this.generateDts -> TsCompilationStrategy.NONE
+        this.irPerFile -> TsCompilationStrategy.EACH_FILE
+        else -> TsCompilationStrategy.MERGED
+    }
+
 private class DisposableZipFileSystemAccessor private constructor(
     private val zipAccessor: ZipFileSystemCacheableAccessor
 ) : Disposable, ZipFileSystemAccessor by zipAccessor {
@@ -100,6 +107,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
     ) {
         private fun lowerIr(): LoweredIr {
             return compile(
+                mainCallArguments,
                 module,
                 phaseConfig,
                 IrFactoryImplForJsIC(WholeWorldStageController()),
@@ -122,7 +130,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         private fun makeJsCodeGenerator(): JsCodeGenerator {
             val ir = lowerIr()
-            val transformer = IrModuleToJsTransformer(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
+            val transformer = IrModuleToJsTransformer(ir.context, ir.moduleFragmentToUniqueName, mainCallArguments != null)
 
             val mode = TranslationMode.fromFlags(arguments.irDce, arguments.granularity, arguments.irMinimizedMemberNames)
             return transformer.makeJsCodeGenerator(ir.allModules, mode)
@@ -303,7 +311,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 )
 
                 val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.granularity, outJsProgram = false)
-                outputs.writeAll(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
+                outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
 
                 icCaches.cacheGuard.release()
 
@@ -391,7 +399,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
-                outputs.writeAll(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
+                outputs.writeAll(outputDir, outputName, arguments.dtsStrategy, moduleName, moduleKind)
             } catch (e: CompilationException) {
                 messageCollector.report(
                     ERROR,
@@ -611,10 +619,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 cacheDir = cacheDirectory,
                 compilerConfiguration = configurationJs,
                 irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
-                mainArguments = mainCallArguments,
                 compilerInterfaceFactory = { mainModule, cfg ->
                     JsIrCompilerWithIC(
                         mainModule,
+                        mainCallArguments,
                         cfg,
                         arguments.granularity,
                         PhaseConfig(jsPhases),

@@ -57,12 +57,6 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
 
     override fun loadJsIrModule(cacheInfo: CachedModuleInfo) = cacheInfo.artifact.loadJsIrModule()
 
-    override fun getMainModuleAndDependencies(cacheInfo: List<CachedModuleInfo>) =
-        cacheInfo.last() to cacheInfo.dropLast(1)
-
-    override fun fetchCompiledJsCodeForNullCacheInfo() =
-        error("Should never happen for per module granularity")
-
     override fun fetchCompiledJsCode(cacheInfo: CachedModuleInfo) = cacheInfo.artifact.artifactsDir?.let { cacheDir ->
         val jsCodeFile = File(cacheDir, CACHED_MODULE_JS).ifExists { this }
         val sourceMapFile = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { this }

@@ -14,10 +14,8 @@ abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
     abstract fun loadProgramHeadersFromCache(): List<T>
     abstract fun loadRequiredJsIrModules(crossModuleReferences: Map<JsIrModuleHeader, CrossModuleReferences>)
     abstract fun fetchCompiledJsCode(cacheInfo: T): CompilationOutputsCached?
-    abstract fun commitCompiledJsCode(cacheInfo: T, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs
-    abstract fun fetchCompiledJsCodeForNullCacheInfo(): CompilationOutputs
     abstract fun loadJsIrModule(cacheInfo: T): JsIrModule
-    abstract fun getMainModuleAndDependencies(cacheInfo: List<T>): Pair<T?, List<T>>
+    abstract fun commitCompiledJsCode(cacheInfo: T, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs
 
     protected fun File.writeIfNotNull(data: String?) {
         if (data != null) {

@@ -48,12 +48,25 @@ val String.safeModuleName: String
 val IrModuleFragment.safeName: String
     get() = name.asString().safeModuleName
 
-fun generateProxyIrModuleWith(safeName: String, externalName: String, importedWithEffectInModuleWithName: String? = null) = JsIrModule(
-    safeName,
-    externalName,
-    listOf(JsIrProgramFragment(safeName, "<proxy-file>")),
-    importedWithEffectInModuleWithName = importedWithEffectInModuleWithName
-)
+fun generateProxyIrModuleWith(
+    safeName: String,
+    externalName: String,
+    mainFunction: String?,
+    importedWithEffectInModuleWithName: String? = null
+): JsIrModule {
+    val programFragment = JsIrProgramFragment(safeName, "<proxy-file>").apply {
+        mainFunction?.let {
+            this.mainFunction = it
+            this.nameBindings[it] = JsName("main", true)
+        }
+    }
+    return JsIrModule(
+        safeName,
+        externalName,
+        listOf(programFragment),
+        importedWithEffectInModuleWithName = importedWithEffectInModuleWithName
+    )
+}
 
 enum class JsGenerationGranularity {
     WHOLE_PROGRAM,
@@ -127,8 +140,8 @@ class JsCodeGenerator(
 
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
-    private val mainArguments: List<String>?,
     moduleToName: Map<IrModuleFragment, String> = emptyMap(),
+    private val shouldReferMainFunction: Boolean = false,
     private val removeUnusedAssociatedObjects: Boolean = true,
 ) {
     private val shouldGeneratePolyfills = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
@@ -274,12 +287,14 @@ class IrModuleToJsTransformer(
             override val JsIrModules.artifactName get() = this.mainModule.externalModuleName
             override val JsIrModules.hasEffect get() = this.mainModule.importedWithEffectInModuleWithName != null
             override val JsIrModules.hasExport get() = this.exportModule != null
+            override val JsIrModules.packageFqn get() = this.mainModule.fragments.first().packageFqn
+            override val JsIrModules.mainFunction get() = this.mainModule.fragments.first().mainFunction
 
             override fun List<JsIrModules>.merge() =
                 JsIrModules(map { it.mainModule }.merge(), mapNotNull { it.exportModule }.ifNotEmpty { merge() })
 
-            override fun IrAndExportedDeclarations.generateArtifact(moduleNameForEffects: String?) =
-                JsIrModules(toJsIrProxyModule(moduleNameForEffects))
+            override fun IrAndExportedDeclarations.generateArtifact(mainFunctionTag: String?, moduleNameForEffects: String?) =
+                JsIrModules(toJsIrProxyModule(mainFunctionTag, moduleNameForEffects))
 
             override fun IrFileExports.generateArtifact(module: IrAndExportedDeclarations) = takeIf { !file.couldBeSkipped() }
                 ?.let { generateProgramFragment(it, mode) }
@@ -316,10 +331,14 @@ class IrModuleToJsTransformer(
         )
     }
 
-    private fun IrAndExportedDeclarations.toJsIrProxyModule(importedWithEffectInModuleWithName: String? = null): JsIrModule {
+    private fun IrAndExportedDeclarations.toJsIrProxyModule(
+        mainFunction: String?,
+        importedWithEffectInModuleWithName: String? = null
+    ): JsIrModule {
         return generateProxyIrModuleWith(
             fragment.safeName,
             moduleFragmentToNameMapper.getExternalNameFor(fragment),
+            mainFunction,
             importedWithEffectInModuleWithName
         )
     }
@@ -404,15 +423,6 @@ class IrModuleToJsTransformer(
         result.initializers.statements += staticContext.initializerBlock.statements
         result.eagerInitializers.statements += staticContext.eagerInitializerBlock.statements
 
-        if (mainArguments != null) {
-            JsMainFunctionDetector(backendContext).getMainFunctionOrNull(fileExports.file)?.let {
-                val jsName = staticContext.getNameForStaticFunction(it)
-                val generateArgv = it.valueParameters.firstOrNull()?.isStringArrayParameter() ?: false
-                val generateContinuation = it.isLoweredSuspendFunction(backendContext)
-                result.mainFunction = JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt()
-            }
-        }
-
         backendContext.testFunsPerFile[fileExports.file]?.let {
             result.testFunInvocation = JsInvocation(staticContext.getNameForStaticFunction(it).makeRef()).makeStmt()
             result.suiteFn = staticContext.getNameForStaticFunction(backendContext.suiteFun!!.owner)
@@ -421,6 +431,12 @@ class IrModuleToJsTransformer(
         result.importedModules += nameGenerator.importedModules
 
         val definitionSet = fileExports.file.declarations.toSet()
+
+        if (shouldReferMainFunction) {
+            JsMainFunctionDetector(backendContext).getMainFunctionOrNull(fileExports.file)
+                ?.let { backendContext.mapping.mainFunctionToItsWrapper[it] }
+                ?.let { result.mainFunction = definitionSet.computeTag(it) }
+        }
 
         result.computeAndSaveNameBindings(definitionSet, nameGenerator)
         result.computeAndSaveImports(definitionSet, nameGenerator)
@@ -492,25 +508,6 @@ class IrModuleToJsTransformer(
                 }
             }
         }
-    }
-
-    private fun generateMainArguments(
-        generateArgv: Boolean,
-        generateContinuation: Boolean,
-        staticContext: JsStaticContext,
-    ): List<JsExpression> {
-        val mainArguments = this.mainArguments!!
-        val mainArgumentsArray =
-            if (generateArgv) JsArrayLiteral(mainArguments.map { JsStringLiteral(it) }) else null
-
-        val continuation = if (generateContinuation) {
-            backendContext.coroutineEmptyContinuation.owner
-                .let { it.getter!! }
-                .let { staticContext.getNameForStaticFunction(it) }
-                .let { JsInvocation(it.makeRef()) }
-        } else null
-
-        return listOfNotNull(mainArgumentsArray, continuation)
     }
 
     private fun IrFile.couldBeSkipped(): Boolean = declarations.all { it.origin == JsCodeOutliningLowering.OUTLINED_JS_CODE_ORIGIN }

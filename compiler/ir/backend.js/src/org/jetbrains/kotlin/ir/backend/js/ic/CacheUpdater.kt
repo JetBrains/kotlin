@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragments
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*
@@ -30,11 +29,7 @@ import java.nio.file.Files
 import java.util.EnumSet
 
 fun interface JsIrCompilerICInterface {
-    fun compile(
-        allModules: Collection<IrModuleFragment>,
-        dirtyFiles: Collection<IrFile>,
-        mainArguments: List<String>?
-    ): List<() -> JsIrProgramFragments>
+    fun compile(allModules: Collection<IrModuleFragment>, dirtyFiles: Collection<IrFile>): List<() -> JsIrProgramFragments>
 }
 
 fun interface JsIrCompilerICInterfaceFactory {
@@ -62,7 +57,6 @@ class CacheUpdater(
     cacheDir: String,
     private val compilerConfiguration: CompilerConfiguration,
     private val irFactory: () -> IrFactory,
-    private val mainArguments: List<String>?,
     private val compilerInterfaceFactory: JsIrCompilerICInterfaceFactory
 ) {
     private val stopwatch = StopwatchIC()
@@ -646,7 +640,7 @@ class CacheUpdater(
                 }
             }
 
-            val fragmentGenerators = compilerForIC.compile(loadedFragments.values, dirtyFilesForCompiling, mainArguments)
+            val fragmentGenerators = compilerForIC.compile(loadedFragments.values, dirtyFilesForCompiling)
 
             dirtyFilesForRestoring.mapIndexedTo(ArrayList(dirtyFilesForRestoring.size)) { i, libFileAndSrcFile ->
                 Triple(libFileAndSrcFile.first, libFileAndSrcFile.second, fragmentGenerators[i])
@@ -805,6 +799,7 @@ fun rebuildCacheForDirtyFiles(
 
     val compilerWithIC = JsIrCompilerWithIC(
         currentIrModule,
+        mainArguments,
         configuration,
         JsGenerationGranularity.PER_MODULE,
         PhaseConfig(jsPhases),
@@ -815,7 +810,7 @@ fun rebuildCacheForDirtyFiles(
     loadedIr.loadUnboundSymbols()
     internationService.clear()
 
-    val fragments = compilerWithIC.compile(loadedIr.loadedFragments.values, dirtyIrFiles, mainArguments).memoryOptimizedMap { it() }
+    val fragments = compilerWithIC.compile(loadedIr.loadedFragments.values, dirtyIrFiles).memoryOptimizedMap { it() }
 
     return currentIrModule to dirtyIrFiles.zip(fragments)
 }

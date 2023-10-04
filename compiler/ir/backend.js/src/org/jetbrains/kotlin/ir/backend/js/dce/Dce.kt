@@ -114,13 +114,9 @@ private fun buildRoots(modules: Iterable<IrModuleFragment>, context: JsIrBackend
         dceRuntimeDiagnostic.unreachableDeclarationMethod(context).owner.acceptVoid(declarationsCollector)
     }
 
-    // TODO: Generate calls to main as IR->IR lowering and reference coroutineEmptyContinuation directly
-    JsMainFunctionDetector(context).getMainFunctionOrNull(modules.last())?.let { mainFunction ->
-        add(mainFunction)
-        if (mainFunction.isLoweredSuspendFunction(context)) {
-            context.coroutineEmptyContinuation.owner.acceptVoid(declarationsCollector)
-        }
-    }
+    JsMainFunctionDetector(context).getMainFunctionOrNull(modules.last())
+        ?.let { context.mapping.mainFunctionToItsWrapper[it] }
+        ?.let { add(it) }
 
     addIfNotNull(context.intrinsics.void.owner.backingField)
     addAll(context.testFunsPerFile.values)

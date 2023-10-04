@@ -356,6 +356,64 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
                 runTest("js/js.translator/testData/box/esModules/jsName/jsTopLevelClashes.kt");
             }
         }
+
+        @Nested
+        @TestMetadata("js/js.translator/testData/box/esModules/main")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Main {
+            @Test
+            public void testAllFilesPresentInMain() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/main"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @Test
+            @TestMetadata("differentMains.kt")
+            public void testDifferentMains() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/main/differentMains.kt");
+            }
+
+            @Test
+            @TestMetadata("incremental.kt")
+            public void testIncremental() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/main/incremental.kt");
+            }
+
+            @Test
+            @TestMetadata("noArgs.kt")
+            public void testNoArgs() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/main/noArgs.kt");
+            }
+
+            @Test
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/main/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("suspendMain.kt")
+            public void testSuspendMain() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/main/suspendMain.kt");
+            }
+
+            @Test
+            @TestMetadata("suspendMainNoArgs.kt")
+            public void testSuspendMainNoArgs() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/main/suspendMainNoArgs.kt");
+            }
+
+            @Test
+            @TestMetadata("suspendMainThrows.kt")
+            public void testSuspendMainThrows() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/main/suspendMainThrows.kt");
+            }
+
+            @Test
+            @TestMetadata("twoMains.kt")
+            public void testTwoMains() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/main/twoMains.kt");
+            }
+        }
     }
 
     @Nested

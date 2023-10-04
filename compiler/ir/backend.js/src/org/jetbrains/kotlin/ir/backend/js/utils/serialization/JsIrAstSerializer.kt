@@ -156,7 +156,7 @@ private class JsIrAstSerializer {
         }
 
         ifNotNull(fragment.mainFunction) {
-            writeStatement(it)
+            writeString(it)
         }
 
         ifNotNull(fragment.dts) {

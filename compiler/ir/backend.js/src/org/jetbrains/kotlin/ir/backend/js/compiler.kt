@@ -37,6 +37,7 @@ class LoweredIr(
 )
 
 fun compile(
+    mainCallArguments: List<String>?,
     depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
@@ -56,6 +57,7 @@ fun compile(
     return compileIr(
         moduleFragment,
         depsDescriptors.mainModule,
+        mainCallArguments,
         depsDescriptors.compilerConfiguration,
         dependencyModules,
         moduleToName,
@@ -75,6 +77,7 @@ fun compile(
 fun compileIr(
     moduleFragment: IrModuleFragment,
     mainModule: MainModule,
+    mainCallArguments: List<String>?,
     configuration: CompilerConfiguration,
     dependencyModules: List<IrModuleFragment>,
     moduleToName: Map<IrModuleFragment, String>,
@@ -109,7 +112,8 @@ fun compileIr(
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
         granularity = granularity,
-        incrementalCacheEnabled = false
+        incrementalCacheEnabled = false,
+        mainCallArguments = mainCallArguments
     )
 
     // Load declarations referenced during `context` initialization

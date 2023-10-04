@@ -42,6 +42,10 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
         return module.getJsOutputName()
     }
 
+    fun excludeFileNameFromExternalName(externalName: String): String {
+        return externalName.substringBeforeLast('/')
+    }
+
     private fun IrModuleFragment.getJsOutputName(): String {
         return jsOutputNamesMapping[this] ?: sanitizeName(safeName)
     }

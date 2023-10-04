@@ -17,7 +17,8 @@ class ProjectInfo(
     val steps: List<ProjectBuildStep>,
     val muted: Boolean,
     val moduleKind: ModuleKind,
-    val ignoredGranularities: Set<JsGenerationGranularity>
+    val ignoredGranularities: Set<JsGenerationGranularity>,
+    val callMain: Boolean
 ) {
 
     class ProjectBuildStep(
@@ -71,6 +72,7 @@ class ModuleInfo(val moduleName: String) {
 }
 
 const val PROJECT_INFO_FILE = "project.info"
+private const val CALL_MAIN = "CALL_MAIN"
 private const val MODULES_LIST = "MODULES"
 private const val MODULES_KIND = "MODULE_KIND"
 private const val LIBS_LIST = "libs"
@@ -173,6 +175,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
         val steps = mutableListOf<ProjectInfo.ProjectBuildStep>()
         val ignoredGranularities = mutableSetOf<JsGenerationGranularity>()
         var muted = false
+        var callMain = false
         var moduleKind = ModuleKind.ES
 
         loop { line ->
@@ -191,6 +194,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
 
             when {
                 op == MODULES_LIST -> libraries += split[1].splitAndTrim()
+                op == CALL_MAIN && split[1].trim() == "true" -> callMain = true
                 op == IGNORE_PER_FILE && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_FILE
                 op == IGNORE_PER_MODULE && split[1].trim() == "true" -> ignoredGranularities += JsGenerationGranularity.PER_MODULE
                 op == MODULES_KIND -> moduleKind = split[1].trim()
@@ -222,7 +226,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             false
         }
 
-        return ProjectInfo(entryName, libraries, steps, muted, moduleKind, ignoredGranularities)
+        return ProjectInfo(entryName, libraries, steps, muted, moduleKind, ignoredGranularities, callMain)
     }
 }
 

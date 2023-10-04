@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.utils.JsMainFunctionDetector
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.putToMultiMap
 
 interface PerFileGenerator<Module, File, Artifact> {
@@ -16,10 +18,12 @@ interface PerFileGenerator<Module, File, Artifact> {
     val Artifact.artifactName: String
     val Artifact.hasEffect: Boolean
     val Artifact.hasExport: Boolean
+    val Artifact.packageFqn: String
+    val Artifact.mainFunction: String?
 
     fun List<Artifact>.merge(): Artifact
     fun File.generateArtifact(module: Module): Artifact?
-    fun Module.generateArtifact(moduleNameForEffects: String?): Artifact
+    fun Module.generateArtifact(mainFunctionTag: String?, moduleNameForEffects: String?): Artifact
 
     fun generatePerFileArtifacts(modules: List<Module>): List<Artifact> {
         var someModuleHasEffect = false
@@ -29,8 +33,8 @@ interface PerFileGenerator<Module, File, Artifact> {
                 var hasModuleLevelEffect = false
                 var hasFileWithExportedDeclaration = false
 
-                for (file in module.fileList) {
-                    val generatedArtifact = file.generateArtifact(module) ?: continue
+                val artifacts = module.fileList.mapNotNull {
+                    val generatedArtifact = it.generateArtifact(module) ?: return@mapNotNull null
 
                     if (generatedArtifact.hasExport) {
                         hasFileWithExportedDeclaration = true
@@ -41,15 +45,28 @@ interface PerFileGenerator<Module, File, Artifact> {
                     }
 
                     putToMultiMap(generatedArtifact.artifactName, generatedArtifact)
+
+                    generatedArtifact
                 }
 
                 if (hasModuleLevelEffect) {
                     someModuleHasEffect = true
                 }
 
-                if (hasFileWithExportedDeclaration || hasModuleLevelEffect || (module.isMain && someModuleHasEffect)) {
+                val mainFunctionTag = runIf(module.isMain) {
+                    JsMainFunctionDetector
+                        .pickMainFunctionFromCandidates(artifacts) {
+                            JsMainFunctionDetector.MainFunctionCandidate(
+                                it.packageFqn,
+                                it.mainFunction
+                            )
+                        }
+                        ?.mainFunction
+                }
+
+                if (mainFunctionTag != null || hasFileWithExportedDeclaration || hasModuleLevelEffect || (module.isMain && someModuleHasEffect)) {
                     val proxyArtifact =
-                        module.generateArtifact(mainModuleName.takeIf { !module.isMain && hasModuleLevelEffect }) ?: continue
+                        module.generateArtifact(mainFunctionTag, mainModuleName.takeIf { !module.isMain && hasModuleLevelEffect }) ?: continue
                     putToMultiMap(proxyArtifact.artifactName, proxyArtifact)
                 }
             }

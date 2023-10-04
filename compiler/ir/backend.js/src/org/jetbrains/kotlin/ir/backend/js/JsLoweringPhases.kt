@@ -863,6 +863,12 @@ val constEvaluationPhase = makeJsModulePhase(
     description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`",
 ).toModuleLowering()
 
+val mainFunctionCallWrapperLowering = makeJsModulePhase(
+    ::MainFunctionCallWrapperLowering,
+    name = "MainFunctionCallWrapperLowering",
+    description = "Generate main function call inside the wrapper-function"
+).toModuleLowering()
+
 val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
@@ -968,6 +974,7 @@ val loweringList = listOf<Lowering>(
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,
+    mainFunctionCallWrapperLowering,
     cleanupLoweringPhase,
     // Currently broken due to static members lowering making single-open-class
     // files non-recognizable as single-class files
