@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.defaultType
 
@@ -90,16 +91,14 @@ class FirBuilderInferenceSession2(
         resolutionMode: ResolutionMode,
     ) {
         val additionalBindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
-        if (resolutionMode == ResolutionMode.ReceiverResolution) {
-            fixVariablesForMemberScope(resolvedType, outerCandidate)?.let { additionalBindings += it }
+        val system = (this as? FirResolvable)?.candidate()?.system ?: outerSystem
+
+        if (resolutionMode is ResolutionMode.ReceiverResolution) {
+            fixVariablesForMemberScope(resolvedType, system)?.let { additionalBindings += it }
         }
 
-        val substitutor =
-            (this as? FirResolvable)?.candidate()?.system?.buildCurrentSubstitutor(additionalBindings)
-                ?: outerSystem.buildCurrentSubstitutor(additionalBindings)
-
-
-        val updatedType = (substitutor as ConeSubstitutor).substituteOrNull(resolvedType)
+        val substitutor = system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
+        val updatedType = substitutor.substituteOrNull(resolvedType)
 
         if (updatedType != null) {
             replaceConeTypeOrNull(updatedType)
@@ -108,35 +107,40 @@ class FirBuilderInferenceSession2(
 
     fun fixVariablesForMemberScope(
         type: ConeKotlinType,
-        outerCandidate: Candidate,
+        myCs: NewConstraintSystemImpl,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
         return when (type) {
-            is ConeFlexibleType -> fixVariablesForMemberScope(type.lowerBound, outerCandidate)
-            is ConeDefinitelyNotNullType -> fixVariablesForMemberScope(type.original, outerCandidate)
-            is ConeTypeVariableType -> fixVariablesForMemberScope(type, outerCandidate)
+            is ConeFlexibleType -> fixVariablesForMemberScope(type.lowerBound, myCs)
+            is ConeDefinitelyNotNullType -> fixVariablesForMemberScope(type.original, myCs)
+            is ConeTypeVariableType -> fixVariablesForMemberScope(type, myCs)
             else -> null
         }
     }
 
     private fun fixVariablesForMemberScope(
         type: ConeTypeVariableType,
-        myCandidate: Candidate,
+        myCs: NewConstraintSystemImpl,
     ): Pair<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
-        if ("".hashCode() == 0) return null
+        // outerYield_1_3.kt
+        // org.jetbrains.kotlin.test.runners.FirPsiOldFrontendDiagnosticsTestGenerated.TestsWithStdLib.Coroutines.RestrictSuspension.testOuterYield_1_3
+        //if ("".hashCode() == 0) return null
         val coneTypeVariableTypeConstructor = type.lookupTag
-        val myCs = myCandidate.system
 
         require(coneTypeVariableTypeConstructor in myCs.allTypeVariables) {
             "$coneTypeVariableTypeConstructor not found"
         }
 
         val variableWithConstraints = myCs.notFixedTypeVariables[coneTypeVariableTypeConstructor] ?: return null
-        val c = myCandidate.csBuilder
-        val resultType = inferenceComponents.resultTypeResolver.findResultType(
-            c,
-            variableWithConstraints,
-            TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-        ) as ConeKotlinType
+        val c = myCs.getBuilder()
+        val resultType = c.run {
+            withTypeVariablesThatAreNotCountedAsProperTypes(myCs.allTypeVariables.keys - outerCS.allTypeVariables.keys) {
+                inferenceComponents.resultTypeResolver.findResultType(
+                    c,
+                    variableWithConstraints,
+                    TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+                ) as ConeKotlinType
+            }
+        }
         val variable = variableWithConstraints.typeVariable
         // TODO: Position
         c.addEqualityConstraint(variable.defaultType(c), resultType, ConeFixVariableConstraintPosition(variable))
@@ -145,7 +149,7 @@ class FirBuilderInferenceSession2(
     }
 
     private fun Candidate.isNotTrivial(): Boolean =
-        usedOuterCs || postponedAtoms.isNotEmpty()
+        usedOuterCs
 
     override fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? {
         if (candidate.needsToBePostponed()) return outerCS
