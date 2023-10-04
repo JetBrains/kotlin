@@ -93,7 +93,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
             origin = IrDeclarationOrigin.SCRIPT_CLASS
             name = irScript.name.let {
                 if (it.isSpecial) {
-                    NameUtils.getScriptNameForFile(irScript.name.asStringStripSpecialMarkers().removePrefix("script-"))
+                    NameUtils.getScriptNameForFile(it.asStringStripSpecialMarkers().removePrefix("script-"))
                 } else it
             }
             kind = ClassKind.CLASS

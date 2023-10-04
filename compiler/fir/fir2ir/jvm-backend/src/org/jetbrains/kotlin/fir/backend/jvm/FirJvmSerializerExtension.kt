@@ -113,6 +113,19 @@ class FirJvmSerializerExtension(
         }
     }
 
+    override fun serializeScript(
+        script: FirScript,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: FirElementSerializer
+    ) {
+        assert((metadata as FirMetadataSource.Script).fir == script)
+        if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
+            proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
+        }
+        writeLocalProperties(proto, JvmProtoBuf.classLocalVariable)
+    }
+
     // Interfaces which have @JvmDefault members somewhere in the hierarchy need the compiler 1.2.40+
     // so that the generated bridges in subclasses would call the super members correctly
     private fun writeVersionRequirementForJvmDefaultIfNeeded(

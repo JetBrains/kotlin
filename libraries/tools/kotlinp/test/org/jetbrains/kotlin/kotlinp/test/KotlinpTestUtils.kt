@@ -95,7 +95,7 @@ private fun compileAndPrintAllFiles(
     }
 
     if (compareWithTxt) {
-        KotlinTestUtils.assertEqualsToFile(File(file.path.replace(".kt", ".txt")), main.toString())
+        KotlinTestUtils.assertEqualsToFile(File(file.path.replace(".kt.?".toRegex(), ".txt")), main.toString())
     }
 
     if (readWriteAndCompare && InTextDirectivesUtils.findStringWithPrefixes(file.readText(), "// NO_READ_WRITE_COMPARE") == null) {

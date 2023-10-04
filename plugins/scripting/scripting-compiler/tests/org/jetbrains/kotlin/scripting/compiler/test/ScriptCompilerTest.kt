@@ -10,10 +10,8 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.getBaseCompilerArgumentsFromProperty
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
-import org.jetbrains.kotlin.utils.tryConstructClassFromStringArgs
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
-import kotlin.reflect.full.createInstance
 import kotlin.reflect.full.declaredMembers
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
@@ -43,8 +41,8 @@ class ScriptCompilerTest : TestCase() {
             """.trimIndent().toScriptSource()
         )
 
-        val kclass = res.valueOrThrow()
-        val scriptInstance = kclass.createInstance()
+        val kclass = res.valueOrThrow().java
+        val scriptInstance = kclass.constructors.first().newInstance()
         assertNotNull(scriptInstance)
     }
 
@@ -64,8 +62,8 @@ class ScriptCompilerTest : TestCase() {
             """.trimIndent().toScriptSource()
         )
 
-        val kclass = res.valueOrThrow()
-        val scriptInstance = kclass.createInstance()
+        val kclass = res.valueOrThrow().java
+        val scriptInstance = kclass.constructors.first().newInstance()
         assertNotNull(scriptInstance)
     }
 
@@ -97,8 +95,8 @@ class ScriptCompilerTest : TestCase() {
         )
 
         val kClass = res.valueOrThrow()
-        val scriptInstance = kClass.createInstance()
         val members = kClass.declaredMembers
+        val scriptInstance = kClass.java.constructors.first().newInstance()
         val namesToMembers = members.associateBy { it.name }
 
         fun prop(name: String) = namesToMembers[name]!! as KProperty<*>
@@ -110,6 +108,24 @@ class ScriptCompilerTest : TestCase() {
         assertEquals(3, propValue("c"))
         assertEquals(Char::class, propType("d"))
         assertNull(namesToMembers["_"])
+    }
+
+    fun testSimpleReflection() {
+        val res = compileToClass(
+            """
+                val c = 3
+                class A {
+                    class B
+                }
+                val a = A()
+            """.trimIndent().toScriptSource()
+        )
+
+        val kClass = res.valueOrThrow()
+        val members = kClass.declaredMembers
+        assertEquals(2, members.size)
+        val nestedClasses = kClass.nestedClasses
+        assertEquals(1, nestedClasses.size)
     }
 
     fun compile(

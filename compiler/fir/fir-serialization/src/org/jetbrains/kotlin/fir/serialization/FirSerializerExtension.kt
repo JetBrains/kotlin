@@ -54,6 +54,14 @@ abstract class FirSerializerExtension {
     ) {
     }
 
+    open fun serializeScript(
+        script: FirScript,
+        proto: ProtoBuf.Class.Builder,
+        versionRequirementTable: MutableVersionRequirementTable,
+        childSerializer: FirElementSerializer
+    ) {
+    }
+
     open fun serializeConstructor(
         constructor: FirConstructor,
         proto: ProtoBuf.Constructor.Builder,

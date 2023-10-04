@@ -103,8 +103,7 @@ class ScriptingCompilerPluginTest : TestCase() {
         )
     }
 
-    // muted, see KT-61490
-    fun testLazyScriptDefinitionDiscovery() = expectTestToFailOnK2 {
+    fun testLazyScriptDefinitionDiscovery() {
 
         withTempDir { tmpdir ->
             withDisposable { disposable ->

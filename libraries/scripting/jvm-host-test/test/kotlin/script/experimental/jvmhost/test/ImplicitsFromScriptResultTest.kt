@@ -35,7 +35,7 @@ import kotlin.script.experimental.jvmhost.JvmScriptCompiler
  */
 class ImplicitsFromScriptResultTest : TestCase() {
 
-    fun testImplicits() = expectTestToFailOnK2 {
+    fun testImplicits() {
         // the implementation of the Compiler Host doesn't work with IR - the inter-script symbol table
         // should be maintained to make it run (see latest REPL compiler implementations for details
         // TODO: consider either fix it or rewrite to the REPL compiler

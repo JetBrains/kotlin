@@ -26,7 +26,7 @@ public class K2KotlinpTestGenerated extends AbstractK2KotlinpTest {
     }
 
     public void testAllFilesPresentInTestData() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData"), Pattern.compile("^(.*)\\.kts?$"), null, true);
     }
 
     @TestMetadata("Annotations.kt")
@@ -109,6 +109,11 @@ public class K2KotlinpTestGenerated extends AbstractK2KotlinpTest {
         runTest("libraries/tools/kotlinp/testData/Properties.kt");
     }
 
+    @TestMetadata("scriptSimple.kts")
+    public void testScriptSimple() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/scriptSimple.kts");
+    }
+
     @TestMetadata("SimpleClass.kt")
     public void testSimpleClass() throws Exception {
         runTest("libraries/tools/kotlinp/testData/SimpleClass.kt");
@@ -163,7 +168,7 @@ public class K2KotlinpTestGenerated extends AbstractK2KotlinpTest {
         }
 
         public void testAllFilesPresentInJvmDefault() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData/jvmDefault"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData/jvmDefault"), Pattern.compile("^(.*)\\.kts?$"), null, true);
         }
 
         @TestMetadata("withCompatibility.kt")
@@ -186,7 +191,7 @@ public class K2KotlinpTestGenerated extends AbstractK2KotlinpTest {
         }
 
         public void testAllFilesPresentInLocalClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData/localClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("libraries/tools/kotlinp/testData/localClasses"), Pattern.compile("^(.*)\\.kts?$"), null, true);
         }
 
         @TestMetadata("AnonymousObject.kt")

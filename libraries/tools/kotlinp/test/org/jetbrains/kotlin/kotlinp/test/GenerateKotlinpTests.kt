@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
                 model("")
             }
             testClass<AbstractK2KotlinpTest> {
-                model("")
+                model("", pattern = "^(.*)\\.kts?$")
             }
         }
     }

@@ -103,6 +103,7 @@ class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrCompone
                     ?.topmostParentClassId
                     ?.toSymbol(session)
                     ?.fir
+                is FirScript -> this
                 else -> error("Unsupported declaration type: $this")
             } ?: this
         }

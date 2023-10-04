@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.FirScriptDeclarationsScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.serialization.constant.hasConstantValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
@@ -292,6 +293,88 @@ class FirElementSerializer private constructor(
 
         return builder
     }
+
+    fun scriptProto(script: FirScript): ProtoBuf.Class.Builder = whileAnalysing(session, script) {
+        val builder = ProtoBuf.Class.newBuilder()
+
+        val flags = Flags.getClassFlags(
+            extension.hasAdditionalAnnotations(script),
+            ProtoEnumFlags.visibility(Visibilities.Public),
+            ProtoEnumFlags.modality(Modality.FINAL),
+            ProtoEnumFlags.classKind(ClassKind.CLASS, false),
+            /* inner = */ false,
+            /* isData = */ false,
+            /* isExternal = */ false,
+            /* isExpect = */ false,
+            /* isValue = */ false,
+            /* isFun = */ false,
+            /* hasEnumEntries = */ false,
+        )
+        if (flags != builder.flags) {
+            builder.flags = flags
+        }
+
+        val name = script.name.let {
+            if (it.isSpecial) {
+                NameUtils.getScriptNameForFile(it.asStringStripSpecialMarkers().removePrefix("script-"))
+            } else it
+        }
+        val classId = ClassId(script.symbol.fqName.parentOrNull() ?: FqName.ROOT, name)
+
+        builder.fqName = getClassifierId(classId)
+
+        val memberScope = FirScriptDeclarationsScope(session, script)
+
+        val callableMembers = buildList {
+            memberScope.processAllCallables { add(it.fir) }
+        }
+
+        for (declaration in callableMembers) {
+            when (declaration) {
+                is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
+                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                else -> {}
+            }
+        }
+
+        memberScope.getClassifierNames().forEach { classifierName ->
+            memberScope.processClassifiersByName(classifierName) { nestedClassifier ->
+                when (nestedClassifier) {
+                    is FirRegularClassSymbol -> {
+                        builder.addNestedClassName(getSimpleNameIndex(nestedClassifier.name))
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+        for (contextReceiver in script.contextReceivers) {
+            val typeRef = contextReceiver.typeRef
+            if (useTypeTable()) {
+                builder.addContextReceiverTypeId(typeId(typeRef))
+            } else {
+                builder.addContextReceiverType(typeProto(contextReceiver.typeRef))
+            }
+        }
+
+        if (versionRequirementTable == null) error("Version requirements must be serialized for scripts: ${script.render()}")
+
+        builder.addAllVersionRequirement(versionRequirementTable.serializeVersionRequirements(script))
+
+        extension.serializeScript(script, builder, versionRequirementTable, this)
+
+        if (metDefinitelyNotNullType) {
+            builder.addVersionRequirement(
+                writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
+            )
+        }
+
+        typeTable.serialize()?.let { builder.typeTable = it }
+        versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
+
+        return builder
+    }
+
 
     /*
      * Order of nested classifiers:
@@ -1236,6 +1319,25 @@ class FirElementSerializer private constructor(
             }
             return serializer
         }
+
+        @JvmStatic
+        fun createForScript(
+            session: FirSession,
+            scopeSession: ScopeSession,
+            script: FirScript,
+            extension: FirSerializerExtension,
+            typeApproximator: AbstractTypeApproximator,
+            languageVersionSettings: LanguageVersionSettings,
+            produceHeaderKlib: Boolean = false,
+        ): FirElementSerializer =
+            FirElementSerializer(
+                session, scopeSession, script,
+                Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(),
+                serializeTypeTableToFunction = false,
+                typeApproximator,
+                languageVersionSettings,
+                produceHeaderKlib,
+            )
 
         private fun writeLanguageVersionRequirement(
             languageFeature: LanguageFeature,
