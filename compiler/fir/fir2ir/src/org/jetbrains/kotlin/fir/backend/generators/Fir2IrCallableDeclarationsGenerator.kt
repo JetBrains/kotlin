@@ -231,6 +231,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     isExternal = false,
                 ).apply {
                     metadata = FirMetadataSource.Function(constructor)
+                    annotationGenerator.generate(this, constructor)
                     // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
                     // with the annotation itself.
                     @OptIn(LeakedDeclarationCaches::class)
