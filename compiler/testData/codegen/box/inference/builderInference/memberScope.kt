@@ -1,8 +1,6 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // !DIAGNOSTICS: -DEPRECATION -OPT_IN_IS_NOT_ENABLED
 // WITH_STDLIB
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, JS_IR_ES6, NATIVE, WASM
-// FIR status: NONE_APPLICABLE at all equals calls
 import kotlin.experimental.ExperimentalTypeInference
 
 interface TestInterface<R> {
