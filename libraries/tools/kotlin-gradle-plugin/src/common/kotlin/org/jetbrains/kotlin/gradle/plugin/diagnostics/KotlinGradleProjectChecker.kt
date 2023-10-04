@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
+import org.jetbrains.kotlin.gradle.plugin.KotlinExtensionPoint
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
@@ -96,27 +97,7 @@ internal interface KotlinGradleProjectChecker {
     suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector)
 
     companion object {
-        val ALL_CHECKERS: List<KotlinGradleProjectChecker> = listOf(
-            CommonMainOrTestWithDependsOnChecker,
-            DeprecatedKotlinNativeTargetsChecker,
-            MissingNativeStdlibChecker,
-            UnusedSourceSetsChecker,
-            AndroidSourceSetLayoutV1SourceSetsNotFoundChecker,
-            AndroidPluginWithoutAndroidTargetChecker,
-            NoKotlinTargetsDeclaredChecker,
-            DisabledCinteropCommonizationInHmppProjectChecker,
-            DisabledNativeTargetsChecker,
-            JsEnvironmentChecker,
-            PreHmppDependenciesUsageChecker,
-            ExperimentalK2UsageChecker,
-            KotlinSourceSetTreeDependsOnMismatchChecker,
-            PlatformSourceSetConventionsChecker,
-            AndroidMainSourceSetConventionsChecker,
-            IosSourceSetConventionChecker,
-            KotlinTargetAlreadyDeclaredChecker,
-            InternalGradlePropertiesUsageChecker,
-            WasmSourceSetsNotFoundChecker,
-        )
+        val extensionPoint = KotlinExtensionPoint<KotlinGradleProjectChecker>()
     }
 }
 

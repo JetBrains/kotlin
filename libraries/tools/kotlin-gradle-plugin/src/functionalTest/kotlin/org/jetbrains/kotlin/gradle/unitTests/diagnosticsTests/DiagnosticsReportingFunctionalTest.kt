@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.util.set
 import org.junit.Test
 
 class DiagnosticsReportingFunctionalTest {
@@ -161,11 +162,8 @@ private fun buildProjectWithMockedCheckers(
         }
     )
 
-    project.allprojects {
-        project.extensions.extraProperties.set(
-            KOTLIN_GRADLE_PROJECT_CHECKERS_OVERRIDE,
-            listOf(MockChecker, MockPerProjectChecker, MockPerBuildChecker)
-        )
+    project.allprojects { currentProject ->
+        KotlinGradleProjectChecker.extensionPoint[currentProject] = listOf(MockChecker, MockPerProjectChecker, MockPerBuildChecker)
     }
 
     project.block()

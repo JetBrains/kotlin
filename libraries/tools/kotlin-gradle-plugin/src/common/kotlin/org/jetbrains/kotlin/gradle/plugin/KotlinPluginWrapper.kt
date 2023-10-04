@@ -22,7 +22,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -257,6 +256,8 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         val plugin = getPlugin(project)
 
         setupAttributeMatchingStrategy(project)
+
+        project.registerKotlinPluginExtensions()
 
         project.startKotlinPluginLifecycle()
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
  * Completely overwrites the currently registered extensions on this [KotlinExtensionPoint] in this project.
  */
 @OptIn(UnsafeApi::class)
-fun <T> KotlinExtensionPoint<T>.set(project: Project, extensions: List<T>) {
+operator fun <T> KotlinExtensionPoint<T>.set(project: Project, extensions: List<T>) {
     (this as KotlinExtensionPointInternal<T>)
     set(project, extensions)
 }
