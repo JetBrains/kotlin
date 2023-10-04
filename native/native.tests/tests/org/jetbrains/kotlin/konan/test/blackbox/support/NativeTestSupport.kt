@@ -262,10 +262,11 @@ private object NativeTestSupport {
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode
     ): CacheMode {
+        val defaultCache = CacheMode.defaultForTestTarget(distribution, kotlinNativeTargets)
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
             enforcedProperties,
             CacheMode.Alias.values(),
-            default = CacheMode.defaultForTestTarget(distribution, kotlinNativeTargets)
+            default = defaultCache
         )
         val useStaticCacheForUserLibraries = when (cacheMode) {
             CacheMode.Alias.NO -> return CacheMode.WithoutCache
@@ -275,7 +276,9 @@ private object NativeTestSupport {
         }
         val makePerFileCaches = cacheMode == CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE
 
-        return CacheMode.WithStaticCache(
+        return if (defaultCache == CacheMode.Alias.NO)
+            CacheMode.WithoutCache
+        else CacheMode.WithStaticCache(
             distribution,
             kotlinNativeTargets,
             optimizationMode,
