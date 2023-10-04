@@ -17053,6 +17053,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                     }
 
                     @Test
+                    @TestMetadata("simpleIntersection.kt")
+                    public void testSimpleIntersection() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/simpleIntersection.kt");
+                    }
+
+                    @Test
                     @TestMetadata("stubTypeReceiverRestriction.kt")
                     public void testStubTypeReceiverRestriction() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/builderInference/stubTypes/stubTypeReceiverRestriction.kt");
