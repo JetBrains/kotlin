@@ -137,6 +137,32 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("embedAndSign task does not copy dSYM to Xcode frameworks folder")
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @GradleTest
+    fun testEmbedAnsSignDoesNotCopyDsym(
+        gradleVersion: GradleVersion,
+    ) {
+
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion,
+        ) {
+            val environmentVariables = mapOf(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos",
+                "ARCHS" to "arm64",
+                "EXPANDED_CODE_SIGN_IDENTITY" to "-",
+                "TARGET_BUILD_DIR" to projectPath.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived"
+            )
+            build(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = EnvironmentalVariables(environmentVariables)) {
+                assertDirectoryInProjectExists("build/xcode-derived/sdk.framework")
+                assertDirectoryInProjectDoesNotExist("build/xcode-derived/sdk.framework.DSYM")
+            }
+        }
+    }
+
     @DisplayName("embedAndSignAppleFrameworkForXcode fail")
     @GradleTest
     fun shouldFailWithExecutingEmbedAndSignAppleFrameworkForXcode(

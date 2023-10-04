@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.CocoapodsPluginDiagnostics
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.KotlinArtifactsPodspecExtension
@@ -177,13 +178,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     private fun Project.createCopyFrameworkTask(
         frameworkFile: Provider<File>,
         buildingTask: TaskProvider<*>
-    ) = registerTask<FrameworkCopy>(SYNC_TASK_NAME) {
-        it.group = TASK_GROUP
-        it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
+    ) = registerTask<FrameworkCopy>(SYNC_TASK_NAME) { task ->
+        task.group = TASK_GROUP
+        task.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
 
-        it.sourceFramework.fileProvider(frameworkFile)
-        it.dependsOn(buildingTask)
-        it.destinationDirectory.set(layout.cocoapodsBuildDirs.framework)
+        task.sourceFramework.fileProvider(frameworkFile)
+        task.sourceDsym.fileProvider(dsymFile(frameworkFile))
+        task.dependsOn(buildingTask)
+        task.destinationDirectory.set(layout.cocoapodsBuildDirs.framework)
     }
 
     private fun createSyncForFatFramework(
