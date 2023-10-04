@@ -1,4 +1,7 @@
 compiler/testData/cli/metadata/inheritorOfExpectSealedClass/common-2.kt:1:21: error: 'actual class Base : Any' has no corresponding expected declaration
 actual sealed class Base
                     ^
+compiler/testData/cli/metadata/inheritorOfExpectSealedClass/common-3.kt:1:17: error: unresolved reference '<init>'.
+class Derived : Base()
+                ^
 COMPILATION_ERROR

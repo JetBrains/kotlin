@@ -123,8 +123,12 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         override fun visitRegularClass(regularClass: FirRegularClass, data: FirRecorderData) {
             val classId = regularClass.symbol.classId
             val prevFile = data.state.classifierContainerFileMap.put(classId, data.file)
-            data.state.classifierMap.put(classId, regularClass)?.let {
-                data.nameConflictsTracker?.registerClassifierRedeclaration(classId, regularClass.symbol, data.file, it.symbol, prevFile)
+            val storedClassifier = data.state.classifierMap.getOrPut(classId) { regularClass }
+
+            if (storedClassifier != regularClass) {
+                data.nameConflictsTracker?.registerClassifierRedeclaration(
+                    classId, regularClass.symbol, data.file, storedClassifier.symbol, prevFile,
+                )
             }
 
             if (!classId.isNestedClass && !classId.isLocal) {
@@ -138,8 +142,12 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         override fun visitTypeAlias(typeAlias: FirTypeAlias, data: FirRecorderData) {
             val classId = typeAlias.symbol.classId
             val prevFile = data.state.classifierContainerFileMap.put(classId, data.file)
-            data.state.classifierMap.put(classId, typeAlias)?.let {
-                data.nameConflictsTracker?.registerClassifierRedeclaration(classId, typeAlias.symbol, data.file, it.symbol, prevFile)
+            val storedClassifier = data.state.classifierMap.getOrPut(classId) { typeAlias }
+
+            if (storedClassifier != typeAlias) {
+                data.nameConflictsTracker?.registerClassifierRedeclaration(
+                    classId, typeAlias.symbol, data.file, storedClassifier.symbol, prevFile,
+                )
             }
 
             data.state.classifierInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
