@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy.Companion.dsymFile
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -133,6 +134,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
             task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
             task.isEnabled = frameworkBuildType == envBuildType
             task.sourceFramework.fileProvider(framework.linkTaskProvider.flatMap { it.outputFile })
+            task.sourceDsym.fileProvider(dsymFile(task.sourceFramework.mapToFile()))
             task.dependsOn(framework.linkTaskProvider)
             task.destinationDirectory.set(appleFrameworkDir(envFrameworkSearchDir))
         }
@@ -223,7 +225,6 @@ private fun Project.appleFrameworkDir(frameworkSearchDir: File) =
  * See https://youtrack.jetbrains.com/issue/KT-48594.
  */
 @DisableCachingByDefault
-@Suppress("LeakingThis") // Should be extended only by Gradle
 internal abstract class FrameworkCopy : DefaultTask() {
 
     @get:Inject
@@ -235,22 +236,23 @@ internal abstract class FrameworkCopy : DefaultTask() {
 
     @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
+    @get:Optional
     @get:IgnoreEmptyDirectories
-    protected val sourceDsym = sourceFramework.mapToFile().map { File(it.path + ".dSYM") }
+    abstract val sourceDsym: DirectoryProperty
 
     @get:OutputDirectory
     abstract val destinationDirectory: DirectoryProperty
 
     @TaskAction
     open fun copy() {
-        copy(sourceFramework.mapToFile())
-        if (sourceDsym.get().exists()) {
+        copy(sourceFramework)
+        if (sourceDsym.isPresent && sourceDsym.getFile().exists()) {
             copy(sourceDsym)
         }
     }
 
-    private fun copy(sourceProvider: Provider<File>) {
-        val source = sourceProvider.get()
+    private fun copy(sourceProperty: DirectoryProperty) {
+        val source = sourceProperty.getFile()
         val destination = destinationDirectory.getFile()
 
         val destinationFile = File(destination, source.name)
@@ -259,5 +261,9 @@ internal abstract class FrameworkCopy : DefaultTask() {
         }
 
         execOperations.exec { it.commandLine("cp", "-R", source.absolutePath, destination.absolutePath) }
+    }
+
+    companion object {
+        fun dsymFile(framework: Provider<File>): Provider<File> = framework.map { File(it.path + ".dSYM") }
     }
 }
