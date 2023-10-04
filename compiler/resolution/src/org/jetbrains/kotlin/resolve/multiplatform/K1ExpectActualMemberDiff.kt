@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 // This class will be later used by K2. That's why it's placed in compiler.common module
-data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember: M, val expectClass: C) {
+data class K1ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember: M, val expectClass: C) {
     /**
      * Diff kinds that are legal for fake-overrides in final `expect class`, but illegal for non-final `expect class`
      *
@@ -52,36 +52,36 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
     }
 }
 
-fun ExpectActualCompatibility.Incompatible<*>.toMemberDiffKind(): ExpectActualMemberDiff.Kind? = when (this) {
-    ExpectActualCompatibility.Incompatible.CallableKind -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ParameterCount -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ParameterShape -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ParameterTypes -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ReturnType -> ExpectActualMemberDiff.Kind.ReturnTypeChangedInOverride
-    ExpectActualCompatibility.Incompatible.FunctionTypeParameterCount -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ClassTypeParameterCount -> error("Not applicable because ExpectActualMemberDiff is about members")
-    ExpectActualCompatibility.Incompatible.FunctionTypeParameterUpperBounds -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ClassTypeParameterUpperBounds -> error("Not applicable because ExpectActualMemberDiff is about members")
-    ExpectActualCompatibility.Incompatible.ActualFunctionWithDefaultParameters -> null // It's not possible to add default parameters in override
-    ExpectActualCompatibility.Incompatible.ClassKind -> error("Not applicable because ExpectActualMemberDiff is about members")
-    ExpectActualCompatibility.Incompatible.ClassModifiers -> error("Not applicable because ExpectActualMemberDiff is about members")
-    is ExpectActualCompatibility.Incompatible.ClassScopes -> error("Not applicable because ExpectActualMemberDiff is about members")
-    ExpectActualCompatibility.Incompatible.EnumEntries -> error("Not applicable because ExpectActualMemberDiff is about members")
-    ExpectActualCompatibility.Incompatible.FunInterfaceModifier -> error("Not applicable because ExpectActualMemberDiff is about members")
-    ExpectActualCompatibility.Incompatible.FunctionModifiersDifferent -> null // It's not possible to override with different function modifier (suspend)
-    ExpectActualCompatibility.Incompatible.FunctionModifiersNotSubset -> null // It's not possible to override with different function modifier (infix, inline, operator)
-    ExpectActualCompatibility.Incompatible.Modality -> ExpectActualMemberDiff.Kind.ModalityChangedInOverride
-    ExpectActualCompatibility.Incompatible.ParameterNames -> ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride
-    ExpectActualCompatibility.Incompatible.PropertyConstModifier -> null // const fun can't be overridden
-    ExpectActualCompatibility.Incompatible.PropertyKind -> ExpectActualMemberDiff.Kind.PropertyKindChangedInOverride
-    ExpectActualCompatibility.Incompatible.PropertyLateinitModifier -> ExpectActualMemberDiff.Kind.LateinitChangedInOverride
-    ExpectActualCompatibility.Incompatible.PropertySetterVisibility -> ExpectActualMemberDiff.Kind.SetterVisibilityChangedInOverride
-    ExpectActualCompatibility.Incompatible.Supertypes -> error("Not applicable because ExpectActualMemberDiff is about members")
-    ExpectActualCompatibility.Incompatible.TypeParameterNames -> ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride
-    ExpectActualCompatibility.Incompatible.TypeParameterReified -> null // inline fun can't be overridden
-    ExpectActualCompatibility.Incompatible.TypeParameterVariance -> null // Members are not allowed to have variance
-    ExpectActualCompatibility.Incompatible.ValueParameterCrossinline -> null // inline fun can't be overridden
-    ExpectActualCompatibility.Incompatible.ValueParameterNoinline -> null // inline fun can't be overridden
-    ExpectActualCompatibility.Incompatible.ValueParameterVararg -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.Visibility -> ExpectActualMemberDiff.Kind.VisibilityChangedInOverride
+fun K1ExpectActualCompatibility.Incompatible<*>.toMemberDiffKind(): K1ExpectActualMemberDiff.Kind? = when (this) {
+    K1ExpectActualCompatibility.Incompatible.CallableKind -> K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    K1ExpectActualCompatibility.Incompatible.ParameterCount -> K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    K1ExpectActualCompatibility.Incompatible.ParameterShape -> K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    K1ExpectActualCompatibility.Incompatible.ParameterTypes -> K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    K1ExpectActualCompatibility.Incompatible.ReturnType -> K1ExpectActualMemberDiff.Kind.ReturnTypeChangedInOverride
+    K1ExpectActualCompatibility.Incompatible.FunctionTypeParameterCount -> K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    K1ExpectActualCompatibility.Incompatible.ClassTypeParameterCount -> error("Not applicable because K1ExpectActualMemberDiff is about members")
+    K1ExpectActualCompatibility.Incompatible.FunctionTypeParameterUpperBounds -> K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    K1ExpectActualCompatibility.Incompatible.ClassTypeParameterUpperBounds -> error("Not applicable because K1ExpectActualMemberDiff is about members")
+    K1ExpectActualCompatibility.Incompatible.ActualFunctionWithDefaultParameters -> null // It's not possible to add default parameters in override
+    K1ExpectActualCompatibility.Incompatible.ClassKind -> error("Not applicable because K1ExpectActualMemberDiff is about members")
+    K1ExpectActualCompatibility.Incompatible.ClassModifiers -> error("Not applicable because K1ExpectActualMemberDiff is about members")
+    is K1ExpectActualCompatibility.Incompatible.ClassScopes -> error("Not applicable because K1ExpectActualMemberDiff is about members")
+    K1ExpectActualCompatibility.Incompatible.EnumEntries -> error("Not applicable because K1ExpectActualMemberDiff is about members")
+    K1ExpectActualCompatibility.Incompatible.FunInterfaceModifier -> error("Not applicable because K1ExpectActualMemberDiff is about members")
+    K1ExpectActualCompatibility.Incompatible.FunctionModifiersDifferent -> null // It's not possible to override with different function modifier (suspend)
+    K1ExpectActualCompatibility.Incompatible.FunctionModifiersNotSubset -> null // It's not possible to override with different function modifier (infix, inline, operator)
+    K1ExpectActualCompatibility.Incompatible.Modality -> K1ExpectActualMemberDiff.Kind.ModalityChangedInOverride
+    K1ExpectActualCompatibility.Incompatible.ParameterNames -> K1ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride
+    K1ExpectActualCompatibility.Incompatible.PropertyConstModifier -> null // const fun can't be overridden
+    K1ExpectActualCompatibility.Incompatible.PropertyKind -> K1ExpectActualMemberDiff.Kind.PropertyKindChangedInOverride
+    K1ExpectActualCompatibility.Incompatible.PropertyLateinitModifier -> K1ExpectActualMemberDiff.Kind.LateinitChangedInOverride
+    K1ExpectActualCompatibility.Incompatible.PropertySetterVisibility -> K1ExpectActualMemberDiff.Kind.SetterVisibilityChangedInOverride
+    K1ExpectActualCompatibility.Incompatible.Supertypes -> error("Not applicable because K1ExpectActualMemberDiff is about members")
+    K1ExpectActualCompatibility.Incompatible.TypeParameterNames -> K1ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride
+    K1ExpectActualCompatibility.Incompatible.TypeParameterReified -> null // inline fun can't be overridden
+    K1ExpectActualCompatibility.Incompatible.TypeParameterVariance -> null // Members are not allowed to have variance
+    K1ExpectActualCompatibility.Incompatible.ValueParameterCrossinline -> null // inline fun can't be overridden
+    K1ExpectActualCompatibility.Incompatible.ValueParameterNoinline -> null // inline fun can't be overridden
+    K1ExpectActualCompatibility.Incompatible.ValueParameterVararg -> K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    K1ExpectActualCompatibility.Incompatible.Visibility -> K1ExpectActualMemberDiff.Kind.VisibilityChangedInOverride
 }

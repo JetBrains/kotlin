@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
-import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
-import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
-import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -44,7 +42,7 @@ class ClassicExpectActualMatchingContext(
      * Otherwise, it won't be possible to suppress the compilation error in user code
      */
     override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false
-) : ExpectActualMatchingContext<MemberDescriptor>,
+) : K1ExpectActualMatchingContext<MemberDescriptor>,
     TypeSystemContext by ClassicTypeSystemContextForCS(platformModule.builtIns, KotlinTypeRefiner.Default) {
     override val shouldCheckReturnTypesOfCallables: Boolean
         get() = true
@@ -363,7 +361,7 @@ class ClassicExpectActualMatchingContext(
     override fun areAnnotationArgumentsEqual(
         expectAnnotation: AnnotationCallInfo,
         actualAnnotation: AnnotationCallInfo,
-        collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
+        collectionArgumentsCompatibilityCheckStrategy: K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
     ): Boolean {
         fun AnnotationCallInfo.getDescriptor(): AnnotationDescriptor = (this as AnnotationCallInfoImpl).annotationDescriptor
 
@@ -428,7 +426,7 @@ class ClassicExpectActualMatchingContext(
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
         checkClassScopesCompatibility: Boolean,
-    ): Map<MemberDescriptor, ExpectActualCompatibility<*>> {
+    ): Map<MemberDescriptor, K1ExpectActualCompatibility<*>> {
         val compatibilityToExpects = ExpectedActualResolver.findExpectForActualClassMember(
             actualMember as MemberDescriptor,
             actualClass as ClassDescriptor,
