@@ -9,7 +9,7 @@ fun use(p: Any?) {}
 
 fun test1() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> {
-        this.get(0).extension()
+        this.get(0).<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
         use(this.get(0)::extension)
         use(it::extension)
     }
@@ -19,7 +19,7 @@ fun test1() {
 fun test2() {
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> {
         val v = this.get(0)
-        v.extension()
+        v.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>extension<!>()
         use(v::extension)
         use(it::extension)
     }
