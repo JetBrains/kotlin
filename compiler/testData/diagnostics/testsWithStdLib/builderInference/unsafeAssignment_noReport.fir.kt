@@ -12,11 +12,11 @@ fun main(arg: Any) {
     val x = 57
     val value = myBuilder {
         doSmthng("one ")
-        a = 57
-        a = x
+        a = <!ASSIGNMENT_TYPE_MISMATCH!>57<!>
+        a = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
         if (arg is String) {
             a = arg
         }
     }
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value.a?.<!UNRESOLVED_REFERENCE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
+    println(value.a?.count { it in 'l' .. 'q' })
 }
