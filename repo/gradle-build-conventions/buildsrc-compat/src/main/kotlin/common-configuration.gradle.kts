@@ -182,7 +182,7 @@ fun Project.configureKotlinCompilationOptions() {
             ":gradle:android-test-fixes",
             ":gradle:gradle-warnings-detector",
             ":gradle:kotlin-compiler-args-properties",
-            ":gradle:fus-statistics-gradle-plugin",
+            ":libraries:tools:gradle:fus-statistics-gradle-plugin",
             ":js:js.config",
             ":kotlin-allopen",
             ":kotlin-assignment",
