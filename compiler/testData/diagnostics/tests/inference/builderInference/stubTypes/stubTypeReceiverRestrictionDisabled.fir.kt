@@ -9,7 +9,7 @@ fun <T> T.extension() {}
 fun use(p: Any?) {}
 
 fun test1() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> {
+    a {
         this.get(0).extension()
         use(this.get(0)::extension)
         use(it::extension)
@@ -18,7 +18,7 @@ fun test1() {
 
 
 fun test2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>a<!> {
+    a {
         val v = this.get(0)
         v.extension()
         use(v::extension)
