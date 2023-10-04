@@ -274,4 +274,33 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             }
         """
     )
+
+    @Test
+    fun testUnstableReceiverFunctionReferenceMemoized() = comparisonPropagation(
+        """
+            class Unstable(var qux: Int = 0) { fun method(arg1: Int) {} }
+            val unstable = Unstable()
+        """,
+        """
+            @Composable
+            fun Something() {
+                val x = unstable::method
+            }
+        """
+    )
+
+    @Test
+    fun testUnstableExtensionReceiverFunctionReferenceMemoized() = comparisonPropagation(
+        """
+            class Unstable(var foo: Int = 0)
+            fun Unstable.method(arg1: Int) {}
+            val unstable = Unstable()
+        """,
+        """
+            @Composable
+            fun Something() {
+                val x = unstable::method
+            }
+        """
+    )
 }
