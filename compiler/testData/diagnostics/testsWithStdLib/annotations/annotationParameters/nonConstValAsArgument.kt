@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlin.reflect.KClass
 
 annotation class Ann(

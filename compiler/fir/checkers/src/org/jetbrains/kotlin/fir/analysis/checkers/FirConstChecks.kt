@@ -99,6 +99,16 @@ internal fun checkConstantArguments(
                 else -> null
             }
         }
+        expression is FirArrayLiteral -> {
+            for (exp in expression.arguments) {
+                checkConstantArguments(exp, session)?.let {
+                    return it
+                }
+            }
+        }
+        expression is FirThisReceiverExpression -> {
+            return ConstantArgumentKind.NOT_CONST
+        }
         expressionSymbol == null -> {
             //DO NOTHING
         }
