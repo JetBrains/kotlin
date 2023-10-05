@@ -59,6 +59,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCreateInheritanceTypeSubstit
     }
 
     @Test
+    @TestMetadata("diamond.kt")
+    public void testDiamond() throws Exception {
+        runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/diamond.kt");
+    }
+
+    @Test
     @TestMetadata("directComplexSubstitution.kt")
     public void testDirectComplexSubstitution() throws Exception {
         runTest("analysis/analysis-api/testData/components/substitutorProvider/createInheritanceTypeSubstitutor/directComplexSubstitution.kt");
