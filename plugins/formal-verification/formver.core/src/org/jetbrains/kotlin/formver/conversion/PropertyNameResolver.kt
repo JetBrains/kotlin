@@ -41,7 +41,7 @@ class PropertyNameResolver(
     fun addLoopIdentifier(labelName: String, index: Int) = PropertyNameResolver(scopeDepth, parent, LoopIdentifier(labelName, index))
 
     fun tryResolveLoopName(name: String): Int? {
-        return if (loopName != null && loopName.targetName == name) {
+        return if (loopName?.targetName == name) {
             loopName.index
         } else {
             parent?.tryResolveLoopName(name)
