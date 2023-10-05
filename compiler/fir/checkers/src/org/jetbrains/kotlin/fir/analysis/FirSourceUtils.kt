@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.name.FqName
 
 fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
     return getChild(setOf(type), index, depth, reverse)
@@ -69,3 +70,10 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
     return segmentSource.takeIf { it.elementType == KtNodeTypes.REFERENCE_EXPRESSION }
         ?: segmentSource.getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
 }
+
+/**
+ * Looks for the source element of the last segment
+ * of `importedFqName`.
+ */
+fun FirImport.getLastImportedFqNameSegmentSource(): KtSourceElement? =
+    source?.getChild(KtNodeTypes.REFERENCE_EXPRESSION, reverse = true)
