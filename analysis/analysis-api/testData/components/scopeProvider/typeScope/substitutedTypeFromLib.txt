@@ -148,7 +148,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: FINAL
   name: copy
-  origin: SOURCE_MEMBER_GENERATED
+  origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -176,7 +176,7 @@ KtFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: first
-      origin: SOURCE_MEMBER_GENERATED
+      origin: LIBRARY
       receiverParameter: null
       returnType: KtTypeParameterType:
         annotationsList: []
@@ -195,7 +195,7 @@ KtFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: second
-      origin: SOURCE_MEMBER_GENERATED
+      origin: LIBRARY
       receiverParameter: null
       returnType: KtTypeParameterType:
         annotationsList: []
@@ -400,3 +400,4 @@ KtKotlinPropertySymbol:
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
+

@@ -226,7 +226,7 @@ internal fun deserializeClassToSymbol(
                     classOrObject,
                     context.dispatchReceiver,
                     zippedParameters,
-                    createResolvedStatus = true,
+                    isFromLibrary = true,
                     createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
                     createParameterTypeRefWithSourceKind = { property, newKind ->
                         property.returnTypeRef.copyWithNewSourceKind(newKind)
