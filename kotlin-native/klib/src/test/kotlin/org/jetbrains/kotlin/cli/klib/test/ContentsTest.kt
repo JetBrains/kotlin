@@ -18,7 +18,7 @@ class ContentsTest {
 
     private fun klibContents(library: String, printOutput: Boolean = false, expected: () -> String) {
         val output = StringBuilder()
-        val lib = Library(library, null, "host")
+        val lib = Library(library, null)
         lib.contents(output, false)
         if (printOutput) {
             println(output.trim().toString())
@@ -34,7 +34,7 @@ class ContentsTest {
     fun `Stdlib content should be printed without exceptions`() {
         val output = StringBuilder()
         val distributionPath = System.getProperty("konan.home")
-        Library(Distribution(distributionPath).stdlib, null, "host").contents(output, false)
+        Library(Distribution(distributionPath).stdlib, null).contents(output, false)
     }
 
     @Test

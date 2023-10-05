@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.library.*
@@ -72,7 +71,6 @@ fun printUsage() {
 
             and the options are:
                -repository <path>    Work with the specified repository
-               -target <name>        Inspect specifics of the given target
                -print-signatures {true|false}
                                      Print IR signature for every declaration (only for "contents" and "dump-ir" commands)
             """.trimIndent()
@@ -145,7 +143,7 @@ open class ModuleDeserializer(val library: ByteArray) {
 
 }
 
-class Library(val libraryNameOrPath: String, val requestedRepository: String?, val target: String) {
+class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
 
     val repository = requestedRepository?.File() ?: defaultRepository
     fun info() {
@@ -313,14 +311,10 @@ fun libraryInRepoOrCurrentDir(repository: File, name: String) =
 fun main(args: Array<String>) {
     val command = Command(args)
 
-    val targetManager = PlatformManager(KonanHomeProvider.determineKonanHome())
-            .targetManager(command.options["-target"]?.last())
-    val target = targetManager.targetName
-
     val repository = command.options["-repository"]?.last()
     val printSignatures = command.options["-print-signatures"]?.last()?.toBoolean() == true
 
-    val library = Library(command.library, repository, target)
+    val library = Library(command.library, repository)
 
     when (command.verb) {
         "dump-ir" -> library.ir(System.out, printSignatures)

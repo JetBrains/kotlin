@@ -11,8 +11,8 @@ import java.io.File
 private fun invokeKlibTool(kotlinNativeClassLoader: ClassLoader, klibFile: File, functionName: String, vararg args: Any): String {
     val libraryClass = Class.forName("org.jetbrains.kotlin.cli.klib.Library", true, kotlinNativeClassLoader)
     val entryPoint = libraryClass.declaredMethods.single { it.name == functionName }
-    val lib = libraryClass.getDeclaredConstructor(String::class.java, String::class.java, String::class.java)
-        .newInstance(klibFile.canonicalPath, null, "host")
+    val lib = libraryClass.getDeclaredConstructor(String::class.java, String::class.java)
+        .newInstance(klibFile.canonicalPath, null)
 
     val output = StringBuilder()
     entryPoint.invoke(lib, output, *args)
