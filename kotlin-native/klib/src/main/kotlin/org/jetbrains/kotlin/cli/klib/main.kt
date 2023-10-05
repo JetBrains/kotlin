@@ -59,8 +59,10 @@ fun printUsage() {
 
             where the commands are:
                info                  General information about the library
-               install               Install the library to the local repository
-               remove                Remove the library from the local repository
+               install               [DEPRECATED] Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
+                                       Install the library to the local repository
+               remove                [DEPRECATED] Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
+                                       Remove the library from the local repository
                dump-ir               Dump the intermediate representation (IR) of all declarations in the library
                                        (to be used for debugging purposes only)
                dump-ir-signatures    Dump IR signatures of all public declarations in the library and all public declarations consumed
@@ -73,7 +75,8 @@ fun printUsage() {
                contents              Dump the metadata of all public declarations in the library in the form of Kotlin-alike code
 
             and the options are:
-               -repository <path>    Work with the specified repository
+               -repository <path>    [DEPRECATED] Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
+                                       Work with the specified repository
                -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}
                                      Render IR signatures of a specific version. By default, the most up-to-date signature version
                                        supported in the library is used.
@@ -191,6 +194,8 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun install() {
+        logWarning("Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
+
         if (!repository.exists) {
             logWarning("Repository does not exist: $repository. Creating...")
             repository.mkdirs()
@@ -207,6 +212,8 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun remove(blind: Boolean = false) {
+        logWarning("Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
+
         if (!repository.exists) logError("Repository does not exist: $repository")
 
         val library = try {
@@ -294,7 +301,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun signatures(output: Appendable) {
-        logWarning("\"signatures\" is deprecated. Please, use \"dump-ir-signatures\" instead\n\n")
+        logWarning("\"signatures\" is deprecated. Please, use \"dump-ir-signatures\" instead\n")
 
         val module = loadModule()
         val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer())
