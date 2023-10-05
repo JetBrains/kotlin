@@ -1,0 +1,38 @@
+KtFunctionSymbol:
+  annotationsList: [
+    org/jetbrains/annotations/NotNull()
+      psi: null
+  ]
+  callableIdIfNonLocal: /JavaClass.foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: false
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: foo
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/String
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: JavaClass
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

@@ -147,6 +147,64 @@ public class ForeignAnnotationsSourceJavaTestGenerated extends AbstractForeignAn
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ExternalAnnotations {
+            @Test
+            public void testAllFilesPresentInExternalAnnotations() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("constructorParameterNotNull.kt")
+            public void testConstructorParameterNotNull() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/constructorParameterNotNull.kt");
+            }
+
+            @Test
+            @TestMetadata("constructorParameterNotNull2.kt")
+            public void testConstructorParameterNotNull2() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/constructorParameterNotNull2.kt");
+            }
+
+            @Test
+            @TestMetadata("fieldNotNull.kt")
+            public void testFieldNotNull() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/fieldNotNull.kt");
+            }
+
+            @Test
+            @TestMetadata("fieldNotNullAnnotationWithPackage.kt")
+            public void testFieldNotNullAnnotationWithPackage() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/fieldNotNullAnnotationWithPackage.kt");
+            }
+
+            @Test
+            @TestMetadata("methodNotNull.kt")
+            public void testMethodNotNull() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/methodNotNull.kt");
+            }
+
+            @Test
+            @TestMetadata("methodNotNullFromAnotherModule.kt")
+            public void testMethodNotNullFromAnotherModule() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/methodNotNullFromAnotherModule.kt");
+            }
+
+            @Test
+            @TestMetadata("methodParameterNotNull.kt")
+            public void testMethodParameterNotNull() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/methodParameterNotNull.kt");
+            }
+
+            @Test
+            @TestMetadata("methodParameterNotNull2.kt")
+            public void testMethodParameterNotNull2() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/tests/externalAnnotations/methodParameterNotNull2.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/foreignAnnotationsTests/tests/jsr305")
         @TestDataPath("$PROJECT_ROOT")
         public class Jsr305 {

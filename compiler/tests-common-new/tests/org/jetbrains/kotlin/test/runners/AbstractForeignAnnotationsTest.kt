@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,7 +24,9 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.frontend.classic.handlers.*
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.preprocessors.ExternalAnnotationsSourcePreprocessor
 import org.jetbrains.kotlin.test.preprocessors.JspecifyMarksCleanupPreprocessor
+import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.*
 import org.jetbrains.kotlin.test.services.jvm.ForeignAnnotationAgainstCompiledJavaTestSuppressor
@@ -69,8 +71,11 @@ abstract class AbstractForeignAnnotationsTestBase(private val kind: ForeignAnnot
         useConfigurators(
             ::CommonEnvironmentConfigurator,
             ::JvmForeignAnnotationsConfigurator,
-            ::JvmEnvironmentConfigurator
+            ::JvmEnvironmentConfigurator,
+            ::ExternalAnnotationsEnvironmentConfigurator,
         )
+
+        useSourcePreprocessor(::ExternalAnnotationsSourcePreprocessor)
 
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,

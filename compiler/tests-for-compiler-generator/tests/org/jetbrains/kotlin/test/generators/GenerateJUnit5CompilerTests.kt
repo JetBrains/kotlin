@@ -56,7 +56,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractForeignAnnotationsCompiledJavaTest> {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
+                model(
+                    "diagnostics/foreignAnnotationsTests/tests",
+                    excludedPattern = excludedCustomTestdataPattern,
+                    excludeDirs = listOf("externalAnnotations"),
+                )
                 model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }
@@ -242,7 +246,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             testClass<AbstractFirPsiForeignAnnotationsCompiledJavaTest>(
                 suiteTestClassName = "FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated"
             ) {
-                model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedCustomTestdataPattern)
+                model(
+                    "diagnostics/foreignAnnotationsTests/tests",
+                    excludedPattern = excludedCustomTestdataPattern,
+                    excludeDirs = listOf("externalAnnotations"),
+                )
                 model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
             }

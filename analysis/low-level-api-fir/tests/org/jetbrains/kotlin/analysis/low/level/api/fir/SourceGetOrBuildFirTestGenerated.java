@@ -1164,6 +1164,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("externalJavaAnnotation.kt")
+        public void testExternalJavaAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/externalJavaAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("functionTypeParemeter.kt")
         public void testFunctionTypeParemeter() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/functionTypeParemeter.kt");
@@ -1221,6 +1227,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         @TestMetadata("nestedClass.kt")
         public void testNestedClass() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/nestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("notNullJavaAnnotation.kt")
+        public void testNotNullJavaAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/notNullJavaAnnotation.kt");
         }
 
         @Test

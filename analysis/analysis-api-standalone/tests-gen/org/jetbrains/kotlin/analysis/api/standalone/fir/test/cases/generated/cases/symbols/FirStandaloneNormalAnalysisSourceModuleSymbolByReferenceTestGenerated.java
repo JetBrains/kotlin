@@ -137,6 +137,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByReferenceTestGenerat
     }
 
     @Test
+    @TestMetadata("javaMethodWithExternalNotNullAnnotation.kt")
+    public void testJavaMethodWithExternalNotNullAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethodWithExternalNotNullAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("javaMethodWithNotNullAnnotation.kt")
+    public void testJavaMethodWithNotNullAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethodWithNotNullAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("javaStaticField.kt")
     public void testJavaStaticField() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaStaticField.kt");
