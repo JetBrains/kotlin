@@ -1,5 +1,10 @@
 # Kotlin Programming Language
 
+> [!WARNING]  
+> This package has been deprecated.
+> 
+> Kotlin/JS does not currently support working with npm packages.
+
 Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
 
  * [Kotlin Site](https://kotlinlang.org/)

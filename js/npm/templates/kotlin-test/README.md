@@ -1,5 +1,10 @@
 # Kotlin Test
 
+> [!WARNING]  
+> This package has been deprecated.
+>
+> Kotlin/JS does not currently support working with npm packages.
+
 The `kotlin-test` module is used by the [Kotlin/JS](https://kotlinlang.org/docs/tutorials/javascript/kotlin-to-javascript/kotlin-to-javascript.html)
 compiler output for performing assertions in tests, independently of the test framework being used. 
 
