@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
@@ -21,7 +22,8 @@ object FirProjectionsOnNonClassTypeArgumentChecker : FirQualifiedAccessExpressio
                 is FirStarProjection -> reporter.reportOn(it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, context)
                 is FirTypeProjectionWithVariance -> {
                     if (it.variance != Variance.INVARIANT) {
-                        reporter.reportOn(it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, context)
+                        val modifierSource = it.source.getModifierList()?.modifiers?.firstOrNull()?.source
+                        reporter.reportOn(modifierSource ?: it.source, FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, context)
                     }
                 }
             }

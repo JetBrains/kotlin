@@ -10,16 +10,17 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.Companion.classActualTargets
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
+import org.jetbrains.kotlin.fir.analysis.checkers.checkCompatibilityType
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -84,83 +85,6 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 when {
                     !checkTarget(modifierSource, modifier, actualTargets, parent, context, reporter) -> reportedNodes += secondModifier
                     !checkParent(modifierSource, modifier, actualParents, parent, context, reporter) -> reportedNodes += secondModifier
-                }
-            }
-        }
-    }
-
-    private fun checkCompatibilityType(
-        firstModifier: FirModifier<*>,
-        secondModifier: FirModifier<*>,
-        reporter: DiagnosticReporter,
-        reportedNodes: MutableSet<FirModifier<*>>,
-        owner: FirDeclaration?,
-        context: CheckerContext
-    ) {
-        val firstModifierToken = firstModifier.token
-        val secondModifierToken = secondModifier.token
-        when (val compatibilityType = compatibility(firstModifierToken, secondModifierToken)) {
-            Compatibility.COMPATIBLE -> {
-            }
-            Compatibility.REPEATED ->
-                if (reportedNodes.add(secondModifier)) {
-                    reporter.reportOn(secondModifier.source, FirErrors.REPEATED_MODIFIER, secondModifierToken, context)
-                }
-            Compatibility.REDUNDANT -> {
-                reporter.reportOn(
-                    secondModifier.source,
-                    FirErrors.REDUNDANT_MODIFIER,
-                    secondModifierToken,
-                    firstModifierToken,
-                    context
-                )
-            }
-            Compatibility.REVERSE_REDUNDANT -> {
-                reporter.reportOn(
-                    firstModifier.source,
-                    FirErrors.REDUNDANT_MODIFIER,
-                    firstModifierToken,
-                    secondModifierToken,
-                    context
-                )
-            }
-            Compatibility.DEPRECATED -> {
-                reporter.reportOn(
-                    firstModifier.source,
-                    FirErrors.DEPRECATED_MODIFIER_PAIR,
-                    firstModifierToken,
-                    secondModifierToken,
-                    context
-                )
-                reporter.reportOn(
-                    secondModifier.source,
-                    FirErrors.DEPRECATED_MODIFIER_PAIR,
-                    secondModifierToken,
-                    firstModifierToken,
-                    context
-                )
-            }
-            Compatibility.INCOMPATIBLE, Compatibility.COMPATIBLE_FOR_CLASSES_ONLY -> {
-                if (compatibilityType == Compatibility.COMPATIBLE_FOR_CLASSES_ONLY && owner is FirClass) {
-                    return
-                }
-                if (reportedNodes.add(firstModifier)) {
-                    reporter.reportOn(
-                        firstModifier.source,
-                        FirErrors.INCOMPATIBLE_MODIFIERS,
-                        firstModifierToken,
-                        secondModifierToken,
-                        context
-                    )
-                }
-                if (reportedNodes.add(secondModifier)) {
-                    reporter.reportOn(
-                        secondModifier.source,
-                        FirErrors.INCOMPATIBLE_MODIFIERS,
-                        secondModifierToken,
-                        firstModifierToken,
-                        context
-                    )
                 }
             }
         }
