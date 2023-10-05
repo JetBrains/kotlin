@@ -10,6 +10,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.name.FqName
 
 fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
     return getChild(setOf(type), index, depth, reverse)
@@ -68,4 +69,43 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
 
     return segmentSource.takeIf { it.elementType == KtNodeTypes.REFERENCE_EXPRESSION }
         ?: segmentSource.getChild(KtNodeTypes.REFERENCE_EXPRESSION, depth = 1, reverse = true)
+}
+
+/**
+ * Looks for the source element of the last segment
+ * of `fqName` within the given import.
+ * If the given fqName doesn't match the beginning
+ * of the imported fqName or the imported fqName
+ * has no segments this function returns `null`.
+ *
+ * For example, calling this function for `import a.b.c`
+ * and fqName `a.b` returns the source element for `b`.
+ */
+fun FirImport.getSourceForFqName(fqName: FqName): KtSourceElement? {
+    // For the example from the doc. comment
+    // we'd get [a, a.b, a.b.c]
+    val cumulativeSegmentSources = generateSequence(source) { it.getChild(IMPORT_PARENT_TOKEN_TYPES) }.drop(1).toList().asReversed()
+    // [a, b, c]
+    val segmentSources = cumulativeSegmentSources.map { it.getChild(KtNodeTypes.REFERENCE_EXPRESSION, reverse = true) ?: it }
+    // [a, b]
+    val fqNameSegments = fqName.pathSegments()
+    var currentSegmentIndex = 0
+
+    if (segmentSources.size < fqNameSegments.size || segmentSources.isEmpty()) {
+        return null
+    }
+
+    while (currentSegmentIndex < fqNameSegments.size) {
+        if (segmentSources[currentSegmentIndex].text != fqNameSegments[currentSegmentIndex].identifier) {
+            return null
+        }
+
+        currentSegmentIndex += 1
+    }
+
+    if (currentSegmentIndex != fqNameSegments.size) {
+        return null
+    }
+
+    return segmentSources[currentSegmentIndex - 1]
 }
