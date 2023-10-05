@@ -1252,6 +1252,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("suppressNamedArg.kt")
+        public void testSuppressNamedArg() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suppressNamedArg.kt");
+        }
+
+        @Test
         @TestMetadata("suppressOnPlusAssign.kt")
         public void testSuppressOnPlusAssign() throws Exception {
             runTest("compiler/testData/diagnostics/tests/suppressOnPlusAssign.kt");
