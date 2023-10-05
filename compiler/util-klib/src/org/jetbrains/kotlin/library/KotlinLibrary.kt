@@ -75,6 +75,7 @@ interface MetadataLibrary {
 }
 
 interface IrLibrary {
+    val hasIr: Boolean
     val dataFlowGraph: ByteArray?
     fun irDeclaration(index: Int, fileIndex: Int): ByteArray
     fun type(index: Int, fileIndex: Int): ByteArray

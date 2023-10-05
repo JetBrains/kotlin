@@ -89,6 +89,12 @@ class MetadataLibraryImpl(
 abstract class IrLibraryImpl(
     val access: IrLibraryAccess<IrKotlinLibraryLayout>
 ) : IrLibrary {
+    override val hasIr by lazy {
+        access.inPlace { it: IrKotlinLibraryLayout ->
+            it.irDir.exists
+        }
+    }
+
     override val dataFlowGraph by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
             it.dataFlowGraphFile.let { if (it.exists) it.readBytes() else null }
