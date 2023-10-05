@@ -18,6 +18,7 @@ class DeprecationFilterTest : BaseAbstractTest() {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                    classpath = listOfNotNull(jvmStdlibPath)
                     skipDeprecated = false
                     perPackageOptions = mutableListOf(
                         PackageOptionsImpl(
