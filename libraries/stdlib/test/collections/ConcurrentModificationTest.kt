@@ -252,6 +252,12 @@ class ConcurrentModificationTest {
                 action(subList)
             }
         }
+        assertFailsWith<ConcurrentModificationException> {
+            buildList<String> {
+                addAll(listOf("a", "b", "c"))
+                for (e in subList(1, 3)) remove(e)
+            }
+        }
     }
 
     @Test

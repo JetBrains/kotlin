@@ -5,11 +5,22 @@
 
 package kotlin.collections
 
-actual class ArrayList<E> private constructor(
-    private var backingArray: Array<E>,
-    private var length: Int,
-    private var isReadOnly: Boolean
-) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
+/**
+ * Creates a new empty [ArrayList] with the specified initial capacity.
+ *
+ * Capacity is the maximum number of elements the list is able to store in current backing storage.
+ * When the list gets full and a new element can't be added, its capacity is expanded,
+ * which usually leads to creation of a bigger backing storage.
+ *
+ * @param initialCapacity the initial capacity of the created list.
+ *   Note that the argument is just a hint for the implementation and can be ignored.
+ *
+ * @throws IllegalArgumentException if [initialCapacity] is negative.
+ */
+actual class ArrayList<E> actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
+    private var backing = arrayOfUninitializedElements<E>(initialCapacity)
+    private var length = 0
+    private var isReadOnly = false
     private companion object {
         private val Empty = ArrayList<Nothing>(0).also { it.isReadOnly = true }
     }
@@ -18,21 +29,6 @@ actual class ArrayList<E> private constructor(
      * Creates a new empty [ArrayList].
      */
     actual constructor() : this(10)
-
-    /**
-     * Creates a new empty [ArrayList] with the specified initial capacity.
-     *
-     * Capacity is the maximum number of elements the list is able to store in current backing storage.
-     * When the list gets full and a new element can't be added, its capacity is expanded,
-     * which usually leads to creation of a bigger backing storage.
-     *
-     * @param initialCapacity the initial capacity of the created list.
-     *   Note that the argument is just a hint for the implementation and can be ignored.
-     *
-     * @throws IllegalArgumentException if [initialCapacity] is negative.
-     */
-    actual constructor(initialCapacity: Int) : this(
-            arrayOfUninitializedElements(initialCapacity), 0, false)
 
     /**
      * Creates a new [ArrayList] filled with the elements of the specified collection.
@@ -51,31 +47,27 @@ actual class ArrayList<E> private constructor(
     }
 
     override actual val size: Int
-        get() {
-            return length
-        }
+        get() = length
 
-    override actual fun isEmpty(): Boolean {
-        return length == 0
-    }
+    override actual fun isEmpty() = length == 0
 
     override actual fun get(index: Int): E {
         AbstractList.checkElementIndex(index, length)
-        return backingArray[index]
+        return backing[index]
     }
 
     override actual operator fun set(index: Int, element: E): E {
         checkIsMutable()
         AbstractList.checkElementIndex(index, length)
-        val old = backingArray[index]
-        backingArray[index] = element
+        val old = backing[index]
+        backing[index] = element
         return old
     }
 
     override actual fun indexOf(element: E): Int {
         var i = 0
         while (i < length) {
-            if (backingArray[i] == element) return i
+            if (backing[i] == element) return i
             i++
         }
         return -1
@@ -84,7 +76,7 @@ actual class ArrayList<E> private constructor(
     override actual fun lastIndexOf(element: E): Int {
         var i = length - 1
         while (i >= 0) {
-            if (backingArray[i] == element) return i
+            if (backing[i] == element) return i
             i--
         }
         return -1
@@ -155,17 +147,33 @@ actual class ArrayList<E> private constructor(
 
     override actual fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
         AbstractList.checkRangeIndexes(fromIndex, toIndex, length)
-        return ArraySubList(backingArray, fromIndex, toIndex - fromIndex, null, this)
+        return ArraySubList(backing, fromIndex, toIndex - fromIndex, null, this)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T> toArray(array: Array<T>): Array<T> {
+        if (array.size < length) {
+            return backing.copyOfRange(fromIndex = 0, toIndex = length) as Array<T>
+        }
+
+        (backing as Array<T>).copyInto(array, 0, startIndex = 0, endIndex = length)
+
+        return terminateCollectionToArray(length, array)
+    }
+
+    override fun toArray(): Array<Any?> {
+        @Suppress("UNCHECKED_CAST")
+        return backing.copyOfRange(fromIndex = 0, toIndex = length) as Array<Any?>
     }
 
     actual fun trimToSize() {
         registerModification()
-        if (length < backingArray.size)
-            backingArray = backingArray.copyOfUninitializedElements(length)
+        if (length < backing.size)
+            backing = backing.copyOfUninitializedElements(length)
     }
 
     final actual fun ensureCapacity(minCapacity: Int) {
-        if (minCapacity <= backingArray.size) return
+        if (minCapacity <= backing.size) return
         registerModification()
         ensureCapacityInternal(minCapacity)
     }
@@ -176,27 +184,11 @@ actual class ArrayList<E> private constructor(
     }
 
     override fun hashCode(): Int {
-        return backingArray.subarrayContentHashCode(0, length)
+        return backing.subarrayContentHashCode(0, length)
     }
 
     override fun toString(): String {
-        return backingArray.subarrayContentToString(0, length, this)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <T> toArray(array: Array<T>): Array<T> {
-        if (array.size < length) {
-            return backingArray.copyOfRange(fromIndex = 0, toIndex = length) as Array<T>
-        }
-
-        (backingArray as Array<T>).copyInto(array, 0, startIndex = 0, endIndex = length)
-
-        return terminateCollectionToArray(length, array)
-    }
-
-    override fun toArray(): Array<Any?> {
-        @Suppress("UNCHECKED_CAST")
-        return backingArray.copyOfRange(fromIndex = 0, toIndex = length) as Array<Any?>
+        return backing.subarrayContentToString(0, length, this)
     }
 
     // ---------------------------- private ----------------------------
@@ -215,26 +207,26 @@ actual class ArrayList<E> private constructor(
 
     private fun ensureCapacityInternal(minCapacity: Int) {
         if (minCapacity < 0) throw OutOfMemoryError()    // overflow
-        if (minCapacity > backingArray.size) {
-            val newSize = AbstractList.newCapacity(backingArray.size, minCapacity)
-            backingArray = backingArray.copyOfUninitializedElements(newSize)
+        if (minCapacity > backing.size) {
+            val newSize = AbstractList.newCapacity(backing.size, minCapacity)
+            backing = backing.copyOfUninitializedElements(newSize)
         }
     }
 
     private fun contentEquals(other: List<*>): Boolean {
-        return backingArray.subarrayContentEquals(0, length, other)
+        return backing.subarrayContentEquals(0, length, other)
     }
 
     private fun insertAtInternal(i: Int, n: Int) {
         ensureExtraCapacity(n)
-        backingArray.copyInto(backingArray, startIndex = i, endIndex = length, destinationOffset = i + n)
+        backing.copyInto(backing, startIndex = i, endIndex = length, destinationOffset = i + n)
         length += n
     }
 
     private fun addAtInternal(i: Int, element: E) {
         registerModification()
         insertAtInternal(i, 1)
-        backingArray[i] = element
+        backing[i] = element
     }
 
     private fun addAllInternal(i: Int, elements: Collection<E>, n: Int) {
@@ -243,24 +235,24 @@ actual class ArrayList<E> private constructor(
         var j = 0
         val it = elements.iterator()
         while (j < n) {
-            backingArray[i + j] = it.next()
+            backing[i + j] = it.next()
             j++
         }
     }
 
     private fun removeAtInternal(i: Int): E {
         registerModification()
-        val old = backingArray[i]
-        backingArray.copyInto(backingArray, startIndex = i + 1, endIndex = length, destinationOffset = i)
-        backingArray.resetAt(length - 1)
+        val old = backing[i]
+        backing.copyInto(backing, startIndex = i + 1, endIndex = length, destinationOffset = i)
+        backing.resetAt(length - 1)
         length--
         return old
     }
 
     private fun removeRangeInternal(rangeOffset: Int, rangeLength: Int) {
         if (rangeLength > 0) registerModification()
-        backingArray.copyInto(backingArray, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset)
-        backingArray.resetRange(fromIndex = length - rangeLength, toIndex = length)
+        backing.copyInto(backing, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset)
+        backing.resetRange(fromIndex = length - rangeLength, toIndex = length)
         length -= rangeLength
     }
 
@@ -269,32 +261,26 @@ actual class ArrayList<E> private constructor(
         var i = 0
         var j = 0
         while (i < rangeLength) {
-            if (elements.contains(backingArray[rangeOffset + i]) == retain) {
-                backingArray[rangeOffset + j++] = backingArray[rangeOffset + i++]
+            if (elements.contains(backing[rangeOffset + i]) == retain) {
+                backing[rangeOffset + j++] = backing[rangeOffset + i++]
             } else {
                 i++
             }
         }
         val removed = rangeLength - j
-        backingArray.copyInto(backingArray, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset + j)
-        backingArray.resetRange(fromIndex = length - removed, toIndex = length)
+        backing.copyInto(backing, startIndex = rangeOffset + rangeLength, endIndex = length, destinationOffset = rangeOffset + j)
+        backing.resetRange(fromIndex = length - removed, toIndex = length)
         if (removed > 0) registerModification()
         length -= removed
         return removed
     }
 
-    private class Itr<E> : MutableListIterator<E> {
-        private val list: ArrayList<E>
+    private class Itr<E>(
+        private val list: ArrayList<E>,
         private var index: Int
-        private var lastIndex: Int
-        private var expectedModCount: Int
-
-        constructor(list: ArrayList<E>, index: Int) {
-            this.list = list
-            this.index = index
-            this.lastIndex = -1
-            this.expectedModCount = list.modCount
-        }
+    ) : MutableListIterator<E> {
+        private var lastIndex = -1
+        private var expectedModCount = list.modCount
 
         override fun hasPrevious(): Boolean = index > 0
         override fun hasNext(): Boolean = index < list.length
@@ -306,20 +292,20 @@ actual class ArrayList<E> private constructor(
             checkForComodification()
             if (index <= 0) throw NoSuchElementException()
             lastIndex = --index
-            return list.backingArray[lastIndex]
+            return list.backing[lastIndex]
         }
 
         override fun next(): E {
             checkForComodification()
             if (index >= list.length) throw NoSuchElementException()
             lastIndex = index++
-            return list.backingArray[lastIndex]
+            return list.backing[lastIndex]
         }
 
         override fun set(element: E) {
             checkForComodification()
             check(lastIndex != -1) { "Call next() or previous() before replacing element from the iterator." }
-            list.set(lastIndex, element)
+            list[lastIndex] = element
         }
 
         override fun add(element: E) {
@@ -347,10 +333,10 @@ actual class ArrayList<E> private constructor(
     }
 
     private class ArraySubList<E>(
-        private var backingArray: Array<E>,
+        private var backing: Array<E>,
         private val offset: Int,
         private var length: Int,
-        private val backingList: ArraySubList<E>?,
+        private val parent: ArraySubList<E>?,
         private val root: ArrayList<E>
     ) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
 
@@ -372,15 +358,15 @@ actual class ArrayList<E> private constructor(
         override fun get(index: Int): E {
             checkForComodification()
             AbstractList.checkElementIndex(index, length)
-            return backingArray[offset + index]
+            return backing[offset + index]
         }
 
         override operator fun set(index: Int, element: E): E {
             checkIsMutable()
             checkForComodification()
             AbstractList.checkElementIndex(index, length)
-            val old = backingArray[offset + index]
-            backingArray[offset + index] = element
+            val old = backing[offset + index]
+            backing[offset + index] = element
             return old
         }
 
@@ -388,7 +374,7 @@ actual class ArrayList<E> private constructor(
             checkForComodification()
             var i = 0
             while (i < length) {
-                if (backingArray[offset + i] == element) return i
+                if (backing[offset + i] == element) return i
                 i++
             }
             return -1
@@ -398,7 +384,7 @@ actual class ArrayList<E> private constructor(
             checkForComodification()
             var i = length - 1
             while (i >= 0) {
-                if (backingArray[offset + i] == element) return i
+                if (backing[offset + i] == element) return i
                 i--
             }
             return -1
@@ -479,7 +465,25 @@ actual class ArrayList<E> private constructor(
 
         override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
             AbstractList.checkRangeIndexes(fromIndex, toIndex, length)
-            return ArraySubList(backingArray, offset + fromIndex, toIndex - fromIndex, this, root)
+            return ArraySubList(backing, offset + fromIndex, toIndex - fromIndex, this, root)
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        override fun <T> toArray(array: Array<T>): Array<T> {
+            checkForComodification()
+            if (array.size < length) {
+                return backing.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<T>
+            }
+
+            (backing as Array<T>).copyInto(array, 0, startIndex = offset, endIndex = offset + length)
+
+            return terminateCollectionToArray(length, array)
+        }
+
+        override fun toArray(): Array<Any?> {
+            checkForComodification()
+            @Suppress("UNCHECKED_CAST")
+            return backing.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<Any?>
         }
 
         override fun equals(other: Any?): Boolean {
@@ -490,30 +494,12 @@ actual class ArrayList<E> private constructor(
 
         override fun hashCode(): Int {
             checkForComodification()
-            return backingArray.subarrayContentHashCode(offset, length)
+            return backing.subarrayContentHashCode(offset, length)
         }
 
         override fun toString(): String {
             checkForComodification()
-            return backingArray.subarrayContentToString(offset, length, this)
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        override fun <T> toArray(array: Array<T>): Array<T> {
-            checkForComodification()
-            if (array.size < length) {
-                return backingArray.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<T>
-            }
-
-            (backingArray as Array<T>).copyInto(array, 0, startIndex = offset, endIndex = offset + length)
-
-            return terminateCollectionToArray(length, array)
-        }
-
-        override fun toArray(): Array<Any?> {
-            checkForComodification()
-            @Suppress("UNCHECKED_CAST")
-            return backingArray.copyOfRange(fromIndex = offset, toIndex = offset + length) as Array<Any?>
+            return backing.subarrayContentToString(offset, length, this)
         }
 
         // ---------------------------- private ----------------------------
@@ -528,54 +514,42 @@ actual class ArrayList<E> private constructor(
         }
 
         private fun checkIsMutable() {
-            if (root.isReadOnly) throw UnsupportedOperationException()
+            if (isReadOnly) throw UnsupportedOperationException()
         }
 
-        private fun ensureExtraCapacity(n: Int) {
-            ensureCapacityInternal(length + n)
-        }
-
-        private fun ensureCapacityInternal(minCapacity: Int) {
-            if (minCapacity < 0) throw OutOfMemoryError()    // overflow
-            if (minCapacity > backingArray.size) {
-                val newSize = AbstractList.newCapacity(backingArray.size, minCapacity)
-                backingArray = backingArray.copyOfUninitializedElements(newSize)
-            }
-        }
+        private val isReadOnly: Boolean
+            get() = root.isReadOnly
 
         private fun contentEquals(other: List<*>): Boolean {
-            return backingArray.subarrayContentEquals(offset, length, other)
+            return backing.subarrayContentEquals(offset, length, other)
         }
 
         private fun addAtInternal(i: Int, element: E) {
             registerModification()
-            val backingList = backingList
-            if (backingList != null) {
-                backingList.addAtInternal(i, element)
+            if (parent != null) {
+                parent.addAtInternal(i, element)
             } else {
                 root.addAtInternal(i, element)
             }
-            backingArray = root.backingArray
+            backing = root.backing
             length++
         }
 
         private fun addAllInternal(i: Int, elements: Collection<E>, n: Int) {
             registerModification()
-            val backingList = backingList
-            if (backingList != null) {
-                backingList.addAllInternal(i, elements, n)
+            if (parent != null) {
+                parent.addAllInternal(i, elements, n)
             } else {
                 root.addAllInternal(i, elements, n)
             }
-            backingArray = root.backingArray
+            backing = root.backing
             length += n
         }
 
         private fun removeAtInternal(i: Int): E {
             registerModification()
-            val backingList = backingList
-            val old = if (backingList != null) {
-                backingList.removeAtInternal(i)
+            val old = if (parent != null) {
+                parent.removeAtInternal(i)
             } else {
                 root.removeAtInternal(i)
             }
@@ -585,9 +559,8 @@ actual class ArrayList<E> private constructor(
 
         private fun removeRangeInternal(rangeOffset: Int, rangeLength: Int) {
             if (rangeLength > 0) registerModification()
-            val backingList = backingList
-            if (backingList != null) {
-                backingList.removeRangeInternal(rangeOffset, rangeLength)
+            if (parent != null) {
+                parent.removeRangeInternal(rangeOffset, rangeLength)
             } else {
                 root.removeRangeInternal(rangeOffset, rangeLength)
             }
@@ -596,10 +569,9 @@ actual class ArrayList<E> private constructor(
 
         /** Retains elements if [retain] == true and removes them it [retain] == false. */
         private fun retainOrRemoveAllInternal(rangeOffset: Int, rangeLength: Int, elements: Collection<E>, retain: Boolean): Int {
-            val backingList = backingList
             val removed =
-                if (backingList != null) {
-                    backingList.retainOrRemoveAllInternal(rangeOffset, rangeLength, elements, retain)
+                if (parent != null) {
+                    parent.retainOrRemoveAllInternal(rangeOffset, rangeLength, elements, retain)
                 } else {
                     root.retainOrRemoveAllInternal(rangeOffset, rangeLength, elements, retain)
                 }
@@ -608,18 +580,12 @@ actual class ArrayList<E> private constructor(
             return removed
         }
 
-        private class Itr<E> : MutableListIterator<E> {
-            private val list: ArraySubList<E>
+        private class Itr<E>(
+            private val list: ArraySubList<E>,
             private var index: Int
-            private var lastIndex: Int
-            private var expectedModCount: Int
-
-            constructor(list: ArraySubList<E>, index: Int) {
-                this.list = list
-                this.index = index
-                this.lastIndex = -1
-                this.expectedModCount = list.modCount
-            }
+        ) : MutableListIterator<E> {
+            private var lastIndex = -1
+            private var expectedModCount = list.modCount
 
             override fun hasPrevious(): Boolean = index > 0
             override fun hasNext(): Boolean = index < list.length
@@ -631,20 +597,20 @@ actual class ArrayList<E> private constructor(
                 checkForComodification()
                 if (index <= 0) throw NoSuchElementException()
                 lastIndex = --index
-                return list.backingArray[list.offset + lastIndex]
+                return list.backing[list.offset + lastIndex]
             }
 
             override fun next(): E {
                 checkForComodification()
                 if (index >= list.length) throw NoSuchElementException()
                 lastIndex = index++
-                return list.backingArray[list.offset + lastIndex]
+                return list.backing[list.offset + lastIndex]
             }
 
             override fun set(element: E) {
                 checkForComodification()
                 check(lastIndex != -1) { "Call next() or previous() before replacing element from the iterator." }
-                list.set(lastIndex, element)
+                list[lastIndex] = element
             }
 
             override fun add(element: E) {
@@ -666,7 +632,7 @@ actual class ArrayList<E> private constructor(
             // Must inline for native, suppress warning for WASM
             @Suppress("NOTHING_TO_INLINE")
             private inline fun checkForComodification() {
-                if (list.modCount != expectedModCount)
+                if (list.root.modCount != expectedModCount)
                     throw ConcurrentModificationException()
             }
         }
