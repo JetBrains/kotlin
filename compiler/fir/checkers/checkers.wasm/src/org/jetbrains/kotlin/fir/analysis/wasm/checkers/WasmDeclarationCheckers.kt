@@ -9,20 +9,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.declaration.*
 
 object WasmDeclarationCheckers : DeclarationCheckers() {
-    override val functionCheckers: Set<FirFunctionChecker>
-        get() = setOf(
-        )
-
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
-        )
-
     override val classCheckers: Set<FirClassChecker>
         get() = setOf(
-            FirWasmExternalInheritanceChecker
-        )
-
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
-        get() = setOf(
+            FirWasmExternalInheritanceChecker,
         )
 }
