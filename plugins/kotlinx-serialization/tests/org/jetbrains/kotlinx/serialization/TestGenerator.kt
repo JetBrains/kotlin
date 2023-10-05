@@ -6,12 +6,13 @@
 package org.jetbrains.kotlinx.serialization
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlinx.serialization.runners.*
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+    val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(
