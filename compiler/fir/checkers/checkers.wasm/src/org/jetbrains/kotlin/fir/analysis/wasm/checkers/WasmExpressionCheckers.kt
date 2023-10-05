@@ -8,19 +8,4 @@ package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 
 object WasmExpressionCheckers : ExpressionCheckers() {
-    override val annotationCallCheckers: Set<FirAnnotationCallChecker>
-        get() = setOf(
-        )
-
-    override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
-        get() = setOf(
-        )
-
-    override val functionCallCheckers: Set<FirFunctionCallChecker>
-        get() = setOf(
-        )
-
-    override val callCheckers: Set<FirCallChecker>
-        get() = setOf(
-        )
 }
