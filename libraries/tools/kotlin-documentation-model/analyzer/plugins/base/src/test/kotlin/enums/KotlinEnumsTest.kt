@@ -292,6 +292,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/")
+                    classpath = listOfNotNull(jvmStdlibPath)
                 }
             }
         }
