@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getContents
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.konan.util.CInteropHints
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -103,7 +103,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
                 "Test failed. CInterop compilation result was: $testCompilationResult"
             }
         } else {
-            val klibContents = testCompilationResult.assertSuccess().resultingArtifact.getContents(kotlinNativeClassLoader.classLoader)
+            val metadata = testCompilationResult.assertSuccess().resultingArtifact.dumpMetadata(kotlinNativeClassLoader.classLoader)
                 .let {
                     if (ignoreExperimentalForeignApi) {
                         it.replace("@ExperimentalForeignApi ", "")
@@ -112,7 +112,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
                     }
                 }
             val expectedContents = goldenFile.readText()
-            assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(klibContents)) {
+            assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(metadata)) {
                 "Test failed. CInterop compilation result was: $testCompilationResult"
             }
         }

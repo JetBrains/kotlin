@@ -12,21 +12,21 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.nio.file.Paths
 
-class ContentsTest {
+class DumpMetadataTest {
 
     private fun testLibrary(name: String) = LIBRARY_DIRECTORY.resolve("$name.klib").toFile().absolutePath
 
-    private fun klibContents(library: String, printOutput: Boolean = false, expected: () -> String) {
+    private fun dumpMetadata(library: String, printOutput: Boolean = false, expected: () -> String) {
         val output = StringBuilder()
         val lib = Library(library, null)
-        lib.contents(output, false)
+        lib.dumpMetadata(output, false)
         if (printOutput) {
             println(output.trim().toString())
         }
         assertEquals(
                 StringUtil.convertLineSeparators(expected()),
                 StringUtil.convertLineSeparators(output.trim().toString()),
-                "klib contents test failed for library: $library"
+                "klib \"dump-metadata\" test failed for library: $library"
         )
     }
 
@@ -34,11 +34,11 @@ class ContentsTest {
     fun `Stdlib content should be printed without exceptions`() {
         val output = StringBuilder()
         val distributionPath = System.getProperty("konan.home")
-        Library(Distribution(distributionPath).stdlib, null).contents(output, false)
+        Library(Distribution(distributionPath).stdlib, null).dumpMetadata(output, false)
     }
 
     @Test
-    fun topLevelFunctions() = klibContents(testLibrary("TopLevelFunctions")) {
+    fun topLevelFunctions() = dumpMetadata(testLibrary("TopLevelFunctions")) {
         """
         package <root> {
             annotation class A constructor() : Annotation
@@ -65,7 +65,7 @@ class ContentsTest {
     }
 
     @Test
-    fun constructors() = klibContents(testLibrary("Constructors")) {
+    fun constructors() = dumpMetadata(testLibrary("Constructors")) {
         """
         package <root> {
             annotation class A constructor() : Annotation
@@ -95,7 +95,7 @@ class ContentsTest {
     }
 
     @Test
-    fun objects() = klibContents(testLibrary("Objects")) {
+    fun objects() = dumpMetadata(testLibrary("Objects")) {
         """
         package <root> {
 
@@ -128,7 +128,7 @@ class ContentsTest {
     }
 
     @Test
-    fun classes() = klibContents(testLibrary("Classes")) {
+    fun classes() = dumpMetadata(testLibrary("Classes")) {
         """
         package <root> {
 
@@ -193,7 +193,7 @@ class ContentsTest {
     }
 
     @Test
-    fun methodModality() = klibContents(testLibrary("MethodModality")) {
+    fun methodModality() = dumpMetadata(testLibrary("MethodModality")) {
         """
         package <root> {
 
@@ -223,7 +223,7 @@ class ContentsTest {
     }
 
     @Test
-    fun functionModifiers() = klibContents(testLibrary("FunctionModifiers")) {
+    fun functionModifiers() = dumpMetadata(testLibrary("FunctionModifiers")) {
         """
         package <root> {
 
@@ -242,7 +242,7 @@ class ContentsTest {
 
     @Test
     // TODO: Support enum entry methods in serialization/deserialization.
-    fun enum() = klibContents(testLibrary("Enum")) {
+    fun enum() = dumpMetadata(testLibrary("Enum")) {
         """
         package <root> {
 
@@ -262,7 +262,7 @@ class ContentsTest {
 
     @Test
     // TODO: Support getter/setter annotations in serialization/deserialization.
-    fun accessors() = klibContents(testLibrary("Accessors")) {
+    fun accessors() = dumpMetadata(testLibrary("Accessors")) {
         """
         package custom.pkg {
             annotation class A constructor() : Annotation
@@ -287,7 +287,7 @@ class ContentsTest {
     }
 
     @Test
-    fun topLevelPropertiesCustomPackage() = klibContents(testLibrary("TopLevelPropertiesCustomPackage")) {
+    fun topLevelPropertiesCustomPackage() = dumpMetadata(testLibrary("TopLevelPropertiesCustomPackage")) {
         """
         package custom.pkg {
             typealias MyTransformer = (String) -> Int
@@ -300,7 +300,7 @@ class ContentsTest {
     }
 
     @Test
-    fun topLevelPropertiesRootPackage() = klibContents(testLibrary("TopLevelPropertiesRootPackage")) {
+    fun topLevelPropertiesRootPackage() = dumpMetadata(testLibrary("TopLevelPropertiesRootPackage")) {
         """
         package <root> {
             typealias MyTransformer = (String) -> Int
@@ -313,7 +313,7 @@ class ContentsTest {
     }
 
     @Test
-    fun topLevelPropertiesWithClassesCustomPackage() = klibContents(testLibrary("TopLevelPropertiesWithClassesCustomPackage")) {
+    fun topLevelPropertiesWithClassesCustomPackage() = dumpMetadata(testLibrary("TopLevelPropertiesWithClassesCustomPackage")) {
         """
         package custom.pkg {
             object Bar
@@ -328,7 +328,7 @@ class ContentsTest {
     }
 
     @Test
-    fun topLevelPropertiesWithClassesRootPackage() = klibContents(testLibrary("TopLevelPropertiesWithClassesRootPackage")) {
+    fun topLevelPropertiesWithClassesRootPackage() = dumpMetadata(testLibrary("TopLevelPropertiesWithClassesRootPackage")) {
         """
         package <root> {
             object Bar

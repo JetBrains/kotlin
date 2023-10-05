@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_FILE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getContents
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
@@ -39,18 +39,18 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
 
         val includeFrameworkArgs = TestCompilerArgs("-compiler-option", "-F${testDataDir.canonicalPath}")
         val klib1: KLIB = cinteropToLibrary(targets, def1File, buildDir, includeFrameworkArgs).assertSuccess().resultingArtifact
-        val contents1 = klib1.getContents(kotlinNativeClassLoader.classLoader)
+        val metadata1 = klib1.dumpMetadata(kotlinNativeClassLoader.classLoader)
 
         val expectedFiltered1Output = golden1File.readText()
-        val actualFiltered1Output = filterContentsOutput(contents1, " pod.Version|POD|class Pod")
+        val actualFiltered1Output = filterContentsOutput(metadata1, " pod.Version|POD|class Pod")
         assertEquals(StringUtilRt.convertLineSeparators(expectedFiltered1Output), StringUtilRt.convertLineSeparators(actualFiltered1Output))
 
         val cinterop2ExtraArgs = TestCompilerArgs("-l", klib1.klibFile.canonicalPath, "-compiler-option", "-fmodules")
         val klib2: KLIB = cinteropToLibrary(targets, def2File, buildDir, includeFrameworkArgs + cinterop2ExtraArgs).assertSuccess().resultingArtifact
-        val contents2 = klib2.getContents(kotlinNativeClassLoader.classLoader)
+        val metadata2 = klib2.dumpMetadata(kotlinNativeClassLoader.classLoader)
 
         val expectedFiltered2Output = golden2File.readText()
-        val actualFiltered2Output = filterContentsOutput(contents2, " pod.Version|POD|class Pod")
+        val actualFiltered2Output = filterContentsOutput(metadata2, " pod.Version|POD|class Pod")
         assertEquals(StringUtilRt.convertLineSeparators(expectedFiltered2Output), StringUtilRt.convertLineSeparators(actualFiltered2Output))
 
         val ktFile = testPathFull.resolve(DEFAULT_FILE_NAME)

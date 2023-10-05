@@ -72,7 +72,8 @@ fun printUsage() {
                                        Note that this command renders the signatures from the metadata. Signatures for certain
                                        declarations in the metadata and in IR may differ if compiler plugins (such as Compose)
                                        were applied during library compilation.
-               contents              Dump the metadata of all public declarations in the library in the form of Kotlin-alike code
+               dump-metadata         Dump the metadata of all public declarations in the library in the form of Kotlin-alike code
+               contents              [DEPRECATED] Renamed to "dump-metadata". Please, use new command name
 
             and the options are:
                -repository <path>    [DEPRECATED] Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
@@ -81,7 +82,7 @@ fun printUsage() {
                                      Render IR signatures of a specific version. By default, the most up-to-date signature version
                                        supported in the library is used.
                -print-signatures {true|false}
-                                     Print IR signature for every declaration (only for "contents" and "dump-ir" commands)
+                                     Print IR signature for every declaration (only for "dump-metadata" and "dump-ir" commands)
             """.trimIndent()
     )
 }
@@ -293,6 +294,11 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun contents(output: Appendable, printSignatures: Boolean) {
+        logWarning("\"contents\" has been renamed to \"dump-metadata\"")
+        dumpMetadata(output, printSignatures)
+    }
+
+    fun dumpMetadata(output: Appendable, printSignatures: Boolean) {
         val module = loadModule()
         val signatureRenderer = if (printSignatures) DefaultKlibSignatureRenderer("// Signature: ") else KlibSignatureRenderer.NO_SIGNATURE
         val printer = DeclarationPrinter(output, DefaultDeclarationHeaderRenderer, signatureRenderer)
@@ -301,7 +307,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun signatures(output: Appendable) {
-        logWarning("\"signatures\" is deprecated. Please, use \"dump-ir-signatures\" instead\n")
+        logWarning("\"signatures\" is deprecated. Please, use \"dump-ir-signatures\" instead")
 
         val module = loadModule()
         val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer())
@@ -380,6 +386,7 @@ fun main(args: Array<String>) {
     when (command.verb) {
         "dump-ir" -> library.ir(System.out, printSignatures)
         "dump-ir-signatures" -> library.dumpIrSignatures(System.out, signatureVersion)
+        "dump-metadata" -> library.dumpMetadata(System.out, printSignatures)
         "contents" -> library.contents(System.out, printSignatures)
         "signatures" -> library.signatures(System.out)
         "info" -> library.info()

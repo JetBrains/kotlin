@@ -20,8 +20,8 @@ private fun invokeKlibTool(kotlinNativeClassLoader: ClassLoader, klibFile: File,
 
 }
 
-internal fun TestCompilationArtifact.KLIB.getContents(kotlinNativeClassLoader: ClassLoader): String {
-    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "contents", false)
+internal fun TestCompilationArtifact.KLIB.dumpMetadata(kotlinNativeClassLoader: ClassLoader): String {
+    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "dumpMetadata", /* printSignatures= */ false)
 }
 
 internal fun TestCompilationArtifact.KLIB.getIr(
