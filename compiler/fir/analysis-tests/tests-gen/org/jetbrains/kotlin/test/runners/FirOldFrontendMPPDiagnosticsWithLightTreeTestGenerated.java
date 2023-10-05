@@ -927,6 +927,24 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("typeUsage.kt")
+        public void testTypeUsage() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsage.kt");
+        }
+
+        @Test
+        @TestMetadata("typeUsageWithImplicitType.kt")
+        public void testTypeUsageWithImplicitType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsageWithImplicitType.kt");
+        }
+
+        @Test
+        @TestMetadata("typeUsageWithUnresolvedReference.kt")
+        public void testTypeUsageWithUnresolvedReference() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsageWithUnresolvedReference.kt");
+        }
+
+        @Test
         @TestMetadata("typealias.kt")
         public void testTypealias() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealias.kt");
