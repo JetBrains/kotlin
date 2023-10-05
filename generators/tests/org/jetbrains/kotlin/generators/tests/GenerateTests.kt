@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.WITH_JAVA
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
 import org.jetbrains.kotlin.jvm.abi.AbstractCompileAgainstJvmAbiTest
@@ -225,7 +226,7 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5 {
-        val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
+        val excludedFirTestdataPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX
 
         testGroup("plugins/parcelize/parcelize-compiler/tests-gen", "plugins/parcelize/parcelize-compiler/testData") {
             testClass<AbstractParcelizeIrBoxTest> {
