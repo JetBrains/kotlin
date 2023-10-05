@@ -1,6 +1,6 @@
-class A<caret_base>A : BB<Int>
+class A<caret_base>A : BB<Int>()
 
-class B<caret_super>B<S : String> {
-    fun foo(): S
+open class B<caret_super>B<S : String> {
+    fun foo(): S = TODO()
 }
 

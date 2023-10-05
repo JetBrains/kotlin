@@ -1,6 +1,5 @@
-class A<caret_base>A : BB<Int, String>
+class A<caret_base>A : BB<Int, String>()
 
-class BB<S, T> : CC<S, T, List<T>>
+open class BB<S, T> : CCC<S, T, List<T>>
 
-class C<caret_super>CC<X, Y, Z> : AA
-
+class CC<caret_super>C<X, Y, Z> : AA()
