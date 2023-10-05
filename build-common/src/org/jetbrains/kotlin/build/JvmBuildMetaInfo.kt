@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.incremental.storage.RelativeFileToPathConverter
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
-class JvmBuildMetaInfo : BuildMetaInfo() {
+class JvmBuildMetaInfo(converter: RelativeFileToPathConverter?) : BuildMetaInfo(converter) {
     override fun checkIfPlatformSpecificCompilerArgumentWasChanged(key: String, currentValue: String, previousValue: String): Boolean? {
         when (key) {
             CustomKeys.METADATA_VERSION_STRING.name -> {

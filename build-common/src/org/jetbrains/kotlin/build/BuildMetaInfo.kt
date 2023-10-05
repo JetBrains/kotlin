@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.incremental.storage.RelativeFileToPathConverter
 
-abstract class BuildMetaInfo {
+abstract class BuildMetaInfo(val converter: RelativeFileToPathConverter?) {
     enum class CustomKeys {
         LANGUAGE_VERSION_STRING, IS_EAP, METADATA_VERSION_STRING, PLUGIN_CLASSPATHS, API_VERSION_STRING
     }
@@ -44,7 +45,7 @@ abstract class BuildMetaInfo {
             CustomKeys.LANGUAGE_VERSION_STRING.name ->
                 return LanguageVersion.fromVersionString(currentValue) != LanguageVersion.fromVersionString(previousValue)
             CustomKeys.API_VERSION_STRING.name -> return ApiVersion.parse(currentValue) != ApiVersion.parse(previousValue)
-            CustomKeys.PLUGIN_CLASSPATHS.name -> return !PluginClasspathsComparator(previousValue, currentValue).equals()
+            CustomKeys.PLUGIN_CLASSPATHS.name -> return !PluginClasspathComparator(previousValue, currentValue).equals()
         }
 
         // check keys that are sensitive for true -> false change
@@ -77,8 +78,8 @@ abstract class BuildMetaInfo {
         val apiVersionString = args.apiVersion ?: languageVersionSting
         resultMap[CustomKeys.API_VERSION_STRING.name] = apiVersionString
 
-        val pluginClasspaths = PluginClasspaths(args.pluginClasspaths).serialize()
-        resultMap[CustomKeys.PLUGIN_CLASSPATHS.name] = pluginClasspaths
+        val pluginClasspath = PluginClasspath(args.pluginClasspaths, converter).serialize()
+        resultMap[CustomKeys.PLUGIN_CLASSPATHS.name] = pluginClasspath
 
         return resultMap
     }
