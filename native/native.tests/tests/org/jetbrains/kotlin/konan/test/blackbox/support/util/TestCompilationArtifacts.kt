@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import java.io.File
 
-private fun invokeKlibTool(kotlinNativeClassLoader: ClassLoader, klibFile: File, functionName: String, vararg args: Any): String {
+private fun invokeKlibTool(kotlinNativeClassLoader: ClassLoader, klibFile: File, functionName: String, vararg args: Any?): String {
     val libraryClass = Class.forName("org.jetbrains.kotlin.cli.klib.Library", true, kotlinNativeClassLoader)
     val entryPoint = libraryClass.declaredMethods.single { it.name == functionName }
-    val lib = libraryClass.getDeclaredConstructor(String::class.java, String::class.java)
-        .newInstance(klibFile.canonicalPath, null)
+    val lib = libraryClass.getDeclaredConstructor(String::class.java, String::class.java).newInstance(klibFile.canonicalPath, null)
 
     val output = StringBuilder()
     entryPoint.invoke(lib, output, *args)
@@ -29,4 +29,20 @@ internal fun TestCompilationArtifact.KLIB.dumpIr(
     printSignatures: Boolean = false,
 ): String {
     return invokeKlibTool(kotlinNativeClassLoader, klibFile, "dumpIr", printSignatures)
+}
+
+internal fun TestCompilationArtifact.KLIB.dumpIrSignatures(
+    kotlinNativeClassLoader: ClassLoader,
+    signatureVersion: KotlinIrSignatureVersion,
+): String {
+    // This ceremony is required to load `KotlinIrSignatureVersion` class from the isolated class loader and thus avoid
+    // "argument type mismatch" exception raised by the Java reflection API.
+    // TODO: migrate on CLI-based scheme of invocation of all KLIB tool commands
+    val signatureVersionForIsolatedClassLoader = Class.forName(
+        signatureVersion::class.java.canonicalName,
+        true,
+        kotlinNativeClassLoader
+    ).getDeclaredConstructor(Int::class.java).newInstance(signatureVersion.number)!!
+
+    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "dumpIrSignatures", signatureVersionForIsolatedClassLoader)
 }

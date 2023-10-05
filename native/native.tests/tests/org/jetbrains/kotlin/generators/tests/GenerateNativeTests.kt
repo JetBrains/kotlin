@@ -240,6 +240,25 @@ fun main() {
             }
         }
 
+        // Dump KLIB IR signatures tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeKlibDumpIrSignaturesTest>(
+                suiteTestClassName = "NativeKlibDumpIrSignaturesTestGenerated",
+            ) {
+                model("klib/dump-signatures", pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+        }
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeKlibDumpIrSignaturesTest>(
+                suiteTestClassName = "FirNativeKlibDumpIrSignaturesTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
+            ) {
+                model("klib/dump-signatures", pattern = "^([^_](.+)).kt$", recursive = true)
+            }
+        }
+
         // LLDB integration tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
