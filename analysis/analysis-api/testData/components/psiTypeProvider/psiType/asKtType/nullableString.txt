@@ -1,0 +1,2 @@
+PsiType: PsiType:String
+KtType: kotlin.String?

@@ -20,6 +20,11 @@ public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
         isAnnotationMethod: Boolean,
         allowErrorTypes: Boolean
     ): PsiTypeElement?
+
+    public abstract fun asKtType(
+        psiType: PsiType,
+        useSitePosition: PsiElement
+    ): KtType?
 }
 
 public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
@@ -68,4 +73,14 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
         isAnnotationMethod: Boolean = false
     ): PsiType? =
         asPsiTypeElement(useSitePosition, allowErrorTypes, mode, isAnnotationMethod)?.type
+
+    /**
+     * Converts given [PsiType] to [KtType].
+     *
+     * @receiver PsiType to be converted.
+     * @return The converted KtType, or null if conversion is not possible e.g., [PsiType] is not resolved
+     */
+    public fun PsiType.asKtType(useSitePosition: PsiElement): KtType? = withValidityAssertion {
+        analysisSession.psiTypeProvider.asKtType(this, useSitePosition)
+    }
 }

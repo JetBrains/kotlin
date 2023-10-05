@@ -11,9 +11,11 @@ import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import java.text.StringCharacterIterator
+import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.analysis.api.components.KtPsiTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -29,16 +31,27 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.javaSymbolProvider
+import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.jvm.buildJavaTypeRef
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeImpl
+import org.jetbrains.kotlin.load.java.structure.impl.JavaTypeParameterImpl
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
 import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
@@ -46,6 +59,7 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import java.text.StringCharacterIterator
 
 internal class KtFirPsiTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -91,6 +105,64 @@ internal class KtFirPsiTypeProvider(
                 rootModuleSession.jvmTypeMapper.typeContext.getOptimalModeForValueParameter(expandedType)
             }
         }
+    }
+
+    override fun asKtType(
+        psiType: PsiType,
+        useSitePosition: PsiElement,
+    ): KtType? {
+        val javaElementSourceFactory = JavaElementSourceFactory.getInstance(project)
+        val javaType = JavaTypeImpl.create(psiType, javaElementSourceFactory.createTypeSource(psiType))
+
+        val javaTypeRef = buildJavaTypeRef {
+            //TODO KT-62351
+            annotationBuilder = { emptyList() }
+            type = javaType
+        }
+
+
+        val javaTypeParameterStack = JavaTypeParameterStack()
+
+        var psiClass = PsiTreeUtil.getContextOfType(useSitePosition, PsiClass::class.java, false)
+        while (psiClass != null && psiClass.name == null) {
+            psiClass = PsiTreeUtil.getContextOfType(psiClass, PsiClass::class.java, true)
+        }
+        if (psiClass != null) {
+            val qualifiedName = psiClass.qualifiedName
+            val packageName = (psiClass.containingFile as? PsiJavaFile)?.packageName ?: ""
+            if (qualifiedName != null) {
+                val javaClass = JavaClassImpl(javaElementSourceFactory.createPsiSource(psiClass))
+                val relativeName = if (packageName.isEmpty()) qualifiedName else qualifiedName.substring(packageName.length + 1)
+                val containingClassSymbol = rootModuleSession.javaSymbolProvider?.getClassLikeSymbolByClassId(
+                    ClassId(
+                        FqName(packageName),
+                        FqName(relativeName.takeIf { !relativeName.isEmpty() } ?: SpecialNames.NO_NAME_PROVIDED.asString()),
+                        PsiUtil.isLocalClass(psiClass)
+                    ),
+                    javaClass
+                )
+                if (containingClassSymbol != null) {
+                    val member =
+                        PsiTreeUtil.getContextOfType(useSitePosition, PsiTypeParameterListOwner::class.java, false, PsiClass::class.java)
+                    if (member != null) {
+                        val memberSymbol = containingClassSymbol.declarationSymbols.find { it.findPsi() == member } as? FirCallableSymbol<*>
+                        if (memberSymbol != null) {
+                            //typeParamSymbol.fir.source == null thus zip is required, see KT-62354
+                            memberSymbol.typeParameterSymbols.zip(member.typeParameters).forEach { (typeParamSymbol, typeParam) ->
+                                javaTypeParameterStack.addParameter(JavaTypeParameterImpl(typeParam), typeParamSymbol)
+                            }
+                        }
+                    }
+
+                    containingClassSymbol.typeParameterSymbols.zip(psiClass.typeParameters).forEach { (symbol, typeParameter) ->
+                        javaTypeParameterStack.addParameter(JavaTypeParameterImpl(typeParameter), symbol)
+                    }
+                }
+            }
+        }
+        val firTypeRef = javaTypeRef.resolveIfJavaType(analysisSession.useSiteSession, javaTypeParameterStack)
+        val coneKotlinType = (firTypeRef as? FirResolvedTypeRef)?.type ?: return null
+        return coneKotlinType.asKtType()
     }
 }
 

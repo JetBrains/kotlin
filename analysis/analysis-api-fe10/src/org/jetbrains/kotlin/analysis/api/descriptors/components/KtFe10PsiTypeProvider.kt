@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiType
 import com.intellij.psi.PsiTypeElement
 import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import java.lang.UnsupportedOperationException
 import java.text.StringCharacterIterator
 
 internal class KtFe10PsiTypeProvider(
@@ -105,5 +107,12 @@ internal class KtFe10PsiTypeProvider(
         val typeText = TypeInfo.createTypeText(typeInfo) ?: return null
 
         return ClsTypeElementImpl(useSitePosition, typeText, '\u0000')
+    }
+
+    override fun asKtType(
+        psiType: PsiType,
+        useSitePosition: PsiElement,
+    ): KtType? {
+        throw UnsupportedOperationException("Conversion to KtType is not supported in K1 implementation")
     }
 }

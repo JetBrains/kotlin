@@ -1,0 +1,2 @@
+PsiType: PsiType:List<String>
+KtType: kotlin.collections.List<kotlin.String?>?
