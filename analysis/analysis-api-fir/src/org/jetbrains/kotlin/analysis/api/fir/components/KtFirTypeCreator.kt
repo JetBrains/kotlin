@@ -11,17 +11,20 @@ import org.jetbrains.kotlin.analysis.api.components.KtTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirTypeParameterSymbol
+import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
+import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.typeContext
 
 internal class KtFirTypeCreator(
@@ -61,5 +64,19 @@ internal class KtFirTypeCreator(
             }
         }
         return coneType.asKtType() as KtTypeParameterType
+    }
+
+    override fun buildFunctionalType(parameterTypes: List<KtType>, receiverType: KtType?, returnType: KtType): KtFunctionalType {
+        require(parameterTypes.all { it is KtFirType })
+        require(receiverType is KtFirType?)
+        require(returnType is KtFirType)
+
+        val coneType = createFunctionType(
+            FunctionTypeKind.Function,
+            parameterTypes.map { (it as KtFirType).coneType },
+            receiverType?.coneType,
+            returnType.coneType,
+        )
+        return coneType.asKtType() as KtFunctionalType
     }
 }

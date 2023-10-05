@@ -19,10 +19,14 @@ import org.jetbrains.kotlin.analysis.api.descriptors.types.KtFe10UsualClassType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
+import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
+import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.SimpleType
@@ -91,5 +95,21 @@ internal class KtFe10TypeCreator(
         val kotlinType = descriptor?.defaultType
             ?: ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_TYPE_PARAMETER, builder.toString())
         return kotlinType.toKtType(analysisContext) as KtTypeParameterType
+    }
+
+    override fun buildFunctionalType(parameterTypes: List<KtType>, receiverType: KtType?, returnType: KtType): KtFunctionalType {
+        require(parameterTypes.all { it is KtFe10Type })
+        require(receiverType is KtFe10Type?)
+        require(returnType is KtFe10Type)
+
+        return createFunctionType(
+            analysisContext.builtIns,
+            annotations = Annotations.EMPTY,
+            receiverType?.fe10Type,
+            contextReceiverTypes = emptyList(),
+            parameterTypes.map { (it as KtFe10Type).fe10Type },
+            parameterNames = null,
+            returnType.fe10Type,
+        ).toKtType(analysisContext) as KtFunctionalType
     }
 }

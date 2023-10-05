@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.assertIsValidAndAccessible
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
+import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
@@ -24,9 +25,14 @@ public abstract class KtTypeCreator : KtAnalysisSessionComponent() {
     public abstract fun buildClassType(builder: KtClassTypeBuilder): KtClassType
 
     public abstract fun buildTypeParameterType(builder: KtTypeParameterTypeBuilder): KtTypeParameterType
+
+    public abstract fun buildFunctionalType(parameterTypes: List<KtType>, receiverType: KtType?, returnType: KtType): KtFunctionalType
 }
 
-public interface KtTypeCreatorMixIn : KtAnalysisSessionMixIn
+public interface KtTypeCreatorMixIn : KtAnalysisSessionMixIn {
+    public fun buildFunctionalType(parameterTypes: List<KtType>, receiverType: KtType?, returnType: KtType): KtFunctionalType =
+        withValidityAssertion { analysisSession.typesCreator.buildFunctionalType(parameterTypes, receiverType, returnType) }
+}
 
 public inline fun KtTypeCreatorMixIn.buildClassType(
     classId: ClassId,
