@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.fus.services
 
+/**
+ * Dummy service is used to avoid data collection without user's consent
+ */
 internal abstract class DummyGradleBuildFusStatisticsService : InternalGradleBuildFusStatisticsService() {
     override fun reportMetric(name: String, value: Any, subprojectName: String?) {
         //do nothing

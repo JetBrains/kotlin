@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.fus.services
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -15,6 +16,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import java.io.File
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 
 interface UsesGradleBuildFusStatisticsService : Task {
@@ -30,7 +32,8 @@ internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFus
         val uuid: Property<String>
     }
 
-    private val metrics = HashMap<Metric, Any>()
+    private val metrics = ConcurrentHashMap<Metric, Any>()
+    private val log = Logging.getLogger(this.javaClass)
 
     override fun close() {
         val reportFile = File(parameters.path.get())
@@ -47,7 +50,10 @@ internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFus
     }
 
     override fun reportMetric(name: String, value: Any, subprojectName: String?) {
-        metrics[Metric(name, subprojectName)] = value
+        val oldValue = metrics.getOrPut(Metric(name, subprojectName)) { value }
+        if (oldValue != value) {
+            log.warn("Try to override $name metric: current value is \"$oldValue\", new value is \"$value\"")
+        }
     }
 
     companion object {
