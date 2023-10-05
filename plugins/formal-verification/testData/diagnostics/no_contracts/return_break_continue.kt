@@ -39,3 +39,42 @@ fun <!VIPER_TEXT!>while_nested<!>(b: Boolean) {
         break
     }
 }
+
+fun <!VIPER_TEXT!>labelled_break<!>(b: Boolean) {
+    loop1@ while(b){
+        loop2@ while (b){
+            break@loop1
+            break@loop2
+            break
+        }
+        break@loop1
+        break
+    }
+}
+
+fun <!VIPER_TEXT!>labelled_continue<!>(b: Boolean) {
+    loop1@ while(b){
+        loop2@ while (b){
+            continue@loop1
+            continue@loop2
+            continue
+        }
+        continue@loop1
+        continue
+    }
+}
+
+fun <!VIPER_TEXT!>labelled_while_shadowing<!>(b: Boolean) {
+    loop1@ while(b){
+        loop1@ while (b){
+            break@loop1
+            continue@loop1
+        }
+        loop1@ while (b){
+            break@loop1
+            continue@loop1
+        }
+        break@loop1
+        continue@loop1
+    }
+}

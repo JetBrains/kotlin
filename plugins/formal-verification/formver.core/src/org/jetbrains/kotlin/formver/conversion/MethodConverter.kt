@@ -39,6 +39,13 @@ class MethodConverter(
         return result
     }
 
+    override fun addLoopIdentifier(labelName: String, index: Int) {
+        propertyResolver = propertyResolver.addLoopIdentifier(labelName, index)
+    }
+
+    override fun resolveLoopIndex(name: String): Int =
+        propertyResolver.tryResolveLoopName(name) ?: throw IllegalArgumentException("Loop $name not found in scope.")
+
     override fun resolveLocalPropertyName(name: Name): MangledName =
         propertyResolver.tryResolveLocalPropertyName(name) ?: parent?.resolveLocalPropertyName(name)
         ?: throw IllegalArgumentException("Property $name not found in scope.")

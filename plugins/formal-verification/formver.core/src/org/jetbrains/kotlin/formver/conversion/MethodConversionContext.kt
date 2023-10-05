@@ -27,6 +27,8 @@ interface MethodConversionContext : ProgramConversionContext {
     fun registerLocalPropertyName(name: Name)
 
     fun <R> withScopeImpl(scopeDepth: Int, action: () -> R): R
+    fun addLoopIdentifier(labelName: String, index: Int)
+    fun resolveLoopIndex(name: String): Int
     fun resolveReturnTarget(sourceName: String?): ReturnTarget
 }
 

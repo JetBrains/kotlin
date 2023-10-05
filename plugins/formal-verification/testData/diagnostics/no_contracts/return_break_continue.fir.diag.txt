@@ -95,3 +95,89 @@ method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
   label label$break$0
   label label$ret$0
 }
+
+/return_break_continue.kt:(543,557): info: Generated Viper text for labelled_break:
+method global$fun_labelled_break$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
+  returns (ret: dom$Unit)
+{
+  var anonymous$0: Bool
+  label label$continue$0
+  anonymous$0 := local$b
+  while (anonymous$0) {
+    var anonymous$1: Bool
+    label label$continue$1
+    anonymous$1 := local$b
+    while (anonymous$1) {
+      goto label$break$0
+      goto label$break$1
+      goto label$break$1
+      anonymous$1 := local$b
+    }
+    label label$break$1
+    goto label$break$0
+    goto label$break$0
+    anonymous$0 := local$b
+  }
+  label label$break$0
+  label label$ret$0
+}
+
+/return_break_continue.kt:(742,759): info: Generated Viper text for labelled_continue:
+method global$fun_labelled_continue$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
+  returns (ret: dom$Unit)
+{
+  var anonymous$0: Bool
+  label label$continue$0
+  anonymous$0 := local$b
+  while (anonymous$0) {
+    var anonymous$1: Bool
+    label label$continue$1
+    anonymous$1 := local$b
+    while (anonymous$1) {
+      goto label$continue$0
+      goto label$continue$1
+      goto label$continue$1
+      anonymous$1 := local$b
+    }
+    label label$break$1
+    goto label$continue$0
+    goto label$continue$0
+    anonymous$0 := local$b
+  }
+  label label$break$0
+  label label$ret$0
+}
+
+/return_break_continue.kt:(959,983): info: Generated Viper text for labelled_while_shadowing:
+method global$fun_labelled_while_shadowing$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
+  returns (ret: dom$Unit)
+{
+  var anonymous$0: Bool
+  label label$continue$0
+  anonymous$0 := local$b
+  while (anonymous$0) {
+    var anonymous$1: Bool
+    var anonymous$2: Bool
+    label label$continue$1
+    anonymous$1 := local$b
+    while (anonymous$1) {
+      goto label$break$1
+      goto label$continue$1
+      anonymous$1 := local$b
+    }
+    label label$break$1
+    label label$continue$2
+    anonymous$2 := local$b
+    while (anonymous$2) {
+      goto label$break$2
+      goto label$continue$2
+      anonymous$2 := local$b
+    }
+    label label$break$2
+    goto label$break$0
+    goto label$continue$0
+    anonymous$0 := local$b
+  }
+  label label$break$0
+  label label$ret$0
+}

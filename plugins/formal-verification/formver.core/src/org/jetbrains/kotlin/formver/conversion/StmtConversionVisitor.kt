@@ -224,6 +224,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             val condCtx = addResult(BooleanTypeEmbedding)
             condCtx.convertAndCapture(whileLoop.condition)
             val bodyBlock = condCtx.withNewScopeToBlock {
+                whileLoop.label?.name?.let { addLoopName(it) }
                 convert(whileLoop.block)
                 convertAndCapture(whileLoop.condition)
             }
@@ -240,7 +241,9 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         breakExpression: FirBreakExpression,
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding {
-        data.addStatement(data.breakLabel.toGoto())
+        val targetName = breakExpression.target.labelName
+        val breakLabel = data.breakLabel(targetName)
+        data.addStatement(breakLabel.toGoto())
         return UnitLit
     }
 
@@ -248,7 +251,9 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         continueExpression: FirContinueExpression,
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding {
-        data.addStatement(data.continueLabel.toGoto())
+        val targetName = continueExpression.target.labelName
+        val continueLabel = data.continueLabel(targetName)
+        data.addStatement(continueLabel.toGoto())
         return UnitLit
     }
 

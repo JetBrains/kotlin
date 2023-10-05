@@ -68,20 +68,35 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
 
     override fun capture(exp: ExpEmbedding) = resultCtx.capture(exp)
 
-    override val breakLabel: Label
-        get() = Label(BreakLabelName(whileIndex), listOf())
+    private fun resolveWhileIndex(targetName: String?) =
+        if (targetName != null) {
+            resolveLoopIndex(targetName)
+        } else {
+            whileIndex
+        }
 
-    override val continueLabel: Label
-        get() = Label(ContinueLabelName(whileIndex), listOf())
+    override fun continueLabel(targetName: String?): Label {
+        val index = resolveWhileIndex(targetName)
+        return Label(ContinueLabelName(index), listOf())
+    }
+
+    override fun breakLabel(targetName: String?): Label {
+        val index = resolveWhileIndex(targetName)
+        return Label(BreakLabelName(index), listOf())
+    }
+
+    override fun addLoopName(targetName: String) {
+        methodCtx.addLoopIdentifier(targetName, whileIndex)
+    }
 
     override fun <R> withFreshWhile(action: StmtConversionContext<RTC>.() -> R): R {
         val freshIndex = whileIndexProducer.getFresh()
         val ctx = copy(whileIndex = freshIndex)
-        addDeclaration(ctx.continueLabel.toDecl())
-        addStatement(ctx.continueLabel.toStmt())
+        addDeclaration(ctx.continueLabel().toDecl())
+        addStatement(ctx.continueLabel().toStmt())
         val result = ctx.action()
-        addDeclaration(ctx.breakLabel.toDecl())
-        addStatement(ctx.breakLabel.toStmt())
+        addDeclaration(ctx.breakLabel().toDecl())
+        addStatement(ctx.breakLabel().toStmt())
         return result
     }
 
