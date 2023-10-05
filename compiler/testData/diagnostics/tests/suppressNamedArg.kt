@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-62146
 
 @Deprecated("This is deprecated", level = DeprecationLevel.WARNING)
