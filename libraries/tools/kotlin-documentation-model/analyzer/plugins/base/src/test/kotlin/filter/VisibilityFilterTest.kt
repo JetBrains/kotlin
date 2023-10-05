@@ -691,6 +691,7 @@ class VisibilityFilterTest : BaseAbstractTest() {
                 sourceSet {
                     includeNonPublic = true
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                    classpath = listOfNotNull(jvmStdlibPath)
                 }
             }
         }
