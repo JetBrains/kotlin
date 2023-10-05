@@ -126,6 +126,10 @@ FILE fqName:<root> fileName:/kt43342.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.collections.Map
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:getOrDefault visibility:public modality:OPEN <> ($this:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>, key:K of <root>.ControlFlowInfo, defaultValue:V of <root>.ControlFlowInfo) returnType:V of <root>.ControlFlowInfo
+      $this: VALUE_PARAMETER name:<this> type:<root>.ControlFlowInfo<K of <root>.ControlFlowInfo, V of <root>.ControlFlowInfo>
+      VALUE_PARAMETER name:key index:0 type:K of <root>.ControlFlowInfo
+      VALUE_PARAMETER name:defaultValue index:1 type:V of <root>.ControlFlowInfo
   CLASS CLASS name:StringFlowInfo modality:FINAL visibility:public superTypes:[<root>.ControlFlowInfo<kotlin.String, kotlin.String>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.StringFlowInfo
     CONSTRUCTOR visibility:public <> (map:kotlin.collections.Map<kotlin.String, kotlin.String>) returnType:<root>.StringFlowInfo [primary]

@@ -2,8 +2,6 @@
 // IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-61370
 // WITH_STDLIB
 // FULL_JDK
-// IGNORE_BACKEND_K2: ANY
-// Ignore reason: KT-62334
 
 abstract class AMap1<K1, V1>(private val m: Map<K1, V1>) : Map<K1, V1> by m
 

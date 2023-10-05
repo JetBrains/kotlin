@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.DelegatedWrapperData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -39,6 +40,7 @@ class FirDelegatedMemberScope(
 ) : FirContainingNamesAwareScope() {
     private val dispatchReceiverType = containingClass.defaultType()
     private val overrideChecker = session.firOverrideChecker
+    private val delegatedMembersFilter = session.delegatedMembersFilter
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         declaredMemberScope.processFunctionsByName(name, processor)
@@ -77,6 +79,10 @@ class FirDelegatedMemberScope(
             }
 
             if (original.modality == Modality.FINAL || original.visibility == Visibilities.Private) {
+                return@processor
+            }
+
+            if (delegatedMembersFilter.shouldNotGenerateDelegatedMember(original.symbol)) {
                 return@processor
             }
 
@@ -140,6 +146,10 @@ class FirDelegatedMemberScope(
             }
 
             if (propertySymbol.modality == Modality.FINAL || propertySymbol.visibility == Visibilities.Private) {
+                return@processor
+            }
+
+            if (delegatedMembersFilter.shouldNotGenerateDelegatedMember(propertySymbol)) {
                 return@processor
             }
 
@@ -240,3 +250,15 @@ fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boole
 }
 
 private val PUBLIC_METHOD_NAMES_IN_ANY = setOf("equals", "hashCode", "toString")
+
+abstract class FirDelegatedMembersFilter : FirSessionComponent {
+    abstract fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean
+
+    object Default : FirDelegatedMembersFilter() {
+        override fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean {
+            return false
+        }
+    }
+}
+
+private val FirSession.delegatedMembersFilter: FirDelegatedMembersFilter by FirSession.sessionComponentAccessor()
