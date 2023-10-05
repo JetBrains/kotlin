@@ -1,5 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
+// IGNORE_BACKEND_K2: ANY
+// Ignore reason: KT-62334
 // FILE: A.java
 
 public interface A {

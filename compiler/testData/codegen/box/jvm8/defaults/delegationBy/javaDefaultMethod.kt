@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // WITH_STDLIB
+// IGNORE_BACKEND_K2: ANY
+// Ignore reason: KT-62334
 
 // FILE: javaDefaultMethod.kt
 
