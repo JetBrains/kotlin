@@ -28,8 +28,9 @@ sourceSets {
     "test" { none() }
 }
 
-val compileKotlin by tasks
-compileKotlin.dependsOn(":compiler:fir:checkers:generateCheckersComponents")
+tasks.named("compileKotlin").configure {
+    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
+}
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")
