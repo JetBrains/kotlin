@@ -116,6 +116,17 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Fir2IrClassifierStorage modality:FINAL visibility:public superTypes:[<root>.Fir2IrComponents]'
+    PROPERTY name:components visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'components: <root>.Fir2IrComponents declared in <root>.Fir2IrClassifierStorage.<init>' type=<root>.Fir2IrComponents origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-components> visibility:private modality:FINAL <> ($this:<root>.Fir2IrClassifierStorage) returnType:<root>.Fir2IrComponents
+        correspondingProperty: PROPERTY name:components visibility:private modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Fir2IrClassifierStorage
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-components> (): <root>.Fir2IrComponents declared in <root>.Fir2IrClassifierStorage'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]' type=<root>.Fir2IrComponents origin=null
+              receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-components>' type=<root>.Fir2IrClassifierStorage origin=null
     PROPERTY DELEGATED_MEMBER name:session visibility:public modality:OPEN [val]
       overridden:
         public abstract session: <root>.FirSession
@@ -142,17 +153,6 @@ FILE fqName:<root> fileName:/Fir2IrClassifierStorage.kt
             CALL 'public abstract fun <get-classifierStorage> (): <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrComponents' type=<root>.Fir2IrClassifierStorage origin=null
               $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]' type=<root>.Fir2IrComponents origin=null
                 receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-classifierStorage>' type=<root>.Fir2IrClassifierStorage origin=null
-    PROPERTY name:components visibility:private modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'components: <root>.Fir2IrComponents declared in <root>.Fir2IrClassifierStorage.<init>' type=<root>.Fir2IrComponents origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-components> visibility:private modality:FINAL <> ($this:<root>.Fir2IrClassifierStorage) returnType:<root>.Fir2IrComponents
-        correspondingProperty: PROPERTY name:components visibility:private modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Fir2IrClassifierStorage
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-components> (): <root>.Fir2IrComponents declared in <root>.Fir2IrClassifierStorage'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:components type:<root>.Fir2IrComponents visibility:private [final]' type=<root>.Fir2IrComponents origin=null
-              receiver: GET_VAR '<this>: <root>.Fir2IrClassifierStorage declared in <root>.Fir2IrClassifierStorage.<get-components>' type=<root>.Fir2IrClassifierStorage origin=null
     PROPERTY name:name visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]
         EXPRESSION_BODY

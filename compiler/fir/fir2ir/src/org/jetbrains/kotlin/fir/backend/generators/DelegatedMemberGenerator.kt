@@ -125,7 +125,6 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
 
             bodiesInfo += DeclarationBodyInfo(irSubFunction, irField, delegateToSymbol, delegateToLookupTag)
             declarationStorage.cacheDelegationFunction(functionSymbol.fir, irSubFunction)
-            subClass.addMember(irSubFunction)
         }
 
         subClassScope.processAllProperties { propertySymbol ->
@@ -154,7 +153,6 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             )
             bodiesInfo += DeclarationBodyInfo(irSubProperty, irField, delegateToSymbol, delegateToLookupTag)
             declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubProperty)
-            subClass.addMember(irSubProperty)
         }
     }
 

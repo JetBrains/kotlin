@@ -44,6 +44,10 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
 
   }
 
+  private val components: Fir2IrComponents
+    field = components
+    private get
+
   override val session: FirSession
     override get(): FirSession {
       return <this>.#components.<get-session>()
@@ -53,10 +57,6 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
     override get(): Fir2IrClassifierStorage {
       return <this>.#components.<get-classifierStorage>()
     }
-
-  private val components: Fir2IrComponents
-    field = components
-    private get
 
   private val name: String
     field = <this>.<get-session>().<get-name>()

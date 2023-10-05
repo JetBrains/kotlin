@@ -1,5 +1,3 @@
-typealias CA = C
-typealias NA = Nested
 class C {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
@@ -9,6 +7,7 @@ class C {
 
 }
 
+typealias CA = C
 object Host {
   private constructor() /* primary */ {
     super/*Any*/()
@@ -27,6 +26,7 @@ object Host {
 
 }
 
+typealias NA = Nested
 val test1: Function1<Int, C>
   field = C::<init>
   get

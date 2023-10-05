@@ -86,6 +86,7 @@ class Test1 : IBase {
 
   }
 
+  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
   override fun foo(x: Int, s: String) {
     <this>.#$$delegate_0.foo(x = x, s = s)
   }
@@ -97,8 +98,6 @@ class Test1 : IBase {
   override fun String.qux() {
     (<this>.#$$delegate_0, <this>).qux()
   }
-
-  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
 
 }
 
@@ -109,6 +108,7 @@ class Test2 : IBase, IOther {
 
   }
 
+  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
   override fun foo(x: Int, s: String) {
     <this>.#$$delegate_0.foo(x = x, s = s)
   }
@@ -121,7 +121,7 @@ class Test2 : IBase, IOther {
     (<this>.#$$delegate_0, <this>).qux()
   }
 
-  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
+  private /* final field */ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
   override val x: String
     override get(): String {
       return <this>.#$$delegate_1.<get-x>()
@@ -148,6 +148,5 @@ class Test2 : IBase, IOther {
       (<this>.#$$delegate_1, <this>).<set-z2>(<set-?> = <set-?>)
     }
 
-  private /* final field */ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
-
 }
+

@@ -29,12 +29,11 @@ class Wrapper {
 
         }
 
+        private /* final field */ val $$delegate_0: <no name provided> = <this>.<get-dummy>()
         override val foo: String
           override get(): String {
             return <this>.#$$delegate_0.<get-foo>()
           }
-
-        private /* final field */ val $$delegate_0: <no name provided> = <this>.<get-dummy>()
 
       }
 
@@ -51,3 +50,4 @@ interface Bar {
     }
 
 }
+

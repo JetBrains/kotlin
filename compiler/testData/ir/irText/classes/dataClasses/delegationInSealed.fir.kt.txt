@@ -12,6 +12,10 @@ sealed class A : CharSequence {
 
     }
 
+    val c: CharSequence
+      field = c
+      get
+
     override operator fun get(index: Int): Char {
       return <this>.#c.get(index = index)
     }
@@ -24,10 +28,6 @@ sealed class A : CharSequence {
       override get(): Int {
         return <this>.#c.<get-length>()
       }
-
-    val c: CharSequence
-      field = c
-      get
 
     operator fun component1(): CharSequence {
       return <this>.#c

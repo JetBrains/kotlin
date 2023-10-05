@@ -131,6 +131,9 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestJFoo modality:FINAL visibility:public superTypes:[<root>.IFoo]'
+    FIELD DELEGATE name:$$delegate_0 type:<root>.JFoo visibility:private [final]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JFoo' type=<root>.JFoo origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.TestJFoo) returnType:kotlin.String
       overridden:
         public abstract fun foo (): kotlin.String declared in <root>.IFoo
@@ -141,9 +144,6 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
             CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=@[EnhancedNullability] kotlin.String origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.JFoo visibility:private [final]' type=<root>.JFoo origin=null
                 receiver: GET_VAR '<this>: <root>.TestJFoo declared in <root>.TestJFoo.foo' type=<root>.TestJFoo origin=null
-    FIELD DELEGATE name:$$delegate_0 type:<root>.JFoo visibility:private [final]
-      EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.JFoo' type=<root>.JFoo origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo
@@ -163,6 +163,9 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestK1 modality:FINAL visibility:public superTypes:[<root>.IFoo]'
+    FIELD DELEGATE name:$$delegate_0 type:<root>.K1 visibility:private [final]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K1' type=<root>.K1 origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.TestK1) returnType:kotlin.String
       overridden:
         public abstract fun foo (): kotlin.String declared in <root>.IFoo
@@ -173,9 +176,6 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
             CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=@[EnhancedNullability] kotlin.String origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.K1 visibility:private [final]' type=<root>.K1 origin=null
                 receiver: GET_VAR '<this>: <root>.TestK1 declared in <root>.TestK1.foo' type=<root>.TestK1 origin=null
-    FIELD DELEGATE name:$$delegate_0 type:<root>.K1 visibility:private [final]
-      EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K1' type=<root>.K1 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo
@@ -195,6 +195,9 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestK2 modality:FINAL visibility:public superTypes:[<root>.IFoo]'
+    FIELD DELEGATE name:$$delegate_0 type:<root>.K2 visibility:private [final]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K2' type=<root>.K2 origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.TestK2) returnType:kotlin.String
       overridden:
         public abstract fun foo (): kotlin.String declared in <root>.IFoo
@@ -204,9 +207,6 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
           CALL 'public open fun foo (): kotlin.String declared in <root>.K2' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.K2 visibility:private [final]' type=<root>.K2 origin=null
               receiver: GET_VAR '<this>: <root>.TestK2 declared in <root>.TestK2.foo' type=<root>.TestK2 origin=null
-    FIELD DELEGATE name:$$delegate_0 type:<root>.K2 visibility:private [final]
-      EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K2' type=<root>.K2 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo
@@ -226,6 +226,9 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestK3 modality:FINAL visibility:public superTypes:[<root>.IFoo]'
+    FIELD DELEGATE name:$$delegate_0 type:<root>.K3 visibility:private [final]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K3' type=<root>.K3 origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.TestK3) returnType:kotlin.String
       overridden:
         public abstract fun foo (): kotlin.String declared in <root>.IFoo
@@ -235,9 +238,6 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
           CALL 'public open fun foo (): kotlin.String declared in <root>.K3' type=kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.K3 visibility:private [final]' type=<root>.K3 origin=null
               receiver: GET_VAR '<this>: <root>.TestK3 declared in <root>.TestK3.foo' type=<root>.TestK3 origin=null
-    FIELD DELEGATE name:$$delegate_0 type:<root>.K3 visibility:private [final]
-      EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K3' type=<root>.K3 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo
@@ -257,6 +257,9 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestK4 modality:FINAL visibility:public superTypes:[<root>.IFoo]'
+    FIELD DELEGATE name:$$delegate_0 type:<root>.K4 visibility:private [final]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K4' type=<root>.K4 origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.TestK4) returnType:kotlin.String
       overridden:
         public abstract fun foo (): kotlin.String declared in <root>.IFoo
@@ -267,9 +270,6 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
             CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.K4' type=@[FlexibleNullability] kotlin.String? origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.K4 visibility:private [final]' type=<root>.K4 origin=null
                 receiver: GET_VAR '<this>: <root>.TestK4 declared in <root>.TestK4.foo' type=<root>.TestK4 origin=null
-    FIELD DELEGATE name:$$delegate_0 type:<root>.K4 visibility:private [final]
-      EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.K4' type=<root>.K4 origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IFoo

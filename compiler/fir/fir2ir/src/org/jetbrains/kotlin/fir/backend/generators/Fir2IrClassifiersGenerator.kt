@@ -146,7 +146,14 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 }
             }
         }
-        irClass.parent = parent
+        /*
+         * `regularClass.isLocal` indicates that either class itsef is local or it is a nested class in some other class
+         * Check for parentClassId allows to distinguish between those cases
+         */
+        irClass.setParent(parent)
+        if (!(regularClass.isLocal && regularClass.classId.parentClassId == null)) {
+            addDeclarationToParent(irClass, parent)
+        }
         return irClass
     }
 
@@ -347,9 +354,8 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
             ).apply {
                 this.parent = parent
                 setTypeParameters(this, typeAlias)
-                if (parent is IrFile) {
-                    parent.declarations += this
-                }
+                setParent(parent)
+                addDeclarationToParent(this, parent)
             }
             irTypeAlias
         }
@@ -382,7 +388,8 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                     hasEnumEntries = false,
                 ).apply {
                     metadata = FirMetadataSource.CodeFragment(codeFragment)
-                    parent = containingFile
+                    setParent(containingFile)
+                    addDeclarationToParent(this, containingFile)
                     typeParameters = emptyList()
                     thisReceiver = declareThisReceiverParameter(
                         thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
@@ -421,7 +428,8 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                     symbol = symbol,
                 ).apply {
                     declarationStorage.enterScope(this.symbol)
-                    this.parent = irParent
+                    setParent(irParent)
+                    addDeclarationToParent(this, irParent)
                     if (isEnumEntryWhichRequiresSubclass(enumEntry)) {
                         // An enum entry with its own members requires an anonymous object generated.
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,

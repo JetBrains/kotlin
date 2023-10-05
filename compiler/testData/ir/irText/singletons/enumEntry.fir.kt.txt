@@ -39,3 +39,4 @@ open enum class Z : Enum<Z> {
     get(): EnumEntries<Z> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

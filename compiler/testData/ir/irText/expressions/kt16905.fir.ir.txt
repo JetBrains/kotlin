@@ -1,5 +1,4 @@
 FILE fqName:<root> fileName:/kt16905.kt
-  TYPEALIAS name:OI visibility:public expandedType:<root>.Outer.Inner
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
     CONSTRUCTOR visibility:public <> () returnType:<root>.Outer [primary]
@@ -81,6 +80,7 @@ FILE fqName:<root> fileName:/kt16905.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  TYPEALIAS name:OI visibility:public expandedType:<root>.Outer.Inner
   FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Outer.Inner
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): <root>.Outer.Inner declared in <root>'

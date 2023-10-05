@@ -22,6 +22,7 @@ open class DelegatedB : B<String> {
 
   }
 
+  private /* final field */ val $$delegate_0: C<String> = C<String>()
   override operator fun invoke() {
     <this>.#$$delegate_0.invoke()
   }
@@ -29,8 +30,6 @@ open class DelegatedB : B<String> {
   override operator fun invoke(value: String) {
     <this>.#$$delegate_0.invoke(value = value)
   }
-
-  private /* final field */ val $$delegate_0: C<String> = C<String>()
 
 }
 
@@ -46,3 +45,4 @@ class C<out T : Any?> : B<T> {
   }
 
 }
+

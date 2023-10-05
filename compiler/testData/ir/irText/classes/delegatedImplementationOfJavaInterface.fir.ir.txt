@@ -6,6 +6,17 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.J]'
+    PROPERTY name:j visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'j: <root>.J declared in <root>.Test.<init>' type=<root>.J origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j> visibility:private modality:FINAL <> ($this:<root>.Test) returnType:<root>.J
+        correspondingProperty: PROPERTY name:j visibility:private modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-j> (): <root>.J declared in <root>.Test'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
+              receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-j>' type=<root>.Test origin=null
     FUN DELEGATED_MEMBER name:takeNotNull visibility:public modality:OPEN <> ($this:<root>.Test, x:@[EnhancedNullability] kotlin.String) returnType:kotlin.Unit
       overridden:
         public abstract fun takeNotNull (x: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J
@@ -72,17 +83,6 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
           CALL 'public abstract fun returnsFlexible (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnsFlexible' type=<root>.Test origin=null
-    PROPERTY name:j visibility:private modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]
-        EXPRESSION_BODY
-          GET_VAR 'j: <root>.J declared in <root>.Test.<init>' type=<root>.J origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j> visibility:private modality:FINAL <> ($this:<root>.Test) returnType:<root>.J
-        correspondingProperty: PROPERTY name:j visibility:private modality:FINAL [val]
-        $this: VALUE_PARAMETER name:<this> type:<root>.Test
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='private final fun <get-j> (): <root>.J declared in <root>.Test'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
-              receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-j>' type=<root>.Test origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.J

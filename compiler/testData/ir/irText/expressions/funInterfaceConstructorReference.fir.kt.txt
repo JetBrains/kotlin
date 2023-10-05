@@ -1,21 +1,21 @@
-typealias KR = KRunnable
-typealias KSS = KSupplier<String>
-typealias KCS = KConsumer<String>
 fun interface KRunnable {
   abstract fun run()
 
 }
 
+typealias KR = KRunnable
 fun interface KSupplier<T : Any?> {
   abstract fun get(): T
 
 }
 
+typealias KSS = KSupplier<String>
 fun interface KConsumer<T : Any?> {
   abstract fun accept(x: T)
 
 }
 
+typealias KCS = KConsumer<String>
 fun test1(): KFunction1<Function0<Unit>, KRunnable> {
   return { // BLOCK
     local fun KRunnable(function: Function0<Unit>): KRunnable {

@@ -139,7 +139,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(session) == true
             else function.isSuspend
         val created = function.convertWithOffsets { startOffset, endOffset ->
-            val result = declareIrSimpleFunction(signature) { symbol ->
+            declareIrSimpleFunction(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(function, symbol)
                 irFactory.createSimpleFunction(
                     startOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
@@ -161,7 +161,14 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
                     declarationStorage.withScope(symbol) {
-                        setAndModifyParent(this, irParent)
+                        /*
+                         * `isLocal = true` indicates that a function is local or member of a local class
+                         * containingClassLookupTag allows to distinguish those two cases
+                         */
+                        setParent(irParent)
+                        if (!(isLocal && function.containingClassLookupTag() == null)) {
+                            addDeclarationToParent(this, irParent)
+                        }
                         declareParameters(
                             function, irParent,
                             dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
@@ -172,7 +179,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     }
                 }
             }
-            result
         }
 
         if (visibility == Visibilities.Local) {
@@ -245,7 +251,8 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     @OptIn(LeakedDeclarationCaches::class)
                     declarationStorage.cacheIrConstructor(constructor, this)
                     declarationStorage.withScope(symbol) {
-                        setAndModifyParent(this, irParent)
+                        setParent(irParent)
+                        addDeclarationToParent(this, irParent)
                         declareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)
                     }
                 }
@@ -321,9 +328,9 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                     metadata = FirMetadataSource.Property(property)
                     convertAnnotationsForNonDeclaredMembers(property, origin)
                     declarationStorage.withScope(symbol) {
-                        if (irParent != null) {
-                            parent = irParent
-                        }
+                        // IrProperty is never created for local variables
+                        setParent(irParent)
+                        addDeclarationToParent(this, irParent)
                         val type = property.returnTypeRef.toIrType()
                         val delegate = property.delegate
                         val getter = property.getter
@@ -528,7 +535,9 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                             firValueParameter = null
                         )
                     }
-                    setAndModifyParent(this, irParent)
+                    // property accessors does not belong to declarations of class/file, but are referenced via property,
+                    //   so there is no need to add accessor to list of parents declarations
+                    setParent(irParent)
                     declareParameters(
                         propertyAccessor, irParent, dispatchReceiverType,
                         isStatic = irParent !is IrClass || propertyAccessor?.isStatic == true, forSetter = isSetter,
@@ -651,7 +660,14 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 if (initializer is FirConstExpression<*>) {
                     this.initializer = factory.createExpressionBody(initializer.toIrConst(irType))
                 }
-                setAndModifyParent(this, irParent)
+                /*
+                 * fields of regular properties are stored inside IrProperty
+                 * fields for delegates (inheritance by delegation) are stored in the corresponding class directly
+                 */
+                setParent(irParent)
+                if (origin == IrDeclarationOrigin.DELEGATE) {
+                    addDeclarationToParent(this, irParent)
+                }
             }
         }
     }
@@ -981,7 +997,8 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 IrDeclarationOrigin.DEFINED,
                 irParent.descriptor
             ).apply {
-                this.parent = irParent
+                setParent(irParent)
+                addDeclarationToParent(this, irParent)
             }
         }
     }
@@ -1051,15 +1068,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }
     }
 
-    fun setAndModifyParent(declaration: IrDeclaration, irParent: IrDeclarationParent?) {
-        if (irParent != null) {
-            declaration.parent = irParent
-            if (irParent is IrExternalPackageFragment) {
-                irParent.declarations += declaration
-            }
-        }
-    }
-
     private fun IrMutableAnnotationContainer.convertAnnotationsForNonDeclaredMembers(
         firAnnotationContainer: FirAnnotationContainer, origin: IrDeclarationOrigin,
     ) {
@@ -1082,3 +1090,40 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }
     }
 }
+
+internal fun IrDeclaration.setParent(irParent: IrDeclarationParent?) {
+    if (irParent != null) {
+        parent = irParent
+    }
+}
+
+/**
+ * We should not try to add declaration to list of parents declarations in two cases:
+ * 1. getters, setters, and backing fields are not stored in parent directly. They are stored in IrProperty instead,
+ *      which is stored in parent
+ * 2. if a declaration is declared in a local scope (in some body) then it will have contained class/function as a parent. But the declaration
+ *      should be listed in statements list of the corresponding IrBlock instead of IrClass.declarations
+ *      Note that IrClass will be a parent if some declaration is declared inside anonymous initializer, because IrAnonymousInitializer
+ *      is not a IrDeclarationParent
+ */
+internal fun addDeclarationToParent(declaration: IrDeclaration, irParent: IrDeclarationParent?) {
+    if (irParent == null) return
+    when (irParent) {
+        is Fir2IrLazyClass -> {
+            /*
+             * Declaration list of lazy class is lazy by itself, and it will collect and store all required members
+             * automatically on the first access to Fir2IrLazyClass.declarations
+             */
+        }
+        is IrClass -> irParent.declarations += declaration
+        is IrFile -> irParent.declarations += declaration
+        is IrExternalPackageFragment -> irParent.declarations += declaration
+        is IrScript -> {
+            /*
+             * All declarations of the script will be added during main script conversion
+             */
+        }
+        else -> error("Can't add declaration ${declaration.render()} to parent ${irParent.render()}")
+    }
+}
+

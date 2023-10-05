@@ -13,11 +13,10 @@ class A : I {
 
   }
 
+  private /* final field */ val $$delegate_0: I = i
   override val <T : Any?> T.id: T
     override get(): T {
       return (<this>.#$$delegate_0, <this>).<get-id><T>()
     }
-
-  private /* final field */ val $$delegate_0: I = i
 
 }

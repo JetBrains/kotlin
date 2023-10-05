@@ -2,8 +2,6 @@
 // WITH_STDLIB
 // IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-62535
 // !LANGUAGE: +MultiPlatformProjects
-// IGNORE_BACKEND_K2: ANY
-// REASON: K2 incorrectly generates IR for S2.s3 f/o
 
 // MODULE: common
 // TARGET_PLATFORM: Common

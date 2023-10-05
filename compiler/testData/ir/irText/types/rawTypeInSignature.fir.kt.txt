@@ -44,6 +44,7 @@ class KRaw : JRaw {
 
   }
 
+  private /* final field */ val $$delegate_0: JRaw = j
   override fun takesRawList(list: @FlexibleNullability @FlexibleMutability @RawType MutableList<Any?>) {
     <this>.#$$delegate_0.takesRawList(list = list)
   }
@@ -75,8 +76,6 @@ class KRaw : JRaw {
   override fun returnsRawGenericOut(): @FlexibleNullability @RawType GenericOut<Number> {
     return <this>.#$$delegate_0.returnsRawGenericOut() /*!! @RawType GenericOut<Number> */
   }
-
-  private /* final field */ val $$delegate_0: JRaw = j
 
 }
 

@@ -1,4 +1,3 @@
-typealias OI = Inner
 class Outer {
   constructor() /* primary */ {
     super/*Any*/()
@@ -35,6 +34,7 @@ class Outer {
 
 }
 
+typealias OI = Inner
 fun test(): Inner {
   return Outer().Inner()
 }

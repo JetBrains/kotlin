@@ -116,6 +116,9 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.DerivedBase'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[foo.DerivedBase; foo.Base]'
+    FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]
+      EXPRESSION_BODY
+        CALL 'public final fun newBase (): foo.Base declared in foo' type=foo.Base origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:foo.Derived, x:kotlin.String) returnType:kotlin.String
       overridden:
         public abstract fun foo (x: kotlin.String): kotlin.String declared in foo.Base
@@ -127,9 +130,6 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]' type=foo.Base origin=null
               receiver: GET_VAR '<this>: foo.Derived declared in foo.Derived.foo' type=foo.Derived origin=null
             x: GET_VAR 'x: kotlin.String declared in foo.Derived.foo' type=kotlin.String origin=null
-    FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]
-      EXPRESSION_BODY
-        CALL 'public final fun newBase (): foo.Base declared in foo' type=foo.Base origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         CALL 'public final fun <set-global> (<set-?>: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ
@@ -158,6 +158,9 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.DerivedBase'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived1 modality:FINAL visibility:public superTypes:[foo.Base; foo.DerivedBase]'
+    FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]
+      EXPRESSION_BODY
+        CALL 'public final fun newBase (): foo.Base declared in foo' type=foo.Base origin=null
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:foo.Derived1, x:kotlin.String) returnType:kotlin.String
       overridden:
         public abstract fun foo (x: kotlin.String): kotlin.String declared in foo.Base
@@ -169,9 +172,6 @@ FILE fqName:foo fileName:/delegationEvaluationOrder1.kt
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]' type=foo.Base origin=null
               receiver: GET_VAR '<this>: foo.Derived1 declared in foo.Derived1.foo' type=foo.Derived1 origin=null
             x: GET_VAR 'x: kotlin.String declared in foo.Derived1.foo' type=kotlin.String origin=null
-    FIELD DELEGATE name:$$delegate_0 type:foo.Base visibility:private [final]
-      EXPRESSION_BODY
-        CALL 'public final fun newBase (): foo.Base declared in foo' type=foo.Base origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
         CALL 'public final fun <set-global> (<set-?>: kotlin.String): kotlin.Unit declared in foo' type=kotlin.Unit origin=EQ

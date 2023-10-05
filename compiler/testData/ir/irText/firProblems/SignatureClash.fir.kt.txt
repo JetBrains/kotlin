@@ -36,13 +36,13 @@ data class DataClass : Derived, Delegate {
 
   }
 
-  override fun bar() {
-    <this>.#delegate.bar()
-  }
-
   val delegate: Delegate
     field = delegate
     get
+
+  override fun bar() {
+    <this>.#delegate.bar()
+  }
 
   operator fun component1(): Delegate {
     return <this>.#delegate

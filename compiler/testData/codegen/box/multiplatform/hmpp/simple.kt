@@ -7,8 +7,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-62535
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR
-// REASON: K2 incorrectly generates IR for B.bar f/o
 // MODULE: common
 // TARGET_PLATFORM: Common
 

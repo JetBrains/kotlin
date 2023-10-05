@@ -52,11 +52,11 @@ class Derived : DerivedBase, Base {
 
   }
 
+  private /* final field */ val $$delegate_0: Base = newBase()
   override fun foo(x: String): String {
     return <this>.#$$delegate_0.foo(x = x)
   }
 
-  private /* final field */ val $$delegate_0: Base = newBase()
   init {
     <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
   }
@@ -70,11 +70,11 @@ class Derived1 : Base, DerivedBase {
 
   }
 
+  private /* final field */ val $$delegate_0: Base = newBase()
   override fun foo(x: String): String {
     return <this>.#$$delegate_0.foo(x = x)
   }
 
-  private /* final field */ val $$delegate_0: Base = newBase()
   init {
     <set-global>(<set-?> = <get-global>().plus(other = ":Derived"))
   }

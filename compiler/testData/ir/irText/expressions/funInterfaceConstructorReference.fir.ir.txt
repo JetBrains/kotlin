@@ -1,7 +1,4 @@
 FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
-  TYPEALIAS name:KR visibility:public expandedType:<root>.KRunnable
-  TYPEALIAS name:KSS visibility:public expandedType:<root>.KSupplier<kotlin.String>
-  TYPEALIAS name:KCS visibility:public expandedType:<root>.KConsumer<kotlin.String>
   CLASS INTERFACE name:KRunnable modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KRunnable
     FUN name:run visibility:public modality:ABSTRACT <> ($this:<root>.KRunnable) returnType:kotlin.Unit
@@ -19,6 +16,7 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  TYPEALIAS name:KR visibility:public expandedType:<root>.KRunnable
   CLASS INTERFACE name:KSupplier modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KSupplier<T of <root>.KSupplier>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -37,6 +35,7 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  TYPEALIAS name:KSS visibility:public expandedType:<root>.KSupplier<kotlin.String>
   CLASS INTERFACE name:KConsumer modality:ABSTRACT visibility:public [fun] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.KConsumer<T of <root>.KConsumer>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
@@ -56,6 +55,7 @@ FILE fqName:<root> fileName:/funInterfaceConstructorReference.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  TYPEALIAS name:KCS visibility:public expandedType:<root>.KConsumer<kotlin.String>
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.reflect.KFunction1<kotlin.Function0<kotlin.Unit>, <root>.KRunnable> declared in <root>'

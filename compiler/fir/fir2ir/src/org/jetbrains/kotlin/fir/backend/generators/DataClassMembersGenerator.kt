@@ -202,7 +202,6 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     toStringContributedFunction,
                     components.irBuiltIns.stringType,
                 )
-                irClass.declarations.add(toStringFunction)
                 declarationStorage.cacheGeneratedFunction(toStringContributedFunction, toStringFunction)
             }
 
@@ -214,7 +213,6 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     hashcodeNameContributedFunction,
                     components.irBuiltIns.intType,
                 )
-                irClass.declarations.add(hashCodeFunction)
                 declarationStorage.cacheGeneratedFunction(hashcodeNameContributedFunction, hashCodeFunction)
             }
 
@@ -228,7 +226,6 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     otherParameterNeeded = true,
                     isOperator = true
                 )
-                irClass.declarations.add(equalsFunction)
                 declarationStorage.cacheGeneratedFunction(equalsContributedFunction, equalsFunction)
             }
 
@@ -329,7 +326,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     metadata = FirMetadataSource.Function(syntheticCounterpart)
                 }
             }.apply {
-                parent = irClass
+                setParent(irClass)
+                addDeclarationToParent(this, irClass)
                 dispatchReceiverParameter = generateDispatchReceiverParameter(this)
                 components.irBuiltIns.findBuiltInClassMemberFunctions(
                     components.irBuiltIns.anyClass,

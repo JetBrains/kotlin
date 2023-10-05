@@ -14,6 +14,17 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
         BLOCK_BODY
           DELEGATING_CONSTRUCTOR_CALL 'protected constructor <init> () declared in <root>.A'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public [data] superTypes:[<root>.A; kotlin.CharSequence]'
+      PROPERTY name:c visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]
+          EXPRESSION_BODY
+            GET_VAR 'c: kotlin.CharSequence declared in <root>.A.B.<init>' type=kotlin.CharSequence origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> visibility:public modality:FINAL <> ($this:<root>.A.B) returnType:kotlin.CharSequence
+          correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.A.B
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-c> (): kotlin.CharSequence declared in <root>.A.B'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
+                receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.<get-c>' type=<root>.A.B origin=null
       FUN DELEGATED_MEMBER name:get visibility:public modality:OPEN <> ($this:<root>.A.B, index:kotlin.Int) returnType:kotlin.Char [operator]
         overridden:
           public abstract fun get (index: kotlin.Int): kotlin.Char declared in <root>.A
@@ -55,17 +66,6 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
               CALL 'public abstract fun <get-length> (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=null
                 $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
                   receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.<get-length>' type=<root>.A.B origin=null
-      PROPERTY name:c visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]
-          EXPRESSION_BODY
-            GET_VAR 'c: kotlin.CharSequence declared in <root>.A.B.<init>' type=kotlin.CharSequence origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> visibility:public modality:FINAL <> ($this:<root>.A.B) returnType:kotlin.CharSequence
-          correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
-          $this: VALUE_PARAMETER name:<this> type:<root>.A.B
-          BLOCK_BODY
-            RETURN type=kotlin.Nothing from='public final fun <get-c> (): kotlin.CharSequence declared in <root>.A.B'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
-                receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.<get-c>' type=<root>.A.B origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.A.B) returnType:kotlin.CharSequence [operator]
         $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         BLOCK_BODY
