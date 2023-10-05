@@ -40,6 +40,35 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
 
+internal class NativeCodeGeneratorException(val declarations: List<IrElement>, cause: Throwable?): IllegalStateException(cause) {
+    override val message: String
+        get() = try {
+            buildString {
+                appendLine("Exception during generating code for following declaration:")
+                declarations.dropLast(1).forEach {
+                    append("Inside: ")
+                    appendLine(it.render())
+                }
+                declarations.lastOrNull()?.let {
+                    appendLine(it.dumpKotlinLike())
+                }
+            }
+        } catch (e: Exception) { // shouldn't happen, but if it somehow does, it would be better to have at least a cause printed
+            "Exception during code generation"
+        }
+
+    companion object {
+        fun wrap(e: Exception, element: IrElement?) = if (e is NativeCodeGeneratorException) {
+            if (element == null || e.declarations.firstOrNull() === element)
+                e
+            else
+                NativeCodeGeneratorException(listOfNotNull(element) + e.declarations, e.cause)
+        } else {
+            NativeCodeGeneratorException(listOfNotNull(element), e)
+        }
+    }
+}
+
 internal enum class FieldStorageKind {
     GLOBAL, // In the old memory model these are only accessible from the "main" thread.
     SHARED_FROZEN,
@@ -203,6 +232,11 @@ private interface CodeContext {
      * Called, when context is removed from stack
      */
     fun onExit() {}
+
+    /**
+     * Called, when exception is caught in this block. Result expception would be rethrown instead.
+     */
+    fun wrapException(e: Exception) : Exception
 }
 
 //-------------------------------------------------------------------------//
@@ -290,6 +324,8 @@ internal class CodeGeneratorVisitor(
         override fun location(offset: Int): LocationInfo? = unsupported()
 
         override fun scope(): DIScopeOpaqueRef? = unsupported()
+
+        override fun wrapException(e: Exception) = e
     }
 
     /**
@@ -312,6 +348,8 @@ internal class CodeGeneratorVisitor(
         }
         try {
             return block()
+        } catch (e: Exception) {
+            throw (codeContext?.wrapException(e) ?: e)
         } finally {
             codeContext?.onExit()
             currentCodeContext = oldCodeContext
@@ -744,6 +782,8 @@ internal class CodeGeneratorVisitor(
         override fun location(offset: Int) = scope?.let { scope -> fileScope?.let{LocationInfo(scope, it.file.fileEntry.line(offset), it.file.fileEntry.column(offset)) } }
 
         override fun scope() = scope
+
+        override fun wrapException(e: Exception) = NativeCodeGeneratorException.wrap(e, declaration)
     }
 
     private val functionGenerationContext
@@ -2104,6 +2144,8 @@ internal class CodeGeneratorVisitor(
         }
 
         override fun scope() = scope
+
+        override fun wrapException(e: Exception) = NativeCodeGeneratorException.wrap(e, file)
     }
 
     //-------------------------------------------------------------------------//
@@ -2118,6 +2160,7 @@ internal class CodeGeneratorVisitor(
             debugInfo.objHeaderPointerType
         else null
         override fun classScope(): CodeContext? = this
+        override fun wrapException(e: Exception) = NativeCodeGeneratorException.wrap(e, clazz)
     }
 
     //-------------------------------------------------------------------------//
