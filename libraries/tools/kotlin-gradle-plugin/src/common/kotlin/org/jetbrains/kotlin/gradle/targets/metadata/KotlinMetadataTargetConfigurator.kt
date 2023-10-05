@@ -19,6 +19,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -482,7 +483,7 @@ internal suspend fun KotlinMetadataTarget.awaitMetadataCompilationsCreated(): Na
 }
 
 internal suspend fun Project.findMetadataCompilation(sourceSet: KotlinSourceSet): KotlinMetadataCompilation<*>? {
-    val metadataTarget = multiplatformExtension.metadata() as KotlinMetadataTarget
+    val metadataTarget = multiplatformExtension.metadataTarget
     metadataTarget.awaitMetadataCompilationsCreated()
     return metadataTarget.compilations.findByName(sourceSet.name) as KotlinMetadataCompilation<*>?
 }
