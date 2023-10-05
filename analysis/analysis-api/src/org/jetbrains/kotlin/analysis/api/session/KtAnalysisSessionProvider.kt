@@ -31,6 +31,11 @@ public abstract class KtAnalysisSessionProvider(public val project: Project) : D
 
     public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KtAnalysisSession
 
+    @Suppress("UNUSED_PARAMETER")
+    @Deprecated("Needed for binary compatibility, see KTIJ-27188")
+    public fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession =
+        getAnalysisSession(useSiteKtElement)
+
     public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession
 
     public inline fun <R> analyseInDependedAnalysisSession(
