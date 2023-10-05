@@ -24,9 +24,9 @@ internal fun TestCompilationArtifact.KLIB.dumpMetadata(kotlinNativeClassLoader: 
     return invokeKlibTool(kotlinNativeClassLoader, klibFile, "dumpMetadata", /* printSignatures= */ false)
 }
 
-internal fun TestCompilationArtifact.KLIB.getIr(
+internal fun TestCompilationArtifact.KLIB.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
     printSignatures: Boolean = false,
 ): String {
-    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "ir", printSignatures)
+    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "dumpIr", printSignatures)
 }

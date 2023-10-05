@@ -270,7 +270,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun ir(output: Appendable, printSignatures: Boolean) {
+    fun dumpIr(output: Appendable, printSignatures: Boolean) {
         val module = loadModule()
         val library = module.kotlinLibrary
         checkLibraryHasIr(library)
@@ -384,7 +384,7 @@ fun main(args: Array<String>) {
     val library = Library(command.library, repository)
 
     when (command.verb) {
-        "dump-ir" -> library.ir(System.out, printSignatures)
+        "dump-ir" -> library.dumpIr(System.out, printSignatures)
         "dump-ir-signatures" -> library.dumpIrSignatures(System.out, signatureVersion)
         "dump-metadata" -> library.dumpMetadata(System.out, printSignatures)
         "contents" -> library.contents(System.out, printSignatures)

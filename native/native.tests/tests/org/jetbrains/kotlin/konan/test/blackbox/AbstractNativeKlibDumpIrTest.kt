@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeCla
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
-import org.jetbrains.kotlin.konan.test.blackbox.support.util.getIr
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Tag
 import java.io.File
@@ -53,7 +53,7 @@ abstract class AbstractNativeKlibDumpIrTest : AbstractNativeSimpleTest() {
     ) {
         val artifact = compilationResult.assertSuccess().resultingArtifact
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
-        val klibIr = artifact.getIr(kotlinNativeClassLoader.classLoader, printSignatures)
+        val klibIr = artifact.dumpIr(kotlinNativeClassLoader.classLoader, printSignatures)
         assertEqualsToFile(expectedContents, klibIr)
     }
 
