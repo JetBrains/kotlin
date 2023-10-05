@@ -255,20 +255,24 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun ir(output: Appendable, printSignatures: Boolean) {
         val module = loadModule()
-        if (module.kotlinLibrary.isInterop) error("Deserializing IR from IR-less libraries is not supported yet")
+        val library = module.kotlinLibrary
+        checkLibraryHasIr(library)
+
         val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
         val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
         val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
         val typeTranslator = TypeTranslatorImpl(symbolTable, versionSpec, module)
         val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
+
         val linker = KlibToolLinker(module, irBuiltIns, symbolTable)
         module.allDependencyModules.forEach {
             linker.deserializeOnlyHeaderModule(it, it.kotlinLibrary)
             linker.resolveModuleDeserializer(it, null).init()
         }
-        val irFragment = linker.deserializeFullModule(module, module.kotlinLibrary)
+        val irFragment = linker.deserializeFullModule(module, library)
         linker.resolveModuleDeserializer(module, null).init()
         linker.modulesWithReachableTopLevels.forEach(IrModuleDeserializer::deserializeReachableDeclarations)
+
         output.append(irFragment.dump(DumpIrTreeOptions(printSignatures = printSignatures)))
     }
 
@@ -291,10 +295,15 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
 
     fun dumpIrSignatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
         val library = libraryInCurrentDir(libraryNameOrPath)
+        checkLibraryHasIr(library)
         signatureVersion?.checkSupportedInLibrary(library)
 
         val signatures = IrSignaturesExtractor(library).extract()
         IrSignaturesRenderer(output, signatureVersion).render(signatures)
+    }
+
+    private fun checkLibraryHasIr(library: KotlinLibrary) {
+        if (!library.hasIr) error("Library ${library.libraryFile} is an IR-less library.")
     }
 
     private fun KotlinIrSignatureVersion.checkSupportedInLibrary(library: KotlinLibrary) {
