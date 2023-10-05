@@ -116,26 +116,31 @@ class Command(args: Array<String>) {
 private fun Command.parseSignatureVersion(): KotlinIrSignatureVersion? {
     val rawSignatureVersion = options["-signature-version"]?.last() ?: return null
     val signatureVersion = rawSignatureVersion.toIntOrNull()?.let(::KotlinIrSignatureVersion)
-            ?: error("Invalid signature version: $rawSignatureVersion")
+            ?: logError("Invalid signature version: $rawSignatureVersion")
 
     if (signatureVersion !in KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS)
-        error("Unsupported signature version: ${signatureVersion.number}")
+        logError("Unsupported signature version: ${signatureVersion.number}")
 
     return signatureVersion
 }
 
-fun warn(text: String) {
+internal fun logWarning(text: String) {
     println("warning: $text")
 }
 
-fun error(text: String): Nothing {
-    kotlin.error("error: $text")
+internal fun logError(text: String, withStacktrace: Boolean = false): Nothing {
+    if (withStacktrace)
+        error("error: $text")
+    else {
+        System.err.println("error: $text")
+        exitProcess(1)
+    }
 }
 
 object KlibToolLogger : Logger, IrMessageLogger {
-    override fun warning(message: String) = warn(message)
-    override fun error(message: String) = warn(message)
-    override fun fatal(message: String) = org.jetbrains.kotlin.cli.klib.error(message)
+    override fun warning(message: String) = logWarning(message)
+    override fun error(message: String) = logWarning(message)
+    override fun fatal(message: String) = logError(message, withStacktrace = true)
     override fun log(message: String) = println(message)
     override fun report(severity: IrMessageLogger.Severity, message: String, location: IrMessageLogger.Location?) {
         when (severity) {
@@ -187,7 +192,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
 
     fun install() {
         if (!repository.exists) {
-            warn("Repository does not exist: $repository. Creating.")
+            logWarning("Repository does not exist: $repository. Creating...")
             repository.mkdirs()
         }
 
@@ -202,11 +207,11 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun remove(blind: Boolean = false) {
-        if (!repository.exists) error("Repository does not exist: $repository")
+        if (!repository.exists) logError("Repository does not exist: $repository")
 
         val library = try {
             val library = libraryInRepo(repository, libraryNameOrPath)
-            if (blind) warn("Removing The previously installed $libraryNameOrPath from $repository.")
+            if (blind) logWarning("Removing The previously installed $libraryNameOrPath from $repository")
             library
 
         } catch (e: Throwable) {
@@ -232,7 +237,11 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
             get() = TODO("Not needed for ir dumping")
 
         override fun createModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: KotlinLibrary?, strategyResolver: (String) -> DeserializationStrategy): IrModuleDeserializer {
-            return KlibToolModuleDeserializer(moduleDescriptor, klib ?: error("Expecting kotlin library for $moduleDescriptor"), strategyResolver)
+            return KlibToolModuleDeserializer(
+                    module = moduleDescriptor,
+                    klib = klib ?: error("Expecting kotlin library for $moduleDescriptor"),
+                    strategyResolver = strategyResolver
+            )
         }
 
         override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean {
@@ -285,7 +294,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun signatures(output: Appendable) {
-        output.append("WARNING: \"signatures\" is deprecated. Please, use \"dump-ir-signatures\" instead.\n\n")
+        logWarning("\"signatures\" is deprecated. Please, use \"dump-ir-signatures\" instead\n\n")
 
         val module = loadModule()
         val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer())
@@ -303,13 +312,13 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     private fun checkLibraryHasIr(library: KotlinLibrary) {
-        if (!library.hasIr) error("Library ${library.libraryFile} is an IR-less library.")
+        if (!library.hasIr) logError("Library ${library.libraryFile} is an IR-less library")
     }
 
     private fun KotlinIrSignatureVersion.checkSupportedInLibrary(library: KotlinLibrary) {
         val supportedSignatureVersions = library.versions.irSignatureVersions
         if (this !in supportedSignatureVersions)
-            error("Signature version ${this.number} is not supported in library ${library.libraryFile}." +
+            logError("Signature version ${this.number} is not supported in library ${library.libraryFile}." +
                     " Supported versions: ${supportedSignatureVersions.joinToString { it.number.toString() }}")
     }
 
@@ -369,6 +378,6 @@ fun main(args: Array<String>) {
         "info" -> library.info()
         "install" -> library.install()
         "remove" -> library.remove()
-        else -> error("Unknown command ${command.verb}.")
+        else -> logError("Unknown command: ${command.verb}")
     }
 }
