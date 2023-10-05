@@ -16,12 +16,12 @@ fun test() {
     instance.<!NONE_APPLICABLE!>method<!>(i)
 
     val s: String? = null
-    instance.<!NONE_APPLICABLE!>method<!>(s)
+    instance.method(s)
 
     val b: Boolean? = null
     instance.<!NONE_APPLICABLE!>method<!>(b)
 
-    instance.<!NONE_APPLICABLE!>method<!>(null)
+    instance.method(null)
 }
 
 // FILE: annotations.xml

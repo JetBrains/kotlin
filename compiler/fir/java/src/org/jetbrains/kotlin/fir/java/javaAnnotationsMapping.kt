@@ -1,10 +1,13 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.java
 
+import com.intellij.patterns.PsiJavaPatterns.psiAnnotation
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -17,6 +20,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.java.declarations.buildJavaExternalAnnotation
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -42,6 +46,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import java.util.*
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
@@ -255,7 +260,25 @@ internal fun JavaAnnotation.isJavaDeprecatedAnnotation(): Boolean {
     return classId == JvmStandardClassIds.Annotations.Java.Deprecated
 }
 
-private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotation = buildAnnotation {
+private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotation {
+    val annotationData = buildFirAnnotation(this, session)
+    return if (isIdeExternalAnnotation) {
+        buildJavaExternalAnnotation {
+            annotationTypeRef = annotationData.annotationTypeRef
+            argumentMapping = annotationData.argumentsMapping
+        }
+    } else {
+        buildAnnotation {
+            annotationTypeRef = annotationData.annotationTypeRef
+            argumentMapping = annotationData.argumentsMapping
+        }
+    }
+}
+
+private class AnnotationData(val annotationTypeRef: FirResolvedTypeRef, val argumentsMapping: FirAnnotationArgumentMapping)
+
+private fun buildFirAnnotation(javaAnnotation: JavaAnnotation, session: FirSession): AnnotationData {
+    val classId = javaAnnotation.classId
     val lookupTag = when (classId) {
         JvmStandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
         JvmStandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
@@ -263,7 +286,7 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
         JvmStandardClassIds.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
         else -> classId
     }?.toLookupTag()
-    annotationTypeRef = if (lookupTag != null) {
+    val annotationTypeRef = if (lookupTag != null) {
         buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
         }
@@ -278,7 +301,7 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
      * See KT-59342
      * TODO: KT-60520
      */
-    argumentMapping = object : FirAnnotationArgumentMapping() {
+    val argumentMapping = object : FirAnnotationArgumentMapping() {
         override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
         override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
         override val source: KtSourceElement? get() = null
@@ -286,7 +309,7 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
         override val mapping: Map<Name, FirExpression> by lazy {
             when {
                 classId == JvmStandardClassIds.Annotations.Java.Target -> {
-                    when (val argument = arguments.firstOrNull()) {
+                    when (val argument = javaAnnotation.arguments.firstOrNull()) {
                         is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments(session)
                         is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments(session)
                         else -> null
@@ -296,7 +319,7 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
                 }
 
                 classId == JvmStandardClassIds.Annotations.Java.Retention -> {
-                    arguments.firstOrNull()?.mapJavaRetentionArgument(session)?.let {
+                    javaAnnotation.arguments.firstOrNull()?.mapJavaRetentionArgument(session)?.let {
                         mapOf(StandardClassIds.Annotations.ParameterNames.retentionValue to it)
                     }
                 }
@@ -310,7 +333,7 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
                 }
 
                 lookupTag == null -> null
-                else -> arguments.ifNotEmpty {
+                else -> javaAnnotation.arguments.ifNotEmpty {
                     val mapping = LinkedHashMap<Name, FirExpression>(size)
                     fillAnnotationArgumentMapping(session, lookupTag, this, mapping)
                     mapping
@@ -318,4 +341,6 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
             }.orEmpty()
         }
     }
+
+    return AnnotationData(annotationTypeRef, argumentMapping)
 }

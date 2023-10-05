@@ -16,10 +16,10 @@ public class ClassWithExternalAnnotatedMembers {
 // FILE: usage.kt
 fun test() {
     val x = ClassWithExternalAnnotatedMembers()
-    x.externalNotNullField<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
+    x.externalNotNullField?.foo()
     x.explicitNotNullField<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
 
-    ClassWithExternalAnnotatedMembers.staticExternalNotNullField<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
+    ClassWithExternalAnnotatedMembers.staticExternalNotNullField?.foo()
     ClassWithExternalAnnotatedMembers.staticExplicitNotNullField<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
 }
 

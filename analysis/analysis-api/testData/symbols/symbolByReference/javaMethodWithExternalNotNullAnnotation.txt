@@ -22,10 +22,9 @@ KtFunctionSymbol:
   name: foo
   origin: JAVA
   receiverParameter: null
-  returnType: KtUsualClassType:
+  returnType: KtFlexibleType:
     annotationsList: []
-    ownTypeArguments: []
-    type: @EnhancedNullability kotlin/String
+    type: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

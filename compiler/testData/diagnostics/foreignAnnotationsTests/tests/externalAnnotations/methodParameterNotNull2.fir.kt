@@ -19,12 +19,12 @@ fun test() {
     instance.<!NONE_APPLICABLE!>method<!>(i)
 
     val s: String? = null
-    instance.<!NONE_APPLICABLE!>method<!>(s)
+    instance.method(s)
 
     val b: Boolean? = null
     instance.method(b)
 
-    instance.method(null)
+    instance.<!OVERLOAD_RESOLUTION_AMBIGUITY!>method<!>(null)
 }
 
 // FILE: annotations.xml

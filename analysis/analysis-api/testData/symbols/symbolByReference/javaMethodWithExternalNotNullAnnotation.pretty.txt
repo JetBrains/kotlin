@@ -1,1 +1,1 @@
-open fun foo(): kotlin.String
+open fun foo(): kotlin.String!

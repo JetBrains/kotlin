@@ -18,7 +18,7 @@ public class ClassWithExternalAnnotatedMembers {
 // FILE: usage.kt
 fun test() {
     val i: Int? = null
-    <!NONE_APPLICABLE!>ClassWithExternalAnnotatedMembers<!>(i)
+    ClassWithExternalAnnotatedMembers(i)
 
     val s: String? = null
     <!NONE_APPLICABLE!>ClassWithExternalAnnotatedMembers<!>(s)
@@ -26,7 +26,7 @@ fun test() {
     val b: Boolean? = null
     ClassWithExternalAnnotatedMembers(b)
 
-    ClassWithExternalAnnotatedMembers(null)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>ClassWithExternalAnnotatedMembers<!>(null)
 }
 
 // FILE: annotations.xml

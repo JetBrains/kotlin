@@ -27,7 +27,7 @@ import one.two.FirstModuleClass
 
 fun test() {
     val x = FirstModuleClass()
-    x.externalNotNullMethod()<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
+    x.externalNotNullMethod()?.foo()
     x.explicitNotNullMethod()<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
 }
 
@@ -62,7 +62,7 @@ package my.pack
 import three.SecondModuleClass
 
 fun test() {
-    SecondModuleClass.staticExternalNotNullMethod()<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
+    SecondModuleClass.staticExternalNotNullMethod()?.foo()
     SecondModuleClass.staticExplicitNotNullMethod()<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
 }
 

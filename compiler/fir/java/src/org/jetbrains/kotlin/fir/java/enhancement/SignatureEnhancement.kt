@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -722,8 +722,7 @@ private class EnhancementSignatureParts(
     override val typeSystem: TypeSystemContext
         get() = session.typeContext
 
-    override fun FirAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean =
-        false // TODO: force warnings on IDEA external annotations
+    override fun FirAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean = this is FirJavaExternalAnnotation
 
     override val KotlinTypeMarker.annotations: Iterable<FirAnnotation>
         get() = (this as ConeKotlinType).attributes.customAnnotations
