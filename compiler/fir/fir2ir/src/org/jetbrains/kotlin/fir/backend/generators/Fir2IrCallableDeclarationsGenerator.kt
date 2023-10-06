@@ -42,10 +42,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.impl.SCRIPT_K2_ORIGIN
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -1119,6 +1116,7 @@ internal fun IrDeclaration.setParent(irParent: IrDeclarationParent?) {
  *      Note that IrClass will be a parent if some declaration is declared inside anonymous initializer, because IrAnonymousInitializer
  *      is not a IrDeclarationParent
  */
+@OptIn(IrSymbolInternals::class)
 internal fun addDeclarationToParent(declaration: IrDeclaration, irParent: IrDeclarationParent?) {
     if (irParent == null) return
     when (irParent) {

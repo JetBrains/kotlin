@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.java.javaElementFinder
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -48,9 +49,10 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -185,7 +187,10 @@ class Fir2IrConverter(
          * IrFile should contain declarations in the source order, but creating of IrClass automatically adds created class to the list
          *   of file declaration. And in this step we skip all callables, so by default all classes will be declared before all callables
          * To fix this issue the list of declarations is cleared at this point, and later it will be filled again in `processClassMembers`
+         *
+         * `irFile` is definitely not a lazy class
          */
+        @OptIn(IrSymbolInternals::class)
         irFile.declarations.clear()
     }
 
@@ -207,7 +212,10 @@ class Fir2IrConverter(
          * IrClass should contain declarations in the source order, but creating of nested IrClass automatically adds created class to the list
          *   of class declaration. And in this step we skip all callables, so by default all classes will be declared before all callables
          * To fix this issue the list of declarations is cleared at this point, and later it will be filled again in `processClassMembers`
+         *
+         * `irClass` is a source class and definitely is not a lazy class
          */
+        @OptIn(IrSymbolInternals::class)
         irClass.declarations.clear()
     }
 
@@ -220,6 +228,8 @@ class Fir2IrConverter(
             }
         }
 
+        // `irClass` is a source class and definitely is not a lazy class
+        @OptIn(IrSymbolInternals::class)
         irClass.declarations.addAll(classifierStorage.getFieldsWithContextReceiversForClass(irClass, klass))
 
         val irConstructor = klass.primaryConstructorIfAny(session)?.let {
@@ -343,6 +353,8 @@ class Fir2IrConverter(
 
     private fun bindFakeOverridesInFile(file: FirFile) {
         val irFile = declarationStorage.getIrFile(file)
+        // `irFile` definitely is not a lazy class
+        @OptIn(IrSymbolInternals::class)
         for (irDeclaration in irFile.declarations) {
             if (irDeclaration is IrClass) {
                 bindFakeOverridesInClass(irDeclaration)
@@ -350,7 +362,10 @@ class Fir2IrConverter(
         }
     }
 
+    // `irClass` is a source class and definitely is not a lazy class
+    @OptIn(IrSymbolInternals::class)
     fun bindFakeOverridesInClass(klass: IrClass) {
+        require(klass !is Fir2IrLazyClass)
         fakeOverrideGenerator.bindOverriddenSymbols(klass.declarations)
         delegatedMemberGenerator.bindDelegatedMembersOverriddenSymbols(klass)
         for (irDeclaration in klass.declarations) {
@@ -360,6 +375,8 @@ class Fir2IrConverter(
         }
     }
 
+    // `irClass` is a source class and definitely is not a lazy class
+    @OptIn(IrSymbolInternals::class)
     private fun delegatedMembers(irClass: IrClass): List<FirDeclaration> {
         return irClass.declarations.filter {
             it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
@@ -419,7 +436,10 @@ class Fir2IrConverter(
          * IrClass should contain declarations in the source order, but creating of nested IrClass automatically adds created class to the list
          *   of class declaration. And in this step we skip all callables, so by default all classes will be declared before all callables
          * To fix this issue the list of declarations is cleared at this point, and later it will be filled again in `processFileAndClassMembers`
+         *
+         * `irClass` is a source class and definitely is not a lazy class
          */
+        @OptIn(IrSymbolInternals::class)
         irClass.declarations.clear()
     }
 
@@ -443,8 +463,13 @@ class Fir2IrConverter(
         containingClass: FirClass?,
         parent: IrDeclarationParent
     ) {
-        // This function is needed to preserve the source order of declaration in file
-        // see the comment in [processClassHeaders] function
+        /*
+         * This function is needed to preserve the source order of declaration in file
+         * see the comment in [processClassHeaders] function
+         *
+         * `irClass` is a source class and definitely is not a lazy class
+         */
+        @OptIn(IrSymbolInternals::class)
         fun addDeclarationToParentIfNeeded(irDeclaration: IrDeclaration) {
             when (parent) {
                 is IrFile -> parent.declarations += irDeclaration

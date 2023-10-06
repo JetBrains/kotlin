@@ -157,6 +157,8 @@ class IrBuiltInsOverFir(
     }
 
     private val intrinsicConstAnnotation: IrConstructorCall by lazy {
+        // class for intrinsicConst is created manually and it definitely is not a lazy class
+        @OptIn(IrSymbolInternals::class)
         val constructor = intrinsicConst.constructors.single()
         IrConstructorCallImpl.Companion.fromSymbolOwner(intrinsicConst.defaultType, constructor)
     }
@@ -305,10 +307,17 @@ class IrBuiltInsOverFir(
                 returnType: IrType,
                 vararg valueParameterTypes: Pair<String, IrType>,
                 isIntrinsicConst: Boolean = false,
-            ) =
-                createFunction(name, returnType, valueParameterTypes, origin = BUILTIN_OPERATOR, isIntrinsicConst = isIntrinsicConst).also {
+            ): IrSimpleFunctionSymbol {
+                return createFunction(
+                    name, returnType, valueParameterTypes,
+                    origin = BUILTIN_OPERATOR,
+                    isIntrinsicConst = isIntrinsicConst
+                ).also {
+                    // `kotlinInternalIrPackageFragment` definitely is not a lazy class
+                    @OptIn(IrSymbolInternals::class)
                     declarations.add(it)
                 }.symbol
+            }
 
             primitiveFloatingPointIrTypes.forEach { fpType ->
                 _ieee754equalsFunByOperandType[fpType.classifierOrFail] = addBuiltinOperatorSymbol(
@@ -369,6 +378,8 @@ class IrBuiltInsOverFir(
                     typeParameters = listOf(typeParameter),
                     origin = BUILTIN_OPERATOR
                 ).also {
+                    // `kotlinInternalIrPackageFragment` definitely is not a lazy class
+                    @OptIn(IrSymbolInternals::class)
                     declarations.add(it)
                 }.symbol
             }
@@ -557,6 +568,8 @@ class IrBuiltInsOverFir(
         return builtInClass.functions.filter { it.owner.name == name }.asIterable()
     }
 
+    // This function should not be called from fir2ir code
+    @IrSymbolInternals
     override fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
         val definingClass = lhsType.getMaybeBuiltinClass() ?: error("Defining class not found: $lhsType")
         return definingClass.functions.single { function ->
@@ -564,6 +577,8 @@ class IrBuiltInsOverFir(
         }.symbol
     }
 
+    // This function should not be called from fir2ir code
+    @IrSymbolInternals
     override fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
         val definingClass = receiverType.getMaybeBuiltinClass() ?: error("Defining class not found: $receiverType")
         return definingClass.functions.single { function ->

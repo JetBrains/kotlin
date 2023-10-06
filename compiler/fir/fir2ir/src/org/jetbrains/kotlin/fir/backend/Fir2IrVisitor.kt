@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
@@ -147,6 +148,9 @@ class Fir2IrVisitor(
             converter.bindFakeOverridesInClass(correspondingClass)
             conversionScope.withParent(correspondingClass) {
                 memberGenerator.convertClassContent(correspondingClass, anonymousObject)
+
+                // `correspondingClass` definitely is not a lazy class
+                @OptIn(IrSymbolInternals::class)
                 val constructor = correspondingClass.constructors.first()
                 irEnumEntry.initializerExpression = irFactory.createExpressionBody(
                     IrEnumConstructorCallImpl(
@@ -171,6 +175,8 @@ class Fir2IrVisitor(
             }
         } else if (irParentEnumClass != null && initializer == null) {
             // a default-ish enum entry whose initializer would be a delegating constructor call
+            // `irParentEnumClass` definitely is not a lazy class
+            @OptIn(IrSymbolInternals::class)
             val constructor = irParentEnumClass.defaultConstructor
                 ?: error("Assuming that default constructor should exist and be converted at this point")
             enumEntry.convertWithOffsets { startOffset, endOffset ->
@@ -325,6 +331,8 @@ class Fir2IrVisitor(
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Any?): IrElement {
         val irClass = classifierStorage.getCachedIrCodeFragment(codeFragment)!!
+        // class for code fragment definitely is not a lazy class
+        @OptIn(IrSymbolInternals::class)
         val irFunction = irClass.declarations.firstIsInstance<IrSimpleFunction>()
 
         declarationStorage.enterScope(irFunction.symbol)
@@ -362,6 +370,8 @@ class Fir2IrVisitor(
                         startOffset,
                         endOffset,
                         anonymousClassType,
+                        // a class for an anonymous object definitely is not a lazy class
+                        @OptIn(IrSymbolInternals::class)
                         irAnonymousObject.constructors.first().symbol,
                         irAnonymousObject.typeParameters.size,
                         origin = IrStatementOrigin.OBJECT_LITERAL
