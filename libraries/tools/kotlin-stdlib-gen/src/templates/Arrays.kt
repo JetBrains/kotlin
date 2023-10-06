@@ -143,14 +143,7 @@ object ArrayOps : TemplateGroupBase() {
         }
 
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayEquals")""")
-                body { "definedExternally" }
-            }
-
-            on(Backend.IR) {
-                body { "return contentEqualsInternal(other)" }
-            }
+            body { "return contentEqualsInternal(other)" }
         }
         on(Platform.Native) {
             fun notEq(operand1: String, operand2: String) = when {
@@ -231,14 +224,7 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayDeepEquals")""")
-                body { "definedExternally" }
-            }
-
-            on(Backend.IR) {
-                body { "return contentDeepEqualsImpl(other)" }
-            }
+            body { "return contentDeepEqualsImpl(other)" }
         }
         on(Platform.Native) {
             body { "return contentDeepEqualsImpl(other)" }
@@ -286,13 +272,7 @@ object ArrayOps : TemplateGroupBase() {
             body { "return java.util.Arrays.toString(this)" }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayToString")""")
-                body { "definedExternally" }
-            }
-            on(Backend.IR) {
-                body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
-            }
+            body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
         }
         on(Platform.Native) {
             body { """return this?.joinToString(", ", "[", "]") ?: "null"""" }
@@ -351,13 +331,7 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayDeepToString")""")
-                body { "definedExternally" }
-            }
-            on(Backend.IR) {
-                body { "return contentDeepToStringImpl()" }
-            }
+            body { "return contentDeepToStringImpl()" }
         }
         on(Platform.Native) {
             body { "return contentDeepToStringImpl()" }
@@ -399,13 +373,7 @@ object ArrayOps : TemplateGroupBase() {
             body { "return java.util.Arrays.hashCode(this)" }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayHashCode")""")
-                body { "definedExternally" }
-            }
-            on(Backend.IR) {
-                body { "return contentHashCodeInternal()" }
-            }
+            body { "return contentHashCodeInternal()" }
         }
         on(Platform.Native) {
             body {
@@ -468,13 +436,7 @@ object ArrayOps : TemplateGroupBase() {
             }
         }
         on(Platform.JS) {
-            on(Backend.Legacy) {
-                annotation("""@library("arrayDeepHashCode")""")
-                body { "definedExternally" }
-            }
-            on(Backend.IR) {
-                body { "return contentDeepHashCodeInternal()" }
-            }
+            body { "return contentDeepHashCodeInternal()" }
         }
         on(Platform.Native) {
             body { "return contentDeepHashCodeImpl()" }
@@ -735,23 +697,16 @@ object ArrayOps : TemplateGroupBase() {
                     null, PrimitiveType.Boolean, PrimitiveType.Long ->
                         body { "return arrayPlusCollection(this, elements)" }
                     else -> {
-                        on(Backend.Legacy) {
-                            body {
-                                "return fillFromCollection(this.copyOf(size + elements.size), this.size, elements)"
-                            }
-                        }
-                        on(Backend.IR) {
-                            // Don't use fillFromCollection because it treats arrays
-                            // as `dynamic` but we need to concrete types to perform
-                            // unboxing of collections elements
-                            body {
-                                """
-                                var index = size
-                                val result = this.copyOf(size + elements.size)
-                                for (element in elements) result[index++] = element
-                                return result
-                                """
-                            }
+                        // Don't use fillFromCollection because it treats arrays
+                        // as `dynamic` but we need to concrete types to perform
+                        // unboxing of collections elements
+                        body {
+                            """
+                            var index = size
+                            val result = this.copyOf(size + elements.size)
+                            for (element in elements) result[index++] = element
+                            return result
+                            """
                         }
                     }
                 }
@@ -1197,18 +1152,12 @@ object ArrayOps : TemplateGroupBase() {
                 }
                 specialFor(ArraysOfPrimitives) {
                     if (primitive != PrimitiveType.Long) {
-                        on(Backend.Legacy) {
-                            annotation("""@library("primitiveArraySort")""")
-                            body { "definedExternally" }
-                        }
-                        on(Backend.IR) {
-                            if (primitive == PrimitiveType.Char) {
-                                // Requires comparator because default comparator of 'Array.prototype.sort' compares
-                                // string representation of values
-                                body { "nativeSort(::primitiveCompareTo)" }
-                            } else {
-                                body { "nativeSort()" }
-                            }
+                        if (primitive == PrimitiveType.Char) {
+                            // Requires comparator because default comparator of 'Array.prototype.sort' compares
+                            // string representation of values
+                            body { "nativeSort(::primitiveCompareTo)" }
+                        } else {
+                            body { "nativeSort()" }
                         }
                     } else {
                         body {

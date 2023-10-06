@@ -112,7 +112,6 @@ enum class Platform {
 
 enum class Backend {
     Any,
-    Legacy,
     IR,
     Wasm,
 }
