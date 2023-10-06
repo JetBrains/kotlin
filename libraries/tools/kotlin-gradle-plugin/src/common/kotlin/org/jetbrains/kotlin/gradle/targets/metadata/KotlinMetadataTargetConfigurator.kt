@@ -69,11 +69,12 @@ class KotlinMetadataTargetConfigurator :
             KotlinBuildStatsService.getInstance()?.report(BooleanMetrics.ENABLED_HMPP, true)
 
             target.compilations.withType(KotlinCommonCompilation::class.java).getByName(KotlinCompilation.MAIN_COMPILATION_NAME).run {
+                // Force the default 'main' compilation to produce *.kotlin_metadata regardless of the klib feature flag.
+                forceCompilationToKotlinMetadata = true
+
                 // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
                 val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
                 if (isCompatibilityMetadataVariantEnabled) {
-                    // Force the default 'main' compilation to produce *.kotlin_metadata regardless of the klib feature flag.
-                    forceCompilationToKotlinMetadata = true
                     // Add directly dependsOn sources for Legacy Compatibility Metadata variant
                     // it isn't necessary for KLib compilations
                     // see [KotlinCompilationSourceSetInclusion.AddSourcesWithoutDependsOnClosure]
