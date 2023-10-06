@@ -12,8 +12,8 @@ fun test_1() {
 }
 
 fun test_2() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
-        yield(materialize())
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>sequence<!> {
+        yield(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>materialize<!>())
     }
 }
 
