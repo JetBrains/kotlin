@@ -121,10 +121,6 @@ fun main(args: Array<String>) {
             addRangesGenerators(jsGeneratedDir, KotlinTarget.JS)
             oneToOneMappingsGenerators.add(MappingsGenerator.forTitlecase(jsGeneratedDir.resolve("_TitlecaseMappings.kt")))
 
-            val jsIrGeneratedDir = baseDir.resolve("libraries/stdlib/js-ir/src/generated/")
-            addRangesGenerators(jsIrGeneratedDir, KotlinTarget.JS_IR)
-            oneToOneMappingsGenerators.add(MappingsGenerator.forTitlecase(jsIrGeneratedDir.resolve("_TitlecaseMappings.kt")))
-
             val nativeGeneratedDir = baseDir.resolve("kotlin-native/runtime/src/main/kotlin/generated/")
             addRangesGenerators(nativeGeneratedDir, KotlinTarget.Native)
             addOneToOneMappingsGenerators(nativeGeneratedDir, KotlinTarget.Native)

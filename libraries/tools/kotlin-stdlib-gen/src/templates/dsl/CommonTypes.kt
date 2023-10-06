@@ -120,8 +120,7 @@ enum class Backend {
 enum class KotlinTarget(val platform: Platform, val backend: Backend) {
     Common(Platform.Common, Backend.Any),
     JVM(Platform.JVM, Backend.Any),
-    JS(Platform.JS, Backend.Legacy),
-    JS_IR(Platform.JS, Backend.IR),
+    JS(Platform.JS, Backend.IR),
     WASM(Platform.Native, Backend.Wasm),
     Native(Platform.Native, Backend.IR);
 
