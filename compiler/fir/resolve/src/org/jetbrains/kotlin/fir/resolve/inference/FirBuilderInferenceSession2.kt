@@ -28,7 +28,9 @@ class FirBuilderInferenceSession2(
 
     val outerSystem = outerCandidate.system
 
-    private val outerCS: ConstraintStorage = outerSystem.currentStorage()
+    private var systemAccumulator = outerSystem
+
+    private val outerCS: ConstraintStorage get() = outerSystem.currentStorage()
     private val qualifiedAccessesToProcess = mutableSetOf<FirExpression>()
 
     override fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
@@ -55,6 +57,16 @@ class FirBuilderInferenceSession2(
         }
     }
 
+    override fun <T> runLambdaCompletion(candidate: Candidate, block: () -> T): T {
+        val previous = systemAccumulator
+        return try {
+            systemAccumulator = candidate.system
+            block()
+        } finally {
+            systemAccumulator = previous
+        }
+    }
+
     override fun <T> processPartiallyResolvedCall(
         call: T,
         resolutionMode: ResolutionMode,
@@ -74,7 +86,7 @@ class FirBuilderInferenceSession2(
         outerCandidate.postponedCalls += call
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
-        outerSystem.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
+        systemAccumulator.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
     }
 
     fun integrateChildSession(
@@ -83,7 +95,7 @@ class FirBuilderInferenceSession2(
         afterCompletion: (ConeSubstitutor) -> Unit,
     ) {
         outerCandidate.postponedCalls += childCalls
-        outerSystem.addOtherSystem(childStorage)
+        systemAccumulator.addOtherSystem(childStorage)
         outerCandidate.callbacks += afterCompletion
     }
 
