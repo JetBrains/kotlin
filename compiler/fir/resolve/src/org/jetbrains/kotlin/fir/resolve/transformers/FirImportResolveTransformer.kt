@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -76,10 +77,15 @@ open class FirImportResolveTransformer protected constructor(
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): FirImport {
         val (packageFqName, relativeClassFqName, classSymbol) = when (val result = resolveToPackageOrClass(symbolProvider, fqName)) {
-            is PackageResolutionResult.Error -> return buildErrorImport {
-                this.delegate = delegate
-                this.diagnostic = result.diagnostic
-            }
+            is PackageResolutionResult.Error ->
+                return if (delegate.source?.kind == KtFakeSourceElementKind.ImplicitImport) {
+                    delegate
+                } else {
+                    buildErrorImport {
+                        this.delegate = delegate
+                        this.diagnostic = result.diagnostic
+                    }
+                }
             is PackageResolutionResult.PackageOrClass -> result
         }
         val firClass = classSymbol?.fir as? FirRegularClass
