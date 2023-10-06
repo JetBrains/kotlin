@@ -622,7 +622,6 @@ tasks {
             ":kotlinx-metadata-jvm",
             ":tools:binary-compatibility-validator",
             ":tools:jdk-api-validator",
-            //":kotlin-stdlib-wasm",
         )).forEach {
             dependsOn("$it:check")
         }

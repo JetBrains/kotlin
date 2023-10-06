@@ -90,8 +90,8 @@ sourceSets {
 }
 
 fun Test.setupWasmStdlib(target: String) {
-    dependsOn(":kotlin-stdlib-wasm-$target:compileKotlinWasm")
-    systemProperty("kotlin.wasm-$target.stdlib.path", "libraries/stdlib/wasm/$target/build/classes/kotlin/wasm/main")
+    dependsOn(":kotlin-stdlib:compileKotlinWasm${target.capitalize()}")
+    systemProperty("kotlin.wasm-$target.stdlib.path", "libraries/stdlib/build/classes/kotlin/wasm${target.capitalize()}/main")
     dependsOn(":kotlin-test:kotlin-test-wasm-$target:compileKotlinWasm")
     systemProperty("kotlin.wasm-$target.kotlin.test.path", "libraries/kotlin.test/wasm/$target/build/classes/kotlin/wasm/main")
 }

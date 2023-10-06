@@ -588,8 +588,6 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-dom-api-compat",
             ":kotlin-stdlib-js-ir-minimal-for-test",
             ":kotlin-stdlib-wasm",
-            ":kotlin-stdlib-wasm-js",
-            ":kotlin-stdlib-wasm-wasi",
             ":kotlin-stdlib-jdk7",
             ":kotlin-stdlib-jdk8",
             ":kotlin-stdlib:samples",
@@ -609,8 +607,6 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" as File
     project(':kotlin-dom-api-compat').projectDir = "$rootDir/libraries/kotlin-dom-api-compat" as File
     project(':kotlin-stdlib-wasm').projectDir = "$rootDir/libraries/stdlib/wasm" as File
-    project(':kotlin-stdlib-wasm-js').projectDir = "$rootDir/libraries/stdlib/wasm/js" as File
-    project(':kotlin-stdlib-wasm-wasi').projectDir = "$rootDir/libraries/stdlib/wasm/wasi" as File
     project(':kotlin-stdlib-js-ir-minimal-for-test').projectDir = "$rootDir/libraries/stdlib/js-ir-minimal-for-test" as File
     project(':kotlin-stdlib-jdk7').projectDir = "$rootDir/libraries/stdlib/jdk7" as File
     project(':kotlin-stdlib-jdk8').projectDir = "$rootDir/libraries/stdlib/jdk8" as File
