@@ -1476,6 +1476,46 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
                 }
             }
         }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ThisQualifier {
+            @Test
+            public void testAllFilesPresentInThisQualifier() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
+            }
+
+            @Test
+            @TestMetadata("thisQualifierOnClass.kt")
+            public void testThisQualifierOnClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier/thisQualifierOnClass.kt");
+            }
+
+            @Test
+            @TestMetadata("thisQualifierOnFunction.kt")
+            public void testThisQualifierOnFunction() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier/thisQualifierOnFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("thisQualifierOnFunctionNoExtensionReceiver.kt")
+            public void testThisQualifierOnFunctionNoExtensionReceiver() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier/thisQualifierOnFunctionNoExtensionReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("thisQualifierOnProperty.kt")
+            public void testThisQualifierOnProperty() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier/thisQualifierOnProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("thisQualifierOnPropertyNoExtensionReceiver.kt")
+            public void testThisQualifierOnPropertyNoExtensionReceiver() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/thisQualifier/thisQualifierOnPropertyNoExtensionReceiver.kt");
+            }
+        }
     }
 
     @Nested

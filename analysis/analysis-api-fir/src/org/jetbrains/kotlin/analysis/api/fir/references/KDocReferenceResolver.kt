@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import kotlin.reflect.KClass
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 
 internal object KDocReferenceResolver {
 
@@ -77,8 +79,21 @@ internal object KDocReferenceResolver {
 
     context(KtAnalysisSession)
     private fun resolveKdocFqName(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
+        getExtensionReceiverSymbolByThisQualifier(fqName, contextElement).ifNotEmpty { return this }
         (getSymbolsFromScopes(fqName, contextElement) + listOfNotNull(getPackageSymbolIfPackageExists(fqName))).ifNotEmpty { return this }
         getNonImportedSymbolsByFullyQualifiedName(fqName).ifNotEmpty { return this }
+        return emptyList()
+    }
+
+    context(KtAnalysisSession)
+    fun getExtensionReceiverSymbolByThisQualifier(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
+        val owner = contextElement.parentOfType<KtDeclaration>() ?: return emptyList()
+        if (fqName.pathSegments().singleOrNull()?.asString() == "this") {
+            if (owner is KtCallableDeclaration && owner.receiverTypeReference != null) {
+                val symbol = owner.getSymbol() as? KtCallableSymbol ?: return emptyList()
+                return listOfNotNull(symbol.receiverParameter)
+            }
+        }
         return emptyList()
     }
 
