@@ -1,3 +1,3 @@
-/upperBoundViolation.fir.kt:(150,159): error: Not enough information to infer type argument for 'T'.
+/upperBoundViolation.fir.kt:(227,245): error: Not enough information to infer type argument for 'T'.
 
-/upperBoundViolation.fir.kt:(246,253): error: Argument type mismatch: actual type is 'kotlin/String', but 'kotlin/Number' was expected.
+/upperBoundViolation.fir.kt:(246,253): error: Argument type mismatch: actual type is 'kotlin.String', but 'kotlin.Number' was expected.
