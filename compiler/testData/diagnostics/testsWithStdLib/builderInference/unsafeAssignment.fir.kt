@@ -9,7 +9,7 @@ fun main(arg: Any) {
     val x = 57
     val value = myBuilder {
         doSmthng("one ")
-        run { a; this }.a = <!ASSIGNMENT_TYPE_MISMATCH!>10<!>
+        run { a; this }.<!UNRESOLVED_REFERENCE!>a<!> = 10
         a += 1
         this.a = <!ASSIGNMENT_TYPE_MISMATCH!>57<!>
         this.<!ILLEGAL_SELECTOR, VARIABLE_EXPECTED!>(a)<!> = 57
