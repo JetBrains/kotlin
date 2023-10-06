@@ -5049,7 +5049,6 @@ dynamicTest("produce_dynamic_unhandledException") {
 }
 
 dynamicTest("interop_concurrentRuntime") {
-    disabled = true  // KT-43180
     source = "interop/concurrentTerminate/reverseInterop.kt"
     cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
     clangTool = "clang++"
