@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.konan.swift
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
-import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface
+import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isVoidAsReturnType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -75,7 +75,7 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
     private data class Names(val swift: String, val c: String, val path: List<String>, val symbol: String) {
         companion object {
             operator fun invoke(declaration: IrFunction): Names {
-                val symbolName = "_" + with(KonanBinaryInterface) { declaration.symbolName }
+                val symbolName = "_" + declaration.computeSymbolName()
                 val path: List<String>
                 val cName: String
                 val swiftName: String
@@ -274,7 +274,6 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
     private fun isSupported(declaration: IrFunction): Boolean {
         // No Kotlin-exclusive stuff
         return declaration.visibility.isPublicAPI
-                && declaration.extensionReceiverParameter == null
                 && declaration.contextReceiverParametersCount == 0
                 && !declaration.isExpect
                 && !declaration.isInline
@@ -341,7 +340,7 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
             }
             declaration.computeBinaryType() is BinaryType.Reference -> {
                 // FIXME: generate particular types
-                val type = IrBasedSwiftVisitor.kotlinAnySwiftType.let { if (declaration.isNullable()) it.optional else it }
+                val type = kotlinAnySwiftType.let { if (declaration.isNullable()) it.optional else it }
                 return Bridge.Object(type, cType)
             }
             else -> return null
@@ -396,12 +395,15 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
             +`return`(result.name.identifier)
         }
 
-        fun parameterName(name: Name): String = name.identifierOrNullIfSpecial ?: "newValue".takeIf { declaration.isSetter } ?: "_"
+        fun parameterName(name: Name): String = name.identifierOrNullIfSpecial
+                ?: "newValue".takeIf { declaration.isSetter }
+                ?: "receiver".takeIf { name.asString() == "<this>" && declaration.extensionReceiverParameter != null }
+                ?: "_"
 
         val returnTypeBridge = bridgeFor(declaration.returnType) ?: return null
         val bridges = declaration.explicitParameters.map { parameterName(it.name) to (bridgeFor(it.type) ?: return null) }
-        val parameterBridges: List<Pair<String, IrBasedSwiftVisitor.Bridge>>
-        val argumentBridges: List<Pair<String, IrBasedSwiftVisitor.Bridge>>
+        val parameterBridges: List<Pair<String, Bridge>>
+        val argumentBridges: List<Pair<String, Bridge>>
 
         if (declaration.dispatchReceiverParameter != null) {
             parameterBridges = bridges.drop(1)
