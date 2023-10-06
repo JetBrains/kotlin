@@ -51,7 +51,7 @@ class DaemonReuseCounter private constructor() : IDaemonReuseCounterMXBean {
         }
 
         fun getOrdinal(): Long {
-            val beanName = ObjectName(KotlinBuildStatsService.JMX_BEAN_NAME)
+            val beanName = ObjectName(JMX_BEAN_NAME)
             val mbs: MBeanServer = ManagementFactory.getPlatformMBeanServer()
             ensureRegistered(beanName, mbs)
             return mbs.invoke(beanName, "getOrdinal", emptyArray(), emptyArray<String>()) as? Long ?: 0

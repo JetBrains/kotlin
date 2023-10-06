@@ -12,7 +12,6 @@ import org.junit.Test
 import java.lang.management.ManagementFactory
 import java.util.concurrent.atomic.AtomicInteger
 import javax.management.MBeanServer
-import javax.management.ObjectName
 import javax.management.StandardMBean
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -22,7 +21,7 @@ class BuildStatServiceTest {
     @Test
     fun testJmxDoesNotFail() {
         //Test that JMX service does not throw exception even if JMX beans are not configured
-        val beanName = ObjectName(KotlinBuildStatsService.JMX_BEAN_NAME)
+        val beanName = KotlinBuildStatsServicesRegistry.getBeanName(KotlinBuildStatsServicesRegistry.DEFAULT_SERVICE_QUALIFIER)
         val mbs: MBeanServer = ManagementFactory.getPlatformMBeanServer()
 
         val jmxService = JMXKotlinBuildStatsService(mbs, beanName)
@@ -52,7 +51,7 @@ class BuildStatServiceTest {
 
         }
 
-        val beanName = ObjectName(KotlinBuildStatsService.JMX_BEAN_NAME)
+        val beanName = KotlinBuildStatsServicesRegistry.getBeanName(KotlinBuildStatsServicesRegistry.DEFAULT_SERVICE_QUALIFIER)
         val mbs: MBeanServer = ManagementFactory.getPlatformMBeanServer()
         mbs.registerMBean(StandardMBean(instance, KotlinBuildStatsMXBean::class.java), beanName)
 

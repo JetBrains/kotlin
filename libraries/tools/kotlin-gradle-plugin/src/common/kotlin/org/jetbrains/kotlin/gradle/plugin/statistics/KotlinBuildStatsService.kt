@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.initialization.BuildRequestMetaData
@@ -19,8 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAc
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
-import org.jetbrains.kotlin.gradle.plugin.statistics.old.Pre232IdeaKotlinBuildStatsMXBean
-import org.jetbrains.kotlin.gradle.plugin.statistics.old.Pre232IdeaKotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.utils.loadProperty
 import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
@@ -31,10 +28,8 @@ import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.Closeable
 import java.io.File
-import java.lang.management.ManagementFactory
 import javax.management.MBeanServer
 import javax.management.ObjectName
-import javax.management.StandardMBean
 import kotlin.system.measureTimeMillis
 
 /**
@@ -51,28 +46,19 @@ interface KotlinBuildStatsMXBean {
     fun reportString(name: String, value: String, subprojectName: String?, weight: Long?): Boolean
 }
 
-
 internal abstract class KotlinBuildStatsService internal constructor() : IStatisticsValuesConsumer, Closeable {
     companion object {
-        // Do not rename this bean otherwise compatibility with the older Kotlin Gradle Plugins would be lost
-        private const val JMX_BEAN_NAME_BEFORE_232_IDEA = "org.jetbrains.kotlin.gradle.plugin.statistics:type=StatsService"
-
-        //update name when API changed
-        private const val SERVICE_NAME = "v2"
-        const val JMX_BEAN_NAME = "org.jetbrains.kotlin.gradle.plugin.statistics:type=StatsService,name=$SERVICE_NAME"
-
-
         // Property name for disabling saving statistical information
-        const val ENABLE_STATISTICS_PROPERTY_NAME = "enable_kotlin_performance_profile"
+        private const val ENABLE_STATISTICS_PROPERTY_NAME = "enable_kotlin_performance_profile"
 
         // Property used for tests. Build will fail fast if collected value doesn't fit regexp
         const val FORCE_VALUES_VALIDATION = "kotlin_performance_profile_force_validation"
 
         // default state
-        const val DEFAULT_STATISTICS_STATE = true
+        private const val DEFAULT_STATISTICS_STATE = true
 
         // "emergency file" collecting statistics is disabled it the file exists
-        const val DISABLE_STATISTICS_FILE_NAME = "${STATISTICS_FOLDER_NAME}/.disable"
+        private const val DISABLE_STATISTICS_FILE_NAME = "${STATISTICS_FOLDER_NAME}/.disable"
 
         /**
          * Method for getting IStatisticsValuesConsumer for reporting some statistics
@@ -85,23 +71,21 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
             if (statisticsIsEnabled != true) {
                 return null
             }
-            return instance
+            return kotlinBuildStatsServicesRegistry?.getDefaultService()
         }
-
-        private fun getServiceName(): String = "${KotlinBuildStatsService::class.java}_$SERVICE_NAME"
 
         /**
          * Method for creating new instance of IStatisticsValuesConsumer
          * It could be invoked only when applying Kotlin gradle plugin.
-         * When executed, this method checks, whether it is already executed in current build.
+         * When executed, this method checks, whether it is already executed in the current build.
          * If it was not executed, the new instance of IStatisticsValuesConsumer is created
          *
-         * If it was already executed in the same classpath (i.e. with the same version of Kotlin plugin),
+         * If it was already executed in the same classpath (i.e., with the same version of Kotlin plugin),
          * the previously returned instance is returned.
          *
          * If it was already executed in the other classpath, a JXM implementation is returned.
          *
-         * All the created instances are registered as build listeners
+         * [closeServices] must be called at the end of the build in order to release resources.
          */
         @JvmStatic
         @Synchronized
@@ -115,56 +99,35 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
                 if (statisticsIsEnabled != true) {
                     null
                 } else {
-                    val log = getLogger()
-
-                    if (instance != null) {
-                        log.debug("${getServiceName()} is already instantiated. Current instance is $instance")
-                    } else {
-                        val beanName = ObjectName(JMX_BEAN_NAME)
-                        val mbs: MBeanServer = ManagementFactory.getPlatformMBeanServer()
-                        if (mbs.isRegistered(beanName)) {
-                            log.debug(
-                                "${getServiceName()} is already instantiated in another classpath. Creating JMX-wrapper"
-                            )
-                            instance = JMXKotlinBuildStatsService(mbs, beanName)
-                        } else {
-                            val newInstance = DefaultKotlinBuildStatsService(
-                                project,
-                                beanName
-                            )
-
-                            instance = newInstance
-                            log.debug("Instantiated ${getServiceName()}: new instance $instance")
-                            mbs.registerMBean(StandardMBean(newInstance, KotlinBuildStatsMXBean::class.java), beanName)
-
-                            registerPre232IdeaStatsBean(mbs, log, project)
-                        }
-
-                        BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
-                            OperationCompletionListener { event ->
-                                if (event is TaskFinishEvent) {
-                                    reportTaskIfNeed(event.descriptor.name)
-                                }
-                            }
-                        })
+                    val registry = kotlinBuildStatsServicesRegistry ?: KotlinBuildStatsServicesRegistry().also {
+                        kotlinBuildStatsServicesRegistry = it
                     }
-                    instance
+
+                    val defaultServiceName = KotlinBuildStatsServicesRegistry.getBeanName(KotlinBuildStatsServicesRegistry.DEFAULT_SERVICE_QUALIFIER)
+                    val instance = kotlinBuildStatsServicesRegistry?.getDefaultService()
+                    if (instance != null) {
+                        registry.logger.debug("$defaultServiceName is already instantiated. Current instance is $instance")
+                        return@runSafe instance
+                    }
+
+                    registry.registerServices(project)
+
+                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
+                        OperationCompletionListener { event ->
+                            if (event is TaskFinishEvent) {
+                                reportTaskIfNeed(event.descriptor.name)
+                            }
+                        }
+                    })
+
+                    registry.getDefaultService() ?: error("The default kotlin build stats $defaultServiceName service wasn't initialized")
                 }
             }
         }
 
-        //To support backward compatibility with Idea before 232 version
-        private fun registerPre232IdeaStatsBean(
-            mbs: MBeanServer,
-            log: Logger,
-            project: Project
-        ) {
-            val beanName = ObjectName(JMX_BEAN_NAME_BEFORE_232_IDEA)
-            if (!mbs.isRegistered(beanName)) {
-                val newInstance = Pre232IdeaKotlinBuildStatsService(project, beanName)
-                mbs.registerMBean(StandardMBean(newInstance, Pre232IdeaKotlinBuildStatsMXBean::class.java), beanName)
-                log.debug("Register JMX service for backward compatibility")
-            }
+        fun closeServices() {
+            kotlinBuildStatsServicesRegistry?.close()
+            kotlinBuildStatsServicesRegistry = null
         }
 
         protected fun reportTaskIfNeed(task: String) {
@@ -203,10 +166,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
             }
         }
 
-        @JvmStatic
-        internal fun getLogger() = Logging.getLogger(KotlinBuildStatsService::class.java)
-
-        internal var instance: KotlinBuildStatsService? = null
+        private var kotlinBuildStatsServicesRegistry: KotlinBuildStatsServicesRegistry? = null
 
         private var statisticsIsEnabled: Boolean? = null
 
@@ -226,7 +186,6 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
     }
 
     override fun close() {
-        instance = null
     }
 
     /**
