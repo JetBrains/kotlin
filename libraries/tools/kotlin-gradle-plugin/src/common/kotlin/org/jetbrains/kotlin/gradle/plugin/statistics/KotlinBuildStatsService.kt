@@ -282,18 +282,22 @@ internal abstract class AbstractKotlinBuildStatsService(
         private val logger = Logging.getLogger(AbstractKotlinBuildStatsService::class.java)
     }
 
-    private val localProperties = project.localProperties
+    private val forcePropertiesValidation: Boolean
 
-    private val forcePropertiesValidation = project
-        .loadProperty(FORCE_VALUES_VALIDATION, localProperties)
-        .orNull?.toBoolean() ?: false
+    private val customSessionLoggerRootPath: String?
 
-    private val customSessionLoggerRootPath: String? = project
-        .loadProperty(CUSTOM_LOGGER_ROOT_PATH, localProperties)
-        .orNull
-        ?.also {
-            logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
-        }
+    init {
+        val localProperties = project.localProperties
+        forcePropertiesValidation = project
+            .loadProperty(FORCE_VALUES_VALIDATION, localProperties)
+            .orNull?.toBoolean() ?: false
+        customSessionLoggerRootPath = project
+            .loadProperty(CUSTOM_LOGGER_ROOT_PATH, localProperties)
+            .orNull
+            ?.also {
+                logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
+            }
+    }
 
     private val sessionLoggerRootPath =
         customSessionLoggerRootPath?.let { File(it) } ?: project.gradle.gradleUserHomeDir
