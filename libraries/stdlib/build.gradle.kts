@@ -329,6 +329,13 @@ kotlin {
             val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
                 srcDir(prepareJsIrMainSources)
+                srcDir("$jsCommonDir/src").apply {
+                    exclude("kotlin/browser")
+                    exclude("kotlin/dom")
+                    exclude("kotlinx")
+                    exclude("org.w3c")
+                }
+                srcDir("$jsCommonDir/runtime")
                 srcDir("$jsIrDir/builtins")
                 srcDir("$jsIrDir/runtime")
                 srcDir("$jsIrDir/src")
@@ -342,17 +349,9 @@ kotlin {
                 // TODO: try to reuse absolute paths defined in the beginning
                 val sources = listOf(
                     "core/builtins/src/kotlin/",
-                    "libraries/stdlib/js/src/",
-                    "libraries/stdlib/js/runtime/"
                 ) + unimplementedNativeBuiltIns
 
                 val excluded = listOf(
-                    // stdlib/js/src/generated is used exclusively for current `js-v1` backend.
-                    "libraries/stdlib/js/src/kotlin/browser",
-                    "libraries/stdlib/js/src/kotlin/dom",
-                    "libraries/stdlib/js/src/org.w3c",
-                    "libraries/stdlib/js/src/kotlinx",
-
                     // JS-specific optimized version of emptyArray() already defined
                     "core/builtins/src/kotlin/ArrayIntrinsics.kt",
                     // included in common
