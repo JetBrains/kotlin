@@ -69,7 +69,7 @@ class KLibResolution(
     }
 }
 
-private class KLibResolverHelper(
+class KLibResolverHelper(
     repositories: List<String>,
     directLibs: List<String>,
     distributionKlib: String?,

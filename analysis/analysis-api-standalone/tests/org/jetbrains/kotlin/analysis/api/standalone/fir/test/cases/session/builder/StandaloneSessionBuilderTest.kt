@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -93,6 +94,15 @@ class StandaloneSessionBuilderTest {
     }
 
     @Test
+    fun testKotlinStdLibJsWithInvalidKlib() {
+        doTestKotlinStdLibResolve(
+            JsPlatforms.defaultJsPlatform,
+            Paths.get("dist/kotlinc/lib/kotlin-stdlib-js.jar"),
+            additionalStdlibRoots = listOf(Paths.get(System.getProperty("java.home")))
+        )
+    }
+
+    @Test
     fun testKotlinSourceModuleSessionBuilder() {
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession {
@@ -122,7 +132,10 @@ class StandaloneSessionBuilderTest {
         ktCallExpression.assertIsCallOf(CallableId(FqName.ROOT, Name.identifier("foo")))
     }
 
-    private fun doTestKotlinStdLibResolve(targetPlatform: TargetPlatform, platformStdlibPath: Path) {
+    private fun doTestKotlinStdLibResolve(
+        targetPlatform: TargetPlatform, platformStdlibPath: Path,
+        additionalStdlibRoots: List<Path> = emptyList(),
+    ) {
         lateinit var sourceModule: KtSourceModule
         val session = buildStandaloneAnalysisAPISession {
             registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
@@ -132,6 +145,7 @@ class StandaloneSessionBuilderTest {
                 val stdlib = addModule(
                     buildKtLibraryModule {
                         addBinaryRoot(platformStdlibPath)
+                        addBinaryRoots(additionalStdlibRoots)
                         platform = targetPlatform
                         libraryName = "stdlib"
                     }

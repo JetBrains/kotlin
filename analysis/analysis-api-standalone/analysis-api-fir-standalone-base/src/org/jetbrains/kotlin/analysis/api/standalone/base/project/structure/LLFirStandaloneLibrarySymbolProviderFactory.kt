@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.backend.common.KLibResolverHelper
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -21,12 +22,16 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.fir.session.MetadataSymbolProvider
 import org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
+import org.jetbrains.kotlin.library.resolve
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.util.DummyLogger
+import java.lang.IllegalStateException
+import kotlin.io.path.exists
 
 class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
     override fun createJvmLibrarySymbolProvider(
@@ -107,10 +112,44 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
 
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
         val ktLibraryModule = ktModule as? KtLibraryModule ?: return emptyList()
-        val resolveResult = CommonKLibResolver.resolve(
-            ktLibraryModule.getBinaryRoots().map { it.toString() },
-            DummyLogger
+        val libraries = ktLibraryModule.getBinaryRoots().filter { it.exists() }.map { it.toString() }
+
+        val libraryResolver = KLibResolverHelper(
+            repositories = emptyList(),
+            directLibs = libraries.map { File(it).absolutePath },
+            distributionKlib = null,
+            localKotlinDir = null,
+            logger = IntellijLogBasedLogger,
+            skipCurrentDir = false,
+            zipAccessor = null,
         )
-        return resolveResult.getFullResolvedList().map { it.library }
+
+        return libraries.mapNotNull { path ->
+            val unresolvedLibrary = UnresolvedLibrary(path, null, lenient = true)
+            libraryResolver.resolve(unresolvedLibrary)
+        }
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(LLFirStandaloneLibrarySymbolProviderFactory::class.java)
+    }
+
+    private object IntellijLogBasedLogger : org.jetbrains.kotlin.util.Logger {
+        override fun log(message: String) {
+            LOG.info(message)
+        }
+
+        override fun error(message: String) {
+            LOG.error(message)
+        }
+
+        override fun warning(message: String) {
+            LOG.warn(message)
+        }
+
+        override fun fatal(message: String): Nothing {
+            throw IllegalStateException(message)
+        }
     }
 }
+
