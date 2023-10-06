@@ -21226,12 +21226,6 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
-                @TestMetadata("removeAtInt.kt")
-                public void testRemoveAtInt() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/removeAtInt.kt");
-                }
-
-                @Test
                 @TestMetadata("sizeFromKotlinOverriddenInJava.kt")
                 public void testSizeFromKotlinOverriddenInJava() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/sizeFromKotlinOverriddenInJava.kt");

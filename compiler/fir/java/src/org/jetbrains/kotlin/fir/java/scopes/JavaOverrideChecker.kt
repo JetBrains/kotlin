@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -76,18 +77,17 @@ class JavaOverrideChecker internal constructor(
     private fun isEqualTypes(
         candidateTypeRef: FirTypeRef,
         baseTypeRef: FirTypeRef,
-        substitutor: ConeSubstitutor
+        substitutor: ConeSubstitutor,
+        forceBoxCandidateType: Boolean,
+        forceBoxBaseType: Boolean,
     ): Boolean {
         val candidateType = candidateTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
         val baseType = baseTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
 
-        if (candidateType.isPrimitiveInJava(isReturnType = false) != baseType.isPrimitiveInJava(isReturnType = false)) return false
+        val candidateTypeIsPrimitive = !forceBoxCandidateType && candidateType.isPrimitiveInJava(isReturnType = false)
+        val baseTypeIsPrimitive = !forceBoxBaseType && baseType.isPrimitiveInJava(isReturnType = false)
 
-        return isEqualTypes(
-            candidateType,
-            baseType,
-            substitutor
-        )
+        return candidateTypeIsPrimitive == baseTypeIsPrimitive && isEqualTypes(candidateType, baseType, substitutor)
     }
 
     // In most cases checking erasure of value parameters should be enough, but in some cases there might be semi-valid Java hierarchies
@@ -241,8 +241,11 @@ class JavaOverrideChecker internal constructor(
         if (overrideCandidate.valueParameters.size != baseParameterTypes.size) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration)
 
+        val forceBoxOverrideParameterType = forceSingleValueParameterBoxing(overrideCandidate)
+        val forceBoxBaseParameterType = forceSingleValueParameterBoxing(baseDeclaration)
+
         if (!overrideCandidate.valueParameters.zip(baseParameterTypes).all { (paramFromJava, baseType) ->
-                isEqualTypes(paramFromJava.returnTypeRef, baseType, substitutor)
+                isEqualTypes(paramFromJava.returnTypeRef, baseType, substitutor, forceBoxOverrideParameterType, forceBoxBaseParameterType)
             }) {
             return false
         }
@@ -266,7 +269,10 @@ class JavaOverrideChecker internal constructor(
                     return overrideCandidate.valueParameters.isEmpty()
                 } else {
                     if (overrideCandidate.valueParameters.size != 1) return false
-                    return isEqualTypes(receiverTypeRef, overrideCandidate.valueParameters.single().returnTypeRef, ConeSubstitutor.Empty)
+                    return isEqualTypes(
+                        receiverTypeRef, overrideCandidate.valueParameters.single().returnTypeRef, ConeSubstitutor.Empty,
+                        forceBoxCandidateType = false, forceBoxBaseType = false
+                    )
                 }
             }
             is FirProperty -> {
@@ -274,11 +280,40 @@ class JavaOverrideChecker internal constructor(
                 return when {
                     receiverTypeRef == null -> overrideReceiverTypeRef == null
                     overrideReceiverTypeRef == null -> false
-                    else -> isEqualTypes(receiverTypeRef, overrideReceiverTypeRef, ConeSubstitutor.Empty)
+                    else -> isEqualTypes(
+                        receiverTypeRef, overrideReceiverTypeRef, ConeSubstitutor.Empty,
+                        forceBoxCandidateType = false, forceBoxBaseType = false
+                    )
                 }
             }
             else -> false
         }
     }
 
+    // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation.
+    // Otherwise this method might clash with 'remove(I): E' defined in the java.util.List JDK interface (mapped to kotlin 'removeAt').
+    // As in the K1 implementation in `methodSignatureMapping.kt`, we're checking if the method has `MutableCollection.remove`
+    // in its overridden symbols.
+    private fun forceSingleValueParameterBoxing(function: FirSimpleFunction): Boolean {
+        if (function.name.asString() != "remove" || function.receiverParameter != null || function.contextReceivers.isNotEmpty())
+            return false
+
+        val parameter = function.valueParameters.singleOrNull() ?: return false
+
+        val parameterConeType = parameter.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
+        if (!parameterConeType.fullyExpandedType(session).lowerBoundIfFlexible().isInt) return false
+
+        var overridesMutableCollectionRemove = false
+
+        baseScopes?.processOverriddenFunctions(function.symbol) {
+            if (it.fir.containingClassLookupTag() == StandardClassIds.MutableCollection.toLookupTag()) {
+                overridesMutableCollectionRemove = true
+                ProcessorAction.STOP
+            } else {
+                ProcessorAction.NEXT
+            }
+        }
+
+        return overridesMutableCollectionRemove
+    }
 }
