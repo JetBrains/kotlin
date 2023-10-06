@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
-import org.jetbrains.kotlin.codegen.inline.INLINE_SCOPE_NUMBER_SEPARATOR
+import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
-import org.jetbrains.kotlin.codegen.inline.getSurroundingScopeNumber
 import org.jetbrains.kotlin.config.JVMConfigurationKeys.ENABLE_INLINE_SCOPES_NUMBERS
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -24,9 +22,7 @@ import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
-import org.jetbrains.kotlin.ir.util.isLambdaInlining
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -252,18 +248,26 @@ private class ScopeNumberVariableProcessor : IrElementVisitorVoid {
                 name
         }
 
-        val nameWithScopeNumber = "$newName$INLINE_SCOPE_NUMBER_SEPARATOR$scopeNumber"
-        val nameWithSurroundingScopeNumber =
-            if (name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)) {
-                val surroundingScopeNumber = name.getSurroundingScopeNumber() ?: 0
-                "$nameWithScopeNumber$INLINE_SCOPE_NUMBER_SEPARATOR$surroundingScopeNumber"
-            } else {
-                nameWithScopeNumber
-            }
-
-        declaration.name = Name.identifier(nameWithSurroundingScopeNumber)
+        declaration.name = Name.identifier(addInlineScopeInfo(newName, scopeNumber))
         super.visitVariable(declaration)
     }
+}
+
+private fun addInlineScopeInfo(name: String, scopeNumber: Int): String {
+    val nameWithScopeNumber = name.addScopeInfo(scopeNumber)
+    if (isFakeLocalVariableForInline(name)) {
+        // During IR inlining we can't fetch call site line numbers because the line number mapping
+        // has not been calculated yet. To keep the inline scope info format consistent, we will add
+        // a mock call site line number instead, which will be replaced with the real one during the
+        // expression codegen phase.
+        val nameWithCallSiteLineNumber = nameWithScopeNumber.addScopeInfo(0)
+        if (name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT)) {
+            val surroundingScopeNumber = name.getInlineScopeInfo()?.surroundingScopeNumber ?: 0
+            return nameWithCallSiteLineNumber.addScopeInfo(surroundingScopeNumber)
+        }
+        return nameWithCallSiteLineNumber
+    }
+    return nameWithScopeNumber
 }
 
 private fun IrInlinedFunctionBlock.getReceiverParameterName(): String {

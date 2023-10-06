@@ -5,15 +5,28 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+data class InlineScopeInfo(val scopeNumber: Int, val callSiteLineNumber: Int?, val surroundingScopeNumber: Int?)
+
 fun String.dropInlineScopeInfo(): String =
     substringBefore(INLINE_SCOPE_NUMBER_SEPARATOR)
 
-fun String.getScopeNumber(): Int? =
-    substringAfter(INLINE_SCOPE_NUMBER_SEPARATOR)
-        .substringBefore(INLINE_SCOPE_NUMBER_SEPARATOR)
-        .toIntOrNull()
+fun String.getInlineScopeInfo(): InlineScopeInfo? {
+    val inlineScopeInfoSuffix = substringAfter(INLINE_SCOPE_NUMBER_SEPARATOR)
+    val numbers = arrayOf(StringBuilder(), StringBuilder(), StringBuilder())
+    var currentIndex = 0
+    for (char in inlineScopeInfoSuffix) {
+        if (char == INLINE_SCOPE_NUMBER_SEPARATOR) {
+            if (currentIndex >= numbers.size) {
+                return null
+            }
+            currentIndex += 1
+        } else {
+            numbers[currentIndex].append(char)
+        }
+    }
 
-fun String.getSurroundingScopeNumber(): Int? =
-    substringAfter(INLINE_SCOPE_NUMBER_SEPARATOR, "")
-        .substringAfter(INLINE_SCOPE_NUMBER_SEPARATOR, "")
-        .toIntOrNull()
+    val scopeNumber = numbers[0].toString().toIntOrNull() ?: return null
+    val callSiteLineNumber = numbers[1].toString().toIntOrNull()
+    val surroundingScopeNumber = numbers[2].toString().toIntOrNull()
+    return InlineScopeInfo(scopeNumber, callSiteLineNumber, surroundingScopeNumber)
+}

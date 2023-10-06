@@ -21,7 +21,7 @@ fun box(): String {
 // 3 LOCALVARIABLE \$i\$f\$inlineFun
 
 // JVM_IR_TEMPLATES_WITH_INLINE_SCOPES
-// 1 LOCALVARIABLE \$i\$a\$-inlineFun-DefaultLambdaKt\$inlineFun\$1\\2\\0 I
+// 1 LOCALVARIABLE \$i\$a\$-inlineFun-DefaultLambdaKt\$inlineFun\$1\\2\\30\\0 I
 // inlineFun, inlineFun$default, inlined inlineFun:
 // 1 LOCALVARIABLE \$i\$f\$inlineFun\\1
 // 2 LOCALVARIABLE \$i\$f\$inlineFun I

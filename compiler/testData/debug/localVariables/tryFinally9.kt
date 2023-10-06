@@ -48,8 +48,8 @@ fun box() {
 // test.kt:20 compute:
 // test.kt:21 compute: s:java.lang.String="NOPE":java.lang.String
 // test.kt:22 compute: s:java.lang.String="NOPE":java.lang.String
-// test.kt:7 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1:int=0:int
-// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1:int=0:int, $i$a$-f-TestKt$compute$1\2\0:int=0:int
+// test.kt:7 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int
+// test.kt:23 compute: s:java.lang.String="NOPE":java.lang.String, $i$f$f\1\22:int=0:int, $i$a$-f-TestKt$compute$1\2\103\0:int=0:int
 // test.kt:27 compute:
 // test.kt:28 compute: s2:java.lang.String="NOPE":java.lang.String
 // test.kt:29 compute: s2:java.lang.String="NOPE":java.lang.String, j:int=0:int

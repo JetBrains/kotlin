@@ -43,8 +43,8 @@ fun box() {
 // test.kt:19 compute: e:java.lang.Exception=java.lang.RuntimeException
 // test.kt:20 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int
 // test.kt:21 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int
-// test.kt:7 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f\1:int=0:int
-// test.kt:22 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f\1:int=0:int, $i$a$-f-TestKt$compute$1\2\0:int=0:int
+// test.kt:7 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f\1\21:int=0:int
+// test.kt:22 compute: e:java.lang.Exception=java.lang.RuntimeException, y:int=32:int, j:int=0:int, $i$f$f\1\21:int=0:int, $i$a$-f-TestKt$compute$1\2\88\0:int=0:int
 // test.kt:26 compute:
 // test.kt:32 box:
 // test.kt:33 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String

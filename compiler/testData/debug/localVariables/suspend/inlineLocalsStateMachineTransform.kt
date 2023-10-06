@@ -24,12 +24,12 @@ suspend fun box() {
 // test.kt:8 h: $completion:kotlin.coroutines.Continuation=TestKt$box$1
 // test.kt:12 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:14 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
-// test.kt:4 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal\1:int=0:int
-// test.kt:5 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal\1:int=0:int, x\1:int=41:int
+// test.kt:4 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal\1\14:int=0:int
+// test.kt:5 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal\1\14:int=0:int, x\1:int=41:int
 // test.kt:16 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:18 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
-// test.kt:4 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal\2:int=0:int
-// test.kt:5 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal\2:int=0:int, x\2:int=41:int
+// test.kt:4 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal\2\18:int=0:int
+// test.kt:5 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal\2\18:int=0:int, x\2:int=41:int
 // test.kt:19 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 
 // EXPECTATIONS JVM JVM_IR

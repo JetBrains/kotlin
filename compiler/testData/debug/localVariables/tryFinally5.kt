@@ -34,9 +34,9 @@ fun box() {
 // test.kt:13 compute:
 // test.kt:14 compute:
 // test.kt:15 compute: a:java.lang.String="a":java.lang.String
-// test.kt:7 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1:int=0:int
-// test.kt:16 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1:int=0:int, $i$a$-g-TestKt$compute$1\2\0:int=0:int
-// test.kt:17 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1:int=0:int, $i$a$-g-TestKt$compute$1\2\0:int=0:int, b\2:java.lang.String="b":java.lang.String
+// test.kt:7 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int
+// test.kt:16 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int, $i$a$-g-TestKt$compute$1\2\71\0:int=0:int
+// test.kt:17 compute: a:java.lang.String="a":java.lang.String, $i$f$g\1\15:int=0:int, $i$a$-g-TestKt$compute$1\2\71\0:int=0:int, b\2:java.lang.String="b":java.lang.String
 // test.kt:22 compute:
 // test.kt:28 box:
 // test.kt:29 box: result:java.lang.String="b":java.lang.String
