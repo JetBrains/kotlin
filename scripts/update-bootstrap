@@ -17,7 +17,7 @@ def git_add(*files):
     subprocess.run(['git', 'add', *files], check=True)
 
 def git_commit(message):
-    subprocess.run(['git', 'commit', message])
+    subprocess.run(['git', 'commit', '-m', message])
 
 
 if __name__ == '__main__':
