@@ -33,6 +33,17 @@ class ScriptCompilerTest : TestCase() {
         assertTrue(res.reports.none { it.message.contains("nonsense") })
     }
 
+    fun testDeprecationAnnotation() {
+        val res = compile("""
+            @Deprecated("BECAUSE")
+            fun deprecatedFunction() {}
+            deprecatedFunction()
+        """.trimIndent().toScriptSource()) {}
+
+        assertTrue(res is ResultWithDiagnostics.Success)
+        assertTrue(res.reports.any { it.message.contains("deprecatedFunction(): Unit' is deprecated. BECAUSE") })
+    }
+
     fun testSimpleVarAccess() {
         val res = compileToClass(
             """

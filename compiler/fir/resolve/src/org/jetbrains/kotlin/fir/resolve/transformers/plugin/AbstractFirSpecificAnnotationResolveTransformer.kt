@@ -394,6 +394,21 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         }
     }
 
+    override fun transformScript(
+        script: FirScript,
+        data: Nothing?,
+    ): FirScript {
+        if (shouldTransformDeclaration(script)) {
+            computationSession.recordThatAnnotationsAreResolved(script)
+            transformDeclaration(script, null).also {
+                transformChildren(script) {
+                    script.transformStatements(this, data)
+                }
+            }
+        }
+        return script
+    }
+
     inline fun withRegularClass(
         regularClass: FirRegularClass,
         action: () -> Unit
