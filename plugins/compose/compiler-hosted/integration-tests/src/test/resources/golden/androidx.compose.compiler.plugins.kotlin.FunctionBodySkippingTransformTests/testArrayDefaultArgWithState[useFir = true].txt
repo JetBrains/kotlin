@@ -25,7 +25,7 @@ fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %comp
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
-  } else if (%changed and 0b1110 == 0) {
+  } else if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(state)) 0b0100 else 0b0010
   }
   %composer.startMovableGroup(<>, values.size)
@@ -38,7 +38,7 @@ fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %comp
   if (%dirty and 0b01110000 == 0) {
     %dirty = %dirty or 0b00010000
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     %composer.startDefaults()
     if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
       if (%default and 0b0010 != 0) {
