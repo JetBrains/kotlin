@@ -198,7 +198,6 @@ dependencies {
 
     sources(kotlinStdlib("jdk7", classifier = "sources"))
     sources(kotlinStdlib("jdk8", classifier = "sources"))
-    sources(project(":kotlin-test:kotlin-test-js-ir", configuration = "jsSourcesElements"))
 
     if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         sources(kotlinStdlib(classifier = "sources"))
@@ -210,6 +209,7 @@ dependencies {
         sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
         sources(project(":kotlin-reflect", configuration = "sources"))
         sources(project(":kotlin-test", "combinedJvmSourcesJar"))
+        sources(project(":kotlin-test:kotlin-test-js-ir", configuration = "jsSourcesElements"))
 
         distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
