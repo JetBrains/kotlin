@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrMaybeDeserializedClass
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -154,6 +155,7 @@ class Fir2IrLazyClass(
             .also(converter::bindFakeOverridesOrPostpone)
     }
 
+    @IrSymbolInternals
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,

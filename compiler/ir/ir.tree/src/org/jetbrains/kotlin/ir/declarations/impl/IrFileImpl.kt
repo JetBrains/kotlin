@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 
@@ -79,6 +80,7 @@ class IrFileImpl(
                 packageFragmentDescriptor.containingDeclaration
         }
 
+    @IrSymbolInternals
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     override var annotations: List<IrConstructorCall> = emptyList()

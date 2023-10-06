@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -31,6 +32,8 @@ object IrErrorClassImpl : IrClassImpl(
             override var annotations: List<IrConstructorCall>
                 get() = shouldNotBeCalled()
                 set(_) {}
+
+            @IrSymbolInternals
             override val declarations: MutableList<IrDeclaration>
                 get() = shouldNotBeCalled()
             override val symbol: IrFileSymbol

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
@@ -47,6 +48,7 @@ open class IrClassImpl(
 
     override var thisReceiver: IrValueParameter? = null
 
+    @IrSymbolInternals
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     override var typeParameters: List<IrTypeParameter> = emptyList()

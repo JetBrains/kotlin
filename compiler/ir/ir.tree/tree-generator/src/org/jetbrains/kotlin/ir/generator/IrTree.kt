@@ -343,7 +343,17 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationParent)
 
-        +listField("declarations", declaration, mutability = List, isChild = true)
+        +listField("declarations", declaration, mutability = List, isChild = true) {
+            kDoc = """
+                 Accessing list of declaration may trigger lazy declaration list computation for lazy class,
+                   which requires computation of fake-overrides for this class. So it's unsafe to access it
+                   before IR for all sources is built (because fake-overrides of lazy classes may depend on
+                   declaration of source classes, e.g. for java source classes)
+            """.trimIndent()
+            generationCallback = {
+                addAnnotation(ClassName("org.jetbrains.kotlin.ir.symbols", "IrSymbolInternals"))
+            }
+        }
     }
     val typeParametersContainer: ElementConfig by element(Declaration) {
         ownsChildren = false

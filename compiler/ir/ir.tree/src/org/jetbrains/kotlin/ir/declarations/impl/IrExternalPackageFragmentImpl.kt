@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -51,6 +52,7 @@ class IrExternalPackageFragmentImpl(
     override val moduleDescriptor: ModuleDescriptor
         get() = packageFragmentDescriptor.containingDeclaration
 
+    @IrSymbolInternals
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
