@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.fir.session.MetadataSymbolProvider
@@ -102,6 +103,16 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
 
         return listOf(
             KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kLibs)
+        )
+    }
+
+    override fun createBuiltinsSymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider
+    ): List<FirSymbolProvider> {
+        return listOf(
+            FirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider)
         )
     }
 

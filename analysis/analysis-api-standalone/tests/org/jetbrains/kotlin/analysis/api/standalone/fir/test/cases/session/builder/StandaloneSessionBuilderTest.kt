@@ -25,12 +25,15 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.Assertions
@@ -163,8 +166,14 @@ class StandaloneSessionBuilderTest {
             }
         }
         val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+
+        // call
         val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
         ktCallExpression.assertIsCallOf(CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier("listOf")))
+
+        // builtin type
+        val typeReference = ktFile.findDescendantOfType<KtNamedFunction>()!!.typeReference!!
+        typeReference.assertIsReferenceTo(StandardClassIds.Unit)
     }
 
 
@@ -175,6 +184,13 @@ class StandaloneSessionBuilderTest {
             val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
             Assertions.assertInstanceOf(KtFunctionSymbol::class.java, symbol); symbol as KtFunctionSymbol
             Assertions.assertEquals(callableId, symbol.callableIdIfNonLocal)
+        }
+    }
+
+    private fun KtTypeReference.assertIsReferenceTo(classId: ClassId) {
+        analyze(this) {
+            val actualClassId = getKtType().expandedClassSymbol?.classIdIfNonLocal
+            Assertions.assertEquals(classId, actualClassId)
         }
     }
 }

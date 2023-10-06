@@ -1,0 +1,801 @@
+expression: list
+KtType: kotlin.collections.List<AAA>
+
+KtTypeScope:
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Boolean
+  symbol = kotlin/collections/List.contains(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Boolean
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = element
+      receiverType = null
+      returnType = AAA
+      symbol = element: E
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/collections/List.contains
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Boolean
+  symbol = kotlin/collections/List.containsAll(<dispatch receiver>: kotlin.collections.List<E>, elements: kotlin.collections.Collection<E>): kotlin.Boolean
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = elements
+      receiverType = null
+      returnType = kotlin.collections.Collection<AAA>
+      symbol = elements: kotlin.collections.Collection<E>
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/collections/List.containsAll
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = AAA
+  symbol = kotlin/collections/List.get(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): E
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = index
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = index: kotlin.Int
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/collections/List.get
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/collections/List.indexOf(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Int
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = element
+      receiverType = null
+      returnType = AAA
+      symbol = element: E
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/collections/List.indexOf
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Boolean
+  symbol = kotlin/collections/List.isEmpty(<dispatch receiver>: kotlin.collections.List<E>): kotlin.Boolean
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/collections/List.isEmpty
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.collections.Iterator<AAA>
+  symbol = kotlin/collections/List.iterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.Iterator<E>
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/collections/List.iterator
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/collections/List.lastIndexOf(<dispatch receiver>: kotlin.collections.List<E>, element: E): kotlin.Int
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = element
+      receiverType = null
+      returnType = AAA
+      symbol = element: E
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/collections/List.lastIndexOf
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.collections.ListIterator<AAA>
+  symbol = kotlin/collections/List.listIterator(<dispatch receiver>: kotlin.collections.List<E>): kotlin.collections.ListIterator<E>
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/collections/List.listIterator
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.collections.ListIterator<AAA>
+  symbol = kotlin/collections/List.listIterator(<dispatch receiver>: kotlin.collections.List<E>, index: kotlin.Int): kotlin.collections.ListIterator<E>
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = index
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = index: kotlin.Int
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/collections/List.listIterator
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.collections.List<AAA>
+  symbol = kotlin/collections/List.subList(<dispatch receiver>: kotlin.collections.List<E>, fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<E>
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = fromIndex
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = fromIndex: kotlin.Int
+      callableIdIfNonLocal = null,
+    KtVariableLikeSignature:
+      name = toIndex
+      receiverType = null
+      returnType = kotlin.Int
+      symbol = toIndex: kotlin.Int
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/collections/List.subList
+KtVariableLikeSignature:
+  name = size
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = val size: kotlin.Int
+  callableIdIfNonLocal = kotlin/collections/List.size
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Boolean
+  symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+  valueParameters = [
+    KtVariableLikeSignature:
+      name = other
+      receiverType = null
+      returnType = kotlin.Any?
+      symbol = other: kotlin.Any?
+      callableIdIfNonLocal = null
+  ]
+  callableIdIfNonLocal = kotlin/Any.equals
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.Int
+  symbol = kotlin/Any.hashCode(<dispatch receiver>: kotlin.Any): kotlin.Int
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/Any.hashCode
+KtFunctionLikeSignature:
+  receiverType = null
+  returnType = kotlin.String
+  symbol = kotlin/Any.toString(<dispatch receiver>: kotlin.Any): kotlin.String
+  valueParameters = []
+  callableIdIfNonLocal = kotlin/Any.toString
+
+
+Declaration Scope:
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.contains
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: contains
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: E
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.containsAll
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: containsAll
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: elements
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: [
+          KtTypeParameterType:
+            annotationsList: []
+            type: E
+        ]
+        type: kotlin/collections/Collection<E>
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.get
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: get
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtTypeParameterType:
+    annotationsList: []
+    type: E
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: index
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.indexOf
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: indexOf
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: E
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.isEmpty
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: isEmpty
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.iterator
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: iterator
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: kotlin/collections/Iterator<E>
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.lastIndexOf
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: lastIndexOf
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: element
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtTypeParameterType:
+        annotationsList: []
+        type: E
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.listIterator
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: listIterator
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: kotlin/collections/ListIterator<E>
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.listIterator
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: listIterator
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: kotlin/collections/ListIterator<E>
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: index
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.subList
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: subList
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: kotlin/collections/List<E>
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: fromIndex
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: toIndex
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Int
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtKotlinPropertySymbol:
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(kotlin/collections/List.size)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+  callableIdIfNonLocal: kotlin/collections/List.size
+  contextReceivers: []
+  getter: KtPropertyGetterSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    hasBody: false
+    hasStableParameterNames: true
+    isDefault: true
+    isExtension: false
+    isInline: false
+    isOverride: false
+    modality: ABSTRACT
+    origin: LIBRARY
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: ACCESSOR
+    typeParameters: []
+    valueParameters: []
+    visibility: Public
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isActual: false
+  isConst: false
+  isDelegatedProperty: false
+  isExpect: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: ABSTRACT
+  name: size
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Any.equals
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: equals
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: other
+      origin: LIBRARY
+      receiverParameter: null
+      returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
+        type: kotlin/Any?
+      symbolKind: LOCAL
+      typeParameters: []
+  ]
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Any.hashCode
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: hashCode
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/Any.toString
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isActual: false
+  isBuiltinFunctionInvoke: false
+  isExpect: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: OPEN
+  name: toString
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/String
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+

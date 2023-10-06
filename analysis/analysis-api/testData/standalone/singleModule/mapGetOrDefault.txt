@@ -1,2 +1,2 @@
 Resolved to:
-KtNamedFunction:getOrDefault(key, defaultValue)
+PsiMethod:get(p: PsiType:Object): PsiType:V
