@@ -399,7 +399,9 @@ class FirCallCompleter(
                         }
                     }
                 } else {
-                    lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+                    transformer.context.inferenceSession.runLambdaCompletion(candidate) {
+                        lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+                    }
                 }
             }
             transformer.context.dropContextForAnonymousFunction(lambdaArgument)
