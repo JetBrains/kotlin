@@ -23,7 +23,7 @@ fun assertExists(file: File) {
 }
 
 val BUILT_INS_NATIVE_DIR_JVM = File("core/builtins/native/")
-val BUILT_INS_NATIVE_DIR_JS = File("libraries/stdlib/js-ir/builtins/")
+val BUILT_INS_NATIVE_DIR_JS = File("libraries/stdlib/js/builtins/")
 val BUILT_INS_NATIVE_DIR_WASM = File("libraries/stdlib/wasm/builtins/")
 val BUILT_INS_NATIVE_DIR_NATIVE = File("kotlin-native/runtime/src/main/kotlin/")
 val BUILT_INS_SRC_DIR = File("core/builtins/src/")

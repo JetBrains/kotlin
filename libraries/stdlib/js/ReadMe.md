@@ -1,5 +1,7 @@
-This directory contains shared sources of Kotlin/JS Standard Library for current and IR backends.
+## Kotlin Standard Library for JS
 
-Note that `stdlib/js/src/generated` is not shared but used exclusively for current `js-v1` backend.
+This directory contains Kotlin/JS specific sources of Kotlin standard library
+that are used together common sources to produce the `kotlin-stdlib-js` artifact.
 
-Kotlin/JS Standard Library module is moved to `libraries/stdlib/js-v1`.
+Additional sources are copied during the build from `/core/builtins/` except those builtins that 
+have a more specific version for K/JS (see `builtins` subdirectory).

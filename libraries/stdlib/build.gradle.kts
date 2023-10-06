@@ -49,12 +49,9 @@ dependencies {
 val builtinsDir = "${rootDir}/core/builtins"
 val builtinsSrcDir = "${buildDir}/src/builtin-sources"
 
-val jsCommonDir = "${projectDir}/js"
-val jsCommonSrcDir = "${jsCommonDir}/src"
-val jsCommonTestSrcDir = "${jsCommonDir}/test"
+val jsDir = "${projectDir}/js"
 
 // for js-ir
-val jsIrDir = "${projectDir}/js-ir"
 val jsIrMainSources = "${buildDir}/src/jsMainSources"
 lateinit var jsIrTarget: KotlinJsTargetDsl
 
@@ -329,21 +326,19 @@ kotlin {
             val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
                 srcDir(prepareJsIrMainSources)
-                srcDir("$jsCommonDir/src").apply {
+                srcDir("$jsDir/builtins")
+                srcDir("$jsDir/runtime")
+                srcDir("$jsDir/src").apply {
                     exclude("kotlin/browser")
                     exclude("kotlin/dom")
                     exclude("kotlinx")
                     exclude("org.w3c")
                 }
-                srcDir("$jsCommonDir/runtime")
-                srcDir("$jsIrDir/builtins")
-                srcDir("$jsIrDir/runtime")
-                srcDir("$jsIrDir/src")
             }
 
             prepareJsIrMainSources.configure {
                 val unimplementedNativeBuiltIns =
-                    (file("$builtinsDir/native/kotlin/").list()!!.toSortedSet() - file("$jsIrDir/builtins/").list()!!)
+                    (file("$builtinsDir/native/kotlin/").list()!!.toSortedSet() - file("$jsDir/builtins/").list()!!)
                         .map { "core/builtins/native/kotlin/$it" }
 
                 // TODO: try to reuse absolute paths defined in the beginning
@@ -392,7 +387,7 @@ kotlin {
             dependencies {
                 api(project(":kotlin-test:kotlin-test-js-ir"))
             }
-            kotlin.srcDir(jsCommonTestSrcDir)
+            kotlin.srcDir("${jsDir}/test")
         }
 
         val nativeWasmMain by creating {
@@ -602,14 +597,14 @@ tasks {
             }
             from("$jsIrMainSources/core/builtins/src")
             from("$jsIrMainSources/libraries/stdlib/js/src")
-            from("$jsIrDir/builtins") {
+            from("$jsDir/builtins") {
                 into("kotlin")
                 exclude("Enum.kt")
             }
-            from("$jsIrDir/runtime") {
+            from("$jsDir/runtime") {
                 into("runtime")
             }
-            from("$jsIrDir/src") {
+            from("$jsDir/src") {
                 include("**/*.kt")
             }
         }

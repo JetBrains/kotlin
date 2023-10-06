@@ -87,52 +87,48 @@ val commonMainCollectionSources by task<Sync> {
 
 val jsMainSources by task<Sync> {
     dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
+    val jsDir = file("$rootDir/libraries/stdlib/js")
 
-    from {
-        val fullJsMainSources = tasks.getByPath(":kotlin-stdlib:prepareJsIrMainSources")
+    from("$jsDir/src") {
         exclude(
-            listOf(
-                "libraries/stdlib/js/src/org.w3c/**",
-                "libraries/stdlib/js/src/kotlin/char.kt",
-                "libraries/stdlib/js/src/kotlin/collectionJs.kt",
-                "libraries/stdlib/js/src/kotlin/collections/**",
-                "libraries/stdlib/js/src/kotlin/time/**",
-                "libraries/stdlib/js/src/kotlin/console.kt",
-                "libraries/stdlib/js/src/kotlin/coreDeprecated.kt",
-                "libraries/stdlib/js/src/kotlin/date.kt",
-                "libraries/stdlib/js/src/kotlin/GroupingJs.kt",
-                "libraries/stdlib/js/src/kotlin/ItemArrayLike.kt",
-                "libraries/stdlib/js/src/kotlin/io/**",
-                "libraries/stdlib/js/src/kotlin/json.kt",
-                "libraries/stdlib/js/src/kotlin/promise.kt",
-                "libraries/stdlib/js/src/kotlin/regexp.kt",
-                "libraries/stdlib/js/src/kotlin/sequenceJs.kt",
-                "libraries/stdlib/js/src/kotlin/throwableExtensions.kt",
-                "libraries/stdlib/js/src/kotlin/text/**",
-                "libraries/stdlib/js/src/kotlin/reflect/KTypeHelpers.kt",
-                "libraries/stdlib/js/src/kotlin/reflect/KTypeParameterImpl.kt",
-                "libraries/stdlib/js/src/kotlin/reflect/KTypeImpl.kt",
-                "libraries/stdlib/js/src/kotlin/dom/**",
-                "libraries/stdlib/js/src/kotlin/browser/**",
-                "libraries/stdlib/js/src/kotlinx/dom/**",
-                "libraries/stdlib/js/src/kotlinx/browser/**",
-                "libraries/stdlib/js/src/kotlin/enums/**"
-            )
+            "generated/**",
+            "org.w3c/**",
+            "kotlin/char.kt",
+            "kotlin/collectionJs.kt",
+            "kotlin/collections/**",
+            "kotlin/time/**",
+            "kotlin/console.kt",
+            "kotlin/coreDeprecated.kt",
+            "kotlin/date.kt",
+            "kotlin/GroupingJs.kt",
+            "kotlin/ItemArrayLike.kt",
+            "kotlin/io/**",
+            "kotlin/json.kt",
+            "kotlin/promise.kt",
+            "kotlin/regexp.kt",
+            "kotlin/sequenceJs.kt",
+            "kotlin/throwableExtensions.kt",
+            "kotlin/text/**",
+            "kotlin/reflect/KTypeHelpers.kt",
+            "kotlin/reflect/KTypeParameterImpl.kt",
+            "kotlin/reflect/KTypeImpl.kt",
+            "kotlin/dom/**",
+            "kotlin/browser/**",
+            "kotlinx/dom/**",
+            "kotlinx/browser/**",
+            "kotlin/enums/**",
         )
-        fullJsMainSources.outputs.files.singleFile
     }
-
-    for (jsIrSrcDir in listOf("builtins", "runtime", "src")) {
-        from("$rootDir/libraries/stdlib/js-ir/$jsIrSrcDir") {
-            exclude(
-                listOf(
-                    "collectionsHacks.kt",
-                    "generated/**",
-                    "kotlin/text/**"
-                )
-            )
-            into("libraries/stdlib/js-ir/$jsIrSrcDir")
-        }
+    from {
+        val fullJsMainSources = tasks.getByPath(":kotlin-stdlib:prepareJsIrMainSources") as Sync
+        fullJsMainSources.destinationDir
+    }
+    from("$jsDir/runtime") {
+        exclude("collectionsHacks.kt")
+        into("runtime")
+    }
+    from("$jsDir/builtins") {
+        into("builtins")
     }
 
     from("$rootDir/libraries/stdlib/js-ir-minimal-for-test/src")
