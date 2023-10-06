@@ -306,19 +306,27 @@ fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinT
 }
 
 fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
-    return symbol.isVisibleInClass(parentClass.symbol)
+    return symbol.isVisibleInClass(parentClass.symbol, symbol.resolvedStatus)
 }
 
 fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Boolean {
-    val classPackage = parentClassSymbol.classId.packageFqName
-    val (visibility, packageName) = when (this) {
-        is FirCallableSymbol<*> -> visibility to callableId.packageName
-        is FirClassLikeSymbol<*> -> visibility to classId.packageFqName
+    val status = when (this) {
+        is FirCallableSymbol<*> -> resolvedStatus
+        is FirClassLikeSymbol -> resolvedStatus
         else -> return true
     }
-    if (visibility == Visibilities.Private ||
-        !visibility.visibleFromPackage(classPackage, packageName)
-    ) return false
+    return isVisibleInClass(parentClassSymbol, status)
+}
+
+fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>, status: FirDeclarationStatus): Boolean {
+    val classPackage = parentClassSymbol.classId.packageFqName
+    val packageName = when (this) {
+        is FirCallableSymbol<*> -> callableId.packageName
+        is FirClassLikeSymbol<*> -> classId.packageFqName
+        else -> return true
+    }
+    val visibility = status.visibility
+    if (visibility == Visibilities.Private || !visibility.visibleFromPackage(classPackage, packageName)) return false
     if (
         visibility == Visibilities.Internal &&
         (moduleData != parentClassSymbol.moduleData || parentClassSymbol.moduleData in moduleData.friendDependencies)

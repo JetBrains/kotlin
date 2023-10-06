@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.isVisibleInClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -49,7 +50,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class JavaClassUseSiteMemberScope(
-    klass: FirJavaClass,
+    private val klass: FirJavaClass,
     session: FirSession,
     superTypeScopes: List<FirTypeScope>,
     declaredMemberScope: FirContainingNamesAwareScope
@@ -153,6 +154,9 @@ class JavaClassUseSiteMemberScope(
 
     internal fun syntheticPropertyFromOverride(overriddenProperty: ResultOfIntersection<FirPropertySymbol>): FirSyntheticPropertySymbol? {
         val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull { (symbol, _) ->
+            // We may call this function at the STATUS phase, which means that using resolved status may lead to cycle
+            // So we need to use raw status here
+            if (!symbol.isVisibleInClass(klass.symbol, symbol.rawStatus)) return@firstNotNullOfOrNull null
             symbol.createOverridePropertyIfExists(declaredMemberScope, takeModalityFromGetter = true)
                 ?: superTypeScopes.firstNotNullOfOrNull { scope ->
                     symbol.createOverridePropertyIfExists(scope, takeModalityFromGetter = false)
@@ -260,7 +264,10 @@ class JavaClassUseSiteMemberScope(
             getProperties(propertyName).any l@{ propertySymbol ->
                 // TODO: add magic overrides from LazyJavaClassMemberScope.isVisibleAsFunctionInCurrentClass
                 if (propertySymbol !is FirPropertySymbol) return@l false
-                propertySymbol.isOverriddenInClassBy(this)
+                // We may call this function at the STATUS phase, which means that using resolved status may lead to cycle
+                //   so we need to use raw status here
+                propertySymbol.isVisibleInClass(this@JavaClassUseSiteMemberScope.klass.symbol, propertySymbol.rawStatus) &&
+                        propertySymbol.isOverriddenInClassBy(this)
             }
         }
         if (hasCorrespondingProperty) return false
