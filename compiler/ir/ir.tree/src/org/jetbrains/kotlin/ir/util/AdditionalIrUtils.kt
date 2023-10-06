@@ -185,6 +185,8 @@ val IrDeclaration.fileEntry: IrFileEntry
         }
     }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 fun IrClass.companionObject(): IrClass? =
     this.declarations.singleOrNull { it is IrClass && it.isCompanion } as IrClass?
 
@@ -282,6 +284,8 @@ class NaiveSourceBasedFileEntryImpl(
     }
 }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
     val properties = declarations.filterIsInstanceAnd<IrProperty> { it.name.asString() == name }
     if (properties.size > 1) {
@@ -296,10 +300,14 @@ private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
 fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
     findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 fun IrClass.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.getter?.symbol
         ?: getSimpleFunction("<get-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 fun IrClass.getPropertySetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.setter?.symbol
         ?: getSimpleFunction("<set-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }

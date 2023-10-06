@@ -225,39 +225,61 @@ val IrProperty.isSimpleProperty: Boolean
                 (setterFun == null || setterFun.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR)
     }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClass.functions: Sequence<IrSimpleFunction>
     get() = declarations.asSequence().filterIsInstance<IrSimpleFunction>()
 
+// This declaration accesses IrBasedSymbol.owner, which is marked with this opt-in
+@IrSymbolInternals
 val IrClass.superClass: IrClass?
     get() = superTypes
         .firstOrNull { !it.isInterface() && !it.isAny() }
         ?.classOrNull
         ?.owner
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
     get() = owner.functions.map { it.symbol }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClass.constructors: Sequence<IrConstructor>
     get() = declarations.asSequence().filterIsInstance<IrConstructor>()
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClass.defaultConstructor: IrConstructor?
     get() = constructors.firstOrNull { ctor -> ctor.valueParameters.all { it.defaultValue != null } }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
     get() = owner.constructors.map { it.symbol }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClass.fields: Sequence<IrField>
     get() = declarations.asSequence().filterIsInstance<IrField>()
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClassSymbol.fields: Sequence<IrFieldSymbol>
     get() = owner.fields.map { it.symbol }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClass.primaryConstructor: IrConstructor?
     get() = this.declarations.singleOrNull { it is IrConstructor && it.isPrimary } as IrConstructor?
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrClass.invokeFun: IrSimpleFunction?
     get() = declarations.filterIsInstance<IrSimpleFunction>().singleOrNull { it.name.asString() == "invoke" }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 val IrDeclarationContainer.properties: Sequence<IrProperty>
     get() = declarations.asSequence().filterIsInstance<IrProperty>()
 
@@ -447,6 +469,8 @@ fun IrFunction.isExternalOrInheritedFromExternal(): Boolean {
     return isEffectivelyExternal() || (this is IrSimpleFunction && isExternalOrInheritedFromExternalImpl(this))
 }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
     declarations.find { it is T && predicate(it) } as? T
 
@@ -1169,6 +1193,8 @@ fun IrFunction.isMethodOfAny(): Boolean =
                 else -> false
             }
 
+// This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
+@IrSymbolInternals
 fun IrDeclarationContainer.simpleFunctions() = declarations.flatMap {
     when (it) {
         is IrSimpleFunction -> listOf(it)
