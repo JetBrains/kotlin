@@ -446,33 +446,33 @@ fun FirTypeScope.processOverriddenFunctionsFromSuperClasses(
     functionSymbol: FirNamedFunctionSymbol,
     containingClass: FirClass,
     processor: (FirNamedFunctionSymbol) -> ProcessorAction
-): ProcessorAction =
-    processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { overridden, _ ->
-        val unwrapped = if (overridden.fir.isSubstitutionOverride &&
-            overridden.dispatchReceiverClassLookupTagOrNull() == containingClass.symbol.toLookupTag()
-        )
+): ProcessorAction {
+    val ownerTag = containingClass.symbol.toLookupTag()
+    return processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { overridden, _ ->
+        val unwrapped = if (overridden.fir.isSubstitutionOverride && ownerTag.isRealOwnerOf(overridden))
             overridden.originalForSubstitutionOverride!!
         else
             overridden
 
         processor(unwrapped)
     }
+}
 
 fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
     propertySymbol: FirPropertySymbol,
     containingClass: FirClass,
     processor: (FirPropertySymbol) -> ProcessorAction
-): ProcessorAction =
-    processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, _ ->
-        val unwrapped = if (overridden.fir.isSubstitutionOverride &&
-            overridden.dispatchReceiverClassLookupTagOrNull() == containingClass.symbol.toLookupTag()
-        )
+): ProcessorAction {
+    val ownerTag = containingClass.symbol.toLookupTag()
+    return processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, _ ->
+        val unwrapped = if (overridden.fir.isSubstitutionOverride && ownerTag.isRealOwnerOf(overridden))
             overridden.originalForSubstitutionOverride!!
         else
             overridden
 
         processor(unwrapped)
     }
+}
 
 context(Fir2IrComponents)
 internal fun FirProperty.processOverriddenPropertySymbols(
