@@ -18508,6 +18508,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
+        @TestMetadata("delegateFromDifferentPackage.kt")
+        public void testDelegateFromDifferentPackage() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/delegateFromDifferentPackage.kt");
+        }
+
         @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
         public void testElvisWithInlineClassAndNullConstant() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

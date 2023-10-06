@@ -22154,6 +22154,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("delegateFromDifferentPackage.kt")
+        public void testDelegateFromDifferentPackage() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/delegateFromDifferentPackage.kt");
+        }
+
+        @Test
         @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
         public void testElvisWithInlineClassAndNullConstant() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
