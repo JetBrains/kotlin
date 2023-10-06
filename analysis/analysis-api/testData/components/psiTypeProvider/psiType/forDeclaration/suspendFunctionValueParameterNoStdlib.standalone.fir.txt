@@ -1,0 +1,2 @@
+KtType: suspend (kotlin.Int) -> kotlin.Unit
+PsiType: PsiType:Function2<? super Integer, ? super NonExistentClass<Unit>, ? extends Object>

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFacto
 import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -76,6 +77,10 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     }
 
     override fun getClassesByClassId(classId: ClassId): Collection<PsiClass> {
+        JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())?.let {
+            return getClassesByClassId(it)
+        }
+
         classId.parentClassId?.let { parentClassId ->
             val innerClassName = classId.relativeClassName.asString().split(".").last()
             return getClassesByClassId(parentClassId).mapNotNull { parentClsClass ->

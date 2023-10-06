@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.p
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.providers.DecompiledPsiDeclarationProvider.findPsi
@@ -54,6 +55,9 @@ public abstract class AbstractPsiDeclarationProviderTest : AbstractAnalysisApiBa
         return when (symbol.origin) {
             KtSymbolOrigin.LIBRARY -> {
                 findPsi(symbol, project) ?: symbol.psi
+            }
+            KtSymbolOrigin.SUBSTITUTION_OVERRIDE, KtSymbolOrigin.INTERSECTION_OVERRIDE -> {
+                psiForTest((symbol as KtCallableSymbol).unwrapFakeOverrides, project)
             }
             else -> symbol.psi
         }

@@ -7,16 +7,21 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.name.ClassId
 
 @LLFirInternals
 class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
@@ -79,4 +84,44 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
     ): List<FirSymbolProvider> {
         return emptyList() // TODO(kirpichenkov)
     }
+
+    override fun createBuiltinsSymbolProvider(
+        session: FirSession,
+        moduleData: LLFirModuleData,
+        kotlinScopeProvider: FirKotlinScopeProvider
+    ): List<FirSymbolProvider> {
+        return listOf(
+            StubBasedBuiltInsSymbolProvider(project, session, moduleData, kotlinScopeProvider)
+        )
+    }
+}
+
+private class StubBasedBuiltInsSymbolProvider(
+    project: Project,
+    session: FirSession,
+    moduleData: LLFirModuleData,
+    kotlinScopeProvider: FirKotlinScopeProvider,
+) : StubBasedFirDeserializedSymbolProvider(
+    session,
+    SingleModuleDataProvider(moduleData),
+    kotlinScopeProvider,
+    project,
+    createBuiltInsScope(project),
+    FirDeclarationOrigin.BuiltIns
+) {
+    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
+        session,
+        moduleData,
+        kotlinScopeProvider
+    )
+
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        return super.getClassLikeSymbolByClassId(classId)
+            ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
+    }
+}
+
+private fun createBuiltInsScope(project: Project): GlobalSearchScope {
+    val builtInFiles = BuiltInsVirtualFileProvider.getInstance().getBuiltInVirtualFiles()
+    return GlobalSearchScope.filesScope(project, builtInFiles)
 }

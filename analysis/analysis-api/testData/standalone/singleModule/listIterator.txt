@@ -1,2 +1,2 @@
 Resolved to:
-KtNamedFunction:add(element)
+PsiMethod:add(p: PsiType:E): PsiType:void
