@@ -990,6 +990,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/noStdlib.args");
         }
 
+        @TestMetadata("noStdlibCustomAny_k1.args")
+        public void testNoStdlibCustomAny_k1() throws Exception {
+            runTest("compiler/testData/cli/jvm/noStdlibCustomAny_k1.args");
+        }
+
+        @TestMetadata("noStdlibCustomAny_k2.args")
+        public void testNoStdlibCustomAny_k2() throws Exception {
+            runTest("compiler/testData/cli/jvm/noStdlibCustomAny_k2.args");
+        }
+
         @TestMetadata("nonExistingClassPathAndAnnotationsPath.args")
         public void testNonExistingClassPathAndAnnotationsPath() throws Exception {
             runTest("compiler/testData/cli/jvm/nonExistingClassPathAndAnnotationsPath.args");

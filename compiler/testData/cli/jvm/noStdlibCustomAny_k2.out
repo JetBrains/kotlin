@@ -1,0 +1,4 @@
+compiler/testData/cli/jvm/noStdlibCustomAny.kt:7:10: error: 'operator' modifier is not applicable to function 'must override ''equals()'' in Any'.
+    open operator fun equals(other: Any?): Boolean { return this.equals(other) }
+         ^
+COMPILATION_ERROR
