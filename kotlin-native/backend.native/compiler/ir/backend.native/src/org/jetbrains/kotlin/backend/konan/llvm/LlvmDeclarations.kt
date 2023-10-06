@@ -346,11 +346,11 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         } else {
             // Fields are module-private, so we use internal name:
             val name = "kvar:" + qualifyInternalName(declaration)
-            val alignmnet = declaration.requiredAlignment(llvm)
+            val alignment = declaration.requiredAlignment(llvm)
             val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
-                addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet)
+                addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignment)
             } else {
-                addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
+                addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignment, isExported = false)
             }
 
             declaration.metadata = KonanMetadata.StaticField(declaration, StaticFieldLlvmDeclarations(storage, alignmnet))

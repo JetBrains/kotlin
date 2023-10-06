@@ -1143,7 +1143,7 @@
 - [`KT-31129`](https://youtrack.jetbrains.com/issue/KT-31129) Call only Kotlin-specific reference contributors for getting Kotlin references from PSI
 - [`KT-32082`](https://youtrack.jetbrains.com/issue/KT-32082) Kotlin facet: 1.3.40 plugin does not properly read target platform settings of 1.3.50 plugin
 - [`KT-32969`](https://youtrack.jetbrains.com/issue/KT-32969) Data class extending abstract class with final `toString`, `equals` or `hashCode` causes exception
-- [`KT-33245`](https://youtrack.jetbrains.com/issue/KT-33245) IllegalArgumentException exception occurs on Tools->Configure Koltin in Project action in Android Studio
+- [`KT-33245`](https://youtrack.jetbrains.com/issue/KT-33245) IllegalArgumentException exception occurs on Tools->Configure Kotlin in Project action in Android Studio
 
 ### IDE. Completion
 

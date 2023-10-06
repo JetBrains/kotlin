@@ -144,7 +144,7 @@ test {
     } else if (project.hasProperty("org.jetbrains.kotlin.native.home")) {
         systemProperty("org.jetbrains.kotlin.native.home", project.property("org.jetbrains.kotlin.native.home"))
     } else {
-        // The Koltin/Native compiler must be built before test execution.
+        // The Kotlin/Native compiler must be built before test execution.
         systemProperty("konan.home", distDir.absolutePath)
         systemProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
     }

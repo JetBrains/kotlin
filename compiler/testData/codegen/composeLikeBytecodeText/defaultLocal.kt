@@ -3,7 +3,7 @@ fun box(): String {
     return foo() + foo("K")
 }
 
-// For Compose special default arugment handling, we still do not want
+// For Compose special default argument handling, we still do not want
 // the default argument mask in the local variable table.
 
 // 0 \$default

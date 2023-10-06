@@ -895,7 +895,7 @@ continuation parameter to it. Its purpose is to give access to the continuation 
 and lambdas. Thus we cannot write in pure Kotlin. It has to be intrinsic.
 
 Fun fact: since the lambda returns `returnType | COROUTINE_SUSPENDED`, the compiler does not check its return type, so there can be some
-funny CCEs at runtime because of this unsoundness in the Koltin type system:
+funny CCEs at runtime because of this unsoundness in the Kotlin type system:
 ```kotlin
 import kotlin.coroutines.intrinsics.*
 

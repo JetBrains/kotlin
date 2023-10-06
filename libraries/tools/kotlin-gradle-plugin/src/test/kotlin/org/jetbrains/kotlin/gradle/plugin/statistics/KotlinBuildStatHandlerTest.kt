@@ -51,7 +51,7 @@ class KotlinBuildStatHandlerTest {
 
         val konanTargetsMissedInMppPlatforms = KonanTarget::class.sealedSubclasses
             .mapNotNull { sealedClass -> sealedClass.objectInstance }
-            .map { koltinTarget -> koltinTarget.name }
+            .map { kotlinTarget -> kotlinTarget.name }
 
 
         val extraValues = allowedMppValues - kotlinPlatformTypesMissedInMppPlatforms - konanTargetsMissedInMppPlatforms
