@@ -24,13 +24,13 @@ fun Test(start: Int, end: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)P(1)<rememb...>,*<get(bK...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(start)) 0b0100 else 0b0010
   }
-  if (%changed and 0b01110000 == 0) {
+  if (%changed and 0b00110000 == 0) {
     %dirty = %dirty or if (%composer.changed(end)) 0b00100000 else 0b00010000
   }
-  if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
+  if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }

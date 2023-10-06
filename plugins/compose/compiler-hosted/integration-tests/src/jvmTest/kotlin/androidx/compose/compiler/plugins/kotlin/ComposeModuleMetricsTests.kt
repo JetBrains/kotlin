@@ -16,9 +16,15 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
 class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(useFir) {
+    override fun CompilerConfiguration.updateConfiguration() {
+        // Tests in this file are about testing the output, so we want non-skippable composables
+        put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
+    }
+
     @Test
     fun testStableAndUnstableClassesTxt() = assertClasses(
         """

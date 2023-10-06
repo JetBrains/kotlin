@@ -21,10 +21,10 @@ fun Test(decorator: Function3<@[ParameterName(name = 'content')] Function2<Compo
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<decora...>:Test.kt")
   val %dirty = %changed
-  if (%changed and 0b1110 == 0) {
+  if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changedInstance(decorator)) 0b0100 else 0b0010
   }
-  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
@@ -42,7 +42,7 @@ fun Test(decorator: Function3<@[ParameterName(name = 'content')] Function2<Compo
 internal object ComposableSingletons%TestKt {
   val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<Text("...>:Test.kt")
-    if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
+    if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }

@@ -20,10 +20,10 @@ internal object ComposableSingletons%TestKt {
   val lambda-1: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { x: Int, %composer: Composer?, %changed: Int ->
     sourceInformation(%composer, "C<A(x)>:Test.kt")
     val %dirty = %changed
-    if (%changed and 0b1110 == 0) {
+    if (%changed and 0b0110 == 0) {
       %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
     }
-    if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
+    if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %dirty, -1, <>)
       }

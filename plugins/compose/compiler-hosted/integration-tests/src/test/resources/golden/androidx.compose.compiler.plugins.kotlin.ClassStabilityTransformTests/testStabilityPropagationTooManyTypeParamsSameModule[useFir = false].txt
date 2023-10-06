@@ -100,9 +100,11 @@ fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
   sourceInformation(%composer, "C(A)<A(>:Test.kt#2p")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
-    %dirty = %dirty or 0b0010
+    %dirty = %dirty or 0b0110
+  } else if (%changed and 0b0110 == 0) {
+    %dirty = %dirty or if (%composer.changedInstance(y)) 0b0100 else 0b0010
   }
-  if (%default and 0b0001 != 0b0001 || %dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+  if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
     if (%default and 0b0001 != 0) {
       y = null
     }

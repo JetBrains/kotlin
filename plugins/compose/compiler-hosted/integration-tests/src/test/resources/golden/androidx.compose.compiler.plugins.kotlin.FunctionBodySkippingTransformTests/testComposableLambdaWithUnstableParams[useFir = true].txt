@@ -24,7 +24,7 @@ internal object ComposableSingletons%TestKt {
       traceEventStart(<>, %changed, -1, <>)
     }
     A(x, %composer, 0b1110 and %changed)
-    B(y, %composer, 0b1000)
+    B(y, %composer, 0b1110 and %changed shr 0b0011)
     if (isTraceInProgress()) {
       traceEventEnd()
     }
