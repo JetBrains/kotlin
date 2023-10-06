@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import org.gradle.api.Project
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -108,9 +107,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
         if (parameters.fusStatisticsAvailable.get()) {
             recordBuildFinished(null, buildFailed)
         }
-        KotlinBuildStatsService.applyIfInitialised {
-            it.close()
-        }
+        KotlinBuildStatsService.closeServices()
         log.kotlinDebug("Close ${this.javaClass.simpleName}")
     }
 
