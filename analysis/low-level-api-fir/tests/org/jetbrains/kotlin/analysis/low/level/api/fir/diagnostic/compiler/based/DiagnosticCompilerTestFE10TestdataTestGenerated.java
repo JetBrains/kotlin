@@ -16414,6 +16414,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("nestedLambdaWithNonLastYieldStatement.kt")
+                public void testNestedLambdaWithNonLastYieldStatement() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithNonLastYieldStatement.kt");
+                }
+
+                @Test
                 @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
                 public void testNoBuilderInferenceRestrictionReceiverInconsistency() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/noBuilderInferenceRestrictionReceiverInconsistency.kt");
