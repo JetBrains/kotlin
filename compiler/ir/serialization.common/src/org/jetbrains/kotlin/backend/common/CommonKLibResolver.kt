@@ -20,20 +20,23 @@ object CommonKLibResolver {
     fun resolve(
         libraries: Collection<String>,
         logger: Logger,
-        zipAccessor: ZipFileSystemAccessor? = null
+        zipAccessor: ZipFileSystemAccessor? = null,
+        lenient: Boolean = false,
     ): KotlinLibraryResolveResult =
         resolveWithoutDependencies(
             libraries,
             logger,
-            zipAccessor
+            zipAccessor,
+            lenient,
         ).resolveWithDependencies()
 
     fun resolveWithoutDependencies(
         libraries: Collection<String>,
         logger: Logger,
-        zipAccessor: ZipFileSystemAccessor?
+        zipAccessor: ZipFileSystemAccessor?,
+        lenient: Boolean = false,
     ): KLibResolution {
-        val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, null) }
+        val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, null, lenient) }
         val libraryAbsolutePaths = libraries.map { File(it).absolutePath }
         // Configure the resolver to only work with absolute paths for now.
         val libraryResolver = KLibResolverHelper(

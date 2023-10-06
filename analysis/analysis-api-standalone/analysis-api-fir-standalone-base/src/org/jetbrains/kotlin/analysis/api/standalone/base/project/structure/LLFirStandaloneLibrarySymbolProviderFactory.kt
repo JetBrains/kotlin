@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsF
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.util.DummyLogger
+import java.lang.IllegalStateException
 
 class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
     override fun createJvmLibrarySymbolProvider(
@@ -107,10 +108,35 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
 
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
         val ktLibraryModule = ktModule as? KtLibraryModule ?: return emptyList()
+
         val resolveResult = CommonKLibResolver.resolve(
             ktLibraryModule.getBinaryRoots().map { it.toString() },
-            DummyLogger
+            IntellijLogBasedLogger,
+            lenient = true,
         )
         return resolveResult.getFullResolvedList().map { it.library }
     }
+
+    companion object {
+        private val LOG = Logger.getInstance(LLFirStandaloneLibrarySymbolProviderFactory::class.java)
+    }
+
+    private object IntellijLogBasedLogger : org.jetbrains.kotlin.util.Logger {
+        override fun log(message: String) {
+            LOG.info(message)
+        }
+
+        override fun error(message: String) {
+            LOG.error(message)
+        }
+
+        override fun warning(message: String) {
+            LOG.warn(message)
+        }
+
+        override fun fatal(message: String): Nothing {
+            throw IllegalStateException(message)
+        }
+    }
 }
+
