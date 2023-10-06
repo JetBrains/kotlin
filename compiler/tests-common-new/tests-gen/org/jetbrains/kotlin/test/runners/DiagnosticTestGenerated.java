@@ -26181,6 +26181,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("PropertyInvoke.kt")
+            public void testPropertyInvoke() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/operatorsOverloading/PropertyInvoke.kt");
+            }
+
+            @Test
             @TestMetadata("unresolvedOperator.kt")
             public void testUnresolvedOperator() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/operatorsOverloading/unresolvedOperator.kt");
