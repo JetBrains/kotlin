@@ -444,8 +444,8 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_toPrimitiveArray = fn("toPrimitiveArray()") {
-        include(ArraysOfObjects, PrimitiveType.values().toSet())
-        include(Collections, PrimitiveType.values().toSet())
+        include(ArraysOfObjects, PrimitiveType.entries.toSet())
+        include(Collections, PrimitiveType.entries.toSet())
     } builder {
         val primitive = checkNotNull(primitive)
         val arrayType = primitive.name + "Array"

@@ -59,7 +59,7 @@ enum class PrimitiveType {
 
     companion object {
         val unsignedPrimitives = setOf(UInt, ULong, UByte, UShort)
-        val defaultPrimitives = PrimitiveType.values().toSet() - unsignedPrimitives
+        val defaultPrimitives = PrimitiveType.entries.toSet() - unsignedPrimitives
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
         val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
         val floatingPointPrimitives = setOf(Double, Float)
@@ -124,10 +124,6 @@ enum class KotlinTarget(val platform: Platform, val backend: Backend) {
     Native(Platform.Native, Backend.IR);
 
     val fullName get() = "Kotlin/$name"
-
-    companion object {
-        val values = KotlinTarget.values().toList()
-    }
 }
 
 enum class SequenceClass {
