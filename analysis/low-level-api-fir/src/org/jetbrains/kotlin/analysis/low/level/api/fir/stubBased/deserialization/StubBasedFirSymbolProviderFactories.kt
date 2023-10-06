@@ -10,13 +10,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.library.KLIB_METADATA_FILE_EXTENSION
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 internal fun createStubBasedFirSymbolProviderForClassFiles(
@@ -41,7 +41,13 @@ internal fun createStubBasedFirSymbolProviderForCommonMetadataFiles(
     kotlinScopeProvider: FirKotlinScopeProvider,
 ): FirSymbolProvider = createStubBasedFirSymbolProviderForScopeLimitedByFiles(
     project, baseScope, session, moduleDataProvider, kotlinScopeProvider,
-    fileFilter = { file -> file.fileType == KotlinBuiltInFileType },
+    fileFilter = { file ->
+        val extension = file.extension
+        extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION ||
+                extension == MetadataPackageFragment.METADATA_FILE_EXTENSION ||
+                // klib metadata symbol provider
+                extension == KLIB_METADATA_FILE_EXTENSION
+    },
 )
 
 internal fun createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(

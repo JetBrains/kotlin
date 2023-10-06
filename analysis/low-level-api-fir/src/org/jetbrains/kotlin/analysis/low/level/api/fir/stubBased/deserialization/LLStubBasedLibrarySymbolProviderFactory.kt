@@ -46,17 +46,15 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
         moduleDataProvider: SingleModuleDataProvider,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
-    ): List<FirSymbolProvider> {
-        return buildList {
-            add(createStubBasedFirSymbolProviderForCommonMetadataFiles(project, scope, session, moduleDataProvider, kotlinScopeProvider))
-            add(
-                // klib metadata symbol provider
-                createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
-                    project, scope, session, moduleDataProvider, kotlinScopeProvider
-                )
-            )
-        }
-    }
+    ): List<FirSymbolProvider> = listOf(
+        createStubBasedFirSymbolProviderForCommonMetadataFiles(
+            project = project,
+            baseScope = scope,
+            session = session,
+            moduleDataProvider = moduleDataProvider,
+            kotlinScopeProvider = kotlinScopeProvider,
+        )
+    )
 
     override fun createNativeLibrarySymbolProvider(
         session: FirSession,
