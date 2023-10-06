@@ -957,11 +957,16 @@ if (disableVerificationTasks) {
 
 gradle.taskGraph.whenReady(checkYarnAndNPMSuppressed)
 
+val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+
 plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
     extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class.java) {
         // Node.js with canary v8 that supports recent Wasm GC changes
         nodeVersion = "21.0.0-v8-canary202309167e82ab1fa2"
-        nodeDownloadBaseUrl = "https://nodejs.org/download/v8-canary"
+        nodeDownloadBaseUrl = if (cacheRedirectorEnabled)
+            "https://cache-redirector.jetbrains.com/nodejs.org/download/v8-canary"
+        else
+            "https://nodejs.org/download/v8-canary"
 
         npmInstallTaskProvider.configure {
             args += listOf("--network-concurrency", "1", "--mutex", "network")
@@ -973,7 +978,6 @@ plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin:
 }
 
 afterEvaluate {
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
     if (cacheRedirectorEnabled) {
         rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
             rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().downloadBaseUrl =
