@@ -450,6 +450,18 @@ public actual inline val Double.sign: Double get() = nativeSign(this)
 
 /**
  * Returns this value with the sign bit same as of the [sign] value.
+ *
+ * If [sign] is `NaN` the sign of the result is undefined.
+ */
+@SinceKotlin("1.2")
+public actual fun Double.withSign(sign: Double): Double {
+    val thisSignBit = doubleSignBit(this)
+    val newSignBit = doubleSignBit(sign)
+    return if (thisSignBit == newSignBit) this else -this
+}
+
+/**
+ * Returns this value with the sign bit same as of the [sign] value.
  */
 @SinceKotlin("1.2")
 @InlineOnly
