@@ -15,6 +15,7 @@ class ConeTypeVariableType(
     override val nullability: ConeNullability,
     override val lookupTag: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
+    // TODO: Make ConeSimpleKotlinType. KT-62420
 ) : ConeLookupTagBasedType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
     override fun equals(other: Any?): Boolean {
@@ -38,6 +39,7 @@ class ConeTypeVariableType(
 class ConeTypeVariableTypeConstructor(
     val debugName: String,
     val originalTypeParameter: TypeParameterMarker?
+    // TODO: Remove ConeClassifierLookupTag supertype. KT-62420
 ) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
     override val name: Name get() = Name.identifier(debugName)
 
