@@ -444,15 +444,6 @@ tasks {
         into(rootProject.buildDir.resolve("js-ir-runtime"))
     }
 
-    val jsLegacyJar by registering(Jar::class) {
-        archiveAppendix.set("js")
-        val jsJarFile = jsJar.get().archiveFile
-        inputs.file(jsJarFile)
-        doLast {
-            jsJarFile.get().asFile.toPath().copyTo(archiveFile.get().asFile.toPath(), overwrite = true)
-        }
-    }
-
     val jsRearrangedSourcesJar by registering(Jar::class) {
         archiveClassifier.set("js-sources")
         archiveVersion.set("")
@@ -505,7 +496,6 @@ tasks {
         val distJsSourcesJar = configurations.create("distJsSourcesJar")
         val distJsKlib = configurations.create("distJsKlib")
 
-        add(distJsJar.name, jsLegacyJar)
         add(distJsSourcesJar.name, jsSourcesJar)
         add(distJsKlib.name, jsJar)
     }
@@ -691,7 +681,6 @@ publishing {
             mavenPublication {
                 artifactId = "$artifactBaseName-js"
                 configureKotlinPomAttributes(project, "Kotlin Standard Library for JS", packaging = "klib")
-                artifact(tasks.named("jsLegacyJar"))
             }
             variant("jsApiElements")
             variant("jsRuntimeElements")
