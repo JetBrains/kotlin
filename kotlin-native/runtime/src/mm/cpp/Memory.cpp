@@ -16,6 +16,7 @@
 #include "Natives.h"
 #include "ObjectOps.hpp"
 #include "Porting.h"
+#include "ReferenceOps.hpp"
 #include "Runtime.h"
 #include "SafePoint.hpp"
 #include "StableRef.hpp"
@@ -144,63 +145,59 @@ extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, cons
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
     // Null `initialValue` means that the appropriate value was already set by static initialization.
     if (initialValue != nullptr) {
-        mm::SetHeapRef(location, const_cast<ObjHeader*>(initialValue));
+        SetHeapRef(location, const_cast<ObjHeader*>(initialValue));
     }
 }
 
 extern "C" const MemoryModel CurrentMemoryModel = MemoryModel::kExperimental;
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void SetStackRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetStackRef(location, const_cast<ObjHeader*>(object));
+    UpdateStackRef(location, object);
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetHeapRef(location, const_cast<ObjHeader*>(object));
+    mm::RefAccessor<false>{location} = const_cast<ObjHeader*>(object);
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
-    mm::SetHeapRef(location, nullptr);
+    mm::RefAccessor<false>{location} = nullptr;
 }
 
 extern "C" RUNTIME_NOTHROW void ZeroArrayRefs(ArrayHeader* array) {
     for (uint32_t index = 0; index < array->count_; ++index) {
         ObjHeader** location = ArrayAddressOfElementAt(array, index);
-        mm::SetHeapRef(location, nullptr);
+        mm::RefFieldAccessor{location} = nullptr;
     }
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
-    mm::SetStackRef(location, nullptr);
+    mm::StackRefAccessor{location} = nullptr;
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetStackRef(location, const_cast<ObjHeader*>(object));
+    mm::StackRefAccessor{location} = const_cast<ObjHeader*>(object);
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetHeapRef(location, const_cast<ObjHeader*>(object));
+    mm::RefAccessor<false>{location} = const_cast<ObjHeader*>(object);
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateVolatileHeapRef(ObjHeader** location, const ObjHeader* object) {
-    mm::SetHeapRefAtomicSeqCst(location, const_cast<ObjHeader*>(object));
+    mm::RefAccessor<false>{location}.storeAtomic(const_cast<ObjHeader*>(object), std::memory_order_seq_cst);
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(CompareAndSwapVolatileHeapRef, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
-    RETURN_RESULT_OF(mm::CompareAndSwapHeapRef, location, expectedValue, newValue);
+    ObjHeader* actual = expectedValue;
+    mm::RefAccessor<false>{location}.compareAndExchange(actual, newValue, std::memory_order_seq_cst);
+    RETURN_OBJ(actual);
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW bool CompareAndSetVolatileHeapRef(ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue) {
-    return mm::CompareAndSetHeapRef(location, expectedValue, newValue);
+    return mm::RefAccessor<false>{location}.compareAndExchange(expectedValue, newValue, std::memory_order_seq_cst);
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) {
-    RETURN_RESULT_OF(mm::GetAndSetHeapRef, location, newValue);
-}
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) {
-    if (object == nullptr) return;
-    ObjHeader* result = nullptr; // No need to store this value in a rootset.
-    mm::CompareAndSwapHeapRef(location, nullptr, const_cast<ObjHeader*>(object), &result);
+    RETURN_OBJ(mm::RefAccessor<false>{location}.exchange(newValue, std::memory_order_seq_cst));
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex,
@@ -209,22 +206,10 @@ extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArray(const
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
-    mm::SetStackRef(returnSlot, const_cast<ObjHeader*>(object));
+    SetStackRef(returnSlot, object);
 }
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(
-        SwapHeapRefLocked, ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock, int32_t* cookie) {
-    RETURN_RESULT_OF(mm::CompareAndSwapHeapRef, location, expectedValue, newValue);
-}
 
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void SetHeapRefLocked(
-        ObjHeader** location, ObjHeader* newValue, int32_t* spinlock, int32_t* cookie) {
-    mm::SetHeapRefAtomic(location, newValue);
-}
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock, int32_t* cookie) {
-    RETURN_RESULT_OF(mm::ReadHeapRefAtomic, location);
-}
 
 extern "C" OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index) {
     // TODO: Remove when legacy MM is gone.
@@ -513,7 +498,7 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
     AssertThreadState(ThreadState::kRunnable);
     mm::StableRef stableRef(static_cast<mm::RawSpecialRef*>(pointer));
     auto* obj = *stableRef;
-    mm::SetStackRef(OBJ_RESULT, obj);
+    SetStackRef(OBJ_RESULT, obj);
     std::move(stableRef).dispose();
     return obj;
 }

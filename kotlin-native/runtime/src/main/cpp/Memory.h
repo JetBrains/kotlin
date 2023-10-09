@@ -191,6 +191,7 @@ struct type_layout::descriptor<ArrayBody> {
     };
 };
 
+
 } // namespace kotlin
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
@@ -315,18 +316,8 @@ OBJ_GETTER(GetAndSetVolatileHeapRef, ObjHeader** location, ObjHeader* newValue) 
 // Updates heap/static data in one array.
 void UpdateHeapRefsInsideOneArray(const ArrayHeader* array, int fromIndex, int toIndex, int count) RUNTIME_NOTHROW;
 // Updates location if it is null, atomically.
-void UpdateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Updates reference in return slot.
 void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) RUNTIME_NOTHROW;
-// Compares and swaps reference with taken lock.
-OBJ_GETTER(SwapHeapRefLocked,
-    ObjHeader** location, ObjHeader* expectedValue, ObjHeader* newValue, int32_t* spinlock,
-    int32_t* cookie) RUNTIME_NOTHROW;
-// Sets reference with taken lock.
-void SetHeapRefLocked(ObjHeader** location, ObjHeader* newValue, int32_t* spinlock,
-    int32_t* cookie) RUNTIME_NOTHROW;
-// Reads reference with taken lock.
-OBJ_GETTER(ReadHeapRefLocked, ObjHeader** location, int32_t* spinlock, int32_t* cookie) RUNTIME_NOTHROW;
 OBJ_GETTER(ReadHeapRefNoLock, ObjHeader* object, int32_t index);
 // Called on frame enter, if it has object slots.
 void EnterFrame(ObjHeader** start, int parameters, int count) RUNTIME_NOTHROW;
@@ -421,6 +412,7 @@ struct FrameOverlay {
 };
 
 // Class holding reference to an object, holding object during C++ scope.
+// TODO adopt ref accessors
 class ObjHolder {
  public:
    ObjHolder() : obj_(nullptr) {

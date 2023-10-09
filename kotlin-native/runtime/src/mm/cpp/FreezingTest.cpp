@@ -29,14 +29,13 @@ struct NoFreezeHook {
 };
 
 struct EmptyPayload {
-    using Field = ObjHeader* EmptyPayload::*;
-    static constexpr std::array<Field, 0> kFields{};
+    static constexpr test_support::NoRefFields<EmptyPayload> kFields{};
 };
 
 struct Payload {
-    ObjHeader* field1;
-    ObjHeader* field2;
-    ObjHeader* field3;
+    mm::RefField field1;
+    mm::RefField field2;
+    mm::RefField field3;
 
     static constexpr std::array kFields{
             &Payload::field1,
@@ -66,7 +65,7 @@ public:
 
     ObjHeader* header() { return object_.header(); }
 
-    ObjHeader*& operator[](size_t field) { return object_.fields()[field]; }
+    mm::RefField& operator[](size_t field) { return object_.fields()[field]; }
 
     void MakePermanent() { header()->typeInfoOrMeta_ = setPointerBits(header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER); }
 
@@ -89,7 +88,7 @@ public:
 
     ObjHeader* header() { return array_.header(); }
 
-    ObjHeader*& operator[](size_t index) { return array_.elements()[index]; }
+    mm::RefField& operator[](size_t index) { return array_.elements()[index]; }
 
     void MakePermanent() { header()->typeInfoOrMeta_ = setPointerBits(header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER); }
 
