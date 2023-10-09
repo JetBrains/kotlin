@@ -181,7 +181,7 @@ fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, s
 fun FirExpression.unwrapVarargValue(): List<FirExpression> {
     return when (this) {
         is FirVarargArgumentsExpression -> when (val first = arguments.firstOrNull()) {
-            is FirWrappedArgumentExpression -> first.unwrapArgument().unwrapVarargValue()
+            is FirWrappedArgumentExpression -> first.expression.unwrapVarargValue()
             else -> arguments
         }
         is FirArrayLiteral -> arguments
