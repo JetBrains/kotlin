@@ -1,5 +1,6 @@
 // IGNORE_INLINER: IR
 // IGNORE_BACKEND: WASM
+// JVM_ABI_K1_K2_DIFF: KT-62464
 
 // FILE: 1.kt
 inline fun <U> unchecked(any: Any): Any {

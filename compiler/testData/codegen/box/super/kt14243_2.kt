@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-62781
+
 interface Z<T> {
     fun test(p: T): T {
         return p

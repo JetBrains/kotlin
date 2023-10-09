@@ -1,0 +1,59 @@
+MODULE main
+	Missing in K1
+		LocalFunctionReferencesKt$sam$FunInterface$0.class
+	CLASS LocalFunctionReferencesKt$box$9.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS LocalFunctionReferencesKt$box$10.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---

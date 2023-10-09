@@ -1,0 +1,13 @@
+MODULE main
+	CLASS Owner$withExponentialBackoff$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function1<Lkotlin/coroutines/Continuation<-TW;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function1<Lkotlin/coroutines/Continuation<-TB;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+		METHOD invoke(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+			Property: method.signature
+				K1
+					(Lkotlin/coroutines/Continuation<-TW;>;)Ljava/lang/Object;
+				K2
+					(Lkotlin/coroutines/Continuation<-TB;>;)Ljava/lang/Object;

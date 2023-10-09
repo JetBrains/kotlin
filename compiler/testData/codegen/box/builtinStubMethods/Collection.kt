@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: KT-62550
 
 class MyCollection<T>: Collection<T> {
     override val size: Int get() = 0

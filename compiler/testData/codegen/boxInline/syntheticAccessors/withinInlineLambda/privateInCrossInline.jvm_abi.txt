@@ -1,0 +1,64 @@
+MODULE main
+	CLASS A$test2$$inlined$call$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/_1Kt$call$1
+				+ 2 2.kt
+				A
+				+ 3 1.kt
+				test/_1Kt
+				+ 4 fake.kt
+				kotlin/jvm/internal/FakeKt
+				*L
+				1#1,14:1
+				31#2:15
+				11#3:16
+				9#3:18
+				1#4:17
+				*S KotlinDebug
+				*F
+				+ 1 2.kt
+				A
+				*L
+				31#1:16
+				31#1:18
+				31#1:17
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				1.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 1.kt
+				test/_1Kt$call$1
+				+ 2 2.kt
+				A
+				+ 3 1.kt
+				test/_1Kt
+				+ 4 fake.kt
+				kotlin/jvm/internal/FakeKt
+				*L
+				1#1,14:1
+				31#2:15
+				33#2:19
+				11#3:16
+				9#3:18
+				1#4:17
+				*S KotlinDebug
+				*F
+				+ 1 2.kt
+				A
+				*L
+				31#1:16
+				31#1:18
+				31#1:17
+				*E
+				 } )

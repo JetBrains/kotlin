@@ -1,0 +1,340 @@
+MODULE main
+	Missing in K1
+		BoundAdaptedFunctionReferenceKt$sam$FunInterface$0.class
+		FromOtherFileKt$sam$FunInterface$0.class
+	CLASS BoundAdaptedFunctionReferenceKt$box$6.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$7.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$8.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$9.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$10.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$11.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$12.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$13.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$18.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS BoundAdaptedFunctionReferenceKt$box$19.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS FromOtherFileKt$adapted1FromOtherFile$1.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---
+	CLASS FromOtherFileKt$adapted2FromOtherFile$1.class
+		Property: class.signature
+			K1
+				NULL
+			K2
+				Lkotlin/jvm/internal/AdaptedFunctionReference;Lkotlin/jvm/functions/Function0<Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/AdaptedFunctionReference
+		Property: class.superInterfaces
+			K1
+				[FunInterface, kotlin/jvm/internal/FunctionAdapter]
+			K2
+				[kotlin/jvm/functions/Function0]
+		K1
+			equals(Ljava/lang/Object;)Z [public, final]
+		K2
+			---
+		K1
+			getFunctionDelegate()Lkotlin/Function; [public, final]
+		K2
+			---
+		K1
+			hashCode()I [public, final]
+		K2
+			---

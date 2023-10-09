@@ -1,0 +1,8 @@
+MODULE main
+	CLASS second/BarKt.class
+		METHOD bar()Ljava/lang/String;
+			Annotation: method.invisibleAnnotations
+				K1
+					@Lorg/jetbrains/annotations/NotNull;
+				K2
+					---

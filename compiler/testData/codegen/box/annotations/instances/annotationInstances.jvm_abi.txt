@@ -1,0 +1,26 @@
+MODULE main
+	CLASS AnnotationInstancesKt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				annotationInstances.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 annotationInstances.kt
+				AnnotationInstancesKt
+				+ 2 ArrayIntrinsics.kt
+				kotlin/ArrayIntrinsicsKt
+				*L
+				1#1,76:1
+				26#2:77
+				*S KotlinDebug
+				*F
+				+ 1 annotationInstances.kt
+				AnnotationInstancesKt
+				*L
+				51#1:77
+				*E
+				 } )
+			K2
+				---

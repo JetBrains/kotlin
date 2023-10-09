@@ -1,0 +1,10 @@
+MODULE main
+	CLASS A$X.class
+		K1
+			---
+		K2
+			getAnonObject()LA$X$anonObject$1; [public, final]
+		K1
+			getAnonObject()Ljava/lang/Object; [public, final]
+		K2
+			---

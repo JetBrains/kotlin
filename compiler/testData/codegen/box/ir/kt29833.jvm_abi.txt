@@ -1,0 +1,14 @@
+MODULE main
+	CLASS Definitions.class
+		METHOD getKtValue()Ljava/lang/String;
+			Annotation: method.invisibleAnnotations
+				K1
+					@Lorg/jetbrains/annotations/NotNull;
+				K2
+					---
+		FIELD KT_CONSTANT:Ljava/lang/String;
+			Annotation: field.invisibleAnnotations
+				K1
+					@Lorg/jetbrains/annotations/NotNull;
+				K2
+					---

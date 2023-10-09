@@ -1,0 +1,5 @@
+MODULE main
+	Missing in K1
+		LocalFunctionReferencesKt$box$9.class
+		LocalFunctionReferencesKt$box$10.class
+		LocalFunctionReferencesKt$sam$java_lang_Runnable$0.class

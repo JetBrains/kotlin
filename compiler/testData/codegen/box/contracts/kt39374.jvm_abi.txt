@@ -1,0 +1,5 @@
+MODULE main
+	Missing in K1
+		Kt39374Kt$runBlocking$1.class
+	Missing in K2
+		Kt39374Kt$runBlocking$2.class

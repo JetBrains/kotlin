@@ -1,0 +1,31 @@
+MODULE main
+	Missing in K1
+		_1Kt$sam$Custom_MBiConsumer$0.class
+	CLASS _1Kt$box$1.class
+		Property: class.signature
+			K1
+				<T:Ljava/lang/Object;U:Ljava/lang/Object;>Ljava/lang/Object;LCustom$MBiConsumer;
+			K2
+				Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function2<Ljava/lang/String;Ljava/lang/String;Lkotlin/Unit;>;
+		Property: class.superClassInternalName
+			K1
+				java/lang/Object
+			K2
+				kotlin/jvm/internal/Lambda
+		Property: class.superInterfaces
+			K1
+				[Custom$MBiConsumer]
+			K2
+				[kotlin/jvm/functions/Function2]
+		K1
+			INNER_CLASS Custom$MBiConsumer Custom MBiConsumer 11000001001 [public, static, interface, abstract]
+		K2
+			---
+		K1
+			accept(Ljava/lang/String;Ljava/lang/String;)V [public, final]
+		K2
+			---
+		K1
+			---
+		K2
+			invoke(Ljava/lang/String;Ljava/lang/String;)V [public, final]

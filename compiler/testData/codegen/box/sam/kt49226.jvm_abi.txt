@@ -1,0 +1,27 @@
+MODULE main
+	Missing in K1
+		Kt49226Kt$box$x$1.class
+		Kt49226Kt$sam$Func$0.class
+	CLASS Kt49226Kt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				kt49226.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 kt49226.kt
+				Kt49226Kt
+				*L
+				1#1,11:1
+				6#1:12
+				*S KotlinDebug
+				*F
+				+ 1 kt49226.kt
+				Kt49226Kt
+				*L
+				6#1:12
+				*E
+				 } )
+			K2
+				---

@@ -1,0 +1,33 @@
+MODULE main
+	CLASS Kt48367Kt$flaf$$inlined$bar$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				kt48367.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 kt48367.kt
+				Kt48367Kt$bar$1
+				+ 2 kt48367.kt
+				Kt48367Kt
+				*L
+				1#1,23:1
+				9#2,2:24
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				kt48367.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 kt48367.kt
+				Kt48367Kt$bar$1
+				+ 2 kt48367.kt
+				Kt48367Kt
+				*L
+				1#1,23:1
+				9#2,3:24
+				*E
+				 } )

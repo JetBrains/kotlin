@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: KT-57300
 
 // FILE: A.java
 abstract public class A extends B {

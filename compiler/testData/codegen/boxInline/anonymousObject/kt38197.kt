@@ -1,5 +1,7 @@
 // WITH_COROUTINES
 // WITH_STDLIB
+// JVM_ABI_K1_K2_DIFF: KT-62464
+
 // FILE: test.kt
 
 var result = "Fail"

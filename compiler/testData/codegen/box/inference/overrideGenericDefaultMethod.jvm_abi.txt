@@ -1,0 +1,10 @@
+MODULE main
+	CLASS MyFinalClassI.class
+		K1
+			---
+		K2
+			test(I)Ljava/lang/Integer; [public]
+		K1
+			---
+		K2
+			testWithDefault(Ljava/lang/Integer;)Ljava/lang/Integer; [public]

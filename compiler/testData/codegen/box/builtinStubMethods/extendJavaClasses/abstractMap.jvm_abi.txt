@@ -1,0 +1,18 @@
+MODULE main
+	CLASS A.class
+		K1
+			---
+		K2
+			getOrDefault(Ljava/lang/Integer;Ljava/lang/String;)Ljava/lang/String; [public, bridge]
+		K1
+			---
+		K2
+			getOrDefault(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/String; [public, final, bridge]
+		K1
+			---
+		K2
+			remove(Ljava/lang/Integer;Ljava/lang/String;)Z [public, bridge]
+		K1
+			---
+		K2
+			remove(Ljava/lang/Object;Ljava/lang/Object;)Z [public, final, bridge]

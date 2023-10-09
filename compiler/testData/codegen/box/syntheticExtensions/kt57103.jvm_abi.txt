@@ -1,0 +1,22 @@
+MODULE main
+	Missing in K2
+		TestKt$box$1.class
+	CLASS TestKt.class
+		Annotation: class.invisibleAnnotations
+			K1
+				---
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				test.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 test.kt
+				TestKt
+				+ 2 fake.kt
+				kotlin/jvm/internal/FakeKt
+				*L
+				1#1,27:1
+				1#2:28
+				*E
+				 } )

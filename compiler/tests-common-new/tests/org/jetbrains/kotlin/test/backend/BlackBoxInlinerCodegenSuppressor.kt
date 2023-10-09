@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.directives.tryRetrieveIgnoredInliner
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.TestServices
@@ -43,17 +44,11 @@ class BlackBoxInlinerCodegenSuppressor(testServices: TestServices) : AfterAnalys
 
     private fun suppressForTargetFrontend(
         failedAssertions: List<WrappedException>,
-        directive: ValueDirective<TargetInliner>
+        directive: ValueDirective<TargetInliner>,
     ): List<WrappedException>? {
-        val directiveName = directive.name
-        val ignoreDirectives = testServices.moduleStructure.allDirectives[directive]
-        if (ignoreDirectives.size > 1) {
-            throw IllegalArgumentException("Directive $directiveName should contains only one value")
-        }
-
-        val ignoreDirective = ignoreDirectives.singleOrNull()
+        val ignoreDirective = testServices.tryRetrieveIgnoredInliner(directive)
         val enabledIrInliner = LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER in testServices.moduleStructure.allDirectives
-        val unmuteError = listOf(AssertionError("Looks like this test can be unmuted. Please remove $directiveName directive.").wrap())
+        val unmuteError = listOf(AssertionError("Looks like this test can be unmuted. Please remove ${directive.name} directive.").wrap())
 
         if (ignoreDirective == TargetInliner.IR && enabledIrInliner || ignoreDirective == TargetInliner.BYTECODE && !enabledIrInliner) {
             return if (failedAssertions.isNotEmpty()) emptyList() else unmuteError

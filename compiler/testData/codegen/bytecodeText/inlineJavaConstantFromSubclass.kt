@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-62558
+
 // FILE: first/JavaSuperclass.java
 
 package first;

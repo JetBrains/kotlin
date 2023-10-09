@@ -1,3 +1,5 @@
+// JVM_ABI_K1_K2_DIFF: KT-57268
+
 var result = ""
 
 public abstract class AbstractFoo<K, V> : Map<K, V> {

@@ -1,0 +1,10 @@
+MODULE main
+	CLASS IC3.class
+		K1
+			---
+		K2
+			getOrDefault-impl(Ljava/util/Map;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; [public, static]
+		K1
+			---
+		K2
+			remove-impl(Ljava/util/Map;Ljava/lang/Object;Ljava/lang/Object;)Z [public, static]

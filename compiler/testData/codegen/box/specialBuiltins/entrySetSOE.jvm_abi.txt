@@ -1,0 +1,18 @@
+MODULE main
+	CLASS Map1.class
+		K1
+			---
+		K2
+			getOrDefault(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; [public, final, bridge]
+		K1
+			---
+		K2
+			getOrDefault(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object; [public, bridge]
+		K1
+			---
+		K2
+			remove(Ljava/lang/Object;Ljava/lang/Object;)Z [public, final, bridge]
+		K1
+			---
+		K2
+			remove(Ljava/lang/String;Ljava/lang/Object;)Z [public, bridge]

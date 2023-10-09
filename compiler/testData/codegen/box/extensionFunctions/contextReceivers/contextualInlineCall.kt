@@ -1,6 +1,7 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 // KT-51271
+// JVM_ABI_K1_K2_DIFF: KT-62464
 
 class Context {
     fun c() = 1

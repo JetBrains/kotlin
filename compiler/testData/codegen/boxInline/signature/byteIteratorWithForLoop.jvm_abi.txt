@@ -1,0 +1,14 @@
+MODULE kotlin_stdlib
+	CLASS kotlin/collections/ByteIterator.class
+		K1
+			<init>()V [public]
+		K2
+			---
+		K1
+			next()Ljava/lang/Byte; [public, final]
+		K2
+			---
+		K1
+			nextByte()B [public, abstract]
+		K2
+			---

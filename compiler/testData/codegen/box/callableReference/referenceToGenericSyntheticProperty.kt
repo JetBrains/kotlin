@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // !LANGUAGE: +ReferencesToSyntheticJavaProperties
+// JVM_ABI_K1_K2_DIFF: KT-62849
 
 // FILE: J.java
 

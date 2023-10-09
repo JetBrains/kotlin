@@ -22,7 +22,7 @@ class IrActualizerAndPluginsFacade(
     val testServices: TestServices,
 ) : AbstractTestFacade<IrBackendInput, IrBackendInput>() {
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
-        if (module.frontendKind != FrontendKinds.FIR) return inputArtifact
+        if (module.frontendKind != FrontendKinds.FIR && module.frontendKind != FrontendKinds.Both) return inputArtifact
         if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
             val builtins = inputArtifact.irModuleFragment.irBuiltins
             val typeSystemContext = when (module.targetPlatform.isJvm()) {

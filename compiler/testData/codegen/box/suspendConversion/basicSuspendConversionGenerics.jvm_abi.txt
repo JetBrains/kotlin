@@ -1,0 +1,81 @@
+MODULE main
+	CLASS BasicSuspendConversionGenericsKt$test$a01$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<LC;Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<TT;Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+		K1
+			invoke(LC;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]
+		K2
+			---
+		K1
+			---
+		K2
+			invoke(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]
+	CLASS BasicSuspendConversionGenericsKt$test$a11$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function1<Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function1<Lkotlin/coroutines/Continuation<-TT;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+		METHOD invoke(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+			Property: method.signature
+				K1
+					(Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;)Ljava/lang/Object;
+				K2
+					(Lkotlin/coroutines/Continuation<-TT;>;)Ljava/lang/Object;
+	CLASS BasicSuspendConversionGenericsKt$test$a21$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<LC;Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<TT;Lkotlin/coroutines/Continuation<-TK;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+		K1
+			invoke(LC;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]
+		K2
+			---
+		K1
+			---
+		K2
+			invoke(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]
+	CLASS BasicSuspendConversionGenericsKt$test$a31$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<LC;Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<TT;Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+		K1
+			invoke(LC;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]
+		K2
+			---
+		K1
+			---
+		K2
+			invoke(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]
+	CLASS BasicSuspendConversionGenericsKt$test$a41$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function1<Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function1<Lkotlin/coroutines/Continuation<-TT;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+		METHOD invoke(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+			Property: method.signature
+				K1
+					(Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;)Ljava/lang/Object;
+				K2
+					(Lkotlin/coroutines/Continuation<-TT;>;)Ljava/lang/Object;
+	CLASS BasicSuspendConversionGenericsKt$test$a51$1.class
+		Property: class.signature
+			K1
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<LC;Lkotlin/coroutines/Continuation<-Ljava/lang/String;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+			K2
+				Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function2<TT;Lkotlin/coroutines/Continuation<-TK;>;Ljava/lang/Object;>;Lkotlin/coroutines/jvm/internal/SuspendFunction;
+		K1
+			invoke(LC;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]
+		K2
+			---
+		K1
+			---
+		K2
+			invoke(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object; [public, final]

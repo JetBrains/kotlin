@@ -1,0 +1,43 @@
+MODULE lib
+	CLASS LibKt$additionalText$2.class
+		Property: class.signature
+			K1
+				Ljava/lang/Object;LIDelegate1<LValue<Ljava/lang/Object;LCR<Ljava/lang/Object;>;>;LP<Ljava/lang/Object;Ljava/lang/Object;>;>;
+			K2
+				Ljava/lang/Object;LIDelegate1<LValue<TT;LCR<TT;>;>;LP<TT;TT;>;>;
+		METHOD getValue(LValue;Lkotlin/reflect/KProperty;)LP;
+			Property: method.signature
+				K1
+					(LValue<Ljava/lang/Object;LCR<Ljava/lang/Object;>;>;Lkotlin/reflect/KProperty<*>;)LP<Ljava/lang/Object;Ljava/lang/Object;>;
+				K2
+					(LValue<TT;LCR<TT;>;>;Lkotlin/reflect/KProperty<*>;)LP<TT;TT;>;
+	CLASS LibKt$additionalText$2$deepO$2.class
+		Property: class.signature
+			K1
+				Ljava/lang/Object;LIDelegate1<LValue<Ljava/lang/Object;LCR<Ljava/lang/Object;>;>;Ljava/lang/Object;>;
+			K2
+				Ljava/lang/Object;LIDelegate1<LValue<TT;LCR<TT;>;>;TT;>;
+		METHOD getValue(LValue;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+			Property: method.signature
+				K1
+					(LValue<Ljava/lang/Object;LCR<Ljava/lang/Object;>;>;Lkotlin/reflect/KProperty<*>;)Ljava/lang/Object;
+				K2
+					(LValue<TT;LCR<TT;>;>;Lkotlin/reflect/KProperty<*>;)TT;
+	CLASS LibKt$additionalText$2$deepK$2.class
+		Property: class.signature
+			K1
+				Ljava/lang/Object;LIDelegate1<LValue<Ljava/lang/Object;LCR<Ljava/lang/Object;>;>;Ljava/lang/Object;>;
+			K2
+				Ljava/lang/Object;LIDelegate1<LValue<TT;LCR<TT;>;>;TT;>;
+		METHOD getValue(LValue;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+			Property: method.signature
+				K1
+					(LValue<Ljava/lang/Object;LCR<Ljava/lang/Object;>;>;Lkotlin/reflect/KProperty<*>;)Ljava/lang/Object;
+				K2
+					(LValue<TT;LCR<TT;>;>;Lkotlin/reflect/KProperty<*>;)TT;
+		METHOD qux22(LIR;)Ljava/lang/Object;
+			Property: method.signature
+				K1
+					<F22T::LIR<Ljava/lang/Object;>;>(TF22T;)Ljava/lang/Object;
+				K2
+					<F22T::LIR<TT;>;>(TF22T;)TT;

@@ -1,0 +1,16 @@
+MODULE main
+	Missing in K1
+		TestKt$box$6.class
+		TestKt$box$7.class
+		TestKt$box$8.class
+		TestKt$box$9.class
+		TestKt$box$10.class
+		TestKt$box$11.class
+		TestKt$box$12.class
+		TestKt$box$13.class
+		TestKt$box$18.class
+		TestKt$box$19.class
+		TestKt$sam$java_lang_Runnable$0.class
+		FromOtherFileKt$adapted1FromOtherFile$1.class
+		FromOtherFileKt$adapted2FromOtherFile$1.class
+		FromOtherFileKt$sam$java_lang_Runnable$0.class

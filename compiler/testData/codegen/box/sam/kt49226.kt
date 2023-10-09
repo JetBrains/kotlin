@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: KT-62858
 
 // FILE: kt49226.kt
 fun box(): String {

@@ -1,6 +1,8 @@
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // WITH_STDLIB
 
+// JVM_ABI_K1_K2_DIFF: KT-62464
+
 import kotlin.contracts.*
 
 class Smth {

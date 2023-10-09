@@ -1,0 +1,45 @@
+MODULE main
+	CLASS InlineSiteKt$abc$$inlined$map$1$1.class
+		Annotation: class.invisibleAnnotations
+			K1
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				inlined.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 inlined.kt
+				InlinedKt$collect$2
+				+ 2 inlined.kt
+				InlinedKt$transform$1
+				+ 3 inlined.kt
+				InlinedKt
+				+ 4 inlineSite.kt
+				InlineSiteKt
+				*L
+				1#1,41:1
+				25#2:42
+				30#3:43
+				46#4,4:44
+				*E
+				 } )
+			K2
+				@Lkotlin/jvm/internal/SourceDebugExtension;( value: #{ SMAP
+				inlined.kt
+				Kotlin
+				*S Kotlin
+				*F
+				+ 1 inlined.kt
+				InlinedKt$collect$2
+				+ 2 inlined.kt
+				InlinedKt$transform$1
+				+ 3 inlined.kt
+				InlinedKt
+				+ 4 inlineSite.kt
+				InlineSiteKt
+				*L
+				1#1,41:1
+				25#2:42
+				30#3:43
+				46#4,5:44
+				*E
+				 } )

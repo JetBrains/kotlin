@@ -79,6 +79,20 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/box")
             }
 
+
+            testClass<AbstractJvmAbiConsistencyTest> {
+                model("codegen/box")
+                model("codegen/boxInline")
+                model("codegen/boxModernJdk")
+                model("codegen/bytecodeText")
+                model("codegen/bytecodeListing")
+                model("codegen/composeLike")
+                model("codegen/composeLikeBytecodeText")
+                model("codegen/defaultArguments")
+                model("codegen/dumpDeclarations")
+                model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+            }
+
             testClass<AbstractIrBlackBoxCodegenWithIrInlinerTest> {
                 model("codegen/box")
             }
