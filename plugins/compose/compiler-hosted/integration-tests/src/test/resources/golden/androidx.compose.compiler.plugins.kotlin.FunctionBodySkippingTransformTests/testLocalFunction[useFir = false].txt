@@ -34,7 +34,7 @@ fun A(x: Int, %composer: Composer?, %changed: Int) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      B(x, y, %composer, 0b1110 and %dirty or 0b01110000 and %changed shl 0b0011)
+      B(x, y, %composer, 0b01110000 and %changed shl 0b0011)
       if (isTraceInProgress()) {
         traceEventEnd()
       }

@@ -54,12 +54,12 @@ fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
         if (x > 0) {
           %composer.startReplaceableGroup(<>)
           sourceInformation(%composer, "<A(x)>")
-          A(x, 0, %composer, 0b1110 and %dirty, 0b0010)
+          A(x, 0, %composer, 0, 0b0010)
           %composer.endReplaceableGroup()
         } else {
           %composer.startReplaceableGroup(<>)
           sourceInformation(%composer, "<A(x)>")
-          A(x, 0, %composer, 0b1110 and %dirty, 0b0010)
+          A(x, 0, %composer, 0, 0b0010)
           %composer.endReplaceableGroup()
         }
         if (isTraceInProgress()) {
