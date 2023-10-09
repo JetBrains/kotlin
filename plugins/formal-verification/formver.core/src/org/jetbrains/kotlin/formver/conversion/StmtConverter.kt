@@ -106,13 +106,18 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
     override fun <R> withCheckedSafeCallSubject(subject: ExpEmbedding?, action: StmtConversionContext<RTC>.() -> R): R =
         copy(checkedSafeCallSubject = subject).action()
 
-    override fun withCatches(catches: List<FirCatch>, action: StmtConversionContext<RTC>.(exitLabel: Label) -> Unit): CatchBlockListData {
+    override fun withCatches(
+        catches: List<FirCatch>,
+        action: StmtConversionContext<RTC>.(catchBlockListData: CatchBlockListData) -> Unit,
+    ): CatchBlockListData {
         val newCatchLabels = catches.map { Label(catchLabelNameProducer.getFresh(), listOf()) }
         newCatchLabels.forEach { addDeclaration(it.toDecl()) }
         val exitLabel = Label(tryExitLabelNameProducer.getFresh(), listOf())
         addDeclaration(exitLabel.toDecl())
         val ctx = copy(activeCatchLabels = activeCatchLabels + newCatchLabels)
-        ctx.action(exitLabel)
-        return CatchBlockListData(exitLabel, newCatchLabels.zip(catches).map { (label, firCatch) -> CatchBlockData(label, firCatch) })
+        val catchBlockListData =
+            CatchBlockListData(exitLabel, newCatchLabels.zip(catches).map { (label, firCatch) -> CatchBlockData(label, firCatch) })
+        ctx.action(catchBlockListData)
+        return catchBlockListData
     }
 }

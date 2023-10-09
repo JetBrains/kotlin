@@ -53,7 +53,16 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun <R> withFreshWhile(action: StmtConversionContext<RTC>.() -> R): R
     fun <R> withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> R): R
     fun <R> withCheckedSafeCallSubject(subject: ExpEmbedding?, action: StmtConversionContext<RTC>.() -> R): R
-    fun withCatches(catches: List<FirCatch>, action: StmtConversionContext<RTC>.(exitLabel: Label) -> Unit): CatchBlockListData
+    fun withCatches(
+        catches: List<FirCatch>,
+        action: StmtConversionContext<RTC>.(catchBlockListData: CatchBlockListData) -> Unit,
+    ): CatchBlockListData
+}
+
+fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.nonDeterministically(action: StmtConversionContext<RTC>.() -> Unit) {
+    val branchVar = freshAnonVar(BooleanTypeEmbedding)
+    addDeclaration(branchVar.toLocalVarDecl())
+    addStatement(Stmt.If(branchVar.toViper(), withNewScopeToBlock(action), Stmt.Seqn()))
 }
 
 fun StmtConversionContext<ResultTrackingContext>.convertAndStore(exp: FirExpression): VariableEmbedding = store(convert(exp))

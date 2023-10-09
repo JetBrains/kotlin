@@ -330,17 +330,26 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
     }
 
     override fun visitTryExpression(tryExpression: FirTryExpression, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
-        val catchData = data.withCatches(tryExpression.catches) { exitLabel ->
+        val catchData = data.withCatches(tryExpression.catches) { catchData ->
             withNewScope {
+                val maybeJumpToSomeCatch = {
+                    for (catchBlock in catchData.blocks) {
+                        nonDeterministically {
+                            addStatement(catchBlock.entryLabel.toGoto())
+                        }
+                    }
+                }
+                maybeJumpToSomeCatch()
                 convert(tryExpression.tryBlock)
-                addStatement(exitLabel.toGoto())
+                maybeJumpToSomeCatch()
+                addStatement(catchData.exitLabel.toGoto())
             }
         }
-        for (catch in catchData.blocks) {
+        for (catchBlock in catchData.blocks) {
             data.withNewScope {
-                addStatement(catch.entryLabel.toStmt())
-                registerLocalPropertyName(catch.firCatch.parameter.name)
-                convert(catch.firCatch.block)
+                addStatement(catchBlock.entryLabel.toStmt())
+                registerLocalPropertyName(catchBlock.firCatch.parameter.name)
+                convert(catchBlock.firCatch.block)
                 addStatement(catchData.exitLabel.toGoto())
             }
         }

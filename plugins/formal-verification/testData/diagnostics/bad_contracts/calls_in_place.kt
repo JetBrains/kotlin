@@ -39,3 +39,30 @@ fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>i
     }
     return unknown(f)
 }
+
+// Consistency check with current Kotlin contract verification mechanism.
+@Suppress("WRONG_INVOCATION_KIND")
+@OptIn(ExperimentalContracts::class)
+fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>incorrect_exactly_once_with_catch<!>(f : () -> Unit) : Unit {
+    contract {
+        callsInPlace(f, EXACTLY_ONCE)
+    }
+    try {
+        f()
+    } catch (e: Exception) {
+    }
+}
+
+// Consistency check with current Kotlin contract verification mechanism.
+@Suppress("WRONG_INVOCATION_KIND")
+@OptIn(ExperimentalContracts::class)
+fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>incorrect_exactly_once_with_call_in_catch<!>(f : () -> Unit) : Unit {
+    contract {
+        callsInPlace(f, EXACTLY_ONCE)
+    }
+    try {
+        f()
+    } catch (e: Exception) {
+        f()
+    }
+}

@@ -88,3 +88,79 @@ method global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(loca
 
 
 /calls_in_place.kt:(866,889): warning: Function incorrect_at_least_once may not satisfy its contract.
+
+/calls_in_place.kt:(1150,1183): info: Generated Viper text for incorrect_exactly_once_with_catch:
+method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter ==
+    old(local$f.special$function_object_call_counter) + 1
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  if (true) {
+    var anonymous$0: Bool
+    var anonymous$1: dom$Unit
+    var anonymous$2: Bool
+    if (anonymous$0) {
+      goto label$catch$0
+    }
+    special$invoke_function_object(local$f)
+    if (anonymous$2) {
+      goto label$catch$0
+    }
+    goto label$try_exit$0
+  }
+  if (true) {
+    label label$catch$0
+    goto label$try_exit$0
+  }
+  label label$try_exit$0
+  label label$ret$0
+}
+
+/calls_in_place.kt:(1150,1183): warning: Viper verification error: Postcondition of global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion local$f.special$function_object_call_counter == old(local$f.special$function_object_call_counter) + 1 might not hold. (<no position>)
+
+
+/calls_in_place.kt:(1150,1183): warning: Function incorrect_exactly_once_with_catch may not satisfy its contract.
+
+/calls_in_place.kt:(1478,1519): info: Generated Viper text for incorrect_exactly_once_with_call_in_catch:
+method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+  ensures local$f.special$function_object_call_counter ==
+    old(local$f.special$function_object_call_counter) + 1
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
+  if (true) {
+    var anonymous$0: Bool
+    var anonymous$1: dom$Unit
+    var anonymous$2: Bool
+    if (anonymous$0) {
+      goto label$catch$0
+    }
+    special$invoke_function_object(local$f)
+    if (anonymous$2) {
+      goto label$catch$0
+    }
+    goto label$try_exit$0
+  }
+  if (true) {
+    var anonymous$3: dom$Unit
+    label label$catch$0
+    special$invoke_function_object(local$f)
+    goto label$try_exit$0
+  }
+  label label$try_exit$0
+  label label$ret$0
+}
+
+/calls_in_place.kt:(1478,1519): warning: Viper verification error: Postcondition of global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion local$f.special$function_object_call_counter == old(local$f.special$function_object_call_counter) + 1 might not hold. (<no position>)
+
+
+/calls_in_place.kt:(1478,1519): warning: Function incorrect_exactly_once_with_call_in_catch may not satisfy its contract.

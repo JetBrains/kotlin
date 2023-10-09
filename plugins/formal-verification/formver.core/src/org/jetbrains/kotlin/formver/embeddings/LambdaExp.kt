@@ -21,7 +21,6 @@ class LambdaExp(
     private val parentCtx: MethodConversionContext,
 ) : CallableEmbedding, ExpEmbedding,
     FunctionSignature by signature {
-    override val canThrow: Boolean = false
     override val type: TypeEmbedding = FunctionTypeEmbedding(signature.asData)
 
     override fun toViper(): Exp = TODO("create new function object with counter, duplicable (requires toViper restructuring)")
