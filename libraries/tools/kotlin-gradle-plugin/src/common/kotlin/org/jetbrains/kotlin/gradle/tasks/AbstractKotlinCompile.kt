@@ -102,6 +102,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal open fun isIncrementalCompilationEnabled(): Boolean =
         incremental
 
+    // This allows us to treat friendPaths as Input rather than InputFiles
+    @get:Input
+    internal val friendPathsSet: Set<String>
+        get() {
+            val buildDirFile = projectLayout.buildDirectory.asFile.get()
+            return friendPaths
+                .filter { it.exists() }
+                .map { it.normalize().relativeTo(buildDirFile).path }.toSet()
+        }
+
     @Deprecated("Scheduled for removal with Kotlin 2.0", ReplaceWith("moduleName"))
     @get:Input
     abstract val ownModuleName: Property<String>
