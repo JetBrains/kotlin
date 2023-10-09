@@ -186,6 +186,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("comparison.kt")
+        public void testComparison() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/comparison.kt");
+        }
+
+        @Test
         @TestMetadata("exp_side_effects.kt")
         public void testExp_side_effects() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/exp_side_effects.kt");

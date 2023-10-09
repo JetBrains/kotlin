@@ -174,6 +174,29 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         }
     }
 
+    override fun visitComparisonExpression(
+        comparisonExpression: FirComparisonExpression,
+        data: StmtConversionContext<ResultTrackingContext>
+    ): ExpEmbedding {
+        val dispatchReceiver = comparisonExpression.compareToCall.dispatchReceiver
+        val arg = comparisonExpression.compareToCall.argumentList.arguments.firstOrNull()
+        if (dispatchReceiver == null) {
+            throw IllegalArgumentException("found compareTo call with null receiver")
+        }
+        if (arg == null) {
+            throw IllegalArgumentException("found compareTo call with null argument at position 0")
+        }
+        val left = data.convert(dispatchReceiver)
+        val right = data.convert(arg)
+        return when (comparisonExpression.operation) {
+            FirOperation.LT -> LtCmp(left, right)
+            FirOperation.LT_EQ -> LeCmp(left, right)
+            FirOperation.GT -> GtCmp(left, right)
+            FirOperation.GT_EQ -> GeCmp(left, right)
+            else -> throw IllegalArgumentException("expected comparison operation but found ${comparisonExpression.operation}")
+        }
+    }
+
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val symbol = functionCall.calleeCallableSymbol
         val callee = data.embedFunction(symbol as FirFunctionSymbol<*>)
