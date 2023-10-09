@@ -561,7 +561,7 @@ class Fir2IrConverter(
                     IrFakeOverrideBuilder(
                         typeContextProvider(irBuiltins),
                         Fir2IrFakeOverrideStrategy(friendModulesMap(session), commonMemberStorage.symbolTable, irMangler),
-                        externalOverridabilityConditions = emptyList(), // TODO: KT-61370, KT-61804.
+                        fir2IrExtensions.externalOverridabilityConditions
                     )
                 },
                 moduleDescriptor, commonMemberStorage, irMangler, specialSymbolProvider, initializedIrBuiltIns

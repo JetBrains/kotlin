@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
@@ -306,7 +307,8 @@ internal class KonanIrLinker(
         private val cachedLibraries: CachedLibraries,
         private val lazyIrForCaches: Boolean,
         private val libraryBeingCached: PartialCacheInfo?,
-        override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
+        override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport,
+        externalOverridabilityConditions: List<IrExternalOverridabilityCondition>,
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
@@ -321,7 +323,8 @@ internal class KonanIrLinker(
             typeSystem = IrTypeSystemContextImpl(builtIns),
             friendModules = friendModules,
             partialLinkageSupport = partialLinkageSupport,
-            platformSpecificClassFilter = KonanFakeOverrideClassFilter
+            platformSpecificClassFilter = KonanFakeOverrideClassFilter,
+            externalOverridabilityConditions = externalOverridabilityConditions,
     )
 
     val moduleDeserializers = mutableMapOf<ModuleDescriptor, KonanPartialModuleDeserializer>()

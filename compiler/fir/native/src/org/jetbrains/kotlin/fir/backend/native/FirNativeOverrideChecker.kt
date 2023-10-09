@@ -14,6 +14,12 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 
+/**
+ * The same code, as in this class also exists in [org.jetbrains.kotlin.ir.objcinterop.ObjCOverridabilityCondition]
+ * and in [org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition].
+ *
+ * When modifying, all three copies should be synchronized.
+ */
 class FirNativeOverrideChecker(private val session: FirSession) : FirOverrideChecker {
     private val standardOverrideChecker = FirStandardOverrideChecker(session)
 

@@ -17,6 +17,10 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
  * This class is applied at [org.jetbrains.kotlin.resolve.OverridingUtil] as configured with
  * `META-INF/services/org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition` resource.
  *
+ * The same code, as in this class also exists in [org.jetbrains.kotlin.fir.backend.native.FirNativeOverrideChecker]
+ * and in [org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition].
+ *
+ * When modifying, all three copies should be synchronized.
  *
  */
 class ObjCOverridabilityCondition : ExternalOverridabilityCondition {

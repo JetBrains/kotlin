@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.objcinterop
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
-import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.annotations.getAnnotationStringValue
 import org.jetbrains.kotlin.resolve.annotations.getArgumentValueOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -27,7 +25,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.utils.atMostOne
+
+private fun IrFunction.isFakeOverrideInProgressOfBuilding() = this is IrFunctionWithLateBinding && !isBound && isFakeOverride
 
 internal val interopPackageName = NativeStandardInteropNames.cInteropPackage
 internal val objCObjectFqName = NativeStandardInteropNames.objCObjectClassId.asSingleFqName()
@@ -118,7 +117,7 @@ private fun FunctionDescriptor.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
 }
 
 private fun IrFunction.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
-    assert (this.isReal)
+    require(this.isReal || this.isFakeOverrideInProgressOfBuilding())
 
     val methodInfo = this.annotations.findAnnotation(objCMethodFqName)?.let {
         ObjCMethodInfo(
@@ -158,6 +157,11 @@ private fun FunctionDescriptor.getObjCMethodInfo(onlyExternal: Boolean): ObjCMet
  * @param onlyExternal indicates whether to accept overriding methods from Kotlin classes
  */
 private fun IrSimpleFunction.getObjCMethodInfo(onlyExternal: Boolean): ObjCMethodInfo? {
+    // During fake override building we need this method, but overriddenSymbols are not valid yet.
+    // So let's pretend this override is real. It has annotation copied, if it exists
+    if (this.isFakeOverrideInProgressOfBuilding()) {
+        decodeObjCMethodAnnotation()?.let { return it }
+    }
     if (this.isReal) {
         this.decodeObjCMethodAnnotation()?.let { return it }
 

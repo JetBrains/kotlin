@@ -4101,6 +4101,11 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("kt59167") {
         it.defFile 'interop/kt59167/kt59167.def'
     }
+    createInterop("overridabilityCondition") {
+        it.defFile 'interop/objc/overridabilityCondition/lib.def'
+        it.headers "$projectDir/interop/objc/overridabilityCondition/lib.h"
+        it.extraOpts "-Xcompile-source", "$projectDir/interop/objc/overridabilityCondition/lib.m"
+    }
 }
 
 createInterop("withSpaces") {
@@ -4671,6 +4676,12 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_direct") {
         source = "interop/objc/direct/main.kt"
         interop = "objcDirect"
+    }
+
+    interopTest("interop_objc_overridabilityCondition") {
+        interop = "overridabilityCondition"
+        source = "interop/objc/overridabilityCondition/main.kt"
+        flags = [ "-Xuse-ir-fake-override-builder" ]
     }
 
     interopTest("interop_objc_foreignException") {

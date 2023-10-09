@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -32,6 +33,7 @@ class JvmFir2IrExtensions(
     private val irDeserializer: JvmIrDeserializer,
     private val mangler: KotlinMangler.IrMangler,
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
+    override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList() // TODO: KT-61370, KT-61804
     override val classNameOverride: MutableMap<IrClass, JvmClassName> = mutableMapOf()
     override val cachedFields = CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
 

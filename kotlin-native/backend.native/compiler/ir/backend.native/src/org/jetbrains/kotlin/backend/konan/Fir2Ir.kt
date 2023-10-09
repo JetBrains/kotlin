@@ -26,11 +26,15 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
+import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.signaturer.Ir2FirManglerAdapter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrMemberWithContainerSource
+import org.jetbrains.kotlin.ir.objcinterop.IrObjCOverridabilityCondition
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -40,11 +44,18 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
+internal object NativeFir2IrExtensions : Fir2IrExtensions {
+    override val irNeedsDeserialization = false
+    override val externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition)
+    override fun generateOrGetFacadeClass(declaration: IrMemberWithContainerSource, components: Fir2IrComponents) = null
+    override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents) = false
+    override fun registerDeclarations(symbolTable: SymbolTable) {}
+    override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope) = null
+}
+
 internal fun PhaseContext.fir2Ir(
         input: FirOutput.Full,
 ): Fir2IrOutput {
-    val fir2IrExtensions = Fir2IrExtensions.Default
-
     var builtInsModule: KotlinBuiltIns? = null
 
     val resolvedLibraries = config.resolvedLibraries.getFullResolvedList()
@@ -85,7 +96,7 @@ internal fun PhaseContext.fir2Ir(
             useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
     )
     val (irModuleFragment, components, pluginContext, irActualizedResult) = input.firResult.convertToIrAndActualize(
-            fir2IrExtensions,
+            NativeFir2IrExtensions,
             fir2IrConfiguration,
             IrGenerationExtension.getInstances(config.project),
             signatureComposer = DescriptorSignatureComposerStub(KonanManglerDesc),
