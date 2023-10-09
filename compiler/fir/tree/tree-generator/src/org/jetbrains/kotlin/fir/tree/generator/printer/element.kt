@@ -55,25 +55,24 @@ fun SmartPrinter.printElement(element: Element) {
         print("${kind!!.title} $type")
         print(typeParameters())
         val needPureAbstractElement = !isInterface && !allParents.any { it.kind == ImplementationKind.AbstractClass || it.kind == ImplementationKind.SealedClass }
+        val superTypesStrings = parentRefs.map {
+            // TODO: Factor out
+            var result = it.element.type
+            if (it.args.isNotEmpty()) {
+                result += it.args.values.joinToString(", ", "<", ">") { it.typeWithArguments }
+            }
+            result + it.element.kind.braces()
+        } + additionalSupertypeInterfaces.map { it.type }
 
-        if (parentRefs.isNotEmpty() || needPureAbstractElement) {
+        if (superTypesStrings.isNotEmpty() || needPureAbstractElement) {
             print(" : ")
             if (needPureAbstractElement) {
                 print("${pureAbstractElementType.type}()")
-                if (parentRefs.isNotEmpty()) {
+                if (superTypesStrings.isNotEmpty()) {
                     print(", ")
                 }
             }
-            print(
-                parentRefs.joinToString(", ") {
-                    // TODO: Factor out
-                    var result = it.element.type
-                    if (it.args.isNotEmpty()) {
-                        result += it.args.values.joinToString(", ", "<", ">") { it.typeWithArguments }
-                    }
-                    result + it.element.kind.braces()
-                },
-            )
+            print(superTypesStrings.joinToString(", "),)
         }
         print(multipleUpperBoundsList())
         println(" {")

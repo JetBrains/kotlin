@@ -40,6 +40,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
     override val packageName: String = BASE_PACKAGE + kind.packageName.let { if (it.isBlank()) it else "." + it }
     override val fullQualifiedName: String get() = super.fullQualifiedName!!
     override val parentRefs = mutableListOf<ElementOrRef<Element, Field>>()
+    val additionalSupertypeInterfaces = mutableListOf<TypeRef>()
     var defaultImplementation: Implementation? = null
     val customImplementations = mutableListOf<Implementation>()
 

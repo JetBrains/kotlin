@@ -67,6 +67,7 @@ fun Element.collectImports(): List<String> {
     if (needPureAbstractElement) {
         baseTypes += pureAbstractElementType.fullQualifiedName
     }
+    baseTypes.addAll(additionalSupertypeInterfaces.map { it.fullQualifiedName!! })
     return collectImportsInternal(
         baseTypes,
         ImportKind.Element,
