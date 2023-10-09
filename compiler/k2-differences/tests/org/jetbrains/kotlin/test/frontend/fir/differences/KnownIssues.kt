@@ -589,6 +589,8 @@ private val mutableKnownIntroducedDiagnostics = mutableMapOf(
     "CAPTURED_VAL_INITIALIZATION" to IssueInfo("25-4777561", 61664),
     "EXPRESSION_EXPECTED" to IssueInfo("25-4777562", 61665),
     "DELEGATE_SPECIAL_FUNCTION_MISSING" to IssueInfo("25-4807761", 61967),
+    "TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED" to IssueInfo("25-4850866", 62429),
+    "DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE" to IssueInfo("25-4850867", 62430),
     //<::>knownIntroducedDiagnostics
 )
 
