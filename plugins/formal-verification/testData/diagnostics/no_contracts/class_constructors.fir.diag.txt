@@ -1,6 +1,22 @@
 /class_constructors.kt:(389,411): info: Generated Viper text for onlySecondConstructors:
 field class_scope_global$class_Foo$member_a: Int
 
+method class_scope_global$class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Bool)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+
+
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$x1: Int,
+  local$x2: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+
+
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$n: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+
+
 method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -38,24 +54,18 @@ method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method class_scope_global$class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Bool)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-
-
-method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$n: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-
-
-method class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$x1: Int,
-  local$x2: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-
-
 /class_constructors.kt:(590,617): info: Generated Viper text for primaryAndSecondConstructor:
 field class_scope_global$class_Bar$member_a: Int
+
+method class_scope_global$class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Bool)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+
+
+method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+
 
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
@@ -82,12 +92,3 @@ method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
   local0$shouldBeAnswer := anonymous$3
   label label$ret$0
 }
-
-method class_scope_global$class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Bool)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
-
-
-method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())

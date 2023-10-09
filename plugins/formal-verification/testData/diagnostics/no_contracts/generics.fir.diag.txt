@@ -16,6 +16,11 @@ method class_scope_global$class_Box$fun_genericMethod$fun_take$T_class_global$cl
 /generics.kt:(88,97): info: Generated Viper text for createBox:
 field class_scope_global$class_Box$member_t: dom$Nullable[dom$Any]
 
+method class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Box())
+
+
 method global$fun_createBox$fun_take$$return$T_Int() returns (ret: Int)
 {
   var anonymous$0: Ref
@@ -45,13 +50,13 @@ method global$fun_createBox$fun_take$$return$T_Int() returns (ret: Int)
   label label$ret$0
 }
 
+/generics.kt:(208,223): info: Generated Viper text for setGenericField:
+field class_scope_global$class_Box$member_t: dom$Nullable[dom$Any]
+
 method class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Box())
 
-
-/generics.kt:(208,223): info: Generated Viper text for setGenericField:
-field class_scope_global$class_Box$member_t: dom$Nullable[dom$Any]
 
 method global$fun_setGenericField$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
@@ -66,11 +71,6 @@ method global$fun_setGenericField$fun_take$$return$T_Unit()
   exhale acc(local0$box.class_scope_global$class_Box$member_t, write)
   label label$ret$0
 }
-
-method class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Box())
-
 
 /generics.kt:(274,284): info: Generated Viper text for genericFun:
 method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: dom$Nullable[dom$Any])

@@ -1,4 +1,13 @@
 /calls_in_place_leak.kt:(364,386): info: Generated Viper text for invalid_calls_in_place:
+method global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$f.special$function_object_call_counter, write)
+  requires special$duplicable(local$f)
+  ensures acc(local$f.special$function_object_call_counter, write)
+  ensures old(local$f.special$function_object_call_counter) <=
+    local$f.special$function_object_call_counter
+
+
 method global$fun_invalid_calls_in_place$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -12,15 +21,6 @@ method global$fun_invalid_calls_in_place$fun_take$fun_take$$return$T_Unit$return
   anonymous$0 := global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f)
   label label$ret$0
 }
-
-method global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
-  returns (ret: dom$Unit)
-  requires acc(local$f.special$function_object_call_counter, write)
-  requires special$duplicable(local$f)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
-
 
 /calls_in_place_leak.kt:(364,386): warning: Viper verification error: The precondition of method global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion special$duplicable(local$f) might not hold. (<no position>)
 

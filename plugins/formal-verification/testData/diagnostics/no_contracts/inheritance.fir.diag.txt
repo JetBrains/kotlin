@@ -1,9 +1,9 @@
 /inheritance.kt:(74,78): info: Generated Viper text for getY:
+field class_scope_global$class_Foo$member_b: Bool
+
 field class_scope_global$class_Foo$member_x: Int
 
 field class_scope_global$class_Foo$member_y: Int
-
-field class_scope_global$class_Foo$member_b: Bool
 
 method class_scope_global$class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Int)
@@ -19,13 +19,13 @@ method class_scope_global$class_Foo$fun_getY$fun_take$T_class_global$class_Foo$r
 }
 
 /inheritance.kt:(171,174): info: Generated Viper text for sum:
-field class_scope_global$class_Foo$member_x: Int
-
-field class_scope_global$class_Foo$member_y: Int
+field class_scope_global$class_Bar$member_z: Int
 
 field class_scope_global$class_Foo$member_b: Bool
 
-field class_scope_global$class_Bar$member_z: Int
+field class_scope_global$class_Foo$member_x: Int
+
+field class_scope_global$class_Foo$member_y: Int
 
 method class_scope_global$class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(this: Ref)
   returns (ret: Int)
@@ -45,13 +45,17 @@ method class_scope_global$class_Bar$fun_sum$fun_take$T_class_global$class_Bar$re
 }
 
 /inheritance.kt:(217,232): info: Generated Viper text for callSuperMethod:
+field class_scope_global$class_Bar$member_z: Int
+
+field class_scope_global$class_Foo$member_b: Bool
+
 field class_scope_global$class_Foo$member_x: Int
 
 field class_scope_global$class_Foo$member_y: Int
 
-field class_scope_global$class_Foo$member_b: Bool
+method class_scope_global$class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
+  returns (ret: Int)
 
-field class_scope_global$class_Bar$member_z: Int
 
 method global$fun_callSuperMethod$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
   returns (ret: Int)
@@ -65,18 +69,14 @@ method global$fun_callSuperMethod$fun_take$T_class_global$class_Bar$return$T_Int
   label label$ret$0
 }
 
-method class_scope_global$class_Foo$fun_getY$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
-  returns (ret: Int)
-
-
 /inheritance.kt:(279,295): info: Generated Viper text for accessSuperField:
-field class_scope_global$class_Foo$member_x: Int
-
-field class_scope_global$class_Foo$member_y: Int
+field class_scope_global$class_Bar$member_z: Int
 
 field class_scope_global$class_Foo$member_b: Bool
 
-field class_scope_global$class_Bar$member_z: Int
+field class_scope_global$class_Foo$member_x: Int
+
+field class_scope_global$class_Foo$member_y: Int
 
 method global$fun_accessSuperField$fun_take$T_class_global$class_Bar$return$T_Boolean(local$bar: Ref)
   returns (ret: Bool)
@@ -92,13 +92,13 @@ method global$fun_accessSuperField$fun_take$T_class_global$class_Bar$return$T_Bo
 }
 
 /inheritance.kt:(341,355): info: Generated Viper text for accessNewField:
-field class_scope_global$class_Foo$member_x: Int
-
-field class_scope_global$class_Foo$member_y: Int
+field class_scope_global$class_Bar$member_z: Int
 
 field class_scope_global$class_Foo$member_b: Bool
 
-field class_scope_global$class_Bar$member_z: Int
+field class_scope_global$class_Foo$member_x: Int
+
+field class_scope_global$class_Foo$member_y: Int
 
 method global$fun_accessNewField$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
   returns (ret: Int)
@@ -114,13 +114,17 @@ method global$fun_accessNewField$fun_take$T_class_global$class_Bar$return$T_Int(
 }
 
 /inheritance.kt:(397,410): info: Generated Viper text for callNewMethod:
+field class_scope_global$class_Bar$member_z: Int
+
+field class_scope_global$class_Foo$member_b: Bool
+
 field class_scope_global$class_Foo$member_x: Int
 
 field class_scope_global$class_Foo$member_y: Int
 
-field class_scope_global$class_Foo$member_b: Bool
+method class_scope_global$class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(this: Ref)
+  returns (ret: Int)
 
-field class_scope_global$class_Bar$member_z: Int
 
 method global$fun_callNewMethod$fun_take$T_class_global$class_Bar$return$T_Int(local$bar: Ref)
   returns (ret: Int)
@@ -133,18 +137,14 @@ method global$fun_callNewMethod$fun_take$T_class_global$class_Bar$return$T_Int(l
   label label$ret$0
 }
 
-method class_scope_global$class_Bar$fun_sum$fun_take$T_class_global$class_Bar$return$T_Int(this: Ref)
-  returns (ret: Int)
-
-
 /inheritance.kt:(456,469): info: Generated Viper text for setSuperField:
-field class_scope_global$class_Foo$member_x: Int
-
-field class_scope_global$class_Foo$member_y: Int
+field class_scope_global$class_Bar$member_z: Int
 
 field class_scope_global$class_Foo$member_b: Bool
 
-field class_scope_global$class_Bar$member_z: Int
+field class_scope_global$class_Foo$member_x: Int
+
+field class_scope_global$class_Foo$member_y: Int
 
 method global$fun_setSuperField$fun_take$T_class_global$class_Bar$return$T_Unit(local$bar: Ref)
   returns (ret: dom$Unit)
@@ -157,13 +157,13 @@ method global$fun_setSuperField$fun_take$T_class_global$class_Bar$return$T_Unit(
 }
 
 /inheritance.kt:(506,527): info: Generated Viper text for accessSuperSuperField:
-field class_scope_global$class_Foo$member_x: Int
-
-field class_scope_global$class_Foo$member_y: Int
+field class_scope_global$class_Bar$member_z: Int
 
 field class_scope_global$class_Foo$member_b: Bool
 
-field class_scope_global$class_Bar$member_z: Int
+field class_scope_global$class_Foo$member_x: Int
+
+field class_scope_global$class_Foo$member_y: Int
 
 method global$fun_accessSuperSuperField$fun_take$T_class_global$class_Baz$return$T_Int(local$baz: Ref)
   returns (ret: Int)

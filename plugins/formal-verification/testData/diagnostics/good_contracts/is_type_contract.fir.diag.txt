@@ -1,10 +1,6 @@
 /is_type_contract.kt:(157,165): info: Generated Viper text for isString:
 field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
 
-method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Int)
-
-
 method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: dom$Nullable[dom$Any])
   returns (ret: Bool)
   ensures ret == true ==>
@@ -16,12 +12,12 @@ method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: dom$Nullabl
   label label$ret$0
 }
 
-/is_type_contract.kt:(322,330): info: Generated Viper text for isString:
-field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
-
 method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
+
+/is_type_contract.kt:(322,330): info: Generated Viper text for isString:
+field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
 
 method global$fun_isString$fun_take$T_Any$return$T_Boolean(this: dom$Any)
   returns (ret: Bool)
@@ -33,6 +29,10 @@ method global$fun_isString$fun_take$T_Any$return$T_Boolean(this: dom$Any)
   goto label$ret$0
   label label$ret$0
 }
+
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
 
 /is_type_contract.kt:(491,508): info: Generated Viper text for subtypeTransitive:
 method global$fun_subtypeTransitive$fun_take$T_Unit$return$T_Unit(local$x: dom$Unit)
@@ -46,6 +46,11 @@ method global$fun_subtypeTransitive$fun_take$T_Unit$return$T_Unit(local$x: dom$U
 /is_type_contract.kt:(686,707): info: Generated Viper text for constructorReturnType:
 field class_scope_global$class_Foo$member_bar: Ref
 
+method class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+
+
 method global$fun_constructorReturnType$fun_take$$return$T_Boolean()
   returns (ret: Bool)
   ensures ret == true
@@ -56,11 +61,6 @@ method global$fun_constructorReturnType$fun_take$$return$T_Boolean()
   goto label$ret$0
   label label$ret$0
 }
-
-method class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-
 
 /is_type_contract.kt:(832,848): info: Generated Viper text for subtypeSuperType:
 field class_scope_global$class_Foo$member_bar: Ref

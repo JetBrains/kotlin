@@ -94,6 +94,10 @@ method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nulla
 }
 
 /nullable.kt:(522,544): info: Generated Viper text for elvis_operator_complex:
+method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
+  returns (ret: Int)
+
+
 method global$fun_elvis_operator_complex$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
   returns (ret: Int)
 {
@@ -118,10 +122,6 @@ method global$fun_pass_nullable_parameter$fun_take$NT_Int$return$NT_Int(local$x:
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 
 
-method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
-  returns (ret: Int)
-
-
 /nullable.kt:(627,648): info: Generated Viper text for evlis_operator_return:
 method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
   returns (ret: Int)
@@ -144,10 +144,6 @@ method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: do
 /nullable.kt:(711,720): info: Generated Viper text for safe_call:
 field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
 
-method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
-  returns (ret: Int)
-
-
 method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
   returns (ret: dom$Unit)
 {
@@ -168,12 +164,12 @@ method pkg$kotlin$class_scope_pkg$kotlin$global$class_Any$fun_hashCode$fun_take$
   returns (ret: Int)
 
 
-/nullable.kt:(760,778): info: Generated Viper text for safe_call_property:
-field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
-
 method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
+
+/nullable.kt:(760,778): info: Generated Viper text for safe_call_property:
+field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
 
 method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
   returns (ret: dom$Unit)
@@ -194,8 +190,17 @@ method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_S
   label label$ret$0
 }
 
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
+
 /nullable.kt:(899,914): info: Generated Viper text for safe_call_chain:
 field class_scope_global$class_Foo$member_v: Int
+
+method class_scope_global$class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo(this: Ref)
+  returns (ret: dom$Nullable[Ref])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
+
 
 method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: dom$Nullable[Ref])
   returns (ret: dom$Nullable[Int])
@@ -234,8 +239,3 @@ method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_I
   goto label$ret$0
   label label$ret$0
 }
-
-method class_scope_global$class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo(this: Ref)
-  returns (ret: dom$Nullable[Ref])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
-

@@ -33,6 +33,10 @@ method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class
 /member_functions.kt:(140,152): info: Generated Viper text for sibling_call:
 field class_scope_global$class_Foo$member_x: Int
 
+method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
+  returns (ret: Int)
+
+
 method class_scope_global$class_Foo$fun_sibling_call$fun_take$T_class_global$class_Foo$T_class_global$class_Foo$return$T_Unit(this: Ref,
   local$other: Ref)
   returns (ret: dom$Unit)
@@ -44,12 +48,17 @@ method class_scope_global$class_Foo$fun_sibling_call$fun_take$T_class_global$cla
   label label$ret$0
 }
 
+/member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
+field class_scope_global$class_Foo$member_x: Int
+
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+
+
 method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Int)
 
-
-/member_functions.kt:(207,228): info: Generated Viper text for outer_member_fun_call:
-field class_scope_global$class_Foo$member_x: Int
 
 method global$fun_outer_member_fun_call$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
@@ -62,11 +71,3 @@ method global$fun_outer_member_fun_call$fun_take$$return$T_Unit()
   anonymous$1 := class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(local0$f)
   label label$ret$0
 }
-
-method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-
-
-method class_scope_global$class_Foo$fun_member_fun$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
-  returns (ret: Int)

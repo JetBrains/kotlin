@@ -55,6 +55,13 @@ method global$fun_logical_not$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
 }
 
 /returns_booleans.kt:(1052,1075): info: Generated Viper text for call_fun_with_contracts:
+method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Bool,
+  local$b: Bool)
+  returns (ret: Bool)
+  ensures ret == false ==> local$b && false
+  ensures ret == true ==> (true || local$a) && (local$b || true)
+
+
 method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   returns (ret: Bool)
   ensures ret == true
@@ -69,18 +76,7 @@ method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(lo
   label label$ret$0
 }
 
-method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$a: Bool,
-  local$b: Bool)
-  returns (ret: Bool)
-  ensures ret == false ==> local$b && false
-  ensures ret == true ==> (true || local$a) && (local$b || true)
-
-
 /returns_booleans.kt:(1268,1281): info: Generated Viper text for isNullOrEmpty:
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$getter_size(this: Ref)
-  returns (ret: Int)
-
-
 method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: dom$Nullable[Ref])
   returns (ret: Bool)
   ensures ret == false ==> this != (dom$Nullable$null(): dom$Nullable[Ref])
@@ -109,4 +105,8 @@ method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$
 
 method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: Ref)
   returns (ret: Bool)
+
+
+method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$getter_size(this: Ref)
+  returns (ret: Int)
 

@@ -22,11 +22,11 @@ data class Program(
     val trafos: Trafos = Trafos.NoTrafos,
 ) : IntoSilver<viper.silver.ast.Program> {
     override fun toSilver(): viper.silver.ast.Program = viper.silver.ast.Program(
-        domains.toSilver().toScalaSeq(),
-        fields.toSilver().toScalaSeq(),
-        functions.toSilver().toScalaSeq(),
+        domains.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
+        fields.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
+        functions.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
         emptySeq(), /* predicates */
-        methods.toSilver().toScalaSeq(),
+        methods.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
         emptySeq(), /* extensions */
         pos.toSilver(),
         info.toSilver(),

@@ -1,4 +1,8 @@
 /try_catch.kt:(139,148): info: Generated Viper text for try_catch:
+method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
+  returns (ret: dom$Unit)
+
+
 method global$fun_try_catch$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -27,11 +31,11 @@ method global$fun_try_catch$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
+/try_catch.kt:(253,269): info: Generated Viper text for nested_try_catch:
 method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 
 
-/try_catch.kt:(253,269): info: Generated Viper text for nested_try_catch:
 method global$fun_nested_try_catch$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -76,11 +80,11 @@ method global$fun_nested_try_catch$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
+/try_catch.kt:(559,580): info: Generated Viper text for try_catch_with_inline:
 method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
   returns (ret: dom$Unit)
 
 
-/try_catch.kt:(559,580): info: Generated Viper text for try_catch_with_inline:
 method global$fun_try_catch_with_inline$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -113,10 +117,6 @@ method global$fun_try_catch_with_inline$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret: dom$Unit)
-
-
 /try_catch.kt:(674,693): info: Generated Viper text for try_catch_shadowing:
 method global$fun_try_catch_shadowing$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
@@ -147,6 +147,10 @@ method global$fun_try_catch_shadowing$fun_take$$return$T_Unit()
 }
 
 /try_catch.kt:(804,820): info: Generated Viper text for multiple_catches:
+method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
+  returns (ret: dom$Unit)
+
+
 method global$fun_multiple_catches$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -188,7 +192,3 @@ method global$fun_multiple_catches$fun_take$$return$T_Unit()
   label label$try_exit$0
   label label$ret$0
 }
-
-method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret: dom$Unit)
-

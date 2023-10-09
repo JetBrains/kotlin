@@ -1,14 +1,14 @@
 /interface.kt:(65,80): info: Generated Viper text for test_properties:
+method class_scope_global$class_Foo$getter_valProp(this: Ref)
+  returns (ret: Int)
+
+
 method class_scope_global$class_Foo$getter_varProp(this: Ref)
   returns (ret: Int)
 
 
 method class_scope_global$class_Foo$setter_varProp(this: Ref, local$value: Int)
   returns (ret: dom$Unit)
-
-
-method class_scope_global$class_Foo$getter_valProp(this: Ref)
-  returns (ret: Int)
 
 
 method global$fun_test_properties$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo: Ref)

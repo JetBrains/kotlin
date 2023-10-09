@@ -3,6 +3,19 @@ field class_scope_global$class_AlwaysPlusOne$member_b: Int
 
 field class_scope_global$class_AlwaysPlusOne$member_num: Int
 
+method class_scope_global$class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_AlwaysPlusOne())
+
+
+method class_scope_global$class_AlwaysPlusOne$getter_num(this: Ref)
+  returns (ret: Int)
+
+
+method class_scope_global$class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
+  returns (ret: dom$Unit)
+
+
 method global$fun_testCustomSetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -19,21 +32,13 @@ method global$fun_testCustomSetter$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method class_scope_global$class_AlwaysPlusOne$getter_num(this: Ref)
-  returns (ret: Int)
-
-
-method class_scope_global$class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
-  returns (ret: dom$Unit)
-
-
-method class_scope_global$class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_AlwaysPlusOne())
-
-
 /classes_setters.kt:(490,500): info: Generated Viper text for testSetter:
 field class_scope_global$class_Person$member_age: Int
+
+method class_scope_global$class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(local$age: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Person())
+
 
 method global$fun_testSetter$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
@@ -53,15 +58,20 @@ method global$fun_testSetter$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method class_scope_global$class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(local$age: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Person())
-
-
 /classes_setters.kt:(572,589): info: Generated Viper text for testSetterCascade:
 field class_scope_global$class_Bar$member_a: Int
 
 field class_scope_global$class_Foo$member_b: Ref
+
+method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+
+
+method class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+
 
 method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
@@ -83,18 +93,20 @@ method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-
-
-method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
-
-
 /classes_setters.kt:(641,665): info: Generated Viper text for testSetterNoBackingField:
 field class_scope_global$class_Baz$member__a: Int
+
+method class_scope_global$class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Baz())
+
+
+method class_scope_global$class_Baz$getter_a(this: Ref) returns (ret: Int)
+
+
+method class_scope_global$class_Baz$setter_a(this: Ref, local$value: Int)
+  returns (ret: dom$Unit)
+
 
 method global$fun_testSetterNoBackingField$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
@@ -108,20 +120,13 @@ method global$fun_testSetterNoBackingField$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
-method class_scope_global$class_Baz$getter_a(this: Ref) returns (ret: Int)
-
-
-method class_scope_global$class_Baz$setter_a(this: Ref, local$value: Int)
-  returns (ret: dom$Unit)
-
-
-method class_scope_global$class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Baz())
-
-
 /classes_setters.kt:(805,821): info: Generated Viper text for testSetterLambda:
 field class_scope_global$class_Bar$member_a: Int
+
+method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+
 
 method global$fun_testSetterLambda$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
@@ -137,8 +142,3 @@ method global$fun_testSetterLambda$fun_take$$return$T_Unit()
   }
   label label$ret$0
 }
-
-method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
-

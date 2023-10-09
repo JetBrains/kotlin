@@ -1,4 +1,8 @@
 /function_call.kt:(99,112): info: Generated Viper text for function_call:
+method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
+  returns (ret: Int)
+
+
 method global$fun_function_call$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -9,11 +13,11 @@ method global$fun_function_call$fun_take$$return$T_Unit()
   label label$ret$0
 }
 
+/function_call.kt:(142,162): info: Generated Viper text for function_call_nested:
 method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret: Int)
 
 
-/function_call.kt:(142,162): info: Generated Viper text for function_call_nested:
 method global$fun_function_call_nested$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -25,6 +29,3 @@ method global$fun_function_call_nested$fun_take$$return$T_Unit()
   anonymous$2 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$1)
   label label$ret$0
 }
-
-method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret: Int)

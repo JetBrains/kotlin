@@ -1,12 +1,25 @@
 /full_viper_dump.kt:(54,55): info: Generated Viper text for f:
-domain dom$Unit  {
+domain dom$Any  {
 
-  function dom$Unit$element(): dom$Unit
 
-  axiom {
-    (forall u: dom$Unit ::
-      { (dom$TypeOf$typeOf(u): dom$Type) }
-      (dom$TypeOf$typeOf(u): dom$Type) == dom$Type$Unit())
+}
+
+domain dom$Casting[A, B]  {
+
+  function dom$Casting$cast(a: A, newType: dom$Type): B
+
+  axiom dom$Casting$null_cast {
+    (forall newType: dom$Type ::
+      { (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), dom$Type$special$Nullable(newType)): dom$Nullable[B]) }
+      (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), dom$Type$special$Nullable(newType)): dom$Nullable[B]) ==
+      (dom$Nullable$null(): dom$Nullable[B]))
+  }
+
+  axiom dom$Casting$type_of_cast {
+    (forall a: A, newType: dom$Type ::
+      { (dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type) }
+      dom$Type$isSubtype((dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type),
+      newType))
   }
 }
 
@@ -37,42 +50,6 @@ domain dom$Nullable[T]  {
       nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
       (dom$Casting$cast((dom$Casting$cast(nx, newType): T), (dom$TypeOf$typeOf(nx): dom$Type)): dom$Nullable[T]) ==
       nx)
-  }
-}
-
-domain dom$Casting[A, B]  {
-
-  function dom$Casting$cast(a: A, newType: dom$Type): B
-
-  axiom dom$Casting$null_cast {
-    (forall newType: dom$Type ::
-      { (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), dom$Type$special$Nullable(newType)): dom$Nullable[B]) }
-      (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), dom$Type$special$Nullable(newType)): dom$Nullable[B]) ==
-      (dom$Nullable$null(): dom$Nullable[B]))
-  }
-
-  axiom dom$Casting$type_of_cast {
-    (forall a: A, newType: dom$Type ::
-      { (dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type) }
-      dom$Type$isSubtype((dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type),
-      newType))
-  }
-}
-
-domain dom$TypeOf[T]  {
-
-  function dom$TypeOf$typeOf(x: T): dom$Type
-
-  axiom {
-    (forall i: Int ::
-      { (dom$TypeOf$typeOf(i): dom$Type) }
-      (dom$TypeOf$typeOf(i): dom$Type) == dom$Type$Int())
-  }
-
-  axiom {
-    (forall b: Bool ::
-      { (dom$TypeOf$typeOf(b): dom$Type) }
-      (dom$TypeOf$typeOf(b): dom$Type) == dom$Type$Boolean())
   }
 }
 
@@ -254,23 +231,44 @@ domain dom$Type  {
   }
 }
 
-domain dom$Any  {
+domain dom$TypeOf[T]  {
 
+  function dom$TypeOf$typeOf(x: T): dom$Type
 
+  axiom {
+    (forall i: Int ::
+      { (dom$TypeOf$typeOf(i): dom$Type) }
+      (dom$TypeOf$typeOf(i): dom$Type) == dom$Type$Int())
+  }
+
+  axiom {
+    (forall b: Bool ::
+      { (dom$TypeOf$typeOf(b): dom$Type) }
+      (dom$TypeOf$typeOf(b): dom$Type) == dom$Type$Boolean())
+  }
 }
 
-field special$function_object_call_counter: Int
+domain dom$Unit  {
+
+  function dom$Unit$element(): dom$Unit
+
+  axiom {
+    (forall u: dom$Unit ::
+      { (dom$TypeOf$typeOf(u): dom$Type) }
+      (dom$TypeOf$typeOf(u): dom$Type) == dom$Type$Unit())
+  }
+}
 
 field class_scope_global$class_Foo$member_x: Int
+
+field special$function_object_call_counter: Int
 
 function special$duplicable(anonymous$0: Ref): Bool
 
 
-method special$invoke_function_object(anonymous$0: Ref)
-  requires acc(anonymous$0.special$function_object_call_counter, write)
-  ensures acc(anonymous$0.special$function_object_call_counter, write)
-  ensures old(anonymous$0.special$function_object_call_counter) + 1 ==
-    anonymous$0.special$function_object_call_counter
+method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
 
 method global$fun_f$fun_take$$return$T_Unit() returns (ret: dom$Unit)
@@ -282,7 +280,9 @@ method global$fun_f$fun_take$$return$T_Unit() returns (ret: dom$Unit)
   label label$ret$0
 }
 
-method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+method special$invoke_function_object(anonymous$0: Ref)
+  requires acc(anonymous$0.special$function_object_call_counter, write)
+  ensures acc(anonymous$0.special$function_object_call_counter, write)
+  ensures old(anonymous$0.special$function_object_call_counter) + 1 ==
+    anonymous$0.special$function_object_call_counter
 
