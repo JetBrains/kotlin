@@ -354,7 +354,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 .appendText("this can't be compiled")
 
             buildAndFail(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = environmentVariables) {
-                assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Expecting a top level declaration")
+                assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Syntax error: Expecting a top level declaration")
                 assertOutputContains("error: Compilation finished with errors")
             }
         }
@@ -418,7 +418,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "-Pkotlin.native.useXcodeMessageStyle=true",
                 environmentVariables = environmentVariables
             ) {
-                assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Expecting a top level declaration")
+                assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Syntax error: Expecting a top level declaration")
                 assertOutputContains("error: Compilation finished with errors")
             }
         }
@@ -452,7 +452,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "-Pkotlin.native.disableCompilerDaemon=true",
                 environmentVariables = environmentVariables
             ) {
-                assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Expecting a top level declaration")
+                assertOutputContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Syntax error: Expecting a top level declaration")
             }
         }
     }
@@ -501,7 +501,7 @@ class AppleFrameworkIT : KGPBaseTest() {
             }
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
-                assertOutputContainsNativeFrameworkVariant("mainStaticReleaseFrameworkIos", gradleVersion)
+                assertOutputDoesNotContain("mainStaticReleaseFrameworkIos")
             }
         }
     }

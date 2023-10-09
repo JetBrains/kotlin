@@ -205,9 +205,9 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.addPod(defaultPodName, produceGitBlock())
             testImport()
 
-            val anotherPodName = "Alamofire"
-            val anotherPodRepo = "https://github.com/Alamofire/Alamofire"
-            buildGradleKts.addPod(anotherPodName, produceGitBlock(anotherPodRepo))
+            val anotherPodName = "Base64"
+            val anotherPodRepo = "https://github.com/ekscrypto/Base64"
+            buildGradleKts.addPod(anotherPodName, produceGitBlock(anotherPodRepo, tagName = "1.2.2"))
             testImport(repos = listOf(defaultPodRepo, anotherPodRepo)) {
 
                 assertTasksExecuted(

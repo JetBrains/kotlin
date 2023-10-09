@@ -484,7 +484,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 )
             )
             buildAndFail("syncFramework", buildOptions = buildOptions) {
-                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Expecting a top level declaration")
+                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
                 assertOutputContains("error: Compilation finished with errors")
             }
         }
@@ -504,7 +504,7 @@ class CocoaPodsIT : KGPBaseTest() {
             )
             buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
                 assertOutputContains("e: file:///")
-                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2 Expecting a top level declaration")
+                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2 Syntax error: Expecting a top level declaration")
                 assertOutputDoesNotContain("error: Compilation finished with errors")
             }
         }
@@ -524,7 +524,7 @@ class CocoaPodsIT : KGPBaseTest() {
                 )
             )
             buildAndFail("linkPodDebugFrameworkIOS", buildOptions = buildOptions) {
-                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Expecting a top level declaration")
+                assertOutputContains("/native-cocoapods-template/src/commonMain/kotlin/A.kt:5:2: error: Syntax error: Expecting a top level declaration")
                 assertOutputContains("error: Compilation finished with errors")
             }
         }
