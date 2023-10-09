@@ -22,12 +22,11 @@ testing::MockFunction<void(KRef)>* kotlin::test_support::internal::Kotlin_runUnh
 namespace {
 
 struct EmptyPayload {
-    using Field = ObjHeader* EmptyPayload::*;
-    static constexpr std::array<Field, 0> kFields{};
+    static constexpr kotlin::test_support::NoRefFields<EmptyPayload> kFields{};
 };
 
 kotlin::test_support::TypeInfoHolder theAnyTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ObjectBuilder<EmptyPayload>()};
-kotlin::test_support::TypeInfoHolder theArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<ObjHeader*>()};
+kotlin::test_support::TypeInfoHolder theArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<kotlin::mm::RefField>()};
 kotlin::test_support::TypeInfoHolder theBooleanArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KBoolean>()};
 kotlin::test_support::TypeInfoHolder theByteArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KByte>()};
 kotlin::test_support::TypeInfoHolder theCharArrayTypeInfoHolder{kotlin::test_support::TypeInfoHolder::ArrayBuilder<KChar>()};

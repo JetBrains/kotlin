@@ -11,6 +11,7 @@
 #include "GC.hpp"
 #include "Memory.h"
 #include "RawPtr.hpp"
+#include "ReferenceOps.hpp"
 #include "ThreadRegistry.hpp"
 
 namespace kotlin::mm {
@@ -102,7 +103,7 @@ class SpecialRefRegistry : private Pinned {
 
         OBJ_GETTER0(tryRef) noexcept {
             AssertThreadState(ThreadState::kRunnable);
-            RETURN_RESULT_OF(kotlin::gc::tryRef, obj_);
+            RETURN_RESULT_OF(mm::weakRefReadBarrier, obj_);
         }
 
         void retainRef() noexcept {

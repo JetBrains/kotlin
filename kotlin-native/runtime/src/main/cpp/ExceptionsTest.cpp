@@ -31,8 +31,7 @@ namespace {
 struct Payload {
     int value = 0;
 
-    using Field = ObjHeader* Payload::*;
-    static constexpr std::array<Field, 0> kFields{};
+    static constexpr test_support::NoRefFields<Payload> kFields{};
 };
 
 using Object = test_support::Object<Payload>;
