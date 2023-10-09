@@ -30,9 +30,9 @@
 using namespace kotlin;
 
 struct Payload {
-    ObjHeader* field1;
-    ObjHeader* field2;
-    ObjHeader* field3;
+    mm::RefField field1;
+    mm::RefField field2;
+    mm::RefField field3;
 
     static constexpr std::array kFields = {
             &Payload::field1,
@@ -97,7 +97,7 @@ public:
     test_support::ObjectArray<3>& operator*() { return test_support::ObjectArray<3>::FromArrayHeader(location_->array()); }
     test_support::ObjectArray<3>& operator->() { return test_support::ObjectArray<3>::FromArrayHeader(location_->array()); }
 
-    ObjHeader*& operator[](size_t index) noexcept { return (**this).elements()[index]; }
+    mm::RefField& operator[](size_t index) noexcept { return (**this).elements()[index]; }
 
 private:
     ObjHeader* location_ = nullptr;
@@ -144,7 +144,7 @@ public:
     test_support::ObjectArray<3>& operator*() { return test_support::ObjectArray<3>::FromArrayHeader(holder_.obj()->array()); }
     test_support::ObjectArray<3>& operator->() { return test_support::ObjectArray<3>::FromArrayHeader(holder_.obj()->array()); }
 
-    ObjHeader*& operator[](size_t index) noexcept { return (**this).elements()[index]; }
+    mm::RefField& operator[](size_t index) noexcept { return (**this).elements()[index]; }
 
 private:
     ObjHolder holder_;
@@ -343,7 +343,7 @@ TYPED_TEST_P(TracingGCTest, FreeObjectWithHoldedWeak) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         StackObjectHolder stack{threadData};
-        auto& weak1 = InstallWeakReference(threadData, object1.header(), &stack->field1);
+        auto& weak1 = InstallWeakReference(threadData, object1.header(), stack->field1.ptr());
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), weak1.header(), stack.header()));
         ASSERT_THAT(gc::isMarked(object1.header()), false);

@@ -851,8 +851,8 @@ public:
 using ObjectFactory = alloc::ObjectFactory<ObjectFactoryTraits>;
 
 struct Payload {
-    ObjHeader* field1;
-    ObjHeader* field2;
+    mm::RefField field1;
+    mm::RefField field2;
 
     static constexpr std::array kFields{
             &Payload::field1,

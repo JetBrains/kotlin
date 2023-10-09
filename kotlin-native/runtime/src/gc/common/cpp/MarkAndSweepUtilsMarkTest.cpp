@@ -22,9 +22,9 @@ using namespace kotlin;
 namespace {
 
 struct Payload {
-    ObjHeader* field1;
-    ObjHeader* field2;
-    ObjHeader* field3;
+    mm::RefField field1;
+    mm::RefField field2;
+    mm::RefField field3;
 
     static constexpr std::array kFields = {
             &Payload::field1,

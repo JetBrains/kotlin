@@ -19,8 +19,7 @@ using namespace kotlin;
 namespace {
 
 struct EmptyPayload {
-    using Field = ObjHeader* EmptyPayload::*;
-    static constexpr std::array<Field, 0> kFields{};
+    static constexpr test_support::NoRefFields<EmptyPayload> kFields{};
 };
 
 class ExtraObjectDataTest : public testing::Test {
