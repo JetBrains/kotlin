@@ -3189,6 +3189,11 @@ class ComposableFunctionBodyTransformer(
                             }
                         }
                         return true
+                    } else {
+                        // If the capture is outside inline lambda, we don't allow meta propagation
+                        if (!inlineLambdaInfo.isInlineLambda(scope.function)) {
+                            return false
+                        }
                     }
                 }
                 else -> {

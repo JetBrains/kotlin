@@ -167,7 +167,7 @@ fun Test5(content: Function2<Composer, Int, Unit>, %composer: Composer?, %change
           traceEventStart(<>, %changed, -1, <>)
         }
         Test1(%composer, 0)
-        content(%composer, 0b1110 and %dirty)
+        content(%composer, 0)
         if (isTraceInProgress()) {
           traceEventEnd()
         }
@@ -204,7 +204,7 @@ fun Test6(test: String, %composer: Composer?, %changed: Int) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
-        T(test, %composer, 0b1110 and %dirty)
+        T(test, %composer, 0)
         Test1(%composer, 0)
         if (isTraceInProgress()) {
           traceEventEnd()
