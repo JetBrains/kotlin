@@ -12,6 +12,10 @@ method global$fun_unverifiableTypeCheck$fun_take$NT_Int$return$T_Boolean(local$x
   label label$ret$0
 }
 
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
+
 /is_type_contract.kt:(121,142): warning: Viper verification error: Postcondition of global$fun_unverifiableTypeCheck$fun_take$NT_Int$return$T_Boolean might not hold. Assertion true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Unit()) might not hold. (<no position>)
 
 

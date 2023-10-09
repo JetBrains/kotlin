@@ -144,6 +144,10 @@ method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: do
 /nullable.kt:(711,720): info: Generated Viper text for safe_call:
 field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
 
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
+
 method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
   returns (ret: dom$Unit)
 {
@@ -166,6 +170,10 @@ method pkg$kotlin$class_scope_pkg$kotlin$global$class_Any$fun_hashCode$fun_take$
 
 /nullable.kt:(760,778): info: Generated Viper text for safe_call_property:
 field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
+
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
 
 method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
   returns (ret: dom$Unit)

@@ -51,8 +51,8 @@ fun FirPropertyAccessorSymbol.embedName(ctx: ProgramConversionContext): ScopedKo
         else -> throw IllegalStateException("An extension property must be a setter or a getter!")
     }
     false -> when {
-        isGetter -> callableId.embedGetterName()
-        isSetter -> callableId.embedSetterName()
+        isGetter -> propertySymbol.callableId.embedGetterName()
+        isSetter -> propertySymbol.callableId.embedSetterName()
         else -> throw IllegalStateException("A property accessor must be a setter or a getter!")
     }
 }

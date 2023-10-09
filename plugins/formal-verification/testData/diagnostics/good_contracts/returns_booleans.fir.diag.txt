@@ -77,6 +77,10 @@ method global$fun_binary_logic_expressions$fun_take$T_Boolean$T_Boolean$return$T
 
 
 /returns_booleans.kt:(1268,1281): info: Generated Viper text for isNullOrEmpty:
+method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$getter_size(this: Ref)
+  returns (ret: Int)
+
+
 method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: dom$Nullable[Ref])
   returns (ret: Bool)
   ensures ret == false ==> this != (dom$Nullable$null(): dom$Nullable[Ref])
@@ -105,3 +109,4 @@ method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$
 
 method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: Ref)
   returns (ret: Bool)
+

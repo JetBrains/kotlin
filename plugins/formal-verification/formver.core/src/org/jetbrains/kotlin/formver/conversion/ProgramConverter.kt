@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.ErrorCollector
@@ -22,6 +25,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
  * Tracks the top-level information about the program.
@@ -33,7 +37,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     ProgramConversionContext {
     private val methods: MutableMap<MangledName, FunctionEmbedding> = SpecialKotlinFunctions.byName.toMutableMap()
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
-    private val fields: MutableMap<MangledName, FieldEmbedding> = mutableMapOf()
+    private val fields: MutableSet<FieldEmbedding> = mutableSetOf()
+    private val properties: MutableMap<MangledName, PropertyEmbedding> = mutableMapOf()
 
     override val anonNameProducer = FreshEntityProducer { AnonymousName(it) }
     override val whileIndexProducer = FreshEntityProducer { it }
@@ -44,7 +49,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     val program: Program
         get() = Program(
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
-            fields = SpecialFields.all + fields.values.map { it.toViper() },
+            fields = SpecialFields.all + fields.map { it.toViper() },
             functions = SpecialFunctions.all,
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.toList(),
         )
@@ -116,8 +121,15 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     // Note: keep in mind that this function is necessary to resolve the name of the function!
     override fun embedType(symbol: FirFunctionSymbol<*>): TypeEmbedding = FunctionTypeEmbedding(embedFunctionSignature(symbol).asData)
 
-    override fun getField(field: FirPropertySymbol): FieldEmbedding? = field.isExtension.ifFalse {
-        fields[field.callableId.embedMemberPropertyName()]
+    override fun embedProperty(symbol: FirPropertySymbol): PropertyEmbedding = if (!symbol.isExtension) {
+        // Ensure that the class has been processed.
+        embedType(symbol.dispatchReceiverType!!)
+        properties[symbol.callableId.embedMemberPropertyName()] ?: throw IllegalStateException("Unknown property ${symbol.callableId}")
+    } else {
+        PropertyEmbedding(
+            symbol.getterSymbol?.let { embedGetter(it, null) },
+            symbol.setterSymbol?.let { embedSetter(it, null) },
+        )
     }
 
     override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
@@ -165,12 +177,37 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private fun processClass(symbol: FirRegularClassSymbol) {
         symbol.declarationSymbols
             .filterIsInstance<FirPropertySymbol>()
-            .filter { it.hasBackingField }
-            .forEach {
-                val fieldName = it.callableId.embedMemberPropertyName()
-                fields[fieldName] = FieldEmbedding(it.callableId.embedMemberPropertyName(), embedType(it.resolvedReturnType))
-            }
+            .forEach(::processProperty)
     }
+
+    private fun processProperty(symbol: FirPropertySymbol) {
+        val name = symbol.callableId.embedMemberPropertyName()
+        val backingField = symbol.hasBackingField.ifTrue {
+            FieldEmbedding(symbol.callableId.embedMemberPropertyName(), embedType(symbol.resolvedReturnType))
+        }
+
+        val getter: GetterEmbedding? = symbol.getterSymbol?.let { embedGetter(it, backingField) }
+        val setter: SetterEmbedding? = symbol.setterSymbol?.let { embedSetter(it, backingField) }
+
+        properties[name] = PropertyEmbedding(getter, setter)
+        backingField?.let { fields.add(it) }
+    }
+
+    @OptIn(SymbolInternals::class)
+    private fun embedGetter(symbol: FirPropertyAccessorSymbol, backingField: FieldEmbedding?): GetterEmbedding =
+        if (symbol.fir is FirDefaultPropertyGetter && backingField != null) {
+            BackingFieldGetter(backingField)
+        } else {
+            CustomGetter(embedFunction(symbol))
+        }
+
+    @OptIn(SymbolInternals::class)
+    private fun embedSetter(symbol: FirPropertyAccessorSymbol, backingField: FieldEmbedding?): SetterEmbedding =
+        if (symbol.fir is FirDefaultPropertySetter && backingField != null) {
+            BackingFieldSetter(backingField)
+        } else {
+            CustomSetter(embedFunction(symbol))
+        }
 
     private fun processCallable(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): CallableEmbedding =
         if (symbol.isInline) {

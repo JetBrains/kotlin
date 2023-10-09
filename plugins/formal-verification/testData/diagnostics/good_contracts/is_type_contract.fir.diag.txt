@@ -1,6 +1,10 @@
 /is_type_contract.kt:(157,165): info: Generated Viper text for isString:
 field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
 
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
+
 method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: dom$Nullable[dom$Any])
   returns (ret: Bool)
   ensures ret == true ==>
@@ -14,6 +18,10 @@ method global$fun_isString$fun_take$NT_Any$return$T_Boolean(local$x: dom$Nullabl
 
 /is_type_contract.kt:(322,330): info: Generated Viper text for isString:
 field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
+
+method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
 
 method global$fun_isString$fun_take$T_Any$return$T_Boolean(this: dom$Any)
   returns (ret: Bool)

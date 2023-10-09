@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.calleeSymbol
@@ -86,31 +83,18 @@ fun StmtConversionContext<ResultTrackingContext>.declareLocal(
 fun StmtConversionContext<ResultTrackingContext>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
     when (val calleeSymbol = symbol.calleeSymbol) {
         is FirValueParameterSymbol -> embedParameter(calleeSymbol).asPropertyAccess()
-        is FirPropertySymbol ->
-            when {
-                symbol.dispatchReceiver != null -> {
-                    ClassPropertyAccess(convert(symbol.dispatchReceiver!!), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
-                }
-                symbol.extensionReceiver != null -> {
-                    ClassPropertyAccess(convert(symbol.extensionReceiver!!), embedGetter(calleeSymbol), embedSetter(calleeSymbol))
-                }
-                else -> embedLocalProperty(calleeSymbol)
+        is FirPropertySymbol -> when {
+            symbol.dispatchReceiver != null -> {
+                val property = embedProperty(calleeSymbol)
+                ClassPropertyAccess(convert(symbol.dispatchReceiver!!), property)
             }
+            symbol.extensionReceiver != null -> {
+                val property = embedProperty(calleeSymbol)
+                ClassPropertyAccess(convert(symbol.extensionReceiver!!), property)
+            }
+            else -> embedLocalProperty(calleeSymbol)
+        }
         else -> throw IllegalStateException("Property access symbol $calleeSymbol has unsupported type.")
-    }
-
-@OptIn(SymbolInternals::class)
-fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedGetter(symbol: FirPropertySymbol): GetterEmbedding? =
-    when (val getter = symbol.fir.getter) {
-        null, is FirDefaultPropertyGetter -> getField(symbol)?.let { BackingFieldGetter(it) }
-        else -> CustomGetter(embedFunction(getter.symbol))
-    }
-
-@OptIn(SymbolInternals::class)
-fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.embedSetter(symbol: FirPropertySymbol): SetterEmbedding? =
-    when (val setter = symbol.fir.setter) {
-        null, is FirDefaultPropertySetter -> getField(symbol)?.let { BackingFieldSetter(it) }
-        else -> CustomSetter(embedFunction(setter.symbol))
     }
 
 fun StmtConversionContext<ResultTrackingContext>.withResult(

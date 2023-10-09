@@ -10,17 +10,18 @@ method global$fun_testGetter$fun_take$$return$T_Unit()
   var local0$succ: Int
   anonymous$0 := class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
   local0$wrapper := anonymous$0
-  anonymous$1 := pkg$special$global$getter_accessor(local0$wrapper)
+  anonymous$1 := class_scope_global$class_IntWrapper$getter_succ(local0$wrapper)
   local0$succ := anonymous$1
   label label$ret$0
 }
 
+method class_scope_global$class_IntWrapper$getter_succ(this: Ref)
+  returns (ret: Int)
+
+
 method class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(local$n: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_IntWrapper())
-
-
-method pkg$special$global$getter_accessor(this: Ref) returns (ret: Int)
 
 
 /classes_getters.kt:(278,295): info: Generated Viper text for testCascadeGetter:
@@ -99,10 +100,14 @@ method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
   anonymous$2 := local0$wrapper.class_scope_global$class_IntWrapperContainer$member_i
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$global$class_IntWrapper())
   exhale acc(local0$wrapper.class_scope_global$class_IntWrapperContainer$member_i, write)
-  anonymous$3 := pkg$special$global$getter_accessor(anonymous$2)
+  anonymous$3 := class_scope_global$class_IntWrapper$getter_succ(anonymous$2)
   local0$succ := anonymous$3
   label label$ret$0
 }
+
+method class_scope_global$class_IntWrapper$getter_succ(this: Ref)
+  returns (ret: Int)
+
 
 method class_scope_global$class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(local$i: Ref)
   returns (ret: Ref)
@@ -113,5 +118,3 @@ method class_scope_global$class_IntWrapper$constructor$fun_take$T_Int$return$T_c
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_IntWrapper())
 
-
-method pkg$special$global$getter_accessor(this: Ref) returns (ret: Int)
