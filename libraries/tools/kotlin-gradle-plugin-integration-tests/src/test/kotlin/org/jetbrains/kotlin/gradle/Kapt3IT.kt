@@ -1313,12 +1313,12 @@ open class Kapt3IT : Kapt3BaseIT() {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
                 assertOutputDoesNotContain("Falling back to 1.9.")
-                assertOutputContains("Kapt 4 is an experimental feature. Use with caution.")
+                assertOutputContains("K2 kapt is an experimental feature. Use with caution.")
             }
             build("-Pkapt.use.k2=true", "cleanCompileKotlin", "compileKotlin") {
                 assertTasksExecuted(":compileKotlin")
                 // The warning should not be displayed for the compile task.
-                assertOutputDoesNotContain("Kapt 4 is an experimental feature. Use with caution.")
+                assertOutputDoesNotContain("K2 kapt is an experimental feature. Use with caution.")
             }
         }
     }
