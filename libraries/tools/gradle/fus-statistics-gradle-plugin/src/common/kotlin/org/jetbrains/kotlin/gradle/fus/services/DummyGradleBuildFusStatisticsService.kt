@@ -13,7 +13,4 @@ internal abstract class DummyGradleBuildFusStatisticsService : InternalGradleBui
         //do nothing
     }
 
-    override fun close() {
-        //do nothing
-    }
 }

@@ -15,6 +15,6 @@ class FusStatisticsPlugin @Inject constructor(
     private val providerFactory: ProviderFactory
 ) : Plugin<Project> {
     override fun apply(project: Project) {
-        InternalGradleBuildFusStatisticsService.registerIfAbsent(project).get()
+        InternalGradleBuildFusStatisticsService.registerIfAbsent(project)
     }
 }

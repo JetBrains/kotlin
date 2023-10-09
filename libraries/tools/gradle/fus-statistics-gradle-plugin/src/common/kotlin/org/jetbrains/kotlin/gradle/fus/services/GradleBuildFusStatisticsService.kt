@@ -3,7 +3,34 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.gradle.fus.services
+
+import org.gradle.api.Task
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
+
+
+/**
+ * A service interface for build FUS statistics reporting.
+ */
 interface GradleBuildFusStatisticsService {
+
+    /**
+     * Reports a metric by its name and optionally subproject.
+     *
+     * @param name the metric name
+     * @param value  the metric value.
+     * @param subprojectName the subproject name for which the metric is being reported.
+     */
     fun reportMetric(name: String, value: Any, subprojectName: String? = null)
 
+}
+
+/**
+ * This task interface provide access to GradleBuildFusStatisticsService.
+ *
+ * @property fusStatisticsBuildService holds an instance of GradleBuildFusStatisticsService.
+ */
+interface UsesGradleBuildFusStatisticsService : Task {
+    @get:Internal
+    val fusStatisticsBuildService: Property<GradleBuildFusStatisticsService>
 }

@@ -7,39 +7,31 @@ package org.jetbrains.kotlin.gradle.fus.services
 
 
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-import org.gradle.api.tasks.Internal
 import java.io.File
+import java.nio.file.Files
 import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
-
-
-interface UsesGradleBuildFusStatisticsService : Task {
-    @get:Internal
-    val fusStatisticsBuildService: Property<GradleBuildFusStatisticsService?>
-}
 
 internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFusStatisticsService,
     BuildService<InternalGradleBuildFusStatisticsService.Parameters>, AutoCloseable {
 
     interface Parameters : BuildServiceParameters {
-        val path: Property<String>
-        val uuid: Property<String>
+        val fusStatisticsRootDirPath: Property<String>
+        val buildId: Property<String>
     }
 
     private val metrics = ConcurrentHashMap<Metric, Any>()
     private val log = Logging.getLogger(this.javaClass)
 
     override fun close() {
-        val reportFile = File(parameters.path.get())
-            .resolve(STATISTICS_FOLDER_NAME)
-            .also { it.mkdirs() }
-            .resolve(parameters.uuid.get())
+        val reportFile = File(parameters.fusStatisticsRootDirPath.get(), STATISTICS_FOLDER_NAME)
+            .also { Files.createDirectories(it.toPath()) }
+            .resolve(parameters.buildId.get())
         reportFile.createNewFile()
 
         for ((metric, value) in metrics) {
@@ -66,29 +58,28 @@ internal abstract class InternalGradleBuildFusStatisticsService : GradleBuildFus
         private val serviceClass = InternalGradleBuildFusStatisticsService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
-        fun registerIfAbsent(project: Project): Provider<InternalGradleBuildFusStatisticsService> {
+        fun registerIfAbsent(project: Project): Provider<out GradleBuildFusStatisticsService>? {
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
-                return it.service as Provider<InternalGradleBuildFusStatisticsService>
+                return it.service as Provider<GradleBuildFusStatisticsService>
             }
 
-            return if (statisticsIsEnabled) {
+            return (if (statisticsIsEnabled) {
                 project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
                     val customPath: String = if (project.rootProject.hasProperty(FUS_STATISTICS_PATH)) {
                         project.rootProject.property(FUS_STATISTICS_PATH) as String
                     } else {
-                        project.gradle.gradleUserHomeDir.path //fix
+                        project.gradle.gradleUserHomeDir.path
                     }
-                    it.parameters.path.set(customPath)
-                    it.parameters.uuid.set(UUID.randomUUID().toString())
+                    it.parameters.fusStatisticsRootDirPath.set(customPath)
+                    it.parameters.buildId.set(UUID.randomUUID().toString())
                 }
             } else {
                 project.gradle.sharedServices.registerIfAbsent(serviceName, DummyGradleBuildFusStatisticsService::class.java) {}
-                    .map { it as InternalGradleBuildFusStatisticsService }
-            }.also { configureTasks(project, it) }
+            }).also { configureTasks(project, it) }
         }
 
-        private fun configureTasks(project: Project, serviceProvider: Provider<InternalGradleBuildFusStatisticsService>) {
+        private fun configureTasks(project: Project, serviceProvider: Provider<out InternalGradleBuildFusStatisticsService>) {
             project.tasks.withType(UsesGradleBuildFusStatisticsService::class.java).configureEach { task ->
                 task.fusStatisticsBuildService.value(serviceProvider).disallowChanges()
                 task.usesService(serviceProvider)
