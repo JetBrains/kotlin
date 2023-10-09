@@ -50,10 +50,11 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
         //
         // Only the 2nd example is valid, and we want to check if token type QUEST doesn't exist at the same level as COLONCOLON.
         val markedNullable = source.getChild(QUEST, depth = 1) != null
+        val resolvedFullyExpandedType = argument.resolvedType.fullyExpandedType(context.session)
         val isNullable = markedNullable ||
                 (argument as? FirResolvedQualifier)?.isNullableLHSForCallableReference == true ||
-                argument.resolvedType.isMarkedNullable ||
-                argument.resolvedType.isNullableTypeParameter(context.session.typeContext)
+                resolvedFullyExpandedType.isMarkedNullable ||
+                resolvedFullyExpandedType.isNullableTypeParameter(context.session.typeContext)
         if (isNullable) {
             if (argument.canBeDoubleColonLHSAsType) {
                 reporter.reportOn(source, FirErrors.NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, context)
@@ -77,8 +78,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
 
         if (argument !is FirResolvedQualifier) return
         // TODO, KT-59835: differentiate RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS
-        if (argument.typeArguments.isNotEmpty() && !argument.resolvedType.fullyExpandedType(context.session)
-                .isAllowedInClassLiteral(context)) {
+        if (argument.typeArguments.isNotEmpty() && !resolvedFullyExpandedType.isAllowedInClassLiteral(context)) {
             val symbol = argument.symbol
             symbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
             @OptIn(SymbolInternals::class)
