@@ -352,7 +352,7 @@ class FirCallResolver(
                     referencedSymbol,
                     qualifiedAccess.source,
                     qualifiedAccess.typeArguments,
-                    diagnostic,
+                    diagnostic ?: extractNestedClassAccessDiagnostic(nameReference.source, qualifiedAccess.explicitReceiver, referencedSymbol),
                     nonFatalDiagnostics = extractNonFatalDiagnostics(
                         nameReference.source,
                         qualifiedAccess.explicitReceiver,

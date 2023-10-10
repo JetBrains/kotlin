@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.getSingleVisibleClassifier
 import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeNestedClassAccessedViaInstanceReference
 import org.jetbrains.kotlin.fir.resolve.setTypeOfQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -182,6 +183,16 @@ private fun FqName.continueQualifierInPackage(
     }.apply {
         setTypeOfQualifier(components.session)
     }
+}
+
+internal fun extractNestedClassAccessDiagnostic(
+    source: KtSourceElement?,
+    explicitReceiver: FirExpression?,
+    symbol: FirClassLikeSymbol<*>
+): ConeDiagnostic? {
+    if ((explicitReceiver as? FirResolvedQualifier)?.typeArguments?.isNotEmpty() == true)
+        return ConeNestedClassAccessedViaInstanceReference(source!!, symbol)
+    return null
 }
 
 internal fun extractNonFatalDiagnostics(

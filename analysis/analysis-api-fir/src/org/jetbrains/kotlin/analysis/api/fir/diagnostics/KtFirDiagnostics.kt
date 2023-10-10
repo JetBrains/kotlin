@@ -414,6 +414,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val suggestedFunction: String
     }
 
+    interface NestedClassAccessedViaInstanceReference : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NestedClassAccessedViaInstanceReference::class
+        val symbol: KtClassLikeSymbol
+    }
+
     interface SuperIsNotAnExpression : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }

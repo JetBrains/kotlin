@@ -194,6 +194,7 @@ object FirErrors {
     val AMBIGUOUS_ALTERED_ASSIGN by error1<PsiElement, List<String?>>()
     val FORBIDDEN_BINARY_MOD by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.OPERATOR_MODIFIER)
     val DEPRECATED_BINARY_MOD by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.OPERATOR_MODIFIER)
+    val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error1<PsiElement, FirClassLikeSymbol<*>>()
 
     // Super
     val SUPER_IS_NOT_AN_EXPRESSION by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)

@@ -127,6 +127,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
         FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source)
     is ConeTypeArgumentsForOuterClassWhenNestedReferencedError ->
         FirErrors.TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED.createOn(this.source)
+    is ConeNestedClassAccessedViaInstanceReference ->
+        FirErrors.NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE.createOn(this.source, this.symbol)
 
     is ConeOuterClassArgumentsRequired ->
         FirErrors.OUTER_CLASS_ARGUMENTS_REQUIRED.createOn(callOrAssignmentSource ?: source, this.symbol)

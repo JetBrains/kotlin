@@ -480,6 +480,12 @@ internal class DeprecatedBinaryModImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DeprecatedBinaryMod
 
+internal class NestedClassAccessedViaInstanceReferenceImpl(
+    override val symbol: KtClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.NestedClassAccessedViaInstanceReference
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
