@@ -6,26 +6,26 @@ FILE fqName:interop fileName:/Definitions.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Definitions modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:KT_CONSTANT visibility:public modality:FINAL [const,val]
-      FIELD PROPERTY_BACKING_FIELD name:KT_CONSTANT type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:KT_CONSTANT type:@[FlexibleNullability] kotlin.String? visibility:public [final]
         EXPRESSION_BODY
           CONST String type=kotlin.String value="constant"
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-KT_CONSTANT> visibility:public modality:FINAL <> ($this:interop.Definitions) returnType:kotlin.String
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-KT_CONSTANT> visibility:public modality:FINAL <> ($this:interop.Definitions) returnType:@[FlexibleNullability] kotlin.String?
         correspondingProperty: PROPERTY name:KT_CONSTANT visibility:public modality:FINAL [const,val]
         $this: VALUE_PARAMETER name:<this> type:interop.Definitions
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-KT_CONSTANT> (): kotlin.String declared in interop.Definitions'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:KT_CONSTANT type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-KT_CONSTANT> (): @[FlexibleNullability] kotlin.String? declared in interop.Definitions'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:KT_CONSTANT type:@[FlexibleNullability] kotlin.String? visibility:public [final]' type=@[FlexibleNullability] kotlin.String? origin=null
               receiver: GET_VAR '<this>: interop.Definitions declared in interop.Definitions.<get-KT_CONSTANT>' type=interop.Definitions origin=null
     PROPERTY name:ktValue visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:ktValue type:kotlin.String visibility:private [final]
+      FIELD PROPERTY_BACKING_FIELD name:ktValue type:@[FlexibleNullability] kotlin.String? visibility:private [final]
         EXPRESSION_BODY
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:CONSTANT type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=GET_PROPERTY
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ktValue> visibility:public modality:FINAL <> ($this:interop.Definitions) returnType:kotlin.String
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:CONSTANT type:@[FlexibleNullability] kotlin.String? visibility:public [final,static]' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ktValue> visibility:public modality:FINAL <> ($this:interop.Definitions) returnType:@[FlexibleNullability] kotlin.String?
         correspondingProperty: PROPERTY name:ktValue visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:interop.Definitions
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-ktValue> (): kotlin.String declared in interop.Definitions'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ktValue type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-ktValue> (): @[FlexibleNullability] kotlin.String? declared in interop.Definitions'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ktValue type:@[FlexibleNullability] kotlin.String? visibility:private [final]' type=@[FlexibleNullability] kotlin.String? origin=null
               receiver: GET_VAR '<this>: interop.Definitions declared in interop.Definitions.<get-ktValue>' type=interop.Definitions origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

@@ -1,0 +1,7 @@
+FILE fqName:<root> fileName:/SameJavaFieldReferences.kt
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      VAR name:ref1 type:kotlin.reflect.KProperty0<@[FlexibleNullability] kotlin.String?> [val]
+        PROPERTY_REFERENCE 'public final someJavaField: @[FlexibleNullability] kotlin.String?' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:someJavaField type:@[FlexibleNullability] kotlin.String? visibility:public [final,static]' getter=null setter=null type=kotlin.reflect.KProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+      VAR name:ref2 type:kotlin.reflect.KProperty0<@[FlexibleNullability] kotlin.String?> [val]
+        PROPERTY_REFERENCE 'public final someJavaField: @[FlexibleNullability] kotlin.String?' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:someJavaField type:@[FlexibleNullability] kotlin.String? visibility:public [final,static]' getter=null setter=null type=kotlin.reflect.KProperty0<@[FlexibleNullability] kotlin.String?> origin=null

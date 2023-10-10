@@ -3436,6 +3436,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("noEnhancementOnFinalStaticConstFields.kt")
+            public void testNoEnhancementOnFinalStaticConstFields() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inference/noEnhancementOnFinalStaticConstFields.kt");
+            }
+
+            @Test
             @TestMetadata("nullableIntegerLiteralType.kt")
             public void testNullableIntegerLiteralType() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/nullableIntegerLiteralType.kt");

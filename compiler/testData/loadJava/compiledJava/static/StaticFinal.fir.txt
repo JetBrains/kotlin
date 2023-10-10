@@ -1,13 +1,13 @@
 public open class StaticFinal : R|kotlin/Any| {
-    public final static field publicNonNull: R|kotlin/String| = String(aaa)
+    public final static field publicNonNull: R|kotlin/String!| = String(aaa)
 
     public final static field publicNull: R|kotlin/String!|
 
-    public/*package*/ final static field packageNonNull: R|kotlin/String| = String(bbb)
+    public/*package*/ final static field packageNonNull: R|kotlin/String!| = String(bbb)
 
     public/*package*/ final static field packageNull: R|kotlin/String!|
 
-    private final static field privateNonNull: R|kotlin/String| = String(bbb)
+    private final static field privateNonNull: R|kotlin/String!| = String(bbb)
 
     private final static field privateNull: R|kotlin/String!|
 

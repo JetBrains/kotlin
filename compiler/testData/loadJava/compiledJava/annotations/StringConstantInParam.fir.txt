@@ -1,5 +1,5 @@
 public abstract interface StringConstantInParam : R|kotlin/Any| {
-    public final static field HEL: R|kotlin/String| = String(hel)
+    public final static field HEL: R|kotlin/String!| = String(hel)
 
     public final annotation class Anno : R|kotlin/Annotation| {
         public constructor(value: R|kotlin/String|): R|test/StringConstantInParam.Anno|
