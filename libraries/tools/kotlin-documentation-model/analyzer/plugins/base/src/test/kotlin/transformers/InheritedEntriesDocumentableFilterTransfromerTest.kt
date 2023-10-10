@@ -9,7 +9,6 @@ import org.jetbrains.dokka.model.DEnum
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import utils.OnlyDescriptors
 
 class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
     val suppressingInheritedConfiguration = dokkaConfiguration {
@@ -138,7 +137,6 @@ class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyDescriptors("Entry does not have `name` and `ordinal`") // TODO
     @Test
     fun `should work with enum entries when not suppressing`(){
         testInline(
@@ -146,7 +144,8 @@ class InheritedEntriesDocumentableFilterTransformerTest : BaseAbstractTest() {
             /src/suppressed/Suppressed.kt
             package suppressed
             enum class Suppressed {
-                ENTRY_SUPPRESSED
+                ENTRY_SUPPRESSED;
+                class A
             }
             """.trimIndent(),
             nonSuppressingInheritedConfiguration
