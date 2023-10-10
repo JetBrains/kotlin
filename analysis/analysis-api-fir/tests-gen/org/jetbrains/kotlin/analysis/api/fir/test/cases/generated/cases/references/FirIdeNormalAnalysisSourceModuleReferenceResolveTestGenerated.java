@@ -1310,6 +1310,82 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CompanionObject {
+            @Test
+            public void testAllFilesPresentInCompanionObject() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("childQualifiedFunctionFromSuperClassCompanion.kt")
+            public void testChildQualifiedFunctionFromSuperClassCompanion() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/childQualifiedFunctionFromSuperClassCompanion.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedClassNestedInClassNestedInCompanion.kt")
+            public void testQualifiedClassNestedInClassNestedInCompanion() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/qualifiedClassNestedInClassNestedInCompanion.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedFunctionFromCompanion.kt")
+            public void testQualifiedFunctionFromCompanion() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/qualifiedFunctionFromCompanion.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedFunctionFromCompanionInOtherFile.kt")
+            public void testQualifiedFunctionFromCompanionInOtherFile() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/qualifiedFunctionFromCompanionInOtherFile.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedFunctionFromCompanionWithImport.kt")
+            public void testQualifiedFunctionFromCompanionWithImport() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/qualifiedFunctionFromCompanionWithImport.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedFunctionFromOwnCompanion.kt")
+            public void testQualifiedFunctionFromOwnCompanion() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/qualifiedFunctionFromOwnCompanion.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedFunctionFromSuperClassCompanion.kt")
+            public void testQualifiedFunctionFromSuperClassCompanion() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/qualifiedFunctionFromSuperClassCompanion.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedFunctionFromSuperClassCompanionInOtherFile.kt")
+            public void testQualifiedFunctionFromSuperClassCompanionInOtherFile() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/qualifiedFunctionFromSuperClassCompanionInOtherFile.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedFunctionOfClassNestedInCompanion.kt")
+            public void testQualifiedFunctionOfClassNestedInCompanion() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/qualifiedFunctionOfClassNestedInCompanion.kt");
+            }
+
+            @Test
+            @TestMetadata("unqualifiedFunctionFromOwnCompanion.kt")
+            public void testUnqualifiedFunctionFromOwnCompanion() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/unqualifiedFunctionFromOwnCompanion.kt");
+            }
+
+            @Test
+            @TestMetadata("unqualifiedFunctionFromSuperClassCompanion.kt")
+            public void testUnqualifiedFunctionFromSuperClassCompanion() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject/unqualifiedFunctionFromSuperClassCompanion.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
         @TestDataPath("$PROJECT_ROOT")
         public class Imports {
@@ -1840,6 +1916,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             @TestMetadata("invalidPropertyAccessOnFunction.kt")
             public void testInvalidPropertyAccessOnFunction() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors/invalidPropertyAccessOnFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("invalidPropertyAccessOnFunctionFromCompanionObject.kt")
+            public void testInvalidPropertyAccessOnFunctionFromCompanionObject() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors/invalidPropertyAccessOnFunctionFromCompanionObject.kt");
             }
 
             @Test
