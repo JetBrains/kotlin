@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -160,7 +161,13 @@ internal class FirElementBuilder(
         element = element,
         firResolveSession = firResolveSession,
         anchorElementProvider = { it.parentsOfType<KtTypeReference>(withSelf = true).lastOrNull() },
-        declarationProvider = { it.parent as? KtDeclaration },
+        declarationProvider = {
+            when (val parent = it.parent) {
+                is KtDeclaration -> parent
+                is KtSuperTypeListEntry, is KtConstructorCalleeExpression -> parent.parentOfType<KtClassOrObject>()
+                else -> null
+            }
+        },
         resolveAndFindFirForAnchor = { declaration, anchor -> declaration.resolveAndFindTypeRefAnchor(anchor) },
     )?.let { firElement ->
         if (firElement is FirReceiverParameter) {
@@ -196,6 +203,14 @@ internal class FirElementBuilder(
 
         if (this is FirTypeParameter) {
             for (typeRef in bounds) {
+                if (typeRef.psi == typeReference) {
+                    return typeRef
+                }
+            }
+        }
+
+        if (this is FirClass) {
+            for (typeRef in superTypeRefs) {
                 if (typeRef.psi == typeReference) {
                     return typeRef
                 }

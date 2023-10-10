@@ -13,11 +13,11 @@ FILE: [ResolvedTo(IMPORTS)] superCallAnnotation2.kt
         }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class B : R|@R|Anno|()  A| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class B : R|@R|Anno|()  A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<<implicit>>
         }
 
     }

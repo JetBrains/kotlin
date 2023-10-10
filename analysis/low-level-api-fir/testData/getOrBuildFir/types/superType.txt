@@ -7,15 +7,15 @@ R|A|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superType.kt
-    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class B : R|A| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
-            super<R|A|>()
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
         }
 
     }

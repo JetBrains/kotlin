@@ -7,11 +7,11 @@ R|A|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superTypeInObject2.kt
-    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] object B : R|A| {
-        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
-            super<R|kotlin/Any|>()
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] object B : R|A| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<<implicit>>
         }
 
     }

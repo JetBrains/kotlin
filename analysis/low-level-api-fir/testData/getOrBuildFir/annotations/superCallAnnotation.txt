@@ -13,15 +13,15 @@ FILE: [ResolvedTo(IMPORTS)] superCallAnnotation.kt
         }
 
     }
-    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class B : R|@R|Anno|()  A| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
-            super<R|@R|Anno|()  A|>()
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class B : R|@R|Anno|()  A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<@R|Anno|[Types]() A>
         }
 
     }

@@ -7,21 +7,19 @@ R|A|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superTypeAndGeneratedProperty.kt
-    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(BODY_RESOLVE)] class B : R|A| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/B.prop] prop: R|kotlin/String| = <strcat>(R|/foo|())): R|B| {
-            super<R|A|>()
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/B.prop] prop: String = LAZY_EXPRESSION): R|B| {
+            LAZY_super<A>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/String| = R|<local>/prop|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: String = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] get(): String
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
-        ^foo Int(42)
-    }
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }

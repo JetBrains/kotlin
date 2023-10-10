@@ -7,28 +7,26 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superTypeOnEnumClass.kt
-    public final [ResolvedTo(BODY_RESOLVE)] enum class MyClass : <ERROR TYPE REF: Symbol not found for UnresolvedInterface>, R|kotlin/Enum<MyClass>| {
-        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/MyClass.i] i: R|kotlin/Int| = R|/foo|()): R|MyClass| {
-            super<R|kotlin/Enum<MyClass>|>()
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] enum class MyClass : <ERROR TYPE REF: Symbol not found for UnresolvedInterface>, R|kotlin/Enum<MyClass>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.i] i: Int = LAZY_EXPRESSION): R|MyClass| {
+            LAZY_super<R|kotlin/Enum<MyClass>|>
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] get(): Int
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] enum entry ENTRY1: R|MyClass| = LAZY_EXPRESSION
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] enum entry ENTRY2: R|MyClass| = LAZY_EXPRESSION
-        public final [ResolvedTo(STATUS)] fun boo([ResolvedTo(STATUS)] a: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] enum entry ENTRY1: R|MyClass| = LAZY_EXPRESSION
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] enum entry ENTRY2: R|MyClass| = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] a: String): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] fun values(): R|kotlin/Array<MyClass>| {
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] fun values(): R|kotlin/Array<MyClass>| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyClass| {
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|MyClass| {
         }
 
-        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
-            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
-        ^foo Int(42)
-    }
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
