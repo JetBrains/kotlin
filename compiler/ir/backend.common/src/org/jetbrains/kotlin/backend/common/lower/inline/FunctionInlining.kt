@@ -284,7 +284,7 @@ class FunctionInlining(
 
                 return when {
                     functionArgument is IrFunctionReference ->
-                        inlineFunctionReference(expression, functionArgument, functionArgument.symbol.owner)
+                        inlineFunctionReference(expression, functionArgument, functionArgument.symbol)
 
                     functionArgument is IrPropertyReference && functionArgument.field != null -> inlineField(expression, functionArgument)
 
@@ -379,6 +379,20 @@ class FunctionInlining(
                     irCall.startOffset, irCall.endOffset,
                     inlinedFunctionReference.type, origin = null,
                     statements = listOf(irFunction, inlinedFunctionReference)
+                )
+            }
+
+            fun inlineFunctionReference(
+                irCall: IrCall,
+                irFunctionReference: IrFunctionReference,
+                inlinedFunctionSymbol: IrFunctionSymbol,
+            ): IrExpression {
+                val inlinedFunction = inlinedFunctionSymbol.owner
+                return inlineFunctionReference(
+                    irCall, irFunctionReference,
+                    if (inlinedFunction.needsInlining)
+                        inlineFunctionResolver.getFunctionDeclaration(inlinedFunction.symbol)
+                    else inlinedFunction
                 )
             }
 
