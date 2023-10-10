@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.tree.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

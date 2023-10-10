@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.tree.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

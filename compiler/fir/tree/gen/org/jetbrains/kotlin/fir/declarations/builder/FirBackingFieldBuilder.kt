@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.tree.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.tree.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

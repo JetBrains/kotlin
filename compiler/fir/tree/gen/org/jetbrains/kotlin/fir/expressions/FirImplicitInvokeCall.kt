@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.tree.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 
