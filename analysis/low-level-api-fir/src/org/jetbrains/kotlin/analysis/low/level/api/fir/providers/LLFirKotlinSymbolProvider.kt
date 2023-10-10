@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.psi.KtProperty
  */
 internal abstract class LLFirKotlinSymbolProvider(session: FirSession) : FirSymbolProvider(session) {
     abstract val declarationProvider: KotlinDeclarationProvider
+
+    abstract val packageProvider: KotlinPackageProvider
 
     /**
      * Whether the [LLFirKotlinSymbolProvider] should be able to find symbols defined in `kotlin` packages. This is usually not the case for

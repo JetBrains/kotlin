@@ -144,6 +144,7 @@ public class StandaloneAnalysisAPISessionBuilder(
                 KotlinPackageProviderFactory::class.java,
                 KotlinStaticPackageProviderFactory(project, sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
             )
+            registerService(KotlinPackageProviderMerger::class.java, KotlinStaticPackageProviderMerger(this))
 
             registerService(
                 FirSealedClassInheritorsProcessorFactory::class.java,

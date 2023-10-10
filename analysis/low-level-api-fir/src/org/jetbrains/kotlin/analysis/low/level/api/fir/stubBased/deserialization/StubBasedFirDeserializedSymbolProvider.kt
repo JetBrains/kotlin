@@ -78,7 +78,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
-    private val packageProvider = project.createPackageProvider(scope)
+    final override val packageProvider = project.createPackageProvider(scope)
 
     private fun findAndDeserializeTypeAlias(
         classId: ClassId,

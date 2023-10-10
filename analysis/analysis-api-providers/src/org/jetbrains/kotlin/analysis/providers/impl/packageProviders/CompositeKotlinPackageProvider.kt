@@ -3,18 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
+package org.jetbrains.kotlin.analysis.providers.impl.packageProviders
 
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinCompositeProvider
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
-class CompositeKotlinPackageProvider
-private constructor(
-    private val providers: List<KotlinPackageProvider>
-) : KotlinPackageProvider() {
-
+public class CompositeKotlinPackageProvider private constructor(
+    override val providers: List<KotlinPackageProvider>,
+) : KotlinPackageProvider(), KotlinCompositeProvider<KotlinPackageProvider> {
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean {
         return providers.any { it.doesPackageExist(packageFqName, platform) }
     }
@@ -43,13 +43,12 @@ private constructor(
         return providers.flatMapTo(mutableSetOf()) { it.getPlatformSpecificSubPackagesFqNames(packageFqName, platform, nameFilter) }
     }
 
-    companion object {
-        fun create(providers: List<KotlinPackageProvider>): KotlinPackageProvider {
-            return when (providers.size) {
-                0 -> EmptyKotlinPackageProvider
-                1 -> providers.single()
-                else -> CompositeKotlinPackageProvider(providers)
-            }
-        }
+    public companion object {
+        public val factory: KotlinCompositeProviderFactory<KotlinPackageProvider> = KotlinCompositeProviderFactory(
+            EmptyKotlinPackageProvider,
+            ::CompositeKotlinPackageProvider,
+        )
+
+        public fun create(providers: List<KotlinPackageProvider>): KotlinPackageProvider = factory.create(providers)
     }
 }

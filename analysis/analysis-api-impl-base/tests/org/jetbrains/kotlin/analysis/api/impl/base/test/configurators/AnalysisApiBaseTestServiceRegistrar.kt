@@ -99,6 +99,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
                 KotlinPackageProviderFactory::class.java,
                 KotlinStaticPackageProviderFactory(project, allSourceKtFiles + ktFilesForBinaries)
             )
+            registerService(KotlinPackageProviderMerger::class.java, KotlinStaticPackageProviderMerger(project))
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
         }
     }
