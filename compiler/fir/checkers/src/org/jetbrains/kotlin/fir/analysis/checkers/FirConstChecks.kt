@@ -148,16 +148,11 @@ internal fun checkConstantArguments(
                 return ConstantArgumentKind.NOT_CONST
             }
 
-            for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
-                if (exp == null) continue
-                val expClassId = exp.resolvedType.lowerBoundIfFlexible().fullyExpandedClassId(session)
-                // TODO, KT-59823: add annotation for allowed constant types
-                if (expClassId !in StandardClassIds.constantAllowedTypes) {
-                    return ConstantArgumentKind.NOT_CONST
-                }
-
-                checkConstantArguments(exp, session)?.let { return it }
+            for (exp in expression.arguments) {
+                checkArgument(exp, session)?.let { return it }
             }
+            expression.dispatchReceiver?.let { arg -> checkArgument(arg, session)?.let { return it } }
+            expression.extensionReceiver?.let { arg -> checkArgument(arg, session)?.let { return it } }
 
             return null
         }
@@ -176,8 +171,7 @@ internal fun checkConstantArguments(
             val property = propertySymbol.fir
             when {
                 property.unwrapFakeOverrides().symbol.canBeEvaluated() || property.isCompileTimeBuiltinProperty(session) -> {
-                    val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != null }!!
-                    return checkConstantArguments(receiver, session)
+                    return checkConstantArguments(expression.dispatchReceiver ?: expression.extensionReceiver, session)
                 }
                 propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST
                 expressionType.fullyExpandedClassId(session) == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
@@ -196,6 +190,17 @@ internal fun checkConstantArguments(
         }
         else -> return ConstantArgumentKind.NOT_CONST
     }
+    return null
+}
+
+private fun checkArgument(exp: FirExpression, session: FirSession): ConstantArgumentKind? {
+    val expClassId = exp.resolvedType.lowerBoundIfFlexible().fullyExpandedClassId(session)
+    // TODO, KT-59823: add annotation for allowed constant types
+    if (expClassId !in StandardClassIds.constantAllowedTypes) {
+        return ConstantArgumentKind.NOT_CONST
+    }
+
+    checkConstantArguments(exp, session)?.let { return it }
     return null
 }
 
