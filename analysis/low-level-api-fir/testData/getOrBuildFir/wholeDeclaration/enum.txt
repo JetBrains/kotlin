@@ -15,14 +15,14 @@ public final [ResolvedTo(BODY_RESOLVE)] enum class MyClass : <ERROR TYPE REF: Sy
     public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] enum entry ENTRY2: R|MyClass| = LAZY_EXPRESSION
     public final [ResolvedTo(STATUS)] fun boo([ResolvedTo(STATUS)] a: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
-    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] fun values(): R|kotlin/Array<MyClass>| {
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] fun values(): R|kotlin/Array<MyClass>| {
     }
 
-    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|MyClass| {
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyClass| {
     }
 
-    public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
-        public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<MyClass>|
+    public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
 }
 
@@ -40,14 +40,14 @@ FILE: [ResolvedTo(IMPORTS)] enum.kt
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] enum entry ENTRY2: R|MyClass| = LAZY_EXPRESSION
         public final [ResolvedTo(STATUS)] fun boo([ResolvedTo(STATUS)] a: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] fun values(): R|kotlin/Array<MyClass>| {
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] fun values(): R|kotlin/Array<MyClass>| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|MyClass| {
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|MyClass| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<MyClass>|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] val entries: R|kotlin/enums/EnumEntries<MyClass>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<MyClass>|
 
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {

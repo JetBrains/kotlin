@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithSpecificMembersResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.isImplicitConstructor
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 
@@ -35,11 +36,11 @@ internal object FileElementFactory {
                         add(member)
                     }
 
-                    member is FirPrimaryConstructor && member.source?.kind == KtFakeSourceElementKind.ImplicitConstructor -> {
+                    member.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration -> {
                         add(member)
                     }
 
-                    member is FirProperty && member.source?.kind == KtFakeSourceElementKind.PropertyFromParameter -> {
+                    member.isImplicitConstructor -> {
                         add(member)
                     }
 

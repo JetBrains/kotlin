@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.visitScrip
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
+import org.jetbrains.kotlin.fir.correspondingProperty
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirScript
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.util.withSourceCodeAnalysisExceptionUnwrapping
 
@@ -50,16 +51,27 @@ internal class ClassDiagnosticRetriever(
     private class Visitor(
         private val structureElementDeclaration: FirRegularClass,
         context: CheckerContextForProvider,
-        components: DiagnosticCollectorComponents
+        components: DiagnosticCollectorComponents,
     ) : LLFirDiagnosticVisitor(context, components) {
+        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean = when {
+            declaration === structureElementDeclaration -> true
+            insideFakeDeclaration -> true
+            declaration.isImplicitConstructor -> true
+            else -> false
+        }
 
-        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
-            return when {
-                declaration == structureElementDeclaration -> true
-                shouldDiagnosticsAlwaysBeCheckedOn(declaration) -> true
-                declaration is FirDefaultPropertyAccessor -> shouldVisitDeclaration(declaration.propertySymbol.fir)
-                declaration is FirValueParameter -> shouldVisitDeclaration(declaration.containingFunctionSymbol.fir)
-                else -> false
+        private var insideFakeDeclaration: Boolean = false
+
+        override fun visitNestedElements(element: FirElement) {
+            if (element.isImplicitConstructor) {
+                insideFakeDeclaration = true
+                try {
+                    super.visitNestedElements(element)
+                } finally {
+                    insideFakeDeclaration = false
+                }
+            } else {
+                super.visitNestedElements(element)
             }
         }
     }
@@ -72,6 +84,9 @@ internal class ClassDiagnosticRetriever(
         }
     }
 }
+
+internal val FirElement.isImplicitConstructor: Boolean
+    get() = this is FirConstructor && source?.kind == KtFakeSourceElementKind.ImplicitConstructor
 
 internal class SingleNonLocalDeclarationDiagnosticRetriever(
     private val structureElementDeclaration: FirDeclaration
@@ -94,9 +109,16 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
         context: CheckerContextForProvider,
         components: DiagnosticCollectorComponents
     ) : LLFirDiagnosticVisitor(context, components) {
+        override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
+            super.visitConstructor(constructor, data)
 
-        override fun shouldVisitDeclaration(declaration: FirDeclaration): Boolean {
-            return true
+            if (constructor is FirPrimaryConstructor) {
+                for (valueParameter in constructor.valueParameters) {
+                    valueParameter.correspondingProperty?.let {
+                        visitProperty(it, data)
+                    }
+                }
+            }
         }
     }
 }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosti
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ScriptDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.isImplicitConstructor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
@@ -160,32 +161,35 @@ internal class ClassDeclarationStructureElement(
 
     class Recorder(private val firClass: FirRegularClass) : FirElementsRecorder() {
         override fun visitProperty(property: FirProperty, data: MutableMap<KtElement, FirElement>) {
-            if (property.source?.kind == KtFakeSourceElementKind.PropertyFromParameter) {
-                super.visitProperty(property, data)
-            }
         }
 
         override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableMap<KtElement, FirElement>) {
         }
 
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
-            if (
-                (constructor is FirPrimaryConstructor || constructor is FirErrorPrimaryConstructor) &&
-                constructor.source?.kind == KtFakeSourceElementKind.ImplicitConstructor
-            ) {
+            if (constructor.isImplicitConstructor) {
                 DeclarationStructureElement.Recorder.visitConstructor(constructor, data)
             }
         }
 
-        override fun visitErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: MutableMap<KtElement, FirElement>) =
-            visitConstructor(errorPrimaryConstructor, data)
+        override fun visitField(field: FirField, data: MutableMap<KtElement, FirElement>) {
+            if (field.source?.kind == KtFakeSourceElementKind.ClassDelegationField) {
+                DeclarationStructureElement.Recorder.visitField(field, data)
+            }
+        }
+
+        override fun visitErrorPrimaryConstructor(
+            errorPrimaryConstructor: FirErrorPrimaryConstructor,
+            data: MutableMap<KtElement, FirElement>,
+        ) = visitConstructor(errorPrimaryConstructor, data)
 
         override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: MutableMap<KtElement, FirElement>) {
         }
 
         override fun visitRegularClass(regularClass: FirRegularClass, data: MutableMap<KtElement, FirElement>) {
-            if (regularClass != firClass) return
-            super.visitRegularClass(regularClass, data)
+            if (regularClass === firClass) {
+                super.visitRegularClass(regularClass, data)
+            }
         }
 
         override fun visitTypeAlias(typeAlias: FirTypeAlias, data: MutableMap<KtElement, FirElement>) {
@@ -206,6 +210,8 @@ internal class DeclarationStructureElement(
 
     object Recorder : FirElementsRecorder() {
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
+            super.visitConstructor(constructor, data)
+
             if (constructor is FirPrimaryConstructor) {
                 constructor.valueParameters.forEach { parameter ->
                     parameter.correspondingProperty?.let { property ->
@@ -213,8 +219,6 @@ internal class DeclarationStructureElement(
                     }
                 }
             }
-
-            super.visitConstructor(constructor, data)
         }
     }
 }
