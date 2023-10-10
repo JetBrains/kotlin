@@ -1,3 +1,50 @@
+## 1.9.20-RC
+
+### Compiler
+
+- [`KT-62127`](https://youtrack.jetbrains.com/issue/KT-62127) "NoSuchFieldError: TRUE$delegate" on referencing companion's variable in submodule
+- [`KT-62335`](https://youtrack.jetbrains.com/issue/KT-62335) Improve debuggability of code generator crashes
+- [`KT-62263`](https://youtrack.jetbrains.com/issue/KT-62263) Turn "different expect/actual members" error into a warning
+- [`KT-61933`](https://youtrack.jetbrains.com/issue/KT-61933) K2: "`Argument type mismatch: actual type is 'Foo<kotlin/Function0<kotlin/Unit>>' but 'Foo<kotlin/coroutines/SuspendFunction0<kotlin/Unit>>' was expected`"
+
+### IDE. Multiplatform
+
+- [`KT-61686`](https://youtrack.jetbrains.com/issue/KT-61686) Check and update places in compiler and IDE where we are saying that MPP is experimental/Beta/Alpha
+
+### Native
+
+- [`KT-61369`](https://youtrack.jetbrains.com/issue/KT-61369) Support Xcode 15 for Kotlin/Native
+
+### Native. Runtime. Memory
+
+- [`KT-61914`](https://youtrack.jetbrains.com/issue/KT-61914) Kotlin/Native: massive increase in memory usage
+- [`KT-61741`](https://youtrack.jetbrains.com/issue/KT-61741) Kotlin/Native: tsan error in parallel mark
+
+### Tools. Gradle
+
+- [`KT-62318`](https://youtrack.jetbrains.com/issue/KT-62318) Android Studio sync memory leak in 1.9.20-Beta
+- [`KT-61368`](https://youtrack.jetbrains.com/issue/KT-61368) Native compiler option 'module-name' isn't available within the compilerOptions extension for native target while configuring it inside compilations
+- [`KT-61355`](https://youtrack.jetbrains.com/issue/KT-61355) freeCompilerArgs arguments and its values are passed to the compiler 5 times if added through target-level compilerOptions{} extension inside compilations
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-62029`](https://youtrack.jetbrains.com/issue/KT-62029) Kotlin 1.9.20-Beta fails to detect some transitive dependency references in JVM+Android source set
+
+### Tools. Incremental Compile
+
+- [`KT-61852`](https://youtrack.jetbrains.com/issue/KT-61852) Kotlin 1.9.20-Beta: incremental compilation fails with files outside of the project folder
+
+### Tools. Kapt
+
+- [`KT-62438`](https://youtrack.jetbrains.com/issue/KT-62438) Change experimental K2 kapt diagnostic message
+- [`KT-61879`](https://youtrack.jetbrains.com/issue/KT-61879) K2 Kapt: java.lang.NoSuchMethodError during stub generation
+
+### Tools. Wasm
+
+- [`KT-61973`](https://youtrack.jetbrains.com/issue/KT-61973) K/Wasm: wasmWasiNodeRun is missed
+- [`KT-61971`](https://youtrack.jetbrains.com/issue/KT-61971) K/Wasm: wasmWasiTest should depends on kotlinNodeJsSetup
+
+
 ## 1.9.20-Beta2
 
 ### Backend. Wasm
