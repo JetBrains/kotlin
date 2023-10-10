@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.SourceNavigator.Companion.withNavigator
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -47,6 +48,9 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
         }
         if (isProhibitedEnumConstructor(declaration, lastClass)) {
             reporter.reportOn(source, FirErrors.EXPECTED_ENUM_CONSTRUCTOR, context)
+        }
+        if (isProhibitedEnumEntryWithBody(declaration)) {
+            reporter.reportOn(source, FirErrors.EXPECTED_ENUM_ENTRY_WITH_BODY, context)
         }
 
         if (isProhibitedPrivateDeclaration(declaration)) {
@@ -93,5 +97,9 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
 
     private fun isProhibitedDeclarationWithBody(declaration: FirMemberDeclaration): Boolean {
         return declaration is FirFunction && declaration.hasBody
+    }
+
+    private fun isProhibitedEnumEntryWithBody(declaration: FirMemberDeclaration): Boolean {
+        return declaration is FirEnumEntry && declaration.withNavigator { declaration.hasBody() == true }
     }
 }
