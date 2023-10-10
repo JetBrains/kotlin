@@ -1,0 +1,28 @@
+FILE: main.kt
+    public final fun testWithStatic1(x1: R|kotlin/String?|): R|kotlin/String| {
+        lval x: R|kotlin/String?|
+        R|<local>/x| = R|<local>/x1| ?: Q|JavaClass|.R|/JavaClass.X*s|
+        ^testWithStatic1 R|<local>/x|
+    }
+    public final fun testWithStatic2(x1: R|kotlin/String?|): R|kotlin/String| {
+        lvar x: R|kotlin/String?| = Null(null)
+        R|<local>/x| = R|<local>/x1| ?: Q|JavaClass|.R|/JavaClass.f*s|()
+        ^testWithStatic2 R|<local>/x|
+    }
+    public final fun testWithStatic3(x1: R|kotlin/String?|): R|kotlin/String| {
+        lval x: R|kotlin/String?| = R|<local>/x1| ?: Q|JavaClass|.R|/JavaClass.X*s|
+        ^testWithStatic3 R|<local>/x|
+    }
+    public final fun testWithStatic4(x1: R|kotlin/String?|, w: R|kotlin/Int|): R|kotlin/String| {
+        lvar x: R|kotlin/String?|
+        R|<local>/x| = R|<local>/x1| ?: when (R|<local>/w|) {
+            ==($subj$, Int(42)) ->  {
+                Q|JavaClass|.R|/JavaClass.X*s|
+            }
+            else ->  {
+                Q|JavaClass|.R|/JavaClass.f*s|()
+            }
+        }
+
+        ^testWithStatic4 R|<local>/x|
+    }

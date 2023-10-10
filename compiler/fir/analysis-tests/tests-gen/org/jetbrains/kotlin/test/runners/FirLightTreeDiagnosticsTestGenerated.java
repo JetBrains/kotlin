@@ -3352,6 +3352,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("flexibleTypeAtRightSideOfElvis.kt")
+            public void testFlexibleTypeAtRightSideOfElvis() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inference/flexibleTypeAtRightSideOfElvis.kt");
+            }
+
+            @Test
             @TestMetadata("integerLiteralAsComparable.kt")
             public void testIntegerLiteralAsComparable() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/integerLiteralAsComparable.kt");

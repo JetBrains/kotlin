@@ -271,16 +271,44 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         }
 
         session.typeContext.run {
-            if (result.resolvedType.isNullableType() && !result.rhs.resolvedType.isNullableType()) {
-                // Sometimes return type for special call for elvis operator might be nullable,
-                // but result is not nullable if the right type is not nullable
-                result.replaceConeTypeOrNull(
-                    result.resolvedType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
-                )
+            if (result.resolvedType.isNullableType()) {
+                val rhsResolvedType = result.rhs.resolvedType
+                // This part of the code is a kind of workaround, and it probably will be resolved by KT-55692
+                if (!rhsResolvedType.isNullableType()) {
+                    // It's definitely not a flexible with nullable bound
+                    // Sometimes return type for special call for elvis operator might be nullable,
+                    // but result is not nullable if the right type is not nullable
+                    result.replaceConeTypeOrNull(result.resolvedType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
+                } else if (rhsResolvedType is ConeFlexibleType && !rhsResolvedType.lowerBound.isNullableType()) {
+                    result.replaceConeTypeOrNull(result.resultType.makeConeFlexibleTypeWithNotNullableLowerBound(session.typeContext))
+                }
             }
         }
 
         dataFlowAnalyzer.exitElvis(elvisExpression, isLhsNotNull, data.forceFullCompletion)
         return result
+    }
+
+    private fun ConeKotlinType.makeConeFlexibleTypeWithNotNullableLowerBound(typeContext: ConeTypeContext): ConeKotlinType {
+        with(typeContext) {
+            return when (this@makeConeFlexibleTypeWithNotNullableLowerBound) {
+                is ConeDefinitelyNotNullType ->
+                    error("It can't happen because of the previous `isNullableType` check")
+                is ConeFlexibleType -> {
+                    if (!lowerBound.isNullableType()) {
+                        this@makeConeFlexibleTypeWithNotNullableLowerBound
+                    } else {
+                        ConeFlexibleType(lowerBound.makeConeTypeDefinitelyNotNullOrNotNull(typeContext) as ConeSimpleKotlinType, upperBound)
+                    }
+                }
+                is ConeIntersectionType -> ConeIntersectionType(
+                    intersectedTypes.map { it.makeConeFlexibleTypeWithNotNullableLowerBound(typeContext) }
+                )
+                is ConeSimpleKotlinType -> ConeFlexibleType(
+                    makeConeTypeDefinitelyNotNullOrNotNull(typeContext) as ConeSimpleKotlinType,
+                    this@makeConeFlexibleTypeWithNotNullableLowerBound
+                )
+            }
+        }
     }
 }
