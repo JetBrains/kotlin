@@ -100,9 +100,10 @@ class FlagDelegatesTest {
                 field = param.takeLast(0)
             }
 
-        var noinlineModifierVar: String = ""
+        inline var noinlineModifierVar: () -> String
+            get() = { "" }
             set(noinline param) {
-                field = param.takeLast(0)
+                param()
             }
 
     }
@@ -154,7 +155,7 @@ class FlagDelegatesTest {
             assertEquals("param", it?.name)
         }
 
-        assertProperty("noinlineModifierVar", true, false, true) {
+        assertProperty("noinlineModifierVar", true, true, true) {
             assertEquals("param", it?.name)
             assertEquals(true, it?.isNoinline)
         }

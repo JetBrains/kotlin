@@ -131,6 +131,7 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
     }
 
     public inline fun checkIfPrinted(render: () -> Unit): Boolean {
+        contract { callsInPlace(render, InvocationKind.EXACTLY_ONCE) }
         val initialSize = builder.length
         render()
         return initialSize != builder.length
