@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCa
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.analysis.providers.mergeDeclarationProviders
+import org.jetbrains.kotlin.analysis.providers.mergePackageProviders
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
@@ -129,6 +129,9 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
         } else {
             packageProvider.doesKotlinOnlyPackageExist(fqName)
         }
+
+        // Regarding caching `hasPackage`: The static (standalone) package provider precomputes its packages, while the IDE package provider
+        // caches the results itself. Hence, it's currently unnecessary to provide another layer of caching here.
         return fqName.takeIf { hasPackage }
     }
 
@@ -137,14 +140,13 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
             if (providers.size > 1) {
                 val declarationProvider = project.mergeDeclarationProviders(providers.map { it.declarationProvider })
 
-                // TODO (marco): Implement a package provider merger.
-                val combinedScope = providers.createCombinedScope()
-                val packageProvider = project.createPackageProvider(combinedScope)
+                val packageProvider = project.mergePackageProviders(providers.map { it.packageProvider })
 
                 val packageProviderForKotlinPackages = providers
                     .filter { it.allowKotlinPackage }
                     .takeIf { it.isNotEmpty() }
-                    ?.let { project.createPackageProvider(it.createCombinedScope()) }
+                    ?.map { it.packageProvider }
+                    ?.let(project::mergePackageProviders)
 
                 LLFirCombinedKotlinSymbolProvider(
                     session,
