@@ -1,0 +1,6 @@
+FILE: main.kt
+    public final fun testSimpleType(): R|kotlin/String| {
+        lval x: R|kotlin/String?|
+        R|<local>/x| = Null(null) ?: Q|JavaClass|.R|/JavaClass.X*s|
+        ^testSimpleType R|<local>/x|
+    }

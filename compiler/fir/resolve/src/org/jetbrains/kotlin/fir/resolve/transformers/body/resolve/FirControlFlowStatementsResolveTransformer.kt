@@ -271,16 +271,33 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         }
 
         session.typeContext.run {
-            if (result.resolvedType.isNullableType() && !result.rhs.resolvedType.isNullableType()) {
-                // Sometimes return type for special call for elvis operator might be nullable,
-                // but result is not nullable if the right type is not nullable
-                result.replaceConeTypeOrNull(
-                    result.resolvedType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
-                )
+            if (result.resolvedType.isNullableType()) {
+                val rhsResolvedType = result.rhs.resolvedType
+                if (rhsResolvedType !is ConeFlexibleType) {
+                    if (!result.rhs.resolvedType.isNullableType()) {
+                        // Sometimes return type for special call for elvis operator might be nullable,
+                        // but result is not nullable if the right type is not nullable
+                        result.replaceConeTypeOrNull(result.resolvedType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
+                    }
+                } else {
+                    if (!rhsResolvedType.lowerBound.isNullableType()) {
+                        result.replaceConeTypeOrNull(result.resultType.makeConeFlexibleType(rhsResolvedType))
+                    }
+                }
             }
         }
 
         dataFlowAnalyzer.exitElvis(elvisExpression, isLhsNotNull, data.forceFullCompletion)
         return result
+    }
+
+    private fun ConeKotlinType.makeConeFlexibleType(rhsResolvedType: ConeFlexibleType): ConeKotlinType {
+        return when (this) {
+            is ConeDefinitelyNotNullType -> error("It can't happen because of the previous `isNullableType` check")
+            is ConeFlexibleType -> this // Leave as is since resulting type is already flexible
+            is ConeIntersectionType -> ConeIntersectionType(this.intersectedTypes.map { it.makeConeFlexibleType(rhsResolvedType) })
+            is ConeSimpleKotlinType -> rhsResolvedType.withAttributes(this@makeConeFlexibleType.attributes.union(rhsResolvedType.attributes))
+            else -> error("Unsupported type")
+        }
     }
 }
