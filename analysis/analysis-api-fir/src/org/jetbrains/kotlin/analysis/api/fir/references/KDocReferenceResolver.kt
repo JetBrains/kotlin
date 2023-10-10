@@ -138,6 +138,13 @@ internal object KDocReferenceResolver {
         }
     }
 
+    /**
+     * Returns the [KtSymbol]s called [fqName] found in the member scope and companion object's member scope of the [KtDeclaration]s that
+     * contain the [contextElement].
+     *
+     * If [fqName] has two or more segments, e.g. `Foo.bar`, the member and companion object scope of the containing [KtDeclaration] will be
+     * queried for a class `Foo` first, and then that class `Foo` will be queried for the member `bar` by short name.
+     */
     context(KtAnalysisSession)
     private fun getSymbolsFromParentMemberScopes(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
         for (ktDeclaration in contextElement.parentsOfType<KtDeclaration>(withSelf = true)) {
@@ -147,10 +154,7 @@ internal object KDocReferenceResolver {
             if (ktDeclaration is KtClassOrObject) {
                 val symbol = ktDeclaration.getClassOrObjectSymbol() ?: continue
 
-                val scope = listOfNotNull(
-                    symbol.getMemberScope(),
-                    getCompanionObjectMemberScope(symbol),
-                ).asCompositeScope()
+                val scope = symbol.getCompositeCombinedMemberAndCompanionObjectScope()
 
                 val symbolsFromScope = getSymbolsFromMemberScope(fqName, scope)
                 if (symbolsFromScope.isNotEmpty()) return symbolsFromScope
@@ -160,8 +164,15 @@ internal object KDocReferenceResolver {
     }
 
     context(KtAnalysisSession)
-    private fun getCompanionObjectMemberScope(classSymbol: KtClassOrObjectSymbol): KtScope? {
-        val namedClassSymbol = classSymbol as? KtNamedClassOrObjectSymbol ?: return null
+    private fun KtSymbolWithMembers.getCompositeCombinedMemberAndCompanionObjectScope(): KtScope =
+        listOfNotNull(
+            getCombinedMemberScope(),
+            getCompanionObjectMemberScope(),
+        ).asCompositeScope()
+
+    context(KtAnalysisSession)
+    private fun KtSymbolWithMembers.getCompanionObjectMemberScope(): KtScope? {
+        val namedClassSymbol = this as? KtNamedClassOrObjectSymbol ?: return null
         val companionSymbol = namedClassSymbol.companionObject ?: return null
         return companionSymbol.getMemberScope()
     }
@@ -192,7 +203,7 @@ internal object KDocReferenceResolver {
                 currentScope
                     .getClassifierSymbols(fqNamePart)
                     .filterIsInstance<KtSymbolWithMembers>()
-                    .map { it.getCombinedMemberScope() }
+                    .map { it.getCompositeCombinedMemberAndCompanionObjectScope() }
                     .toList()
                     .asCompositeScope()
             }
