@@ -43767,6 +43767,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("kt62313.kt")
+            public void testKt62313() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/inlineClasses/kt62313.kt");
+            }
+
+            @Test
             @TestMetadata("noReturnTypeManglingFun.kt")
             public void testNoReturnTypeManglingFun() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingFun.kt");
