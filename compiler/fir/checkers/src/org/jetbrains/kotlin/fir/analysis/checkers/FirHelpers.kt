@@ -204,6 +204,7 @@ fun CheckerContext.findClosestClassOrObject(): FirClass? {
             it is FirRegularClass ||
             it is FirAnonymousObject
         ) {
+            @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
             return it as FirClass
         }
     }

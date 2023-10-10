@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirFunction && declaration !is FirProperty) return
+        @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
         require(declaration is FirCallableDeclaration)
         // if source is not null then this type was declared in source
         // so it can not be inferred to anonymous type

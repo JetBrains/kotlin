@@ -122,6 +122,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
         }
     }
 
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
     class VariableStatusInfo(
         map: PersistentMap<FirPropertySymbol, VariableStatus> = persistentMapOf()
     ) : ControlFlowInfo<VariableStatusInfo, FirPropertySymbol, VariableStatus>(map) {

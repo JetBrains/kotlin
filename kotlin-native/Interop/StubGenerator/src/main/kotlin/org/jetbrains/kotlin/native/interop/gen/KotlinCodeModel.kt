@@ -346,5 +346,6 @@ internal fun getTopLevelPropertyDeclarationName(scope: KotlinScope, property: Pr
 }
 
 // Try to use the provided name. If failed, mangle it with underscore and try again:
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 private tailrec fun getTopLevelPropertyDeclarationName(scope: KotlinScope, receiver: String?, name: String): String =
         scope.declareProperty(receiver, name) ?: getTopLevelPropertyDeclarationName(scope, receiver, name + "_")

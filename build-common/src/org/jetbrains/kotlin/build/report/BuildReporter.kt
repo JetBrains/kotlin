@@ -12,6 +12,7 @@ open class BuildReporter<B : BuildTime, P : BuildPerformanceMetric>(
     protected open val buildMetricsReporter: BuildMetricsReporter<B, P>,
 ) : ICReporter by icReporter, BuildMetricsReporter<B, P> by buildMetricsReporter
 
+@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 class RemoteBuildReporter<B : BuildTime, P : BuildPerformanceMetric>(
     override val icReporter: RemoteICReporter,
     override val buildMetricsReporter: RemoteBuildMetricsReporter<B, P>,
@@ -22,5 +23,6 @@ class RemoteBuildReporter<B : BuildTime, P : BuildPerformanceMetric>(
     }
 }
 
+@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 object DoNothingBuildReporter :
     BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>(DoNothingICReporter, DoNothingBuildMetricsReporter)

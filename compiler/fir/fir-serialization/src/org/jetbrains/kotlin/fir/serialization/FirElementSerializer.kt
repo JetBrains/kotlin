@@ -535,6 +535,7 @@ class FirElementSerializer private constructor(
         }
 
         for (typeParameter in function.typeParameters) {
+            @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
             if (typeParameter !is FirTypeParameter) continue
             builder.addTypeParameter(local.typeParameterProto(typeParameter))
         }

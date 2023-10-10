@@ -85,6 +85,7 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
         if (container == null || container is PackageFragmentDescriptor) break
         container = container.containingDeclaration
     }
+    @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
     require(container is PackageFragmentDescriptor?)
     return container?.fqName
 }

@@ -27,7 +27,9 @@ object ExpectActualClassifiersAreInBetaChecker : DeclarationChecker {
         // Common supertype of KtTypeAlias and KtClassOrObject is KtClassLikeDeclaration.
         // Common supertype of TypeAliasDescriptor and ClassDescriptor is ClassifierDescriptorWithTypeParameters.
         // The explicit casts won't be necessary when we start compiling kotlin with K2.
+        @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
         check(declaration is KtClassLikeDeclaration)
+        @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
         check(descriptor is ClassifierDescriptorWithTypeParameters)
 
         if (descriptor.isExpect || descriptor.isActual) {

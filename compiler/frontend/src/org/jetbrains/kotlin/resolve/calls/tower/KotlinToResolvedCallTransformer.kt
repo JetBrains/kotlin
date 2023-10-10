@@ -107,6 +107,7 @@ class KotlinToResolvedCallTransformer(
             }
 
             is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
+                @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
                 val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
 
                 val resultSubstitutor =

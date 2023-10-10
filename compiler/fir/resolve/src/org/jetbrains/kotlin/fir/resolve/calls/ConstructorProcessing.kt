@@ -189,6 +189,7 @@ private fun processConstructors(
                 }
             }
             is FirClassSymbol -> {
+                @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
                 val firClass = matchedSymbol.fir as FirClass
                 when (firClass.classKind) {
                     ClassKind.INTERFACE -> null

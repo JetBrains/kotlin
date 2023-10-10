@@ -88,6 +88,7 @@ internal class SymbolLightClassForFacade(
                 for (fileSymbol in fileSymbols) {
                     for (callableSymbol in fileSymbol.getFileScope().getCallableSymbols()) {
                         if (callableSymbol !is KtFunctionSymbol && callableSymbol !is KtKotlinPropertySymbol) continue
+                        @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
                         if (callableSymbol !is KtSymbolWithVisibility) continue
                         if ((callableSymbol as? KtAnnotatedSymbol)?.hasInlineOnlyAnnotation() == true) continue
                         if (multiFileClass && callableSymbol.toPsiVisibilityForMember() == PsiModifier.PRIVATE) continue

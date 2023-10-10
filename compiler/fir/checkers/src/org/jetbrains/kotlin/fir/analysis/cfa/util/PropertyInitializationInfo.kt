@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
+@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K : Any>(
     map: PersistentMap<K, EventOccurrencesRange> = persistentMapOf()
 ) : ControlFlowInfo<E, K, EventOccurrencesRange>(map) {
@@ -38,6 +39,7 @@ abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K 
     }
 }
 
+@Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 class PropertyInitializationInfo(
     map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
 ) : EventOccurrencesRangeInfo<PropertyInitializationInfo, FirPropertySymbol>(map) {

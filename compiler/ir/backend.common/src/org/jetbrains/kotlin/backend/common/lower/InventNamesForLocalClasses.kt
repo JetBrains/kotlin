@@ -73,6 +73,7 @@ abstract class InventNamesForLocalClasses(
             val isLocal = parent is IrFile && declaration.isAnonymousObject
             if (!isLocal) return processClass(declaration, data)
 
+            @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
             val enclosingName = (parent as IrFile).name.removeSuffix(".kt").plus("Kt").capitalizeAsciiOnly()
             processClass(declaration, data.copy(enclosingName = enclosingName, isLocal = true))
         }

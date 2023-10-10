@@ -105,6 +105,7 @@ abstract class UsefulDeclarationProcessor(
         addReachabilityInfoIfNeeded(from, this, description, isContagiousOverridableDeclaration)
 
         if (isContagiousOverridableDeclaration) {
+            @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
             contagiousReachableDeclarations.add(this as IrOverridableDeclaration<*>)
         }
 

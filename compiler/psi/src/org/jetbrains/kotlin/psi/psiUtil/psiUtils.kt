@@ -201,6 +201,7 @@ inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranches(
     return getParentOfType<T>(strict)?.getIfChildIsInBranches(this, branches)
 }
 
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 tailrec fun PsiElement.getOutermostParentContainedIn(container: PsiElement): PsiElement? {
     val parent = parent
     return if (parent == container) this else parent?.getOutermostParentContainedIn(container)

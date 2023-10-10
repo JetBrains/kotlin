@@ -46,6 +46,7 @@ fun FirClassSymbol<*>.collectEnumEntries(): Collection<FirEnumEntrySymbol> {
  * sequence of FirTypeAlias'es points to starting
  * with `this`. Or null if something goes wrong or we have anonymous object symbol.
  */
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 tailrec fun FirClassLikeSymbol<*>.fullyExpandedClass(useSiteSession: FirSession): FirRegularClassSymbol? {
     return when (this) {
         is FirRegularClassSymbol -> this

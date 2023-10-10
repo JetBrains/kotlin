@@ -95,6 +95,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         val typeContext = context.session.typeContext
 
         val isReturn = node is JumpNode && node.fir is FirReturnExpression
+        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
         val resultExpression = if (isReturn) (node.fir as FirReturnExpression).result else node.fir
 
         val expressionType = (resultExpression as? FirExpression)?.resolvedType

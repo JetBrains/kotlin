@@ -707,6 +707,7 @@ fun getTrailingCommaByElementsList(elementList: PsiElement?): PsiElement? {
 val KtNameReferenceExpression.isUnderscoreInBackticks
     get() = getReferencedName() == "`_`"
 
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 tailrec fun KtTypeElement.unwrapNullability(): KtTypeElement? {
     return when (this) {
         is KtNullableType -> this.innerType?.unwrapNullability()

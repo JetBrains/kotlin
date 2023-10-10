@@ -218,6 +218,7 @@ fun FirReference.extractSymbolForCall(): FirBasedSymbol<*>? {
         if (symbol.origin == FirDeclarationOrigin.SubstitutionOverride.CallSite) {
             symbol = symbol.fir.unwrapUseSiteSubstitutionOverrides<FirCallableDeclaration>().symbol
         }
+        @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
         symbol = (symbol as FirCallableSymbol<*>).unwrapCallRepresentative()
     }
     return symbol

@@ -421,6 +421,7 @@ class MethodInliner(
 
             private fun getNewIndex(`var`: Int): Int {
                 val lambdaInfo = inliningContext.lambdaInfo
+                @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
                 if (reorderIrLambdaParameters && lambdaInfo is IrExpressionLambda) {
                     val extensionSize = if (lambdaInfo.isExtensionLambda) lambdaInfo.invokeMethod.argumentTypes[0].size else 0
                     return when {

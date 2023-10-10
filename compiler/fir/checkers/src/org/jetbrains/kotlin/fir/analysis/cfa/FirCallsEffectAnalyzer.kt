@@ -207,6 +207,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         }
     }
 
+    @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
     class LambdaInvocationInfo(
         map: PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange> = persistentMapOf(),
     ) : EventOccurrencesRangeInfo<LambdaInvocationInfo, FirBasedSymbol<*>>(map) {

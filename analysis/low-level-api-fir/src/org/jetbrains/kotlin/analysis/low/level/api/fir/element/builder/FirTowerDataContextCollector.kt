@@ -120,6 +120,7 @@ internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollec
  *
  * Otherwise, invokes this function recursively on the parent.
  */
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 private tailrec fun PsiElement.closestParentExpressionWithSameContextOrSelf(): KtExpression? {
     if (this is KtExpression) {
         if (

@@ -825,6 +825,7 @@ class DiagnosticReporterByTrackingStrategy(
             KtPsiUtil.deparenthesize(it) ?: it
         }
         if (expression != null) {
+            @Suppress("USELESS_IS_CHECK") // K2 warning suppression, TODO: KT-62472
             if (expression.isNull() && expression is KtConstantExpression) {
                 val factory = when (diagnostic) {
                     is ArgumentNullabilityErrorDiagnostic -> NULL_FOR_NONNULL_TYPE

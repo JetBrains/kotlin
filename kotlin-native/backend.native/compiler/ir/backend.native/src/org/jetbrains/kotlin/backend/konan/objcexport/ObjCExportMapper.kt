@@ -232,6 +232,7 @@ internal fun ObjCExportMapper.getBaseProperties(descriptor: PropertyDescriptor):
                     .distinct()
         }
 
+@Suppress("NO_TAIL_CALLS_FOUND", "NON_TAIL_RECURSIVE_CALL") // K2 warning suppression, TODO: KT-62472
 internal tailrec fun KotlinType.getErasedTypeClass(): ClassDescriptor =
         TypeUtils.getClassDescriptor(this) ?: this.constructor.supertypes.first().getErasedTypeClass()
 
