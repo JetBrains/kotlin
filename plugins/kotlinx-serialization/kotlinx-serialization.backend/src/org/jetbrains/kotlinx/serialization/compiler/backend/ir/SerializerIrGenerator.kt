@@ -108,6 +108,7 @@ open class SerializerIrGenerator(
     fun generateSerialDesc() {
         val desc = generatedSerialDescPropertyDescriptor ?: return
         val addFuncS = serialDescImplClass.functionByName(CallingConventions.addElement)
+        val markAsInheritor = serialDescImplClass.getSimpleFunction("markAsInheritor")
 
         val thisAsReceiverParameter = irClass.thisReceiver!!
         lateinit var prop: IrProperty
@@ -137,6 +138,14 @@ open class SerializerIrGenerator(
                 localDesc,
                 serialDescImplClass.functionByName(CallingConventions.addClassAnnotation)
             )
+
+            if (markAsInheritor != null &&
+                serializableIrClass.superTypes.any { st ->
+                    st.classOrUpperBound()?.owner?.let { it.hasSerializableOrMetaAnnotationWithoutArgs() && it.modality == Modality.SEALED } == true
+                }
+            ) {
+                +irInvoke(irGet(localDesc), markAsInheritor, typeHint = context.irBuiltIns.unitType)
+            }
 
             // save local descriptor to field
             +irSetField(

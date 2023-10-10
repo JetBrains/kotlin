@@ -188,6 +188,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("markAsInheritor.kt")
+    public void testMarkAsInheritor() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/markAsInheritor.kt");
+    }
+
+    @Test
     @TestMetadata("metaSerializable.kt")
     public void testMetaSerializable() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/metaSerializable.kt");
