@@ -896,7 +896,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinExecuti
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinExecution$ExecutionSource {
 }
 
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinExtensionPoint {
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinGradlePluginExtensionPoint {
 	public abstract fun get (Lorg/gradle/api/Project;)Ljava/util/List;
 	public abstract fun register (Lorg/gradle/api/Project;Ljava/lang/Object;)V
 }

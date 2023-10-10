@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
 import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.AndroidPluginWithoutAndroidTargetChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.AndroidSourceSetLayoutV1SourceSetsNotFoundChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.CommonMainOrTestWithDependsOnChecker
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnusedSourceSetsC
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.WasmSourceSetsNotFoundChecker
 
 /**
- * Active Extensions (using the [KotlinExtensionPoint] infrastructure) will be registered here by the Kotlin Gradle Plugin.
+ * Active Extensions (using the [KotlinGradlePluginExtensionPoint] infrastructure) will be registered here by the Kotlin Gradle Plugin.
  */
 internal fun Project.registerKotlinPluginExtensions() {
     KotlinGradleProjectChecker.extensionPoint.apply {

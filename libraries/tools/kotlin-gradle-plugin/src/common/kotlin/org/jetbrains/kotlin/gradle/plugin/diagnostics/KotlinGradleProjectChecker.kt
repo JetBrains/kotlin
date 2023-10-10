@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
-import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
-import org.jetbrains.kotlin.gradle.plugin.KotlinExtensionPoint
+import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
 
 /**
  * Interface for generic checks of a Gradle Project with any Kotlin Gradle Plugin applied.
@@ -97,7 +93,7 @@ internal interface KotlinGradleProjectChecker {
     suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector)
 
     companion object {
-        val extensionPoint = KotlinExtensionPoint<KotlinGradleProjectChecker>()
+        val extensionPoint = KotlinGradlePluginExtensionPoint<KotlinGradleProjectChecker>()
     }
 }
 

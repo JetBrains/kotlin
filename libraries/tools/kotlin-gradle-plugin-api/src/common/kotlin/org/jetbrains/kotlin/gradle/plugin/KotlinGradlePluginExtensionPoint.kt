@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
  * Note: Not stable for implementation: Custom implementations of this interface will not be supported by the Kotlin Gradle Plugin!
  *
  * #### Motivation
- * This [KotlinExtensionPoint] will be used to 'generically' extend parts of the Kotlin Gradle Plugin (internally and externally).
+ * This [KotlinGradlePluginExtensionPoint] will be used to 'generically' extend parts of the Kotlin Gradle Plugin (internally and externally).
  * General Kotlin Gradle Plugin code will call into this 'semantically' structured extension points to load logic
  * Such extension points are to be used for public as well as for internal extension points.
  *
@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
  * [org.jetbrains.kotlin.gradle.plugin.registerKotlinPluginExtensions] entry point.
  */
 @ExperimentalKotlinGradlePluginApi
-interface KotlinExtensionPoint<T> {
+interface KotlinGradlePluginExtensionPoint<T> {
     /**
      * @return all currently registered extension points.
      * The returned list is *not* live and just represents the current snapshot.

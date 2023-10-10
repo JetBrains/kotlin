@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KotlinExtensionPoint
-import org.jetbrains.kotlin.gradle.plugin.KotlinExtensionPointInternal
+import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
+import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPointInternal
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 /**
- * Completely overwrites the currently registered extensions on this [KotlinExtensionPoint] in this project.
+ * Completely overwrites the currently registered extensions on this [KotlinGradlePluginExtensionPoint] in this project.
  */
 @OptIn(UnsafeApi::class)
-operator fun <T> KotlinExtensionPoint<T>.set(project: Project, extensions: List<T>) {
-    (this as KotlinExtensionPointInternal<T>)
+operator fun <T> KotlinGradlePluginExtensionPoint<T>.set(project: Project, extensions: List<T>) {
+    (this as KotlinGradlePluginExtensionPointInternal<T>)
     set(project, extensions)
 }

@@ -9,15 +9,15 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.set
-import org.jetbrains.kotlin.gradle.plugin.KotlinExtensionPoint
+import org.jetbrains.kotlin.gradle.plugin.KotlinGradlePluginExtensionPoint
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class KotlinExtensionPointTest {
+class KotlinGradlePluginExtensionPointTest {
 
     @Test
     fun `test - simple extension point`() {
-        val extensionPoint = KotlinExtensionPoint<String>()
+        val extensionPoint = KotlinGradlePluginExtensionPoint<String>()
         val projectA = buildProject()
         val projectB = buildProject()
 
@@ -33,7 +33,7 @@ class KotlinExtensionPointTest {
 
     @Test
     fun `test - overwrite`() {
-        val extensionPoint = KotlinExtensionPoint<Int>()
+        val extensionPoint = KotlinGradlePluginExtensionPoint<Int>()
         val project = buildProject()
 
         extensionPoint.register(project, 0)

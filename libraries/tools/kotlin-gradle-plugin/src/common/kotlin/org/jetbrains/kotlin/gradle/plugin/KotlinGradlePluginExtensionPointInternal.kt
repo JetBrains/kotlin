@@ -10,20 +10,20 @@ import org.jetbrains.kotlin.gradle.utils.storedProjectProperty
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 /**
- * Creates a new [KotlinExtensionPoint]
- * See [KotlinExtensionPoint] documentation for the intended usage!
+ * Creates a new [KotlinGradlePluginExtensionPoint]
+ * See [KotlinGradlePluginExtensionPoint] documentation for the intended usage!
  */
-internal fun <T> KotlinExtensionPoint(): KotlinExtensionPoint<T> {
+internal fun <T> KotlinGradlePluginExtensionPoint(): KotlinGradlePluginExtensionPoint<T> {
     @OptIn(UnsafeApi::class)
-    return KotlinExtensionPointInternal()
+    return KotlinGradlePluginExtensionPointInternal()
 }
 
 /**
- * Only intended implementation of [KotlinExtensionPoint]!
+ * Only intended implementation of [KotlinGradlePluginExtensionPoint]!
  * Visible for tests to allow test utils to overwrite certain extension points
  */
 @UnsafeApi("Visible for tests only")
-internal class KotlinExtensionPointInternal<T> : KotlinExtensionPoint<T> {
+internal class KotlinGradlePluginExtensionPointInternal<T> : KotlinGradlePluginExtensionPoint<T> {
 
     private val Project.registeredExtensions by storedProjectProperty<MutableList<T>> { mutableListOf() }
 
