@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.fir.differences
 
 import kotlinx.serialization.Serializable
+import org.jetbrains.kotlin.test.utils.firTestDataFile
 import java.io.File
 
 val knownTestDataCategories = listOf(
@@ -89,7 +90,7 @@ class TestsCollection(
 val File.analogousK2File: File
     get() = when {
         path.contains(".fir.") -> error("This is already a definitely K2 file")
-        else -> File(path.replace(".kt", ".fir.kt"))
+        else -> firTestDataFile
     }
 
 val File.hasAnalogousK2File get() = analogousK2File.isFile
