@@ -4,7 +4,7 @@
 annotation class An
 
 @An
-data class A(@An val x: @An Int) {
-    @An
-    fun copy(@An x: @An Int) = x
+data class <!CONFLICTING_OVERLOADS("[@An() fun copy(@An() x: @R|An|()  Int): @R|An|()  Int]")!>A(@An val x: @An Int)<!> {
+    <!CONFLICTING_OVERLOADS("[fun copy(@An() x: @R|An|()  Int = ...): A]")!>@An
+    fun copy(@An x: @An Int)<!> = x
 }

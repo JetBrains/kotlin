@@ -63,7 +63,7 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
     return when (this) {
         // - see tests with `fun () {}`.
         // you can't redeclare something that has no name.
-        is FirNamedFunctionSymbol -> source?.kind !is KtFakeSourceElementKind && name != SpecialNames.NO_NAME_PROVIDED
+        is FirNamedFunctionSymbol -> isCollectableAccordingToSource && name != SpecialNames.NO_NAME_PROVIDED
         is FirRegularClassSymbol -> name != SpecialNames.NO_NAME_PROVIDED
         // - see testEnumValuesValueOf.
         // it generates a static function that has
@@ -75,6 +75,9 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
         else -> true
     }
 }
+
+private val FirNamedFunctionSymbol.isCollectableAccordingToSource: Boolean
+    get() = source?.kind !is KtFakeSourceElementKind || source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers
 
 private val FirBasedSymbol<*>.resolvedStatus
     get() = when (this) {
