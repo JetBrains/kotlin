@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.providers.impl.declarationProviders
 
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinCompositeProvider
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -13,8 +15,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 public class CompositeKotlinDeclarationProvider private constructor(
-    public val providers: List<KotlinDeclarationProvider>
-) : KotlinDeclarationProvider() {
+    override val providers: List<KotlinDeclarationProvider>
+) : KotlinDeclarationProvider(), KotlinCompositeProvider<KotlinDeclarationProvider> {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
         return providers.firstNotNullOfOrNull { it.getClassLikeDeclarationByClassId(classId) }
     }
@@ -68,23 +70,11 @@ public class CompositeKotlinDeclarationProvider private constructor(
     }
 
     public companion object {
-        public fun create(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider {
-            return when (providers.size) {
-                0 -> EmptyKotlinDeclarationProvider
-                1 -> providers.single()
-                else -> CompositeKotlinDeclarationProvider(providers)
-            }
-        }
+        public val factory: KotlinCompositeProviderFactory<KotlinDeclarationProvider> = KotlinCompositeProviderFactory(
+            EmptyKotlinDeclarationProvider,
+            ::CompositeKotlinDeclarationProvider,
+        )
 
-        public fun createFlattened(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
-            create(if (providers.size > 1) flatten(providers) else providers)
-
-        public fun flatten(providers: List<KotlinDeclarationProvider>): List<KotlinDeclarationProvider> =
-            providers.flatMap { provider ->
-                when (provider) {
-                    is CompositeKotlinDeclarationProvider -> provider.providers
-                    else -> listOf(provider)
-                }
-            }
+        public fun create(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider = factory.create(providers)
     }
 }
