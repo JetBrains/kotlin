@@ -161,6 +161,19 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirReg
         }
     }
 
+    // Constructors of nested classes
+    // are collected when checking the outer
+    // class: this is because they may clash
+    // with functions from this outer class,
+    // so we should avoid checking them twice.
+    if (context.isTopLevel) {
+        scope.processDeclaredConstructors {
+            if (it.isCollectable() && it.isVisibleInClass(klass)) {
+                collect(it, FirRedeclarationPresenter.represent(it, klass), functionDeclarations)
+            }
+        }
+    }
+
     val visitedProperties = mutableSetOf<FirVariableSymbol<*>>()
 
     scope.collectLeafProperties().forEach {

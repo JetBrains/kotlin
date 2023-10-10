@@ -7,8 +7,8 @@ class B : A {
     constructor(z: String) : this()
 }
 
-<!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>class C : A(20) {
-    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
+<!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>class <!CONFLICTING_OVERLOADS!>C<!> : A(20) {
+    <!CONFLICTING_OVERLOADS, EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     constructor(z: String) : <!OVERLOAD_RESOLUTION_AMBIGUITY!>this<!>()
 }<!>
 
