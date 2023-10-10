@@ -1252,6 +1252,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("suppressOnPlusAssign.kt")
+        public void testSuppressOnPlusAssign() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suppressOnPlusAssign.kt");
+        }
+
+        @Test
         @TestMetadata("suspendConflictingOverloads.kt")
         public void testSuspendConflictingOverloads() throws Exception {
             runTest("compiler/testData/diagnostics/tests/suspendConflictingOverloads.kt");
