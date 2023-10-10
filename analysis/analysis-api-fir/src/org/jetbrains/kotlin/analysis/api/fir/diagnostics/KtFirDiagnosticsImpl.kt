@@ -91,7 +91,7 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.types.Variance
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.analysis.api.fir.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

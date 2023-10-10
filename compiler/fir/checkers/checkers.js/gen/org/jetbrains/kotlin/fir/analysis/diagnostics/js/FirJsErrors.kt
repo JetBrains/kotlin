@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParameter
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.checkers.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

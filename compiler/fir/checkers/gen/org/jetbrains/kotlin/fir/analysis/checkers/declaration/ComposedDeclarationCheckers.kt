@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationCh
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.checkers.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

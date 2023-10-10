@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtExpression
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.analysis.api.fir.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

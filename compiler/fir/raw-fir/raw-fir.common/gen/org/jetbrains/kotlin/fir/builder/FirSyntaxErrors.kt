@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.checkers.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

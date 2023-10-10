@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.fir.checkers.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 

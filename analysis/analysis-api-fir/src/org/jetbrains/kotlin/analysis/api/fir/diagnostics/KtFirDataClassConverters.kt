@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
 /*
- * This file was generated automatically
+ * This file was generated automatically by [org.jetbrains.kotlin.analysis.api.fir.generator.MainKt]
  * DO NOT MODIFY IT MANUALLY
  */
 
