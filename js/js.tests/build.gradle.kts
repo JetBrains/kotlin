@@ -11,7 +11,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("jps-compatible")
-    id("com.github.node-gradle.node") version "5.0.0"
+    alias(libs.plugins.gradle.node)
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -230,7 +230,7 @@ val generateTypeScriptJsExportOnFileTests by parallel(
 fun Test.setupNodeJs() {
     systemProperty("javascript.engine.path.NodeJs", com.github.gradle.node.variant.VariantComputer()
         .let { variantComputer ->
-            computeNodeExec(node, variantComputer.computeNodeBinDir(node.computedNodeDir)).get()
+            computeNodeExec(node, variantComputer.computeNodeBinDir(node.resolvedNodeDir, node.resolvedPlatform)).get()
         }
     )
 }
