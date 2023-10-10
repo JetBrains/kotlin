@@ -1326,6 +1326,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 name: Name,
                 source: KtSourceElement?,
                 referenceSource: KtSourceElement?,
+                annotations: List<FirAnnotation>,
                 receiver: FirExpression,
                 vararg arguments: FirExpression
             ): FirFunctionCall = buildFunctionCall {
@@ -1343,6 +1344,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     this.name = name
                 }
                 origin = FirFunctionCallOrigin.Operator
+                this.annotations.addAll(annotations)
             }
         }
 
@@ -1351,8 +1353,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 name,
                 baseElement.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment),
                 referenceSource,
+                baseElement.annotations,
                 lhs,
-                rhs
+                rhs,
             )
         }
 
@@ -1590,6 +1593,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             OperatorNameConventions.SET,
             augmentedArraySetCall.source,
             augmentedArraySetCall.calleeReference.source,
+            annotations = augmentedArraySetCall.annotations,
             receiver = arrayAccess, // a
             *indicesQualifiedAccess.toTypedArray(), // indices
             resolvedOperatorCall // a.get(b).plus(c)
