@@ -1,0 +1,11 @@
+expression: {
+            s: String -> 0
+    }
+expected type: KtUsualClassType:
+  annotationsList: []
+  ownTypeArguments: [
+    KtFlexibleType:
+      annotationsList: []
+      type: kotlin/String!
+  ]
+  type: java/lang/Comparable<kotlin/String!>

@@ -185,6 +185,12 @@ public class FirStandaloneNormalAnalysisSourceModuleExpectedExpressionTypeTestGe
     }
 
     @Test
+    @TestMetadata("functionalTypeSubstitution.kt")
+    public void testFunctionalTypeSubstitution() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/functionalTypeSubstitution.kt");
+    }
+
+    @Test
     @TestMetadata("ifCondition.kt")
     public void testIfCondition() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/ifCondition.kt");
