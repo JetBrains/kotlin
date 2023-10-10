@@ -24,6 +24,9 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.compilationModel.compilation.AdhocKotlinCompilationEventsListener
+import org.jetbrains.kotlin.compilationModel.compilation.AllKotlinCompilationEventsListener
+import org.jetbrains.kotlin.compilationModel.kotlinCompilationModel
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -81,22 +84,33 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
     override fun configureCompilations(target: KotlinTargetType) {
         val project = target.project
-        val main = target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         target.compilations.all {
             setupCompilationDependencyFiles(it)
         }
 
-        if (createTestCompilation) {
-            target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
-                associateWith(main)
+        val compilationModel = project.kotlinCompilationModel
+        val allKotlinCompilationEventsListener = compilationModel
+            .services
+            .get<AllKotlinCompilationEventsListener>()
 
-                if (runtimeIncludesCompilationOutputs && this is KotlinCompilationToRunnableFiles) {
-                    // TODO: fix inconsistency? KT-27272
-                    runtimeDependencyFiles += project.files(output.allOutputs)
+        allKotlinCompilationEventsListener.addAdhoc(object : AdhocKotlinCompilationEventsListener {
+            override fun onMainCompilationAdded(compilation: org.jetbrains.kotlin.compilationModel.compilation.KotlinCompilation) {
+                target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
+            }
+
+            override fun onTestCompilationAdded(compilation: org.jetbrains.kotlin.compilationModel.compilation.KotlinCompilation) {
+                val main = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
+                    associateWith(main)
+
+                    if (runtimeIncludesCompilationOutputs && this is KotlinCompilationToRunnableFiles) {
+                        // TODO: fix inconsistency? KT-27272
+                        runtimeDependencyFiles += project.files(output.allOutputs)
+                    }
                 }
             }
-        }
+        })
     }
 
     override fun configureSourceSet(target: KotlinTargetType) {

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
-import org.jetbrains.kotlin.build.kotlinMultiplatformProjectModel
+import org.jetbrains.kotlin.compilationModel.kotlinCompilationModel
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -47,7 +47,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         checkGradleCompatibility("the Kotlin Multiplatform plugin")
         runDeprecationDiagnostics(project)
         project.plugins.apply(JavaBasePlugin::class.java)
-        val model = project.kotlinMultiplatformProjectModel
+        val model = project.kotlinCompilationModel
 
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
 

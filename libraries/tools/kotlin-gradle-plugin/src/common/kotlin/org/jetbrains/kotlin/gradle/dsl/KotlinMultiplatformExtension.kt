@@ -9,9 +9,9 @@ import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
-import org.jetbrains.kotlin.build.kotlinMultiplatformProjectModel
-import org.jetbrains.kotlin.build.targets.GradleTargetCreationContext
-import org.jetbrains.kotlin.build.targets.TargetType
+import org.jetbrains.kotlin.compilationModel.kotlinCompilationModel
+import org.jetbrains.kotlin.compilationModel.targets.GradleTargetCreationContext
+import org.jetbrains.kotlin.compilationModel.targets.TargetType
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -364,7 +364,7 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
                 else -> error("Unexpected Target Preset $targetPreset")
             }
 
-            val targetsHandler = project.kotlinMultiplatformProjectModel.targetsHandler
+            val targetsHandler = project.kotlinCompilationModel.kotlinTargetHandler
             targetsHandler.createTarget(targetName, targetType, GradleTargetCreationContext(targetPreset))
             val createdTarget = targets.findByName(targetName) ?: error("expected target $targetName was not found")
 
