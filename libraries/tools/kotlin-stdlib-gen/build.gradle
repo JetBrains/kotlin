@@ -14,7 +14,7 @@ dependencies {
 
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-version"]
+        freeCompilerArgs = ["-version", "-Xdont-warn-on-error-suppression"]
     }
 }
 

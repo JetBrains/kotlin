@@ -118,7 +118,8 @@ fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val commonCompilerArgs = listOfNotNull(
             "-opt-in=kotlin.RequiresOptIn",
-            "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false }
+            "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false },
+            "-Xdont-warn-on-error-suppression",
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
@@ -127,12 +128,33 @@ fun Project.configureKotlinCompilationOptions() {
         val useFirIC by extra(project.kotlinBuildProperties.useFirTightIC)
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
 
-        @Suppress("DEPRECATION")
+        val coreLibProjects: List<String> by rootProject.extra
+        val projectsWithForced19LanguageVersion = coreLibProjects + listOf(
+            ":kotlin-stdlib-jvm-minimal-for-test",
+            ":kotlin-stdlib-js-ir-minimal-for-test",
+            ":kotlin-stdlib-wasm-js",
+            ":kotlin-stdlib-wasm-wasi",
+            ":kotlin-dom-api-compat",
+            ":kotlin-test:kotlin-test-wasm-js",
+            ":kotlin-test:kotlin-test-wasm-wasi",
+        )
+
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
             kotlinOptions {
-                languageVersion = kotlinLanguageVersion
-                apiVersion = kotlinLanguageVersion
+
                 freeCompilerArgs += commonCompilerArgs
+                val forced19 = project.path in projectsWithForced19LanguageVersion
+                if (forced19) {
+                    languageVersion = "1.9"
+                    apiVersion = "1.9"
+                } else {
+                    languageVersion = kotlinLanguageVersion
+                    apiVersion = kotlinLanguageVersion
+                    freeCompilerArgs += "-Xskip-prerelease-check"
+                }
+                if (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0 && forced19) {
+                    options.progressiveMode.set(false)
+                }
             }
 
             val relativePathBaseArg: String? =
@@ -143,7 +165,6 @@ fun Project.configureKotlinCompilationOptions() {
             // Workaround to avoid remote build cache misses due to absolute paths in relativePathBaseArg
             doFirst {
                 if (relativePathBaseArg != null) {
-                    @Suppress("DEPRECATION")
                     kotlinOptions.freeCompilerArgs += relativePathBaseArg
                 }
             }
@@ -152,79 +173,6 @@ fun Project.configureKotlinCompilationOptions() {
         val jvmCompilerArgs = listOf(
             "-Xno-optimized-callable-references",
             "-Xno-kotlin-nothing-value-exception",
-        )
-
-        val coreLibProjects: List<String> by rootProject.extra
-        // Check prepare/kotlin-gradle-plugin-compiler-dependencies/build.gradle.kts to find out why there're some specific compiler modules
-        val kgpAndDependencies = listOf(
-            ":atomicfu",
-            ":compiler:build-tools:kotlin-build-statistics",
-            ":compiler:build-tools:kotlin-build-tools-api",
-            ":compiler:cli",
-            ":compiler:cli-base",
-            ":compiler:cli-common",
-            ":compiler:compiler.version",
-            ":compiler:config",
-            ":compiler:config.jvm",
-            ":compiler:frontend",
-            ":compiler:ir.serialization.common",
-            ":compiler:ir.tree",
-            ":compiler:util",
-            ":core:compiler.common",
-            ":core:compiler.common.jvm",
-            ":core:compiler.common.native",
-            ":core:descriptors",
-            ":core:deserialization",
-            ":core:deserialization.common",
-            ":core:metadata",
-            ":core:util.runtime",
-            ":daemon-common",
-            ":gradle:android-test-fixes",
-            ":gradle:gradle-warnings-detector",
-            ":gradle:kotlin-compiler-args-properties",
-            ":js:js.config",
-            ":kotlin-allopen",
-            ":kotlin-assignment",
-            ":kotlin-build-common",
-            ":kotlin-build-tools-enum-compat",
-            ":kotlin-compiler-runner-unshaded",
-            ":kotlin-daemon-client",
-            ":kotlin-gradle-build-metrics",
-            ":kotlin-gradle-compiler-types",
-            ":kotlin-gradle-plugin",
-            ":kotlin-gradle-plugin-annotations",
-            ":kotlin-gradle-plugin-api",
-            ":kotlin-gradle-plugin-idea",
-            ":kotlin-gradle-plugin-idea-proto",
-            ":kotlin-gradle-plugin-model",
-            ":kotlin-gradle-statistics",
-            ":kotlin-gradle-subplugin-example",
-            ":kotlin-lombok",
-            ":kotlin-noarg",
-            ":kotlin-project-model",
-            ":kotlin-sam-with-receiver",
-            ":kotlin-serialization",
-            ":kotlin-tooling-core",
-            ":kotlin-tooling-metadata",
-            ":kotlin-util-io",
-            ":kotlin-util-klib",
-            ":native:kotlin-klib-commonizer-api",
-            ":native:kotlin-native-utils",
-        )
-        val projectsWithDisabledFirBootstrap = coreLibProjects + kgpAndDependencies + listOf(
-            ":kotlinx-metadata",
-            ":kotlinx-metadata-jvm",
-            // For some reason stdlib isn't imported correctly for this module
-            // Probably it's related to kotlin-test module usage
-            ":kotlin-gradle-statistics",
-            // Requires serialization plugin
-            ":wasm:wasm.ir",
-            // Uses multiplatform
-            ":kotlin-stdlib-jvm-minimal-for-test",
-            ":kotlin-native:endorsedLibraries:kotlinx.cli",
-            ":kotlin-native:klib",
-            // Requires serialization plugin
-            ":js:js.tests",
         )
 
         // TODO: fix remaining warnings and remove this property.
@@ -240,25 +188,6 @@ fun Project.configureKotlinCompilationOptions() {
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
             kotlinOptions {
                 freeCompilerArgs += jvmCompilerArgs
-
-                if (useJvmFir) {
-                    if (project.path !in projectsWithDisabledFirBootstrap) {
-                        freeCompilerArgs += "-Xuse-k2"
-                        freeCompilerArgs += "-Xabi-stability=stable"
-                        if (useFirLT) {
-                            freeCompilerArgs += "-Xuse-fir-lt"
-                        }
-                        if (useFirIC) {
-                            freeCompilerArgs += "-Xuse-fir-ic"
-                        }
-                    } else {
-                        freeCompilerArgs += "-Xskip-prerelease-check"
-                    }
-                }
-                if (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0 && project.path in projectsWithDisabledFirBootstrap) {
-                    languageVersion = "1.9"
-                    options.progressiveMode.set(false)
-                }
                 if (renderDiagnosticNames) {
                     freeCompilerArgs += "-Xrender-internal-diagnostic-names"
                 }

@@ -82,6 +82,7 @@ fun Project.configureFrontendIr() = tasks.withType<KotlinJvmCompile>().configure
             }
             if (languageVersion.get() >= KotlinVersion.KOTLIN_2_0) {
                 languageVersion.set(KotlinVersion.KOTLIN_1_9)
+                apiVersion.set(KotlinVersion.KOTLIN_1_9)
                 progressiveMode.set(false)
             }
         }
