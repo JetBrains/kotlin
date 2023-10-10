@@ -32,6 +32,13 @@ public interface J {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final expect class WithExplicitPrimaryConstructor : C {
+    public constructor WithExplicitPrimaryConstructor()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 // -- Module: <m2-jvm> --
 package
 
@@ -68,6 +75,13 @@ public interface J {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final actual class WithExplicitPrimaryConstructor : C {
+    public constructor WithExplicitPrimaryConstructor()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 // -- Module: <m3-js> --
 package
 
@@ -99,6 +113,13 @@ public interface I {
 }
 
 public interface J {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final actual class WithExplicitPrimaryConstructor : C {
+    public constructor WithExplicitPrimaryConstructor()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
