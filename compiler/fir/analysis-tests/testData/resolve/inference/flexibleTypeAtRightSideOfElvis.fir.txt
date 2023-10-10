@@ -1,6 +1,11 @@
 FILE: main.kt
-    public final fun testSimpleType(): R|kotlin/String| {
+    public final fun testWithStatic(): R|kotlin/String| {
         lval x: R|kotlin/String?|
         R|<local>/x| = Null(null) ?: Q|JavaClass|.R|/JavaClass.X*s|
-        ^testSimpleType R|<local>/x|
+        ^testWithStatic R|<local>/x|
+    }
+    public final fun testWithFinalStatic(): R|kotlin/String| {
+        lval y: R|kotlin/String?|
+        R|<local>/y| = Null(null) ?: Q|JavaClass|.R|/JavaClass.Y*s|
+        ^testWithFinalStatic R|<local>/y|
     }

@@ -150,7 +150,7 @@ internal fun checkConstantArguments(
 
             for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
                 if (exp == null) continue
-                val expClassId = exp.resolvedType.fullyExpandedClassId(session)
+                val expClassId = exp.resolvedType.lowerBoundIfFlexible().fullyExpandedClassId(session)
                 // TODO, KT-59823: add annotation for allowed constant types
                 if (expClassId !in StandardClassIds.constantAllowedTypes) {
                     return ConstantArgumentKind.NOT_CONST
