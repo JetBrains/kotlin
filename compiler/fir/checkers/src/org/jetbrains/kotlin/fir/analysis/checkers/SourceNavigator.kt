@@ -57,7 +57,7 @@ interface SourceNavigator {
     }
 }
 
-open class LightTreeSourceNavigator : SourceNavigator {
+private open class LightTreeSourceNavigator : SourceNavigator {
 
     private fun <T> FirElement.withSource(f: (KtSourceElement) -> T): T? =
         source?.let { f(it) }
@@ -111,7 +111,7 @@ open class LightTreeSourceNavigator : SourceNavigator {
 }
 
 //by default psi tree can reuse light tree manipulations
-object PsiSourceNavigator : LightTreeSourceNavigator() {
+private object PsiSourceNavigator : LightTreeSourceNavigator() {
 
     //Swallows incorrect casts!!!
     private inline fun <reified P : PsiElement> FirElement.psi(): P? = source?.psi()
