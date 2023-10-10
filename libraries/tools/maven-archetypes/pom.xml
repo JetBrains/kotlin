@@ -18,7 +18,6 @@
 
     <modules>
         <module>kotlin-archetype-jvm</module>
-        <module>kotlin-archetype-js</module>
     </modules>
 
     <build>
