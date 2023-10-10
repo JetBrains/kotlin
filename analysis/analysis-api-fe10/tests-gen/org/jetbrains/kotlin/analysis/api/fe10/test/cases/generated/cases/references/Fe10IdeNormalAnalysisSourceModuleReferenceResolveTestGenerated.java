@@ -1517,6 +1517,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
             }
 
             @Test
+            @TestMetadata("SelfNonLocalNestedClass.kt")
+            public void testSelfNonLocalNestedClass() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/localContext/SelfNonLocalNestedClass.kt");
+            }
+
+            @Test
             @TestMetadata("SelfNonLocalProperty.kt")
             public void testSelfNonLocalProperty() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/localContext/SelfNonLocalProperty.kt");
