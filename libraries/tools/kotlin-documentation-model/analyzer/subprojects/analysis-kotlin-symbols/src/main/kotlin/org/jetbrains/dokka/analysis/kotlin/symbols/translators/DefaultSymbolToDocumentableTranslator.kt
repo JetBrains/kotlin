@@ -343,7 +343,30 @@ internal class DokkaSymbolVisitor(
 
             KtClassKind.ANONYMOUS_OBJECT -> throw NotImplementedError("ANONYMOUS_OBJECT does not support")
             KtClassKind.ENUM_CLASS -> {
-                val entries = namedClassOrObjectSymbol.getEnumEntries().map { visitEnumEntrySymbol(it) }
+                /**
+                 * See https://github.com/Kotlin/dokka/issues/3129
+                 *
+                 *  e.g. the `A` enum entry in the `enum E` is
+                 * ```
+                 * static val A: E = object : E() {
+                 *    val x: Int = 5
+                 * }
+                 * ```
+                 * it needs to exclude all static members like `values` and `valueOf` from the enum class's scope
+                 */
+                val enumEntryScope = lazy {
+                    getDokkaScopeFrom(namedClassOrObjectSymbol, dri, includeStaticScope = false).let {
+                        it.copy(
+                            functions = it.functions.map { it.withNewExtras( it.extra + InheritedMember(dri.copy(callable = null).toSourceSetDependent())) },
+                            properties = it.properties.map { it.withNewExtras( it.extra + InheritedMember(dri.copy(callable = null).toSourceSetDependent())) }
+                        )
+                    }
+                }
+
+                val entries =
+                    namedClassOrObjectSymbol.getEnumEntries().map {
+                        visitEnumEntrySymbol(it, enumEntryScope.value)
+                    }
 
                 DEnum(
                     dri = dri,
@@ -383,12 +406,17 @@ internal class DokkaSymbolVisitor(
         val properties: List<DProperty>,
         val classlikes: List<DClasslike>
     )
+
+    /**
+     * @param includeStaticScope flag to add static members, e.g. `valueOf`, `values` and `entries` members for Enum
+     */
     private fun KtAnalysisSession.getDokkaScopeFrom(
         namedClassOrObjectSymbol: KtNamedClassOrObjectSymbol,
-        dri: DRI
+        dri: DRI,
+        includeStaticScope: Boolean = true
     ): DokkaScope {
         // e.g. getStaticMemberScope contains `valueOf`, `values` and `entries` members for Enum
-        val scope = listOf(namedClassOrObjectSymbol.getMemberScope(), namedClassOrObjectSymbol.getStaticMemberScope()).asCompositeScope()
+        val scope = if(includeStaticScope) listOf(namedClassOrObjectSymbol.getMemberScope(), namedClassOrObjectSymbol.getStaticMemberScope()).asCompositeScope() else namedClassOrObjectSymbol.getMemberScope()
         val constructors = scope.getConstructors().map { visitConstructorSymbol(it) }.toList()
 
         val callables = scope.getCallableSymbols().toList()
@@ -453,28 +481,18 @@ internal class DokkaSymbolVisitor(
     }
 
     private fun KtAnalysisSession.visitEnumEntrySymbol(
-        enumEntrySymbol: KtEnumEntrySymbol
+        enumEntrySymbol: KtEnumEntrySymbol, scope: DokkaScope
     ): DEnumEntry = withExceptionCatcher(enumEntrySymbol) {
         val dri = getDRIFromEnumEntry(enumEntrySymbol)
         val isExpect = false
-
-        val scope = enumEntrySymbol.getMemberScope()
-        val callables = scope.getCallableSymbols().toList()
-        val classifiers = scope.getClassifierSymbols().toList()
-
-        val functions = callables.filterIsInstance<KtFunctionSymbol>().map { visitFunctionSymbol(it, dri) }
-        val properties = callables.filterIsInstance<KtPropertySymbol>().map { visitPropertySymbol(it, dri) }
-        val classlikes =
-            classifiers.filterIsInstance<KtNamedClassOrObjectSymbol>()
-                .map { visitNamedClassOrObjectSymbol(it, dri) }
 
         return DEnumEntry(
             dri = dri,
             name = enumEntrySymbol.name.asString(),
             documentation = getDocumentation(enumEntrySymbol)?.toSourceSetDependent() ?: emptyMap(),
-            functions = functions,
-            properties = properties,
-            classlikes = classlikes,
+            functions = scope.functions,
+            properties = scope.properties,
+            classlikes = emptyList(), // always empty, see https://github.com/Kotlin/dokka/issues/3129
             sourceSets = setOf(sourceSet),
             expectPresentInSet = sourceSet.takeIf { isExpect },
             extra = PropertyContainer.withAll(

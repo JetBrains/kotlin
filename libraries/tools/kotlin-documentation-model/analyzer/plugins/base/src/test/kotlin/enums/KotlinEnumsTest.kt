@@ -15,8 +15,7 @@ import org.jetbrains.dokka.pages.ContentGroup
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import signatures.renderedContent
-import utils.TestOutputWriter
-import utils.TestOutputWriterPlugin
+import utils.*
 import java.net.URL
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -323,6 +322,47 @@ class KotlinEnumsTest : BaseAbstractTest() {
 
                         assertNotNull(first.functions.find { it.name == "toBeImplemented" })
                     }
+                }
+            }
+        }
+    }
+
+    @Test
+    @OnlyDescriptors("K2 has `compareTo`, that should be suppressed, due to #3196")
+    fun `enum should have functions on page`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/basic/TestEnum.kt
+            |package testpackage
+            |
+            |
+            |interface Sample {
+            |    fun toBeImplemented(): String
+            |}
+            |
+            |enum class TestEnum: Sample {
+            |    E1 {
+            |        override fun toBeImplemented(): String = "e1"
+            |    }
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            pagesTransformationStage = { root ->
+                root.contentPage<ClasslikePageNode>("E1") {
+                    assertHasFunctions("toBeImplemented")
+                }
+
+                root.contentPage<ClasslikePageNode>("TestEnum") {
+                    assertHasFunctions("toBeImplemented", "valueOf", "values")
                 }
             }
         }
