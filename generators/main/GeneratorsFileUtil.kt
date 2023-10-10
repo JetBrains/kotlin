@@ -13,12 +13,21 @@ import kotlin.io.path.*
 object GeneratorsFileUtil {
     val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 
-    val GENERATED_MESSAGE = """
+    fun generatedMessage(mainClassName: String? = getMainClassName()) = """
     /*
-     * This file was generated automatically
+     * This file was generated automatically by [$mainClassName]
      * DO NOT MODIFY IT MANUALLY
      */
      """.trimIndent()
+
+    val generatedMessageAsRegex = generatedMessage(mainClassName = ".*")
+        .replace("[", "\\[")
+        .replace("]", "\\]")
+        .toRegex()
+
+    /** Must be called on the main thread, otherwise returns the root class of the worker thread. */
+    private fun getMainClassName(): String? =
+        Throwable().stackTrace.lastOrNull()?.className
 
     @OptIn(ExperimentalPathApi::class)
     @JvmStatic
@@ -95,7 +104,7 @@ object GeneratorsFileUtil {
 
     fun collectPreviouslyGeneratedFiles(generationPath: File): List<File> {
         return generationPath.walkTopDown().filter {
-            it.isFile && it.readText().contains(GENERATED_MESSAGE)
+            it.isFile && generatedMessageAsRegex.containsMatchIn(it.readText())
         }.toList()
     }
 

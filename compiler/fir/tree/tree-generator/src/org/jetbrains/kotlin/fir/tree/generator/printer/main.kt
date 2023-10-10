@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.GENERATED_MESSAGE
+import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.generatedMessage
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 
@@ -36,6 +36,6 @@ fun SmartPrinter.printCopyright() {
 }
 
 fun SmartPrinter.printGeneratedMessage() {
-    println(GENERATED_MESSAGE)
+    println(generatedMessage())
     println()
 }
