@@ -1,0 +1,17 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|A|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] superTypeInObject2.kt
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] object B : R|A| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -1,4 +1,4 @@
 // LOOK_UP_FOR_ELEMENT_OF_TYPE: KtTypeReference
-open class A
+interface A
 
-class B(): <expr>A</expr>()
+object B: <expr>A</expr>

@@ -1112,9 +1112,39 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("superType2.kt")
+        public void testSuperType2() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superType2.kt");
+        }
+
+        @Test
+        @TestMetadata("superType3.kt")
+        public void testSuperType3() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superType3.kt");
+        }
+
+        @Test
         @TestMetadata("superTypeAndGeneratedProperty.kt")
         public void testSuperTypeAndGeneratedProperty() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeAndGeneratedProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeInObject.kt")
+        public void testSuperTypeInObject() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeInObject.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeInObject2.kt")
+        public void testSuperTypeInObject2() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeInObject2.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeInObject3.kt")
+        public void testSuperTypeInObject3() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeInObject3.kt");
         }
 
         @Test
