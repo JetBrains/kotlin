@@ -1931,6 +1931,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             }
 
             @Test
+            @TestMetadata("invalidPropertyAccessOnFunctionFromNonImportedCompanionObject.kt")
+            public void testInvalidPropertyAccessOnFunctionFromNonImportedCompanionObject() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors/invalidPropertyAccessOnFunctionFromNonImportedCompanionObject.kt");
+            }
+
+            @Test
             @TestMetadata("invalidPropertyAccessOnFunctionFromSuperClass.kt")
             public void testInvalidPropertyAccessOnFunctionFromSuperClass() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/withErrors/invalidPropertyAccessOnFunctionFromSuperClass.kt");

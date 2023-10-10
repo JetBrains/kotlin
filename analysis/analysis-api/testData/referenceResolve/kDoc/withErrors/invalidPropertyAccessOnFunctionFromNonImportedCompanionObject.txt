@@ -1,0 +1,2 @@
+Resolved to:
+0: (in bar.A.Companion) fun toName(): kotlin.String

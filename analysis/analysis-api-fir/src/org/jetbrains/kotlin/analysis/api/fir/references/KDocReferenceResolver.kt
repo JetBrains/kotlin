@@ -264,7 +264,7 @@ internal object KDocReferenceResolver {
 
             else -> {
                 getClassOrObjectSymbolByClassId(classId)
-                    ?.getCombinedMemberScope()
+                    ?.getCompositeCombinedMemberAndCompanionObjectScope()
                     ?.getCallableSymbols(callableId.callableName)
                     ?.let(::addAll)
             }
