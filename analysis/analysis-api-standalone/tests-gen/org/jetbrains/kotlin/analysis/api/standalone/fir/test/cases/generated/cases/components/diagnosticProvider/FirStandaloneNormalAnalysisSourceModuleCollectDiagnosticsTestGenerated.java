@@ -71,6 +71,42 @@ public class FirStandaloneNormalAnalysisSourceModuleCollectDiagnosticsTestGenera
     }
 
     @Test
+    @TestMetadata("unresolvedAnnotationsOnPropertyFromParameter.kt")
+    public void testUnresolvedAnnotationsOnPropertyFromParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedAnnotationsOnPropertyFromParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedReferenceInsideSuperConstructorCall.kt")
+    public void testUnresolvedReferenceInsideSuperConstructorCall() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperConstructorCall.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedReferenceInsideSuperConstructorCallWithLocalFunction.kt")
+    public void testUnresolvedReferenceInsideSuperConstructorCallWithLocalFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperConstructorCallWithLocalFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedReferenceInsideSuperConstructorCallWithPrimaryConstructor.kt")
+    public void testUnresolvedReferenceInsideSuperConstructorCallWithPrimaryConstructor() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperConstructorCallWithPrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedReferenceInsideSuperConstructorCallWithSecondaryConstructor.kt")
+    public void testUnresolvedReferenceInsideSuperConstructorCallWithSecondaryConstructor() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperConstructorCallWithSecondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedReferenceInsideSuperPrimaryConstructorCallWithLocalFunction.kt")
+    public void testUnresolvedReferenceInsideSuperPrimaryConstructorCallWithLocalFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedReferenceInsideSuperPrimaryConstructorCallWithLocalFunction.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvedSuperConstructorCall.kt")
     public void testUnresolvedSuperConstructorCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolvedSuperConstructorCall.kt");

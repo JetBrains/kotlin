@@ -14,12 +14,15 @@ FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallAndExplicitConstructo
 
     }
     public final [ResolvedTo(STATUS)] class A : R|B| {
-        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.f] f: R|kotlin/String| = <strcat>(Int(42))): R|A| {
             super<R|B|>(Int(1), [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 R|/foo|()
             }
             )
         }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val f: R|kotlin/String| = R|<local>/f|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/String|
 
     }
     public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {

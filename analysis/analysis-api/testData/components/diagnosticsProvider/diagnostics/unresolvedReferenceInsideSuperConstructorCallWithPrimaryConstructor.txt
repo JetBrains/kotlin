@@ -1,0 +1,4 @@
+Diagnostics from elements:
+  for PSI element of type KtNameReferenceExpression at (4,5-15)
+    UNRESOLVED_REFERENCE      text ranges: [(92,102)]
+      PSI: KtNameReferenceExpression at (4,5-15)

@@ -1,0 +1,30 @@
+KT element: KtNameReferenceExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<Unresolved name: anySymbols>#
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallInsideImplicitConstructor.kt
+    public open [ResolvedTo(STATUS)] class IJProject : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=IJProject] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/IJProject.init] init: R|() -> kotlin/Unit| = LAZY_EXPRESSION): R|IJProject| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val init: R|() -> kotlin/Unit| = R|<local>/init|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=IJProject] get(): R|() -> kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class KotlinIDE : R|IJProject| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=KotlinIDE] constructor(): R|KotlinIDE| {
+            super<R|IJProject|>(init = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                    <Unresolved name: anySymbols>#
+                }
+
+            }
+            )
+        }
+
+    }

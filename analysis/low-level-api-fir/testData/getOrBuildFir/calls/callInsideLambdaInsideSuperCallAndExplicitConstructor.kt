@@ -2,7 +2,7 @@
 
 open class B(x: () -> Unit)
 
-class A() : B(1, {
+class A(val f: String = "${42}") : B(1, {
     <expr>foo()</expr>
 })
 

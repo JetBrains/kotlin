@@ -82,6 +82,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("annotationOnEnumClass.kt")
+        public void testAnnotationOnEnumClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnEnumClass.kt");
+        }
+
+        @Test
         @TestMetadata("annotationOnReturnType.kt")
         public void testAnnotationOnReturnType() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnReturnType.kt");
@@ -303,6 +309,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         @TestMetadata("callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt")
         public void testCallInsideLambdaInsideSuperCallFromSingleSecondaryConstructor() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("callInsideLambdaInsideSuperCallInsideImplicitConstructor.kt")
+        public void testCallInsideLambdaInsideSuperCallInsideImplicitConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/calls/callInsideLambdaInsideSuperCallInsideImplicitConstructor.kt");
         }
 
         @Test
@@ -1100,6 +1112,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("superTypeAndGeneratedProperty.kt")
+        public void testSuperTypeAndGeneratedProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeAndGeneratedProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("superTypeOnEnumClass.kt")
+        public void testSuperTypeOnEnumClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/superTypeOnEnumClass.kt");
+        }
+
+        @Test
         @TestMetadata("typeArgument.kt")
         public void testTypeArgument() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/typeArgument.kt");
@@ -1155,6 +1179,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         @TestMetadata("classTypeParemeter.kt")
         public void testClassTypeParemeter() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/classTypeParemeter.kt");
+        }
+
+        @Test
+        @TestMetadata("enum.kt")
+        public void testEnum() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/enum.kt");
         }
 
         @Test
