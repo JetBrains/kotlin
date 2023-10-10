@@ -43,11 +43,11 @@ class RegisteredDirectivesParser(private val container: DirectivesContainer, pri
 
     fun addParsedDirective(parsedDirective: ParsedDirective) {
         val (directive, values) = parsedDirective
+        @Suppress("UNCHECKED_CAST")
         when (directive) {
             is SimpleDirective -> simpleDirectives += directive
             is StringDirective -> {
                 val list = stringValueDirectives.getOrPut(directive, ::mutableListOf)
-                @Suppress("UNCHECKED_CAST")
                 list += values as List<String>
             }
             is ValueDirective<*> -> {
