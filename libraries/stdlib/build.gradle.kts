@@ -69,15 +69,19 @@ val commonTestOptIns = listOf(
 )
 
 kotlin {
+    val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
+    val diagnosticNamesArg = if (renderDiagnosticNames) "-Xrender-internal-diagnostic-names" else null
+
     metadata {
         compilations {
             all {
                 compileTaskProvider.configure {
                     kotlinOptions {
-                        freeCompilerArgs = listOf(
+                        freeCompilerArgs = listOfNotNull(
                             "-Xallow-kotlin-package",
                             "-module-name", "kotlin-stdlib-common",
                             "-Xexpect-actual-classes",
+                            diagnosticNamesArg,
                         )
                     }
                     // workaround for compiling legacy MPP metadata, remove when this compilation is not needed anymore
@@ -93,7 +97,7 @@ kotlin {
             val compileOnlyDeclarations by creating {
                 compileTaskProvider.configure {
                     kotlinOptions {
-                        freeCompilerArgs = listOf("-Xallow-kotlin-package")
+                        freeCompilerArgs = listOfNotNull("-Xallow-kotlin-package", diagnosticNamesArg)
                     }
                 }
             }
@@ -106,13 +110,14 @@ kotlin {
                         moduleName = "kotlin-stdlib"
                         jvmTarget = "1.8"
                         // providing exhaustive list of args here
-                        freeCompilerArgs = listOf(
+                        freeCompilerArgs = listOfNotNull(
                             "-Xallow-kotlin-package",
                             "-Xexpect-actual-classes",
                             "-Xmultifile-parts-inherit",
                             "-Xuse-14-inline-classes-mangling-scheme",
                             "-Xbuiltins-from-sources",
                             "-Xno-new-java-annotation-targets",
+                            diagnosticNamesArg,
                         )
                     }
                 }
@@ -130,10 +135,11 @@ kotlin {
                     kotlinOptions {
                         moduleName = "kotlin-stdlib-jdk7"
                         jvmTarget = "1.8"
-                        freeCompilerArgs = listOf(
+                        freeCompilerArgs = listOfNotNull(
                             "-Xallow-kotlin-package",
                             "-Xmultifile-parts-inherit",
-                            "-Xno-new-java-annotation-targets"
+                            "-Xno-new-java-annotation-targets",
+                            diagnosticNamesArg,
                         )
                     }
                 }
@@ -144,10 +150,11 @@ kotlin {
                 compileTaskProvider.configure {
                     kotlinOptions {
                         moduleName = "kotlin-stdlib-jdk8"
-                        freeCompilerArgs = listOf(
+                        freeCompilerArgs = listOfNotNull(
                             "-Xallow-kotlin-package",
                             "-Xmultifile-parts-inherit",
-                            "-Xno-new-java-annotation-targets"
+                            "-Xno-new-java-annotation-targets",
+                            diagnosticNamesArg,
                         )
                     }
                 }

@@ -36,6 +36,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
         )
+    val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
+    if (renderDiagnosticNames) {
+        compilerOptions.freeCompilerArgs.add("-Xrender-internal-diagnostic-names")
+    }
     friendPaths.from(libraries)
     compilerOptions.allWarningsAsErrors.set(true)
 }
