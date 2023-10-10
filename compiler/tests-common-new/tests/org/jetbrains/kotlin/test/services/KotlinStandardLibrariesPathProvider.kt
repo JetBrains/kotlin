@@ -73,7 +73,7 @@ abstract class KotlinStandardLibrariesPathProvider : TestService {
     abstract fun getAnnotationsJar(): File
 
     /**
-     * kotlin-stdlib-js.jar
+     * kotlin-stdlib-js.klib
      */
     abstract fun fullJsStdlib(): File
 
@@ -124,9 +124,9 @@ object StandardLibrariesPathProviderForKotlinProject : KotlinStandardLibrariesPa
     override fun jvmAnnotationsForTests(): File = ForTestCompileRuntime.jvmAnnotationsForTests()
     override fun getAnnotationsJar(): File = KtTestUtil.getAnnotationsJar()
 
-    override fun fullJsStdlib(): File = extractFromPropertyFirst("kotlin.js.full.stdlib.path") { "kotlin-stdlib-js.jar".dist() }
-    override fun defaultJsStdlib(): File = extractFromPropertyFirst("kotlin.js.reduced.stdlib.path") { "kotlin-stdlib-js.jar".dist() }
-    override fun kotlinTestJsKLib(): File = extractFromPropertyFirst("kotlin.js.kotlin.test.path") { "kotlin-test-js.jar".dist() }
+    override fun fullJsStdlib(): File = extractFromPropertyFirst("kotlin.js.full.stdlib.path") { "kotlin-stdlib-js.klib".dist() }
+    override fun defaultJsStdlib(): File = extractFromPropertyFirst("kotlin.js.reduced.stdlib.path") { "kotlin-stdlib-js.klib".dist() }
+    override fun kotlinTestJsKLib(): File = extractFromPropertyFirst("kotlin.js.kotlin.test.path") { "kotlin-test-js.klib".dist() }
 
     private inline fun extractFromPropertyFirst(prop: String, onMissingProperty: () -> String): File {
         val path = System.getProperty(prop, null) ?: onMissingProperty()

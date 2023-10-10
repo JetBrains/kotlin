@@ -82,7 +82,7 @@ public class ForTestCompileRuntime {
 
     @NotNull
     public static File stdlibJsForTests() {
-        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-js.jar"));
+        return assertExists(new File("dist/kotlinc/lib/kotlin-stdlib-js.klib"));
     }
 
     @NotNull

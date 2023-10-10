@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryMod
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSdkModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModule
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.jupiter.api.Assertions
@@ -91,14 +89,14 @@ class StandaloneSessionBuilderTest {
 
     @Test
     fun testKotlinStdLibJs() {
-        doTestKotlinStdLibResolve(JsPlatforms.defaultJsPlatform, PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath.toPath())
+        doTestKotlinStdLibResolve(JsPlatforms.defaultJsPlatform, PathUtil.kotlinPathsForDistDirectory.jsStdLibKlibPath.toPath())
     }
 
     @Test
     fun testKotlinStdLibJsWithInvalidKlib() {
         doTestKotlinStdLibResolve(
             JsPlatforms.defaultJsPlatform,
-            PathUtil.kotlinPathsForDistDirectory.jsStdLibJarPath.toPath(),
+            PathUtil.kotlinPathsForDistDirectory.jsStdLibKlibPath.toPath(),
             additionalStdlibRoots = listOf(
                 Paths.get(System.getProperty("java.home")), // directory which exists and does not contain KLibs inside
                 PathUtil.kotlinPathsForDistDirectory.stdlibPath.toPath(), // file which exists and not a KLib
