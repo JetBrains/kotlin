@@ -286,6 +286,7 @@
 /libraries/tools/atomicfu/ "Kotlin Libraries"
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
 /libraries/tools/dukat/ "Kotlin JS"
+/libraries/tools/ide-plugin-dependencies-validator "Kotlin IDE Analysis Core"
 /libraries/kotlin-dom-api-compat/ "Kotlin JS"
 /libraries/tools/kotlin-build-tools-enum-compat/ "Kotlin Build Tools"
 /libraries/tools/gradle/ "Kotlin Build Tools"
