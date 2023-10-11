@@ -102,7 +102,7 @@ projectTest {
     val runtimeJarPathProvider = project.provider {
         val jar = runtimeJar.get().outputs.files.asPath
         val trove = configurations.detachedConfiguration(
-                dependencies.module(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+                dependencies.create(commonDependency("org.jetbrains.intellij.deps:trove4j"))
         )
         (trove.files + jar).joinToString(File.pathSeparatorChar.toString())
     }
