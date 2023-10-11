@@ -66,23 +66,29 @@ abstract class TypeCheckerStateForConstraintSystem(
         val hasNoInfer = subType.isTypeVariableWithNoInfer() || superType.isTypeVariableWithNoInfer()
         if (hasNoInfer) return true
 
-        val hasExact = subType.isTypeVariableWithExact() || superType.isTypeVariableWithExact()
+        val isSubTypeExact = subType.isTypeVariableWithExact()
+        val isSuperTypeExact = superType.isTypeVariableWithExact()
+        val hasExact = isSubTypeExact || isSuperTypeExact
 
+        return if (!hasExact) {
+            internalAddSubtypeConstraint(subType, superType, isFromNullabilityConstraint)
+        } else {
+            val mySubType = prepareExactType(subType, out = true)
+            val mySuperType = prepareExactType(superType, out = false)
+
+            if (isSubTypeExact) {
+                addEqualityConstraint(mySubType.typeConstructor(extensionTypeContext), mySuperType)
+            }
+            if (isSuperTypeExact) {
+                addEqualityConstraint(mySuperType.typeConstructor(extensionTypeContext), mySubType)
+            }
+            true
+        }
+    }
+
+    private fun prepareExactType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker {
         // we should strip annotation's because we have incorporation operation and they should be not affected
-        val mySubType =
-            if (hasExact) extractTypeForProjectedType(subType, out = true)
-                ?: with(extensionTypeContext) { subType.removeExactAnnotation() } else subType
-        val mySuperType =
-            if (hasExact) extractTypeForProjectedType(superType, out = false)
-                ?: with(extensionTypeContext) { superType.removeExactAnnotation() } else superType
-
-        val result = internalAddSubtypeConstraint(mySubType, mySuperType, isFromNullabilityConstraint)
-        if (!hasExact) return result
-
-        val result2 = internalAddSubtypeConstraint(mySuperType, mySubType, isFromNullabilityConstraint)
-
-        if (result == null && result2 == null) return null
-        return (result ?: true) && (result2 ?: true)
+        return extractTypeForProjectedType(type, out) ?: with(extensionTypeContext) { type.removeExactAnnotation() }
     }
 
     private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? = with(extensionTypeContext) {

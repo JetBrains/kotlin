@@ -30,7 +30,7 @@ fun testYield() {
     val buildee = build {
         yield { val x: UserKlass = <!NO_THIS!>this@yield<!> }
     }
-    checkExactType<Buildee<UserKlass.() -> Unit>>(<!TYPE_MISMATCH("Buildee<UserKlass.() -> Unit>; Buildee<() -> Unit>"), TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>")!>buildee<!>)
+    checkExactType<Buildee<UserKlass.() -> Unit>>(<!TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>"), TYPE_MISMATCH("Buildee<UserKlass.() -> Unit>; Buildee<() -> Unit>")!>buildee<!>)
 }
 
 // test 2: PTV is in producing position (materialize-case)
@@ -42,5 +42,5 @@ fun testMaterialize() {
             materialize()
         )
     }
-    checkExactType<Buildee<UserKlass.() -> Unit>>(<!TYPE_MISMATCH("Buildee<UserKlass.() -> Unit>; Buildee<() -> Unit>"), TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>")!>buildee<!>)
+    checkExactType<Buildee<UserKlass.() -> Unit>>(<!TYPE_MISMATCH("Buildee<() -> Unit>; Buildee<UserKlass.() -> Unit>"), TYPE_MISMATCH("Buildee<UserKlass.() -> Unit>; Buildee<() -> Unit>")!>buildee<!>)
 }
