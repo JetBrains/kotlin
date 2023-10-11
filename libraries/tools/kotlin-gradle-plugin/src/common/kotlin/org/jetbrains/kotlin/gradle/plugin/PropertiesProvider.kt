@@ -39,10 +39,10 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.gradle.utils.loadProperty
 import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -529,6 +528,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val suppressBuildToolsApiVersionConsistencyChecks: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS) ?: false
 
+    private val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
+
+    internal fun property(propertyName: String): Provider<String> = propertiesBuildService.property(propertyName, project)
+
+    internal fun get(propertyName: String): String? = propertiesBuildService.get(propertyName, project)
+
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
@@ -538,23 +543,22 @@ internal class PropertiesProvider private constructor(private val project: Proje
             ?: property(KOTLIN_JS_KARMA_BROWSERS).orNull
 
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
-        val deprecatedProperty = property(deprecatedPropName).orNull
+        val deprecatedProperty = get(deprecatedPropName)
         if (deprecatedProperty != null) {
             project.reportDiagnosticOncePerBuild(KotlinToolingDiagnostics.DeprecatedPropertyWithReplacement(deprecatedPropName, propName))
         }
-        return property(propName).orNull ?: deprecatedProperty
+        return get(propName) ?: deprecatedProperty
     }
 
     private fun booleanProperty(propName: String): Boolean? =
-        property(propName).orNull?.toBoolean()
+        get(propName)?.toBoolean()
 
     private inline fun <reified T : Enum<T>> enumProperty(
         propName: String,
         defaultValue: T,
-    ): T = this.property(propName).orNull?.let { enumValueOf<T>(it.toUpperCaseAsciiOnly()) } ?: defaultValue
+    ): T = get(propName)?.let { enumValueOf<T>(it.toUpperCaseAsciiOnly()) } ?: defaultValue
 
-    private val localProperties = project.localProperties
-    internal fun property(propName: String): Provider<String> = project.loadProperty(propName, localProperties)
+    private val localProperties: Map<String, String> by lazy { project.localProperties.get() }
 
     private fun propertiesWithPrefix(prefix: String): Map<String, String> {
         val result: MutableMap<String, String> = mutableMapOf()
@@ -563,7 +567,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
                 result[name] = value
             }
         }
-        localProperties.orNull?.forEach { (name, value) ->
+        localProperties.forEach { (name, value) ->
             if (name.startsWith(prefix)) {
                 // Project properties have higher priority.
                 result.putIfAbsent(name, value)
