@@ -114,6 +114,9 @@ fun Project.configureJavaBasePlugin() {
     }
 }
 
+val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
+val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
+
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val commonCompilerArgs = listOfNotNull(
@@ -151,6 +154,9 @@ fun Project.configureKotlinCompilationOptions() {
                     languageVersion = kotlinLanguageVersion
                     apiVersion = kotlinLanguageVersion
                     freeCompilerArgs += "-Xskip-prerelease-check"
+                }
+                if (project.path in projectsUsedInIntelliJKotlinPlugin) {
+                    apiVersion = kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin
                 }
                 if (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0 && forced19) {
                     options.progressiveMode.set(false)

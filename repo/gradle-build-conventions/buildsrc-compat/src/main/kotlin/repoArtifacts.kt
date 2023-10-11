@@ -300,6 +300,14 @@ fun Project.idePluginDependency(block: () -> Unit) {
 }
 
 fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<String> = emptyList()) {
+    val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
+
+    for (projectName in projects) {
+        check(projectName in projectsUsedInIntelliJKotlinPlugin) {
+            "`$projectName` is used in IntelliJ Kotlin Plugin, it should be added to `extra[\"projectsUsedInIntelliJKotlinPlugin\"]`"
+        }
+    }
+
     idePluginDependency {
         publishProjectJars(projects, libraryDependencies)
     }

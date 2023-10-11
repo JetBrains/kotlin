@@ -575,7 +575,8 @@ include ":generators:analysis-api-generator",
         ":analysis:decompiled:native",
         ":analysis:decompiled:light-classes-for-decompiled",
         ":analysis:decompiled:light-classes-for-decompiled-fe10",
-        ":prepare:analysis-api-test-framework"
+        ":prepare:analysis-api-test-framework",
+        ":tools:ide-plugin-dependencies-validator"
 
 
 if (buildProperties.inJpsBuildIdeaSync) {
@@ -615,6 +616,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':tools:binary-compatibility-validator').projectDir = "$rootDir/libraries/tools/binary-compatibility-validator" as File
     project(':tools:jdk-api-validator').projectDir = "$rootDir/libraries/tools/jdk-api-validator" as File
     project(':tools:kotlin-stdlib-gen').projectDir = "$rootDir/libraries/tools/kotlin-stdlib-gen" as File
+    project(':tools:ide-plugin-dependencies-validator').projectDir = "$rootDir/libraries/tools/ide-plugin-dependencies-validator" as File
 
     project(':kotlin-test').projectDir = "$rootDir/libraries/kotlin.test" as File
     project(':kotlin-test:kotlin-test-js-ir').projectDir = "$rootDir/libraries/kotlin.test/js-ir" as File
