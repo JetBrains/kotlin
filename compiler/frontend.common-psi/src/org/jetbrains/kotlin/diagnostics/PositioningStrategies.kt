@@ -1015,7 +1015,6 @@ object PositioningStrategies {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     val COMMAS: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return buildList {

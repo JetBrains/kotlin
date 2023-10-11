@@ -466,7 +466,6 @@ class MemoizedMultiFieldValueClassReplacements(
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun verifyStructureCompatibility(
         targetStructure: List<RemappedParameter>,
         sourceStructure: List<RemappedParameter>

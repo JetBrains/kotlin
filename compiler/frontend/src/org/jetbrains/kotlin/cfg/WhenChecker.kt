@@ -227,7 +227,6 @@ internal abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChe
 }
 
 private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,
@@ -248,7 +247,6 @@ private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecke
 }
 
 internal object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
-    @OptIn(ExperimentalStdlibApi::class)
     override fun getMissingCases(
         expression: KtWhenExpression,
         context: BindingContext,

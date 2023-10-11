@@ -20,7 +20,6 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 private val BOXING_CLASS_INTERNAL_NAME =
     StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("Boxing")).topLevelClassInternalName()
 
-@OptIn(ExperimentalStdlibApi::class)
 object ChangeBoxingMethodTransformer : MethodTransformer() {
     private val wrapperToInternalBoxing: Map<String, String>
 

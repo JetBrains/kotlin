@@ -1154,7 +1154,6 @@ object LightTreePositioningStrategies {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     val COMMAS: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
