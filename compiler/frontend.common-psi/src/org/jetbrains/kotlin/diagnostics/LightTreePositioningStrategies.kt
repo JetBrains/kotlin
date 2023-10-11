@@ -1233,6 +1233,29 @@ object LightTreePositioningStrategies {
             return markElement(nodeToMark, startOffset, endOffset, tree, node)
         }
     }
+
+    val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(
+            node: LighterASTNode,
+            startOffset: Int,
+            endOffset: Int,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>
+        ): List<TextRange> {
+            val nodeToMark = when (node.tokenType) {
+                KtNodeTypes.ENUM_ENTRY -> {
+                    tree.findChildByType(node, KtNodeTypes.INITIALIZER_LIST) ?: node
+                }
+                KtNodeTypes.TYPE_REFERENCE -> {
+                    val valueArgList = node.getParentIfTypeIs(KtNodeTypes.CONSTRUCTOR_CALLEE, tree)
+                        ?.getParentIfTypeIs(KtNodeTypes.SUPER_TYPE_CALL_ENTRY, tree)
+                        ?.let { tree.findChildByType(it, KtNodeTypes.VALUE_ARGUMENT_LIST) }
+                    valueArgList ?: node
+                }
+                else -> node
+            }
+            return markElement(nodeToMark, startOffset, endOffset, tree, node)
+        }
+    }
 }
 
 fun KtSourceElement.hasValOrVar(): Boolean =
@@ -1656,4 +1679,11 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.lastChild(node: Lighte
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
     return childrenRef.get().lastOrNull { it != null }
+}
+
+private fun LighterASTNode.getParentIfTypeIs(
+    tokenType: IElementType,
+    tree: FlyweightCapableTreeStructure<LighterASTNode>,
+): LighterASTNode? {
+    return tree.getParent(this)?.takeIf { it.tokenType == tokenType }
 }

@@ -3027,7 +3027,7 @@ internal class ExpectedLateinitPropertyImpl(
 internal class SupertypeInitializedInExpectedClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.SupertypeInitializedInExpectedClass
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.SupertypeInitializedInExpectedClass
 
 internal class ExpectedPrivateDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,

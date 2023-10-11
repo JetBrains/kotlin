@@ -56,6 +56,13 @@ interface SourceNavigator {
      */
     fun FirEnumEntry.hasBody(): Boolean?
 
+    /**
+     * Returns whether this [FirEnumEntry] has an initializer in source, or `null` if the entry does not have a source.
+     *
+     * Reason of implementing this in [SourceNavigator] and not in FIR is same as in [hasBody] method.
+     */
+    fun FirEnumEntry.hasInitializer(): Boolean?
+
     companion object {
 
         private val lightTreeInstance = LightTreeSourceNavigator()
@@ -129,6 +136,12 @@ private open class LightTreeSourceNavigator : SourceNavigator {
         val childNodes = source.lighterASTNode.getChildren(source.treeStructure)
         return childNodes.any { it.tokenType == KtNodeTypes.CLASS_BODY }
     }
+
+    override fun FirEnumEntry.hasInitializer(): Boolean? {
+        val source = source ?: return null
+        val childNodes = source.lighterASTNode.getChildren(source.treeStructure)
+        return childNodes.any { it.tokenType == KtNodeTypes.INITIALIZER_LIST }
+    }
 }
 
 //by default psi tree can reuse light tree manipulations
@@ -175,5 +188,10 @@ private object PsiSourceNavigator : LightTreeSourceNavigator() {
     override fun FirEnumEntry.hasBody(): Boolean? {
         val enumEntryPsi = source?.psi as? KtEnumEntry ?: return null
         return enumEntryPsi.body != null
+    }
+
+    override fun FirEnumEntry.hasInitializer(): Boolean? {
+        val enumEntryPsi = source?.psi as? KtEnumEntry ?: return null
+        return enumEntryPsi.initializerList != null
     }
 }

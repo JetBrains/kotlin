@@ -642,7 +642,7 @@ object FirErrors {
     val EXPECTED_PROPERTY_INITIALIZER by error0<KtExpression>()
     val EXPECTED_DELEGATED_PROPERTY by error0<KtExpression>()
     val EXPECTED_LATEINIT_PROPERTY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.LATEINIT_MODIFIER)
-    val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS by error0<PsiElement>()
+    val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS by error0<KtElement>(SourceElementPositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC)
     val EXPECTED_PRIVATE_DECLARATION by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val EXPECTED_EXTERNAL_DECLARATION by error0<KtModifierListOwner>(SourceElementPositioningStrategies.EXTERNAL_MODIFIER)
     val EXPECTED_TAILREC_FUNCTION by error0<KtModifierListOwner>(SourceElementPositioningStrategies.TAILREC_MODIFIER)

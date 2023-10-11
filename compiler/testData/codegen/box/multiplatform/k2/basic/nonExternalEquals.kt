@@ -7,7 +7,7 @@ open class Base {
     open operator fun plus(b: Base) = Base()
 }
 
-expect open class Derived constructor() : Base() {
+expect open class Derived constructor() : Base {
 }
 
 // MODULE: main()()(common)

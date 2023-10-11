@@ -394,4 +394,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.TYPEALIAS_TYPE_REFERENCE,
         PositioningStrategies.TYPEALIAS_TYPE_REFERENCE,
     )
+
+    val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
+        PositioningStrategies.SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC,
+    )
 }

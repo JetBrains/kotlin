@@ -2512,7 +2512,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ExpectedLateinitProperty::class
     }
 
-    interface SupertypeInitializedInExpectedClass : KtFirDiagnostic<PsiElement> {
+    interface SupertypeInitializedInExpectedClass : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = SupertypeInitializedInExpectedClass::class
     }
 

@@ -1046,6 +1046,21 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField
+    val SUPERTYPE_INITIALIZED_IN_EXPECTED_CLASS_DIAGNOSTIC = object : PositioningStrategy<KtElement>() {
+        override fun mark(element: KtElement): List<TextRange> {
+            val elementToMark = when (element) {
+                is KtEnumEntry -> element.initializerList ?: element
+                is KtTypeReference -> {
+                    val superTypeCallEntry = (element.parent as? KtConstructorCalleeExpression)?.parent as? KtSuperTypeCallEntry
+                    superTypeCallEntry?.valueArgumentList ?: element
+                }
+                else -> element
+            }
+            return markElement(elementToMark)
+        }
+    }
+
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for
      * diagnostics on super and unresolved references. For example, with the following, only the part inside the parentheses should be
