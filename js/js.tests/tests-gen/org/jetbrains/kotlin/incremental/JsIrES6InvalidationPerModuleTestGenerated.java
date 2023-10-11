@@ -62,6 +62,12 @@ public class JsIrES6InvalidationPerModuleTestGenerated extends AbstractJsIrES6In
     }
 
     @Test
+    @TestMetadata("companionConstVal")
+    public void testCompanionConstVal() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/companionConstVal/");
+    }
+
+    @Test
     @TestMetadata("companionFunction")
     public void testCompanionFunction() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/companionFunction/");
@@ -305,6 +311,12 @@ public class JsIrES6InvalidationPerModuleTestGenerated extends AbstractJsIrES6In
     @TestMetadata("jsCodeWithConstString")
     public void testJsCodeWithConstString() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstString/");
+    }
+
+    @Test
+    @TestMetadata("jsCodeWithConstStringFromOtherModule")
+    public void testJsCodeWithConstStringFromOtherModule() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsCodeWithConstStringFromOtherModule/");
     }
 
     @Test
