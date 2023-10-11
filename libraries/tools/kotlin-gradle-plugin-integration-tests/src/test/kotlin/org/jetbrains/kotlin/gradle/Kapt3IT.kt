@@ -159,6 +159,16 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
+    @DisplayName("Kapt is not skipped when all annotation processors are declared as indirect dependencies")
+    @GradleTest
+    fun testKaptNotSkippedWithIndirectDependencies(gradleVersion: GradleVersion) {
+        project("indirectDependencies".withPrefix, gradleVersion) {
+            build("assemble") {
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin")
+            }
+        }
+    }
+
     @DisplayName("Kapt is working with newer JDKs")
     @JdkVersions(versions = [JavaVersion.VERSION_1_10, JavaVersion.VERSION_11, JavaVersion.VERSION_16, JavaVersion.VERSION_17])
     @GradleWithJdkTest

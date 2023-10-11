@@ -277,7 +277,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
-        val nonEmptyKaptConfigurations = kaptConfigurations.filter { it.dependencies.isNotEmpty() }
+        val nonEmptyKaptConfigurations = kaptConfigurations.filter { it.allDependencies.isNotEmpty() }
 
         val javaCompileOrNull = findJavaTaskForKotlinCompilation(kotlinCompilation)
 
@@ -359,7 +359,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         generateStubsTask: TaskProvider<KaptGenerateStubsTask>
     ): TaskProvider<out KaptTask> {
         val taskName = kotlinCompile.kaptTaskName
-        @Suppress("UNCHECKED_CAST")
         val taskConfigAction = KaptWithoutKotlincConfig(
             kotlinCompilation.project,
             generateStubsTask,
