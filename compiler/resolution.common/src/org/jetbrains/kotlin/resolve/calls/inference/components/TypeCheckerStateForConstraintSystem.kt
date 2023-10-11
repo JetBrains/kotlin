@@ -88,7 +88,7 @@ abstract class TypeCheckerStateForConstraintSystem(
 
     private fun prepareExactType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker {
         // we should strip annotation's because we have incorporation operation and they should be not affected
-        return extractTypeForProjectedType(type, out) ?: with(extensionTypeContext) { type.removeExactAnnotation() }
+        return extractTypeForProjectedType(type, out) ?: type
     }
 
     private fun extractTypeForProjectedType(type: KotlinTypeMarker, out: Boolean): KotlinTypeMarker? = with(extensionTypeContext) {

@@ -421,11 +421,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.getTypeParameterClassifier() != null
     }
 
-    override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
-        require(this is ConeKotlinType)
-        return this
-    }
-
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
         if (this is ErrorTypeConstructor) return createErrorType(reason)
         if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId")
