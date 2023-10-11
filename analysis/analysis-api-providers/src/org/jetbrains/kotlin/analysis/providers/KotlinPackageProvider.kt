@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  * Provides information about packages that are visible to Kotlin in the given scope. Can be constructed via [KotlinPackageProviderFactory].
  * The FIR compiler calls [doesKotlinOnlyPackageExist]  very often, so the implementations should consider caching the results.
  */
-public abstract class KotlinPackageProvider {
+public abstract class KotlinPackageProvider : KotlinComposableProvider {
     /**
      * Checks if a package with given [FqName] exists in current [GlobalSearchScope] with a view from a given [platform].
      *
@@ -82,13 +82,7 @@ public abstract class KotlinPackageProviderFactory {
  * Package providers should not be naively merged by combining scopes and calling [createPackageProvider], because there may be additional
  * package providers which do not operate based on scopes (e.g. resolve extension package providers).
  */
-public abstract class KotlinPackageProviderMerger {
-    /**
-     * Merges [packageProviders] if possible, creating a combined package provider that should be more efficient compared to invoking
-     * separate package providers.
-     */
-    public abstract fun mergePackageProviders(packageProviders: List<KotlinPackageProvider>): KotlinPackageProvider
-
+public abstract class KotlinPackageProviderMerger : KotlinComposableProviderMerger<KotlinPackageProvider> {
     public companion object {
         public fun getInstance(project: Project): KotlinPackageProviderMerger = project.getService(KotlinPackageProviderMerger::class.java)
     }
@@ -99,4 +93,4 @@ public fun Project.createPackageProvider(searchScope: GlobalSearchScope): Kotlin
         .createPackageProvider(searchScope)
 
 public fun Project.mergePackageProviders(packageProviders: List<KotlinPackageProvider>): KotlinPackageProvider =
-    KotlinPackageProviderMerger.getInstance(this).mergePackageProviders(packageProviders)
+    KotlinPackageProviderMerger.getInstance(this).merge(packageProviders)

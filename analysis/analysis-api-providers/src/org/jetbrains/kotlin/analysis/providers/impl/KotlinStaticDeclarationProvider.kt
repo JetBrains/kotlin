@@ -375,9 +375,9 @@ public class KotlinFakeClsStubsCache {
 }
 
 public class KotlinStaticDeclarationProviderMerger(private val project: Project) : KotlinDeclarationProviderMerger() {
-    override fun mergeDeclarationProviders(declarationProviders: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
-        declarationProviders.mergeSpecificProviders<_, KotlinStaticDeclarationProvider>(CompositeKotlinDeclarationProvider.factory) { providers ->
-            val combinedScope = GlobalSearchScope.union(providers.map { it.scope })
+    override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
+        providers.mergeSpecificProviders<_, KotlinStaticDeclarationProvider>(CompositeKotlinDeclarationProvider.factory) { targetProviders ->
+            val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
             project.createDeclarationProvider(combinedScope, module = null).apply {
                 check(this is KotlinStaticDeclarationProvider) {
                     "`KotlinStaticDeclarationProvider` can only be merged into a combined declaration provider of the same type."

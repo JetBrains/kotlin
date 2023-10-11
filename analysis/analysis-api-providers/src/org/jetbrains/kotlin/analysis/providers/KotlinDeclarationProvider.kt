@@ -15,10 +15,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 /**
- * A declaration provider for a given scope. Can be created via [KotlinDeclarationProviderFactory].
- * May be called frequently, so for implementations it is better to cache results.
+ * A declaration provider for a given scope. It can be created via [KotlinDeclarationProviderFactory].
+ *
+ * It may be called frequently, so implementations should cache the results.
  */
-public abstract class KotlinDeclarationProvider {
+public abstract class KotlinDeclarationProvider : KotlinComposableProvider {
     public abstract fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration?
 
     public abstract fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject>
@@ -66,15 +67,7 @@ public abstract class KotlinDeclarationProviderFactory {
  * [createDeclarationProvider]. [KotlinDeclarationProviderMerger] should implement proper merging logic that takes these concerns into
  * account.
  */
-public abstract class KotlinDeclarationProviderMerger {
-    /**
-     * Merges [declarationProviders] if possible, creating a combined declaration provider that should be more efficient compared to calling
-     * separate declaration providers. Not all given declaration providers might be mergeable, or there might be multiple separate sets of
-     * declaration providers which can be merged individually, so the resulting declaration provider may be a composite Kotlin declaration
-     * provider.
-     */
-    public abstract fun mergeDeclarationProviders(declarationProviders: List<KotlinDeclarationProvider>): KotlinDeclarationProvider
-
+public abstract class KotlinDeclarationProviderMerger : KotlinComposableProviderMerger<KotlinDeclarationProvider> {
     public companion object {
         public fun getInstance(project: Project): KotlinDeclarationProviderMerger =
             project.getService(KotlinDeclarationProviderMerger::class.java)
@@ -85,4 +78,4 @@ public fun Project.createDeclarationProvider(scope: GlobalSearchScope, module: K
     KotlinDeclarationProviderFactory.getInstance(this).createDeclarationProvider(scope, module)
 
 public fun Project.mergeDeclarationProviders(declarationProviders: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
-    KotlinDeclarationProviderMerger.getInstance(this).mergeDeclarationProviders(declarationProviders)
+    KotlinDeclarationProviderMerger.getInstance(this).merge(declarationProviders)

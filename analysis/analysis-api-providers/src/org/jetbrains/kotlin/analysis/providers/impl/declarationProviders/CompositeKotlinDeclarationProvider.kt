@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.providers.impl.declarationProviders
 
+import org.jetbrains.kotlin.analysis.providers.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId

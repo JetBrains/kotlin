@@ -54,9 +54,9 @@ public class KotlinStaticPackageProviderFactory(
 }
 
 public class KotlinStaticPackageProviderMerger(private val project: Project) : KotlinPackageProviderMerger() {
-    override fun mergePackageProviders(packageProviders: List<KotlinPackageProvider>): KotlinPackageProvider =
-        packageProviders.mergeSpecificProviders<_, KotlinStaticPackageProvider>(CompositeKotlinPackageProvider.factory) { providers ->
-            val combinedScope = GlobalSearchScope.union(providers.map { it.scope })
+    override fun merge(providers: List<KotlinPackageProvider>): KotlinPackageProvider =
+        providers.mergeSpecificProviders<_, KotlinStaticPackageProvider>(CompositeKotlinPackageProvider.factory) { targetProviders ->
+            val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
             project.createPackageProvider(combinedScope).apply {
                 check(this is KotlinStaticPackageProvider) {
                     "`${KotlinStaticPackageProvider::class.simpleName}` can only be merged into a combined package provider of the same type."

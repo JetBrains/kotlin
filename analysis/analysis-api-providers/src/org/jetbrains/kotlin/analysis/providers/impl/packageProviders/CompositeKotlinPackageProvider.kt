@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.providers.impl.packageProviders
 
+import org.jetbrains.kotlin.analysis.providers.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinCompositeProviderFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name

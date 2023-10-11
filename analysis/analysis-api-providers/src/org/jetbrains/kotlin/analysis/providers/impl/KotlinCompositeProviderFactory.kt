@@ -5,20 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.providers.impl
 
+import org.jetbrains.kotlin.analysis.providers.KotlinComposableProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinCompositeProvider
 import org.jetbrains.kotlin.analysis.providers.impl.util.mergeOnly
 
 /**
- * A composite provider should only contain providers of the same base type as the composite provider itself, so implementations of
- * [KotlinCompositeProvider] should always be a subtype of their type argument [P].
+ * [KotlinCompositeProviderFactory] is used by various [KotlinCompositeProvider]s to share code related to provider creation and flattening.
  */
-public interface KotlinCompositeProvider<P> {
-    public val providers: List<P>
-}
-
-/**
- * [KotlinCompositeProviderFactory] is used by various composite providers to share code related to provider creation and flattening.
- */
-public class KotlinCompositeProviderFactory<P>(
+public class KotlinCompositeProviderFactory<P : KotlinComposableProvider>(
     private val emptyProvider: P,
     private val composeProviders: (List<P>) -> P,
 ) {
@@ -48,7 +42,7 @@ public class KotlinCompositeProviderFactory<P>(
  * Uses the given [factory] to merge all providers of type [T] with the given [mergeTargets] strategy. Other providers (not of type [T]) are
  * added to the resulting composite provider unmerged.
  */
-public inline fun <P : Any, reified T : P> List<P>.mergeSpecificProviders(
+public inline fun <P : KotlinComposableProvider, reified T : P> List<P>.mergeSpecificProviders(
     factory: KotlinCompositeProviderFactory<P>,
     crossinline mergeTargets: (List<T>) -> P,
 ): P {
