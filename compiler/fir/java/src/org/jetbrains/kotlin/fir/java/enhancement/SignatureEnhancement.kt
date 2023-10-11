@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
+import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE_PARAMETER
 import org.jetbrains.kotlin.load.java.FakePureImplementationsProvider
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -647,7 +649,7 @@ class FirSignatureEnhancement(
         parameterContainer?.let {
             typeQualifierResolver.extractAndMergeDefaultQualifiers(defaultQualifiers, it.annotations)
         } ?: defaultQualifiers,
-        AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
+        VALUE_PARAMETER,
         typeInSignature,
         predefined,
         forAnnotationMember
@@ -665,7 +667,14 @@ class FirSignatureEnhancement(
     ): FirResolvedTypeRef {
         val typeRef = typeInSignature.getTypeRef(this)
         val typeRefsFromOverridden = overriddenMembers.map { typeInSignature.getTypeRef(it) }
-        val mode = if (forAnnotationMember) FirJavaTypeConversionMode.ANNOTATION_MEMBER else FirJavaTypeConversionMode.DEFAULT
+        val mode = when {
+            !forAnnotationMember ->
+                FirJavaTypeConversionMode.DEFAULT
+            containerApplicabilityType == VALUE_PARAMETER && (typeContainer as? FirValueParameter)?.name == DEFAULT_VALUE_PARAMETER ->
+                FirJavaTypeConversionMode.ANNOTATION_CONSTRUCTOR_PARAMETER
+            else ->
+                FirJavaTypeConversionMode.ANNOTATION_MEMBER
+        }
         return EnhancementSignatureParts(
             session, typeQualifierResolver, typeContainer, isCovariant, forceOnlyHeadTypeConstructor = false,
             containerApplicabilityType, containerQualifiers

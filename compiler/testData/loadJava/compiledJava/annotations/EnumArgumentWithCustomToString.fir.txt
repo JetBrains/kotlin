@@ -20,7 +20,7 @@ public open class EnumArgumentWithCustomToString : R|kotlin/Any| {
 
     }
     public final annotation class EnumArrayAnno : R|kotlin/Annotation| {
-        public constructor(vararg value: R|kotlin/Array<test/EnumArgumentWithCustomToString.E>|): R|test/EnumArgumentWithCustomToString.EnumArrayAnno|
+        public constructor(vararg value: R|kotlin/Array<out test/EnumArgumentWithCustomToString.E>|): R|test/EnumArgumentWithCustomToString.EnumArrayAnno|
 
     }
 }
