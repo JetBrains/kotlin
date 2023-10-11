@@ -24096,6 +24096,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("typeAliasWithArray.kt")
+                public void testTypeAliasWithArray() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeAliasWithArray.kt");
+                }
+
+                @Test
                 @TestMetadata("typeParameters.kt")
                 public void testTypeParameters() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeParameters.kt");
