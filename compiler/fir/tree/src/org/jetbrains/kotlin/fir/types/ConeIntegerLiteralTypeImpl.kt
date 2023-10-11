@@ -34,7 +34,6 @@ class ConeIntegerLiteralConstantTypeImpl(
         return getApproximatedTypeImpl(expectedType)
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     companion object {
         fun create(
             value: Long,
