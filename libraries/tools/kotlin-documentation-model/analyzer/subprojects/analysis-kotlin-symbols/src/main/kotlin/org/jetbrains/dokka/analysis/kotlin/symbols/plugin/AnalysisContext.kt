@@ -125,11 +125,12 @@ internal open class EnvironmentKotlinAnalysis(
 internal interface AnalysisContext: Closeable {
     val project: Project
     val mainModule: KtSourceModule
+    val analysisSession: StandaloneAnalysisAPISession
 }
 
 private class AnalysisContextImpl(
     override val mainModule: KtSourceModule,
-    private val analysisSession: StandaloneAnalysisAPISession,
+    override val analysisSession: StandaloneAnalysisAPISession,
     private val applicationDisposable: Disposable,
     private val projectDisposable: Disposable
 ) : AnalysisContext {
