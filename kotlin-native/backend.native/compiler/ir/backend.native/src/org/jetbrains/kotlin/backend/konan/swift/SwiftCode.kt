@@ -30,6 +30,8 @@ sealed interface SwiftCode {
 
         val String.identifier get() = Expression.Identifier(this)
 
+        val String.primitiveType get() = Type.Primitive(this)
+
         val String.type get() = Type.Named(this)
 
         val String.literal get() = Expression.StringLiteral(this)
@@ -731,6 +733,10 @@ sealed interface SwiftCode {
     sealed interface Type : FunctionArgumentType {
         sealed interface Nominal: Type
         sealed interface PossiblyGeneric : Type
+
+        data class Primitive(val name: String) : Nominal, PossiblyGeneric {
+            override fun render(): String = name
+        }
 
         data class Named(val name: String) : Nominal, PossiblyGeneric {
             override fun render(): String = name

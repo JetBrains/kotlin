@@ -72,37 +72,41 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         }
     }
 
-    private data class Names(val swift: String, val c: String, val path: List<String>, val symbol: String) {
+    private data class Names(val swift: String, val c: String, val path: List<Pair<String, Boolean>>, val symbol: String) {
         companion object {
             operator fun invoke(declaration: IrFunction): Names {
                 val symbolName = "_" + declaration.computeSymbolName()
-                val path: List<String>
+                val path: List<Pair<String, Boolean>> // name to shouldDeclare
                 val cName: String
                 val swiftName: String
 
                 when {
                     declaration.isPropertyAccessor -> {
                         val property = declaration.propertyIfAccessor
-                        checkNotNull(property)
                         swiftName = property.getNameWithAssert().identifier
-                        path = property.parent.kotlinFqName.pathSegments().map { it.identifier } + listOf(swiftName)
-                        val pathString = path.joinToString(separator = "_")
-                        when {
-                            declaration.isGetter -> cName = "__kn_get_$pathString"
-                            declaration.isSetter -> cName = "__kn_set_$pathString"
+                        path = property.parent.kotlinFqName.pathSegments().map { it.identifier to true } + listOf(swiftName to true)
+                        val pathString = path.joinToString(separator = "_") { it.first }
+                        cName = when {
+                            declaration.isGetter -> "__kn_get_$pathString"
+                            declaration.isSetter -> "__kn_set_$pathString"
                             else -> error("A property accessor is expected to either be a setter or getter")
                         }
                     }
                     declaration is IrConstructor -> {
                         swiftName = "init"
-                        path = declaration.kotlinFqName.pathSegments().dropLast(1).map { it.identifier } + listOf("init")
-                        val pathString = path.joinToString(separator = "_")
+                        path = declaration.kotlinFqName.pathSegments().dropLast(1).map { it.identifier to true } + listOf("init" to true)
+                        val pathString = path.joinToString(separator = "_") { it.first }
                         cName = "__kn_$pathString"
                     }
                     else -> {
                         swiftName = declaration.name.identifier
-                        path = declaration.kotlinFqName.pathSegments().map { it.identifier }
-                        val pathString = path.joinToString(separator = "_")
+                        val kReceiver = declaration.extensionReceiverParameter?.type
+                        val sReceiver = kReceiver?.mapTypeToSwift()
+                        val receiver = sReceiver?.render()
+                        path = listOfNotNull(
+                                receiver?.let { it to false }
+                        ) + declaration.kotlinFqName.pathSegments().map { it.identifier to true }
+                        val pathString = path.joinToString(separator = "_") { it.first }
                         cName = "__kn_$pathString"
                     }
                 }
@@ -112,9 +116,9 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
 
             operator fun invoke(declaration: IrClass): Names {
                 val swiftName = declaration.name.identifier
-                val path = declaration.kotlinFqName.pathSegments().map { it.identifier }
+                val path = declaration.kotlinFqName.pathSegments().map { it.identifier to true }
                 val pathString = path.joinToString(separator = "_")
-                val cName =  "__kn_class_$pathString"
+                val cName = "__kn_class_$pathString"
                 return Names(swiftName, cName, path, "")
             }
         }
@@ -129,6 +133,7 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         enum class Kind {
             PACKAGE,
             TYPE,
+            PRIMITIVE_TYPE,
         }
 
         fun <R> reduce(transform: (List<String>, Kind, List<T>, List<R>) -> R): R {
@@ -137,21 +142,21 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
             return reduceFrom(this, emptyList(), transform)
         }
 
-        fun makePath(path: List<String>): Namespace<T> {
+        fun makePath(path: List<Pair<String, Boolean>>): Namespace<T> {
             if (path.isEmpty()) {
                 return this
             }
 
             val key = path.first()
-            val next = children.getOrPut(key) { Namespace<T>(key) }
+            val next = children.getOrPut(key.first) { Namespace(key.first, if (key.second) Kind.PACKAGE else Kind.PRIMITIVE_TYPE) }
             return next.makePath(path.drop(1))
         }
 
-        fun insertElement(path: List<String>, value: T): Namespace<T> {
+        fun insertElement(path: List<Pair<String, Boolean>>, value: T): Namespace<T> {
             return makePath(path).also { it.elements.add(value) }
         }
 
-        fun insertNamespace(path: List<String>, namespace: Namespace<T>): Namespace<T> {
+        fun insertNamespace(path: List<Pair<String, Boolean>>, namespace: Namespace<T>): Namespace<T> {
             return makePath(path).also { it.children.put(namespace.name, namespace) }
         }
 
@@ -168,8 +173,8 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
             val swiftImports: MutableList<SwiftCode.Import> = mutableListOf(SwiftCode.Import.Module("Foundation")),
             val swiftDeclarations: Namespace<SwiftCode.Declaration> = Namespace(""),
             // FIXME: we shouldn't manually generate c headers for our existing code, but here we are.
-            val cImports: MutableList<CCode> = mutableListOf<CCode>(),
-            val cDeclarations: MutableList<CCode> = mutableListOf<CCode>(),
+            val cImports: MutableList<CCode> = mutableListOf(),
+            val cDeclarations: MutableList<CCode> = mutableListOf(),
     )
 
     override fun visitElement(element: IrElement, data: Result) {
@@ -199,7 +204,8 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         val cls = SwiftCode.build {
             `class`(
                     names.swift,
-                    inheritedTypes = listOfNotNull(declaration.superClass?.let { Names(it).path.type } ?: kotlinAnySwiftType)
+                    inheritedTypes = listOfNotNull(declaration.superClass?.let { Names(it).path.map { it.first }.type }
+                            ?: kotlinAnySwiftType)
             ) {
                 declarations.first.forEach { +it }
             }
@@ -280,64 +286,16 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
                 && !declaration.isFakeOverride
     }
 
-    private fun mapTypeToC(declaration: IrType): CCode.Type? = CCode.build {
-        when {
-            declaration.isUnit() -> if (declaration.isNullable()) null else void
-            declaration.isPrimitiveType() -> if (declaration.isNullable()) null else when (declaration.getPrimitiveType()!!) {
-                PrimitiveType.BYTE -> int8()
-                PrimitiveType.BOOLEAN -> bool
-                PrimitiveType.CHAR -> null // TODO: implement alongside with strings
-                PrimitiveType.SHORT -> int16()
-                PrimitiveType.INT -> int32()
-                PrimitiveType.LONG -> int64()
-                PrimitiveType.FLOAT -> float
-                PrimitiveType.DOUBLE -> double
-            }
-            declaration.isUnsignedType() -> if (declaration.isNullable()) null else when (declaration.getUnsignedType()!!) {
-                UnsignedType.UBYTE -> int8(isUnsigned = true)
-                UnsignedType.USHORT -> int16(isUnsigned = true)
-                UnsignedType.UINT -> int32(isUnsigned = true)
-                UnsignedType.ULONG -> int64(isUnsigned = true)
-            }
-            declaration.isRegularClass -> void.pointer(nullability = CCode.Type.Pointer.Nullability.NULLABLE.takeIf { declaration.isNullable() })
-            else -> null
-        }
-    }
-
-    private fun mapTypeToSwift(declaration: IrType): SwiftCode.Type? = SwiftCode.build {
-        when {
-            declaration.isNullable() -> null
-            declaration.isUnit() -> "Void".type
-            declaration.isPrimitiveType() -> when (declaration.getPrimitiveType()!!) {
-                PrimitiveType.BYTE -> "Int8"
-                PrimitiveType.BOOLEAN -> "Bool"
-                PrimitiveType.CHAR -> null // TODO: implement alongside with strings
-                PrimitiveType.SHORT -> "Int16"
-                PrimitiveType.INT -> "Int32"
-                PrimitiveType.LONG -> "Int64"
-                PrimitiveType.FLOAT -> "Float"
-                PrimitiveType.DOUBLE -> "Double"
-            }?.type
-            declaration.isUnsignedType() -> when (declaration.getUnsignedType()!!) {
-                UnsignedType.UBYTE -> "UInt8"
-                UnsignedType.USHORT -> "UInt16"
-                UnsignedType.UINT -> "UInt32"
-                UnsignedType.ULONG -> "UInt64"
-            }.type
-            else -> null
-        }
-    }
-
     private fun bridgeFor(declaration: IrType): Bridge? = SwiftCode.build {
-        val cType = mapTypeToC(declaration) ?: return null
-        val swiftType = mapTypeToSwift(declaration)
+        val cType = declaration.mapTypeToC() ?: return null
+        val swiftType = declaration.mapTypeToSwift()
 
         when {
-            swiftType != null -> Bridge.AsIs(swiftType, cType)
             declaration.isAny() -> {
                 val type = "AnyObject".type.let { if (declaration.isNullable()) it.optional else it }
                 return Bridge.Object(type, cType)
             }
+            swiftType != null -> Bridge.AsIs(swiftType, cType)
             declaration.computeBinaryType() is BinaryType.Reference -> {
                 // FIXME: generate particular types
                 val type = kotlinAnySwiftType.let { if (declaration.isNullable()) it.optional else it }
@@ -349,10 +307,10 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
 
     private fun generateCFunction(declaration: IrFunction, names: Names = Names(declaration)): CCode.Declaration? = CCode.build {
         declare(function(
-                returnType = mapTypeToC(declaration.returnType) ?: return null,
+                returnType = declaration.returnType.mapTypeToC() ?: return null,
                 name = names.c,
                 arguments = declaration.explicitParameters.map {
-                    variable(mapTypeToC(it.type) ?: return null, it.name.identifierOrNullIfSpecial)
+                    variable(it.type.mapTypeToC() ?: return null, it.name.identifierOrNullIfSpecial)
                 } + listOfNotNull(variable(void.pointer, "returnSlot").takeIf { declaration.hasObjectHolderParameter }),
                 attributes = listOf(asm(names.symbol))
         ))
@@ -405,7 +363,7 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         val parameterBridges: List<Pair<String, Bridge>>
         val argumentBridges: List<Pair<String, Bridge>>
 
-        if (declaration.dispatchReceiverParameter != null) {
+        if (declaration.dispatchReceiverParameter != null || declaration.extensionReceiverParameter != null) {
             parameterBridges = bridges.drop(1)
             argumentBridges = listOf("self" to Bridge.Self) + parameterBridges
         } else {
@@ -420,10 +378,12 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
                     visibility = public
             ) {
                 // FIXME: properly create an instance when the runtime support for that arrives
-                +"fatalError".identifier.call()
+                if (parameterBridges.isNotEmpty()) {
+                    +"fatalError".identifier.call()
+                }
             }
 
-            declaration.dispatchReceiverParameter != null -> method(
+            declaration.dispatchReceiverParameter != null || declaration.extensionReceiverParameter != null -> method(
                     names.swift,
                     parameters = parameterBridges.map { parameter(it.first, type = it.second.swiftType) },
                     returnType = returnTypeBridge.swiftType,
@@ -513,6 +473,7 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                             children.forEach { it.inline.forEach { +it.patchStatic() } }
                         })
                     }
+                    else -> Unit
                 }
 
                 for (child in children) {
@@ -520,7 +481,7 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                 }
 
                 for (element in elements) {
-                    outline.add(extension(name, visibility = public) {
+                    outline.add(extension(name) {
                         +element.patchStatic()
                     })
                 }
@@ -553,3 +514,52 @@ private val IrType.isClass: Boolean
 private fun CCode.Builder.asm(name: String) = rawAttribute("asm".identifier.call(name.literal))
 
 private val IrFunction.hasObjectHolderParameter get() = this.returnType.isClass && !this.returnType.isUnit() && !this.returnType.isVoidAsReturnType()
+
+private fun IrType.mapTypeToC(): CCode.Type? = CCode.build {
+    when {
+        isUnit() -> if (isNullable()) null else void
+        isPrimitiveType() -> if (isNullable()) null else when (getPrimitiveType()!!) {
+            PrimitiveType.BYTE -> int8()
+            PrimitiveType.BOOLEAN -> bool
+            PrimitiveType.CHAR -> null // TODO: implement alongside with strings
+            PrimitiveType.SHORT -> int16()
+            PrimitiveType.INT -> int32()
+            PrimitiveType.LONG -> int64()
+            PrimitiveType.FLOAT -> float
+            PrimitiveType.DOUBLE -> double
+        }
+        isUnsignedType() -> if (isNullable()) null else when (getUnsignedType()!!) {
+            UnsignedType.UBYTE -> int8(isUnsigned = true)
+            UnsignedType.USHORT -> int16(isUnsigned = true)
+            UnsignedType.UINT -> int32(isUnsigned = true)
+            UnsignedType.ULONG -> int64(isUnsigned = true)
+        }
+        isRegularClass -> void.pointer(nullability = CCode.Type.Pointer.Nullability.NULLABLE.takeIf { isNullable() })
+        else -> null
+    }
+}
+
+private fun IrType.mapTypeToSwift(): SwiftCode.Type? = SwiftCode.build {
+    when {
+        isNullable() -> null
+        isUnit() -> "Void".primitiveType
+        isPrimitiveType() -> when (getPrimitiveType()!!) {
+            PrimitiveType.BYTE -> "Int8"
+            PrimitiveType.BOOLEAN -> "Bool"
+            PrimitiveType.CHAR -> null // TODO: implement alongside with strings
+            PrimitiveType.SHORT -> "Int16"
+            PrimitiveType.INT -> "Int32"
+            PrimitiveType.LONG -> "Int64"
+            PrimitiveType.FLOAT -> "Float"
+            PrimitiveType.DOUBLE -> "Double"
+        }?.primitiveType
+        isUnsignedType() -> when (getUnsignedType()!!) {
+            UnsignedType.UBYTE -> "UInt8"
+            UnsignedType.USHORT -> "UInt16"
+            UnsignedType.UINT -> "UInt32"
+            UnsignedType.ULONG -> "UInt64"
+        }.primitiveType
+        isRegularClass -> "${this@mapTypeToSwift.classFqName}".type
+        else -> null
+    }
+}
