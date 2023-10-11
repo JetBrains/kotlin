@@ -34,8 +34,7 @@ class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding)
         ctx.addStatement(Stmt.LocalVarAssign(toViper(), value.withType(type).toViper()))
     }
 
-    fun invariants(): List<Exp> = type.invariants(toViper())
-
+    fun pureInvariants(): List<Exp> = type.pureInvariants(toViper())
     fun provenInvariants(): List<Exp> = type.provenInvariants(toViper())
     fun accessInvariants(): List<Exp> = type.accessInvariants(toViper())
     fun dynamicInvariants(): List<Exp> = type.dynamicInvariants(toViper())

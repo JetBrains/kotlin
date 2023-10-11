@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Type
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
  * Represents our representation of a Kotlin type.
@@ -42,6 +43,27 @@ interface TypeEmbedding {
      */
     val name: MangledName
 
+    /**
+     * Find an embedding of a backing field by this name amongst the ancestors of this type.
+     *
+     * While in Kotlin only classes can have backing fields, and so searching interface supertypes is not strictly necessary,
+     * due to the way we handle list size we need to search all types.
+     *
+     * Non-class types have no fields and so almost no types will implement this function.
+     */
+    fun findField(name: SimpleKotlinName): FieldEmbedding? = null
+
+    /**
+     * Perform an action on every field and collect the results.
+     *
+     * Note that for fake fields that are taken from interfaces, this may visit some fields twice.
+     * Use `flatMapUniqueFields` if you want to avoid that.
+     */
+    fun <R> flatMapFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> = listOf()
+
+    /**
+     * Invariants that provide access to a resource and thus behave linearly.
+     */
     fun accessInvariants(v: Exp): List<Exp> = emptyList()
 
     /**
@@ -54,7 +76,11 @@ interface TypeEmbedding {
      */
     fun provenInvariants(v: Exp): List<Exp> = emptyList()
 
-    fun invariants(v: Exp): List<Exp> = emptyList()
+    /**
+     * Invariants that do not depend on the heap, and so do not need to be repeated
+     * once they have been established once.
+     */
+    fun pureInvariants(v: Exp): List<Exp> = emptyList()
 
     /**
      * Invariants that should correlate the old and new value of a value of this type
@@ -64,6 +90,15 @@ interface TypeEmbedding {
      * This is exclusively necessary for CallsInPlace.
      */
     fun dynamicInvariants(v: Exp): List<Exp> = emptyList()
+}
+
+fun <R> TypeEmbedding.flatMapUniqueFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> {
+    val seenFields = mutableSetOf<SimpleKotlinName>()
+    return flatMapFields { name, field ->
+        seenFields.add(name).ifTrue {
+            action(name, field)
+        } ?: listOf()
+    }
 }
 
 /**
@@ -86,7 +121,7 @@ data object NothingTypeEmbedding : TypeEmbedding {
         override val mangled: String = "T_Nothing"
     }
 
-    override fun invariants(v: Exp): List<Exp> = listOf(Exp.BoolLit(false))
+    override fun pureInvariants(v: Exp): List<Exp> = listOf(Exp.BoolLit(false))
 }
 
 data object AnyTypeEmbedding : TypeEmbedding {
@@ -166,7 +201,25 @@ data class FunctionTypeEmbedding(val signature: CallableSignatureData) : Unspeci
     }
 }
 
-data class ClassTypeEmbedding(val className: ScopedKotlinName, val superTypes: List<TypeEmbedding>) : TypeEmbedding {
+data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
+    private var _superTypes: List<TypeEmbedding>? = null
+    val superTypes: List<TypeEmbedding>
+        get() = _superTypes ?: throw IllegalStateException("Super types of $className have not been initialised yet.")
+
+    fun initSuperTypes(newSuperTypes: List<TypeEmbedding>) {
+        if (_superTypes != null) throw IllegalStateException("Super types of $className are already initialised.")
+        _superTypes = newSuperTypes
+    }
+
+    private var _fields: Map<SimpleKotlinName, FieldEmbedding>? = null
+    val fields: Map<SimpleKotlinName, FieldEmbedding>
+        get() = _fields ?: throw IllegalStateException("Fields of $className have not been initialised yet.")
+
+    fun initFields(newFields: Map<SimpleKotlinName, FieldEmbedding>) {
+        if (_fields != null) throw IllegalStateException("Fields of $className are already initialised.")
+        _fields = newFields
+    }
+
     override val runtimeType = TypeDomain.classType(className)
     override val viperType = Type.Ref
 
@@ -175,16 +228,17 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName, val superTypes: L
         override val mangled: String = "T_class_${className.mangled}"
     }
 
-    override fun provenInvariants(v: Exp) = listOf(subtypeInvariant(v))
+    override fun findField(name: SimpleKotlinName): FieldEmbedding? = fields[name] ?: findAncestorField(name)
 
-    override fun accessInvariants(v: Exp): List<Exp> {
-        return if (className.isCollection) {
-            listOf(
-                v.fieldAccessPredicate(SpecialFields.ListSizeField, PermExp.FullPerm()),
-                Exp.GeCmp(v.fieldAccess(SpecialFields.ListSizeField), Exp.IntLit(0))
-            )
-        } else {
-            emptyList()
-        }
-    }
+    fun findAncestorField(name: SimpleKotlinName): FieldEmbedding? = superTypes.firstNotNullOfOrNull { it.findField(name) }
+
+    override fun <R> flatMapFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> =
+        superTypes.flatMap { it.flatMapFields(action) } + fields.flatMap { (name, field) -> action(name, field) }
+
+    // We can't easily implement this by recursion on the supertype structure since some supertypes may be seen multiple times.
+    // TODO: figure out a nicer way to handle this.
+    override fun accessInvariants(v: Exp): List<Exp> =
+        flatMapUniqueFields { _, field -> field.accessInvariantsForParameter(v) }
+
+    override fun provenInvariants(v: Exp) = listOf(subtypeInvariant(v))
 }

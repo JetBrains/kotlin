@@ -1,4 +1,6 @@
 /list.kt:(91,105): info: Generated Viper text for empty_list_get:
+field special$size: Int
+
 method global$fun_empty_list_get$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -40,6 +42,8 @@ method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$
 /list.kt:(91,105): warning: Function empty_list_get may not satisfy its contract.
 
 /list.kt:(193,204): info: Generated Viper text for unsafe_last:
+field special$size: Int
+
 method global$fun_unsafe_last$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Int(local$l: Ref)
   returns (ret: Int)
   requires acc(local$l.special$size, write)
@@ -76,6 +80,8 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Li
 /list.kt:(193,204): warning: Function unsafe_last may not satisfy its contract.
 
 /list.kt:(273,280): info: Generated Viper text for add_get:
+field special$size: Int
+
 method global$fun_add_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$l: Ref)
   returns (ret: dom$Unit)
   requires acc(local$l.special$size, write)

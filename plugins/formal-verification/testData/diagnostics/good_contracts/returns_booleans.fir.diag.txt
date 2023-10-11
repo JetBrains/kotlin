@@ -77,6 +77,8 @@ method global$fun_call_fun_with_contracts$fun_take$T_Boolean$return$T_Boolean(lo
 }
 
 /returns_booleans.kt:(1268,1281): info: Generated Viper text for isNullOrEmpty:
+field special$size: Int
+
 method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: dom$Nullable[Ref])
   returns (ret: Bool)
   requires this != (dom$Nullable$null(): dom$Nullable[Ref]) ==>

@@ -49,6 +49,7 @@ field class_scope_global$class_Foo$member_bar: Ref
 method class_scope_global$class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+  ensures acc(ret.class_scope_global$class_Foo$member_bar, wildcard)
 
 
 method global$fun_constructorReturnType$fun_take$$return$T_Boolean()
@@ -67,6 +68,8 @@ field class_scope_global$class_Foo$member_bar: Ref
 
 method global$fun_subtypeSuperType$fun_take$T_class_global$class_Bar$return$T_Unit(local$bar: Ref)
   returns (ret: dom$Unit)
+  requires acc(local$bar.class_scope_global$class_Foo$member_bar, wildcard)
+  ensures acc(local$bar.class_scope_global$class_Foo$member_bar, wildcard)
   ensures true ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Foo())
 {
@@ -79,15 +82,15 @@ field class_scope_global$class_Foo$member_bar: Ref
 
 method global$fun_typeOfField$fun_take$T_class_global$class_Foo$return$T_Boolean(local$foo: Ref)
   returns (ret: Bool)
+  requires acc(local$foo.class_scope_global$class_Foo$member_bar, wildcard)
+  ensures acc(local$foo.class_scope_global$class_Foo$member_bar, wildcard)
   ensures ret == true
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
   if (true) {
     var anonymous$0: Ref
-    inhale acc(local$foo.class_scope_global$class_Foo$member_bar, write)
     anonymous$0 := local$foo.class_scope_global$class_Foo$member_bar
     inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())
-    exhale acc(local$foo.class_scope_global$class_Foo$member_bar, write)
     if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())) {
       ret := true
       goto label$ret$0

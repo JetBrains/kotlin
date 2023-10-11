@@ -44,10 +44,13 @@ field class_scope_global$class_Foo$member_x: Int
 method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+  ensures acc(ret.class_scope_global$class_Foo$member_x, wildcard)
 
 
 method global$ext_getter_succ$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Int)
+  requires acc(this.class_scope_global$class_Foo$member_x, wildcard)
+  ensures acc(this.class_scope_global$class_Foo$member_x, wildcard)
 
 
 method global$fun_extensionGetterPropertyUserDefinedClass$fun_take$$return$T_Unit()
@@ -70,15 +73,20 @@ field class_scope_global$class_Foo$member_x: Int
 method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
+  ensures acc(ret.class_scope_global$class_Foo$member_x, wildcard)
 
 
 method global$ext_getter_strange$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Int)
+  requires acc(this.class_scope_global$class_Foo$member_x, wildcard)
+  ensures acc(this.class_scope_global$class_Foo$member_x, wildcard)
 
 
 method global$ext_setter_strange$fun_take$T_class_global$class_Foo$T_Int$return$T_Unit(this: Ref,
   local$v: Int)
   returns (ret: dom$Unit)
+  requires acc(this.class_scope_global$class_Foo$member_x, wildcard)
+  ensures acc(this.class_scope_global$class_Foo$member_x, wildcard)
 
 
 method global$fun_extensionSetterPropertyUserDefinedClass$fun_take$$return$T_Unit()

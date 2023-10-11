@@ -16,6 +16,15 @@ data class ScopedKotlinName(val scope: NameScope, val name: KotlinName, val type
         get() = listOfNotNull(scope.mangled, name.mangled, type?.name?.mangled).joinToString("$")
 
     val isCollection: Boolean
+        // TODO: make this neater
+        get() = if (scope is ClassScope && scope.className.name is ClassKotlinName) {
+            scope.packageName.asString() == "kotlin.collections" && scope.className.name.name.asStringStripSpecialMarkers() == "Collection"
+        } else {
+            false
+        }
+
+    val inCollectionsPkg: Boolean
+        // TODO: make this neater
         get() = if (scope is PackagePrefixScope) {
             scope.packageName.asString() == "kotlin.collections"
         } else {

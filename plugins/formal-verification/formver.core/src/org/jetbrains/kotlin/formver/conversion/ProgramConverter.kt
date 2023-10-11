@@ -37,7 +37,6 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     ProgramConversionContext {
     private val methods: MutableMap<MangledName, FunctionEmbedding> = SpecialKotlinFunctions.byName.toMutableMap()
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
-    private val fields: MutableSet<FieldEmbedding> = mutableSetOf()
     private val properties: MutableMap<MangledName, PropertyEmbedding> = mutableMapOf()
 
     override val anonNameProducer = FreshEntityProducer { AnonymousName(it) }
@@ -49,7 +48,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     val program: Program
         get() = Program(
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
-            fields = SpecialFields.all + fields.map { it.toViper() },
+            fields = SpecialFields.all + classes.values.flatMap { it.flatMapUniqueFields { _, field -> listOf(field.toViper()) } }
+                .distinctBy { it.name },
             functions = SpecialFunctions.all,
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.toList(),
         )
@@ -81,10 +81,30 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val className = symbol.classId.embedName()
         return when (val existingEmbedding = classes[className]) {
             null -> {
-                val superTypes = symbol.resolvedSuperTypes.map(::embedType)
-                val newEmbedding = ClassTypeEmbedding(className, superTypes)
+                // The full class embedding is necessary to process the signatures of the properties of the class, since
+                // these take the class as a parameter. We thus do this in three phases:
+                // 1. Provide a class embedding in the `classes` map (necessary for embedType to not call this recursively).
+                // 2. Initialise the supertypes (including running this whole four-step process on each)
+                // 3. Initialise the fields
+                // 4. Process the properties of the class.
+                //
+                // With respect to the embedding, each phase is pure by itself, and only updates the class embedding at the end.
+                // This ensures the code never sees half-built supertype or field data. The phases can, however, modify the
+                // `ProgramConverter`.
+
+                // Phase 1
+                val newEmbedding = ClassTypeEmbedding(className)
                 classes[className] = newEmbedding
-                processClass(symbol)
+
+                // Phase 2
+                newEmbedding.initSuperTypes(symbol.resolvedSuperTypes.map(::embedType))
+
+                // Phase 3
+                val properties = symbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()
+                newEmbedding.initFields(properties.mapNotNull { processBackingFields(it, newEmbedding) }.toMap())
+
+                // Phase 4
+                properties.forEach { processProperty(it, newEmbedding) }
                 newEmbedding
             }
             else -> existingEmbedding
@@ -121,15 +141,15 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     // Note: keep in mind that this function is necessary to resolve the name of the function!
     override fun embedType(symbol: FirFunctionSymbol<*>): TypeEmbedding = FunctionTypeEmbedding(embedFunctionSignature(symbol).asData)
 
-    override fun embedProperty(symbol: FirPropertySymbol): PropertyEmbedding = if (!symbol.isExtension) {
-        // Ensure that the class has been processed.
-        embedType(symbol.dispatchReceiverType!!)
-        properties[symbol.callableId.embedMemberPropertyName()] ?: throw IllegalStateException("Unknown property ${symbol.callableId}")
-    } else {
+    override fun embedProperty(symbol: FirPropertySymbol): PropertyEmbedding = if (symbol.isExtension) {
         PropertyEmbedding(
             symbol.getterSymbol?.let { embedGetter(it, null) },
             symbol.setterSymbol?.let { embedSetter(it, null) },
         )
+    } else {
+        // Ensure that the class has been processed.
+        embedType(symbol.dispatchReceiverType!!)
+        properties[symbol.callableId.embedMemberPropertyName()] ?: throw IllegalStateException("Unknown property ${symbol.callableId}")
     }
 
     override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {
@@ -153,14 +173,14 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, subSignature)
 
         return object : FullNamedFunctionSignature, NamedFunctionSignature by subSignature {
-            override val preconditions = subSignature.formalArgs.flatMap { it.invariants() } +
+            override val preconditions = subSignature.formalArgs.flatMap { it.pureInvariants() } +
                     subSignature.formalArgs.flatMap { it.accessInvariants() } +
                     contractVisitor.getPreconditions(symbol) +
                     subSignature.stdLibPreConditions()
 
             override val postconditions = subSignature.formalArgs.flatMap { it.accessInvariants() } +
                     subSignature.params.flatMap { it.dynamicInvariants() } +
-                    subSignature.returnVar.invariants() +
+                    subSignature.returnVar.pureInvariants() +
                     subSignature.returnVar.provenInvariants() +
                     subSignature.returnVar.accessInvariants() +
                     contractVisitor.getPostconditions(symbol) +
@@ -177,18 +197,31 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             return symbol.dispatchReceiverType ?: symbol.resolvedReceiverTypeRef?.type
         }
 
-    private fun processClass(symbol: FirRegularClassSymbol) {
-        symbol.declarationSymbols
-            .filterIsInstance<FirPropertySymbol>()
-            .forEach(::processProperty)
+    /**
+     * Construct and register the field embedding for this property's backing field, if any exists.
+     */
+    private fun processBackingFields(symbol: FirPropertySymbol, embedding: ClassTypeEmbedding): Pair<SimpleKotlinName, FieldEmbedding>? {
+        val unscopedName = symbol.callableId.embedUnscopedPropertyName()
+        // This field is already registered in the supertype: we don't need to know about it.
+        if (embedding.findAncestorField(unscopedName) != null) return null
+        val name = symbol.callableId.embedMemberPropertyName()
+        val backingField = name.specialEmbedding() ?: symbol.hasBackingField.ifTrue {
+            UserFieldEmbedding(
+                name,
+                embedType(symbol.resolvedReturnType),
+                symbol.isVal
+            )
+        }
+        return backingField?.let { unscopedName to it }
     }
 
-    private fun processProperty(symbol: FirPropertySymbol) {
+    /**
+     * Construct and register the property embedding (i.e. getter + setter) for this property.
+     */
+    private fun processProperty(symbol: FirPropertySymbol, embedding: ClassTypeEmbedding) {
+        val unscopedName = symbol.callableId.embedUnscopedPropertyName()
         val name = symbol.callableId.embedMemberPropertyName()
-        val backingField = name.specialEmbedding()
-            ?: symbol.hasBackingField
-                .ifTrue { FieldEmbedding(symbol.callableId.embedMemberPropertyName(), embedType(symbol.resolvedReturnType)) }
-                ?.also { fields.add(it) }
+        val backingField = embedding.findField(unscopedName)
         val getter: GetterEmbedding? = symbol.getterSymbol?.let { embedGetter(it, backingField) }
         val setter: SetterEmbedding? = symbol.setterSymbol?.let { embedSetter(it, backingField) }
         properties[name] = PropertyEmbedding(getter, setter)

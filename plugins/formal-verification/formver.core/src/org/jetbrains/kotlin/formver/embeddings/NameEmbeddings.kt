@@ -34,6 +34,7 @@ fun CallableId.embedExtensionGetterName(type: TypeEmbedding): ScopedKotlinName =
 fun CallableId.embedExtensionSetterName(type: TypeEmbedding): ScopedKotlinName =
     embedScopedWithType(type, ExtensionSetterKotlinName(callableName))
 fun CallableId.embedMemberPropertyName(): ScopedKotlinName = embedScoped(MemberKotlinName(callableName))
+fun CallableId.embedUnscopedPropertyName(): SimpleKotlinName = SimpleKotlinName(callableName)
 fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName =
     embedScopedWithType(type, FunctionKotlinName(callableName))
 

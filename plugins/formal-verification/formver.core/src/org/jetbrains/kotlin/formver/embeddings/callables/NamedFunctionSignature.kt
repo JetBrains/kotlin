@@ -21,9 +21,9 @@ interface NamedFunctionSignature : FunctionSignature {
             else -> null
         }
 
-    val isCollection: Boolean
+    val inCollectionsPkg: Boolean
         get() = when (val signatureName = name) {
-            is ScopedKotlinName -> signatureName.isCollection
+            is ScopedKotlinName -> signatureName.inCollectionsPkg
             else -> false
         }
 }

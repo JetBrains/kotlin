@@ -16,14 +16,13 @@ abstract class BackingFieldAccess(val field: FieldEmbedding) {
         ctx: StmtConversionContext<RTC>,
         action: StmtConversionContext<RTC>.(access: FieldAccess) -> Unit,
     ) {
-        val fieldAccess = FieldAccess(receiver, field)
-        val accPred = fieldAccess.getAccessPredicate()
-        if (field.inhaleOnAccess) {
-            ctx.addStatement(Stmt.Inhale(accPred))
+        val invariant = field.accessInvariantForAccess(receiver.toViper())
+        invariant?.let {
+            ctx.addStatement(Stmt.Inhale(it))
         }
-        ctx.action(fieldAccess)
-        if (field.inhaleOnAccess) {
-            ctx.addStatement(Stmt.Exhale(accPred))
+        ctx.action(FieldAccess(receiver, field))
+        invariant?.let {
+            ctx.addStatement(Stmt.Exhale(it))
         }
     }
 }

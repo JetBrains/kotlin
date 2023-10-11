@@ -1,4 +1,6 @@
 /list.kt:(77,88): info: Generated Viper text for declaration:
+field special$size: Int
+
 method global$fun_declaration$fun_take$$return$T_Unit()
   returns (ret: dom$Unit)
 {
@@ -9,6 +11,8 @@ method global$fun_declaration$fun_take$$return$T_Unit()
 }
 
 /list.kt:(187,201): info: Generated Viper text for initialization:
+field special$size: Int
+
 method global$fun_initialization$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Unit(local$l: Ref)
   returns (ret: dom$Unit)
   requires acc(local$l.special$size, write)
@@ -35,6 +39,8 @@ method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$
 
 
 /list.kt:(297,304): info: Generated Viper text for add_get:
+field special$size: Int
+
 method global$fun_add_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$l: Ref)
   returns (ret: dom$Unit)
   requires acc(local$l.special$size, write)
@@ -77,6 +83,8 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Mu
 
 
 /list.kt:(379,391): info: Generated Viper text for last_or_null:
+field special$size: Int
+
 method global$fun_last_or_null$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$NT_Int(local$l: Ref)
   returns (ret: dom$Nullable[Int])
   requires acc(local$l.special$size, write)
@@ -119,6 +127,8 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Li
 
 
 /list.kt:(545,553): info: Generated Viper text for is_empty:
+field special$size: Int
+
 method global$fun_is_empty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Int(local$l: Ref)
   returns (ret: Int)
   requires acc(local$l.special$size, write)
@@ -168,6 +178,8 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Li
 
 
 /list.kt:(670,683): info: Generated Viper text for nullable_list:
+field special$size: Int
+
 method global$fun_nullable_list$fun_take$NT_class_pkg$kotlin$collections$global$class_List$return$T_Unit(local$l: dom$Nullable[Ref])
   returns (ret: dom$Unit)
   requires local$l != (dom$Nullable$null(): dom$Nullable[Ref]) ==>

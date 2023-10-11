@@ -39,10 +39,7 @@ object KotlinContractFunction : SpecialKotlinFunction {
     override val name: String = "contract"
 
     private val contractBuilderType =
-        ClassTypeEmbedding(
-            ScopedKotlinName(GlobalScope(packageName), ClassKotlinName(Name.identifier("ContractBuilder"))),
-            listOf(AnyTypeEmbedding)
-        )
+        ClassTypeEmbedding(ScopedKotlinName(GlobalScope(packageName), ClassKotlinName(Name.identifier("ContractBuilder"))))
     override val receiverType: TypeEmbedding? = null
     override val paramTypes: List<TypeEmbedding> =
         listOf(FunctionTypeEmbedding(CallableSignatureData(contractBuilderType, listOf(), UnitTypeEmbedding)))
