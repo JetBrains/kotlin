@@ -554,7 +554,7 @@ class Fir2IrConverter(
             typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext
         ): Fir2IrResult {
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
-            val moduleDescriptor = FirModuleDescriptor(session, kotlinBuiltIns)
+            val moduleDescriptor = FirModuleDescriptor.createSourceModuleDescriptor(session, kotlinBuiltIns)
             val components = Fir2IrComponentsStorage(
                 session, scopeSession, irFactory, fir2IrExtensions, fir2IrConfiguration, visibilityConverter,
                 { irBuiltins ->

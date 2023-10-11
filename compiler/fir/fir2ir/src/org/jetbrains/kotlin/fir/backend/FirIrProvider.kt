@@ -66,13 +66,11 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
         val nameSegments = signature.nameSegments
         val topName = Name.identifier(nameSegments[0])
 
-        val packageFragment = declarationStorage.getIrExternalPackageFragment(packageFqName)
-
         val firCandidates: List<FirDeclaration>
-        val parent: IrDeclarationParent
+        val parentClass: IrClass?
         if (nameSegments.size == 1 && kind != SymbolKind.CLASS_SYMBOL) {
             firCandidates = symbolProvider.getTopLevelCallableSymbols(packageFqName, topName).map { it.fir }
-            parent = packageFragment // TODO: need to insert file facade class on JVM
+            parentClass = null // TODO: need to insert file facade class on JVM
         } else {
             val topLevelClass = symbolProvider.getClassLikeSymbolByClassId(ClassId(packageFqName, topName))?.fir as? FirRegularClass
                 ?: return null
@@ -95,28 +93,28 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
             when (kind) {
                 SymbolKind.CLASS_SYMBOL -> {
                     firCandidates = listOf(firClass)
-                    parent = firParentClass?.let { findIrClass(it) } ?: packageFragment
+                    parentClass = firParentClass?.let { findIrClass(it) }
                 }
                 SymbolKind.ENUM_ENTRY_SYMBOL -> {
                     val lastName = Name.guessByFirstCharacter(nameSegments.last())
                     val firCandidate = firClass.declarations.singleOrNull { (it as? FirEnumEntry)?.name == lastName }
                     firCandidates = firCandidate?.let { listOf(it) } ?: return null
-                    parent = findIrClass(firClass)
+                    parentClass = findIrClass(firClass)
                 }
                 SymbolKind.CONSTRUCTOR_SYMBOL -> {
                     val constructors = mutableListOf<FirConstructor>()
                     scope.processDeclaredConstructors { constructors.add(it.fir) }
                     firCandidates = constructors
-                    parent = findIrClass(firClass)
+                    parentClass = findIrClass(firClass)
                 }
                 SymbolKind.FUNCTION_SYMBOL -> {
-                    parent = findIrClass(firClass)
+                    parentClass = findIrClass(firClass)
                     val lastName = Name.guessByFirstCharacter(nameSegments.last())
                     val functions = mutableListOf<FirSimpleFunction>()
                     scope.processFunctionsByName(lastName) { functionSymbol ->
                         val dispatchReceiverClassId = (functionSymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.classId
                         val function = if (dispatchReceiverClassId != null && dispatchReceiverClassId != classId) {
-                            fakeOverrideGenerator.createFirFunctionFakeOverride(firClass, parent, functionSymbol, scope)!!.first
+                            fakeOverrideGenerator.createFirFunctionFakeOverride(firClass, parentClass, functionSymbol, scope)!!.first
                         } else functionSymbol.fir
                         functions.add(function)
                     }
@@ -126,21 +124,21 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
                     firCandidates = functions
                 }
                 SymbolKind.PROPERTY_SYMBOL -> {
-                    parent = findIrClass(firClass)
+                    parentClass = findIrClass(firClass)
                     val lastName = Name.guessByFirstCharacter(nameSegments.last())
                     val properties = mutableListOf<FirVariable>()
                     scope.processPropertiesByName(lastName) { propertySymbol ->
                         propertySymbol as FirPropertySymbol
                         val dispatchReceiverClassId = (propertySymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.classId
                         val property = if (dispatchReceiverClassId != null && dispatchReceiverClassId != classId) {
-                            fakeOverrideGenerator.createFirPropertyFakeOverride(firClass, parent, propertySymbol, scope)!!.first
+                            fakeOverrideGenerator.createFirPropertyFakeOverride(firClass, parentClass, propertySymbol, scope)!!.first
                         } else propertySymbol.fir
                         properties.add(property)
                     }
                     firCandidates = properties
                 }
                 SymbolKind.FIELD_SYMBOL -> {
-                    parent = findIrClass(firClass)
+                    parentClass = findIrClass(firClass)
                     val lastName = Name.guessByFirstCharacter(nameSegments.last())
                     val fields = mutableListOf<FirVariable>()
                     scope.processPropertiesByName(lastName) { propertySymbol ->
@@ -154,13 +152,13 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
                 else -> {
                     val lastName = nameSegments.last()
                     firCandidates = firClass.declarations.filter { it is FirCallableDeclaration && it.symbol.name.asString() == lastName }
-                    parent = findIrClass(firClass)
+                    parentClass = findIrClass(firClass)
                 }
             }
         }
 
-        val firDeclaration = findDeclarationByHash(firCandidates, signature.id)
-            ?: return null
+        val firDeclaration = findDeclarationByHash(firCandidates, signature.id) ?: return null
+        val parent = parentClass ?: declarationStorage.getIrExternalPackageFragment(packageFqName, firDeclaration.moduleData)
 
         return when (kind) {
             SymbolKind.CLASS_SYMBOL -> {

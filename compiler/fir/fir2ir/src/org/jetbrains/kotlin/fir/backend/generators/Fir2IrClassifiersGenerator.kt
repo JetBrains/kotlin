@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -468,7 +469,9 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
 
         val parentId = classId.outerClassId
         val parentClass = parentId?.let { createIrClassForNotFoundClass(it.toLookupTag()) }
-        val irParent = parentClass ?: declarationStorage.getIrExternalPackageFragment(classId.packageFqName)
+        val irParent = parentClass ?: declarationStorage.getIrExternalPackageFragment(
+            classId.packageFqName, session.moduleData.dependencies.first()
+        )
 
         return symbolTable.declareClassIfNotExists(signature, { IrClassPublicSymbolImpl(signature) }) {
             irFactory.createClass(

@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.*
@@ -48,19 +47,18 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.concurrent.ConcurrentHashMap
-import org.jetbrains.kotlin.fir.java.hasJvmFieldAnnotation
 
 @OptIn(LeakedDeclarationCaches::class)
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
-    private val moduleDescriptor: FirModuleDescriptor,
+    private val sourceModuleDescriptor: FirModuleDescriptor,
     commonMemberStorage: Fir2IrCommonMemberStorage
 ) : Fir2IrComponents by components {
 
     private val fragmentCache: ConcurrentHashMap<FqName, ExternalPackageFragments> = ConcurrentHashMap()
 
     private class ExternalPackageFragments(
-        val fragmentForDependencies: IrExternalPackageFragment,
+        val fragmentsForDependencies: ConcurrentHashMap<FirModuleData, IrExternalPackageFragment>,
         val fragmentForPrecompiledBinaries: IrExternalPackageFragment
     )
 
@@ -156,32 +154,43 @@ class Fir2IrDeclarationStorage(
 
     fun getIrExternalPackageFragment(
         fqName: FqName,
+        moduleData: FirModuleData,
         firOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
     ): IrExternalPackageFragment {
         val fragments = fragmentCache.getOrPut(fqName) {
-            val fragmentForDependencies = callablesGenerator.createExternalPackageFragment(
-                fqName, FirModuleDescriptor(session, moduleDescriptor.builtIns)
-            )
-            val fragmentForPrecompiledBinaries = callablesGenerator.createExternalPackageFragment(fqName, moduleDescriptor)
-            ExternalPackageFragments(fragmentForDependencies, fragmentForPrecompiledBinaries)
+            val fragmentForPrecompiledBinaries = callablesGenerator.createExternalPackageFragment(fqName, sourceModuleDescriptor)
+            ExternalPackageFragments(ConcurrentHashMap(), fragmentForPrecompiledBinaries)
         }
         // Make sure that external package fragments have a different module descriptor. The module descriptors are compared
         // to determine if objects need regeneration because they are from different modules.
         // But keep original module descriptor for the fragments coming from parts compiled on the previous incremental step
         return when (firOrigin) {
             FirDeclarationOrigin.Precompiled -> fragments.fragmentForPrecompiledBinaries
-            else -> fragments.fragmentForDependencies
+            else -> fragments.fragmentsForDependencies.getOrPut(moduleData) {
+                val moduleDescriptor = FirModuleDescriptor.createDependencyModuleDescriptor(
+                    moduleData,
+                    sourceModuleDescriptor.builtIns
+                )
+                callablesGenerator.createExternalPackageFragment(fqName, moduleDescriptor)
+            }
         }
     }
 
-    private fun getIrExternalOrBuiltInsPackageFragment(fqName: FqName, firOrigin: FirDeclarationOrigin): IrExternalPackageFragment {
+    private fun getIrExternalOrBuiltInsPackageFragment(
+        fqName: FqName,
+        moduleData: FirModuleData,
+        firOrigin: FirDeclarationOrigin,
+    ): IrExternalPackageFragment {
         val isBuiltIn = fqName in BUILT_INS_PACKAGE_FQ_NAMES
-        return if (isBuiltIn) getIrBuiltInsPackageFragment(fqName) else getIrExternalPackageFragment(fqName, firOrigin)
+        return when(isBuiltIn) {
+            true -> getIrBuiltInsPackageFragment(fqName)
+            false -> getIrExternalPackageFragment(fqName, moduleData, firOrigin)
+        }
     }
 
     private fun getIrBuiltInsPackageFragment(fqName: FqName): IrExternalPackageFragment {
         return builtInsFragmentCache.getOrPut(fqName) {
-            callablesGenerator.createExternalPackageFragment(FirBuiltInsPackageFragment(fqName, moduleDescriptor))
+            callablesGenerator.createExternalPackageFragment(FirBuiltInsPackageFragment(fqName, sourceModuleDescriptor))
         }
     }
 
@@ -1164,12 +1173,12 @@ class Fir2IrDeclarationStorage(
 
         val parentPackage = when (firBasedSymbol) {
             is FirCallableSymbol<*> -> {
-                getIrExternalPackageFragment(packageFqName, firOrigin)
+                getIrExternalPackageFragment(packageFqName, firBasedSymbol.moduleData, firOrigin)
             }
             else -> {
                 // TODO: All classes from BUILT_INS_PACKAGE_FQ_NAMES are considered built-ins now,
                 // which is not exact and can lead to some problems
-                getIrExternalOrBuiltInsPackageFragment(packageFqName, firOrigin)
+                getIrExternalOrBuiltInsPackageFragment(packageFqName, firBasedSymbol.moduleData, firOrigin)
             }
         }
 
