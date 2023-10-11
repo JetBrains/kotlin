@@ -118,10 +118,7 @@ internal class DokkaSymbolVisitor(
     }
 
     fun visitModule(): DModule {
-        val ktFiles: List<KtFile> = getPsiFilesFromPaths(
-            analysisContext.project,
-            getSourceFilePaths(sourceSet.sourceRoots.map { it.canonicalPath })
-        )
+        val ktFiles = analysisContext.analysisSession.modulesWithFiles.entries.single().value.filterIsInstance<KtFile>()
         val processedPackages: MutableSet<FqName> = mutableSetOf()
         return analyze(analysisContext.mainModule) {
             val packageSymbols: List<DPackage> = ktFiles
