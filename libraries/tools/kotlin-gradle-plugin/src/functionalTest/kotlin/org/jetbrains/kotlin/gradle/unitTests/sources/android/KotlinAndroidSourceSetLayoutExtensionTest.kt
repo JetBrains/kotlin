@@ -25,6 +25,7 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
     fun `single platform plugin`() {
         val project = ProjectBuilder.builder().build()
         project.plugins.apply(KotlinAndroidPluginWrapper::class.java)
+
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
 
         project.setMultiplatformAndroidSourceSetLayoutVersion(1)
@@ -36,8 +37,7 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
 
     @Test
     fun `test multiplatform plugin`() {
-        val project = buildProjectWithMPP { }
-
+        val project = buildProjectWithMPP()
         assertEquals(
             multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout,
             "Expected v2 being set as default"

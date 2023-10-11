@@ -31,7 +31,6 @@ class ExternalKotlinTargetApiUtilsTest {
     @Test
     fun `test - publishJvmEnvironmentAttribute`() {
         val project = buildProjectWithMPP()
-
         project.externalKotlinTargetApiUtils.publishJvmEnvironmentAttribute(true)
         assertTrue(project.kotlinPropertiesProvider.publishJvmEnvironmentAttribute)
 
