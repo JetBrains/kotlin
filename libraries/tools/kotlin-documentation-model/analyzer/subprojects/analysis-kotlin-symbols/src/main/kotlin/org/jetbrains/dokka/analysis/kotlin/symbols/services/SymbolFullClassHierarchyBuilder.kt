@@ -16,12 +16,18 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.dokka.analysis.kotlin.internal.ClassHierarchy
 import org.jetbrains.dokka.analysis.kotlin.internal.FullClassHierarchyBuilder
 import org.jetbrains.dokka.analysis.kotlin.internal.Supertypes
+import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
+import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.dokka.plugability.plugin
+import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import java.util.concurrent.ConcurrentHashMap
 
 
-internal class SymbolFullClassHierarchyBuilder : FullClassHierarchyBuilder {
-    override suspend fun build(module: DModule): ClassHierarchy  {
+internal class SymbolFullClassHierarchyBuilder(val context: DokkaContext) : FullClassHierarchyBuilder {
+    private val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
+
+    override suspend fun build(module: DModule): ClassHierarchy {
         val map = module.sourceSets.associateWith { ConcurrentHashMap<DRI, List<DRI>>() }
         module.packages.forEach { visitDocumentable(it, map) }
         return map
@@ -41,7 +47,7 @@ internal class SymbolFullClassHierarchyBuilder : FullClassHierarchyBuilder {
 
         if (supersMap[dri] == null) {
             supersMap[dri] = supertypesDriWithKType.map { it.first }
-            supertypesDriWithKType.forEach{ collectSupertypesFromKtType(it, supersMap) }
+            supertypesDriWithKType.forEach { collectSupertypesFromKtType(it, supersMap) }
         }
     }
 
@@ -73,7 +79,7 @@ internal class SymbolFullClassHierarchyBuilder : FullClassHierarchyBuilder {
             documentable.sources.forEach { (sourceSet, source) ->
                 if (source is KtPsiDocumentableSource) {
                     (source.psi as? KtClassOrObject)?.let { psi ->
-                        analyze(psi) {
+                        analyze(kotlinAnalysis[sourceSet].mainModule) {
                             val type = psi.getNamedClassOrObjectSymbol()?.buildSelfClassType() ?: return@analyze
                             hierarchy[sourceSet]?.let { collectSupertypesFromKtType(documentable.dri to type, it) }
                         }

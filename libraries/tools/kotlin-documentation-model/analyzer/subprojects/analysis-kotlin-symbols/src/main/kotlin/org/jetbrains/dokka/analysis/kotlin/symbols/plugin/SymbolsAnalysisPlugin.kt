@@ -93,7 +93,7 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
         plugin<InternalKotlinAnalysisPlugin>().documentableSourceLanguageParser providing { KotlinDocumentableSourceLanguageParser() }
     }
     internal val symbolFullClassHierarchyBuilder by extending {
-        plugin<InternalKotlinAnalysisPlugin>().fullClassHierarchyBuilder providing { SymbolFullClassHierarchyBuilder() }
+        plugin<InternalKotlinAnalysisPlugin>().fullClassHierarchyBuilder providing ::SymbolFullClassHierarchyBuilder
     }
 
     internal val symbolSyntheticDocumentableDetector by extending {
