@@ -3,9 +3,7 @@ public final class Box$Creator : java/lang/Object, android/os/Parcelable$Creator
     public void <init>()
 
     (Landroid/os/Parcel;)LBox<*>;
-    public final Box createFromParcel(android.os.Parcel parcel)
-      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
-        @Lorg/jetbrains/annotations/NotNull;([]) // invisible, parameter 0 {
+    public final Box createFromParcel(android.os.Parcel parcel) {
         LABEL (L0)
           ALOAD (1)
           LDC (parcel)
@@ -32,7 +30,6 @@ public final class Box$Creator : java/lang/Object, android/os/Parcelable$Creator
 
     (I)[LBox<*>;
     public final Box[] newArray(int size)
-      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
 
     public java.lang.Object[] newArray(int size)
 }

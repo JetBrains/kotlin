@@ -342,7 +342,7 @@ abstract class AnnotationCodegen(
 
         private fun isInvisibleForNullabilityAnalysis(declaration: IrDeclaration): Boolean =
             when {
-                (declaration.parent as? IrClass)?.isAnonymousObject == true -> true
+                (declaration.parent as? IrClass)?.isLocal == true -> true
                 declaration.origin.isSynthetic ->
                     true
                 declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
