@@ -1,0 +1,4 @@
+Resolved to:
+0: (in Foo) fun foo(number: kotlin.Int)
+1: (in Foo) fun foo(string: kotlin.String)
+2: (in Foo) private fun foo(boolean: kotlin.Boolean)

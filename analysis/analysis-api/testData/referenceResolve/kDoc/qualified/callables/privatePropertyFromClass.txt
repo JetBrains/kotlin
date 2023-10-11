@@ -1,0 +1,2 @@
+Resolved to:
+0: (in Foo) private val foo: kotlin.Int
