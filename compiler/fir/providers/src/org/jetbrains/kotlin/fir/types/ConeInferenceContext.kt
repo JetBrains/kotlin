@@ -423,7 +423,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        return withAttributes(attributes.remove(CompilerConeAttributes.Exact))
+        return this
     }
 
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
