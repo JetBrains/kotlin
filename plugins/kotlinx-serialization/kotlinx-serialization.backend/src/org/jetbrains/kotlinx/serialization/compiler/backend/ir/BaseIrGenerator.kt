@@ -238,12 +238,13 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             // check for call to .shouldEncodeElementDefault
             val encodeDefaults = property.ir.getEncodeDefaultAnnotationValue()
             val field =
-                property.ir.backingField // Nullable when property from another module; can't compare it with default value on JS or Native
-            if (!property.optional || encodeDefaults == true || field == null) {
+                property.ir.backingField
+            val initializer = field?.initializer // FIXME: Null when property from another module; can't compare it with default value on JS or Native
+            if (!property.optional || encodeDefaults == true || field == null || initializer == null) {
                 // emit call right away
                 +elementCall
             } else {
-                val partB = irNotEquals(property.irGet(), initializerAdapter(field.initializer!!))
+                val partB = irNotEquals(property.irGet(), initializerAdapter(initializer))
 
                 val condition = if (encodeDefaults == false) {
                     // drop default without call to .shouldEncodeElementDefault
