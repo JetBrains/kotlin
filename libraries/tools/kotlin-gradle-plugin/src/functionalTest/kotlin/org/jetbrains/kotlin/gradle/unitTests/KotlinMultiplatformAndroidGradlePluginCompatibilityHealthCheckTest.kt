@@ -117,7 +117,17 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
 
     @Test
     fun `test - nowarn property`() {
-        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN, "true")
+        fun createProject(noWarn: Boolean) = buildProjectWithMPP {
+            project.propertiesExtension.set(
+                PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN,
+                noWarn.toString()
+            )
+            setMultiplatformAndroidSourceSetLayoutVersion(2)
+            plugins.apply(LibraryPlugin::class.java)
+            kotlin { androidTarget() }
+        }
+
+        var project = createProject(noWarn = true)
 
         /* Test with missing AGP version */
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(FixedAndroidGradlePluginVersionProvider(null))
@@ -136,7 +146,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
         project.assertNoDiagnostics()
 
         /* Re-enable the check and test with missing AGP version */
-        project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN, "false")
+        project = createProject(noWarn = false)
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheck(FixedAndroidGradlePluginVersionProvider(null))
         project.checkDiagnostics("agpCompatibility/noWarnProperty")
     }

@@ -9,8 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.plugin.getOrNull
 import org.jetbrains.kotlin.gradle.plugin.internal.CustomPropertiesFileValueSource
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
@@ -132,31 +130,6 @@ internal fun File.existsCompat(): Boolean =
     } else {
         exists()
     }
-
-/**
- * Looks up the property in the following sources with decreasing priority:
- * 1. Current project extra properties
- * 2. Project Gradle properties (-P, gradle.properties, etc...)
- * 3. `local.properties` file located in the rootDir
- *
- * If multiple properties are loaded from a same caller, it is better to cache `localProperties` into local variable.
- */
-internal fun Project.loadProperty(
-    propName: String,
-    localPropertiesProvider: Provider<Map<String, String>> = localProperties
-): Provider<String> = providers
-    .provider<String> {
-        extraProperties.getOrNull(propName) as? String
-    }
-    .orElse(
-        project.providers
-            .gradleProperty(propName)
-            .usedAtConfigurationTime(configurationTimePropertiesAccessor)
-    )
-    .orElse(
-        @Suppress("TYPE_MISMATCH")
-        localPropertiesProvider.map { it[propName] }
-    )
 
 /**
  * Loads 'local.properties' file content as [Properties].

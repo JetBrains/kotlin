@@ -14,12 +14,11 @@ import org.gradle.invocation.DefaultGradle
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
+import org.jetbrains.kotlin.gradle.plugin.PropertiesBuildService
 import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
-import org.jetbrains.kotlin.gradle.utils.loadProperty
-import org.jetbrains.kotlin.gradle.utils.localProperties
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -246,16 +245,11 @@ internal abstract class AbstractKotlinBuildStatsService(
     private val customSessionLoggerRootPath: String?
 
     init {
-        val localProperties = project.localProperties
-        forcePropertiesValidation = project
-            .loadProperty(FORCE_VALUES_VALIDATION, localProperties)
-            .orNull?.toBoolean() ?: false
-        customSessionLoggerRootPath = project
-            .loadProperty(CUSTOM_LOGGER_ROOT_PATH, localProperties)
-            .orNull
-            ?.also {
-                logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
-            }
+        val propertiesBuildService = PropertiesBuildService.registerIfAbsent(project).get()
+        forcePropertiesValidation = propertiesBuildService.get(FORCE_VALUES_VALIDATION, project)?.toBoolean() ?: false
+        customSessionLoggerRootPath = propertiesBuildService.get(CUSTOM_LOGGER_ROOT_PATH, project)?.also {
+            logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
+        }
     }
 
     private val sessionLoggerRootPath =

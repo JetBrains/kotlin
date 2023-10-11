@@ -23,33 +23,40 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
 
     @Test
     fun `single platform plugin`() {
-        val project = ProjectBuilder.builder().build()
-        project.plugins.apply(KotlinAndroidPluginWrapper::class.java)
+        fun createProject() = ProjectBuilder.builder().build().also {
+            it.plugins.apply(KotlinAndroidPluginWrapper::class.java)
+        }
+
+        var project = createProject()
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
 
+        project = createProject()
         project.setMultiplatformAndroidSourceSetLayoutVersion(1)
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
 
+        project = createProject()
         project.setMultiplatformAndroidSourceSetLayoutVersion(2)
         assertEquals(singleTargetAndroidSourceSetLayout, project.kotlinAndroidSourceSetLayout)
     }
 
     @Test
     fun `test multiplatform plugin`() {
-        val project = buildProjectWithMPP { }
-
+        var project = buildProjectWithMPP()
         assertEquals(
             multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout,
             "Expected v2 being set as default"
         )
 
+        project = buildProjectWithMPP()
         project.setMultiplatformAndroidSourceSetLayoutVersion(2)
         assertEquals(multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout)
 
+        project = buildProjectWithMPP()
         project.setMultiplatformAndroidSourceSetLayoutVersion(1)
         assertEquals(multiplatformAndroidSourceSetLayoutV1, project.kotlinAndroidSourceSetLayout)
 
         /* Test unhappy path: Layout version 0 is unknown/unsupported */
+        project = buildProjectWithMPP()
         project.setMultiplatformAndroidSourceSetLayoutVersion(0)
         assertFailsWith<IllegalArgumentException> {
             project.kotlinAndroidSourceSetLayout
