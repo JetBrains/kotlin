@@ -9,28 +9,28 @@ FILE fqName:<root> fileName:/destructuringDeclaration.kts
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
         value: CALL 'public final fun component2 (): kotlin.Int declared in <root>.<script-destructuringDeclaration.kts>.A' type=kotlin.Int origin=COMPONENT_N(index=2)
           $this: GET_VAR 'val tmp_0: <root>.<script-destructuringDeclaration.kts>.A declared in <root>.<script-destructuringDeclaration.kts>' type=<root>.<script-destructuringDeclaration.kts>.A origin=null
-    PROPERTY name:abc visibility:public modality:FINAL [val]
+    PROPERTY SCRIPT_K2 name:abc visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-abc> visibility:public modality:FINAL <> () returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:abc visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY SCRIPT_K2 name:abc visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-abc> (): kotlin.Int declared in <root>.<script-destructuringDeclaration.kts>'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:abc type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-    PROPERTY name:def visibility:public modality:FINAL [val]
+    PROPERTY SCRIPT_K2 name:def visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-def> visibility:public modality:FINAL <> () returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:def visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY SCRIPT_K2 name:def visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-def> (): kotlin.Int declared in <root>.<script-destructuringDeclaration.kts>'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:def type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-    PROPERTY name:rv visibility:public modality:FINAL [val]
+    PROPERTY SCRIPT_K2 name:rv visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:rv type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-abc> (): kotlin.Int declared in <root>.<script-destructuringDeclaration.kts>' type=kotlin.Int origin=GET_PROPERTY
             other: CALL 'public final fun <get-def> (): kotlin.Int declared in <root>.<script-destructuringDeclaration.kts>' type=kotlin.Int origin=GET_PROPERTY
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-rv> visibility:public modality:FINAL <> () returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:rv visibility:public modality:FINAL [val]
+        correspondingProperty: PROPERTY SCRIPT_K2 name:rv visibility:public modality:FINAL [val]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-rv> (): kotlin.Int declared in <root>.<script-destructuringDeclaration.kts>'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:rv type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
