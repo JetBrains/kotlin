@@ -114,6 +114,15 @@ val irCompilerModules = arrayOf(
     ":wasm:wasm.ir"
 ).also { extra["irCompilerModules"] = it }
 
+val irCompilerModulesForIDE = arrayOf(
+    ":compiler:ir.tree",
+    ":compiler:ir.serialization.common",
+    ":compiler:ir.serialization.jvm",
+    ":compiler:ir.serialization.js", // used in IJ android plugin in `ComposeIrGenerationExtension`
+    ":compiler:ir.backend.common",
+    ":compiler:ir.interpreter",
+).also { extra["irCompilerModulesForIDE"] = it }
+
 val commonCompilerModules = arrayOf(
     ":compiler:psi",
     ":compiler:frontend.common-psi",
