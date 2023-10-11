@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.formver.viper.ast.PermExp
 sealed interface ExpEmbedding {
     val type: TypeEmbedding
     fun toViper(): Exp
+    fun ignoringCasts(): ExpEmbedding = this
 
     fun withType(newType: TypeEmbedding): ExpEmbedding =
         if (newType == type) this else Cast(this, newType)
@@ -188,6 +189,7 @@ data class Is(val exp: ExpEmbedding, val comparisonType: TypeEmbedding) : ExpEmb
 
 data class Cast(val exp: ExpEmbedding, override val type: TypeEmbedding) : ExpEmbedding {
     override fun toViper() = CastingDomain.cast(exp.toViper(), type)
+    override fun ignoringCasts(): ExpEmbedding = exp
 }
 
 data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : ExpEmbedding {

@@ -324,6 +324,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("scope_functions.kt")
+        public void testScope_functions() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/scope_functions.kt");
+        }
+
+        @Test
         @TestMetadata("shadowing.kt")
         public void testShadowing() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/shadowing.kt");

@@ -101,6 +101,25 @@ object KotlinBooleanNotFunctionImplementation : KotlinBooleanSpecialFunction() {
         Not(args[0])
 }
 
+object KotlinRunSpecialFunction : SpecialKotlinFunction {
+    override val packageName: List<String> = listOf("kotlin")
+    override val name: String = "run"
+
+    override val receiverType: TypeEmbedding? = null
+    override val paramTypes: List<TypeEmbedding> =
+        listOf(FunctionTypeEmbedding(CallableSignatureData(null, emptyList(), NullableTypeEmbedding(AnyTypeEmbedding))))
+    override val returnType: TypeEmbedding = NullableTypeEmbedding(AnyTypeEmbedding)
+
+    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+        val lambda = when (val arg = args[0].ignoringCasts()) {
+            is LambdaExp -> arg
+            else -> throw IllegalStateException("kotlin.run must be called with a lambda argument at the moment")
+        }
+
+        return lambda.insertCallImpl(listOf(), ctx)
+    }
+}
+
 object SpecialKotlinFunctions {
     val byName = listOf(
         KotlinContractFunction,
@@ -109,5 +128,6 @@ object SpecialKotlinFunctions {
         KotlinIntTimesFunctionImplementation,
         KotlinIntDivFunctionImplementation,
         KotlinBooleanNotFunctionImplementation,
+        KotlinRunSpecialFunction,
     ).associateBy { it.embedName() }
 }
