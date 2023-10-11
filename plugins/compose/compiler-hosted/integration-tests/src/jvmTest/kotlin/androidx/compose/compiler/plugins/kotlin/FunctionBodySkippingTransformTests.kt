@@ -4118,4 +4118,37 @@ class FunctionBodySkippingTransformTestsNoSource(
             }
         """
     )
+
+    @Test
+    fun testNonSkippableComposable() = comparisonPropagation(
+        """
+        """.trimIndent(),
+        """
+            import androidx.compose.runtime.NonSkippableComposable
+
+            @Composable
+            @NonSkippableComposable
+            fun Test(i: Int) {
+                used(i)
+            }
+        """.trimIndent(),
+        """
+            @Composable
+            @NonSkippableComposable
+            fun Test(i: Int, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              used(i)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(i, %composer, updateChangedFlags(%changed or 0b0001))
+              }
+            }
+        """.trimIndent()
+    )
 }
