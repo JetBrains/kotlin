@@ -145,6 +145,48 @@ public class FirPsiJsOldFrontendDiagnosticsWithBackendTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("compileTimeString.kt")
+        public void testCompileTimeString() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeString.kt");
+        }
+
+        @Test
+        @TestMetadata("compileTimeStringWithCompanionVal.kt")
+        public void testCompileTimeStringWithCompanionVal() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithCompanionVal.kt");
+        }
+
+        @Test
+        @TestMetadata("compileTimeStringWithConstVal.kt")
+        public void testCompileTimeStringWithConstVal() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithConstVal.kt");
+        }
+
+        @Test
+        @TestMetadata("compileTimeStringWithFunCall.kt")
+        public void testCompileTimeStringWithFunCall() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithFunCall.kt");
+        }
+
+        @Test
+        @TestMetadata("compileTimeStringWithIntrinConstCall.kt")
+        public void testCompileTimeStringWithIntrinConstCall() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithIntrinConstCall.kt");
+        }
+
+        @Test
+        @TestMetadata("compileTimeStringWithTopLevelVal.kt")
+        public void testCompileTimeStringWithTopLevelVal() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithTopLevelVal.kt");
+        }
+
+        @Test
+        @TestMetadata("compileTimeStringWithVal.kt")
+        public void testCompileTimeStringWithVal() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/compileTimeStringWithVal.kt");
+        }
+
+        @Test
         @TestMetadata("deleteOperation.kt")
         public void testDeleteOperation() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/deleteOperation.kt");
@@ -154,6 +196,24 @@ public class FirPsiJsOldFrontendDiagnosticsWithBackendTestGenerated extends Abst
         @TestMetadata("error.kt")
         public void testError() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/error.kt");
+        }
+
+        @Test
+        @TestMetadata("javaScriptEmpty.kt")
+        public void testJavaScriptEmpty() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/javaScriptEmpty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaScriptError.kt")
+        public void testJavaScriptError() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/javaScriptError.kt");
+        }
+
+        @Test
+        @TestMetadata("javaScriptWarning.kt")
+        public void testJavaScriptWarning() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/javaScriptWarning.kt");
         }
 
         @Test

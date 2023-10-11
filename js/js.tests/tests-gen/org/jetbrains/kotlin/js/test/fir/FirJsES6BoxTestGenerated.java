@@ -7211,6 +7211,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         }
 
         @Test
+        @TestMetadata("compileTimeString.kt")
+        public void testCompileTimeString() throws Exception {
+            runTest("js/js.translator/testData/box/jsCode/compileTimeString.kt");
+        }
+
+        @Test
         @TestMetadata("constantExpression.kt")
         public void testConstantExpression() throws Exception {
             runTest("js/js.translator/testData/box/jsCode/constantExpression.kt");
