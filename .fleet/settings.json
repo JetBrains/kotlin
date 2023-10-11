@@ -1,0 +1,5 @@
+{
+    "backend.maxHeapSizeMb": 4096,
+    "excluded": ["libraries", "libraries/"],
+    "toolchains": []
+}
