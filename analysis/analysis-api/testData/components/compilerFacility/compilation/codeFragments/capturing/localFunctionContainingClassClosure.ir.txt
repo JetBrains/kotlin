@@ -27,6 +27,7 @@ MODULE_FRAGMENT
               CALL 'public final fun consume (obj: <root>.Foo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                 obj: GET_VAR '<this>: <root>.Foo declared in <root>.Foo.test' type=<root>.Foo origin=null
           CALL 'local final fun call (): kotlin.Unit declared in <root>.Foo.test' type=kotlin.Unit origin=null
+    FUN name:call visibility:local modality:FINAL <> () returnType:kotlin.Unit
     FUN name:consume visibility:public modality:FINAL <> (obj:<root>.Foo) returnType:kotlin.Unit
       VALUE_PARAMETER name:obj index:0 type:<root>.Foo
       BLOCK_BODY

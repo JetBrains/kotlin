@@ -37,6 +37,8 @@ MODULE_FRAGMENT
                 CONST Int type=kotlin.Int value=42
           CALL 'local final fun call (a: kotlin.Int): kotlin.Unit declared in <root>.Foo.test' type=kotlin.Unit origin=null
             a: CONST Int type=kotlin.Int value=1
+    FUN name:call visibility:local modality:FINAL <> (a:kotlin.Int) returnType:kotlin.Unit
+      VALUE_PARAMETER name:a index:0 type:kotlin.Int
     FUN name:consume visibility:public modality:FINAL <> (obj:kotlin.Any) returnType:kotlin.Unit
       VALUE_PARAMETER name:obj index:0 type:kotlin.Any
       BLOCK_BODY

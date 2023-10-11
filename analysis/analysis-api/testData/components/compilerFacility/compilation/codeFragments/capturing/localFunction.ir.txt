@@ -1,5 +1,8 @@
 MODULE_FRAGMENT
   FILE fqName:<root> fileName:localFunction.kt
+    FUN name:call visibility:local modality:FINAL <> (a:kotlin.Int, b:kotlin.String) returnType:kotlin.Unit
+      VALUE_PARAMETER name:a index:0 type:kotlin.Int
+      VALUE_PARAMETER name:b index:1 type:kotlin.String
     FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
       BLOCK_BODY
         FUN LOCAL_FUNCTION name:call visibility:local modality:FINAL <> (a:kotlin.Int, b:kotlin.String) returnType:kotlin.Unit

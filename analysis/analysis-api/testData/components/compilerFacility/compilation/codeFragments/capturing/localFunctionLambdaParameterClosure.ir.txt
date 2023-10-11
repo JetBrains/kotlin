@@ -8,6 +8,7 @@ MODULE_FRAGMENT
         CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
           $this: GET_VAR 'block: kotlin.Function1<T of <root>.block, kotlin.Unit> declared in <root>.block' type=kotlin.Function1<T of <root>.block, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
           p1: GET_VAR 'obj: T of <root>.block declared in <root>.block' type=T of <root>.block origin=null
+    FUN name:call visibility:local modality:FINAL <> () returnType:kotlin.Unit
     FUN name:consume visibility:public modality:FINAL <> (text:kotlin.String) returnType:kotlin.Unit
       VALUE_PARAMETER name:text index:0 type:kotlin.String
       BLOCK_BODY
