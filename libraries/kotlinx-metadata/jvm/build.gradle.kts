@@ -79,7 +79,7 @@ apiValidation {
 }
 
 tasks.dokkaHtml.configure {
-    outputDirectory.set(buildDir.resolve("dokka"))
+    outputDirectory.set(layout.buildDirectory.dir("dokka"))
     pluginsMapConfiguration.set(
         mapOf(
             "org.jetbrains.dokka.base.DokkaBase"

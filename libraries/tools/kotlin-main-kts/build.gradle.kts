@@ -68,7 +68,7 @@ noDefaultJar()
 val relocatedJar by task<ShadowJar> {
     configurations = listOf(relocatedJarContents)
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    destinationDirectory.set(File(buildDir, "libs"))
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("before-proguard")
 
     // don't add this files to resources classpath to avoid IDE exceptions on kotlin project
@@ -87,7 +87,7 @@ val proguard by task<CacheableProguardTask> {
 
     injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), relocatedJar.get().outputs.files)
 
-    outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
+    outjars(layout.buildDirectory.file("libs/$jarBaseName-$version-after-proguard.jar"))
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
 

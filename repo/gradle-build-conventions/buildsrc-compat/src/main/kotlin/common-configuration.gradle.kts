@@ -163,15 +163,14 @@ fun Project.configureKotlinCompilationOptions() {
                 }
             }
 
-            val relativePathBaseArg: String? =
-                "-Xklib-relative-path-base=$buildDir,$projectDir,$rootDir".takeIf {
-                    !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib")
-                }
+            val layout = project.layout
+            val rootDir = rootDir
+            val useAbsolutePathsInKlib = kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib")
 
             // Workaround to avoid remote build cache misses due to absolute paths in relativePathBaseArg
             doFirst {
-                if (relativePathBaseArg != null) {
-                    kotlinOptions.freeCompilerArgs += relativePathBaseArg
+                if (!useAbsolutePathsInKlib) {
+                    kotlinOptions.freeCompilerArgs += "-Xklib-relative-path-base=${layout.buildDirectory.get().asFile},${layout.projectDirectory.asFile},$rootDir"
                 }
             }
         }

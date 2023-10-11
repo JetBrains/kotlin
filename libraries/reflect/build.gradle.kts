@@ -25,7 +25,7 @@ configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_8)
 publish()
 
 val core = "$rootDir/core"
-val relocatedCoreSrc = "$buildDir/core-relocated"
+val relocatedCoreSrc = "${layout.buildDirectory.get().asFile}/core-relocated"
 
 val proguardDeps by configurations.creating
 val proguardAdditionalInJars by configurations.creating

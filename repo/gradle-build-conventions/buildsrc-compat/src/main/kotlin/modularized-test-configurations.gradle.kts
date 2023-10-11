@@ -1,17 +1,10 @@
 @file:Suppress("UnstableApiUsage")
 
-import org.gradle.jvm.tasks.Jar
-import org.jetbrains.gradle.ext.ActionDelegationConfig
-import org.jetbrains.gradle.ext.JUnit
-import org.jetbrains.gradle.ext.RecursiveArtifact
-import org.jetbrains.gradle.ext.TopLevelArtifact
-import org.jetbrains.kotlin.ideaExt.*
-
 
 val distDir: String by extra
 val ideaSandboxDir: File by extra
 val ideaSdkPath: String
-    get() = rootProject.ideaHomePathForTests().absolutePath
+    get() = rootProject.ideaHomePathForTests().get().asFile.absolutePath
 
 fun MutableList<String>.addModularizedTestArgs(prefix: String, path: String, additionalParameters: Map<String, String>, benchFilter: String?) {
     add("-${prefix}fir.bench.prefix=$path")

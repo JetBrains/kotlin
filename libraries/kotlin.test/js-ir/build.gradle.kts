@@ -13,17 +13,17 @@ val commonMainSources by task<Sync> {
         "$rootDir/libraries/kotlin.test/common/src/main/kotlin",
         "$rootDir/libraries/kotlin.test/annotations-common/src/main/kotlin"
     )
-    into("$buildDir/commonMainSources")
+    into(layout.buildDirectory.dir("commonMainSources"))
 }
 
 val commonTestSources by task<Sync> {
     from("$rootDir/libraries/kotlin.test/common/src/test/kotlin")
-    into("$buildDir/commonTestSources")
+    into(layout.buildDirectory.dir("commonTestSources"))
 }
 
 val jsMainSources by task<Sync> {
     from("$rootDir/libraries/kotlin.test/js/src/main/kotlin")
-    into("$buildDir/jsMainSources")
+    into(layout.buildDirectory.dir("jsMainSources"))
 }
 
 kotlin {

@@ -26,10 +26,10 @@ repositories {
     }
 }
 
-val wabtDir = File(buildDir, "wabt")
+val wabtDir = File(layout.buildDirectory.get().asFile, "wabt")
 val wabtVersion = "1.0.19"
 val testSuiteRevision = "18f8340"
-val testSuiteDir = File(buildDir, "testsuite")
+val testSuiteDir = File(layout.buildDirectory.get().asFile, "testsuite")
 
 val gradleOs = org.gradle.internal.os.OperatingSystem.current()
 val wabtOS = when {

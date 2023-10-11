@@ -68,7 +68,7 @@ val mavenPackagesToRelocate = listOf(
 val relocatedJar by task<ShadowJar> {
     configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    destinationDirectory.set(File(buildDir, "libs"))
+    destinationDirectory.set(layout.buildDirectory.dir("libs"))
     archiveClassifier.set("relocated")
 
     transform(ComponentsXmlResourceTransformer())
@@ -82,8 +82,7 @@ val relocatedJar by task<ShadowJar> {
 
 val normalizeComponentsXmlEndings by tasks.registering {
     dependsOn(relocatedJar)
-    val outputDirectory = buildDir.resolve(name)
-    val outputFile = outputDirectory.resolve(ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH)
+    val outputFile = layout.buildDirectory.file("$name/${ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH}")
     val relocatedJarFile = project.provider { relocatedJar.get().singleOutputFile() }
     val archiveOperations = serviceOf<ArchiveOperations>()
     outputs.file(outputFile)
@@ -93,8 +92,9 @@ val normalizeComponentsXmlEndings by tasks.registering {
             include { it.path == ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH }
         }.single().readText()
         val processedComponentsXml = componentsXml.replace("\r\n", "\n")
-        outputDirectory.mkdirs()
-        outputFile.writeText(processedComponentsXml)
+        val outputAsFile = outputFile.get().asFile
+        outputAsFile.parentFile.mkdirs()
+        outputAsFile.writeText(processedComponentsXml)
     }
 }
 
@@ -123,7 +123,7 @@ val proguard by task<CacheableProguardTask> {
 
     injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), normalizedJar.get().outputs.files)
 
-    outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
+    outjars(layout.buildDirectory.file("libs/$jarBaseName-$version-after-proguard.jar"))
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
 

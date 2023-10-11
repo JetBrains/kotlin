@@ -692,14 +692,17 @@ tasks.register("createIdeaHomeForTests") {
     val intellijSdkVersion = rootProject.extra["versions.intellijSdk"]
     outputs.file(ideaBuildNumberFileForTests)
     doFirst {
-        ideaBuildNumberFileForTests.parentFile.mkdirs()
-        ideaBuildNumberFileForTests.writeText("IC-$intellijSdkVersion")
+        with(ideaBuildNumberFileForTests.get().asFile) {
+            parentFile.mkdirs()
+            writeText("IC-$intellijSdkVersion")
+        }
     }
 }
 
 tasks {
     named<Delete>("clean") {
-        delete += setOf("$buildDir/repo", distDir)
+        delete(distDir)
+        delete(layout.buildDirectory.dir("repo"))
     }
 
     register<Delete>("cleanupArtifacts") {
@@ -1046,7 +1049,7 @@ val zipCompilerWithSignature by secureZipTask(zipCompiler)
 configure<IdeaModel> {
     module {
         excludeDirs = files(
-            project.buildDir,
+            project.layout.buildDirectory,
             commonLocalDataDir,
             ".gradle",
             "dependencies",

@@ -44,7 +44,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 val applicationName = benchmark.applicationName
                 val jarPath = (tasks.getByName("jvmJar") as Jar).archiveFile.get().asFile
                 val jvmCompileTime = getJvmCompileTime(project, applicationName)
-                val benchContents = buildDir.resolve(jvmBenchResults).readText()
+                val benchContents = layout.buildDirectory.file(jvmBenchResults).get().asFile.readText()
 
                 val properties: Map<String, Any> = commonBenchmarkProperties + mapOf(
                         "type" to "jvm",
@@ -55,7 +55,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 )
 
                 val output = createJsonReport(properties)
-                buildDir.resolve(jvmJson).writeText(output)
+                layout.buildDirectory.file(jvmJson).get().asFile.writeText(output)
             }
 
             jvmRun.finalizedBy(this)
@@ -78,7 +78,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 args("-p", "${benchmark.applicationName}::")
                 warmupCount = jvmWarmup
                 repeatCount = attempts
-                outputFileName = buildDir.resolve(jvmBenchResults).absolutePath
+                outputFileName = layout.buildDirectory.file(jvmBenchResults).get().asFile.absolutePath
                 repeatingType = benchmark.repeatingType
             }
         }

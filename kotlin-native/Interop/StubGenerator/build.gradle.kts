@@ -62,7 +62,7 @@ tasks {
         dependsOn(projectsWithNativeLibs.map { "${it.path}:nativelibs" })
         dependsOn(nativeDependencies.llvmDependency)
         systemProperty("java.library.path", projectsWithNativeLibs.joinToString(File.pathSeparator) {
-            File(it.buildDir, "nativelibs").absolutePath
+            it.layout.buildDirectory.dir("nativelibs").get().asFile.absolutePath
         })
         val libclangPath = "${nativeDependencies.llvmPath}/" + if (org.jetbrains.kotlin.konan.target.HostManager.hostIsMingw) {
             "bin/libclang.dll"
@@ -70,7 +70,7 @@ tasks {
             "lib/${System.mapLibraryName("clang")}"
         }
         systemProperty("kotlin.native.llvm.libclang", libclangPath)
-        systemProperty("kotlin.native.interop.stubgenerator.temp", File(buildDir, "stubGeneratorTestTemp"))
+        systemProperty("kotlin.native.interop.stubgenerator.temp", layout.buildDirectory.dir("stubGeneratorTestTemp").get().asFile)
 
         // Set the konan.home property because we run the cinterop tool not from a distribution jar
         // so it will not be able to determine this path by itself.

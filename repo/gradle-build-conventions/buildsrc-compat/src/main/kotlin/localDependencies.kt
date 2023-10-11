@@ -126,11 +126,11 @@ object IntellijRootUtils {
     }
 }
 
-fun Project.ideaHomePathForTests() = rootProject.buildDir.resolve("ideaHomeForTests")
+fun Project.ideaHomePathForTests() = rootProject.layout.buildDirectory.dir("ideaHomeForTests")
 
-fun Project.ideaBuildNumberFileForTests() = File(ideaHomePathForTests(), "build.txt")
+fun Project.ideaBuildNumberFileForTests() = objects.directoryProperty().value(ideaHomePathForTests()).file("build.txt")
 
 fun Project.writeIdeaBuildNumberForTests() {
-    ideaHomePathForTests().mkdirs()
-    ideaBuildNumberFileForTests().writeText("IC-${rootProject.extra["versions.intellijSdk"]}")
+    ideaHomePathForTests().get().asFile.mkdirs()
+    ideaBuildNumberFileForTests().get().asFile.writeText("IC-${rootProject.extra["versions.intellijSdk"]}")
 }

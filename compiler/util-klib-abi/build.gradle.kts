@@ -32,7 +32,7 @@ val testDataDir = project(":compiler").projectDir.resolve("testData/klib/dump-ab
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     inputs.dir(testDataDir)
-    outputs.dir("$buildDir/t")
+    outputs.dir(layout.buildDirectory.dir("t"))
 
     dependsOn(":dist")
     workingDir = rootDir

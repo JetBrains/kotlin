@@ -180,7 +180,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
     protected open fun Project.configureNativeTask(nativeTarget: KotlinNativeTarget): Task {
         val konanRun = createRunTask(this, "konanRun", nativeLinkTask,
-                nativeExecutable, buildDir.resolve(nativeBenchResults).absolutePath).apply {
+                nativeExecutable, layout.buildDirectory.file(nativeBenchResults).get().asFile.absolutePath).apply {
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/Native."
         }
@@ -222,7 +222,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
             doLast {
                 val applicationName = benchmark.applicationName
-                val benchContents = buildDir.resolve(nativeBenchResults).readText()
+                val benchContents = layout.buildDirectory.file(nativeBenchResults).get().asFile.readText()
                 val nativeCompileTasks = if (benchmark.compileTasks.isEmpty()) {
                    listOf("linkBenchmark${benchmark.buildType.name.lowercase().replaceFirstChar { it.uppercase() }}ExecutableNative")
                 } else benchmark.compileTasks
@@ -239,7 +239,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
                 )
 
                 val output = createJsonReport(properties)
-                buildDir.resolve(nativeJson).writeText(output)
+                layout.buildDirectory.file(nativeJson).get().asFile.writeText(output)
             }
         }
     }

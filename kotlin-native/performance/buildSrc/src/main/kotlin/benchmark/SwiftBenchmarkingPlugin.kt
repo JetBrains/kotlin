@@ -53,7 +53,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
     override val benchmarkExtensionName: String = "swiftBenchmark"
 
     override val Project.nativeExecutable: String
-        get() = Paths.get(buildDir.absolutePath, benchmark.applicationName).toString()
+        get() = Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName).toString()
 
     override val Project.nativeLinkTask: Task
         get() = tasks.getByName("buildSwift")
@@ -92,7 +92,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
                 val frameworkParentDirPath = framework.outputDirectory.absolutePath
                 val options = listOf("-O", "-wmo", "-Xlinker", "-rpath", "-Xlinker", frameworkParentDirPath, "-F", frameworkParentDirPath)
                 compileSwift(project, nativeTarget.konanTarget, benchmark.swiftSources, options,
-                        Paths.get(buildDir.absolutePath, benchmark.applicationName), false)
+                        Paths.get(layout.buildDirectory.get().asFile.absolutePath, benchmark.applicationName), false)
             }
         }
     }

@@ -121,7 +121,7 @@ open class SourceSet(
         return SourceSet(
             sourceSets,
             name,
-            sourceSets.project.file("${sourceSets.project.buildDir}/$name/${suffixes.first}_${suffixes.second}/"),
+            sourceSets.project.file(sourceSets.project.layout.buildDirectory.dir("$name/${suffixes.first}_${suffixes.second}/")),
             this,
             suffixes
         )
@@ -218,7 +218,7 @@ open class NativeToolsExtension(val project: Project) {
                 dependsOn(it.implicitTasks())
             }
             val deps = objSet.flatMap { it.collection.files }.map { it.path }
-            val toolConfiguration = ToolPatternImpl(sourceSets.extension, "${project.buildDir.path}/$name", *deps.toTypedArray())
+            val toolConfiguration = ToolPatternImpl(sourceSets.extension, "${project.layout.buildDirectory.get().asFile.path}/$name", *deps.toTypedArray())
             toolConfiguration.configuration()
             toolConfiguration.configure(this, false )
         }

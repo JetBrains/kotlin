@@ -25,7 +25,7 @@ dependencies {
     signature("org.codehaus.mojo.signature:java16:1.1@signature")
 }
 
-val signaturesDirectory = buildDir.resolve("signatures")
+val signaturesDirectory = layout.buildDirectory.get().asFile.resolve("signatures")
 
 val collectSignatures by tasks.registering(Sync::class) {
     from(signature)

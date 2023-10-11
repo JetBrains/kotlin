@@ -455,7 +455,7 @@ targetList.each { target ->
 
             destinationDir project.file("$distDir/klib/cache/")
 
-            from("${project(":kotlin-native:runtime").buildDir}/cache/$target") {
+            from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target")) {
                 include('**')
             }
         }
@@ -747,7 +747,7 @@ tasks.named("clean", Delete) {
     dependsOn subprojects.collect { it.tasks.matching { it.name == "clean" } }
     doFirst {
         delete distDir
-        delete buildDir
+        delete layout.buildDirectory
         delete bundle.outputs.files
         delete "${projectDir}/compile_commands.json"
     }

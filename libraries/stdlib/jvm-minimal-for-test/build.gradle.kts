@@ -25,7 +25,7 @@ dependencies {
 sourceSets {
     "main" {
         java.apply {
-            srcDir(File(buildDir, "src"))
+            srcDir(layout.buildDirectory.dir("src"))
         }
     }
     "test" {}
@@ -50,7 +50,7 @@ val copySources by task<Sync> {
                  "kotlin/enums/EnumEntries.kt",
                  "kotlin/collections/AbstractList.kt",
                  "kotlin/io/Serializable.kt")
-    into(File(buildDir, "src"))
+    into(layout.buildDirectory.dir("src"))
 }
 
 
@@ -91,6 +91,6 @@ publishing {
     }
 
     repositories {
-        maven("${rootProject.buildDir}/internal/repo")
+        maven(rootProject.layout.buildDirectory.dir("internal/repo"))
     }
 }

@@ -206,12 +206,12 @@ fun Project.projectTest(
         }
 
         systemProperty("idea.is.unit.test", "true")
-        systemProperty("idea.home.path", project.ideaHomePathForTests().canonicalPath)
+        systemProperty("idea.home.path", project.ideaHomePathForTests().get().asFile.canonicalPath)
         systemProperty("idea.use.native.fs.for.win", false)
         systemProperty("java.awt.headless", "true")
         environment("NO_FS_ROOTS_ACCESS_CHECK", "true")
         environment("PROJECT_CLASSES_DIRS", project.testSourceSet.output.classesDirs.asPath)
-        environment("PROJECT_BUILD_DIR", project.buildDir)
+        environment("PROJECT_BUILD_DIR", project.layout.buildDirectory.get().asFile)
         systemProperty("jps.kotlin.home", project.rootProject.extra["distKotlinHomeDir"]!!)
         systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (project.rootProject.hasProperty("skipMutedTests")) "true" else "false")
         systemProperty("cacheRedirectorEnabled", project.rootProject.findProperty("cacheRedirectorEnabled")?.toString() ?: "false")

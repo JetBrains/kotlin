@@ -502,9 +502,7 @@ val hostAssemble by tasks.registering {
 }
 
 tasks.named("clean") {
-    doFirst {
-        delete(buildDir)
-    }
+    delete(layout.buildDirectory)
 }
 
 // region: Stdlib
@@ -535,7 +533,7 @@ lateinit var stdlibBuildTask: TaskProvider<Task>
 
 konanArtifacts {
     library("stdlib") {
-        baseDir(project.buildDir.resolve("stdlib"))
+        baseDir(project.layout.buildDirectory.dir("stdlib").get().asFile)
 
         enableMultiplatform(true)
         noStdLib(true)
@@ -578,9 +576,9 @@ targetList.forEach { targetName ->
         dependsOn(stdlibBuildTask)
         dependsOn("${targetName}Runtime")
 
-        destinationDir = project.buildDir.resolve("${targetName}Stdlib")
+        into(project.layout.buildDirectory.dir("${targetName}Stdlib"))
 
-        from(project.buildDir.resolve("stdlib/${hostName}/stdlib"))
+        from(project.layout.buildDirectory.dir("stdlib/${hostName}/stdlib"))
         val runtimeFiles = runtimeBitcode.incoming.artifactView {
             attributes {
                 attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
@@ -614,7 +612,7 @@ targetList.forEach { targetName ->
             target = targetName
             originalKlib.fileProvider(stdlibTask.map { it.destinationDir })
             klibUniqName = "stdlib"
-            cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
+            cacheRoot = project.layout.buildDirectory.dir("cache/$targetName").get().asFile.absolutePath
 
             dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
         }

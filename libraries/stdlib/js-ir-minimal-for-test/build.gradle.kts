@@ -25,7 +25,7 @@ val commonMainFullSources by task<Sync> {
         }
     }
 
-    into("$buildDir/commonMainFullSources")
+    into(layout.buildDirectory.dir("commonMainFullSources"))
 }
 
 val commonMainSources by task<Sync> {
@@ -72,7 +72,7 @@ val commonMainSources by task<Sync> {
         commonMainFullSources.get().outputs.files.singleFile
     }
 
-    into("$buildDir/commonMainSources")
+    into(layout.buildDirectory.dir("commonMainSources"))
 }
 
 val commonMainCollectionSources by task<Sync> {
@@ -82,7 +82,7 @@ val commonMainCollectionSources by task<Sync> {
         commonMainFullSources.get().outputs.files.singleFile
     }
 
-    into("$buildDir/commonMainCollectionSources")
+    into(layout.buildDirectory.dir("commonMainCollectionSources"))
 }
 
 val jsMainSources by task<Sync> {
@@ -131,7 +131,7 @@ val jsMainSources by task<Sync> {
         into("builtins")
     }
 
-    into("$buildDir/jsMainSources")
+    into(layout.buildDirectory.dir("jsMainSources"))
 }
 
 kotlin {

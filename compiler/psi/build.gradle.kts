@@ -31,7 +31,7 @@ sourceSets {
 
 ant.importBuild("buildLexer.xml")
 
-ant.properties["builddir"] = buildDir.absolutePath
+ant.properties["builddir"] = layout.buildDirectory.get().asFile.absolutePath
 
 tasks.findByName("lexer")!!.apply {
     doFirst {

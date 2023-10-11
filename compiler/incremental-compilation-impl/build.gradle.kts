@@ -43,12 +43,12 @@ sourceSets {
 
 projectTest(parallel = true) {
     workingDir = rootDir
-    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
+    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
 projectTest("testJvmICWithJdk11", parallel = true) {
     workingDir = rootDir
-    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
+    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
     filter {
         includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
         includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK2JvmCompilerRunnerTestGenerated*")

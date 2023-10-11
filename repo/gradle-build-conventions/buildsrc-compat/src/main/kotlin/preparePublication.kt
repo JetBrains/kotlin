@@ -23,7 +23,11 @@ fun Project.preparePublication() {
 
         val sonatypeSnapshotsUrl = "https://oss.sonatype.org/content/repositories/snapshots/".takeIf { repo == "sonatype-nexus-snapshots" }
 
-        val repoUrl: String by extra((deployRepoUrl ?: sonatypeSnapshotsUrl ?: "file://${rootProject.buildDir}/repo").toString())
+        val repoUrl: String by extra(
+            (deployRepoUrl ?: sonatypeSnapshotsUrl ?: "file://${
+                rootProject.layout.buildDirectory.dir("repo").get().asFile
+            }").toString()
+        )
 
         val username: String? by extra(
             properties["kotlin.build.deploy-username"]?.toString() ?: properties["kotlin.${repoProvider}.user"]?.toString()

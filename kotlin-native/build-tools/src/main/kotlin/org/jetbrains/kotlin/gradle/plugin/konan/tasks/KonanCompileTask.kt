@@ -92,7 +92,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     protected fun directoryToKt(dir: Any) = project.fileTree(dir).apply {
         include("**/*.kt")
-        exclude { it.file.startsWith(project.buildDir) }
+        exclude { it.file.startsWith(project.layout.buildDirectory.get().asFile) }
     }
 
     // Command line  ------------------------------------------------------------

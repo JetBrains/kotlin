@@ -33,5 +33,5 @@ tasks.register("build") {
 }
 
 tasks.register<Delete>("clean") {
-    delete(buildDir)
+    delete(layout.buildDirectory)
 }

@@ -44,7 +44,7 @@ idePluginDependency {
     val shadowJar by task<ShadowJar> {
         configurations = listOf(embedded)
         duplicatesStrategy = DuplicatesStrategy.FAIL
-        destinationDirectory.set(File(buildDir, "libs"))
+        destinationDirectory.set(layout.buildDirectory.dir("libs"))
         archiveClassifier.set("shadow")
     }
 
@@ -53,7 +53,7 @@ idePluginDependency {
 
         configuration(fileFrom(projectDir, "backend-native-for-ide.pro"))
         injars(mapOf("filter" to "!META-INF/versions/**"), shadowJar.get().outputs.files)
-        outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
+        outjars(layout.buildDirectory.file("libs/$jarBaseName-$version-after-proguard.jar"))
 
         javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
 

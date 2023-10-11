@@ -1,6 +1,5 @@
 import org.gradle.internal.os.OperatingSystem
 import java.net.URI
-import javax.inject.Inject
 
 repositories {
     ivy {
@@ -54,8 +53,7 @@ val androidPlatform by configurations.creating
 val buildTools by configurations.creating
 val androidEmulator by configurations.creating
 
-val libsDestDir = File(buildDir, "androidSdk/platforms/android-26")
-val sdkDestDir = File(buildDir, "androidSdk")
+val sdkDestDirName = "androidSdk"
 
 val toolsOs = when {
     OperatingSystem.current().isWindows -> "windows"
@@ -107,12 +105,11 @@ fun unzipSdkTask(
     val dependency = "google:$sdkName:$sdkVer${coordinatesSuffix.takeIf { it.isNotEmpty() }?.let { ":$it" } ?: ""}@$ext"
     dependencies.add(createdCfg.name, dependency)
 
-    val sdkDestDir = sdkDestDir
     val unzipTask = tasks.register("unzip_$id") {
         val cfg = project.configurations.getByName(id)
         dependsOn(cfg)
         inputs.files(cfg)
-        val targetDir = project.file("$sdkDestDir/$destinationSubdir")
+        val targetDir = project.layout.buildDirectory.dir("$sdkDestDirName/$destinationSubdir")
         outputs.dirs(targetDir)
         val injected = project.objects.newInstance<Injected>()
         val fs = injected.fs
@@ -159,17 +156,17 @@ unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default","r05", prep
 unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
 
 val clean by task<Delete> {
-    delete(buildDir)
+    delete(layout.buildDirectory)
 }
 
-artifacts.add(androidSdk.name, file("$sdkDestDir")) {
+artifacts.add(androidSdk.name, layout.buildDirectory.dir(sdkDestDirName)) {
     builtBy(prepareSdk)
 }
 
-artifacts.add(androidJar.name, file("$libsDestDir/android.jar")) {
+artifacts.add(androidJar.name, layout.buildDirectory.file("$sdkDestDirName/platforms/android-26/android.jar")) {
     builtBy(preparePlatform)
 }
 
-artifacts.add(androidEmulator.name, file("$sdkDestDir")) {
+artifacts.add(androidEmulator.name, layout.buildDirectory.dir(sdkDestDirName)) {
     builtBy(prepareEmulator)
 }

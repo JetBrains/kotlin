@@ -89,7 +89,7 @@ internal val Project.konanVersion: String
         ?.toString()
         ?: project.version.toString()
 
-internal val Project.konanBuildRoot          get() = buildDir.resolve("konan")
+internal val Project.konanBuildRoot          get() = layout.buildDirectory.get().asFile.resolve("konan")
 internal val Project.konanBinBaseDir         get() = konanBuildRoot.resolve("bin")
 internal val Project.konanLibsBaseDir        get() = konanBuildRoot.resolve("libs")
 internal val Project.konanBitcodeBaseDir     get() = konanBuildRoot.resolve("bitcode")

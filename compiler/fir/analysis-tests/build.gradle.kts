@@ -68,7 +68,7 @@ fun Test.configureTest(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
     useJUnitPlatform {
         configureJUnit()
     }
-    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
+    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
 

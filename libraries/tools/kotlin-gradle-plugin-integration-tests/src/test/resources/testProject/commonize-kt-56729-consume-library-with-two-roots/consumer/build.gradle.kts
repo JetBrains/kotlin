@@ -7,7 +7,7 @@ plugins {
 }
 
 repositories {
-    maven(project(":producer").buildDir.resolve("repo"))
+    maven(project(":producer").layout.buildDirectory.dir("repo"))
     mavenLocal()
     mavenCentral()
 }

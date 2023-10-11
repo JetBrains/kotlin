@@ -16,7 +16,7 @@ open class CopyCommonSources : DefaultTask() {
     val sourcePaths: ConfigurableFileCollection = project.files()
 
     @OutputDirectory
-    var outputDir: File = project.buildDir.resolve("sources")
+    var outputDir: File = project.layout.buildDirectory.get().asFile.resolve("sources")
 
     fun zipSources(needToZip: Boolean) {
         zipSources = needToZip
@@ -46,7 +46,7 @@ open class CopyCommonSources : DefaultTask() {
             val filePrefix = sourcePath.name.replace(Regex("-\\d+.*"), "")
             val targetFileName = "$filePrefix-sources.zip"
 
-            val tempDir = project.buildDir.resolve(name).resolve(filePrefix).also {
+            val tempDir = project.layout.buildDirectory.dir("$name/$filePrefix").get().asFile.also {
                 it.deleteRecursively()
                 it.mkdirs()
             }

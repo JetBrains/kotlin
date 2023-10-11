@@ -19,12 +19,12 @@ node {
 
 val jsMainSources by task<Sync> {
     from("$rootDir/libraries/kotlin.test/js/it/src")
-    into("$buildDir/jsMainSources")
+    into(layout.buildDirectory.dir("jsMainSources"))
 }
 
 val jsSources by task<Sync> {
     from("$rootDir/libraries/kotlin.test/js/it/js")
-    into("$buildDir/jsSources")
+    into(layout.buildDirectory.dir("jsSources"))
 }
 
 val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures)
@@ -75,7 +75,7 @@ val populateNodeModules = tasks.register<Copy>("populateNodeModules") {
         }
     }
 
-    into("${buildDir}/node_modules")
+    into(layout.buildDirectory.dir("node_modules"))
 }
 
 fun createFrameworkTest(name: String): TaskProvider<NpmTask> {
@@ -83,12 +83,12 @@ fun createFrameworkTest(name: String): TaskProvider<NpmTask> {
         dependsOn(compileTestDevelopmentExecutableKotlinJs, populateNodeModules, "npmInstall")
         val testName = name
         val lowerName = name.lowercase()
-        val tcOutput = project.file("$buildDir/tc-${lowerName}.log")
-        val stdOutput = "$buildDir/test-${lowerName}.log"
-        val errOutput = "$buildDir/test-${lowerName}.err.log"
-        val exitCodeFile = project.file("$buildDir/test-${lowerName}.exit-code")
+        val tcOutput = layout.buildDirectory.file("tc-${lowerName}.log")
+        val stdOutput = layout.buildDirectory.file("test-${lowerName}.log")
+        val errOutput = layout.buildDirectory.file("test-${lowerName}.err.log")
+        val exitCodeFile = layout.buildDirectory.file("test-${lowerName}.exit-code")
 //        inputs.files(sourceSets.test.output)
-        inputs.dir("${buildDir}/node_modules")
+        inputs.dir(layout.buildDirectory.dir("node_modules"))
         outputs.files(tcOutput, stdOutput, errOutput, exitCodeFile)
 
         args.set(listOf("run", "test-$lowerName"))
@@ -98,12 +98,12 @@ fun createFrameworkTest(name: String): TaskProvider<NpmTask> {
 
         execOverrides {
             isIgnoreExitValue = true
-            standardOutput = FileOutputStream(stdOutput)
-            errorOutput = FileOutputStream(errOutput)
+            standardOutput = FileOutputStream(stdOutput.get().asFile)
+            errorOutput = FileOutputStream(errOutput.get().asFile)
         }
         doLast {
-            println(tcOutput.readText())
-            if (exitCodeFile.readText() != "0" /* && !rootProject.ignoreTestFailures*/) {
+            println(tcOutput.get().asFile.readText())
+            if (exitCodeFile.get().asFile.readText() != "0" /* && !rootProject.ignoreTestFailures*/) {
                 throw GradleException("$testName integration test failed")
             }
 

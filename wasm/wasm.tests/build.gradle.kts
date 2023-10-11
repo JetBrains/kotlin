@@ -113,15 +113,12 @@ fun Test.setupGradlePropertiesForwarding() {
     }
 }
 
-val downloadedTools = File(buildDir, "tools")
-
 val unzipJsShell by task<Copy> {
     dependsOn(jsShell)
     from {
         zipTree(jsShell.singleFile)
     }
-    val unpackedDir = File(downloadedTools, "jsshell-$jsShellSuffix-$jsShellVersion")
-    into(unpackedDir)
+    into(layout.buildDirectory.dir("tools/jsshell-$jsShellSuffix-$jsShellVersion"))
 }
 
 fun Test.setupSpiderMonkey() {
@@ -153,7 +150,7 @@ fun Project.wasmProjectTest(
         setupWasmStdlib("js")
         setupWasmStdlib("wasi")
         setupGradlePropertiesForwarding()
-        systemProperty("kotlin.wasm.test.root.out.dir", "$buildDir/")
+        systemProperty("kotlin.wasm.test.root.out.dir", "${layout.buildDirectory.get().asFile}/")
         body()
     }
 }

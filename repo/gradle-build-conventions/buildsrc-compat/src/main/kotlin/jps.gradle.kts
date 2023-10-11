@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ideaExt.*
 
 
 val ideaSdkPath: String
-    get() = rootProject.ideaHomePathForTests().absolutePath
+    get() = rootProject.ideaHomePathForTests().get().asFile.absolutePath
 val distDir by extra("$rootDir/dist")
 val distKotlinHomeDir by extra("$distDir/kotlinc")
 

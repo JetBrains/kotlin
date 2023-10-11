@@ -68,7 +68,7 @@ javadocJar()
 
 testsJar()
 
-val robolectricDependencyDir = "$buildDir/robolectricDependencies"
+val robolectricDependencyDir = layout.buildDirectory.dir("robolectricDependencies")
 val prepareRobolectricDependencies by tasks.registering(Copy::class) {
     from(robolectricDependency)
     into(robolectricDependencyDir)
@@ -100,7 +100,7 @@ projectTest {
         systemProperty("robolectric.classpath", robolectricClasspathProvider.get())
 
         systemProperty("robolectric.offline", "true")
-        systemProperty("robolectric.dependency.dir", robolectricDependencyDir)
+        systemProperty("robolectric.dependency.dir", robolectricDependencyDir.get().asFile)
 
         systemProperty("layoutLib.path", layoutLibConf.singleFile.canonicalPath)
         systemProperty("layoutLibApi.path", layoutLibApiConf.singleFile.canonicalPath)

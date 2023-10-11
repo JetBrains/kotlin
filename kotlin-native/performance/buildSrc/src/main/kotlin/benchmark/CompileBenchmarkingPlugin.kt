@@ -40,11 +40,11 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
     
     private fun Project.configureUtilityTasks() {
         tasks.create("configureBuild") {
-            doLast { mkdir(buildDir) }
+            doLast { mkdir(layout.buildDirectory.get().asFile) }
         }
 
         tasks.create("clean", Delete::class.java) {
-            delete(buildDir)
+            delete(layout.buildDirectory)
         }
     }
     
@@ -90,7 +90,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
                     repeatNumber,
                     exitCodes
                 )
-                val nativeExecutable = buildDir.resolve("program${getNativeProgramExtension()}")
+                val nativeExecutable = layout.buildDirectory.file("program${getNativeProgramExtension()}").get().asFile
                 val properties = commonBenchmarkProperties + mapOf(
                     "type" to "native",
                     "compilerVersion" to konanVersion,
@@ -100,7 +100,7 @@ open class CompileBenchmarkingPlugin : Plugin<Project> {
                     "codeSize" to getCodeSizeBenchmark(applicationName, nativeExecutable.absolutePath)
                 )
                 val output = createJsonReport(properties)
-                buildDir.resolve(nativeJson).writeText(output)
+                layout.buildDirectory.file(nativeJson).get().asFile.writeText(output)
             }
             konanRun.finalizedBy(this)
         }

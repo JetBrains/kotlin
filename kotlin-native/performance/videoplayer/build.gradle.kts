@@ -77,7 +77,7 @@ compileBenchmark {
             command = listOf(
                 "$dist/bin/konanc$toolSuffix",
                 "-ea", "-p", "program",
-                "-o", "${buildDir.absolutePath}/program$binarySuffix",
+                "-o", layout.buildDirectory.file("program$binarySuffix").get().asFile.toString(),
                 "-l", "$videoplayerDir/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
                 "-l", "$videoplayerDir/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",
                 "-Xmulti-platform", "$videoplayerDir/src/videoPlayerMain/kotlin",

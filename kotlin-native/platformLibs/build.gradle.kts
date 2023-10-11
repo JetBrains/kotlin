@@ -70,7 +70,7 @@ konanTargetList.forEach { target ->
                     klibFiles(df.config.depends.map { "$konanHome/klib/platform/$targetName/${fileNamePrefix}${it}" })
                 }
                 extraOpts("-Xpurge-user-libs", "-Xshort-module-name", df.name, "-Xdisable-experimental-annotation")
-                compilerOpts("-fmodules-cache-path=${project.buildDir}/clangModulesCache")
+                compilerOpts("-fmodules-cache-path=${project.layout.buildDirectory.dir("clangModulesCache").get().asFile}")
             }
         }
 

@@ -1,6 +1,10 @@
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
+import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_CODE
-import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.ClassWriter
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC
+import org.jetbrains.org.objectweb.asm.Opcodes.API_VERSION
 import java.util.zip.ZipFile
 
 plugins {
@@ -20,7 +24,7 @@ val toolsJarStubs by tasks.registering {
     val toolsJarFile = toolsJar().singleFile
     inputs.file(toolsJarFile)
 
-    val outDir = buildDir.resolve(name)
+    val outDir = layout.buildDirectory.dir(name)
     outputs.dir(outDir)
 
     val usedInternalApiPackages = listOf(
@@ -28,7 +32,8 @@ val toolsJarStubs by tasks.registering {
     )
 
     doLast {
-        outDir.deleteRecursively()
+        val outputDirectoryFile = outDir.get().asFile
+        outputDirectoryFile.deleteRecursively()
         val zipFile = ZipFile(toolsJarFile)
         zipFile.stream()
             .filter { it.name.endsWith(".class") }
@@ -63,7 +68,7 @@ val toolsJarStubs by tasks.registering {
                     }, SKIP_CODE)
 
                     if (isExported) {
-                        val result = File(outDir, zipEntry.name)
+                        val result = File(outputDirectoryFile, zipEntry.name)
                         result.parentFile.mkdirs()
                         result.writeBytes(classWriter.toByteArray())
                     }

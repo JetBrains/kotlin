@@ -146,15 +146,15 @@ class NamedNativeInteropConfig implements Named {
     }
 
     File getNativeLibsDir() {
-        return new File(project.buildDir, "nativelibs/$target")
+        return project.layout.buildDirectory.dir("nativelibs/$target").get().asFile
     }
 
     File getGeneratedSrcDir() {
-        return new File(project.buildDir, "nativeInteropStubs/$name/kotlin")
+        return project.layout.buildDirectory.dir("nativeInteropStubs/$name/kotlin").get().asFile
     }
 
     File getTemporaryFilesDir() {
-        return new File(project.buildDir, "interopTemp")
+        return project.layout.buildDirectory.dir("interopTemp").get().asFile
     }
 
     String getLlvmDir() {
@@ -213,8 +213,8 @@ class NamedNativeInteropConfig implements Named {
             jvmArgs '-ea'
 
             systemProperties "java.library.path" : project.files(
-                    new File(project.findProject(":kotlin-native:Interop:Indexer").buildDir, "nativelibs"),
-                    new File(project.findProject(":kotlin-native:Interop:Runtime").buildDir, "nativelibs")
+                    project.findProject(":kotlin-native:Interop:Indexer").layout.buildDirectory.dir("nativelibs"),
+                    project.findProject(":kotlin-native:Interop:Runtime").layout.buildDirectory.dir("nativelibs"),
             ).asPath
             // Set the konan.home property because we run the cinterop tool not from a distribution jar
             // so it will not be able to determine this path by itself.
