@@ -127,9 +127,6 @@ protobuf {
     protoc {
         artifact = libs.protobufCompiler.get()
     }
-    // Generates the java proto-lite code for the protos in this project. See
-    // https://github.com/google/protobuf-gradle-plugin#customizing-protobuf-compilation
-    // for more information.
     generateProtoTasks {
         all().each { task ->
             task.builtins {
