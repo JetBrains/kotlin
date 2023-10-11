@@ -4,6 +4,7 @@ val pp = p1 + p2
 
 fun bar(): String {
     val v = pp
+    @Suppress("JSCODE_ARGUMENT_NON_CONST_EXPRESSION")
     val b = js("\"$v\"")
     return b
 }

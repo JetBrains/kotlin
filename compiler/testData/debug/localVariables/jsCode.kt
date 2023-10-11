@@ -28,8 +28,8 @@ internal inline fun String.myAwesomePolyfill(): Boolean =
     asDynamic()
         .myAwesomePolyfill()
 
-val walter1VarDecl = "var walter1 = _.exclamate('Walter');"
-val jesse1VarDecl = "var jesse1 = _.exclamate(jesse);"
+const val walter1VarDecl = "var walter1 = _.exclamate('Walter');"
+const val jesse1VarDecl = "var jesse1 = _.exclamate(jesse);"
 
 // FILE: test.kt
 
