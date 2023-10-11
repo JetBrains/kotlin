@@ -24,7 +24,7 @@ class CInteropCommonizerArtifactTypeAttributeTest {
         val project = buildProjectWithMPP()
 
         /* Create stub klibs collection directory */
-        val klibCollectionDir = project.buildDir.resolve("testOutputDir")
+        val klibCollectionDir = project.layout.buildDirectory.dir("testOutputDir").get().asFile
         klibCollectionDir.mkdirs()
 
         val klibs = listOf(

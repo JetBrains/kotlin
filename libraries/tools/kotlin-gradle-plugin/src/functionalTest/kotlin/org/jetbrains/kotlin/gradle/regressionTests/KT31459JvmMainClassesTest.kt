@@ -56,7 +56,7 @@ class KT31459JvmMainClassesTest {
             // make copy of original classes directory
             val originalClassesDirs: FileCollection =
                 project.files(classesDirs.from.toTypedArray())
-            val transformedClassesDir = project.buildDir.resolve("classes/atomicfu/${target.name}/${compilation.name}")
+            val transformedClassesDir = project.layout.buildDirectory.dir("classes/atomicfu/${target.name}/${compilation.name}")
             val transformTask = project.tasks.create("transformTask") {
                 it.dependsOn(compilation.compileAllTaskName)
                 it.inputs.files(originalClassesDirs)
