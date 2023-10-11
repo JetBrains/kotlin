@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.platform.TargetPlatform
  * @param createNonCompileTimeObjects
  *      'true' - interpreter will construct object and initialize its properties despite the fact it is not marked as compile time;
  *      'false' - interpreter will create a representation of empty object, that can be used to get const properties
- * @param inlineConstVal tell the interpreter that value of const property can be inlined instead of getter call
  */
 // TODO maybe create some sort of builder
 data class IrInterpreterConfiguration(
@@ -24,5 +23,4 @@ data class IrInterpreterConfiguration(
     val createNonCompileTimeObjects: Boolean = false,
     val printOnlyExceptionMessage: Boolean = false,
     val collapseStackTraceFromJDK: Boolean = true,
-    val inlineConstVal: Boolean = true,
 )

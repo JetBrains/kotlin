@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.interpreter.checker
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 interface IrInterpreterChecker : IrElementVisitor<Boolean, IrInterpreterCheckerData>
@@ -16,5 +15,4 @@ class IrInterpreterCheckerData(
     val irFile: IrFile,
     val mode: EvaluationMode,
     val irBuiltIns: IrBuiltIns,
-    val interpreterConfiguration: IrInterpreterConfiguration,
 )

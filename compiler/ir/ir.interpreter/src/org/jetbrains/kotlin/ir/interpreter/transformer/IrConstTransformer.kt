@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCheckerData
@@ -121,11 +120,9 @@ internal abstract class IrConstTransformer(
         return this
     }
 
-    protected fun IrExpression.canBeInterpreted(
-        configuration: IrInterpreterConfiguration = interpreter.environment.configuration
-    ): Boolean {
+    protected fun IrExpression.canBeInterpreted(): Boolean {
         return try {
-            this.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns, configuration))
+            this.accept(checker, IrInterpreterCheckerData(irFile, mode, interpreter.irBuiltIns))
         } catch (e: Throwable) {
             if (suppressExceptions) {
                 return false

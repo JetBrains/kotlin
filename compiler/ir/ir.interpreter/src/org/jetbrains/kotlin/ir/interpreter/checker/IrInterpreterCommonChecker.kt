@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isStringClassType
-import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
 
@@ -65,7 +64,6 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     override fun visitCall(expression: IrCall, data: IrInterpreterCheckerData): Boolean {
         val owner = expression.symbol.owner
         return when {
-            !data.interpreterConfiguration.inlineConstVal && expression.isGetterToConstVal() && data.irFile != owner.fileOrNull -> false
             expression.dispatchReceiver.isAccessToNotNullableObject() && expression.isGetterToConstVal() -> visitBodyIfNeeded(owner, data)
             !data.mode.canEvaluateExpression(expression) || !data.mode.canEvaluateFunction(owner) -> false
             expression.isKCallableNameCall(data.irBuiltIns) || expression.isEnumName() -> true
