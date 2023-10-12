@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 /**
@@ -23,4 +25,9 @@ abstract class BirLoop : BirExpression() {
     abstract var condition: BirExpression
 
     var label: String? = null
+
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        body?.accept(data, visitor)
+        condition.accept(data, visitor)
+    }
 }

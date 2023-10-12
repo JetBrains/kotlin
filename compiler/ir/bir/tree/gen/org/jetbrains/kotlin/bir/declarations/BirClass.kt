@@ -8,22 +8,16 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.bir.util.transformIfNeeded
-import org.jetbrains.kotlin.bir.util.transformInPlace
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.class]
  */
@@ -69,18 +63,9 @@ abstract class BirClass : BirDeclarationBase(), BirPossiblyExternalDeclaration,
      */
     abstract var sealedSubclasses: List<BirClassSymbol>
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitClass(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
-        declarations.forEach { it.accept(visitor, data) }
-        thisReceiver?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        typeParameters = typeParameters.transformIfNeeded(transformer, data)
-        declarations.transformInPlace(transformer, data)
-        thisReceiver = thisReceiver?.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        typeParameters.forEach { it.accept(data, visitor) }
+        declarations.forEach { it.accept(data, visitor) }
+        thisReceiver?.accept(data, visitor)
     }
 }

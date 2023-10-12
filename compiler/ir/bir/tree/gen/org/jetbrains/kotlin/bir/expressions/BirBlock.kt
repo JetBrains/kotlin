@@ -8,7 +8,8 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 
 /**
  * A non-leaf IR tree element.
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.block]
  */
 abstract class BirBlock : BirContainerExpression() {
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitBlock(this, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        statements.forEach { it.accept(data, visitor) }
+    }
 }

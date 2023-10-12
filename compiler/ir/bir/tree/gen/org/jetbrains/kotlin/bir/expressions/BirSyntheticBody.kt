@@ -8,17 +8,13 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.syntheticBody]
  */
 abstract class BirSyntheticBody : BirBody() {
     abstract var kind: IrSyntheticBodyKind
-
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitSyntheticBody(this, data)
 }

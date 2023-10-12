@@ -31,15 +31,8 @@ class Element(
         get() = elementParents + otherParents
     var isLeaf = config.isForcedLeaf
     val childrenOrderOverride: List<String>? = config.childrenOrderOverride
-    var walkableChildren: List<Field> = emptyList()
-    val transformableChildren get() = walkableChildren.filter { it.transformable }
-
-    val visitFunName = "visit" + (config.visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
-    val visitorParam = config.visitorParam ?: config.category.defaultVisitorParam
-    var accept = config.accept
-    val transform = config.transform
-    val transformByChildren = config.transformByChildren
-    val ownsChildren = config.ownsChildren
+    var allFields: List<Field> = emptyList()
+    val allChildren get() = allFields.filter { it.isChild }
 
     val generationCallback = config.generationCallback
     val propertyName = config.propertyName

@@ -8,12 +8,11 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.bir.util.transformIfNeeded
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
@@ -47,19 +46,11 @@ abstract class BirFunction : BirDeclarationBase(), BirPossiblyExternalDeclaratio
 
     abstract var body: BirBody?
 
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
-        dispatchReceiverParameter?.accept(visitor, data)
-        extensionReceiverParameter?.accept(visitor, data)
-        valueParameters.forEach { it.accept(visitor, data) }
-        body?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        typeParameters = typeParameters.transformIfNeeded(transformer, data)
-        dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
-        extensionReceiverParameter = extensionReceiverParameter?.transform(transformer, data)
-        valueParameters = valueParameters.transformIfNeeded(transformer, data)
-        body = body?.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        typeParameters.forEach { it.accept(data, visitor) }
+        dispatchReceiverParameter?.accept(data, visitor)
+        extensionReceiverParameter?.accept(data, visitor)
+        valueParameters.forEach { it.accept(data, visitor) }
+        body?.accept(data, visitor)
     }
 }

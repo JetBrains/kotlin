@@ -8,11 +8,10 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.const]
  */
@@ -20,7 +19,4 @@ abstract class BirConst<T> : BirExpression() {
     abstract var kind: IrConstKind<T>
 
     abstract var value: T
-
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitConst(this, data)
 }
