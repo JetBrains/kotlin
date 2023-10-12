@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveTransformer
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 
 internal object LLFirContractsLazyResolver : LLFirLazyResolver(FirResolvePhase.CONTRACTS) {
@@ -55,20 +53,6 @@ private class LLFirContractsTargetResolver(
     FirResolvePhase.CONTRACTS
 ) {
     override val transformer = FirContractResolveTransformer(session, scopeSession)
-
-    override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
-        if (target is FirSyntheticProperty) {
-            target.getter.delegate.lazyResolveToPhase(resolverPhase)
-
-            performCustomResolveUnderLock(target) {
-                // just update phase
-            }
-
-            return true
-        }
-
-        return super.doResolveWithoutLock(target)
-    }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {

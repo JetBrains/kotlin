@@ -27,18 +27,12 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val isVar: Boolean,
     override val symbol: FirSyntheticPropertySymbol,
     override val status: FirDeclarationStatus,
-    resolvePhase: FirResolvePhase,
     override val getter: FirSyntheticPropertyAccessor,
     override val setter: FirSyntheticPropertyAccessor? = null,
     override val deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
 ) : FirProperty() {
     init {
         symbol.bind(this)
-    }
-
-    init {
-        @OptIn(ResolveStateAccess::class)
-        this.resolveState = resolvePhase.asResolveState()
     }
 
     override val backingField: FirBackingField? get() = null

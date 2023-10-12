@@ -1,5 +1,5 @@
 RAW_FIR:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -33,7 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 IMPORTS:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 COMPILER_REQUIRED_ANNOTATIONS:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 COMPANION_GENERATION:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 SUPER_TYPES:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 TYPES:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 STATUS:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -237,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 EXPECT_ACTUAL_MATCHING:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 ARGUMENTS_OF_ANNOTATIONS:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -305,7 +305,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 CONTRACTS:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 IMPLICIT_TYPES_BODY_RESOLVE:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -373,7 +373,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -407,7 +407,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 BODY_RESOLVE:
-TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+TARGET: public open override [<synthetic> STATUS] var something: R|kotlin/String|
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
     @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] s: R|@R|Anno|(<strcat>(String(setter type ), propertyFromSetter#))  kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 

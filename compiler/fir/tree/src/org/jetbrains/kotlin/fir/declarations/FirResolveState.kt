@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import java.util.concurrent.CountDownLatch
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 
 /**
@@ -50,10 +51,10 @@ fun FirResolvePhase.asResolveState(): FirResolvedToPhaseState = FirResolvedToPha
 
 @OptIn(ResolveStateAccess::class)
 val FirElementWithResolveState.resolvePhase: FirResolvePhase
-    get() = if (this is FirSyntheticPropertyAccessor) {
-        delegate.resolvePhase
-    } else {
-        resolveState.resolvePhase
+    get() = when (this) {
+        is FirSyntheticProperty -> setter?.resolvePhase?.let { minOf(it, getter.resolvePhase) } ?: getter.resolvePhase
+        is FirSyntheticPropertyAccessor -> delegate.resolvePhase
+        else -> resolveState.resolvePhase
     }
 
 /**
