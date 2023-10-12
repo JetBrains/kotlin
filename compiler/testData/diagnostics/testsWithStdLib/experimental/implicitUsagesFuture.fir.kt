@@ -69,9 +69,9 @@ typealias YourList = ArrayList<String>
 
 fun main() {
     val x = <!OPT_IN_USAGE_ERROR!>listOf<!>(A(), B())
-    val y = MyList()
-    val z = YourList()
-    YourList().add("")
+    val y = <!OPT_IN_USAGE_ERROR!>MyList<!>()
+    val z = <!OPT_IN_USAGE_ERROR!>YourList<!>()
+    <!OPT_IN_USAGE_ERROR!>YourList<!>().add("")
 }
 
 @Marker
