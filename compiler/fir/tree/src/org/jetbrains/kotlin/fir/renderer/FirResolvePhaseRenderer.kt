@@ -15,10 +15,10 @@ class FirResolvePhaseRenderer {
     private val printer get() = components.printer
 
     fun render(element: FirElementWithResolveState) {
+        @OptIn(ResolveStateAccess::class)
         val text = if (element is FirSyntheticPropertyAccessor) {
-            "[<synthetic>] "
+            "[<synthetic> ${element.delegate.resolveState}] "
         } else {
-            @OptIn(ResolveStateAccess::class)
             "[${element.resolveState}] "
         }
 

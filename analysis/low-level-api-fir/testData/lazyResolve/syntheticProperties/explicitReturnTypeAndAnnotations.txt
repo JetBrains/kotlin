@@ -1,6 +1,6 @@
 RAW_FIR:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 IMPORTS:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 COMPANION_GENERATION:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 SUPER_TYPES:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 TYPES:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 STATUS:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 EXPECT_ACTUAL_MATCHING:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 CONTRACTS:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -250,7 +250,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -275,7 +275,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
@@ -300,7 +300,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
 BODY_RESOLVE:
 TARGET: public open override [ResolvedTo(STATUS)] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic>] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(STATUS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(STATUS)] class Derived : R|Base| {
