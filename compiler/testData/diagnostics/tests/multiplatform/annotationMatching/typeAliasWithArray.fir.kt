@@ -7,7 +7,7 @@
     Throughput, AverageTime
 }<!>
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect annotation class BenchmarkMode<!INCOMPATIBLE_MATCHING{JVM}!>(<!INCOMPATIBLE_MATCHING{JVM}!>vararg val value: Mode<!>)<!><!>
+expect annotation class BenchmarkMode(vararg val value: Mode)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
@@ -15,7 +15,7 @@
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS("actual typealias Mode = Mode;     expect constructor(): Mode")!>Mode<!> = mypackage.Mode
 
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS("actual typealias BenchmarkMode = BenchmarkMode;     expect constructor(vararg value: Array<out Mode>): BenchmarkMode    The following declaration is incompatible because parameter types are different:        constructor(vararg value: Array<Mode>): BenchmarkMode")!>BenchmarkMode<!> = mypackage.BenchmarkMode
+actual typealias BenchmarkMode = mypackage.BenchmarkMode
 
 // FILE: mypackage/Mode.java
 

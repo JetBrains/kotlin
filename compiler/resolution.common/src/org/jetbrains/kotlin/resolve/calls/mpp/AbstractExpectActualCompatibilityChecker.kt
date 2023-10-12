@@ -179,7 +179,7 @@ object AbstractExpectActualCompatibilityChecker {
         return expectSupertypes.all { expectSupertype ->
             val substitutedExpectType = substitutor.safeSubstitute(expectSupertype)
             actualSupertypes.any { actualSupertype ->
-                areCompatibleExpectActualTypes(substitutedExpectType, actualSupertype)
+                areCompatibleExpectActualTypes(substitutedExpectType, actualSupertype, parameterOfAnnotationComparisonMode = false)
             }
         }
     }
@@ -321,7 +321,8 @@ object AbstractExpectActualCompatibilityChecker {
         }
 
         // We must prioritize to return STRONG incompatible over WEAK incompatible (because STRONG incompatibility allows to search for overloads)
-        return getCallablesStrongIncompatibility(expectDeclaration, actualDeclaration, parentSubstitutor)
+        val annotationMode = expectContainingClass?.classKind == ClassKind.ANNOTATION_CLASS
+        return getCallablesStrongIncompatibility(expectDeclaration, actualDeclaration, annotationMode, parentSubstitutor)
             ?: getCallablesWeakIncompatibility(expectDeclaration, actualDeclaration, expectContainingClass, actualContainingClass)
             ?: ExpectActualCompatibility.Compatible
     }
@@ -330,6 +331,7 @@ object AbstractExpectActualCompatibilityChecker {
     private fun getCallablesStrongIncompatibility(
         expectDeclaration: CallableSymbolMarker,
         actualDeclaration: CallableSymbolMarker,
+        insideAnnotationClass: Boolean,
         parentSubstitutor: TypeSubstitutorMarker?,
     ): Incompatible.StrongIncompatible<*>? {
         if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
@@ -363,18 +365,24 @@ object AbstractExpectActualCompatibilityChecker {
         if (
             !areCompatibleTypeLists(
                 expectedValueParameters.toTypeList(substitutor),
-                actualValueParameters.toTypeList(createEmptySubstitutor())
-            ) ||
-            !areCompatibleExpectActualTypes(
+                actualValueParameters.toTypeList(createEmptySubstitutor()),
+                insideAnnotationClass
+            ) || !areCompatibleExpectActualTypes(
                 expectedReceiverType?.let { substitutor.safeSubstitute(it) },
-                actualReceiverType
+                actualReceiverType,
+                parameterOfAnnotationComparisonMode = false
             )
         ) {
             return Incompatible.ParameterTypes
         }
 
         if (shouldCheckReturnTypesOfCallables) {
-            if (!areCompatibleExpectActualTypes(substitutor.safeSubstitute(expectDeclaration.returnType), actualDeclaration.returnType)) {
+            if (!areCompatibleExpectActualTypes(
+                    substitutor.safeSubstitute(expectDeclaration.returnType),
+                    actualDeclaration.returnType,
+                    parameterOfAnnotationComparisonMode = insideAnnotationClass
+                )
+            ) {
                 return Incompatible.ReturnType
             }
         }
@@ -492,9 +500,13 @@ object AbstractExpectActualCompatibilityChecker {
     private fun areCompatibleTypeLists(
         expectedTypes: List<KotlinTypeMarker?>,
         actualTypes: List<KotlinTypeMarker?>,
+        insideAnnotationClass: Boolean,
     ): Boolean {
         for (i in expectedTypes.indices) {
-            if (!areCompatibleExpectActualTypes(expectedTypes[i], actualTypes[i])) {
+            if (!areCompatibleExpectActualTypes(
+                    expectedTypes[i], actualTypes[i], parameterOfAnnotationComparisonMode = insideAnnotationClass
+                )
+            ) {
                 return false
             }
         }
@@ -586,7 +598,7 @@ object AbstractExpectActualCompatibilityChecker {
             val actualBounds = actualTypeParameterSymbols[i].bounds
             if (
                 expectBounds.size != actualBounds.size ||
-                !areCompatibleTypeLists(expectBounds.map { substitutor.safeSubstitute(it) }, actualBounds)
+                !areCompatibleTypeLists(expectBounds.map { substitutor.safeSubstitute(it) }, actualBounds, insideAnnotationClass = false)
             ) {
                 return false
             }

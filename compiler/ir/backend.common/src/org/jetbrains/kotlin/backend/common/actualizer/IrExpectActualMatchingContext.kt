@@ -334,7 +334,11 @@ internal abstract class IrExpectActualMatchingContext(
     override val TypeParameterSymbolMarker.isReified: Boolean
         get() = asIr().isReified
 
-    override fun areCompatibleExpectActualTypes(expectType: KotlinTypeMarker?, actualType: KotlinTypeMarker?): Boolean {
+    override fun areCompatibleExpectActualTypes(
+        expectType: KotlinTypeMarker?,
+        actualType: KotlinTypeMarker?,
+        parameterOfAnnotationComparisonMode: Boolean,
+    ): Boolean {
         if (expectType == null) return actualType == null
         if (actualType == null) return false
         /*
@@ -355,11 +359,31 @@ internal abstract class IrExpectActualMatchingContext(
          */
         val actualizedExpectType = expectType.actualize()
         val actualizedActualType = actualType.actualize()
+
+        if (parameterOfAnnotationComparisonMode && actualizedExpectType is IrSimpleType && actualizedExpectType.isArray() &&
+            actualizedActualType is IrSimpleType && actualizedActualType.isArray()
+        ) {
+            return AbstractTypeChecker.equalTypes(
+                createTypeCheckerState(),
+                actualizedExpectType.convertToArrayWithOutProjections(),
+                actualizedActualType.convertToArrayWithOutProjections()
+            )
+        }
+
         return AbstractTypeChecker.equalTypes(
             createTypeCheckerState(),
             actualizedExpectType,
             actualizedActualType
         )
+    }
+
+    private fun IrSimpleType.convertToArrayWithOutProjections(): IrSimpleType {
+        val argumentsWithOutProjection = List(arguments.size) { i ->
+            val typeArgument = arguments[i]
+            if (typeArgument !is IrSimpleType) typeArgument
+            else makeTypeProjection(typeArgument, Variance.OUT_VARIANCE)
+        }
+        return IrSimpleTypeImpl(classifier, isNullable(), argumentsWithOutProjection, annotations)
     }
 
     private fun createTypeCheckerState(): TypeCheckerState {

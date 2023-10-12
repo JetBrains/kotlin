@@ -145,6 +145,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     fun areCompatibleExpectActualTypes(
         expectType: KotlinTypeMarker?,
         actualType: KotlinTypeMarker?,
+        parameterOfAnnotationComparisonMode: Boolean = false,
     ): Boolean
 
     fun actualTypeIsSubtypeOfExpectType(

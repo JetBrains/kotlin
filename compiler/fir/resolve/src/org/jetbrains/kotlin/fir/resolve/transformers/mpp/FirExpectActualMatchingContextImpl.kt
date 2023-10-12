@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -305,15 +306,35 @@ class FirExpectActualMatchingContextImpl private constructor(
     override fun areCompatibleExpectActualTypes(
         expectType: KotlinTypeMarker?,
         actualType: KotlinTypeMarker?,
+        parameterOfAnnotationComparisonMode: Boolean,
     ): Boolean {
         if (expectType == null) return actualType == null
         if (actualType == null) return false
+
+        if (parameterOfAnnotationComparisonMode && expectType is ConeClassLikeType && expectType.isArrayType &&
+            actualType is ConeClassLikeType && actualType.isArrayType
+        ) {
+            return AbstractTypeChecker.equalTypes(
+                createTypeCheckerState(),
+                expectType.convertToArrayWithOutProjections(),
+                actualType.convertToArrayWithOutProjections()
+            )
+        }
 
         return AbstractTypeChecker.equalTypes(
             createTypeCheckerState(),
             expectType,
             actualType
         )
+    }
+
+    private fun ConeClassLikeType.convertToArrayWithOutProjections(): ConeClassLikeType {
+        val argumentsWithOutProjection = Array(typeArguments.size) { i ->
+            val typeArgument = typeArguments[i]
+            if (typeArgument !is ConeKotlinType) typeArgument
+            else ConeKotlinTypeProjectionOut(typeArgument)
+        }
+        return ConeClassLikeTypeImpl(lookupTag, argumentsWithOutProjection, isNullable)
     }
 
     override fun actualTypeIsSubtypeOfExpectType(expectType: KotlinTypeMarker, actualType: KotlinTypeMarker): Boolean {
@@ -370,7 +391,10 @@ class FirExpectActualMatchingContextImpl private constructor(
         check(annotation1.hasResolvedArguments() && annotation2.hasResolvedArguments()) {
             "By this time compared annotations are expected to have resolved arguments"
         }
-        if (!areCompatibleExpectActualTypes(annotation1.resolvedType, annotation2.resolvedType)) {
+        if (!areCompatibleExpectActualTypes(
+                annotation1.resolvedType, annotation2.resolvedType, parameterOfAnnotationComparisonMode = false
+            )
+        ) {
             return false
         }
         val args1 = annotation1.argumentMapping.mapping
