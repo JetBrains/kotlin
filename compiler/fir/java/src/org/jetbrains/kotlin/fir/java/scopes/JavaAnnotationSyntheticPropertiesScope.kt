@@ -9,18 +9,18 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
+import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAccessors
+import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.nullableModuleData
+import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
-import org.jetbrains.kotlin.fir.scopes.FirDelegatingTypeScope
 
 class JavaAnnotationSyntheticPropertiesScope(
     private val session: FirSession,
@@ -43,18 +43,17 @@ class JavaAnnotationSyntheticPropertiesScope(
             val symbol = syntheticPropertiesCache.getOrPut(functionSymbol) {
                 val callableId = CallableId(classId, name)
                 FirJavaOverriddenSyntheticPropertySymbol(callableId, callableId).also {
-                    val accessor = FirSyntheticPropertyAccessor(function, isGetter = true, it)
-                    FirSyntheticProperty(
-                        session.nullableModuleData ?: function.moduleData,
-                        name,
-                        isVar = false,
-                        it,
-                        function.status.copy(modality = Modality.FINAL),
-                        function.resolvePhase,
-                        accessor
-                    )
+                    buildSyntheticProperty {
+                        moduleData = session.nullableModuleData ?: function.moduleData
+                        this.name = name
+                        symbol = it
+                        status = function.status.copy(modality = Modality.FINAL)
+                        delegateGetter = function
+                        deprecationsProvider = UnresolvedDeprecationProvider
+                    }
                 }
             }
+
             processor(symbol)
         }
     }

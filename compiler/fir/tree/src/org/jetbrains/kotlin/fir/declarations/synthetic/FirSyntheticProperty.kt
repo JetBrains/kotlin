@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class FirSyntheticProperty(
+class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val moduleData: FirModuleData,
     override val name: Name,
     override val isVar: Boolean,
@@ -29,7 +30,6 @@ class FirSyntheticProperty(
     resolvePhase: FirResolvePhase,
     override val getter: FirSyntheticPropertyAccessor,
     override val setter: FirSyntheticPropertyAccessor? = null,
-    override val backingField: FirBackingField? = null,
     override val deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
 ) : FirProperty() {
     init {
@@ -40,6 +40,8 @@ class FirSyntheticProperty(
         @OptIn(ResolveStateAccess::class)
         this.resolveState = resolvePhase.asResolveState()
     }
+
+    override val backingField: FirBackingField? get() = null
 
     override val returnTypeRef: FirTypeRef
         get() = getter.returnTypeRef

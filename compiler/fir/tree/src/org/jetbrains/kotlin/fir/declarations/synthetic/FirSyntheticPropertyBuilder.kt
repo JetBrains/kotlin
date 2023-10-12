@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -24,6 +25,7 @@ class FirSyntheticPropertyBuilder {
     var delegateSetter: FirSimpleFunction? = null
 
 
+    @OptIn(FirImplementationDetail::class)
     fun build(): FirSyntheticProperty = FirSyntheticProperty(
         moduleData, name, isVar = delegateSetter != null, symbol = symbol,
         status = status ?: delegateGetter.status,

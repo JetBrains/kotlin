@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class FirSyntheticPropertyAccessor(
+class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor(
     val delegate: FirSimpleFunction,
     override val isGetter: Boolean,
     override val propertySymbol: FirPropertySymbol,
