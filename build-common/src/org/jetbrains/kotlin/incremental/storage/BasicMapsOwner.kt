@@ -63,7 +63,13 @@ open class BasicMapsOwner(val cachesDir: File) {
             }
         }
         if (actionExceptions.isNotEmpty()) {
-            val desc = "Could not $actionName incremental caches in $cachesDir: ${actionExceptions.keys.joinToString(", ")}"
+            val message = actionExceptions.entries.joinToString("\n") { entry ->
+                val storageFileName = entry.key
+                val exception = entry.value
+                "Error for action '$storageFileName': ${exception.message}"
+            }
+
+            val desc = "Could not $actionName incremental caches in $cachesDir: {${message}}"
             val allIOExceptions = actionExceptions.all { it is IOException }
             val ex = if (allIOExceptions) IOException(desc) else Exception(desc)
             actionExceptions.forEach { (_, e) -> ex.addSuppressed(e) }
