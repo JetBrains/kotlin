@@ -95,6 +95,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
                 ::IrTextDumpHandler,
                 ::IrTreeVerifierHandler,
                 ::IrPrettyKotlinDumpHandler,
+                ::IrSourceRangesDumpHandler,
                 ::IrMangledNameAndSignatureDumpHandler,
             )
         }
