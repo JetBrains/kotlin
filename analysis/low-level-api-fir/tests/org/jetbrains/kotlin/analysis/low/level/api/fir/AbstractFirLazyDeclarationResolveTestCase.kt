@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveMultiDesignationCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.findElementIn
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -18,9 +19,13 @@ import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
 import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtFile
@@ -124,6 +129,14 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
             }
             1 -> filteredSymbols.single()
             else -> error("Result ambiguity:\n${filteredSymbols.joinToString("\n")}")
+        }.let { resultSymbol ->
+            val isGetter = directives.singleOrZeroValue(Directives.IS_GETTER)
+            if (isGetter == null) {
+                resultSymbol
+            } else {
+                requireIsInstance<FirPropertySymbol>(resultSymbol)
+                if (isGetter) resultSymbol.getterSymbol!! else resultSymbol.setterSymbol!!
+            }
         }
     }
 
@@ -132,27 +145,39 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
         session: LLFirResolveSession,
         filter: (FirBasedSymbol<*>) -> Boolean,
     ): FirBasedSymbol<*>? {
-        val scope = classSymbol.unsubstitutedScope(
+        val baseScope = classSymbol.unsubstitutedScope(
             session.useSiteFirSession,
             session.getScopeSessionFor(session.useSiteFirSession),
             false,
             FirResolvePhase.STATUS,
         )
 
-        val names = scope.getCallableNames()
+        val scopes: List<FirContainingNamesAwareScope> = listOfNotNull(
+            baseScope,
+            FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(
+                session.useSiteFirSession,
+                classSymbol.defaultType(),
+                baseScope,
+            )
+        )
+
         val declarations = mutableListOf<FirBasedSymbol<*>>()
-        for (name in names) {
-            scope.processFunctionsByName(name) {
-                if (filter(it)) {
-                    declarations += it
+        for (typeScope in scopes) {
+            val names = typeScope.getCallableNames()
+            for (name in names) {
+                typeScope.processFunctionsByName(name) {
+                    if (filter(it)) {
+                        declarations += it
+                    }
+                }
+
+                typeScope.processPropertiesByName(name) {
+                    if (filter(it)) {
+                        declarations += it
+                    }
                 }
             }
 
-            scope.processPropertiesByName(name) {
-                if (filter(it)) {
-                    declarations += it
-                }
-            }
         }
 
         return declarations.singleOrNull() ?: error("Can't choose from:\n${declarations.joinToString("\n")}")
@@ -178,6 +203,8 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
                 symbol.name() == value
             }
         }
+
+        val IS_GETTER by valueDirective("Choose getter/setter in the case of property", parser = String::toBooleanStrict)
     }
 }
 

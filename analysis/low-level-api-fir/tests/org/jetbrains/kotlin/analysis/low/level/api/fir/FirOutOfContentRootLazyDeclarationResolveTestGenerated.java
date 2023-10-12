@@ -879,6 +879,76 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties")
+    @TestDataPath("$PROJECT_ROOT")
+    public class SyntheticProperties {
+        @Test
+        public void testAllFilesPresentInSyntheticProperties() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("explicitReturnType.kt")
+        public void testExplicitReturnType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/explicitReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("explicitReturnTypeAndAnnotations.kt")
+        public void testExplicitReturnTypeAndAnnotations() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/explicitReturnTypeAndAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitReturnType.kt")
+        public void testImplicitReturnType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/implicitReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitReturnTypeAndAnnotations.kt")
+        public void testImplicitReturnTypeAndAnnotations() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/implicitReturnTypeAndAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitReturnTypeAndAnnotationsAsGetter.kt")
+        public void testImplicitReturnTypeAndAnnotationsAsGetter() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/implicitReturnTypeAndAnnotationsAsGetter.kt");
+        }
+
+        @Test
+        @TestMetadata("secondGenerationOverride.kt")
+        public void testSecondGenerationOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/secondGenerationOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("setterAndExplicitReturnType.kt")
+        public void testSetterAndExplicitReturnType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("setterAndExplicitReturnTypeAndAnnotations.kt")
+        public void testSetterAndExplicitReturnTypeAndAnnotations() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnTypeAndAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("setterAndExplicitReturnTypeAndAnnotationsAsGetter.kt")
+        public void testSetterAndExplicitReturnTypeAndAnnotationsAsGetter() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnTypeAndAnnotationsAsGetter.kt");
+        }
+
+        @Test
+        @TestMetadata("setterAndExplicitReturnTypeAndAnnotationsAsSetter.kt")
+        public void testSetterAndExplicitReturnTypeAndAnnotationsAsSetter() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/syntheticProperties/setterAndExplicitReturnTypeAndAnnotationsAsSetter.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testData/lazyResolve/typeAliases")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeAliases {

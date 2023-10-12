@@ -1,0 +1,236 @@
+RAW_FIR:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+TYPES:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+STATUS:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+BODY_RESOLVE:
+TARGET: public open override [ResolvedTo(STATUS)] var something: R|kotlin/String|
+    public [<synthetic>] get(): R|kotlin/String| { LAZY_BLOCK }
+    public [<synthetic>] set([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] Derived.kt
+    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            LAZY_super<R|Base|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
+
+        public open override [ResolvedTo(STATUS)] fun setSomething([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] Derived.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class Derived : R|Base| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Derived] constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun getSomething(): R|kotlin/String| {
+            ^getSomething String(42)
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun setSomething([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }

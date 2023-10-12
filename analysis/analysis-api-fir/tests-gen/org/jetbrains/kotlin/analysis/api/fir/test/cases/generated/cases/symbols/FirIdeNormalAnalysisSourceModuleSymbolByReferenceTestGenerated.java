@@ -197,6 +197,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
     }
 
     @Test
+    @TestMetadata("syntheticProperty.kt")
+    public void testSyntheticProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/syntheticProperty.kt");
+    }
+
+    @Test
     @TestMetadata("typeAnnotationOnBackingField.kt")
     public void testTypeAnnotationOnBackingField() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/typeAnnotationOnBackingField.kt");
