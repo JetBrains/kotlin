@@ -128,7 +128,7 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                     calledName = null
                     val superStruct = LLVMGetArgOperand(call, 0)
                     val superClassPtrPtr = LLVMBuildGEP(builder, superStruct, listOf(llvm.int32(0), llvm.int32(1)).toCValues(), 2, "")
-                    val superClassPtr = LLVMBuildLoad(builder, superClassPtrPtr, "")!!
+                    val superClassPtr = LLVMBuildLoad2(builder, llvm.int8PtrType, superClassPtrPtr, "")!!
                     val classPtr = getSuperClass.buildCall(builder, listOf(superClassPtr))
                     val calledPtrLlvmFunPtr = getMethodImpl.buildCall(builder, listOf(classPtr, LLVMGetArgOperand(call, 1)!!))
                     calledPtrLlvm = LLVMBuildBitCast(builder, calledPtrLlvmFunPtr, llvm.int8PtrType, "")!!

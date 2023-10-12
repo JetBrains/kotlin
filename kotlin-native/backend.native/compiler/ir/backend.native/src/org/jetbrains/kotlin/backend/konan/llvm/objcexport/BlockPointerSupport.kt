@@ -41,7 +41,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         val thisRef = param(0)
         val associatedObjectHolder = if (useSeparateHolder) {
             val bodyPtr = bitcast(pointerType(bodyType), thisRef)
-            loadSlot(structGep(bodyPtr, 1), isVar = false)
+            loadSlot(bodyType, structGep(bodyPtr, 1), isVar = false)
         } else {
             thisRef
         }
