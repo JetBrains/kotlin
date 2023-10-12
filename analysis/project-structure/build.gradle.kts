@@ -14,10 +14,6 @@ kotlin {
     explicitApi()
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
-}
-
 sourceSets {
     "main" { projectDefault() }
 }
