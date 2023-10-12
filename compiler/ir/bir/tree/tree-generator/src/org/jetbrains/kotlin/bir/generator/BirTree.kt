@@ -41,19 +41,12 @@ object BirTree : AbstractTreeBuilder() {
             type = ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
             mutable = false,
             nullable = nullable,
-        ) {
-            skipInIrFactory()
-        }
+        )
 
     private fun declarationWithLateBinding(symbol: ClassRef<*>, initializer: ElementConfig.() -> Unit) = element(Declaration) {
         initializer()
 
-        fieldsToSkipInIrFactoryMethod.add("symbol")
-        fieldsToSkipInIrFactoryMethod.add("containerSource")
-
-        +field("isBound", boolean, mutable = false) {
-            skipInIrFactory()
-        }
+        +field("isBound", boolean, mutable = false)
 
         val oldCallback = generationCallback
         generationCallback = {
@@ -97,10 +90,8 @@ object BirTree : AbstractTreeBuilder() {
         parent(annotationContainerElement)
 
         +descriptor("DeclarationDescriptor")
-        +field("origin", type("org.jetbrains.kotlin.ir.declarations", "IrDeclarationOrigin" ))
-        +field("parent", declarationParent) {
-            skipInIrFactory()
-        }
+        +field("origin", type("org.jetbrains.kotlin.ir.declarations", "IrDeclarationOrigin"))
+        +field("parent", declarationParent)
     }
     val declarationBase: ElementConfig by element(Declaration) {
         typeKind = TypeKind.Class
@@ -125,16 +116,13 @@ object BirTree : AbstractTreeBuilder() {
     val possiblyExternalDeclaration: ElementConfig by element(Declaration) {
         parent(declarationWithName)
 
-        +field("isExternal", boolean) {
-            useFieldInIrFactory(false)
-        }
+        +field("isExternal", boolean)
     }
     val symbolOwner: ElementConfig by element(Declaration) {
         +symbol(symbolType)
     }
     val metadataSourceOwner: ElementConfig by element(Declaration) {
         val metadataField = +field("metadata", type("org.jetbrains.kotlin.ir.declarations", "MetadataSource"), nullable = true) {
-            skipInIrFactory()
             kdoc = """
             The arbitrary metadata associated with this IR node.
             
@@ -169,15 +157,13 @@ object BirTree : AbstractTreeBuilder() {
 
         +field("symbol", s, mutable = false)
         +isFakeOverrideField()
-        +listField("overriddenSymbols", s, mutability = Var) {
-            skipInIrFactory()
-        }
+        +listField("overriddenSymbols", s, mutability = Var)
     }
     val memberWithContainerSource: ElementConfig by element(Declaration) {
         parent(declarationWithName)
 
         +field("containerSource", type<DeserializedContainerSource>(), nullable = true, mutable = false) {
-            useFieldInIrFactory(defaultValue = code("null"))
+            code("null")
         }
     }
     val valueDeclaration: ElementConfig by element(Declaration) {
@@ -249,40 +235,23 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(classSymbolType)
         +field("kind", type<ClassKind>())
         +field("modality", type<Modality>())
-        +field("isCompanion", boolean) {
-            useFieldInIrFactory(defaultValue = false)
-        }
-        +field("isInner", boolean) {
-            useFieldInIrFactory(defaultValue = false)
-        }
-        +field("isData", boolean) {
-            useFieldInIrFactory(defaultValue = false)
-        }
-        +field("isValue", boolean) {
-            useFieldInIrFactory(defaultValue = false)
-        }
-        +field("isExpect", boolean) {
-            useFieldInIrFactory(defaultValue = false)
-        }
-        +field("isFun", boolean) {
-            useFieldInIrFactory(defaultValue = false)
-        }
+        +field("isCompanion", boolean)
+        +field("isInner", boolean)
+        +field("isData", boolean)
+        +field("isValue", boolean)
+        +field("isExpect", boolean)
+        +field("isFun", boolean)
         +field("source", type<SourceElement>(), mutable = false) {
-            useFieldInIrFactory(defaultValue = code("%T.NO_SOURCE", SourceElement::class))
+            code("%T.NO_SOURCE", SourceElement::class)
         }
-        +listField("superTypes", irTypeType, mutability = Var) {
-            skipInIrFactory()
-        }
+        +listField("superTypes", irTypeType, mutability = Var)
         +field("thisReceiver", valueParameter, nullable = true, isChild = true)
         +field(
             "valueClassRepresentation",
             type<ValueClassRepresentation<*>>().withArgs(type(Packages.types, "BirSimpleType")),
             nullable = true,
-        ) {
-            skipInIrFactory()
-        }
+        )
         +listField("sealedSubclasses", classSymbolType, mutability = Var) {
-            skipInIrFactory()
             kdoc = """
             If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
             Otherwise, this is an empty list.
@@ -303,13 +272,9 @@ object BirTree : AbstractTreeBuilder() {
               idempotence invariant and can contain a chain of declarations.
         """.trimIndent()
 
-        +field("attributeOwnerId", attributeContainer) {
-            skipInIrFactory()
-        }
+        +field("attributeOwnerId", attributeContainer)
         // null <=> this element wasn't inlined
-        +field("originalBeforeInline", attributeContainer, nullable = true) {
-            skipInIrFactory()
-        }
+        +field("originalBeforeInline", attributeContainer, nullable = true)
     }
 
     // Equivalent of IrMutableAnnotationContainer which is not an IR element (but could be)
@@ -329,9 +294,7 @@ object BirTree : AbstractTreeBuilder() {
 
         +descriptor("ClassDescriptor") // TODO special descriptor for anonymous initializer blocks
         +symbol(anonymousInitializerSymbolType)
-        +field("isStatic", boolean) {
-            useFieldInIrFactory(defaultValue = false)
-        }
+        +field("isStatic", boolean)
         +field("body", blockBody, isChild = true)
     }
     val declarationContainer: ElementConfig by element(Declaration) {
@@ -361,9 +324,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("variance", type<Variance>())
         +field("index", int)
         +field("isReified", boolean)
-        +listField("superTypes", irTypeType, mutability = Var) {
-            skipInIrFactory()
-        }
+        +listField("superTypes", irTypeType, mutability = Var)
     }
     val returnTarget: ElementConfig by element(Declaration) {
         parent(symbolOwner)
@@ -394,9 +355,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("extensionReceiverParameter", valueParameter, nullable = true, isChild = true)
         +listField("valueParameters", valueParameter, mutability = Var, isChild = true)
         // The first `contextReceiverParametersCount` value parameters are context receivers.
-        +field("contextReceiverParametersCount", int) {
-            skipInIrFactory()
-        }
+        +field("contextReceiverParametersCount", int)
         +field("body", body, nullable = true, isChild = true)
     }
     val constructor: ElementConfig by element(Declaration) {
@@ -424,17 +383,8 @@ object BirTree : AbstractTreeBuilder() {
 
         parent(declarationBase)
 
-        additionalIrFactoryMethodParameters.add(
-            descriptor("DeclarationDescriptor", nullable = true).apply {
-                useFieldInIrFactory(defaultValue = code("null"))
-            }
-        )
-
-        fieldsToSkipInIrFactoryMethod.add("origin")
-
         +field("symbol", symbolType, mutable = false) {
             baseGetter = code("error(\"Should never be called\")")
-            skipInIrFactory()
         }
     }
     val functionWithLateBinding: ElementConfig by declarationWithLateBinding(simpleFunctionSymbolType) {
@@ -458,9 +408,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("isFinal", boolean)
         +field("isStatic", boolean)
         +field("initializer", expressionBody, nullable = true, isChild = true)
-        +field("correspondingPropertySymbol", propertySymbolType, nullable = true) {
-            skipInIrFactory()
-        }
+        +field("correspondingPropertySymbol", propertySymbolType, nullable = true)
     }
     val localDelegatedProperty: ElementConfig by element(Declaration) {
         visitorParent = declarationBase
@@ -482,7 +430,6 @@ object BirTree : AbstractTreeBuilder() {
         visitorParent = rootElement
         transform = true
         transformByChildren = true
-        generateIrFactoryMethod = false
 
         +descriptor("ModuleDescriptor")
         +field("name", type<Name>(), mutable = false)
@@ -513,9 +460,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("isConst", boolean)
         +field("isLateinit", boolean)
         +field("isDelegated", boolean)
-        +field("isExpect", boolean) {
-            useFieldInIrFactory(defaultValue = false)
-        }
+        +field("isExpect", boolean)
         +isFakeOverrideField()
         +field("backingField", field, nullable = true, isChild = true)
         +field("getter", simpleFunction, nullable = true, isChild = true)
@@ -523,11 +468,9 @@ object BirTree : AbstractTreeBuilder() {
     }
 
     private fun isFakeOverrideField() = field("isFakeOverride", boolean) {
-        useFieldInIrFactory(
-            defaultValue = code(
-                "origin == %T.FAKE_OVERRIDE",
-                type("org.jetbrains.kotlin.ir.declarations", "IrDeclarationOrigin").toPoet(),
-            ),
+        code(
+            "origin == %T.FAKE_OVERRIDE",
+            type("org.jetbrains.kotlin.ir.declarations", "IrDeclarationOrigin").toPoet(),
         )
     }
 
@@ -535,7 +478,6 @@ object BirTree : AbstractTreeBuilder() {
     //NOTE: declarations and statements stored separately
     val script: ElementConfig by element(Declaration) {
         visitorParent = declarationBase
-        generateIrFactoryMethod = false
 
         parent(declarationBase)
         parent(declarationWithName)
@@ -573,9 +515,7 @@ object BirTree : AbstractTreeBuilder() {
         +isFakeOverrideField()
         +field("isOperator", boolean)
         +field("isInfix", boolean)
-        +field("correspondingPropertySymbol", propertySymbolType, nullable = true) {
-            skipInIrFactory()
-        }
+        +field("correspondingPropertySymbol", propertySymbolType, nullable = true)
     }
     val typeAlias: ElementConfig by element(Declaration) {
         visitorParent = declarationBase
@@ -592,8 +532,6 @@ object BirTree : AbstractTreeBuilder() {
     }
     val variable: ElementConfig by element(Declaration) {
         visitorParent = declarationBase
-
-        generateIrFactoryMethod = false
 
         parent(declarationBase)
         parent(valueDeclaration)
@@ -631,7 +569,6 @@ object BirTree : AbstractTreeBuilder() {
     val externalPackageFragment: ElementConfig by element(Declaration) {
         visitorParent = packageFragment
         transformByChildren = true
-        generateIrFactoryMethod = false
 
         parent(packageFragment)
 
@@ -642,7 +579,6 @@ object BirTree : AbstractTreeBuilder() {
         transform = true
         transformByChildren = true
         visitorParent = packageFragment
-        generateIrFactoryMethod = false
 
         parent(packageFragment)
         parent(annotationContainerElement)
@@ -664,11 +600,9 @@ object BirTree : AbstractTreeBuilder() {
 
         +field("attributeOwnerId", attributeContainer) {
             baseDefaultValue = code("this")
-            skipInIrFactory()
         }
         +field("originalBeforeInline", attributeContainer, nullable = true) {
             baseDefaultValue = code("null")
-            skipInIrFactory()
         }
         +field("type", irTypeType)
     }
@@ -688,18 +622,14 @@ object BirTree : AbstractTreeBuilder() {
         transform = true
         visitorParent = body
         visitorParam = "body"
-        generateIrFactoryMethod = true
 
         parent(body)
 
-        +field("expression", expression, isChild = true) {
-            useFieldInIrFactory()
-        }
+        +field("expression", expression, isChild = true)
     }
     val blockBody: ElementConfig by element(Expression) {
         visitorParent = body
         visitorParam = "body"
-        generateIrFactoryMethod = true
 
         parent(body)
         parent(statementContainer)
@@ -802,7 +732,7 @@ object BirTree : AbstractTreeBuilder() {
 
         +symbol(constructorSymbolType, mutable = true)
         +field("source", type<SourceElement>()) {
-            useFieldInIrFactory(defaultValue = code("%T.NO_SOURCE", SourceElement::class))
+            code("%T.NO_SOURCE", SourceElement::class)
         }
         +field("constructorTypeArgumentsCount", int)
     }

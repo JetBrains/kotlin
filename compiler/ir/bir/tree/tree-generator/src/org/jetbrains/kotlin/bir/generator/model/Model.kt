@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.bir.generator.model
 
 import com.squareup.kotlinpoet.CodeBlock
-import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.bir.generator.config.ElementConfig
 import org.jetbrains.kotlin.bir.generator.config.FieldConfig
-import org.jetbrains.kotlin.bir.generator.util.*
+import org.jetbrains.kotlin.bir.generator.util.Import
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.topologicalSort
 
 class Element(
@@ -18,7 +18,6 @@ class Element(
     val packageName: String,
     val params: List<TypeVariable>,
     val fields: MutableList<Field>,
-    val additionalFactoryMethodParameters: MutableList<Field>,
 ) {
     var elementParents: List<ElementRef> = emptyList()
     var otherParents: List<ClassRef<*>> = emptyList()
@@ -41,8 +40,6 @@ class Element(
     val transform = config.transform
     val transformByChildren = config.transformByChildren
     val ownsChildren = config.ownsChildren
-    val generateIrFactoryMethod = config.generateIrFactoryMethod
-    val fieldsToSkipInIrFactoryMethod = config.fieldsToSkipInIrFactoryMethod
 
     val generationCallback = config.generationCallback
     val propertyName = config.propertyName
@@ -111,7 +108,6 @@ sealed class Field(
     var needsDescriptorApiAnnotation = false
     abstract val transformable: Boolean
 
-    val useInIrFactoryStrategy = config.useFieldInIrFactoryStrategy
     val kdoc = config.kdoc
 
     val printProperty = config.printProperty
