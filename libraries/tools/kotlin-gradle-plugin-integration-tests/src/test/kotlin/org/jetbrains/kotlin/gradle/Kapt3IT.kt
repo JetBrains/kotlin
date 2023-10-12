@@ -351,13 +351,13 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt is working with incremental compilation")
     @GradleTest
-    fun testSimpleWithIC(gradleVersion: GradleVersion) {
+   open fun testSimpleWithIC(gradleVersion: GradleVersion) {
         doTestSimpleWithIC(gradleVersion)
     }
 
     @DisplayName("Kapt is working with incremental compilation, when kotlin.incremental.useClasspathSnapshot=true")
     @GradleTest
-    fun testSimpleWithIC_withClasspathSnapshot(gradleVersion: GradleVersion) {
+    open fun testSimpleWithIC_withClasspathSnapshot(gradleVersion: GradleVersion) {
         doTestSimpleWithIC(gradleVersion, useClasspathSnapshot = true)
     }
 
