@@ -27,7 +27,7 @@ data class DataClass(@property:Marker val x: Int)
 fun useDataClass(d: DataClass) {
     // Should have error in both
     d.<!OPT_IN_USAGE_ERROR!>x<!>
-    val (x) = d
+    val (<!OPT_IN_USAGE_ERROR!>x<!>) = d
 }
 
 typealias My = <!OPT_IN_USAGE_ERROR!>Some<!>

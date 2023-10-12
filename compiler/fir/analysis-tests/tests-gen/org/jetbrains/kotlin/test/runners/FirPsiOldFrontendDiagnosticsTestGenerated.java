@@ -40627,6 +40627,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("diffrentModules.kt")
+            public void testDiffrentModules() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/diffrentModules.kt");
+            }
+
+            @Test
             @TestMetadata("duration.kt")
             public void testDuration() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/duration.kt");

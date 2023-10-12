@@ -7,14 +7,18 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.resolved
@@ -32,6 +36,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -206,6 +211,16 @@ object FirOptInUsageBaseChecker {
         if (this is FirFunction) {
             valueParameters.forEach {
                 it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
+            }
+
+            // Handling data class 'componentN' function
+            if (parentClassSymbol?.isData == true && DataClassResolver.isComponentLike(this.nameOrSpecialName) && parentClassSymbol.classKind == ClassKind.CLASS) {
+                val componentNIndex = DataClassResolver.getComponentIndex(this.nameOrSpecialName.identifier)
+                val valueParameters = parentClassSymbol.primaryConstructorSymbol(context.session)?.valueParameterSymbols
+                val valueParameter = valueParameters?.getOrNull(componentNIndex - 1)
+                val properties = parentClassSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()
+                val property = properties.firstOrNull { it.name == valueParameter?.name }
+                property?.loadExperimentalities(context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false)
             }
         }
 
