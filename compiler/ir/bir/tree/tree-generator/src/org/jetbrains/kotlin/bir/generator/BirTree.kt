@@ -6,22 +6,22 @@
 package org.jetbrains.kotlin.bir.generator
 
 import com.squareup.kotlinpoet.*
+import org.jetbrains.kotlin.bir.generator.config.AbstractTreeBuilder
+import org.jetbrains.kotlin.bir.generator.config.ElementConfig
+import org.jetbrains.kotlin.bir.generator.config.ElementConfig.Category.*
+import org.jetbrains.kotlin.bir.generator.config.ListFieldConfig.Mutability.*
+import org.jetbrains.kotlin.bir.generator.config.ListFieldConfig.Mutability.Array
+import org.jetbrains.kotlin.bir.generator.config.ListFieldConfig.Mutability.List
+import org.jetbrains.kotlin.bir.generator.config.SimpleFieldConfig
+import org.jetbrains.kotlin.bir.generator.model.Element.Companion.elementName2typeName
+import org.jetbrains.kotlin.bir.generator.print.toPoet
+import org.jetbrains.kotlin.bir.generator.util.Import
+import org.jetbrains.kotlin.bir.generator.util.code
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.bir.generator.config.AbstractTreeBuilder
-import org.jetbrains.kotlin.bir.generator.config.ElementConfig
-import org.jetbrains.kotlin.bir.generator.config.ElementConfig.Category.*
-import org.jetbrains.kotlin.bir.generator.config.ListFieldConfig.Mutability.Array
-import org.jetbrains.kotlin.bir.generator.config.ListFieldConfig.Mutability.List
-import org.jetbrains.kotlin.bir.generator.config.ListFieldConfig.Mutability.Var
-import org.jetbrains.kotlin.bir.generator.config.SimpleFieldConfig
-import org.jetbrains.kotlin.bir.generator.model.Element.Companion.elementName2typeName
-import org.jetbrains.kotlin.bir.generator.print.toPoet
-import org.jetbrains.kotlin.bir.generator.util.*
-import org.jetbrains.kotlin.bir.generator.util.Import
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -94,7 +94,7 @@ object BirTree : AbstractTreeBuilder() {
     val declaration: ElementConfig by element(Declaration) {
         parent(statement)
         parent(symbolOwner)
-        parent(mutableAnnotationContainerType)
+        parent(annotationContainerElement)
 
         +descriptor("DeclarationDescriptor")
         +field("origin", type("org.jetbrains.kotlin.ir.declarations", "IrDeclarationOrigin" ))
@@ -309,6 +309,17 @@ object BirTree : AbstractTreeBuilder() {
         // null <=> this element wasn't inlined
         +field("originalBeforeInline", attributeContainer, nullable = true) {
             skipInIrFactory()
+        }
+    }
+
+    // Equivalent of IrMutableAnnotationContainer which is not an IR element (but could be)
+    val annotationContainerElement: ElementConfig by element(Declaration) {
+        parent(type(Packages.declarations, "BirAnnotationContainer"))
+
+        +listField("annotations", constructorCall, mutability = Var) { // shouldn't those be child elements? rather not ref
+            generationCallback = {
+                addModifiers(KModifier.OVERRIDE)
+            }
         }
     }
     val anonymousInitializer: ElementConfig by element(Declaration) {
@@ -634,7 +645,7 @@ object BirTree : AbstractTreeBuilder() {
         generateIrFactoryMethod = false
 
         parent(packageFragment)
-        parent(mutableAnnotationContainerType)
+        parent(annotationContainerElement)
         parent(metadataSourceOwner)
 
         +symbol(fileSymbolType)
