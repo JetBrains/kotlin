@@ -27,6 +27,7 @@ class ElementConfig(
     val parents = mutableListOf<TypeRef>()
     val fields = mutableListOf<FieldConfig>()
     val additionalImports = mutableListOf<Import>()
+    var symbol: ClassRef<*>? = null
 
     var childrenOrderOverride: List<String>? = null
 

@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.bir.generator
 
-import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.bir.generator.Packages.declarations
-import org.jetbrains.kotlin.bir.generator.Packages.exprs
 import org.jetbrains.kotlin.bir.generator.Packages.symbols
 import org.jetbrains.kotlin.bir.generator.Packages.tree
 import org.jetbrains.kotlin.bir.generator.Packages.types
 import org.jetbrains.kotlin.bir.generator.Packages.visitors
+import org.jetbrains.kotlin.generators.tree.TypeKind
 import org.jetbrains.kotlin.generators.tree.type
 
 object Packages {
@@ -32,24 +31,26 @@ val mutableAnnotationContainerType = type(declarations, "BirMutableAnnotationCon
 val irTypeType = type(types, "BirType")
 
 val symbolType = type(symbols, "BirSymbol")
-val packageFragmentSymbolType = type(symbols, "BirPackageFragmentSymbol")
-val fileSymbolType = type(symbols, "BirFileSymbol")
-val externalPackageFragmentSymbolType = type(symbols, "BirExternalPackageFragmentSymbol")
-val anonymousInitializerSymbolType = type(symbols, "BirAnonymousInitializerSymbol")
-val enumEntrySymbolType = type(symbols, "BirEnumEntrySymbol")
-val fieldSymbolType = type(symbols, "BirFieldSymbol")
-val classifierSymbolType = type(symbols, "BirClassifierSymbol")
-val classSymbolType = type(symbols, "BirClassSymbol")
-val scriptSymbolType = type(symbols, "BirScriptSymbol")
-val typeParameterSymbolType = type(symbols, "BirTypeParameterSymbol")
-val valueSymbolType = type(symbols, "BirValueSymbol")
-val valueParameterSymbolType = type(symbols, "BirValueParameterSymbol")
-val variableSymbolType = type(symbols, "BirVariableSymbol")
-val returnTargetSymbolType = type(symbols, "BirReturnTargetSymbol")
-val functionSymbolType = type(symbols, "BirFunctionSymbol")
-val constructorSymbolType = type(symbols, "BirConstructorSymbol")
-val simpleFunctionSymbolType = type(symbols, "BirSimpleFunctionSymbol")
-val returnableBlockSymbolType = type(symbols, "BirReturnableBlockSymbol")
-val propertySymbolType = type(symbols, "BirPropertySymbol")
-val localDelegatedPropertySymbolType = type(symbols, "BirLocalDelegatedPropertySymbol")
-val typeAliasSymbolType = type(symbols, "BirTypeAliasSymbol")
+object SymbolTypes {
+    val packageFragment = type(symbols, "BirPackageFragmentSymbol")
+    val file = type(symbols, "BirFileSymbol")
+    val externalPackageFragment = type(symbols, "BirExternalPackageFragmentSymbol")
+    val anonymousInitializer = type(symbols, "BirAnonymousInitializerSymbol")
+    val enumEntry = type(symbols, "BirEnumEntrySymbol")
+    val field = type(symbols, "BirFieldSymbol")
+    val classifier = type(symbols, "BirClassifierSymbol")
+    val `class` = type(symbols, "BirClassSymbol")
+    val script = type(symbols, "BirScriptSymbol")
+    val typeParameter = type(symbols, "BirTypeParameterSymbol")
+    val value = type(symbols, "BirValueSymbol")
+    val valueParameter = type(symbols, "BirValueParameterSymbol")
+    val variable = type(symbols, "BirVariableSymbol")
+    val returnTarget = type(symbols, "BirReturnTargetSymbol")
+    val function = type(symbols, "BirFunctionSymbol")
+    val constructor = type(symbols, "BirConstructorSymbol")
+    val simpleFunction = type(symbols, "BirSimpleFunctionSymbol")
+    val returnableBlock = type(symbols, "BirReturnableBlockSymbol")
+    val property = type(symbols, "BirPropertySymbol")
+    val localDelegatedProperty = type(symbols, "BirLocalDelegatedPropertySymbol")
+    val typeAlias = type(symbols, "BirTypeAliasSymbol")
+}
