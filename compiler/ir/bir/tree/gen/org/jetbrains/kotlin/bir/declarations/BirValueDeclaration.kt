@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.symbols.BirValueSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
@@ -18,13 +19,14 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueDeclaration]
  */
-interface BirValueDeclaration : BirDeclarationWithName, BirSymbolOwner {
+abstract class BirValueDeclaration : BirElementBase(), BirDeclarationWithName, BirSymbolOwner
+        {
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: ValueDescriptor
+    abstract override val descriptor: ValueDescriptor
 
-    override val symbol: BirValueSymbol
+    abstract override val symbol: BirValueSymbol
 
-    var type: BirType
+    abstract var type: BirType
 
-    val isAssignable: Boolean
+    abstract val isAssignable: Boolean
 }

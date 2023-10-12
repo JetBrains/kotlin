@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueParameter]
  */
-abstract class BirValueParameter : BirDeclarationBase(), BirValueDeclaration {
+abstract class BirValueParameter : BirValueDeclaration(), BirDeclaration {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ParameterDescriptor
 

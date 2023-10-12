@@ -21,30 +21,30 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.function]
  */
-abstract class BirFunction : BirDeclarationBase(), BirPossiblyExternalDeclaration,
+interface BirFunction : BirDeclaration, BirPossiblyExternalDeclaration,
         BirDeclarationWithVisibility, BirTypeParametersContainer, BirSymbolOwner,
         BirDeclarationParent, BirReturnTarget, BirMemberWithContainerSource, BirMetadataSourceOwner
         {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: FunctionDescriptor
+    override val descriptor: FunctionDescriptor
 
-    abstract override val symbol: BirFunctionSymbol
+    override val symbol: BirFunctionSymbol
 
-    abstract var isInline: Boolean
+    var isInline: Boolean
 
-    abstract var isExpect: Boolean
+    var isExpect: Boolean
 
-    abstract var returnType: BirType
+    var returnType: BirType
 
-    abstract var dispatchReceiverParameter: BirValueParameter?
+    var dispatchReceiverParameter: BirValueParameter?
 
-    abstract var extensionReceiverParameter: BirValueParameter?
+    var extensionReceiverParameter: BirValueParameter?
 
-    abstract var valueParameters: List<BirValueParameter>
+    var valueParameters: List<BirValueParameter>
 
-    abstract var contextReceiverParametersCount: Int
+    var contextReceiverParametersCount: Int
 
-    abstract var body: BirBody?
+    var body: BirBody?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         typeParameters.forEach { it.accept(data, visitor) }
