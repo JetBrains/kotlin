@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.IrOverrideChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -102,6 +103,10 @@ internal class ActualFakeOverridesAdder(
 
                 if (override != null) {
                     override.overriddenSymbols += symbolFromSupertype
+                    if (override is IrProperty && symbolFromSupertype is IrPropertySymbol) {
+                        override.getter?.let { getter -> symbolFromSupertype.owner.getter?.symbol?.let { getter.overriddenSymbols += it } }
+                        override.setter?.let { setter -> symbolFromSupertype.owner.setter?.symbol?.let { setter.overriddenSymbols += it } }
+                    }
                     continue
                 }
             }
