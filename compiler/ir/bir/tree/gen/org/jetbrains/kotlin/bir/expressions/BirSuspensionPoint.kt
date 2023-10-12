@@ -8,12 +8,12 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.declarations.BirVariable
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.suspensionPoint]
  */
@@ -24,19 +24,9 @@ abstract class BirSuspensionPoint : BirExpression() {
 
     abstract var resumeResult: BirExpression
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitSuspensionPoint(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        suspensionPointIdParameter.accept(visitor, data)
-        result.accept(visitor, data)
-        resumeResult.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        suspensionPointIdParameter = suspensionPointIdParameter.transform(transformer, data) as
-                BirVariable
-        result = result.transform(transformer, data)
-        resumeResult = resumeResult.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        suspensionPointIdParameter.accept(data, visitor)
+        result.accept(data, visitor)
+        resumeResult.accept(data, visitor)
     }
 }

@@ -8,12 +8,13 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.descriptors.SourceElement
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constructorCall]
  */
@@ -24,6 +25,9 @@ abstract class BirConstructorCall : BirFunctionAccessExpression() {
 
     abstract var constructorTypeArgumentsCount: Int
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitConstructorCall(this, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        dispatchReceiver?.accept(data, visitor)
+        extensionReceiver?.accept(data, visitor)
+        valueArguments.forEach { it?.accept(data, visitor) }
+    }
 }

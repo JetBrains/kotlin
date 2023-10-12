@@ -8,11 +8,10 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.bir.util.transformInPlace
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 /**
@@ -39,16 +38,10 @@ abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReferenc
     val typeArgumentsCount: Int
         get() = typeArguments.size
 
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        dispatchReceiver?.accept(visitor, data)
-        extensionReceiver?.accept(visitor, data)
-        valueArguments.forEach { it?.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
-        extensionReceiver = extensionReceiver?.transform(transformer, data)
-        valueArguments.transformInPlace(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        dispatchReceiver?.accept(data, visitor)
+        extensionReceiver?.accept(data, visitor)
+        valueArguments.forEach { it?.accept(data, visitor) }
     }
 
     fun getValueArgument(index: Int): BirExpression? {

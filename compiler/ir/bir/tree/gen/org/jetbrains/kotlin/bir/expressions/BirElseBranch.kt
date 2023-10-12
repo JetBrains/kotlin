@@ -8,18 +8,17 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.elseBranch]
  */
 abstract class BirElseBranch : BirBranch() {
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitElseBranch(this, data)
-
-    override fun <D> transform(transformer: BirElementTransformer<D>, data: D):
-            BirElseBranch = accept(transformer, data) as BirElseBranch
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        condition.accept(data, visitor)
+        result.accept(data, visitor)
+    }
 }
