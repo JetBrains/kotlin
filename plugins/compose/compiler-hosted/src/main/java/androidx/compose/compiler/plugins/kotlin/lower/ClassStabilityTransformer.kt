@@ -19,10 +19,10 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeClassIds
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.forEach
 import androidx.compose.compiler.plugins.kotlin.analysis.hasStableMarker
 import androidx.compose.compiler.plugins.kotlin.analysis.normalize
-import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
@@ -62,7 +62,8 @@ class ClassStabilityTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
-) : AbstractComposeLowering(context, symbolRemapper, metrics),
+    stabilityInferencer: StabilityInferencer
+) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
     ClassLoweringPass,
     ModuleLoweringPass {
 
@@ -109,7 +110,7 @@ class ClassStabilityTransformer(
             return cls
         }
 
-        val stability = stabilityOf(declaration.defaultType).normalize()
+        val stability = stabilityInferencer.stabilityOf(declaration.defaultType).normalize()
 
         // remove type parameters
 

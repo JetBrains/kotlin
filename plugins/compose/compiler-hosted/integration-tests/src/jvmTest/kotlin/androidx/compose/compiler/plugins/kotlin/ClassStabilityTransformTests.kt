@@ -16,7 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
+import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -565,6 +566,236 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             class Foo(val a: A)
         """,
         "Stable"
+    )
+
+    @Test
+    fun testExternalStableTypesFieldsAreStable() = assertStability(
+        externalSrc = """
+            class A 
+        """,
+        classDefSrc = """
+            class Foo(val a: A)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.A")
+    )
+
+    @Test
+    fun testClassesExtendingExternalStableInterfacesAreStable() = assertStability(
+        externalSrc = """
+            interface A 
+        """,
+        classDefSrc = """
+            class Foo : A
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.A")
+    )
+
+    @Test
+    fun testExternalWildcardTypesAreStable() = assertStability(
+        externalSrc = """
+            class A
+        """,
+        classDefSrc = """
+            class Foo(val a: A)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.*")
+    )
+
+    @Test
+    fun testExternalOnlySingleWildcardTypesAreStable() = assertStability(
+        externalSrc = """
+            class A
+
+            class B {
+                class C
+            }
+        """,
+        classDefSrc = """
+            class Foo(val a: A, val b: B, val c: B.C)
+        """,
+        stability = "Runtime(B)",
+        externalTypes = setOf("dependency.A", "dependency.B.*")
+    )
+
+    @Test
+    fun testExternalDoubleWildcardTypesAreStable() = assertStability(
+        externalSrc = """
+            class A {
+                class B {
+                    class C
+                }
+            }
+        """,
+        classDefSrc = """
+            class Foo(val a: A, val b: A.B, val c: A.B.C)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.**")
+    )
+
+    @Test
+    fun testExternalDoubleWildcardInMiddleTypesAreStable() = assertStability(
+        externalSrc = """
+            class A {
+                class B {
+                    class C
+                }
+            }
+        """,
+        classDefSrc = """
+            class Foo(val a: A, val b: A.B, val c: A.B.C)
+        """,
+        stability = "Runtime(A),Runtime(B)",
+        externalTypes = setOf("dependency.**.C")
+    )
+
+    @Test
+    fun testExternalDoubleWildcardWithPrefixInMiddleTypesAreStable() = assertStability(
+        externalSrc = """
+            class A {
+                class Ba {
+                    class C
+                }
+                class Bb {
+                    class C
+                }
+            }
+        """,
+        classDefSrc = """
+            class Foo(val a: A, val ba: A.Ba, val bb: A.Bb, val ca: A.Ba.C, val cb: A.Bb.C)
+        """,
+        stability = "Runtime(A)",
+        externalTypes = setOf("dependency.A.B**")
+    )
+
+    @Test
+    fun testExternalMixedWildcardsTypesAreStable() = assertStability(
+        externalSrc = """
+            class A {
+                class B {
+                    class C
+                }
+            }
+        """,
+        classDefSrc = """
+            class Foo(val a: A, val b: A.B, val c: A.B.C)
+        """,
+        stability = "Runtime(A)",
+        externalTypes = setOf("dependency.**.*")
+    )
+
+    @Test
+    fun testExternalMultiWildcardFirstTypesAreStable() = assertStability(
+        externalSrc = """
+            class A {
+                class B {
+                    class C
+                }
+            }
+        """,
+        classDefSrc = """
+            class Foo(val a: A, val b: A.B, val c: A.B.C)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("**")
+    )
+
+    @Test
+    fun testExternalWildcardFirstTypesAreStable() = assertStability(
+        externalSrc = """
+            class A
+        """,
+        classDefSrc = """
+            class Foo(val a: A)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("*.A")
+    )
+
+    @Test
+    fun testExternalMultipleSingleWildcardsTypesAreStable() = assertStability(
+        externalSrc = """
+            class A {
+                class B {
+                    class C
+                }
+                class D {
+                    class E
+                }
+            }
+        """,
+        classDefSrc = """
+            class Foo(val c: A.B.C, val e: A.D.E)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.*.B.*", "dependency.A.D.E")
+    )
+
+    @Test
+    fun testExternalGenericTypesAreParameterDependent() = assertStability(
+        externalSrc = """
+            class Foo<T>(val x: T)
+        """,
+        classDefSrc = """
+            class Test<T>(val foo: Foo<T>)
+        """,
+        stability = "Parameter(T)",
+        externalTypes = setOf("dependency.Foo")
+    )
+
+    @Test
+    fun testExternalGenericTypesAreCanIgnoreParameters() = assertStability(
+        externalSrc = """
+            class Foo<X, Y>(val x: X, val y: Y)
+        """,
+        classDefSrc = """
+            class Test<X, Y>(val foo: Foo<X, Y>)
+        """,
+        stability = "Parameter(X)",
+        externalTypes = setOf("dependency.Foo<*,_>")
+    )
+
+    @Test
+    fun testExternalGenericTypesAreCanBeRuntimeStable() = assertStability(
+        externalSrc = """
+            class A
+            class B
+            class Foo<X, Y>(val x: X, val y: Y)
+        """,
+        classDefSrc = """
+            class Test(val foo: Foo<A, B>)
+        """,
+        stability = "Runtime(B)",
+        externalTypes = setOf("dependency.Foo<_,*>")
+    )
+
+    @Test
+    fun testExternalGenericDefinedTypesAreStable() = assertStability(
+        externalSrc = """
+            class A
+            class Foo<T>(val x: T)
+        """,
+        classDefSrc = """
+            class Test(val foo: Foo<A>)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.Foo", "dependency.A")
+    )
+
+    @Test
+    fun testExternalDeepPackageNameIsStable() = assertStability(
+        externalSrc = """
+            class A
+        """,
+        classDefSrc = """
+            class Test(val foo: A)
+        """,
+        stability = "Stable",
+        externalTypes = setOf("dependency.b.c.d.A"),
+        packageName = "dependency.b.c.d"
     )
 
     @Test
@@ -1480,7 +1711,8 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
     private fun assertStability(
         @Language("kotlin")
         classDefSrc: String,
-        stability: String
+        stability: String,
+        externalTypes: Set<String> = emptySet(),
     ) {
         val source = """
             import androidx.compose.runtime.mutableStateOf
@@ -1499,7 +1731,9 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         val files = listOf(SourceFile("Test.kt", source))
         val irModule = compileToIr(files)
         val irClass = irModule.files.last().declarations.first() as IrClass
-        val classStability = stabilityOf(irClass.defaultType as IrType)
+        val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
+        val stabilityInferencer = StabilityInferencer(externalTypeMatchers)
+        val classStability = stabilityInferencer.stabilityOf(irClass.defaultType as IrType)
 
         assertEquals(
             stability,
@@ -1513,11 +1747,15 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         @Language("kotlin")
         classDefSrc: String,
         stability: String,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        externalTypes: Set<String> = emptySet(),
+        packageName: String = "dependency"
     ) {
-        val irModule = buildModule(externalSrc, classDefSrc, dumpClasses)
+        val irModule = buildModule(externalSrc, classDefSrc, dumpClasses, packageName)
         val irClass = irModule.files.last().declarations.first() as IrClass
-        val classStability = stabilityOf(irClass.defaultType as IrType)
+        val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
+        val classStability =
+            StabilityInferencer(externalTypeMatchers).stabilityOf(irClass.defaultType as IrType)
 
         assertEquals(
             stability,
@@ -1587,7 +1825,8 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         localSrc: String,
         expression: String,
         stability: String,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        externalTypes: Set<String> = emptySet()
     ) {
         val irModule = buildModule(
             externalSrc,
@@ -1611,7 +1850,8 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             is IrExpression -> lastStatement
             else -> error("unexpected statement: $lastStatement")
         }
-        val exprStability = stabilityOf(irExpr)
+        val externalTypeMatchers = externalTypes.map { FqNameMatcher(it) }.toSet()
+        val exprStability = StabilityInferencer(externalTypeMatchers).stabilityOf(irExpr)
 
         assertEquals(
             stability,
@@ -1624,11 +1864,12 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
         externalSrc: String,
         @Language("kotlin")
         localSrc: String,
-        dumpClasses: Boolean = false
+        dumpClasses: Boolean = false,
+        packageName: String = "dependency"
     ): IrModuleFragment {
         val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}"
         val dependencySrc = """
-            package dependency
+            package $packageName
             import androidx.compose.runtime.mutableStateOf
             import androidx.compose.runtime.getValue
             import androidx.compose.runtime.setValue
@@ -1651,7 +1892,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
             }
 
         val source = """
-            import dependency.*
+            import $packageName.*
             import androidx.compose.runtime.mutableStateOf
             import androidx.compose.runtime.getValue
             import androidx.compose.runtime.setValue
