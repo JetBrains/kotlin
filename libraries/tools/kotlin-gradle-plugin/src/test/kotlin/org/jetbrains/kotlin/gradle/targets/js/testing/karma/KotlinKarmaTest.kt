@@ -35,4 +35,17 @@ class KotlinKarmaTest {
             loadWasm.readText().trimIndent()
         )
     }
+
+    @Test
+    fun checkBasify() {
+        val npmProjectDir = createTempDirectory("tmp")
+        val executableFile = npmProjectDir.resolve("kotlin/main.wasm")
+
+        val based = basify(npmProjectDir.toFile(), executableFile.toFile())
+
+        assertEquals(
+            "/base/kotlin/main.wasm",
+            based
+        )
+    }
 }
