@@ -23,10 +23,10 @@ import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.analysis.Stability
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.isUncertain
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.knownUnstable
-import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.DecoyFqNames
 import kotlin.math.abs
@@ -454,11 +454,12 @@ class ComposableFunctionBodyTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
+    stabilityInferencer: StabilityInferencer,
     sourceInformationEnabled: Boolean,
     private val intrinsicRememberEnabled: Boolean,
     private val strongSkippingEnabled: Boolean
 ) :
-    AbstractComposeLowering(context, symbolRemapper, metrics),
+    AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
     FileLoweringPass,
     ModuleLoweringPass {
 
@@ -919,7 +920,8 @@ class ComposableFunctionBodyTransformer(
         // we start off assuming that we *can* skip execution of the function
         var canSkipExecution = declaration.returnType.isUnit() &&
             !isInlineLambda &&
-            scope.allTrackedParams.none { stabilityOf(it.type).knownUnstable() }
+            scope.allTrackedParams.none { stabilityInferencer.stabilityOf(it.type).knownUnstable() }
+
         // if the function can never skip, or there are no parameters to test, then we
         // don't need to have the dirty parameter locally since it will never be different from
         // the passed in `changed` parameter.
@@ -1155,7 +1157,7 @@ class ComposableFunctionBodyTransformer(
                 declaration.contextReceiverParametersCount + scope.realValueParamCount
             )
             val unstableMask = realParams.map {
-                stabilityOf((it.varargElementType ?: it.type)).knownUnstable()
+                stabilityInferencer.stabilityOf((it.varargElementType ?: it.type)).knownUnstable()
             }.toBooleanArray()
 
             val hasAnyUnstableParams = unstableMask.any { it }
@@ -1361,7 +1363,7 @@ class ComposableFunctionBodyTransformer(
         }
 
         parameters.forEachIndexed { slotIndex, param ->
-            val stability = stabilityOf(param.varargElementType ?: param.type)
+            val stability = stabilityInferencer.stabilityOf(param.varargElementType ?: param.type)
 
             stabilities[slotIndex] = stability
 
@@ -1512,7 +1514,7 @@ class ComposableFunctionBodyTransformer(
                         irGet(param)
                     ) { loopVar ->
                         val changedCall = irCallChanged(
-                            stabilityOf(varargElementType),
+                            stabilityInferencer.stabilityOf(varargElementType),
                             changedParam,
                             slotIndex,
                             loopVar
@@ -2637,7 +2639,7 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun populateParamMeta(arg: IrExpression, meta: ParamMeta) {
-        meta.stability = stabilityOf(arg)
+        meta.stability = stabilityInferencer.stabilityOf(arg)
         when {
             arg.isStatic() -> meta.isStatic = true
             arg is IrGetValue -> {
@@ -2655,7 +2657,7 @@ class ComposableFunctionBodyTransformer(
                 }
             }
             arg is IrVararg -> {
-                meta.stability = stabilityOf(arg.varargElementType)
+                meta.stability = stabilityInferencer.stabilityOf(arg.varargElementType)
             }
         }
     }

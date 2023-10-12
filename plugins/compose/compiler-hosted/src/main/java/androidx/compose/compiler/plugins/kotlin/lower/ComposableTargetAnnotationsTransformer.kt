@@ -21,6 +21,7 @@ import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.inference.ApplierInferencer
 import androidx.compose.compiler.plugins.kotlin.inference.ErrorReporter
 import androidx.compose.compiler.plugins.kotlin.inference.Item
@@ -100,8 +101,9 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 class ComposableTargetAnnotationsTransformer(
     context: IrPluginContext,
     symbolRemapper: ComposableSymbolRemapper,
-    metrics: ModuleMetrics
-) : AbstractComposeLowering(context, symbolRemapper, metrics) {
+    metrics: ModuleMetrics,
+    stabilityInferencer: StabilityInferencer
+) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer) {
     private val ComposableTargetClass = symbolRemapper.getReferencedClassOrNull(
         getTopLevelClassOrNull(ComposeClassIds.ComposableTarget)
     )

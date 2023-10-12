@@ -20,8 +20,8 @@ import androidx.compose.compiler.plugins.kotlin.ComposeCallableIds
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
-import androidx.compose.compiler.plugins.kotlin.analysis.stabilityOf
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -291,9 +291,10 @@ class ComposerLambdaMemoization(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
+    stabilityInferencer: StabilityInferencer,
     val strongSkippingModeEnabled: Boolean = false
-) :
-    AbstractComposeLowering(context, symbolRemapper, metrics),
+) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
+
     ModuleLoweringPass {
 
     private val declarationContextStack = mutableListOf<DeclarationContext>()
@@ -941,7 +942,7 @@ class ComposerLambdaMemoization(
         (this as? IrVariable)?.isVar == true
 
     private fun IrValueDeclaration.isStable(): Boolean =
-        stabilityOf(type).knownStable()
+        stabilityInferencer.stabilityOf(type).knownStable()
 
     private fun IrValueDeclaration.isInlinedLambda(): Boolean =
         type.isFunctionOrKFunction() &&
@@ -1016,11 +1017,13 @@ class ComposerLambdaMemoization(
         return this
     }
 
-    private fun IrExpression?.isNullOrStable() = this == null || stabilityOf(this).knownStable()
-
     private val IrExpression.hasDontMemoizeAnnotation: Boolean
         get() = (this as? IrFunctionExpression)?.function?.hasAnnotation(ComposeFqNames.DontMemoize)
             ?: false
+
+    private fun IrExpression?.isNullOrStable() =
+        this == null ||
+            stabilityInferencer.stabilityOf(this).knownStable()
 }
 
 // This must match the highest value of FunctionXX which is current Function22

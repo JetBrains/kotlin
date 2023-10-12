@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.copyWithNewTypeParams
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.didDecoyHaveDefaultForValueParameter
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
@@ -88,10 +89,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 class ComposerParamTransformer(
     context: IrPluginContext,
     symbolRemapper: DeepCopySymbolRemapper,
+    stabilityInferencer: StabilityInferencer,
     private val decoysEnabled: Boolean,
     metrics: ModuleMetrics,
 ) :
-    AbstractComposeLowering(context, symbolRemapper, metrics),
+    AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
     ModuleLoweringPass {
 
     /**
