@@ -387,8 +387,12 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
             val moduleFile = File(tmpdir.absolutePath, "META-INF/main.kotlin_module").readBytes()
             val versionNumber = ModuleMapping.readVersionNumber(DataInputStream(ByteArrayInputStream(moduleFile)))!!
             val moduleVersion = JvmMetadataVersion(*versionNumber)
-            assertEquals("Actual version: $moduleVersion", expectedMajor, moduleVersion.major)
-            assertEquals("Actual version: $moduleVersion", expectedMinor, moduleVersion.minor)
+            if (languageVersion == LanguageVersion.KOTLIN_2_0) {
+                assertEquals("Actual version: $moduleVersion", JvmMetadataVersion(1, 9, 9999), moduleVersion)
+            } else {
+                assertEquals("Actual version: $moduleVersion", expectedMajor, moduleVersion.major)
+                assertEquals("Actual version: $moduleVersion", expectedMinor, moduleVersion.minor)
+            }
         }
     }
 
