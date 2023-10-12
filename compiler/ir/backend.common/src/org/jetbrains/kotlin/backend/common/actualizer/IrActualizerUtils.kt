@@ -118,7 +118,7 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportIncompatibleEx
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     at(expectDeclaration).report(
-        CommonBackendErrors.INCOMPATIBLE_MATCHING,
+        CommonBackendErrors.EXPECT_ACTUAL_MISMATCH,
         expectDeclaration.getNameWithAssert().asString(),
         actualDeclaration.getNameWithAssert().asString(),
         incompatibility
