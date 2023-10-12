@@ -354,7 +354,7 @@ class KotlinKarma(
                     createLoadWasm(npmProject.dir, file).normalize().absolutePath
                 )
 
-                config.proxies["/${wasmFile.name}"] = wasmFileString
+                config.proxies["/${wasmFile.name}"] = basify(npmProjectDir, wasmFile)
 
                 config.customContextFile = npmProject.require("kotlin-test-js-runner/static/context.html")
                 config.customDebugFile = npmProject.require("kotlin-test-js-runner/static/debug.html")
@@ -396,7 +396,7 @@ class KotlinKarma(
             escapeTCMessagesInLog = isTeamCity.isPresent
         )
 
-        config.basePath = npmProject.nodeModulesDir.absolutePath
+        config.basePath = npmProjectDir.absolutePath
 
         configurators.forEach {
             it(task)
@@ -604,6 +604,15 @@ class KotlinKarma(
         appendConfigsFromDir(configDirectory)
         appendLine()
     }
+}
+
+// In Karma config it means relative path based on basePath which is configured inside Karma config
+// It helps to get rid of windows backslashes in proxies config
+// `base` is using because of how Karma works with proxies
+// http://karma-runner.github.io/6.4/config/configuration-file.html#proxies
+// http://karma-runner.github.io/6.4/config/files.html#loading-assets
+internal fun basify(npmProjectDir: File, file: File): String {
+    return "/base/${file.relativeTo(npmProjectDir).invariantSeparatorsPath}"
 }
 
 internal fun createLoadWasm(npmProjectDir: File, file: File): File {
