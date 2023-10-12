@@ -76,6 +76,8 @@ excludedFunctions.mingw = LLVMDumpType
 
 # Functions from LLVMIntPtrType to LLVMModuleCreateWithName are excluded because they work with the GlobalContext.
 # This might not be safe if the compiler is called from a daemon process.
+#
+# Also exclude the functions that rely on typed pointers as we get rid of them from the code generator.
 excludedFunctions = LLVMInitializeAllAsmParsers LLVMInitializeAllAsmPrinters LLVMInitializeAllDisassemblers \
     LLVMInitializeAllTargetInfos LLVMInitializeAllTargetMCs LLVMInitializeAllTargets LLVMInitializeNativeTarget \
     LLVMInitializeNativeAsmParser LLVMInitializeNativeAsmPrinter LLVMInitializeNativeDisassembler \
@@ -83,6 +85,7 @@ excludedFunctions = LLVMInitializeAllAsmParsers LLVMInitializeAllAsmPrinters LLV
     LLVMInt16Type LLVMInt32Type LLVMInt64Type LLVMInt128Type LLVMIntType LLVMHalfType LLVMFloatType LLVMDoubleType \
     LLVMX86FP80Type LLVMFP128Type LLVMPPCFP128Type LLVMX86MMXType LLVMStructType LLVMVoidType LLVMLabelType \
     LLVMMDString LLVMMDNode LLVMConstString LLVMConstStruct LLVMAppendBasicBlock LLVMInsertBasicBlock LLVMCreateBuilder \
-    LLVMParseBitcode LLVMParseBitcode2 LLVMGetBitcodeModule LLVMGetBitcodeModule2 LLVMGetGlobalContext LLVMModuleCreateWithName
+    LLVMParseBitcode LLVMParseBitcode2 LLVMGetBitcodeModule LLVMGetBitcodeModule2 LLVMGetGlobalContext LLVMModuleCreateWithName \
+    LLVMBuildLoad
 
 strictEnums = LLVMIntPredicate LLVMOpcode LLVMDLLStorageClass LLVMCallConv LLVMThreadLocalMode LLVMAtomicOrdering
