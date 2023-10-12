@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.bir.generator.model
 
-import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.bir.generator.config.*
 import org.jetbrains.kotlin.bir.generator.elementBaseType
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
@@ -35,7 +35,6 @@ fun config2model(config: Config): Model {
             packageName = ec.category.packageName,
             params = ec.params,
             fields = ec.fields.mapTo(mutableListOf(), ::transformFieldConfig),
-            additionalFactoryMethodParameters = ec.additionalIrFactoryMethodParameters.mapTo(mutableListOf(), ::transformFieldConfig)
         ).also {
             ec2el[ec.element] = it
         }
