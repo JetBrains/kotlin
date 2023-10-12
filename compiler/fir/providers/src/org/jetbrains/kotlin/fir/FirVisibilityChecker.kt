@@ -468,6 +468,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     protected fun FirBasedSymbol<*>.packageFqName(): FqName {
         return when (this) {
             is FirClassLikeSymbol<*> -> classId.packageFqName
+            is FirPropertyAccessorSymbol -> propertySymbol.packageFqName()
             is FirCallableSymbol<*> -> callableId.packageName
             else -> error("No package fq name for $this")
         }
