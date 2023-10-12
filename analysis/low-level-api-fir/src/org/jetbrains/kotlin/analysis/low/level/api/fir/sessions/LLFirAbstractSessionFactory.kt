@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.LLLibraryScopeAwareCallConflictResolverFactory
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
@@ -33,12 +32,11 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.callConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -494,11 +492,14 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             registerCommonComponentsAfterExtensionsAreConfigured()
 
             val dependencyProvider = LLFirDependenciesSymbolProvider(this) {
-                buildList {
+                val providers = buildList {
                     addMerged(computeFlattenedSymbolProviders(listOf(contextSession)))
                     add(contextSession.dependenciesSymbolProvider) // Add the context module dependency symbol provider as is
                     add(builtinsSession.symbolProvider)
                 }
+
+                // Wrap dependencies into a single classpath-filtering provider
+                listOf(LLFirCodeFragmentDependenciesSymbolProvider(FirCompositeSymbolProvider(session, providers)))
             }
 
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
@@ -533,8 +534,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             )
 
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
-
-            register(ConeCallConflictResolverFactory::class, LLLibraryScopeAwareCallConflictResolverFactory(callConflictResolverFactory))
         }
     }
 

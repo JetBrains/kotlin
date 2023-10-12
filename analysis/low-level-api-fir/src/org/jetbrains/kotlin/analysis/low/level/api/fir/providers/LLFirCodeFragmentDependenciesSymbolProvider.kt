@@ -3,45 +3,48 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
+package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolver
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
-internal class LLLibraryScopeAwareCallConflictResolverFactory(
-    private val delegateFactory: ConeCallConflictResolverFactory
-) : ConeCallConflictResolverFactory() {
-    override fun create(
-        typeSpecificityComparator: TypeSpecificityComparator,
-        components: InferenceComponents,
-        transformerComponents: BodyResolveComponents,
-    ): ConeCallConflictResolver {
-        val delegate = delegateFactory.create(typeSpecificityComparator, components, transformerComponents)
-        return LLLibraryScopeAwareConeCallConflictResolver(delegate, transformerComponents)
+class LLFirCodeFragmentDependenciesSymbolProvider(private val delegate: FirSymbolProvider) : FirSymbolProvider(delegate.session) {
+    override val symbolNamesProvider: FirSymbolNamesProvider
+        get() = delegate.symbolNamesProvider
+
+    override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        return delegate.getClassLikeSymbolByClassId(classId)
     }
-}
 
-private class LLLibraryScopeAwareConeCallConflictResolver(
-    private val delegate: ConeCallConflictResolver,
-    private val bodyResolveComponents: BodyResolveComponents
-) : ConeCallConflictResolver() {
-    override fun chooseMaximallySpecificCandidates(candidates: Set<Candidate>, discriminateAbstracts: Boolean): Set<Candidate> {
-        val filteredCandidates = when {
-            candidates.size > 1 -> filterCodeFragmentCandidates(candidates)
-            else -> candidates
-        }
+    @FirSymbolProviderInternals
+    override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+        destination += delegate.getTopLevelCallableSymbols(packageFqName, name).let(::filterSymbols)
+    }
 
-        return delegate.chooseMaximallySpecificCandidates(filteredCandidates, discriminateAbstracts)
+    @FirSymbolProviderInternals
+    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+        destination += delegate.getTopLevelFunctionSymbols(packageFqName, name).let(::filterSymbols)
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+        destination += delegate.getTopLevelPropertySymbols(packageFqName, name).let(::filterSymbols)
+    }
+
+    override fun getPackage(fqName: FqName): FqName? {
+        return delegate.getPackage(fqName)
     }
 
     // In complex projects, there might be several library copies (with the same or different versions).
@@ -50,18 +53,20 @@ private class LLLibraryScopeAwareConeCallConflictResolver(
     // Normally, K2 issues a 'resolution ambiguity' error on calls to such libraries. It is sort of acceptable for resolution, as
     // resolution errors are never shown in the library code. However, the backend, to which 'evaluate expression' needs to pass FIR
     // afterwards, is not designed for compiling ambiguous (and non-completed) calls.
-    // The code below scans for declaration duplicates, and chooses a set of them from a single class input (a JAR or a directory).
+    // The code below scans for declaration duplicates, and chooses a number of them from a single class input (a JAR or a directory).
     // The logic is not ideal, as, in theory, versions might differ non-trivially: each artifact may have unique declarations.
     // However, such cases should be relatively rare, and to provide the candidate list more precisely, one would need to also compare
     // signatures of each declaration.
-    private fun filterCodeFragmentCandidates(candidates: Set<Candidate>): Set<Candidate> {
-        val binaryCallableCandidates = LinkedHashMap<CallableId, MutableMap<VirtualFile, MutableList<Candidate>>>()
-        val otherCandidates = ArrayList<Candidate>()
+    private fun <T : FirCallableSymbol<*>> filterSymbols(symbols: List<T>): List<T> {
+        if (symbols.size < 2) {
+            return symbols
+        }
 
-        for (candidate in candidates) {
-            val symbol = candidate.symbol
+        val binarySymbols = LinkedHashMap<CallableId, MutableMap<VirtualFile, MutableList<T>>>()
+        val otherSymbols = ArrayList<T>()
 
-            if (symbol is FirCallableSymbol<*> && symbol.callableId.className == null) {
+        for (symbol in symbols) {
+            if (symbol.callableId.className == null) {
                 val callableId = symbol.callableId
 
                 val symbolFile = symbol.fir.psi?.containingFile
@@ -69,29 +74,32 @@ private class LLLibraryScopeAwareConeCallConflictResolver(
                 if (symbolFile is KtFile && symbolFile.isCompiled && symbolVirtualFile != null) {
                     val symbolRootVirtualFile = getSymbolRootFile(symbolVirtualFile, symbolFile.packageFqName)
                     if (symbolRootVirtualFile != null) {
-                        binaryCallableCandidates
+                        binarySymbols
                             .getOrPut(callableId, ::LinkedHashMap)
                             .getOrPut(symbolRootVirtualFile, ::ArrayList)
-                            .add(candidate)
+                            .add(symbol)
                         continue
                     }
                 }
             }
 
-            otherCandidates.add(candidate)
+            otherSymbols.add(symbol)
         }
 
-        if (binaryCallableCandidates.isNotEmpty()) {
-            return buildSet {
-                addAll(otherCandidates)
-                for (binaryCallableCandidateGroup in binaryCallableCandidates.values) {
-                    val chosenGroupKey = binaryCallableCandidateGroup.keys.maxBy { it.path }
-                    addAll(binaryCallableCandidateGroup[chosenGroupKey].orEmpty())
+        if (binarySymbols.isNotEmpty()) {
+            return buildList {
+                addAll(otherSymbols)
+                for (binarySymbolGroup in binarySymbols.values) {
+                    // For consistency with class symbol fetching, callable symbols are returned in the same order as indices returned.
+                    val firstBinarySymbolGroupValue = binarySymbolGroup.values.first()
+                    if (firstBinarySymbolGroupValue.isNotEmpty()) {
+                        addAll(firstBinarySymbolGroupValue)
+                    }
                 }
             }
         }
 
-        return candidates
+        return symbols
     }
 
     private fun getSymbolRootFile(virtualFile: VirtualFile, packageFqName: FqName): VirtualFile? {
