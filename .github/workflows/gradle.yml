@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  checks: write
 
 jobs:
   build:
@@ -36,3 +37,9 @@ jobs:
       uses: gradle/gradle-build-action@v2
     - name: Run test without contract
       run: ./gradlew :kotlin-formver-compiler-plugin:test --tests org.jetbrains.kotlin.formver.plugin.runners.FirLightTreeFormVerPluginDiagnosticsTestGenerated\$No_contracts
+    - name: Report failing test results
+      uses: mikepenz/action-junit-report@v4
+      if: failure()
+      with:
+        report_paths: '**/build/test-results/test/TEST-*.xml'
+        
