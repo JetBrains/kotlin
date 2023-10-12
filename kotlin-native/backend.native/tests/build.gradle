@@ -5052,6 +5052,10 @@ dynamicTest("interop_concurrentRuntime") {
     source = "interop/concurrentTerminate/reverseInterop.kt"
     cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
     clangTool = "clang++"
+    if (project.testTarget == 'mingw_x64') {
+        // Our sysroot for mingw_x64 still requires -femulated-tls. For C++ code as well. See KT-46612.
+        clangFlags += "-femulated-tls"
+    }
     outputChecker = { str -> str.startsWith("Uncaught Kotlin exception: kotlin.RuntimeException: Example") }
     expectedExitStatus = 99
 }
