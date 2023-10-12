@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.bir.generator.config
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
-import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.bir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.bir.generator.model.Element
 import org.jetbrains.kotlin.bir.generator.util.*
+import org.jetbrains.kotlin.generators.tree.*
 
 class Config(
     val elements: List<ElementConfig>,
@@ -38,10 +38,6 @@ class ElementConfig(
     var childrenOrderOverride: List<String>? = null
 
     var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
-
-    var generateIrFactoryMethod = category == Category.Declaration
-    val additionalIrFactoryMethodParameters = mutableListOf<FieldConfig>()
-    val fieldsToSkipInIrFactoryMethod = hashSetOf<String>()
 
     /**
      * Set this to `true` if the element should be a leaf semantically, but technically it's not.
@@ -112,13 +108,6 @@ class ElementConfigRef(
     override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }
 
-sealed class UseFieldAsParameterInIrFactoryStrategy {
-
-    data object No : UseFieldAsParameterInIrFactoryStrategy()
-
-    data class Yes(val defaultValue: CodeBlock?) : UseFieldAsParameterInIrFactoryStrategy()
-}
-
 sealed class FieldConfig(
     val name: String,
     val isChild: Boolean,
@@ -127,21 +116,6 @@ sealed class FieldConfig(
     var baseGetter: CodeBlock? = null
     var printProperty = true
     var strictCastInTransformChildren = false
-
-    internal var useFieldInIrFactoryStrategy: UseFieldAsParameterInIrFactoryStrategy =
-        if (isChild) UseFieldAsParameterInIrFactoryStrategy.No else UseFieldAsParameterInIrFactoryStrategy.Yes(null)
-
-    fun useFieldInIrFactory(defaultValue: CodeBlock? = null) {
-        useFieldInIrFactoryStrategy = UseFieldAsParameterInIrFactoryStrategy.Yes(defaultValue)
-    }
-
-    fun useFieldInIrFactory(defaultValue: Boolean) {
-        useFieldInIrFactoryStrategy = UseFieldAsParameterInIrFactoryStrategy.Yes(code("%L", defaultValue))
-    }
-
-    fun skipInIrFactory() {
-        useFieldInIrFactoryStrategy = UseFieldAsParameterInIrFactoryStrategy.No
-    }
 
     var kdoc: String? = null
 
