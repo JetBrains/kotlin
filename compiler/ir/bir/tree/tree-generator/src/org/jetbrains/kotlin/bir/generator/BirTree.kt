@@ -66,19 +66,14 @@ object BirTree : AbstractTreeBuilder() {
         transform = true
         transformByChildren = true
 
-        fun offsetField(prefix: String) = field(prefix + "Offset", int, mutable = false) {
+        field("sourceSpan", type(Packages.tree, "SourceSpan"), mutable = false) {
             kdoc = """
-            The $prefix offset of the syntax node from which this IR node was generated,
+            The span of the syntax node from which this IR node was generated,
             in number of characters from the start of the source file. If there is no source information for this IR node,
             the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column number from this offset,
             [BirFileEntry.getLineNumber] and [BirFileEntry.getColumnNumber] can be used.
-            
-            @see IrFileEntry.getSourceRangeInfo
             """.trimIndent()
         }
-
-        +offsetField("start")
-        +offsetField("end")
 
         kDoc = "The root interface of the IR tree. Each IR node implements this interface."
     }

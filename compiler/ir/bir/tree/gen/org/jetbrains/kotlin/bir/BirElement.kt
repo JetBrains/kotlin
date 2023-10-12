@@ -18,30 +18,6 @@ import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
  */
 interface BirElement {
     /**
-     * The start offset of the syntax node from which this IR node was generated,
-     * in number of characters from the start of the source file. If there is no source information
-     * for this IR node,
-     * the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column
-     * number from this offset,
-     * [BirFileEntry.getLineNumber] and [BirFileEntry.getColumnNumber] can be used.
-     *
-     * @see IrFileEntry.getSourceRangeInfo
-     */
-    val startOffset: Int
-
-    /**
-     * The end offset of the syntax node from which this IR node was generated,
-     * in number of characters from the start of the source file. If there is no source information
-     * for this IR node,
-     * the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column
-     * number from this offset,
-     * [BirFileEntry.getLineNumber] and [BirFileEntry.getColumnNumber] can be used.
-     *
-     * @see IrFileEntry.getSourceRangeInfo
-     */
-    val endOffset: Int
-
-    /**
      * Runs the provided [visitor] on the IR subtree with the root at this node.
      *
      * @param visitor The visitor to accept.

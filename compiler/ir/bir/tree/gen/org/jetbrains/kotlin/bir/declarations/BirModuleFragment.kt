@@ -32,10 +32,10 @@ abstract class BirModuleFragment : BirElementBase(), BirElement {
 
     abstract val files: MutableList<BirFile>
 
-    override val startOffset: Int
+    val startOffset: Int
         get() = UNDEFINED_OFFSET
 
-    override val endOffset: Int
+    val endOffset: Int
         get() = UNDEFINED_OFFSET
 
     override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
