@@ -3165,8 +3165,7 @@ tasks.register("vararg_of_literals", KonanLocalTest) {
 }
 
 standaloneTest('tailrec') {
-    disabled = isAggressiveGC || // TODO: Investigate why too slow
-            isK2(project) // KT-56269
+    disabled = isAggressiveGC // TODO: Investigate why too slow
     useGoldenData = true
     source = "lower/tailrec.kt"
     flags = ['-XXLanguage:-ProhibitTailrecOnVirtualMember', '-e', 'lower.tailrec.main']
