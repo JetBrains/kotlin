@@ -540,52 +540,6 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     }
 
     @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jsCode")
-    @TestDataPath("$PROJECT_ROOT")
-    public class JsCode {
-        @Test
-        public void testAllFilesPresentInJsCode() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/jsCode"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
-        }
-
-        @Test
-        @TestMetadata("argumentIsLiteral.kt")
-        public void testArgumentIsLiteral() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/argumentIsLiteral.kt");
-        }
-
-        @Test
-        @TestMetadata("badAssignment.kt")
-        public void testBadAssignment() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/badAssignment.kt");
-        }
-
-        @Test
-        @TestMetadata("deleteOperation.kt")
-        public void testDeleteOperation() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/deleteOperation.kt");
-        }
-
-        @Test
-        @TestMetadata("error.kt")
-        public void testError() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/error.kt");
-        }
-
-        @Test
-        @TestMetadata("noJavaScriptProduced.kt")
-        public void testNoJavaScriptProduced() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/noJavaScriptProduced.kt");
-        }
-
-        @Test
-        @TestMetadata("warning.kt")
-        public void testWarning() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsCode/warning.kt");
-        }
-    }
-
-    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/jvmDeclarations")
     @TestDataPath("$PROJECT_ROOT")
     public class JvmDeclarations {

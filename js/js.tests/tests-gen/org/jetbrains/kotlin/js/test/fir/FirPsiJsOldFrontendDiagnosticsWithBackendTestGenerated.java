@@ -124,6 +124,52 @@ public class FirPsiJsOldFrontendDiagnosticsWithBackendTestGenerated extends Abst
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JsCode {
+        @Test
+        public void testAllFilesPresentInJsCode() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("argumentIsLiteral.kt")
+        public void testArgumentIsLiteral() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/argumentIsLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("badAssignment.kt")
+        public void testBadAssignment() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/badAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("deleteOperation.kt")
+        public void testDeleteOperation() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/deleteOperation.kt");
+        }
+
+        @Test
+        @TestMetadata("error.kt")
+        public void testError() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/error.kt");
+        }
+
+        @Test
+        @TestMetadata("noJavaScriptProduced.kt")
+        public void testNoJavaScriptProduced() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/noJavaScriptProduced.kt");
+        }
+
+        @Test
+        @TestMetadata("warning.kt")
+        public void testWarning() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/warning.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/unsupportedFeatures")
     @TestDataPath("$PROJECT_ROOT")
     public class UnsupportedFeatures {
