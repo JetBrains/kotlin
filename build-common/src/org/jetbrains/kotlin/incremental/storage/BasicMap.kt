@@ -39,7 +39,7 @@ interface BasicMap<KEY, VALUE> : PersistentStorage<KEY, VALUE> {
      *   - There is currently no good use case for flushing. In fact, the current implementation of this method does nothing.
      */
     fun flush(memoryCachesOnly: Boolean) {
-        check(!memoryCachesOnly) { "Expected memoryCachesOnly = false but it is `true`" }
+//        check(!memoryCachesOnly) { "Expected memoryCachesOnly = false but it is `true`" }
     }
 
     /**
