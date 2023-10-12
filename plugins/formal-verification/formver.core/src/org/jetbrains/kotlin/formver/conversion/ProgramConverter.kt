@@ -155,13 +155,16 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         return object : FullNamedFunctionSignature, NamedFunctionSignature by subSignature {
             override val preconditions = subSignature.formalArgs.flatMap { it.invariants() } +
                     subSignature.formalArgs.flatMap { it.accessInvariants() } +
-                    contractVisitor.getPreconditions(symbol)
+                    contractVisitor.getPreconditions(symbol) +
+                    subSignature.stdLibPreConditions()
 
             override val postconditions = subSignature.formalArgs.flatMap { it.accessInvariants() } +
                     subSignature.params.flatMap { it.dynamicInvariants() } +
                     subSignature.returnVar.invariants() +
                     subSignature.returnVar.provenInvariants() +
-                    contractVisitor.getPostconditions(symbol)
+                    subSignature.returnVar.accessInvariants() +
+                    contractVisitor.getPostconditions(symbol) +
+                    subSignature.stdLibPostConditions()
         }
     }
 
@@ -182,15 +185,13 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
     private fun processProperty(symbol: FirPropertySymbol) {
         val name = symbol.callableId.embedMemberPropertyName()
-        val backingField = symbol.hasBackingField.ifTrue {
-            FieldEmbedding(symbol.callableId.embedMemberPropertyName(), embedType(symbol.resolvedReturnType))
-        }
-
+        val backingField = name.specialEmbedding()
+            ?: symbol.hasBackingField
+                .ifTrue { FieldEmbedding(symbol.callableId.embedMemberPropertyName(), embedType(symbol.resolvedReturnType)) }
+                ?.also { fields.add(it) }
         val getter: GetterEmbedding? = symbol.getterSymbol?.let { embedGetter(it, backingField) }
         val setter: SetterEmbedding? = symbol.setterSymbol?.let { embedSetter(it, backingField) }
-
         properties[name] = PropertyEmbedding(getter, setter)
-        backingField?.let { fields.add(it) }
     }
 
     @OptIn(SymbolInternals::class)

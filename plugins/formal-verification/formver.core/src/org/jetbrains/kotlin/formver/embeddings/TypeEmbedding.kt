@@ -126,6 +126,11 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
         get() = NullLit(elementType)
 
     override fun provenInvariants(v: Exp) = listOf(subtypeInvariant(v))
+
+    override fun accessInvariants(v: Exp): List<Exp> {
+        return elementType.accessInvariants(CastingDomain.cast(v, elementType))
+            .map { Exp.Implies(Exp.NeCmp(v, nullVal.toViper()), it) }
+    }
 }
 
 abstract class UnspecifiedFunctionTypeEmbedding : TypeEmbedding {
@@ -171,4 +176,15 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName, val superTypes: L
     }
 
     override fun provenInvariants(v: Exp) = listOf(subtypeInvariant(v))
+
+    override fun accessInvariants(v: Exp): List<Exp> {
+        return if (className.isCollection) {
+            listOf(
+                v.fieldAccessPredicate(SpecialFields.ListSizeField, PermExp.FullPerm()),
+                Exp.GeCmp(v.fieldAccess(SpecialFields.ListSizeField), Exp.IntLit(0))
+            )
+        } else {
+            emptyList()
+        }
+    }
 }

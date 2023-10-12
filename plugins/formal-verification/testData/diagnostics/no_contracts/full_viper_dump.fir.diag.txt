@@ -263,6 +263,8 @@ field class_scope_global$class_Foo$member_x: Int
 
 field special$function_object_call_counter: Int
 
+field special$size: Int
+
 function special$duplicable(anonymous$0: Ref): Bool
 
 

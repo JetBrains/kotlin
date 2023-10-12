@@ -18,9 +18,13 @@ abstract class BackingFieldAccess(val field: FieldEmbedding) {
     ) {
         val fieldAccess = FieldAccess(receiver, field)
         val accPred = fieldAccess.getAccessPredicate()
-        ctx.addStatement(Stmt.Inhale(accPred))
+        if (field.inhaleOnAccess) {
+            ctx.addStatement(Stmt.Inhale(accPred))
+        }
         ctx.action(fieldAccess)
-        ctx.addStatement(Stmt.Exhale(accPred))
+        if (field.inhaleOnAccess) {
+            ctx.addStatement(Stmt.Exhale(accPred))
+        }
     }
 }
 

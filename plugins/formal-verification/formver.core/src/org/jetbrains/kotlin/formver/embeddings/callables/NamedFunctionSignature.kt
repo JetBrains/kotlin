@@ -20,6 +20,12 @@ interface NamedFunctionSignature : FunctionSignature {
             is ScopedKotlinName -> (signatureName.name as? FunctionKotlinName)?.name?.asString()
             else -> null
         }
+
+    val isCollection: Boolean
+        get() = when (val signatureName = name) {
+            is ScopedKotlinName -> signatureName.isCollection
+            else -> false
+        }
 }
 
 fun NamedFunctionSignature.toMethodCall(

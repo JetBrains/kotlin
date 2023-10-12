@@ -18,4 +18,3 @@ class ClassPropertyAccess(val receiver: ExpEmbedding, val property: PropertyEmbe
         property.setter!!.setValue(receiver, value, ctx)
     }
 }
-
