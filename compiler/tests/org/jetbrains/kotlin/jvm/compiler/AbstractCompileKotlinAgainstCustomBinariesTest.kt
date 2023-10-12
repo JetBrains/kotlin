@@ -712,6 +712,14 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         output.lines().filterNot { "argument -Xexpect-actual-linker is deprecated" in it }.joinToString("\n")
     }
 
+    fun testConstEvaluationWithDifferentLV() {
+        val library = compileJsLibrary("library", additionalOptions = listOf("-language-version", "1.9"))
+        compileKotlin(
+            "src", File(tmpdir, "usage.js"), emptyList(), K2JSCompiler(),
+            additionalOptions = listOf("-Xinclude=${library.absolutePath}", "-Xir-produce-js"),
+        )
+    }
+
     private fun doTestAnonymousObjectTypeMetadata(
         extraCommandLineArguments: List<String> = emptyList(),
         filterOutput: (String) -> String = { output -> output }

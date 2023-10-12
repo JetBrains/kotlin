@@ -40,23 +40,21 @@ fun IrFile.transformConst(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     suppressExceptions: Boolean = false,
 ) {
-    val preprocessedFile = this.preprocessForConstTransformer(interpreter, mode)
-
     val checker = IrInterpreterCommonChecker()
     val irConstExpressionTransformer = IrConstOnlyNecessaryTransformer(
-        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+        interpreter, this, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-    preprocessedFile.transform(irConstExpressionTransformer, IrConstTransformer.Data())
+    this.transform(irConstExpressionTransformer, IrConstTransformer.Data())
 
     val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
-        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+        interpreter, this, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-    preprocessedFile.transform(irConstDeclarationAnnotationTransformer, IrConstTransformer.Data())
+    this.transform(irConstDeclarationAnnotationTransformer, IrConstTransformer.Data())
 
     val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
-        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+        interpreter, this, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
     )
-    preprocessedFile.transform(irConstTypeAnnotationTransformer, IrConstTransformer.Data())
+    this.transform(irConstTypeAnnotationTransformer, IrConstTransformer.Data())
 }
 
 fun IrFile.runConstOptimizations(
@@ -66,14 +64,18 @@ fun IrFile.runConstOptimizations(
     inlineConstTracker: InlineConstTracker? = null,
     suppressExceptions: Boolean = false,
 ) {
+    val preprocessedFile = this.preprocessForConstTransformer(interpreter, mode)
+
     val checker = IrInterpreterCommonChecker()
     val irConstExpressionTransformer = IrConstAllTransformer(
-        interpreter, this, mode, checker, evaluatedConstTracker, inlineConstTracker, { _, _, _ -> }, { _, _, _ -> }, suppressExceptions
+        interpreter, preprocessedFile, mode, checker, evaluatedConstTracker, inlineConstTracker,
+        { _, _, _ -> }, { _, _, _ -> },
+        suppressExceptions
     )
-    this.transform(irConstExpressionTransformer, IrConstTransformer.Data())
+    preprocessedFile.transform(irConstExpressionTransformer, IrConstTransformer.Data())
 }
 
-fun IrFile.preprocessForConstTransformer(
+private fun IrFile.preprocessForConstTransformer(
     interpreter: IrInterpreter,
     mode: EvaluationMode,
 ): IrFile {
