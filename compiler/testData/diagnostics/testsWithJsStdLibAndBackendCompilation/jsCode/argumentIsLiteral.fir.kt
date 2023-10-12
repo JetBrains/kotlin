@@ -1,3 +1,8 @@
+// FIR_DIFFERENCE
+// The diagnostic cannot be implemented with the FIR frontend checker because it requires constant evaluation over FIR.
+// The diagnostic is implemented as a klib check over IR.
+
+// ERROR_POLICY: SEMANTIC
 val a = "1"
 
 fun nonConst(): String = "1"
@@ -5,20 +10,20 @@ fun nonConst(): String = "1"
 fun test() {
     val b = "b"
 
-    js(a)
-    js((b))
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>a<!>)
+    js((<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>b<!>))
     js(("c"))
-    js(<!ARGUMENT_TYPE_MISMATCH!>3<!>)
-    js(<!ARGUMENT_TYPE_MISMATCH!>3 + 2<!>)
-    js(<!ARGUMENT_TYPE_MISMATCH!>1.0f<!>)
-    js(<!ARGUMENT_TYPE_MISMATCH!>true<!>)
-    js("$a")
+    js(<!ARGUMENT_TYPE_MISMATCH, JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>3<!>)
+    js(<!ARGUMENT_TYPE_MISMATCH, JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>3 + 2<!>)
+    js(<!ARGUMENT_TYPE_MISMATCH, JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>1.0f<!>)
+    js(<!ARGUMENT_TYPE_MISMATCH, JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>true<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"$<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!>"<!>)
     js("${1}")
-    js("$b;")
-    js("${b}bb")
-    js(a + a)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"$<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>b<!>;"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>b<!>}bb"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!><!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!> + <!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>a<!><!>)
     js("a" + "a")
     js("ccc")
 
-    js(nonConst())
+    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION, JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>nonConst()<!>)
 }
