@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 
 /**
  * A non-leaf IR tree element.
@@ -17,7 +16,4 @@ import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
  */
 abstract class BirErrorExpression : BirExpression() {
     abstract var description: String
-
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitErrorExpression(this, data)
 }

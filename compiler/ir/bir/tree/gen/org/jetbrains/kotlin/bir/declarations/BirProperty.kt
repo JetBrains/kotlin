@@ -8,9 +8,9 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
@@ -45,18 +45,9 @@ abstract class BirProperty : BirDeclarationBase(), BirPossiblyExternalDeclaratio
 
     abstract var setter: BirSimpleFunction?
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitProperty(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        backingField?.accept(visitor, data)
-        getter?.accept(visitor, data)
-        setter?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        backingField = backingField?.transform(transformer, data) as BirField?
-        getter = getter?.transform(transformer, data) as BirSimpleFunction?
-        setter = setter?.transform(transformer, data) as BirSimpleFunction?
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        backingField?.accept(data, visitor)
+        getter?.accept(data, visitor)
+        setter?.accept(data, visitor)
     }
 }

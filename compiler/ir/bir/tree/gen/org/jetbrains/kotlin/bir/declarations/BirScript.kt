@@ -8,18 +8,16 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirStatementContainer
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirScriptSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.bir.util.transformIfNeeded
-import org.jetbrains.kotlin.bir.util.transformInPlace
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.script]
  */
@@ -51,26 +49,12 @@ abstract class BirScript : BirDeclarationBase(), BirDeclarationWithName,
 
     abstract var constructor: BirConstructor?
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitScript(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        statements.forEach { it.accept(visitor, data) }
-        thisReceiver?.accept(visitor, data)
-        explicitCallParameters.forEach { it.accept(visitor, data) }
-        implicitReceiversParameters.forEach { it.accept(visitor, data) }
-        providedPropertiesParameters.forEach { it.accept(visitor, data) }
-        earlierScriptsParameter?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        statements.transformInPlace(transformer, data)
-        thisReceiver = thisReceiver?.transform(transformer, data)
-        explicitCallParameters = explicitCallParameters.transformIfNeeded(transformer, data)
-        implicitReceiversParameters = implicitReceiversParameters.transformIfNeeded(transformer,
-                data)
-        providedPropertiesParameters = providedPropertiesParameters.transformIfNeeded(transformer,
-                data)
-        earlierScriptsParameter = earlierScriptsParameter?.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        statements.forEach { it.accept(data, visitor) }
+        thisReceiver?.accept(data, visitor)
+        explicitCallParameters.forEach { it.accept(data, visitor) }
+        implicitReceiversParameters.forEach { it.accept(data, visitor) }
+        providedPropertiesParameters.forEach { it.accept(data, visitor) }
+        earlierScriptsParameter?.accept(data, visitor)
     }
 }

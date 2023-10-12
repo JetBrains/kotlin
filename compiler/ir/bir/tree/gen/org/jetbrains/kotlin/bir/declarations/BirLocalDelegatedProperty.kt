@@ -8,15 +8,15 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.localDelegatedProperty]
  */
@@ -37,18 +37,9 @@ abstract class BirLocalDelegatedProperty : BirDeclarationBase(), BirDeclarationW
 
     abstract var setter: BirSimpleFunction?
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitLocalDelegatedProperty(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        delegate.accept(visitor, data)
-        getter.accept(visitor, data)
-        setter?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        delegate = delegate.transform(transformer, data) as BirVariable
-        getter = getter.transform(transformer, data) as BirSimpleFunction
-        setter = setter?.transform(transformer, data) as BirSimpleFunction?
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        delegate.accept(data, visitor)
+        getter.accept(data, visitor)
+        setter?.accept(data, visitor)
     }
 }

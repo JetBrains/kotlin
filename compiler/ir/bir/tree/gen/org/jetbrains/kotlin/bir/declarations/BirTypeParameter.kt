@@ -10,14 +10,12 @@ package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.types.Variance
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeParameter]
  */
@@ -34,10 +32,4 @@ abstract class BirTypeParameter : BirDeclarationBase(), BirDeclarationWithName {
     abstract var isReified: Boolean
 
     abstract var superTypes: List<BirType>
-
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitTypeParameter(this, data)
-
-    override fun <D> transform(transformer: BirElementTransformer<D>, data: D):
-            BirTypeParameter = accept(transformer, data) as BirTypeParameter
 }

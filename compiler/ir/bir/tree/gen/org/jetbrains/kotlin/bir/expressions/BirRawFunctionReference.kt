@@ -9,16 +9,12 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.rawFunctionReference]
  */
 abstract class BirRawFunctionReference : BirDeclarationReference() {
     abstract override var symbol: BirFunctionSymbol
-
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitRawFunctionReference(this, data)
 }

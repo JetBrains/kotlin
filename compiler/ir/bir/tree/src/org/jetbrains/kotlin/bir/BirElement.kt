@@ -6,11 +6,15 @@
 // This file was generated automatically. See compiler/ir/ir.tree/tree-generator/ReadMe.md.
 // DO NOT MODIFY IT MANUALLY.
 
-package org.jetbrains.kotlin.bir.expressions
+package org.jetbrains.kotlin.bir
 
 /**
- * A non-leaf IR tree element.
+ * The root interface of the IR tree. Each IR node implements this interface.
  *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.continue]
+ * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.rootElement]
  */
-abstract class BirContinue : BirBreakContinue()
+interface BirElement {
+    val sourceSpan: SourceSpan
+
+    fun<D> acceptChildren(visitor: BirElementVisitor<D>, data: D)
+}

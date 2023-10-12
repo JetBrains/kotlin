@@ -8,13 +8,13 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.functionExpression]
  */
@@ -23,14 +23,7 @@ abstract class BirFunctionExpression : BirExpression() {
 
     abstract var function: BirSimpleFunction
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitFunctionExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        function.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        function = function.transform(transformer, data) as BirSimpleFunction
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        function.accept(data, visitor)
     }
 }

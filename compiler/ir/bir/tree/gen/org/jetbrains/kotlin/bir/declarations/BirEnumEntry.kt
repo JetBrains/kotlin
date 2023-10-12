@@ -8,15 +8,15 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirEnumEntrySymbol
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.enumEntry]
  */
@@ -30,16 +30,8 @@ abstract class BirEnumEntry : BirDeclarationBase(), BirDeclarationWithName {
 
     abstract var correspondingClass: BirClass?
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitEnumEntry(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        initializerExpression?.accept(visitor, data)
-        correspondingClass?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        initializerExpression = initializerExpression?.transform(transformer, data)
-        correspondingClass = correspondingClass?.transform(transformer, data) as BirClass?
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        initializerExpression?.accept(data, visitor)
+        correspondingClass?.accept(data, visitor)
     }
 }
