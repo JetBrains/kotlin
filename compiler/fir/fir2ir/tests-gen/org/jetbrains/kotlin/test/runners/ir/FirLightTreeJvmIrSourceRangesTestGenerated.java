@@ -62,6 +62,12 @@ public class FirLightTreeJvmIrSourceRangesTestGenerated extends AbstractFirLight
     }
 
     @Test
+    @TestMetadata("multiLineCall.kt")
+    public void testMultiLineCall() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/multiLineCall.kt");
+    }
+
+    @Test
     @TestMetadata("operators.kt")
     public void testOperators() throws Exception {
         runTest("compiler/testData/ir/sourceRanges/operators.kt");
