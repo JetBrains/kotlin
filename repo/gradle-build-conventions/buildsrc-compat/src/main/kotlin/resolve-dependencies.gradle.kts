@@ -6,10 +6,10 @@ import org.spdx.sbom.gradle.SpdxSbomExtension
 
 
 /*
- * When called with `--write-verification-metadata` resolves all build dependencies including implicit dependecies for all platforms and
- * dependencies downloaded by plugins. Usefull to populate Gradle dependency cache or update `verification-metadata.xml` properly.
+ * When called with `--write-verification-metadata` resolves all build dependencies including implicit dependencies for all platforms and
+ * dependencies downloaded by plugins. Useful to populate Gradle dependency cache or update `verification-metadata.xml` properly.
  *
- * `./gradlew resolveDependencies --write-verification-metadata md5,sha256`
+ * `./gradlew resolveDependencies --write-verification-metadata md5,sha256 -Pkotlin.native.enabled=true`
  */
 tasks.register("resolveDependencies") {
     doFirst {
