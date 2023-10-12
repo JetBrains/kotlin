@@ -49,28 +49,28 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -81,28 +81,28 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -113,28 +113,28 @@
       <scope>compile</scope>
       <exclusions>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-reflect</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk8</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib-jdk7</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-stdlib</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
+          <groupId>org.jetbrains.kotlin</groupId>
           <artifactId>kotlin-script-runtime</artifactId>
-          <groupId>org.jetbrains.kotlin</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>kotlin-stdlib-common</artifactId>
           <groupId>org.jetbrains.kotlin</groupId>
+          <artifactId>kotlin-stdlib-common</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
