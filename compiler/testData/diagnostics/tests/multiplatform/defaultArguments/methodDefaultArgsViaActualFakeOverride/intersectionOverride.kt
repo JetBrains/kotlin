@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: -ProhibitDifferentMemberScopesInOpenExpect
 // MODULE: m1-common
 // FILE: common.kt

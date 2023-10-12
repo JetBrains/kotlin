@@ -3,7 +3,7 @@
 // FILE: common.kt
 
 // K2: false positve INCOMPATIBLE_MATCHING: KT-60155
-<!INCOMPATIBLE_MATCHING{JVM}!>public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
     override val values: MutableCollection<V>
 }<!>
 

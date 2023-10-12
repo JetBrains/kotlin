@@ -2,13 +2,13 @@
 // FILE: common.kt
 annotation class Ann
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class WeakIncompatibility {
-    <!INCOMPATIBLE_MATCHING{JVM}!>@Ann
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect class WeakIncompatibility {
+    <!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>@Ann
     fun foo(p: String)<!>
 }<!>
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class StrongIncompatibility {
-    <!INCOMPATIBLE_MATCHING{JVM}!>@Ann
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect class StrongIncompatibility {
+    <!EXPECT_ACTUAL_MISMATCH{JVM}!>@Ann
     fun foo(p: Int)<!>
 }<!>
 
@@ -18,7 +18,7 @@ class WeakIncompatibilityImpl {
     fun foo(differentName: String) {}
 }
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>WeakIncompatibility<!> = WeakIncompatibilityImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>WeakIncompatibility<!> = WeakIncompatibilityImpl<!>
 
 class StrongIncompatibilityImpl {
     fun foo(p: String) {} // Different param type

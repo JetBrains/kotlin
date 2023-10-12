@@ -73,26 +73,26 @@ object AbstractExpectActualChecker {
         result as ExpectActualCheckingCompatibility<T>
     }
 
-    //fun <T : DeclarationSymbolMarker> matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
-    //    expectDeclaration: DeclarationSymbolMarker,
-    //    actualDeclarations: List<DeclarationSymbolMarker>,
-    //    context: ExpectActualMatchingContext<T>,
-    //    checkClassScopesCompatibility: Boolean,
-    //    languageVersionSettings: LanguageVersionSettings,
-    //) {
-    //    with(context) {
-    //        matchSingleExpectAgainstPotentialActuals(
-    //            expectDeclaration,
-    //            actualDeclarations,
-    //            substitutor = null,
-    //            expectClassSymbol = null,
-    //            actualClassSymbol = null,
-    //            unfulfilled = null,
-    //            checkClassScopesCompatibility = true,
-    //            languageVersionSettings,
-    //        )
-    //    }
-    //}
+    fun <T : DeclarationSymbolMarker> checkSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+        expectDeclaration: DeclarationSymbolMarker,
+        actualDeclarations: List<DeclarationSymbolMarker>,
+        context: ExpectActualMatchingContext<T>,
+        checkClassScopesCompatibility: Boolean,
+        languageVersionSettings: LanguageVersionSettings,
+    ) {
+        with(context) {
+            checkSingleExpectAgainstPotentialActuals(
+                expectDeclaration,
+                actualDeclarations,
+                substitutor = null,
+                expectClassSymbol = null,
+                actualClassSymbol = null,
+                incompatibleMembers = null,
+                checkClassScopesCompatibility = true,
+                languageVersionSettings,
+            )
+        }
+    }
 
     context(ExpectActualMatchingContext<*>)
     @Suppress("warnings")

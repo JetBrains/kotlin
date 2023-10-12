@@ -3,10 +3,10 @@
 // FILE: common.kt
 
 open class Base {
-    <!INCOMPATIBLE_MATCHING{JVM}!>open fun <T> foo(t: T) {}<!>
+    <!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>open fun <T> foo(t: T) {}<!>
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Foo : Base<!>
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect open class Foo : Base<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

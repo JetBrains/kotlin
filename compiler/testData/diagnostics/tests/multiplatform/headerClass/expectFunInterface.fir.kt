@@ -5,7 +5,7 @@ expect fun interface F1 {
     fun run()
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect fun interface F2 {
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect fun interface F2 {
     fun run()
 }<!>
 
@@ -21,7 +21,7 @@ expect fun interface F5 {
     fun run()
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect fun interface F6 {
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect fun interface F6 {
     fun run()
 }<!>
 
@@ -64,4 +64,4 @@ interface F6Typealias {
 
 actual typealias <!ACTUAL_WITHOUT_EXPECT!>F6<!> = F6Typealias
 
-actual typealias <!ACTUAL_WITHOUT_EXPECT!>F7<!> = NotSam
+actual typealias <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_ERROR, ACTUAL_WITHOUT_EXPECT!>F7<!> = NotSam

@@ -7,7 +7,7 @@ expect fun foo1(x: Int)
 
 expect class NoArgConstructor()
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun foo3(): Int<!>
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect fun foo3(): Int<!>
 <!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun foo4(): Int<!>
 
 // MODULE: m2-jvm()()(m1-common)

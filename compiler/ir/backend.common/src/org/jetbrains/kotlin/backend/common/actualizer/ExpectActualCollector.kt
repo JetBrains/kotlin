@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
@@ -202,7 +204,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
     }
 
     private fun matchExpectCallable(declaration: IrDeclarationWithName, callableId: CallableId, context: MatchingContext) {
-        matchExpectDeclaration(
+        matchAndCheckExpectDeclaration(
             declaration.symbol,
             context.classActualizationInfo.actualTopLevels[callableId].orEmpty(),
             context
@@ -214,20 +216,29 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
         val classId = declaration.classIdOrFail
         val expectClassSymbol = declaration.symbol
         val actualClassLikeSymbol = data.classActualizationInfo.getActualWithoutExpansion(classId)
-        matchExpectDeclaration(expectClassSymbol, listOfNotNull(actualClassLikeSymbol), data)
+        matchAndCheckExpectDeclaration(expectClassSymbol, listOfNotNull(actualClassLikeSymbol), data)
     }
 
-    private fun matchExpectDeclaration(
+    private fun matchAndCheckExpectDeclaration(
         expectSymbol: IrSymbol,
         actualSymbols: List<IrSymbol>,
         context: MatchingContext
     ) {
-        AbstractExpectActualMatcher.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+        val matched = AbstractExpectActualMatcher.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
             expectSymbol,
             actualSymbols,
             context,
             checkClassScopesCompatibility = true
         )
+        if (matched != null) {
+            AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+                expectSymbol,
+                listOf(matched),
+                context,
+                checkClassScopesCompatibility = true,
+                context.languageVersionSettings
+            )
+        }
     }
 
     override fun visitElement(element: IrElement, data: MatchingContext) {
@@ -244,6 +255,8 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
     ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
 
         private val currentExpectIoFile by lazy(LazyThreadSafetyMode.PUBLICATION) { currentExpectFile?.toIoFile() }
+        internal val languageVersionSettings: LanguageVersionSettings // todo drop?
+            get() = diagnosticsReporter.languageVersionSettings
 
         fun withNewCurrentFile(newCurrentFile: IrFile) =
             MatchingContext(

@@ -3,10 +3,10 @@
 // FILE: common.kt
 
 expect open class Base {
-    <!INCOMPATIBLE_MATCHING{JVM}!>open fun foo(): MutableList<String><!>
+    <!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>open fun foo(): MutableList<String><!>
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Foo : Base {
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect open class Foo : Base {
 
 }<!>
 

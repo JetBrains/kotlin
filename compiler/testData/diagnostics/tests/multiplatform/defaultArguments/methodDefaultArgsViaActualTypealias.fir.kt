@@ -17,7 +17,7 @@ expect class WithDefaultArgFromSuper : I {
     override fun methodWithDefaultArg(s: String)
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class WithIncompatibility {
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect open class WithIncompatibility {
     fun foo(p: String = "common")
 }<!>
 

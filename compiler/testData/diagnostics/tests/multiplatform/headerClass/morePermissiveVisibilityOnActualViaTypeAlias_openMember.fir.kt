@@ -2,8 +2,8 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Container {
-    <!INCOMPATIBLE_MATCHING{JVM}!>internal open fun internalFun()<!>
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect open class Container {
+    <!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>internal open fun internalFun()<!>
 }<!>
 
 // MODULE: m2-jvm()()(m1-common)
@@ -18,4 +18,4 @@ public class Foo {
 
 // FILE: jvm.kt
 
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Container<!> = foo.Foo
+actual typealias <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_ERROR, NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Container<!> = foo.Foo

@@ -61,17 +61,15 @@ object AbstractExpectActualMatcher {
         actualDeclarations: List<DeclarationSymbolMarker>,
         context: ExpectActualMatchingContext<T>,
         checkClassScopesCompatibility: Boolean,
-    ) {
-        with(context) {
-            matchSingleExpectAgainstPotentialActuals(
-                expectDeclaration,
-                actualDeclarations,
-                substitutor = null,
-                expectClassSymbol = null,
-                actualClassSymbol = null,
-                mismatchedMembers = null,
-            )
-        }
+    ): DeclarationSymbolMarker? = with(context) {
+        matchSingleExpectAgainstPotentialActuals(
+            expectDeclaration,
+            actualDeclarations,
+            substitutor = null,
+            expectClassSymbol = null,
+            actualClassSymbol = null,
+            mismatchedMembers = null,
+        )
     }
 
     //context(ExpectActualMatchingContext<*>)

@@ -2,7 +2,7 @@
 // FILE: common.kt
 annotation class Ann
 
-<!INCOMPATIBLE_MATCHING{JVM}!>@Ann
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>@Ann
 expect inline fun hasWeakIncompatibility()<!>
 
 <!EXPECT_ACTUAL_MISMATCH{JVM}, EXPECT_ACTUAL_MISMATCH{JVM}!>@Ann
@@ -12,7 +12,7 @@ expect fun hasStrongIncompatibility(arg: Double)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_WITHOUT_EXPECT!>hasWeakIncompatibility<!>() {}
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_WITHOUT_EXPECT!>hasWeakIncompatibility<!>() {}<!>
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>hasStrongIncompatibility<!>(arg: Any?) {}
 

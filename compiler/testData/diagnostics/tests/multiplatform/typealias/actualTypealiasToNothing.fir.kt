@@ -1,8 +1,8 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class E01<!>
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class E02<!>
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect class E01<!>
+<!INCOMPATIBLE_EXPECT_ACTUAL{JVM}!>expect class E02<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

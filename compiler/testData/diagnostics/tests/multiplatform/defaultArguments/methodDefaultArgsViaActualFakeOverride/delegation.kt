@@ -14,4 +14,5 @@ object BaseImpl : Base {
     override fun foo(p: Int) {}
 }
 
+// todo broken test
 actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : Base by BaseImpl
