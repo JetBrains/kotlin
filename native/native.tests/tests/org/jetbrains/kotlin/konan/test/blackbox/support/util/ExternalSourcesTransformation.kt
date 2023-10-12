@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
+import org.jetbrains.kotlin.codeMetaInfo.clearTextFromDiagnosticMarkup
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 
 /**
@@ -18,8 +19,7 @@ internal object DiagnosticsRemovingSourceTransformer : ExternalSourceTransformer
     override fun invoke(source: String) = source.lineSequence().joinToString("\n") { line ->
         // Remove all diagnostic parameters from the text. Examples:
         //   <!NO_TAIL_CALLS_FOUND!>, <!NON_TAIL_RECURSIVE_CALL!>, <!>.
-        line.replace(DIAGNOSTIC_REGEX) { match -> match.groupValues[1] }
+        // Removal must be done per source line, since doing it for whole file causes issues under Windows
+        clearTextFromDiagnosticMarkup(line)
     }
-
-    private val DIAGNOSTIC_REGEX = Regex("<!.*?!>(.*?)<!>")
 }
