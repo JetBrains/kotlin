@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_INSTALL_TASK_NAME
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
+import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.DisplayName
@@ -36,6 +37,17 @@ class CocoaPodsXcodeIT : KGPBaseTest() {
     @BeforeAll
     fun setUp() {
         ensureCocoapodsInstalled()
+    }
+
+    override fun TestProject.customizeProject() {
+        val mavenLocalOverride = System.getProperty("maven.repo.local") ?: return
+
+        // Manually adding custom local repo, because the system property is lost when Gradle is invoked through Xcode build phase
+        projectPath.toFile().walkTopDown()
+            .filter { it.isFile && it.name in buildFileNames }
+            .forEach { file ->
+                file.modify { it.replace("mavenLocal()", "maven { setUrl(\"$mavenLocalOverride\") }") }
+            }
     }
 
     @DisplayName("Checks xcodebuild for ios-app with a single framework")
