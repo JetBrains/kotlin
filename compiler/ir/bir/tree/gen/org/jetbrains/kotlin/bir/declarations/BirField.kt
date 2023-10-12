@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.field]
  */
-abstract class BirField : BirDeclarationBase(), BirPossiblyExternalDeclaration,
+abstract class BirField : BirElementBase(), BirDeclaration, BirPossiblyExternalDeclaration,
         BirDeclarationWithVisibility, BirDeclarationParent, BirMetadataSourceOwner {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor

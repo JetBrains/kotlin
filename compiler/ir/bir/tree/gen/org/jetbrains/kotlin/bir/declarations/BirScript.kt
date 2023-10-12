@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirStatementContainer
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.script]
  */
-abstract class BirScript : BirDeclarationBase(), BirDeclarationWithName,
+abstract class BirScript : BirElementBase(), BirDeclaration, BirDeclarationWithName,
         BirDeclarationParent, BirStatementContainer, BirMetadataSourceOwner {
     abstract override val symbol: BirScriptSymbol
 
