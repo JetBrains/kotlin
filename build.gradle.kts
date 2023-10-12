@@ -490,6 +490,9 @@ val projectsWithEnabledContextReceivers by extra {
         ":plugins:parcelize:parcelize-compiler:parcelize.k2",
         ":plugins:fir-plugin-prototype",
         ":plugins:kapt4",
+        ":compiler:bir",
+        ":compiler:bir:tree",
+        ":compiler:bir:backend",
     )
 }
 
