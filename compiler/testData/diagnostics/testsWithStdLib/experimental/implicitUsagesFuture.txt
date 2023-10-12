@@ -111,6 +111,8 @@ public abstract class User {
     public final fun withSome(/*0*/ some: Some? = ...): kotlin.Unit
     public final fun Some?.onSome(): kotlin.Unit
 }
+@Marker public typealias AList = kotlin.collections.ArrayList<I>
 public typealias My = Some
 @kotlin.OptIn(markerClass = {Marker::class}) public typealias MyList = kotlin.collections.ArrayList<I>
 @Marker public typealias YourList = kotlin.collections.ArrayList<kotlin.String>
+

@@ -65,11 +65,15 @@ class B : I
 typealias MyList = ArrayList<I>
 
 @Marker
+typealias AList = ArrayList<I>
+
+@Marker
 typealias YourList = ArrayList<String>
 
 fun main() {
     val x = <!OPT_IN_USAGE_FUTURE_ERROR!>listOf<!>(A(), B())
     val y = <!OPT_IN_USAGE_FUTURE_ERROR!>MyList<!>()
+    val b = <!OPT_IN_USAGE_FUTURE_ERROR!>AList<!>()
     val z = <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>()
     <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>().add("")
 }

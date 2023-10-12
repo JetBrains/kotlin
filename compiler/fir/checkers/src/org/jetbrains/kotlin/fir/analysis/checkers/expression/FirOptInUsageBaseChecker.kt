@@ -208,6 +208,7 @@ object FirOptInUsageBaseChecker {
                 it.returnTypeRef.coneType.addExperimentalities(context, result, visited)
             }
         }
+
         if (fromSetter && symbol is FirPropertySymbol) {
             symbol.setterSymbol?.loadExperimentalities(
                 context, result, visited, fromSetter = false, dispatchReceiverType, fromSupertype = false
@@ -228,10 +229,8 @@ object FirOptInUsageBaseChecker {
                     context, result, visited, fromSetter = false, dispatchReceiverType = null, fromSupertype = false
                 )
             }
-            is FirTypeAlias -> {
-                expandedTypeRef.coneType.addExperimentalities(context, result, visited)
-            }
-            is FirAnonymousObject -> {
+
+            is FirAnonymousObject, is FirTypeAlias -> {
             }
         }
     }
