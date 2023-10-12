@@ -43,24 +43,6 @@ object BirTree : AbstractTreeBuilder() {
             nullable = nullable,
         )
 
-    private fun declarationWithLateBinding(symbol: ClassRef<*>, initializer: ElementConfig.() -> Unit) = element(Declaration) {
-        initializer()
-
-        +field("isBound", boolean, mutable = false)
-
-        val oldCallback = generationCallback
-        generationCallback = {
-            oldCallback?.invoke(this)
-            addFunction(
-                FunSpec.builder("acquireSymbol")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .addParameter("symbol", symbol.toPoet())
-                    .returns(this@element.toPoet())
-                    .build(),
-            )
-        }
-    }
-
     override val rootElement: ElementConfig by element(Other, name = "element") {
         +field("sourceSpan", type(Packages.tree, "SourceSpan")) {
             kdoc = """
@@ -348,12 +330,6 @@ object BirTree : AbstractTreeBuilder() {
         +field("symbol", symbolType, mutable = false) {
             baseGetter = code("error(\"Should never be called\")")
         }
-    }
-    val functionWithLateBinding: ElementConfig by declarationWithLateBinding(simpleFunctionSymbolType) {
-        parent(simpleFunction)
-    }
-    val propertyWithLateBinding: ElementConfig by declarationWithLateBinding(propertySymbolType) {
-        parent(property)
     }
     val field: ElementConfig by element(Declaration) {
         parent(declaration)
