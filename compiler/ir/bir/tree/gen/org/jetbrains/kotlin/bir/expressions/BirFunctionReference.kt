@@ -8,17 +8,21 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.functionReference]
  */
 abstract class BirFunctionReference : BirCallableReference<BirFunctionSymbol>() {
     abstract var reflectionTarget: BirFunctionSymbol?
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitFunctionReference(this, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        dispatchReceiver?.accept(data, visitor)
+        extensionReceiver?.accept(data, visitor)
+        valueArguments.forEach { it?.accept(data, visitor) }
+    }
 }

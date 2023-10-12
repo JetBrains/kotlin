@@ -10,14 +10,10 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementBase
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
 
 /**
  * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.body]
  */
-abstract class BirBody : BirElementBase(), BirElement {
-    override fun <D> transform(transformer: BirElementTransformer<D>, data: D): BirBody =
-        accept(transformer, data) as BirBody
-}
+abstract class BirBody : BirElementBase(), BirElement

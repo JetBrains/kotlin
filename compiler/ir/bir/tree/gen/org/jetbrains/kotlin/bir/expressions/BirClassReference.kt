@@ -10,10 +10,9 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.classReference]
  */
@@ -21,7 +20,4 @@ abstract class BirClassReference : BirDeclarationReference() {
     abstract override var symbol: BirClassifierSymbol
 
     abstract var classType: BirType
-
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitClassReference(this, data)
 }

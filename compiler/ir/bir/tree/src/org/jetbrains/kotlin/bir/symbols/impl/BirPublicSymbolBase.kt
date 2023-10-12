@@ -1,17 +1,17 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.bir.symbols.impl
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.symbols.*
 import org.jetbrains.kotlin.bir.toBirBasedDescriptor
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.bir.util.render
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.util.IdSignature
 
 /**
  * The base class for all public (wrt linkage) symbols.

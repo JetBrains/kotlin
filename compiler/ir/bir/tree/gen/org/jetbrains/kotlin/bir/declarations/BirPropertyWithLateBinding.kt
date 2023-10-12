@@ -8,15 +8,23 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.propertyWithLateBinding]
  */
 abstract class BirPropertyWithLateBinding : BirProperty() {
     abstract val isBound: Boolean
+
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        backingField?.accept(data, visitor)
+        getter?.accept(data, visitor)
+        setter?.accept(data, visitor)
+    }
 
     abstract fun acquireSymbol(symbol: BirPropertySymbol): BirPropertyWithLateBinding
 }

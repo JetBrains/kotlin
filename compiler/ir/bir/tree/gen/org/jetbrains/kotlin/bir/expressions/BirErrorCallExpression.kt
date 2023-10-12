@@ -8,12 +8,11 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.util.transformInPlace
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.errorCallExpression]
  */
@@ -22,16 +21,8 @@ abstract class BirErrorCallExpression : BirErrorExpression() {
 
     abstract val arguments: MutableList<BirExpression>
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitErrorCallExpression(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        explicitReceiver?.accept(visitor, data)
-        arguments.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        explicitReceiver = explicitReceiver?.transform(transformer, data)
-        arguments.transformInPlace(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        explicitReceiver?.accept(data, visitor)
+        arguments.forEach { it.accept(data, visitor) }
     }
 }

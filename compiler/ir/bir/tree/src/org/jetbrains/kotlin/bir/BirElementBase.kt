@@ -16,19 +16,4 @@
 
 package org.jetbrains.kotlin.bir
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
-
-abstract class BirElementBase : BirElement {
-    override fun <D> transform(transformer: BirElementTransformer<D>, data: D): BirElement =
-        accept(transformer, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        // No children by default
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        // No children by default
-    }
-}
+abstract class BirElementBase : BirElement

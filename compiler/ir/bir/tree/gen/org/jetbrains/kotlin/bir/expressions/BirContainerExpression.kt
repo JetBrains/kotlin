@@ -8,10 +8,9 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.BirStatement
-import org.jetbrains.kotlin.bir.util.transformInPlace
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 /**
@@ -24,11 +23,7 @@ abstract class BirContainerExpression : BirExpression(), BirStatementContainer {
 
     override val statements: MutableList<BirStatement> = ArrayList(2)
 
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        statements.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        statements.transformInPlace(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        statements.forEach { it.accept(data, visitor) }
     }
 }

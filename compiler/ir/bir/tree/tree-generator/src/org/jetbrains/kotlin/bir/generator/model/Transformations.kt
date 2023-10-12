@@ -46,7 +46,7 @@ fun config2model(config: Config): Model {
     markLeaves(elements)
     configureDescriptorApiAnnotation(elements)
     processFieldOverrides(elements)
-    addWalkableChildren(elements)
+    computeAllFields(elements)
 
     return Model(elements, rootElement)
 }
@@ -124,8 +124,6 @@ private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Eleme
             .partitionIsInstance<TypeRef, ElementRef>()
         el.elementParents = elParents.takeIf { it.isNotEmpty() || el == rootEl.element } ?: listOf(rootEl)
         el.otherParents = otherParents.castAll<ClassRef<*>>().toList()
-        el.visitorParent = ec.visitorParent?.let(::transform) as ElementRef?
-        el.transformerReturnType = (ec.transformerReturnType?.let(::transform) as ElementRef?)?.element
 
         for (field in el.fields) {
             when (field) {
@@ -150,13 +148,6 @@ private fun markLeaves(elements: List<Element>) {
             if (!parent.element.isLeaf) {
                 leaves.remove(parent.element)
             }
-        }
-    }
-
-    for (el in leaves) {
-        el.isLeaf = true
-        if (el.visitorParent != null) {
-            el.accept = true
         }
     }
 }
@@ -216,29 +207,27 @@ private fun processFieldOverrides(elements: List<Element>) {
     }
 }
 
-private fun addWalkableChildren(elements: List<Element>) {
+
+private fun computeAllFields(elements: List<Element>) {
     for (element in elements) {
-        val walkableChildren = mutableMapOf<String, Field>()
-
+        val allFieldsMap = mutableMapOf<String, Field>()
+        val visitedParents = hashSetOf<Element>()
         fun visitParents(visited: Element) {
-            for (parent in visited.elementParents) {
-                if (!parent.element.ownsChildren) {
-                    for (field in parent.element.fields) {
-                        if (field.isChild) {
-                            walkableChildren[field.name] = field
-                        }
-                    }
-
+            visited.elementParents.forEach { parent ->
+                if (visitedParents.add(parent.element)) {
                     visitParents(parent.element)
                 }
+            }
+
+            visited.fields.forEach { field ->
+                allFieldsMap[field.name] = field
             }
         }
 
         visitParents(element)
+        val allFields = allFieldsMap.values.toList()
 
-        element.fields.filter { it.isChild }.associateByTo(walkableChildren) { it.name }
-
-        element.walkableChildren = reorderIfNecessary(walkableChildren.values.toList(), element.childrenOrderOverride)
+        element.allFields = allFields
     }
 }
 

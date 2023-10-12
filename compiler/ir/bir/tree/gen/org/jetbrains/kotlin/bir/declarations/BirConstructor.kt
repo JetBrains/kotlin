@@ -8,13 +8,14 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constructor]
  */
@@ -26,6 +27,11 @@ abstract class BirConstructor : BirFunction() {
 
     abstract var isPrimary: Boolean
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitConstructor(this, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        typeParameters.forEach { it.accept(data, visitor) }
+        dispatchReceiverParameter?.accept(data, visitor)
+        extensionReceiverParameter?.accept(data, visitor)
+        valueParameters.forEach { it.accept(data, visitor) }
+        body?.accept(data, visitor)
+    }
 }

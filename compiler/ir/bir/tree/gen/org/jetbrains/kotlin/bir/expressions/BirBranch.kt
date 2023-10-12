@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementBase
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 
 /**
  * A non-leaf IR tree element.
@@ -23,19 +23,8 @@ abstract class BirBranch : BirElementBase(), BirElement {
 
     abstract var result: BirExpression
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitBranch(this, data)
-
-    override fun <D> transform(transformer: BirElementTransformer<D>, data: D): BirBranch =
-        accept(transformer, data) as BirBranch
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        condition.accept(visitor, data)
-        result.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        condition = condition.transform(transformer, data)
-        result = result.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        condition.accept(data, visitor)
+        result.accept(data, visitor)
     }
 }

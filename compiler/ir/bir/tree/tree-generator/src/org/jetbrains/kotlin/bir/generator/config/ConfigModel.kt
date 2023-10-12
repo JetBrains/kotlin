@@ -28,16 +28,11 @@ class ElementConfig(
     val fields = mutableListOf<FieldConfig>()
     val additionalImports = mutableListOf<Import>()
 
-    var visitorName: String? = null
-    var visitorParent: ElementConfig? = null
-    var visitorParam: String? = null
-    var accept = false // By default, accept is generated only for leaves.
-    var transform = false
-    var transformByChildren = false
-    var transformerReturnType: ElementConfig? = null
     var childrenOrderOverride: List<String>? = null
 
-    var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
+    var generateIrFactoryMethod = category == Category.Declaration
+    val additionalIrFactoryMethodParameters = mutableListOf<FieldConfig>()
+    val fieldsToSkipInIrFactoryMethod = hashSetOf<String>()
 
     /**
      * Set this to `true` if the element should be a leaf semantically, but technically it's not.

@@ -9,9 +9,11 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.inlinedFunctionBlock]
  */
@@ -19,4 +21,8 @@ abstract class BirInlinedFunctionBlock : BirBlock() {
     abstract var inlineCall: BirFunctionAccessExpression
 
     abstract var inlinedElement: BirElement
+
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        statements.forEach { it.accept(data, visitor) }
+    }
 }

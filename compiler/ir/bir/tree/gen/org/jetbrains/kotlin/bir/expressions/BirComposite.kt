@@ -8,14 +8,16 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.composite]
  */
 abstract class BirComposite : BirContainerExpression() {
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitComposite(this, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        statements.forEach { it.accept(data, visitor) }
+    }
 }

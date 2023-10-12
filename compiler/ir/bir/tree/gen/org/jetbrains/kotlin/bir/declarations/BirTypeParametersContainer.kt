@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 
 /**
  * A non-leaf IR tree element.
@@ -16,4 +18,8 @@ package org.jetbrains.kotlin.bir.declarations
  */
 interface BirTypeParametersContainer : BirDeclaration, BirDeclarationParent {
     var typeParameters: List<BirTypeParameter>
+
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        typeParameters.forEach { it.accept(data, visitor) }
+    }
 }

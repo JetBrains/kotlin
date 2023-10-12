@@ -6,18 +6,21 @@
 package org.jetbrains.kotlin.bir.generator.print
 
 import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import org.jetbrains.kotlin.bir.generator.Packages
+import org.jetbrains.kotlin.bir.generator.model.Element
+import org.jetbrains.kotlin.bir.generator.model.ListField
+import org.jetbrains.kotlin.bir.generator.model.Model
+import org.jetbrains.kotlin.bir.generator.model.SingleField
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.TypeKind
-import org.jetbrains.kotlin.bir.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.bir.generator.elementTransformerType
-import org.jetbrains.kotlin.bir.generator.elementVisitorType
-import org.jetbrains.kotlin.bir.generator.model.*
 import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
-import org.jetbrains.kotlin.bir.generator.util.tryParameterizedBy
 import java.io.File
 
 fun printElements(generationPath: File, model: Model) = sequence {
     for (element in model.elements) {
+        if (element == model.rootElement)
+            continue
 
         val elementName = element.toPoet()
         val selfParametrizedElementName = element.toPoetSelfParameterized()
@@ -76,189 +79,32 @@ fun printElements(generationPath: File, model: Model) = sequence {
                 }.build())
             }
 
-            val isRootElement = element.elementParents.isEmpty()
-            val acceptMethodName = "accept"
-            val transformMethodName = "transform"
-            if (element.accept) {
-                addFunction(FunSpec.builder(acceptMethodName).apply {
-                    addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
-                    val r = TypeVariableName("R")
-                    val d = TypeVariableName("D")
-                    addTypeVariable(r)
-                    addTypeVariable(d)
-                    val visitorParam = ParameterSpec.builder("visitor", elementVisitorType.toPoet().tryParameterizedBy(r, d))
-                        .build()
-                        .also(::addParameter)
-                    val dataParam = ParameterSpec.builder("data", d)
-                        .build()
-                        .also(::addParameter)
-                    returns(r)
-                    if (!isRootElement) {
-                        addStatement("return %N.%N(this, %N)", visitorParam, element.visitFunName, dataParam)
-                    }
-                    if (isRootElement) {
-                        addKdoc(
-                            """
-                            Runs the provided [%1N] on the IR subtree with the root at this node.
-
-                            @param %1N The visitor to accept.
-                            @param %2N An arbitrary context to pass to each invocation of [%1N]'s methods.
-                            @return The value returned by the topmost `visit*` invocation.
-                            """.trimIndent(),
-                            visitorParam,
-                            dataParam,
-                        )
-                    }
-                }.build())
-            }
-
-            if (element.transform) {
-                addFunction(FunSpec.builder(transformMethodName).apply {
-                    addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
-                    val d = TypeVariableName("D")
-                    addTypeVariable(d)
-                    val transformerParam = ParameterSpec.builder("transformer", elementTransformerType.toPoet().tryParameterizedBy(d))
-                        .build()
-                        .also(::addParameter)
-                    val dataParam = ParameterSpec.builder("data", d)
-                        .build()
-                        .also(::addParameter)
-                    returns(selfParametrizedElementName)
-                    if (!isRootElement) {
-                        addStatement("return %N(%N, %N) as %T", acceptMethodName, transformerParam, dataParam, selfParametrizedElementName)
-                    }
-                    if (isRootElement) {
-                        addKdoc(
-                            """
-                            Runs the provided [%1N] on the IR subtree with the root at this node.
-
-                            @param %1N The transformer to use.
-                            @param %2N An arbitrary context to pass to each invocation of [%1N]'s methods.
-                            @return The transformed node.
-                            """.trimIndent(),
-                            transformerParam,
-                            dataParam,
-                        )
-                    }
-                }.build())
-            }
-
-            if (element.ownsChildren && (isRootElement || element.walkableChildren.isNotEmpty())) {
-                addFunction(FunSpec.builder("acceptChildren").apply {
-                    addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
-                    val d = TypeVariableName("D")
-                    addTypeVariable(d)
-
-                    val visitorParam = ParameterSpec
-                        .builder("visitor", elementVisitorType.toPoet().tryParameterizedBy(UNIT, d)).build()
-                        .also(::addParameter)
-                    val dataParam = ParameterSpec
-                        .builder("data", d).build()
-                        .also(::addParameter)
-
-                    for (child in element.walkableChildren) {
-                        addStatement(buildString {
-                            append("%N")
-                            if (child.nullable) append("?")
-                            when (child) {
-                                is SingleField -> append(".%N(%N, %N)")
-                                is ListField -> {
-                                    append(".forEach { it")
-                                    if ((child.elementType as? TypeRefWithNullability)?.nullable == true) append("?")
-                                    append(".%N(%N, %N) }")
-                                }
-                            }
-                        }, child.name, acceptMethodName, visitorParam, dataParam)
-                    }
-
-                    if (isRootElement) {
-                        addKdoc(
-                            """
-                            Runs the provided [%1N] on subtrees with roots in this node's children.
-                            
-                            Basically, calls `%3N(%1N, %2N)` on each child of this node.
-                            
-                            Does **not** run [%1N] on this node itself.
-                            
-                            @param %1N The visitor for children to accept.
-                            @param %2N An arbitrary context to pass to each invocation of [%1N]'s methods.
-                            """.trimIndent(),
-                            visitorParam,
-                            dataParam,
-                            acceptMethodName,
-                        )
-                    }
-                }.build())
-            }
-
-            if (element.ownsChildren && (isRootElement || element.transformableChildren.isNotEmpty())) {
-                addFunction(FunSpec.builder("transformChildren").apply {
-                    addModifiers(if (isRootElement) KModifier.ABSTRACT else KModifier.OVERRIDE)
-                    val d = TypeVariableName("D")
-                    addTypeVariable(d)
-                    val transformerParam =
-                        ParameterSpec.builder("transformer", elementTransformerType.toPoet().tryParameterizedBy(d)).build()
-                            .also(::addParameter)
-                    val dataParam = ParameterSpec.builder("data", d).build().also(::addParameter)
-
-                    for (child in element.transformableChildren) {
-                        val args = mutableListOf<Any>()
-                        val code = buildString {
-                            append("%N")
-                            args.add(child.name)
-                            when (child) {
-                                is SingleField -> {
-                                    append(" = %N")
-                                    args.add(child.name)
-                                    if (child.nullable) append("?")
-                                    append(".%N(%N, %N)")
-                                    args.add(transformMethodName)
-                                }
-                                is ListField -> {
-                                    if (child.mutable) {
-                                        append(" = ")
-                                        append(child.name)
-                                        if (child.nullable) append("?")
+            if (element.allChildren.isNotEmpty()) {
+                addFunction(
+                    FunSpec
+                        .builder("acceptChildren")
+                        .addModifiers(KModifier.OVERRIDE)
+                        .addTypeVariable(TypeVariableName("D"))
+                        .addParameter("visitor", elementVisitor.parameterizedBy(TypeVariableName("D")))
+                        .addParameter("data", TypeVariableName("D"))
+                        .apply {
+                            element.allChildren.forEach { child ->
+                                addCode(child.name)
+                                when (child) {
+                                    is SingleField -> {
+                                        if (child.nullable) addCode("?")
+                                        addCode(".%M(data, visitor)\n", elementAccept)
                                     }
-                                    append(".%M(%N, %N)")
-                                    args.add(if (child.mutable) transformIfNeeded else transformInPlace)
-                                }
-                            }
-
-                            args.add(transformerParam)
-                            args.add(dataParam)
-
-                            if (child is SingleField) {
-                                val elRef = child.type as ElementRef
-                                if (!elRef.element.transform) {
-                                    append(" as %T")
-                                    if (child.nullable) append("?")
-                                    args.add(elRef.toPoet())
+                                    is ListField -> {
+                                        addCode(".forEach { it")
+                                        if ((child.elementType as? TypeRefWithNullability)?.nullable == true) addCode("?")
+                                        addCode(".%M(data, visitor) }\n", elementAccept)
+                                    }
                                 }
                             }
                         }
-
-                        addStatement(code, *args.toTypedArray())
-                    }
-
-                    if (isRootElement) {
-                        addKdoc(
-                            """
-                            Recursively transforms this node's children *in place* using [%1N].
-                            
-                            Basically, executes `this.child = this.child.%3N(%1N, %2N)` for each child of this node.
-                            
-                            Does **not** run [%1N] on this node itself.
-                            
-                            @param %1N The transformer to use for transforming the children.
-                            @param %2N An arbitrary context to pass to each invocation of [%1N]'s methods.
-                            """.trimIndent(),
-                            transformerParam,
-                            dataParam,
-                            transformMethodName,
-                        )
-                    }
-                }.build())
+                        .build()
+                )
             }
 
             generateElementKDoc(element)
@@ -285,5 +131,5 @@ private fun TypeSpec.Builder.generateElementKDoc(element: Element) {
 }
 
 private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")
-private val transformIfNeeded = MemberName("$BASE_PACKAGE.util", "transformIfNeeded", true)
-private val transformInPlace = MemberName("$BASE_PACKAGE.util", "transformInPlace", true)
+private val elementVisitor = ClassName(Packages.tree, "BirElementVisitor")
+private val elementAccept = MemberName(Packages.tree, "accept", true)

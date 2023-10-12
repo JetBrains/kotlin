@@ -8,12 +8,11 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.util.transformInPlace
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
-import org.jetbrains.kotlin.bir.visitors.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.accept
 
 /**
- * A leaf IR tree element.
+ * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.try]
  */
@@ -24,18 +23,9 @@ abstract class BirTry : BirExpression() {
 
     abstract var finallyExpression: BirExpression?
 
-    override fun <R, D> accept(visitor: BirElementVisitor<R, D>, data: D): R =
-        visitor.visitTry(this, data)
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<Unit, D>, data: D) {
-        tryResult.accept(visitor, data)
-        catches.forEach { it.accept(visitor, data) }
-        finallyExpression?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: BirElementTransformer<D>, data: D) {
-        tryResult = tryResult.transform(transformer, data)
-        catches.transformInPlace(transformer, data)
-        finallyExpression = finallyExpression?.transform(transformer, data)
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        tryResult.accept(data, visitor)
+        catches.forEach { it.accept(data, visitor) }
+        finallyExpression?.accept(data, visitor)
     }
 }

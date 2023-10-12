@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.types.BirType
-import org.jetbrains.kotlin.bir.visitors.BirElementTransformer
 
 /**
  * A non-leaf IR tree element.
@@ -26,7 +25,4 @@ abstract class BirExpression : BirElementBase(), BirStatement, BirVarargElement,
     override var originalBeforeInline: BirAttributeContainer? = null
 
     abstract var type: BirType
-
-    override fun <D> transform(transformer: BirElementTransformer<D>, data: D):
-            BirExpression = accept(transformer, data) as BirExpression
 }

@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.bir.generator
 
+import org.jetbrains.kotlin.bir.generator.model.config2model
+import org.jetbrains.kotlin.bir.generator.print.printElements
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.collectPreviouslyGeneratedFiles
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.removeExtraFilesFromPreviousGeneration
-import org.jetbrains.kotlin.bir.generator.model.config2model
-import org.jetbrains.kotlin.bir.generator.print.*
 import java.io.File
 
 const val BASE_PACKAGE = "org.jetbrains.kotlin.bir"
@@ -25,11 +25,6 @@ fun main(args: Array<String>) {
     val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)
     val generatedFiles = sequence {
         yieldAll(printElements(generationPath, model))
-        yield(printVisitor(generationPath, model))
-        yield(printVisitorVoid(generationPath, model))
-        yield(printTransformer(generationPath, model))
-        yield(printTypeVisitor(generationPath, model))
-        // IrElementTransformerVoid is too random to autogenerate
     }.map {
         GeneratorsFileUtil.writeFileIfContentChanged(it.file, it.newText, logNotChanged = false)
         it.file
