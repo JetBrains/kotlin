@@ -168,7 +168,6 @@ dependencies {
         libraries(kotlinStdlib(classifier = "distJsJar"))
         libraries(kotlinStdlib(classifier = "distJsKlib"))
         libraries(project(":kotlin-test:kotlin-test-js-ir", configuration = "jsRuntimeElements"))
-        libraries(project(":kotlin-test:kotlin-test-js-ir", configuration = "jsLegacyRuntimeElements"))
     }
 
     librariesStripVersion(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
