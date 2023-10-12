@@ -849,13 +849,9 @@ private val jsSuspendArityStorePhase = makeDeclarationTransformerPhase(
 
 val constEvaluationPhase = makeJsModulePhase(
     { context ->
-        // We can't inline `const val`s because this lowering can mess up incremental compilation.
-        // For example, if we inline some constant located in `lib` module then we are not going to track and update its value on change.
-        // The only usages of `const val`s that we allow to inline are the ones that are located at the same file as declaration.
         val configuration = IrInterpreterConfiguration(
             printOnlyExceptionMessage = true,
             platform = JsPlatforms.defaultJsPlatform,
-            inlineConstVal = false
         )
         ConstEvaluationLowering(context, configuration = configuration)
     },

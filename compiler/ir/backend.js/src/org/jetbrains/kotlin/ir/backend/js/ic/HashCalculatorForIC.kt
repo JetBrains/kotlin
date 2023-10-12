@@ -73,6 +73,12 @@ private class HashCalculatorForIC {
         updateForEach(annotationContainer.annotations, ::update)
     }
 
+    fun updateProperty(irProperty: IrProperty) {
+        if (irProperty.isConst) {
+            irProperty.backingField?.initializer?.let(::update)
+        }
+    }
+
     fun updateSymbol(symbol: IrSymbol) {
         update(symbol.toString())
 
@@ -107,12 +113,11 @@ private class HashCalculatorForIC {
                 update(functionParam.defaultValue?.let { 1 } ?: 0)
             }
         }
-        (symbol.owner as? IrAnnotationContainer)?.let(::updateAnnotationContainer)
-        (symbol.owner as? IrProperty)?.let { irProperty ->
-            if (irProperty.isConst) {
-                irProperty.backingField?.initializer?.let(::update)
-            }
+        (symbol.owner as? IrSimpleFunction)?.let { irSimpleFunction ->
+            irSimpleFunction.correspondingPropertySymbol?.owner?.let(::updateProperty)
         }
+        (symbol.owner as? IrAnnotationContainer)?.let(::updateAnnotationContainer)
+        (symbol.owner as? IrProperty)?.let(::updateProperty)
     }
 
     inline fun <T> updateForEach(collection: Collection<T>, f: (T) -> Unit) {
