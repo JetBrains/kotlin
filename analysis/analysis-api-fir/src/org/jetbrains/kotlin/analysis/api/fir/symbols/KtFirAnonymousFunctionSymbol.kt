@@ -53,7 +53,7 @@ internal class KtFirAnonymousFunctionSymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousFunctionSymbol>(this)
             ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }
 

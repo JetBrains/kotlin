@@ -33,7 +33,7 @@ internal class KtFe10FileSymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtFileSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtFileSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean {

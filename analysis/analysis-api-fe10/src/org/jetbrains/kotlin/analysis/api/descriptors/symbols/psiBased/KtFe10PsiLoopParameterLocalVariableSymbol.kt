@@ -49,7 +49,7 @@ internal class KtFe10PsiLoopParameterLocalVariableSymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtLocalVariableSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
 

@@ -40,7 +40,7 @@ class KtFe10PsiClassInitializerSymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtClassInitializerSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtClassInitializerSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override val typeParameters: List<KtTypeParameterSymbol> get() = withValidityAssertion { emptyList() }

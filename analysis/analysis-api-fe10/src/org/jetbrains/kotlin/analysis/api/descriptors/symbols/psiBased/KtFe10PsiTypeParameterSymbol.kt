@@ -51,7 +51,7 @@ internal class KtFe10PsiTypeParameterSymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeParameterSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

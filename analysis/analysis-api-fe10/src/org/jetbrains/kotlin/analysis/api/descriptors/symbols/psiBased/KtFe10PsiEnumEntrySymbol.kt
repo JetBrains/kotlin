@@ -67,7 +67,7 @@ internal class KtFe10PsiEnumEntrySymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtEnumEntrySymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
 

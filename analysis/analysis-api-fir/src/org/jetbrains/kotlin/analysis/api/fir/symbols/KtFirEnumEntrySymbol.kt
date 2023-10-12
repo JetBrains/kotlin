@@ -63,7 +63,7 @@ internal class KtFirEnumEntrySymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFirEnumEntrySymbolPointer(requireOwnerPointer(), firSymbol.name)
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtEnumEntrySymbol>(this) ?: KtFirEnumEntrySymbolPointer(requireOwnerPointer(), firSymbol.name)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

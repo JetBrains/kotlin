@@ -55,7 +55,7 @@ internal class KtFe10PsiLocalVariableSymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtLocalVariableSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 
     override fun equals(other: Any?): Boolean = isEqualTo(other)

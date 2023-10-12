@@ -47,6 +47,6 @@ internal class KtFe10PsiScriptSymbol(
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtScriptSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this) ?: KtFe10NeverRestoringSymbolPointer()
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtScriptSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()
     }
 }
