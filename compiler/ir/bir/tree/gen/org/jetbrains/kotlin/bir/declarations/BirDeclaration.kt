@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.declaration]
  */
-interface BirDeclaration : BirStatement, BirSymbolOwner, BirMutableAnnotationContainer {
+interface BirDeclaration : BirStatement, BirSymbolOwner, BirAnnotationContainerElement {
     @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
 
