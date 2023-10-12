@@ -35,6 +35,13 @@ val ConeKotlinType.isNullableString: Boolean get() = isBuiltinType(StandardClass
 
 val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 
+val ConeKotlinType.isList: Boolean get() = isBuiltinType(StandardClassIds.List, false)
+val ConeKotlinType.isMutableList: Boolean get() = isBuiltinType(StandardClassIds.MutableList, false)
+val ConeKotlinType.isSet: Boolean get() = isBuiltinType(StandardClassIds.Set, false)
+val ConeKotlinType.isMutableSet: Boolean get() = isBuiltinType(StandardClassIds.MutableSet, false)
+val ConeKotlinType.isMap: Boolean get() = isBuiltinType(StandardClassIds.Map, false)
+val ConeKotlinType.isMutableMap: Boolean get() = isBuiltinType(StandardClassIds.MutableMap, false)
+
 val ConeKotlinType.isUByte: Boolean get() = isBuiltinType(StandardClassIds.UByte, false)
 val ConeKotlinType.isUShort: Boolean get() = isBuiltinType(StandardClassIds.UShort, false)
 val ConeKotlinType.isUInt: Boolean get() = isBuiltinType(StandardClassIds.UInt, false)
