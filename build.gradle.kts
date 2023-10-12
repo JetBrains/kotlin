@@ -484,6 +484,9 @@ val projectsWithEnabledContextReceivers by extra {
         ":compiler:ir.tree:tree-generator",
         ":native:swift:sir:tree-generator",
         ":generators:tree-generator-common",
+        ":compiler:bir",
+        ":compiler:bir:tree",
+        ":compiler:bir:backend",
     )
 }
 
