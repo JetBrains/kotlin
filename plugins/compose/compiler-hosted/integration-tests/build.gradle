@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 import androidx.build.Publish
-import androidx.build.KmpPlatformsKt
 
 plugins {
     id("AndroidXPlugin")
@@ -25,11 +22,9 @@ plugins {
     id("com.google.protobuf")
 }
 
-def desktopEnabled = KmpPlatformsKt.enableDesktop(project)
-
 androidXMultiplatform {
     android()
-    if (desktopEnabled) desktop()
+    desktop()
 
     sourceSets {
         commonTest {
@@ -82,14 +77,12 @@ androidXMultiplatform {
             }
         }
 
-        if (desktopEnabled) {
-            desktopTest {
-                dependsOn(jvmTest)
-                dependencies {
-                    runtimeOnly(
-                            project(":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged")
-                    )
-                }
+        desktopTest {
+            dependsOn(jvmTest)
+            dependencies {
+                runtimeOnly(
+                        project(":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged")
+                )
             }
         }
     }
