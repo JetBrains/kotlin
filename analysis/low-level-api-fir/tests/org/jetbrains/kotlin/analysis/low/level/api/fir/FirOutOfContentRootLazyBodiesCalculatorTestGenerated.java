@@ -214,6 +214,12 @@ public class FirOutOfContentRootLazyBodiesCalculatorTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("localDeclarationsInEnumEntry.kt")
+        public void testLocalDeclarationsInEnumEntry() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localDeclarationsInEnumEntry.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClass.kt")
         public void testNestedClass() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/nestedClass.kt");
