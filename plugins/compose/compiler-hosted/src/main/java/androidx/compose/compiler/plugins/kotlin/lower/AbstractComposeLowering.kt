@@ -572,9 +572,10 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    /** Compare [lhs] and [rhs] using structural equality (`==`). */
     protected fun irEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
         return irCall(
-            this.context.irBuiltIns.eqeqeqSymbol,
+            context.irBuiltIns.eqeqSymbol,
             null,
             null,
             null,
@@ -590,6 +591,7 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    /** Compare [lhs] and [rhs] using structural inequality (`!=`). */
     protected fun irNotEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
         return irNot(irEqual(lhs, rhs))
     }
