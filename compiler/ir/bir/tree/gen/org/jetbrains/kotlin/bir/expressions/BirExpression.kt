@@ -20,9 +20,5 @@ import org.jetbrains.kotlin.bir.types.BirType
  */
 abstract class BirExpression : BirElementBase(), BirStatement, BirVarargElement,
         BirAttributeContainer {
-    override var attributeOwnerId: BirAttributeContainer = this
-
-    override var originalBeforeInline: BirAttributeContainer? = null
-
     abstract var type: BirType
 }
