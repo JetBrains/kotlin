@@ -52,15 +52,15 @@ method global$fun_add_get$fun_take$T_class_pkg$kotlin$collections$global$class_M
   var anonymous$1: Int
   var local0$n: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_MutableList())
-  anonymous$0 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(local$l,
+  anonymous$0 := pkg$kotlin$collections$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(local$l,
     1)
-  anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(local$l,
+  anonymous$1 := pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(local$l,
     0)
   local0$n := anonymous$1
   label label$ret$0
 }
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(this: Ref,
+method pkg$kotlin$collections$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(this: Ref,
   local$element: Int)
   returns (ret: Bool)
   requires acc(this.special$size, write)
@@ -70,7 +70,7 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Mu
   ensures this.special$size == old(this.special$size) + 1
 
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(this: Ref,
+method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(this: Ref,
   local$index: Int)
   returns (ret: Int)
   requires acc(this.special$size, write)
@@ -101,7 +101,7 @@ method global$fun_last_or_null$fun_take$T_class_pkg$kotlin$collections$global$cl
   if (true) {
     if (!(local0$size == 0)) {
       var anonymous$1: Int
-      anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
+      anonymous$1 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
         local0$size - 1)
       ret := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
       goto label$ret$0
@@ -114,7 +114,7 @@ method global$fun_last_or_null$fun_take$T_class_pkg$kotlin$collections$global$cl
   label label$ret$0
 }
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
+method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
   local$index: Int)
   returns (ret: Int)
   requires acc(this.special$size, write)
@@ -140,10 +140,10 @@ method global$fun_is_empty$fun_take$T_class_pkg$kotlin$collections$global$class_
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
   if (true) {
     var anonymous$1: Bool
-    anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$l)
+    anonymous$1 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$l)
     if (!anonymous$1) {
       var anonymous$2: Int
-      anonymous$2 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
+      anonymous$2 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
         0)
       anonymous$0 := anonymous$2
     } else {
@@ -154,7 +154,7 @@ method global$fun_is_empty$fun_take$T_class_pkg$kotlin$collections$global$class_
   label label$ret$0
 }
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
+method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
   local$index: Int)
   returns (ret: Int)
   requires acc(this.special$size, write)
@@ -166,7 +166,7 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Li
   ensures this.special$size == old(this.special$size)
 
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(this: Ref)
+method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(this: Ref)
   returns (ret: Bool)
   requires acc(this.special$size, write)
   requires this.special$size >= 0
@@ -205,7 +205,7 @@ method global$fun_nullable_list$fun_take$NT_class_pkg$kotlin$collections$global$
     (dom$Casting$cast(local$l, dom$Type$pkg$kotlin$collections$global$class_List()): Ref) ==
     (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$collections$global$class_List()): Ref))) {
       var anonymous$1: Bool
-      anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean((dom$Casting$cast(local$l,
+      anonymous$1 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean((dom$Casting$cast(local$l,
         dom$Type$pkg$kotlin$collections$global$class_List()): Ref))
       anonymous$0 := !anonymous$1
     } else {
@@ -215,7 +215,7 @@ method global$fun_nullable_list$fun_take$NT_class_pkg$kotlin$collections$global$
       var anonymous$3: Int
       var local2$x: Int
       anonymous$2 := (dom$Casting$cast(local$l, dom$Type$pkg$kotlin$collections$global$class_List()): Ref).special$size
-      anonymous$3 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int((dom$Casting$cast(local$l,
+      anonymous$3 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int((dom$Casting$cast(local$l,
         dom$Type$pkg$kotlin$collections$global$class_List()): Ref), anonymous$2 -
         1)
       local2$x := anonymous$3
@@ -224,7 +224,7 @@ method global$fun_nullable_list$fun_take$NT_class_pkg$kotlin$collections$global$
   label label$ret$0
 }
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
+method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
   local$index: Int)
   returns (ret: Int)
   requires acc(this.special$size, write)
@@ -236,7 +236,7 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Li
   ensures this.special$size == old(this.special$size)
 
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(this: Ref)
+method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(this: Ref)
   returns (ret: Bool)
   requires acc(this.special$size, write)
   requires this.special$size >= 0
@@ -245,4 +245,3 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Li
   ensures this.special$size == old(this.special$size)
   ensures ret ==> this.special$size == 0
   ensures !ret ==> this.special$size > 0
-

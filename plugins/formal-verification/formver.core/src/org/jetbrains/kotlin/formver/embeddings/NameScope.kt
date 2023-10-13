@@ -27,13 +27,11 @@ data class GlobalScope(override val packageName: FqName) : PackagePrefixScope {
     constructor(segments: List<String>) : this(FqName.fromSegments(segments))
 }
 
-// We use the embedded class name here.  It's not clear whether className.scope can be anything
-// but GlobalScope(packageName) here, but this approach makes the embedName implementation make
-// more sense.
-data class ClassScope(override val packageName: FqName, val className: ScopedKotlinName) : PackagePrefixScope {
-    override val suffix = "class_scope_${className.mangled}"
+data class ClassScope(override val packageName: FqName, val className: ClassKotlinName) : PackagePrefixScope {
+    // We don't need to prefix this with "class_scope" since the class name will already be prefixed with "class".
+    override val suffix = className.mangled
 
-    constructor(packageSegments: List<String>, className: ScopedKotlinName) : this(FqName.fromSegments(packageSegments), className)
+    constructor(packageSegments: List<String>, className: ClassKotlinName) : this(FqName.fromSegments(packageSegments), className)
 }
 
 data object ParameterScope : NameScope {

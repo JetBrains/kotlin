@@ -17,8 +17,8 @@ data class ScopedKotlinName(val scope: NameScope, val name: KotlinName, val type
 
     val isCollection: Boolean
         // TODO: make this neater
-        get() = if (scope is ClassScope && scope.className.name is ClassKotlinName) {
-            scope.packageName.asString() == "kotlin.collections" && scope.className.name.name.asStringStripSpecialMarkers() == "Collection"
+        get() = if (scope is ClassScope) {
+            scope.packageName.asString() == "kotlin.collections" && scope.className.name.asString() == "Collection"
         } else {
             false
         }

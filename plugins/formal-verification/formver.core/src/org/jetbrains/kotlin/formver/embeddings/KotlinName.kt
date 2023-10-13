@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.viper.MangledName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -31,8 +32,10 @@ data class SetterKotlinName(val name: Name) : PrefixedKotlinName("setter", name)
 data class ExtensionSetterKotlinName(val name: Name) : PrefixedKotlinName("ext_setter", name)
 data class ExtensionGetterKotlinName(val name: Name) : PrefixedKotlinName("ext_getter", name)
 
-data class ClassKotlinName(val name: Name) : KotlinName {
-    override val mangled: String = "class_${name.asStringStripSpecialMarkers()}"
+data class ClassKotlinName(val name: FqName) : KotlinName {
+    override val mangled: String = "class_${name.asViperString()}"
+
+    constructor(classSegments: List<String>) : this(FqName.fromSegments(classSegments))
 }
 
 data object ConstructorKotlinName : KotlinName {

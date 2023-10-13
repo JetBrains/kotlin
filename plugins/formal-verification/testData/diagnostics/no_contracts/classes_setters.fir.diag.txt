@@ -1,18 +1,17 @@
 /classes_setters.kt:(408,424): info: Generated Viper text for testCustomSetter:
-field class_scope_global$class_AlwaysPlusOne$member_b: Int
+field class_AlwaysPlusOne$member_b: Int
 
-field class_scope_global$class_AlwaysPlusOne$member_num: Int
+field class_AlwaysPlusOne$member_num: Int
 
-method class_scope_global$class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
+method class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_AlwaysPlusOne())
 
 
-method class_scope_global$class_AlwaysPlusOne$getter_num(this: Ref)
-  returns (ret: Int)
+method class_AlwaysPlusOne$getter_num(this: Ref) returns (ret: Int)
 
 
-method class_scope_global$class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
+method class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
   returns (ret: dom$Unit)
 
 
@@ -22,20 +21,19 @@ method global$fun_testCustomSetter$fun_take$$return$T_Unit()
   var anonymous$0: Ref
   var local0$f: Ref
   var anonymous$1: dom$Unit
-  anonymous$0 := class_scope_global$class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
+  anonymous$0 := class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
   local0$f := anonymous$0
-  inhale acc(local0$f.class_scope_global$class_AlwaysPlusOne$member_b, write)
-  local0$f.class_scope_global$class_AlwaysPlusOne$member_b := 1
-  exhale acc(local0$f.class_scope_global$class_AlwaysPlusOne$member_b, write)
-  anonymous$1 := class_scope_global$class_AlwaysPlusOne$setter_num(local0$f,
-    1)
+  inhale acc(local0$f.class_AlwaysPlusOne$member_b, write)
+  local0$f.class_AlwaysPlusOne$member_b := 1
+  exhale acc(local0$f.class_AlwaysPlusOne$member_b, write)
+  anonymous$1 := class_AlwaysPlusOne$setter_num(local0$f, 1)
   label label$ret$0
 }
 
 /classes_setters.kt:(490,500): info: Generated Viper text for testSetter:
-field class_scope_global$class_Person$member_age: Int
+field class_Person$member_age: Int
 
-method class_scope_global$class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(local$age: Int)
+method class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(local$age: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Person())
 
@@ -46,29 +44,28 @@ method global$fun_testSetter$fun_take$$return$T_Unit()
   var anonymous$0: Ref
   var local0$person: Ref
   var anonymous$1: Int
-  anonymous$0 := class_scope_global$class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(19)
+  anonymous$0 := class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(19)
   local0$person := anonymous$0
-  inhale acc(local0$person.class_scope_global$class_Person$member_age, write)
-  anonymous$1 := local0$person.class_scope_global$class_Person$member_age
-  exhale acc(local0$person.class_scope_global$class_Person$member_age, write)
-  inhale acc(local0$person.class_scope_global$class_Person$member_age, write)
-  local0$person.class_scope_global$class_Person$member_age := anonymous$1 +
-    1
-  exhale acc(local0$person.class_scope_global$class_Person$member_age, write)
+  inhale acc(local0$person.class_Person$member_age, write)
+  anonymous$1 := local0$person.class_Person$member_age
+  exhale acc(local0$person.class_Person$member_age, write)
+  inhale acc(local0$person.class_Person$member_age, write)
+  local0$person.class_Person$member_age := anonymous$1 + 1
+  exhale acc(local0$person.class_Person$member_age, write)
   label label$ret$0
 }
 
 /classes_setters.kt:(572,589): info: Generated Viper text for testSetterCascade:
-field class_scope_global$class_Bar$member_a: Int
+field class_Bar$member_a: Int
 
-field class_scope_global$class_Foo$member_b: Ref
+field class_Foo$member_b: Ref
 
-method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
+method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
 
 
-method class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
+method class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(local$b: Ref)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
 
@@ -80,31 +77,31 @@ method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   var anonymous$1: Ref
   var local0$f: Ref
   var anonymous$2: Ref
-  anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(10)
-  anonymous$1 := class_scope_global$class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(anonymous$0)
+  anonymous$0 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(10)
+  anonymous$1 := class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(anonymous$0)
   local0$f := anonymous$1
-  inhale acc(local0$f.class_scope_global$class_Foo$member_b, write)
-  anonymous$2 := local0$f.class_scope_global$class_Foo$member_b
+  inhale acc(local0$f.class_Foo$member_b, write)
+  anonymous$2 := local0$f.class_Foo$member_b
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$global$class_Bar())
-  exhale acc(local0$f.class_scope_global$class_Foo$member_b, write)
-  inhale acc(anonymous$2.class_scope_global$class_Bar$member_a, write)
-  anonymous$2.class_scope_global$class_Bar$member_a := 42
-  exhale acc(anonymous$2.class_scope_global$class_Bar$member_a, write)
+  exhale acc(local0$f.class_Foo$member_b, write)
+  inhale acc(anonymous$2.class_Bar$member_a, write)
+  anonymous$2.class_Bar$member_a := 42
+  exhale acc(anonymous$2.class_Bar$member_a, write)
   label label$ret$0
 }
 
 /classes_setters.kt:(641,665): info: Generated Viper text for testSetterNoBackingField:
-field class_scope_global$class_Baz$member__a: Int
+field class_Baz$member__a: Int
 
-method class_scope_global$class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
+method class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Baz())
 
 
-method class_scope_global$class_Baz$getter_a(this: Ref) returns (ret: Int)
+method class_Baz$getter_a(this: Ref) returns (ret: Int)
 
 
-method class_scope_global$class_Baz$setter_a(this: Ref, local$value: Int)
+method class_Baz$setter_a(this: Ref, local$value: Int)
   returns (ret: dom$Unit)
 
 
@@ -114,16 +111,16 @@ method global$fun_testSetterNoBackingField$fun_take$$return$T_Unit()
   var anonymous$0: Ref
   var local0$baz: Ref
   var anonymous$1: dom$Unit
-  anonymous$0 := class_scope_global$class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
+  anonymous$0 := class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
   local0$baz := anonymous$0
-  anonymous$1 := class_scope_global$class_Baz$setter_a(local0$baz, 42)
+  anonymous$1 := class_Baz$setter_a(local0$baz, 42)
   label label$ret$0
 }
 
 /classes_setters.kt:(805,821): info: Generated Viper text for testSetterLambda:
-field class_scope_global$class_Bar$member_a: Int
+field class_Bar$member_a: Int
 
-method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
+method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
 
@@ -133,11 +130,11 @@ method global$fun_testSetterLambda$fun_take$$return$T_Unit()
 {
   var anonymous$0: Ref
   var anonymous$1: dom$Unit
-  anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(0)
+  anonymous$0 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(0)
   if (true) {
-    inhale acc(anonymous$0.class_scope_global$class_Bar$member_a, write)
-    anonymous$0.class_scope_global$class_Bar$member_a := 42
-    exhale acc(anonymous$0.class_scope_global$class_Bar$member_a, write)
+    inhale acc(anonymous$0.class_Bar$member_a, write)
+    anonymous$0.class_Bar$member_a := 42
+    exhale acc(anonymous$0.class_Bar$member_a, write)
     label label$ret$1
   }
   label label$ret$0

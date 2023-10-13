@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.name.ClassId
 fun CallableId.embedScopeName(): NameScope =
     when (val id = this.classId) {
         null -> GlobalScope(packageName)
-        else -> ClassScope(packageName, id.embedName())
+        else -> ClassScope(packageName, ClassKotlinName(id.relativeClassName))
     }
 
 fun CallableId.embedScoped(name: KotlinName) = ScopedKotlinName(embedScopeName(), name)
 fun CallableId.embedScopedWithType(type: TypeEmbedding, name: KotlinName) = ScopedKotlinName(embedScopeName(), name, type)
 
-fun ClassId.embedName(): ScopedKotlinName = ScopedKotlinName(GlobalScope(packageFqName), ClassKotlinName(shortClassName))
+fun ClassId.embedName(): ScopedKotlinName = ScopedKotlinName(GlobalScope(packageFqName), ClassKotlinName(relativeClassName))
 fun CallableId.embedGetterName(): ScopedKotlinName = embedScoped(GetterKotlinName(callableName))
 fun CallableId.embedSetterName(): ScopedKotlinName = embedScoped(SetterKotlinName(callableName))
 fun CallableId.embedExtensionGetterName(type: TypeEmbedding): ScopedKotlinName =

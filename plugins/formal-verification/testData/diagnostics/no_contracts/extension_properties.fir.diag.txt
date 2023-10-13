@@ -39,18 +39,18 @@ method global$fun_extensionSetterProperty$fun_take$$return$T_Unit()
 }
 
 /extension_properties.kt:(409,448): info: Generated Viper text for extensionGetterPropertyUserDefinedClass:
-field class_scope_global$class_Foo$member_x: Int
+field class_Foo$member_x: Int
 
-method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
+method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-  ensures acc(ret.class_scope_global$class_Foo$member_x, wildcard)
+  ensures acc(ret.class_Foo$member_x, wildcard)
 
 
 method global$ext_getter_succ$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Int)
-  requires acc(this.class_scope_global$class_Foo$member_x, wildcard)
-  ensures acc(this.class_scope_global$class_Foo$member_x, wildcard)
+  requires acc(this.class_Foo$member_x, wildcard)
+  ensures acc(this.class_Foo$member_x, wildcard)
 
 
 method global$fun_extensionGetterPropertyUserDefinedClass$fun_take$$return$T_Unit()
@@ -60,7 +60,7 @@ method global$fun_extensionGetterPropertyUserDefinedClass$fun_take$$return$T_Uni
   var local0$f: Ref
   var anonymous$1: Int
   var local0$x: Int
-  anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
+  anonymous$0 := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
   local0$f := anonymous$0
   anonymous$1 := global$ext_getter_succ$fun_take$T_class_global$class_Foo$return$T_Int(local0$f)
   local0$x := anonymous$1
@@ -68,25 +68,25 @@ method global$fun_extensionGetterPropertyUserDefinedClass$fun_take$$return$T_Uni
 }
 
 /extension_properties.kt:(499,538): info: Generated Viper text for extensionSetterPropertyUserDefinedClass:
-field class_scope_global$class_Foo$member_x: Int
+field class_Foo$member_x: Int
 
-method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
+method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-  ensures acc(ret.class_scope_global$class_Foo$member_x, wildcard)
+  ensures acc(ret.class_Foo$member_x, wildcard)
 
 
 method global$ext_getter_strange$fun_take$T_class_global$class_Foo$return$T_Int(this: Ref)
   returns (ret: Int)
-  requires acc(this.class_scope_global$class_Foo$member_x, wildcard)
-  ensures acc(this.class_scope_global$class_Foo$member_x, wildcard)
+  requires acc(this.class_Foo$member_x, wildcard)
+  ensures acc(this.class_Foo$member_x, wildcard)
 
 
 method global$ext_setter_strange$fun_take$T_class_global$class_Foo$T_Int$return$T_Unit(this: Ref,
   local$v: Int)
   returns (ret: dom$Unit)
-  requires acc(this.class_scope_global$class_Foo$member_x, wildcard)
-  ensures acc(this.class_scope_global$class_Foo$member_x, wildcard)
+  requires acc(this.class_Foo$member_x, wildcard)
+  ensures acc(this.class_Foo$member_x, wildcard)
 
 
 method global$fun_extensionSetterPropertyUserDefinedClass$fun_take$$return$T_Unit()
@@ -95,7 +95,7 @@ method global$fun_extensionSetterPropertyUserDefinedClass$fun_take$$return$T_Uni
   var anonymous$0: Ref
   var local0$f: Ref
   var anonymous$1: dom$Unit
-  anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
+  anonymous$0 := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
   local0$f := anonymous$0
   anonymous$1 := global$ext_setter_strange$fun_take$T_class_global$class_Foo$T_Int$return$T_Unit(local0$f,
     42)

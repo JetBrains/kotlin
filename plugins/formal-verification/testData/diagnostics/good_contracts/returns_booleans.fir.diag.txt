@@ -106,7 +106,7 @@ method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$
     anonymous$0 := true
   } else {
     var anonymous$1: Bool
-    anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean((dom$Casting$cast(this,
+    anonymous$1 := pkg$kotlin$collections$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean((dom$Casting$cast(this,
       dom$Type$pkg$kotlin$collections$global$class_Collection()): Ref))
     anonymous$0 := anonymous$1
   }
@@ -115,7 +115,7 @@ method global$fun_isNullOrEmpty$fun_take$NT_class_pkg$kotlin$collections$global$
   label label$ret$0
 }
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: Ref)
+method pkg$kotlin$collections$class_Collection$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_Collection$return$T_Boolean(this: Ref)
   returns (ret: Bool)
   requires acc(this.special$size, write)
   requires this.special$size >= 0
@@ -124,4 +124,3 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Co
   ensures this.special$size == old(this.special$size)
   ensures ret ==> this.special$size == 0
   ensures !ret ==> this.special$size > 0
-

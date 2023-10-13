@@ -142,14 +142,14 @@ method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: do
 }
 
 /nullable.kt:(711,720): info: Generated Viper text for safe_call:
-field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
+field pkg$kotlin$class_String$member_length: Int
 
 method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
   returns (ret: dom$Unit)
   requires local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length, wildcard)
+    acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length, wildcard)
   ensures local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length, wildcard)
+    acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length, wildcard)
 {
   var anonymous$0: dom$Nullable[Int]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$s): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$global$class_String()))
@@ -157,30 +157,30 @@ method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$ret
     anonymous$0 := (dom$Nullable$null(): dom$Nullable[Int])
   } else {
     var anonymous$1: Int
-    anonymous$1 := pkg$kotlin$class_scope_pkg$kotlin$global$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int((dom$Casting$cast((dom$Casting$cast(local$s,
+    anonymous$1 := pkg$kotlin$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int((dom$Casting$cast((dom$Casting$cast(local$s,
       dom$Type$pkg$kotlin$global$class_String()): Ref), dom$Type$Any()): dom$Any))
     anonymous$0 := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   }
   label label$ret$0
 }
 
-method pkg$kotlin$class_scope_pkg$kotlin$global$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int(this: dom$Any)
+method pkg$kotlin$class_Any$fun_hashCode$fun_take$T_Any$return$T_Int(this: dom$Any)
   returns (ret: Int)
 
 
-method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
 
 /nullable.kt:(760,778): info: Generated Viper text for safe_call_property:
-field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
+field pkg$kotlin$class_String$member_length: Int
 
 method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
   returns (ret: dom$Unit)
   requires local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length, wildcard)
+    acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length, wildcard)
   ensures local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length, wildcard)
+    acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length, wildcard)
 {
   var anonymous$0: dom$Nullable[Int]
   var local0$l: dom$Nullable[Int]
@@ -189,35 +189,35 @@ method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_S
     anonymous$0 := (dom$Nullable$null(): dom$Nullable[Int])
   } else {
     var anonymous$1: Int
-    anonymous$1 := (dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length
+    anonymous$1 := (dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length
     anonymous$0 := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   }
   local0$l := anonymous$0
   label label$ret$0
 }
 
-method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
 
 /nullable.kt:(899,914): info: Generated Viper text for safe_call_chain:
-field class_scope_global$class_Foo$member_v: Int
+field class_Foo$member_v: Int
 
-method class_scope_global$class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo(this: Ref)
+method class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo(this: Ref)
   returns (ret: dom$Nullable[Ref])
-  requires acc(this.class_scope_global$class_Foo$member_v, wildcard)
-  ensures acc(this.class_scope_global$class_Foo$member_v, wildcard)
+  requires acc(this.class_Foo$member_v, wildcard)
+  ensures acc(this.class_Foo$member_v, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
   ensures ret != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(ret, dom$Type$global$class_Foo()): Ref).class_scope_global$class_Foo$member_v, wildcard)
+    acc((dom$Casting$cast(ret, dom$Type$global$class_Foo()): Ref).class_Foo$member_v, wildcard)
 
 
 method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: dom$Nullable[Ref])
   returns (ret: dom$Nullable[Int])
   requires local$foo != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_scope_global$class_Foo$member_v, wildcard)
+    acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_Foo$member_v, wildcard)
   ensures local$foo != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-    acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_scope_global$class_Foo$member_v, wildcard)
+    acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_Foo$member_v, wildcard)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   var anonymous$0: dom$Nullable[Ref]
@@ -228,7 +228,7 @@ method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_I
     anonymous$0 := (dom$Nullable$null(): dom$Nullable[Ref])
   } else {
     var anonymous$1: dom$Nullable[Ref]
-    anonymous$1 := class_scope_global$class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(local$foo,
+    anonymous$1 := class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(local$foo,
       dom$Type$global$class_Foo()): Ref))
     anonymous$0 := anonymous$1
   }
@@ -236,7 +236,7 @@ method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_I
     anonymous$2 := (dom$Nullable$null(): dom$Nullable[Ref])
   } else {
     var anonymous$3: dom$Nullable[Ref]
-    anonymous$3 := class_scope_global$class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(anonymous$0,
+    anonymous$3 := class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Foo((dom$Casting$cast(anonymous$0,
       dom$Type$global$class_Foo()): Ref))
     anonymous$2 := anonymous$3
   }
@@ -244,7 +244,7 @@ method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_I
     anonymous$4 := (dom$Nullable$null(): dom$Nullable[Int])
   } else {
     var anonymous$5: Int
-    anonymous$5 := (dom$Casting$cast(anonymous$2, dom$Type$global$class_Foo()): Ref).class_scope_global$class_Foo$member_v
+    anonymous$5 := (dom$Casting$cast(anonymous$2, dom$Type$global$class_Foo()): Ref).class_Foo$member_v
     anonymous$4 := (dom$Casting$cast(anonymous$5, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   }
   ret := anonymous$4

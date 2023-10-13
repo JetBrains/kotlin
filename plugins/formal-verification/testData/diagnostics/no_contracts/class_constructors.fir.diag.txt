@@ -1,23 +1,23 @@
 /class_constructors.kt:(389,411): info: Generated Viper text for onlySecondConstructors:
-field class_scope_global$class_Foo$member_a: Int
+field class_Foo$member_a: Int
 
-method class_scope_global$class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Bool)
+method class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(local$b: Bool)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-  ensures acc(ret.class_scope_global$class_Foo$member_a, wildcard)
+  ensures acc(ret.class_Foo$member_a, wildcard)
 
 
-method class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$x1: Int,
+method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(local$x1: Int,
   local$x2: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-  ensures acc(ret.class_scope_global$class_Foo$member_a, wildcard)
+  ensures acc(ret.class_Foo$member_a, wildcard)
 
 
-method class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$n: Int)
+method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$n: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-  ensures acc(ret.class_scope_global$class_Foo$member_a, wildcard)
+  ensures acc(ret.class_Foo$member_a, wildcard)
 
 
 method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
@@ -35,35 +35,35 @@ method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
   var local0$f3: Ref
   var anonymous$5: Int
   var local0$test: Int
-  anonymous$0 := class_scope_global$class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(true)
+  anonymous$0 := class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(true)
   local0$f1 := anonymous$0
-  anonymous$1 := local0$f1.class_scope_global$class_Foo$member_a
+  anonymous$1 := local0$f1.class_Foo$member_a
   local0$shouldBeOne := anonymous$1
-  anonymous$2 := class_scope_global$class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
+  anonymous$2 := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
   local0$f2 := anonymous$2
-  anonymous$3 := local0$f2.class_scope_global$class_Foo$member_a
+  anonymous$3 := local0$f2.class_Foo$member_a
   local0$shouldBeAnswer := anonymous$3
-  anonymous$4 := class_scope_global$class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
+  anonymous$4 := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
     32)
   local0$f3 := anonymous$4
-  anonymous$5 := local0$f3.class_scope_global$class_Foo$member_a
+  anonymous$5 := local0$f3.class_Foo$member_a
   local0$test := anonymous$5
   label label$ret$0
 }
 
 /class_constructors.kt:(590,617): info: Generated Viper text for primaryAndSecondConstructor:
-field class_scope_global$class_Bar$member_a: Int
+field class_Bar$member_a: Int
 
-method class_scope_global$class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Bool)
+method class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(local$b: Bool)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
-  ensures acc(ret.class_scope_global$class_Bar$member_a, wildcard)
+  ensures acc(ret.class_Bar$member_a, wildcard)
 
 
-method class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
+method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(local$a: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
-  ensures acc(ret.class_scope_global$class_Bar$member_a, wildcard)
+  ensures acc(ret.class_Bar$member_a, wildcard)
 
 
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
@@ -77,13 +77,13 @@ method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
   var local0$b2: Ref
   var anonymous$3: Int
   var local0$shouldBeAnswer: Int
-  anonymous$0 := class_scope_global$class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(false)
+  anonymous$0 := class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(false)
   local0$b1 := anonymous$0
-  anonymous$1 := local0$b1.class_scope_global$class_Bar$member_a
+  anonymous$1 := local0$b1.class_Bar$member_a
   local0$shouldBeZero := anonymous$1
-  anonymous$2 := class_scope_global$class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(42)
+  anonymous$2 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(42)
   local0$b2 := anonymous$2
-  anonymous$3 := local0$b2.class_scope_global$class_Bar$member_a
+  anonymous$3 := local0$b2.class_Bar$member_a
   local0$shouldBeAnswer := anonymous$3
   label label$ret$0
 }

@@ -1,7 +1,7 @@
 /generics.kt:(33,46): info: Generated Viper text for genericMethod:
-field class_scope_global$class_Box$member_t: dom$Nullable[dom$Any]
+field class_Box$member_t: dom$Nullable[dom$Any]
 
-method class_scope_global$class_Box$fun_genericMethod$fun_take$T_class_global$class_Box$NT_Any$return$NT_Any(this: Ref,
+method class_Box$fun_genericMethod$fun_take$T_class_global$class_Box$NT_Any$return$NT_Any(this: Ref,
   local$x: dom$Nullable[dom$Any])
   returns (ret: dom$Nullable[dom$Any])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
@@ -14,9 +14,9 @@ method class_scope_global$class_Box$fun_genericMethod$fun_take$T_class_global$cl
 }
 
 /generics.kt:(88,97): info: Generated Viper text for createBox:
-field class_scope_global$class_Box$member_t: dom$Nullable[dom$Any]
+field class_Box$member_t: dom$Nullable[dom$Any]
 
-method class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
+method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Box())
 
@@ -30,30 +30,30 @@ method global$fun_createBox$fun_take$$return$T_Int() returns (ret: Int)
   var anonymous$2: Ref
   var local0$intBox: Ref
   var anonymous$3: dom$Nullable[dom$Any]
-  anonymous$0 := class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(true,
+  anonymous$0 := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(true,
     dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
   local0$boolBox := anonymous$0
-  inhale acc(local0$boolBox.class_scope_global$class_Box$member_t, write)
-  anonymous$1 := local0$boolBox.class_scope_global$class_Box$member_t
+  inhale acc(local0$boolBox.class_Box$member_t, write)
+  anonymous$1 := local0$boolBox.class_Box$member_t
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
-  exhale acc(local0$boolBox.class_scope_global$class_Box$member_t, write)
+  exhale acc(local0$boolBox.class_Box$member_t, write)
   local0$b := (dom$Casting$cast(anonymous$1, dom$Type$Boolean()): Bool)
-  anonymous$2 := class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(2,
+  anonymous$2 := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(2,
     dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
   local0$intBox := anonymous$2
-  inhale acc(local0$intBox.class_scope_global$class_Box$member_t, write)
-  anonymous$3 := local0$intBox.class_scope_global$class_Box$member_t
+  inhale acc(local0$intBox.class_Box$member_t, write)
+  anonymous$3 := local0$intBox.class_Box$member_t
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$3): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
-  exhale acc(local0$intBox.class_scope_global$class_Box$member_t, write)
+  exhale acc(local0$intBox.class_Box$member_t, write)
   ret := (dom$Casting$cast(anonymous$3, dom$Type$Int()): Int)
   goto label$ret$0
   label label$ret$0
 }
 
 /generics.kt:(208,223): info: Generated Viper text for setGenericField:
-field class_scope_global$class_Box$member_t: dom$Nullable[dom$Any]
+field class_Box$member_t: dom$Nullable[dom$Any]
 
-method class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
+method class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box(local$t: dom$Nullable[dom$Any])
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Box())
 
@@ -63,12 +63,12 @@ method global$fun_setGenericField$fun_take$$return$T_Unit()
 {
   var anonymous$0: Ref
   var local0$box: Ref
-  anonymous$0 := class_scope_global$class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(3,
+  anonymous$0 := class_Box$constructor$fun_take$NT_Any$return$T_class_global$class_Box((dom$Casting$cast(3,
     dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]))
   local0$box := anonymous$0
-  inhale acc(local0$box.class_scope_global$class_Box$member_t, write)
-  local0$box.class_scope_global$class_Box$member_t := (dom$Casting$cast(5, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any])
-  exhale acc(local0$box.class_scope_global$class_Box$member_t, write)
+  inhale acc(local0$box.class_Box$member_t, write)
+  local0$box.class_Box$member_t := (dom$Casting$cast(5, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any])
+  exhale acc(local0$box.class_Box$member_t, write)
   label label$ret$0
 }
 
@@ -98,4 +98,3 @@ method global$fun_callGenericFunc$fun_take$$return$T_Unit()
 method global$fun_genericFun$fun_take$NT_Any$return$NT_Any(local$t: dom$Nullable[dom$Any])
   returns (ret: dom$Nullable[dom$Any])
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
-

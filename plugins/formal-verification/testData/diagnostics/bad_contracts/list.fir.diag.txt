@@ -10,13 +10,13 @@ method global$fun_empty_list_get$fun_take$$return$T_Unit()
   var local0$s: Int
   anonymous$0 := pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
   local0$myList := anonymous$0
-  anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local0$myList,
+  anonymous$1 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local0$myList,
     0)
   local0$s := anonymous$1
   label label$ret$0
 }
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
+method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
   local$index: Int)
   returns (ret: Int)
   requires acc(this.special$size, write)
@@ -36,7 +36,7 @@ method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$
   ensures ret.special$size == 0
 
 
-/list.kt:(91,105): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion local0$myList.special$size > 0 might not hold. (<no position>)
+/list.kt:(91,105): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion local0$myList.special$size > 0 might not hold. (<no position>)
 
 
 /list.kt:(91,105): warning: Function empty_list_get may not satisfy its contract.
@@ -55,14 +55,14 @@ method global$fun_unsafe_last$fun_take$T_class_pkg$kotlin$collections$global$cla
   var anonymous$1: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
   anonymous$0 := local$l.special$size
-  anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
+  anonymous$1 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
     anonymous$0 - 1)
   ret := anonymous$1
   goto label$ret$0
   label label$ret$0
 }
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
+method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
   local$index: Int)
   returns (ret: Int)
   requires acc(this.special$size, write)
@@ -74,7 +74,7 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Li
   ensures this.special$size == old(this.special$size)
 
 
-/list.kt:(193,204): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion anonymous$0 - 1 >= 0 might not hold. (<no position>)
+/list.kt:(193,204): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion anonymous$0 - 1 >= 0 might not hold. (<no position>)
 
 
 /list.kt:(193,204): warning: Function unsafe_last may not satisfy its contract.
@@ -93,15 +93,15 @@ method global$fun_add_get$fun_take$T_class_pkg$kotlin$collections$global$class_M
   var anonymous$1: Int
   var local0$n: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_MutableList())
-  anonymous$0 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(local$l,
+  anonymous$0 := pkg$kotlin$collections$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(local$l,
     1)
-  anonymous$1 := pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(local$l,
+  anonymous$1 := pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(local$l,
     1)
   local0$n := anonymous$1
   label label$ret$0
 }
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(this: Ref,
+method pkg$kotlin$collections$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(this: Ref,
   local$element: Int)
   returns (ret: Bool)
   requires acc(this.special$size, write)
@@ -111,7 +111,7 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Mu
   ensures this.special$size == old(this.special$size) + 1
 
 
-method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(this: Ref,
+method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(this: Ref,
   local$index: Int)
   returns (ret: Int)
   requires acc(this.special$size, write)
@@ -123,7 +123,7 @@ method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_Mu
   ensures this.special$size == old(this.special$size)
 
 
-/list.kt:(273,280): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_scope_pkg$kotlin$collections$global$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int might not hold. Assertion local$l.special$size > 1 might not hold. (<no position>)
+/list.kt:(273,280): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int might not hold. Assertion local$l.special$size > 1 might not hold. (<no position>)
 
 
 /list.kt:(273,280): warning: Function add_get may not satisfy its contract.

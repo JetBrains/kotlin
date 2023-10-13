@@ -57,4 +57,3 @@ method global$fun_if_on_parameter$fun_take$T_Boolean$return$T_Int(local$b: Bool)
 
 
 method global$fun_simple_if$fun_take$$return$T_Int() returns (ret: Int)
-

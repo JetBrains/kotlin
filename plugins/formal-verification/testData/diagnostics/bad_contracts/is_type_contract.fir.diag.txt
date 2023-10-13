@@ -1,5 +1,5 @@
 /is_type_contract.kt:(121,142): info: Generated Viper text for unverifiableTypeCheck:
-field pkg$kotlin$class_scope_pkg$kotlin$global$class_String$member_length: Int
+field pkg$kotlin$class_String$member_length: Int
 
 method global$fun_unverifiableTypeCheck$fun_take$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int])
   returns (ret: Bool)
@@ -12,7 +12,7 @@ method global$fun_unverifiableTypeCheck$fun_take$NT_Int$return$T_Boolean(local$x
   label label$ret$0
 }
 
-method pkg$kotlin$class_scope_pkg$kotlin$global$class_CharSequence$getter_length(this: Ref)
+method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
 
