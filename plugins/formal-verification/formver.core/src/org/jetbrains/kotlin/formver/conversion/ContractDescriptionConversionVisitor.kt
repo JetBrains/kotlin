@@ -49,7 +49,7 @@ class ContractDescriptionConversionVisitor(
     ): Exp = when (booleanConstantDescriptor) {
         ConeContractConstantValues.TRUE -> BoolLit(true)
         ConeContractConstantValues.FALSE -> BoolLit(false)
-        else -> throw Exception("Unexpected boolean constant: $booleanConstantDescriptor")
+        else -> throw IllegalArgumentException("Unexpected boolean constant: $booleanConstantDescriptor")
     }
 
     override fun visitReturnsEffectDeclaration(
@@ -68,7 +68,7 @@ class ContractDescriptionConversionVisitor(
             ConeContractConstantValues.NOT_NULL -> signature.returnVar.nullCmp(true)
             ConeContractConstantValues.TRUE -> EqCmp(retVar, BoolLit(true))
             ConeContractConstantValues.FALSE -> EqCmp(retVar, BoolLit(false))
-            else -> throw Exception("Unexpected constant: ${returnsEffect.value}")
+            else -> throw IllegalArgumentException("Unexpected constant: ${returnsEffect.value}")
         }
     }
 

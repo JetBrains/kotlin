@@ -236,7 +236,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
     override fun visitProperty(property: FirProperty, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         val symbol = property.symbol
         if (!symbol.isLocal) {
-            throw Exception("StmtConversionVisitor should not encounter non-local properties.")
+            throw IllegalStateException("StmtConversionVisitor should not encounter non-local properties.")
         }
         data.declareLocal(symbol.name, data.embedType(symbol.resolvedReturnType), property.initializer?.let { data.convert(it) })
         return UnitLit
@@ -285,7 +285,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         data: StmtConversionContext<ResultTrackingContext>,
     ): ExpEmbedding {
         val propertyAccess = variableAssignment.lValue as? FirPropertyAccessExpression
-            ?: throw Exception("Left hand of an assignment must be a property access.")
+            ?: throw IllegalArgumentException("Left hand of an assignment must be a property access.")
         val embedding = data.embedPropertyAccess(propertyAccess)
         val convertedRValue = data.convert(variableAssignment.rValue)
         embedding.setValue(convertedRValue, data)
@@ -471,7 +471,7 @@ object StmtConversionVisitorExceptionWrapper : FirVisitor<ExpEmbedding, StmtConv
     override fun visitElement(element: FirElement, data: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
         try {
             return element.accept(StmtConversionVisitor, data)
-        } catch (e: Throwable) {
+        } catch (e: Exception) {
             data.errorCollector.addErrorInfo("... while converting ${element.source.text}")
             throw e
         }

@@ -72,7 +72,7 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
             if (!success) {
                 reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, declaration.name.asString(), context)
             }
-        } catch (e: Throwable) {
+        } catch (e: Exception) {
             val error = errorCollector.formatErrorWithInfos(e.message ?: "No message provided")
             reporter.reportOn(declaration.source, PluginErrors.INTERNAL_ERROR, error, context)
             // Note that the below text is only visible during plugin development; Gradle hides it when running the plugin

@@ -26,7 +26,7 @@ class LambdaExp(
     override fun toViper(): Exp = TODO("create new function object with counter, duplicable (requires toViper restructuring)")
 
     override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
-        val inlineBody = function.body ?: throw Exception("Lambda $function has a null body")
+        val inlineBody = function.body ?: throw IllegalArgumentException("Lambda $function has a null body")
         val paramNames = function.valueParameters.map { it.name }
         return ctx.insertInlineFunctionCall(signature, paramNames, args, inlineBody, parentCtx, ctx.signature.sourceName)
     }
