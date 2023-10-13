@@ -111,6 +111,11 @@ private class LLFirAnnotationArgumentsTargetResolver(
 
                 is FirFunction -> bodyResolveContext.forFunctionBody(target, transformer.components) {
                     contextCollector.addDeclarationContext(target, bodyResolveContext)
+                    for (valueParameter in target.valueParameters) {
+                        bodyResolveContext.withValueParameter(valueParameter, transformer.session) {
+                            contextCollector.addDeclarationContext(valueParameter, bodyResolveContext)
+                        }
+                    }
                 }
 
                 is FirScript -> {}
