@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 // !CHECK_TYPE
+// !COMPILER_VERSION 2.0
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
@@ -26,15 +27,15 @@ fun test() {
     <!SYNTAX!><!>fun named7() = 1
 
     val x3 = when (1) {
-        0 -> fun named8(): Int {return 1}
-        else -> fun named9() = 1
+        0 -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named8(): Int {return 1}<!>
+        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named9() = 1<!>
     }
 
     val x31 = when (1) {
         0 -> {
             fun named10(): Int {return 1}
         }
-        else -> fun named11() = 1
+        else -> <!SINGLE_ANONYMOUS_FUNCTION_WITH_NAME_WARNING!>fun named11() = 1<!>
     }
 
     val x4 = {

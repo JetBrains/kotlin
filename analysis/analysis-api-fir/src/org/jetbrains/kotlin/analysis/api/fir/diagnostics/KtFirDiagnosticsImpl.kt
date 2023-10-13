@@ -2592,6 +2592,16 @@ internal class AnonymousFunctionWithNameImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtFunction>(firDiagnostic, token), KtFirDiagnostic.AnonymousFunctionWithName
 
+internal class SingleAnonymousFunctionWithNameErrorImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtFunction>(firDiagnostic, token), KtFirDiagnostic.SingleAnonymousFunctionWithNameError
+
+internal class SingleAnonymousFunctionWithNameWarningImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtFunction>(firDiagnostic, token), KtFirDiagnostic.SingleAnonymousFunctionWithNameWarning
+
 internal class AnonymousFunctionParameterWithDefaultValueImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

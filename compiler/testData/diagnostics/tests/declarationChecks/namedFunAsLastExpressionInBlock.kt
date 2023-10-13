@@ -1,5 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 // !CHECK_TYPE
+// !COMPILER_VERSION 2.0
 fun foo(block: () -> (() -> Int)) {}
 
 fun test() {

@@ -2164,6 +2164,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AnonymousFunctionWithName::class
     }
 
+    interface SingleAnonymousFunctionWithNameError : KtFirDiagnostic<KtFunction> {
+        override val diagnosticClass get() = SingleAnonymousFunctionWithNameError::class
+    }
+
+    interface SingleAnonymousFunctionWithNameWarning : KtFirDiagnostic<KtFunction> {
+        override val diagnosticClass get() = SingleAnonymousFunctionWithNameWarning::class
+    }
+
     interface AnonymousFunctionParameterWithDefaultValue : KtFirDiagnostic<KtParameter> {
         override val diagnosticClass get() = AnonymousFunctionParameterWithDefaultValue::class
     }

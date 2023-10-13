@@ -570,6 +570,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SENSELESS_NULL_IN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_PROJECTED_OUT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SINGLETON_IN_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SINGLE_ANONYMOUS_FUNCTION_WITH_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SMARTCAST_IMPOSSIBLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SPREAD_OF_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUBCLASS_OPT_IN_INAPPLICABLE
@@ -1783,6 +1784,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body.", DECLARATION_NAME)
         map.put(FUNCTION_DECLARATION_WITH_NO_NAME, "Function declaration must have a name.")
         map.put(ANONYMOUS_FUNCTION_WITH_NAME, "Anonymous functions with names are prohibited.")
+        map.put(SINGLE_ANONYMOUS_FUNCTION_WITH_NAME, "Anonymous functions with names are prohibited.")
 
         map.put(
             ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE,
