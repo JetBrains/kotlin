@@ -126,7 +126,9 @@ class SimpleFieldConfig(
     val nullable: Boolean,
     val mutable: Boolean,
     isChildElement: Boolean,
-) : FieldConfig(name, isChildElement)
+) : FieldConfig(name, isChildElement) {
+    var initializeToThis = false
+}
 
 class ListFieldConfig(
     name: String,
