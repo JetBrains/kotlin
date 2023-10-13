@@ -81,7 +81,7 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
  * For example, calling this function for `import a.b.c`
  * and fqName `a.b` returns the source element for `b`.
  */
-fun FirImport.getSourceForFqName(fqName: FqName): KtSourceElement? {
+fun FirImport.getSourceForFqNamePrefix(fqName: FqName): KtSourceElement? {
     // For the example from the doc. comment
     // we'd get [a, a.b, a.b.c]
     val cumulativeSegmentSources = generateSequence(source) { it.getChild(IMPORT_PARENT_TOKEN_TYPES) }.drop(1).toList().asReversed()
@@ -89,23 +89,16 @@ fun FirImport.getSourceForFqName(fqName: FqName): KtSourceElement? {
     val segmentSources = cumulativeSegmentSources.map { it.getChild(KtNodeTypes.REFERENCE_EXPRESSION, reverse = true) ?: it }
     // [a, b]
     val fqNameSegments = fqName.pathSegments()
-    var currentSegmentIndex = 0
 
     if (segmentSources.size < fqNameSegments.size || segmentSources.isEmpty()) {
         return null
     }
 
-    while (currentSegmentIndex < fqNameSegments.size) {
+    for (currentSegmentIndex in fqNameSegments.indices) {
         if (segmentSources[currentSegmentIndex].text != fqNameSegments[currentSegmentIndex].identifier) {
             return null
         }
-
-        currentSegmentIndex += 1
     }
 
-    if (currentSegmentIndex != fqNameSegments.size) {
-        return null
-    }
-
-    return segmentSources[currentSegmentIndex - 1]
+    return segmentSources[fqNameSegments.lastIndex]
 }
