@@ -87,8 +87,10 @@ private class LLFirAnnotationArgumentsTargetResolver(
             collector.addDeclarationContext(firClass, context)
         }
 
-        @Suppress("DEPRECATION_ERROR")
-        super.withRegularClassImpl(firClass, actionWithCollector)
+        transformer.declarationsTransformer.withRegularClass(firClass) {
+            actionWithCollector()
+            firClass
+        }
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {

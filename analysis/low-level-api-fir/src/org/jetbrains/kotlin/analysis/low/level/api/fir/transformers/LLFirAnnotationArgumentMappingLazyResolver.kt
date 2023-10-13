@@ -65,6 +65,14 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
             transformAnnotations(target)
         }
     }
+
+    @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
+    override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
+        transformer.declarationsTransformer.withRegularClass(firClass) {
+            action()
+            firClass
+        }
+    }
 }
 
 internal object AnnotationArgumentMappingStateKeepers {
