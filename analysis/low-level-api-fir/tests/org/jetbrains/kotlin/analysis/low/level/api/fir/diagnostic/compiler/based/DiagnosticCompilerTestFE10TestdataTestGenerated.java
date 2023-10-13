@@ -88,6 +88,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("argumentTypeMismatchVsTooManyArgs.kt")
+        public void testArgumentTypeMismatchVsTooManyArgs() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/argumentTypeMismatchVsTooManyArgs.kt");
+        }
+
+        @Test
         @TestMetadata("AssignToArrayElement.kt")
         public void testAssignToArrayElement() throws Exception {
             runTest("compiler/testData/diagnostics/tests/AssignToArrayElement.kt");
