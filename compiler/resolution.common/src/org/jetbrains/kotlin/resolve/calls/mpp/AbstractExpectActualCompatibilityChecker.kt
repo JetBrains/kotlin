@@ -46,16 +46,23 @@ object AbstractExpectActualCompatibilityChecker {
     fun <T : DeclarationSymbolMarker> getCallablesCompatibility(
         expectDeclaration: CallableSymbolMarker,
         actualDeclaration: CallableSymbolMarker,
-        parentSubstitutor: TypeSubstitutorMarker?,
         expectContainingClass: RegularClassSymbolMarker?,
         actualContainingClass: RegularClassSymbolMarker?,
         context: ExpectActualMatchingContext<T>,
-    ): ExpectActualCompatibility<T> {
-        val result = with(context) {
-            getCallablesCompatibility(expectDeclaration, actualDeclaration, parentSubstitutor, expectContainingClass, actualContainingClass)
-        }
+    ): ExpectActualCompatibility<T> = with (context) {
+        val expectTypeParameters = expectContainingClass?.typeParameters.orEmpty()
+        val actualTypeParameters = actualContainingClass?.typeParameters.orEmpty()
+        val parentSubstitutor = (expectTypeParameters zipIfSizesAreEqual actualTypeParameters)
+            ?.let { createExpectActualTypeParameterSubstitutor(it, parentSubstitutor = null) }
+        val result = getCallablesCompatibility(
+            expectDeclaration,
+            actualDeclaration,
+            parentSubstitutor,
+            expectContainingClass,
+            actualContainingClass
+        )
         @Suppress("UNCHECKED_CAST")
-        return result as ExpectActualCompatibility<T>
+        result as ExpectActualCompatibility<T>
     }
 
     fun <T : DeclarationSymbolMarker> matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
