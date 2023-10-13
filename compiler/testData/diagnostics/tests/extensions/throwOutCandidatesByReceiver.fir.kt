@@ -40,7 +40,7 @@ fun test5() {
 fun <R: Any> R?.sure() : R = this!!
 
 fun <T> test6(l: List<T>?) {
-    l.sure<<!UPPER_BOUND_VIOLATED!>T<!>>()
+    l.<!INAPPLICABLE_CANDIDATE!>sure<!><<!UPPER_BOUND_VIOLATED!>T<!>>()
 }
 
 
