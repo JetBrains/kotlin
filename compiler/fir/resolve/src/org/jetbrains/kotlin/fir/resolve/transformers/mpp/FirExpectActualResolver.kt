@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 
 object FirExpectActualResolver {
@@ -58,7 +58,7 @@ object FirExpectActualResolver {
                     candidates.filter { expectSymbol ->
                         actualSymbol != expectSymbol && expectSymbol.isExpect
                     }.groupBy { expectDeclaration ->
-                        AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
+                        AbstractExpectActualChecker.getCallablesCompatibility(
                             expectDeclaration,
                             actualSymbol as CallableSymbolMarker,
                             expectContainingClass,
@@ -76,7 +76,7 @@ object FirExpectActualResolver {
                 is FirClassLikeSymbol<*> -> {
                     val expectClassSymbol = useSiteSession.dependenciesSymbolProvider
                         .getClassLikeSymbolByClassId(actualSymbol.classId) as? FirRegularClassSymbol ?: return emptyMap()
-                    val compatibility = AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
+                    val compatibility = AbstractExpectActualChecker.getClassifiersCompatibility(
                         expectClassSymbol,
                         actualSymbol,
                         checkClassScopesCompatibility = true,
