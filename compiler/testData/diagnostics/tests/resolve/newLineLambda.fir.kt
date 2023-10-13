@@ -82,8 +82,8 @@ fun testVararg() {
     varargFn(1,2,3) // comment
     // comment
     <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
-    varargFn(1,2,3) {} <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
-    varargFn(1,2,3) {}
+    varargFn(1,2,3) <!VARARG_OUTSIDE_PARENTHESES!>{}<!> <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
+    varargFn(1,2,3) <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
     <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 }
 

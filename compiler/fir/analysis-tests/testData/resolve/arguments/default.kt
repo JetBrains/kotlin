@@ -15,7 +15,7 @@ fun test() {
     bar(1, 2.0, true)
     bar(1, 2.0, true, "my")
 
-    bar(1, <!NO_VALUE_FOR_PARAMETER!>true)<!>
+    bar(1, <!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>true<!>)<!>
 
     baz(1)
     baz(1, "my", "yours")
