@@ -23,9 +23,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.script]
  */
 abstract class BirScript : BirElementBase(), BirDeclaration, BirDeclarationWithName,
-        BirDeclarationParent, BirStatementContainer, BirMetadataSourceOwner {
-    abstract override val symbol: BirScriptSymbol
-
+        BirDeclarationParent, BirStatementContainer, BirMetadataSourceOwner, BirScriptSymbol {
     abstract var thisReceiver: BirValueParameter?
 
     abstract var baseClass: BirType?

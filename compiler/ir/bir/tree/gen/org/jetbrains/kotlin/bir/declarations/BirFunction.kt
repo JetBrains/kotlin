@@ -23,12 +23,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  */
 interface BirFunction : BirDeclaration, BirPossiblyExternalDeclaration,
         BirDeclarationWithVisibility, BirTypeParametersContainer, BirSymbolOwner,
-        BirDeclarationParent, BirReturnTarget, BirMemberWithContainerSource, BirMetadataSourceOwner
-        {
+        BirDeclarationParent, BirReturnTarget, BirMemberWithContainerSource, BirMetadataSourceOwner,
+        BirFunctionSymbol {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
-
-    override val symbol: BirFunctionSymbol
 
     var isInline: Boolean
 

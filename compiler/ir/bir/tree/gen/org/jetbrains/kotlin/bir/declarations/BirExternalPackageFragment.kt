@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.externalPackageFragment]
  */
-abstract class BirExternalPackageFragment : BirPackageFragment() {
-    abstract override val symbol: BirExternalPackageFragmentSymbol
-
+abstract class BirExternalPackageFragment : BirPackageFragment(),
+        BirExternalPackageFragmentSymbol {
     abstract val containerSource: DeserializedContainerSource?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

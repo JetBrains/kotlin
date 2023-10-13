@@ -22,11 +22,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.localDelegatedProperty]
  */
 abstract class BirLocalDelegatedProperty : BirElementBase(), BirDeclaration,
-        BirDeclarationWithName, BirSymbolOwner, BirMetadataSourceOwner {
+        BirDeclarationWithName, BirSymbolOwner, BirMetadataSourceOwner,
+        BirLocalDelegatedPropertySymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptorWithAccessors
-
-    abstract override val symbol: BirLocalDelegatedPropertySymbol
 
     abstract var type: BirType
 

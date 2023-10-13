@@ -21,11 +21,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.enumEntry]
  */
-abstract class BirEnumEntry : BirElementBase(), BirDeclaration, BirDeclarationWithName {
+abstract class BirEnumEntry : BirElementBase(), BirDeclaration, BirDeclarationWithName,
+        BirEnumEntrySymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ClassDescriptor
-
-    abstract override val symbol: BirEnumEntrySymbol
 
     abstract var initializerExpression: BirExpressionBody?
 

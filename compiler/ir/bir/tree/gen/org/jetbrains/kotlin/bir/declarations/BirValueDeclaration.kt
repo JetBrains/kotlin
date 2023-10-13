@@ -19,12 +19,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueDeclaration]
  */
-abstract class BirValueDeclaration : BirElementBase(), BirDeclarationWithName, BirSymbolOwner
-        {
+abstract class BirValueDeclaration : BirElementBase(), BirDeclarationWithName,
+        BirSymbolOwner, BirValueSymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: ValueDescriptor
-
-    abstract override val symbol: BirValueSymbol
 
     abstract var type: BirType
 

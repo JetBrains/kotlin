@@ -22,11 +22,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeAlias]
  */
 abstract class BirTypeAlias : BirElementBase(), BirDeclaration, BirDeclarationWithName,
-        BirDeclarationWithVisibility, BirTypeParametersContainer {
+        BirDeclarationWithVisibility, BirTypeParametersContainer, BirTypeAliasSymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeAliasDescriptor
-
-    abstract override val symbol: BirTypeAliasSymbol
 
     abstract var isActual: Boolean
 

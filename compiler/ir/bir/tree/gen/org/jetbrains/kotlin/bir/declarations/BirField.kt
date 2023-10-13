@@ -24,11 +24,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.field]
  */
 abstract class BirField : BirElementBase(), BirDeclaration, BirPossiblyExternalDeclaration,
-        BirDeclarationWithVisibility, BirDeclarationParent, BirMetadataSourceOwner {
+        BirDeclarationWithVisibility, BirDeclarationParent, BirMetadataSourceOwner, BirFieldSymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor
-
-    abstract override val symbol: BirFieldSymbol
 
     abstract var type: BirType
 

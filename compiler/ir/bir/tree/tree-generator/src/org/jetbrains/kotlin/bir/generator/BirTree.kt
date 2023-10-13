@@ -35,13 +35,13 @@ object BirTree : AbstractTreeBuilder() {
     private fun symbol(type: TypeRef, mutable: Boolean = false): SimpleFieldConfig =
         field("symbol", type, mutable = mutable)
 
-    private fun descriptor(typeName: String, nullable: Boolean = false): SimpleFieldConfig =
-        field(
-            name = "descriptor",
-            type = ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
-            mutable = false,
-            nullable = nullable,
-        )
+    private fun descriptor(typeName: String, nullable: Boolean = false, initializer: SimpleFieldConfig.() -> Unit = {}): SimpleFieldConfig = field(
+        "descriptor",
+        ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
+        mutable = false,
+        nullable = nullable,
+        initializer = initializer
+    )
 
     override val rootElement: ElementConfig by element(Other, name = "element") {
         +field("sourceSpan", type(Packages.tree, "SourceSpan")) {
@@ -85,7 +85,9 @@ object BirTree : AbstractTreeBuilder() {
         +field("isExternal", boolean)
     }
     val symbolOwner: ElementConfig by element(Declaration) {
-        +symbol(symbolType)
+        parent(type(Packages.symbols, "BirUntypedPossiblyElementSymbol"))
+
+        +descriptor("DeclarationDescriptor")
     }
     val metadataSourceOwner: ElementConfig by element(Declaration) {
         val metadataField = +field("metadata", type("org.jetbrains.kotlin.ir.declarations", "MetadataSource"), nullable = true) {
