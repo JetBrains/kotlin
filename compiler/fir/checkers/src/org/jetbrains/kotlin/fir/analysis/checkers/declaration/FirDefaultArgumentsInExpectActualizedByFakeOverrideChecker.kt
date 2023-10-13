@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.compatible
 internal object FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) ||
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitDefaultDefaultArgumentsInExpectActualizedByFakeOverride)) {
+            !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitDefaultArgumentsInExpectActualizedByFakeOverride)) {
             return
         }
         if (!declaration.isActual) {
