@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import java.util.*
 
-object AbstractExpectActualCompatibilityChecker {
+object AbstractExpectActualChecker {
     fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
