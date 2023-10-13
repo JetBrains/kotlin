@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationCheck
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
-import org.jetbrains.kotlin.fir.analysis.getSourceForFqNamePrefix
+import org.jetbrains.kotlin.fir.analysis.getLastImportedFqNameSegmentSource
 import org.jetbrains.kotlin.fir.analysis.getSourceForImportSegment
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -84,7 +84,7 @@ object FirImportsChecker : FirFileChecker() {
             reporter.reportOn(import.source, FirErrors.CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON, classSymbol.classId.shortClassName, context)
         }
         if (!classLike.fir.isVisible(context)) {
-            val source = import.getSourceForFqNamePrefix(fqName) ?: error("`${import.source}` does not contain `$fqName`")
+            val source = import.getLastImportedFqNameSegmentSource() ?: error("`${import.source}` does not contain `$fqName`")
             reporter.report(classLike.toInvisibleReferenceDiagnostic(source), context)
         }
     }

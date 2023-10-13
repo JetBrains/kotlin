@@ -73,32 +73,7 @@ fun FirImport.getSourceForImportSegment(indexFromLast: Int): KtSourceElement? {
 
 /**
  * Looks for the source element of the last segment
- * of `fqName` within the given import.
- * If the given fqName doesn't match the beginning
- * of the imported fqName or the imported fqName
- * has no segments this function returns `null`.
- *
- * For example, calling this function for `import a.b.c`
- * and fqName `a.b` returns the source element for `b`.
+ * of `importedFqName`.
  */
-fun FirImport.getSourceForFqNamePrefix(fqName: FqName): KtSourceElement? {
-    // For the example from the doc. comment
-    // we'd get [a, a.b, a.b.c]
-    val cumulativeSegmentSources = generateSequence(source) { it.getChild(IMPORT_PARENT_TOKEN_TYPES) }.drop(1).toList().asReversed()
-    // [a, b, c]
-    val segmentSources = cumulativeSegmentSources.map { it.getChild(KtNodeTypes.REFERENCE_EXPRESSION, reverse = true) ?: it }
-    // [a, b]
-    val fqNameSegments = fqName.pathSegments()
-
-    if (segmentSources.size < fqNameSegments.size || segmentSources.isEmpty()) {
-        return null
-    }
-
-    for (currentSegmentIndex in fqNameSegments.indices) {
-        if (segmentSources[currentSegmentIndex].text != fqNameSegments[currentSegmentIndex].identifier) {
-            return null
-        }
-    }
-
-    return segmentSources[fqNameSegments.lastIndex]
-}
+fun FirImport.getLastImportedFqNameSegmentSource(): KtSourceElement? =
+    source?.getChild(KtNodeTypes.REFERENCE_EXPRESSION, reverse = true)
