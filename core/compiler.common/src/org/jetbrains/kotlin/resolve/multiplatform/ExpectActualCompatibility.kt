@@ -33,7 +33,7 @@ sealed class ExpectActualCompatibility<out D> {
         object ClassTypeParameterCount : WeakIncompatible<Nothing>(FunctionTypeParameterCount.reason)
 
         object ParameterTypes : StrongIncompatible<Nothing>("parameter types are different")
-        object ReturnType : StrongIncompatible<Nothing>("return type is different")
+        object ReturnType : WeakIncompatible<Nothing>("return type is different")
 
         object ParameterNames : WeakIncompatible<Nothing>("parameter names are different")
         object TypeParameterNames : WeakIncompatible<Nothing>("names of type parameters are different")
