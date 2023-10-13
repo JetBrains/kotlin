@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import llvm.LLVMABIAlignmentOfType
 import llvm.LLVMABISizeOfType
-import llvm.LLVMPreferredAlignmentOfType
 import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -454,14 +452,35 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         val superFields = if (superClass != null) context.getLayoutBuilder(superClass).getFieldsInternal(llvm) else emptyList()
 
         val declaredFields = getDeclaredFields(llvm)
-        val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))
-            declaredFields
-        else
-            declaredFields.sortedByDescending {
-                with(llvm) { LLVMStoreSizeOfType(runtime.targetData, it.type.toLLVMType(this)) }
-            }
 
-        return (superFields + sortedDeclaredFields).also { fields = it }
+        if (irClass.hasAnnotation(KonanFqNames.noReorderFields) || declaredFields.isEmpty()) {
+            return (superFields + declaredFields).also { fields = it }
+        }
+
+        fun sizeOf(field: FieldInfo): Long =
+                LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
+
+        val sortedDeclaredFields = declaredFields.sortedByDescending(::sizeOf)
+        var offset = 0L
+        for (field in superFields) {
+            val size = sizeOf(field)
+            offset = (offset + size - 1) / size * size + size; // align-up by size and add
+        }
+        val bigAlign = sizeOf(sortedDeclaredFields.first())
+        val paddingFields = mutableListOf<FieldInfo>()
+        val regularFields = mutableListOf<FieldInfo>()
+        var padding = (bigAlign - offset % bigAlign) % bigAlign
+        for (field in sortedDeclaredFields) {
+            val size = sizeOf(field)
+            if (size <= padding) {
+                padding -= size
+                paddingFields.add(field)
+            } else {
+                regularFields.add(field)
+            }
+        }
+        paddingFields.reverse()
+        return (superFields + paddingFields + regularFields).also { fields = it }
     }
 
     val associatedObjects by lazy {
