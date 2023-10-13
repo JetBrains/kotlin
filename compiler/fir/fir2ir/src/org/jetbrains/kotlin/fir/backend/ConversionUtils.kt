@@ -114,6 +114,7 @@ internal inline fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffs
  */
 fun FirQualifiedAccessExpression.shouldUseCalleeReferenceAsItsSourceInIr(): Boolean {
     return when {
+        this is FirImplicitInvokeCall -> true
         this is FirFunctionCall && origin != FirFunctionCallOrigin.Regular -> false
         this is FirCallableReferenceAccess -> false
         else -> (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol is FirCallableSymbol
