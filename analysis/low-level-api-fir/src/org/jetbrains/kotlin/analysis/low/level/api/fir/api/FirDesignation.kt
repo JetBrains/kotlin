@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -223,10 +224,6 @@ private fun collectDesignationPathWithTreeTraversal(target: FirDeclaration): Lis
 }
 
 private fun getTargetSession(target: FirDeclaration): FirSession {
-    if (target is FirSyntheticProperty) {
-        return getTargetSession(target.getter)
-    }
-
     if (target is FirCallableDeclaration) {
         val containingSymbol = target.containingClassLookupTag()?.toSymbol(target.moduleData.session)
         if (containingSymbol != null) {
@@ -281,6 +278,7 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
             FirDesignationWithFile(path = emptyList(), this, firFile)
         }
 
+        is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> unexpectedElementError<FirElementWithResolveState>(this)
         is FirDeclaration -> {
             val scriptDesignation = scriptDesignation()
             if (scriptDesignation != null) return scriptDesignation

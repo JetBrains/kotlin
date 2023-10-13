@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAcces
 internal object LLFirResolveMultiDesignationCollector {
     fun getDesignationsToResolve(target: FirElementWithResolveState): List<LLFirResolveTarget> = when (target) {
         is FirFile -> listOf(LLFirSingleResolveTarget(target))
+        is FirSyntheticPropertyAccessor -> getDesignationsToResolve(target.delegate)
+        is FirSyntheticProperty -> getDesignationsToResolve(target.getter) + target.setter?.let(::getDesignationsToResolve).orEmpty()
         else -> getMainDesignationToResolve(target)?.withAnnotationContainer()
     } ?: emptyList()
 
@@ -76,12 +78,11 @@ internal object LLFirResolveMultiDesignationCollector {
         is FirDeclarationOrigin.SamConstructor,
         is FirDeclarationOrigin.WrappedIntegerOperator,
         is FirDeclarationOrigin.IntersectionOverride,
-        is FirDeclarationOrigin.ScriptCustomization
+        is FirDeclarationOrigin.ScriptCustomization,
         -> {
             when (this) {
                 is FirFile -> true
-                is FirSyntheticProperty -> false
-                is FirSyntheticPropertyAccessor -> false
+                is FirSyntheticProperty, is FirSyntheticPropertyAccessor -> false
                 is FirSimpleFunction,
                 is FirProperty,
                 is FirPropertyAccessor,
