@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 
 /**
- * A non-leaf IR tree element.
+ * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.functionReference]
  */
 abstract class BirFunctionReference : BirCallableReference<BirFunctionSymbol>() {
+    abstract override var symbol: BirFunctionSymbol
+
     abstract var reflectionTarget: BirFunctionSymbol?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

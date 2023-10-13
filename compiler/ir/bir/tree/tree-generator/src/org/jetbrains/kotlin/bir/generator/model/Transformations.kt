@@ -63,7 +63,6 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
         fc.mutable,
         fc.isChild,
         fc.baseDefaultValue,
-        fc.baseGetter,
     )
     is ListFieldConfig -> {
         val listType = when (fc.mutability) {
@@ -87,7 +86,6 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
             fc.isChild,
             fc.mutability != ListFieldConfig.Mutability.Immutable,
             fc.baseDefaultValue,
-            fc.baseGetter,
         )
     }
 }
@@ -153,6 +151,10 @@ private fun markLeaves(elements: List<Element>) {
             }
         }
     }
+
+    for (el in leaves) {
+        el.isLeaf = true
+    }
 }
 
 private fun adjustSymbolOwners(elements: List<Element>) {
@@ -162,7 +164,7 @@ private fun adjustSymbolOwners(elements: List<Element>) {
             if (symbolField != null) {
                 el.fields.remove(symbolField)
 
-                val symbolType = when(val type = symbolField.type) {
+                val symbolType = when (val type = symbolField.type) {
                     is ClassRef<*> -> type
                     is TypeVariable -> type.bounds.single() as ClassRef<*>
                     else -> error(type)

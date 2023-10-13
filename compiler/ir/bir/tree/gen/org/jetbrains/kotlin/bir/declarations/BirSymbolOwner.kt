@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.symbols.BirUntypedPossiblyElementSymbol
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.util.IdSignature
 
 /**
  * A non-leaf IR tree element.
@@ -21,4 +22,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 interface BirSymbolOwner : BirElement, BirUntypedPossiblyElementSymbol {
     @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
+
+    override var signature: IdSignature
 }

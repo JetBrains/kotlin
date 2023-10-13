@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.bir.declarations.BirSymbolOwner
 import org.jetbrains.kotlin.bir.symbols.BirReturnableBlockSymbol
 
 /**
- * A non-leaf IR tree element.
+ * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.returnableBlock]
  */

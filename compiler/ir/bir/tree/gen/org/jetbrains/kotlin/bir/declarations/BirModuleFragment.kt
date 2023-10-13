@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.name.Name
 
 /**
- * A non-leaf IR tree element.
+ * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.moduleFragment]
  */
@@ -30,12 +29,6 @@ abstract class BirModuleFragment : BirElementBase(), BirElement {
     abstract val irBuiltins: IrBuiltIns
 
     abstract val files: MutableList<BirFile>
-
-    val startOffset: Int
-        get() = UNDEFINED_OFFSET
-
-    val endOffset: Int
-        get() = UNDEFINED_OFFSET
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         files.forEach { it.accept(data, visitor) }

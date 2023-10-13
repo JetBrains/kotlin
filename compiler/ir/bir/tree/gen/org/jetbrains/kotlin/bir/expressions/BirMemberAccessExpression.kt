@@ -20,47 +20,21 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.memberAccessExpression]
  */
 abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReference() {
-    var dispatchReceiver: BirExpression? = null
+    abstract var dispatchReceiver: BirExpression?
 
-    var extensionReceiver: BirExpression? = null
+    abstract var extensionReceiver: BirExpression?
 
     abstract override val symbol: S
 
     abstract var origin: IrStatementOrigin?
 
-    protected abstract val valueArguments: Array<BirExpression?>
+    abstract val valueArguments: Array<BirExpression?>
 
-    protected abstract val typeArguments: Array<BirType?>
-
-    val valueArgumentsCount: Int
-        get() = valueArguments.size
-
-    val typeArgumentsCount: Int
-        get() = typeArguments.size
+    abstract val typeArguments: Array<BirType?>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         dispatchReceiver?.accept(data, visitor)
         extensionReceiver?.accept(data, visitor)
         valueArguments.forEach { it?.accept(data, visitor) }
-    }
-
-    fun getValueArgument(index: Int): BirExpression? {
-        checkArgumentSlotAccess("value", index, valueArguments.size)
-        return valueArguments[index]
-    }
-
-    fun getTypeArgument(index: Int): BirType? {
-        checkArgumentSlotAccess("type", index, typeArguments.size)
-        return typeArguments[index]
-    }
-
-    fun putValueArgument(index: Int, valueArgument: BirExpression?) {
-        checkArgumentSlotAccess("value", index, valueArguments.size)
-        valueArguments[index] = valueArgument
-    }
-
-    fun putTypeArgument(index: Int, type: BirType?) {
-        checkArgumentSlotAccess("type", index, typeArguments.size)
-        typeArguments[index] = type
     }
 }
