@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.annotations.TestOnly
+import java.io.Closeable
 import java.io.File
 import java.io.IOException
 
-open class BasicMapsOwner(val cachesDir: File) {
+open class BasicMapsOwner(val cachesDir: File) : Closeable {
     private val maps = arrayListOf<BasicMap<*, *>>()
 
     companion object {
@@ -36,11 +37,11 @@ open class BasicMapsOwner(val cachesDir: File) {
         return map
     }
 
-    fun flush(memoryCachesOnly: Boolean) {
-        forEachMapSafe("flush") { it.flush(memoryCachesOnly) }
+    fun flush() {
+        forEachMapSafe("flush", BasicMap<*, *>::flush)
     }
 
-    open fun close() {
+    override fun close() {
         forEachMapSafe("close", BasicMap<*, *>::close)
     }
 
@@ -48,8 +49,32 @@ open class BasicMapsOwner(val cachesDir: File) {
         forEachMapSafe("deleteStorageFiles", BasicMap<*, *>::deleteStorageFiles)
     }
 
+    /**
+     * DEPRECATED: This API should be removed because
+     *   - It's not clear what [memoryCachesOnly] means.
+     *   - In the past, when `memoryCachesOnly=true` we applied a small optimization: Checking
+     *   [com.intellij.util.io.PersistentHashMap.isDirty] before calling [com.intellij.util.io.PersistentHashMap.force]. However, if that
+     *   optimization is useful, it's better to always do it (perhaps inside the [com.intellij.util.io.PersistentHashMap.force] method
+     *   itself) rather than doing it based on the value of this parameter.
+     *
+     * Instead, just call [flush] (without a parameter) directly.
+     */
+    fun flush(@Suppress("UNUSED_PARAMETER") memoryCachesOnly: Boolean) {
+        flush()
+    }
+
+    /**
+     * DEPRECATED: This API should be removed because:
+     *   - It's not obvious what "clean" means: It does not exactly describe the current implementation, and it also sounds similar to
+     *   "clear" which means removing all the map entries, but this method does not do that.
+     *   - This method currently calls [close] (and [deleteStorageFiles]). However, [close] is often already called separately and
+     *   automatically, so this API makes it more likely for [close] to be accidentally called twice.
+     *
+     * Instead, just call [close] and/or [deleteStorageFiles] explicitly.
+     */
     fun clean() {
-        forEachMapSafe("clean", BasicMap<*, *>::clean)
+        close()
+        deleteStorageFiles()
     }
 
     @Synchronized

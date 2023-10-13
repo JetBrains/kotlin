@@ -23,7 +23,7 @@ import java.io.File
 /**
  * Represents an in-memory map that is backed by a [storageFile].
  *
- * Changes to this map may be written to [storageFile] at any time, and it is guaranteed to be written on [close].
+ * Changes to this map may be written to [storageFile] at any time, and it is guaranteed to be written on [flush] or [close].
  *
  * This interface is similar to but simpler than [com.intellij.util.io.PersistentMapBase].
  */
@@ -43,7 +43,10 @@ interface PersistentStorage<KEY, VALUE> : Closeable {
 
     fun remove(key: KEY)
 
-    /** Writes any remaining in-memory changes to [storageFile] and closes this map. */
+    /** Writes any remaining in-memory changes to [storageFile]. */
+    fun flush()
+
+    /** Writes any remaining in-memory changes to [storageFile] ([flush]) and closes this map. */
     override fun close()
 }
 
@@ -95,6 +98,11 @@ abstract class PersistentStorageWrapper<KEY, VALUE>(
     @Synchronized
     override fun remove(key: KEY) {
         storage.remove(key)
+    }
+
+    @Synchronized
+    override fun flush() {
+        storage.flush()
     }
 
     @Synchronized
