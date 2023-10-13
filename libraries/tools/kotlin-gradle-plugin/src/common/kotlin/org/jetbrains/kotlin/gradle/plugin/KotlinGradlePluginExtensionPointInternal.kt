@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.utils.storedProjectProperty
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 /**
@@ -25,7 +25,7 @@ internal fun <T> KotlinGradlePluginExtensionPoint(): KotlinGradlePluginExtension
 @UnsafeApi("Visible for tests only")
 internal class KotlinGradlePluginExtensionPointInternal<T> : KotlinGradlePluginExtensionPoint<T> {
 
-    private val Project.registeredExtensions by storedProjectProperty<MutableList<T>> { mutableListOf() }
+    private val Project.registeredExtensions by projectStoredProperty<MutableList<T>> { mutableListOf() }
 
     override fun get(project: Project): List<T> {
         return project.registeredExtensions.toList()

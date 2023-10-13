@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.tooling.core.extrasKeyOf
 import org.jetbrains.kotlin.tooling.core.getOrPut
 import java.util.*
 import kotlin.properties.ReadOnlyProperty
-import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
@@ -21,7 +20,7 @@ import kotlin.reflect.KProperty
  * ```kotlin
  * class Foo(val projectName: String)
  *
- * val Project.myFoo by storedProjectProperty {
+ * val Project.myFoo by projectStoredProperty {
  *     Foo(project.name)
  * }
  * ```
@@ -52,15 +51,15 @@ import kotlin.reflect.KProperty
  * *not* the type, or any String based key
  *
  */
-internal fun <T : Any> storedProjectProperty(initializer: Project.() -> T): ReadOnlyProperty<Project, T> = StoredLazyProperty(
+internal fun <T> projectStoredProperty(initializer: Project.() -> T): ReadOnlyProperty<Project, T> = StoredLazyProperty(
     storage = { storedPropertyStorage },
     initializer = initializer
 )
 
 /**
- * Same as [storedProjectProperty], but will allow storing the property on any object implementing [HasMutableExtras]
+ * Same as [projectStoredProperty], but will allow storing the property on any object implementing [HasMutableExtras]
  */
-internal fun <R : HasMutableExtras, T : Any> storedExtrasProperty(initializer: R.() -> T): ReadOnlyProperty<R, T> = StoredLazyProperty(
+internal fun <R : HasMutableExtras, T> extrasStoredProperty(initializer: R.() -> T): ReadOnlyProperty<R, T> = StoredLazyProperty(
     storage = { storedPropertyStorage },
     initializer = initializer
 )
@@ -105,7 +104,8 @@ private class StoredPropertyStorage {
     private val values = WeakHashMap<StoredProperty<*>, Any?>()
     fun <T> getOrPut(key: StoredLazyProperty<*, T>, create: () -> T): T {
         @Suppress("UNCHECKED_CAST")
-        return values.getOrPut(key) { create() } as T
+        return if (key in values) values[key] as T
+        else values.getOrPut(key, create) as T
     }
 
     @Suppress("UNCHECKED_CAST")

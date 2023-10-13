@@ -9,34 +9,43 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.util.buildProject
-import org.jetbrains.kotlin.gradle.utils.storedExtrasProperty
-import org.jetbrains.kotlin.gradle.utils.storedProjectProperty
+import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertSame
 
 class StoredPropertyTest {
 
     private data class Value(val id: Any)
 
-    private val Project.projectNameProperty by storedProjectProperty { Value(project.name) }
+    private val Project.projectNameProperty by projectStoredProperty { Value(project.name) }
 
     private val atomic = AtomicInteger(0)
-    private val Project.counterProperty by storedProjectProperty { Value(atomic.getAndIncrement()) }
+    private val Project.counterProperty by projectStoredProperty { Value(atomic.getAndIncrement()) }
+
+    private var myState: Any? = null
+    private val Project.myStateCapturingProperty by projectStoredProperty { myState }
 
     private class Scope(val id: Any) {
-        val Project.myProperty by storedProjectProperty { Value(id) }
+        val Project.myProperty by projectStoredProperty { Value(id) }
     }
 
     private class TestEntity(val id: Any) : HasMutableExtras {
         override val extras: MutableExtras = mutableExtrasOf()
     }
 
-    private val TestEntity.myProperty by storedExtrasProperty { Value(id) }
+    private val TestEntity.myProperty by extrasStoredProperty { Value(id) }
+
+
+    private val TestEntity.myStateCaptureProperty: Any? by extrasStoredProperty {
+        myState
+    }
 
     @Test
     fun `test - projectNameProperty`() {
@@ -85,5 +94,30 @@ class StoredPropertyTest {
 
         assertSame(entityA.myProperty, entityA.myProperty)
         assertSame(entityB.myProperty, entityB.myProperty)
+    }
+
+    @Test
+    fun `test - nullable extras property`() {
+        val entity = TestEntity("a")
+        myState = null
+        assertNull(entity.myStateCaptureProperty)
+
+        myState = "Should not be captured anymore"
+        assertNull(entity.myStateCaptureProperty)
+
+        val anotherEntity = TestEntity("b")
+        myState = "foo"
+        assertEquals("foo", anotherEntity.myStateCaptureProperty)
+    }
+
+    @Test
+    fun `test - nullable project property`() {
+        val project = buildProject()
+        assertNull(project.myStateCapturingProperty)
+
+        myState = "foo"
+        assertNull(project.myStateCapturingProperty)
+
+        assertEquals("foo", buildProject().myStateCapturingProperty)
     }
 }

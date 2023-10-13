@@ -35,7 +35,7 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfigurationName: String
  * These dependencies are set up to resolve Kotlin Metadata (without transformation) and will resolve
  * consistently across the whole project.
  */
-internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configuration by storedExtrasProperty {
+internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configuration by extrasStoredProperty {
     assert(resolvableMetadataConfigurationName !in project.configurations.names)
     val configuration = project.configurations.maybeCreate(resolvableMetadataConfigurationName)
     configuration.markResolvable()
