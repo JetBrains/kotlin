@@ -97,7 +97,6 @@ sealed class Field(
 ) {
     abstract val type: TypeRef
     abstract val baseDefaultValue: CodeBlock?
-    abstract val baseGetter: CodeBlock?
     var isOverride = false
     var needsDescriptorApiAnnotation = false
     abstract val transformable: Boolean
@@ -119,7 +118,6 @@ class SingleField(
     mutable: Boolean,
     isChild: Boolean,
     override val baseDefaultValue: CodeBlock?,
-    override val baseGetter: CodeBlock?,
 ) : Field(config, name, nullable, mutable, isChild) {
     override val transformable: Boolean
         get() = mutable
@@ -135,7 +133,6 @@ class ListField(
     isChild: Boolean,
     override val transformable: Boolean,
     override val baseDefaultValue: CodeBlock?,
-    override val baseGetter: CodeBlock?,
 ) : Field(config, name, nullable, mutable, isChild) {
     override val type: TypeRef
         get() = listType.withArgs(elementType)

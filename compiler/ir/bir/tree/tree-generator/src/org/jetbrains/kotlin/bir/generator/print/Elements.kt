@@ -56,16 +56,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                     if (field.isOverride) {
                         addModifiers(KModifier.OVERRIDE)
                     }
-                    if (field.baseDefaultValue == null && field.baseGetter == null) {
-                        addModifiers(KModifier.ABSTRACT)
-                    }
-
-                    field.baseDefaultValue?.let {
-                        initializer(it)
-                    }
-                    field.baseGetter?.let {
-                        getter(FunSpec.getterBuilder().addCode("return ").addCode(it).build())
-                    }
+                    addModifiers(KModifier.ABSTRACT)
 
                     if (field.needsDescriptorApiAnnotation) {
                         addAnnotation(descriptorApiAnnotation)

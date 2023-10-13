@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 abstract class BirLoop : BirExpression() {
     abstract var origin: IrStatementOrigin?
 
-    var body: BirExpression? = null
+    abstract var body: BirExpression?
 
     abstract var condition: BirExpression
 
-    var label: String? = null
+    abstract var label: String?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         body?.accept(data, visitor)

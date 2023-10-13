@@ -24,7 +24,7 @@ abstract class BirFieldAccessExpression : BirDeclarationReference() {
 
     abstract var superQualifierSymbol: BirClassSymbol?
 
-    var receiver: BirExpression? = null
+    abstract var receiver: BirExpression?
 
     abstract var origin: IrStatementOrigin?
 

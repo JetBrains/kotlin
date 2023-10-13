@@ -8,14 +8,9 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-
 /**
  * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantValue]
  */
-abstract class BirConstantValue : BirExpression() {
-    abstract fun contentEquals(other: BirConstantValue): Boolean
-
-    abstract fun contentHashCode(): Int
-}
+abstract class BirConstantValue : BirExpression()

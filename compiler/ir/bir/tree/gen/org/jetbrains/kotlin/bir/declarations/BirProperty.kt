@@ -43,6 +43,8 @@ abstract class BirProperty : BirOverridableDeclaration<BirPropertySymbol>(), Bir
 
     abstract var setter: BirSimpleFunction?
 
+    abstract override var overriddenSymbols: List<BirPropertySymbol>
+
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         backingField?.accept(data, visitor)
         getter?.accept(data, visitor)
