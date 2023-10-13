@@ -610,6 +610,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("annotationWithConstantFromNestedClass.kt")
+        public void testAnnotationWithConstantFromNestedClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithConstantFromNestedClass.kt");
+        }
+
+        @Test
         @TestMetadata("annotationWithTarget.kt")
         public void testAnnotationWithTarget() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithTarget.kt");
@@ -664,9 +670,33 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("nestedClassAsAnnotationArgument.kt")
+        public void testNestedClassAsAnnotationArgument() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassAsAnnotationArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedClassAsAnnotationArgument2.kt")
+        public void testNestedClassAsAnnotationArgument2() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassAsAnnotationArgument2.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClassWithPropertiesOverrides.kt")
         public void testNestedClassWithPropertiesOverrides() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/nestedClassWithPropertiesOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedNestedClassAsAnnotationArgument.kt")
+        public void testQualifiedNestedClassAsAnnotationArgument() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/qualifiedNestedClassAsAnnotationArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedNestedClassAsAnnotationArgument2.kt")
+        public void testQualifiedNestedClassAsAnnotationArgument2() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/qualifiedNestedClassAsAnnotationArgument2.kt");
         }
 
         @Test

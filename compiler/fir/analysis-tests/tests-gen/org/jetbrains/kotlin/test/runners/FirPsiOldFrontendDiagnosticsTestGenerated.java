@@ -1723,6 +1723,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("constantFromOuterScopeAsAnnotaionParameter.kt")
+            public void testConstantFromOuterScopeAsAnnotaionParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/constantFromOuterScopeAsAnnotaionParameter.kt");
+            }
+
+            @Test
             @TestMetadata("ConstructorCall.kt")
             public void testConstructorCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/ConstructorCall.kt");
@@ -1999,9 +2005,27 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("nestedClassAsAnnotationParameter.kt")
+            public void testNestedClassAsAnnotationParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/nestedClassAsAnnotationParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedClassAsIsAsAnnotationParameter.kt")
+            public void testNestedClassAsIsAsAnnotationParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/nestedClassAsIsAsAnnotationParameter.kt");
+            }
+
+            @Test
             @TestMetadata("nestedClassesInAnnotations.kt")
             public void testNestedClassesInAnnotations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/nestedClassesInAnnotations.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedObjectAsAnnotationParameter.kt")
+            public void testNestedObjectAsAnnotationParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/nestedObjectAsAnnotationParameter.kt");
             }
 
             @Test
@@ -2050,6 +2074,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             @TestMetadata("onMultiDeclaration.kt")
             public void testOnMultiDeclaration() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/onMultiDeclaration.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedNestedClassAsAnnotationParameter.kt")
+            public void testQualifiedNestedClassAsAnnotationParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/qualifiedNestedClassAsAnnotationParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("qualifiedNestedClassAsIsAsAnnotationParameter.kt")
+            public void testQualifiedNestedClassAsIsAsAnnotationParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/qualifiedNestedClassAsIsAsAnnotationParameter.kt");
             }
 
             @Test
@@ -2146,6 +2182,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             @TestMetadata("typealiasWithAnnotatedAbstractClass.kt")
             public void testTypealiasWithAnnotatedAbstractClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/typealiasWithAnnotatedAbstractClass.kt");
+            }
+
+            @Test
+            @TestMetadata("unreachableNestedClassAsAnnotationParameter.kt")
+            public void testUnreachableNestedClassAsAnnotationParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/unreachableNestedClassAsAnnotationParameter.kt");
             }
 
             @Test
