@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.bir.generator
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.KModifier
 import org.jetbrains.kotlin.bir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.bir.generator.config.ElementConfig
 import org.jetbrains.kotlin.bir.generator.config.ElementConfig.Category.*
@@ -88,6 +88,11 @@ object BirTree : AbstractTreeBuilder() {
         parent(type(Packages.symbols, "BirUntypedPossiblyElementSymbol"))
 
         +descriptor("DeclarationDescriptor")
+        +field("signature", type("org.jetbrains.kotlin.ir.util", "IdSignature")) {
+            generationCallback = {
+                addModifiers(KModifier.OVERRIDE)
+            }
+        }
     }
     val metadataSourceOwner: ElementConfig by element(Declaration) {
         val metadataField = +field("metadata", type("org.jetbrains.kotlin.ir.declarations", "MetadataSource"), nullable = true) {
@@ -130,9 +135,7 @@ object BirTree : AbstractTreeBuilder() {
     val memberWithContainerSource: ElementConfig by element(Declaration) {
         parent(declarationWithName)
 
-        +field("containerSource", type<DeserializedContainerSource>(), nullable = true, mutable = false) {
-            code("null")
-        }
+        +field("containerSource", type<DeserializedContainerSource>(), nullable = true, mutable = false)
     }
     val valueDeclaration: ElementConfig by element(Declaration) {
         parent(declarationWithName)
@@ -204,9 +207,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("isValue", boolean)
         +field("isExpect", boolean)
         +field("isFun", boolean)
-        +field("source", type<SourceElement>(), mutable = false) {
-            code("%T.NO_SOURCE", SourceElement::class)
-        }
+        +field("source", type<SourceElement>(), mutable = false)
         +listField("superTypes", irTypeType, mutability = Var)
         +field("thisReceiver", valueParameter, nullable = true, isChild = true)
         +field(
@@ -330,10 +331,6 @@ object BirTree : AbstractTreeBuilder() {
     }
     val errorDeclaration: ElementConfig by element(Declaration) {
         parent(declaration)
-
-        +field("symbol", symbolType, mutable = false) {
-            baseGetter = code("error(\"Should never be called\")")
-        }
     }
     val field: ElementConfig by element(Declaration) {
         parent(declaration)
@@ -369,13 +366,6 @@ object BirTree : AbstractTreeBuilder() {
         +field("name", type<Name>(), mutable = false)
         +field("irBuiltins", type("org.jetbrains.kotlin.ir", "IrBuiltIns"), mutable = false)
         +listField("files", file, mutability = List, isChild = true)
-        val undefinedOffset = MemberName("org.jetbrains.kotlin.ir", "UNDEFINED_OFFSET")
-        +field("startOffset", int, mutable = false) {
-            baseGetter = code("%M", undefinedOffset)
-        }
-        +field("endOffset", int, mutable = false) {
-            baseGetter = code("%M", undefinedOffset)
-        }
     }
     val property: ElementConfig by element(Declaration) {
         isForcedLeaf = true
@@ -398,6 +388,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("backingField", field, nullable = true, isChild = true)
         +field("getter", simpleFunction, nullable = true, isChild = true)
         +field("setter", simpleFunction, nullable = true, isChild = true)
+        +listField("overriddenSymbols", SymbolTypes.property, mutability = Var)
     }
 
     private fun isFakeOverrideField() = field("isFakeOverride", boolean) {
@@ -446,6 +437,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("isOperator", boolean)
         +field("isInfix", boolean)
         +field("correspondingPropertySymbol", SymbolTypes.property, nullable = true)
+        +listField("overriddenSymbols", SymbolTypes.simpleFunction, mutability = Var)
     }
     val typeAlias: ElementConfig by element(Declaration) {
         parent(declaration)
@@ -476,18 +468,6 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(SymbolTypes.packageFragment)
         +descriptor("PackageFragmentDescriptor")
         +field("packageFqName", type<FqName>())
-        +field("fqName", type<FqName>()) {
-            baseGetter = code("packageFqName")
-            generationCallback = {
-                val deprecatedAnnotation = AnnotationSpec.builder(Deprecated::class)
-                    .addMember(code("message = \"Please use `packageFqName` instead\""))
-                    .addMember(code("replaceWith = ReplaceWith(\"packageFqName\")"))
-                    .addMember(code("level = DeprecationLevel.ERROR"))
-                    .build()
-                addAnnotation(deprecatedAnnotation)
-                setter(FunSpec.setterBuilder().addParameter("value", FqName::class).addCode(code("packageFqName = value")).build())
-            }
-        }
     }
     val externalPackageFragment: ElementConfig by element(Declaration) {
         parent(packageFragment)
@@ -537,70 +517,12 @@ object BirTree : AbstractTreeBuilder() {
 
         parent(declarationReference)
 
-        +field("dispatchReceiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("null")
-        }
-        +field("extensionReceiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("null")
-        }
+        +field("dispatchReceiver", expression, nullable = true, isChild = true)
+        +field("extensionReceiver", expression, nullable = true, isChild = true)
         +symbol(s)
         +field("origin", statementOriginType, nullable = true)
-        +listField("valueArguments", expression.copy(nullable = true), mutability = Array, isChild = true) {
-            generationCallback = {
-                addModifiers(KModifier.PROTECTED)
-            }
-        }
-        +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array) {
-            generationCallback = {
-                addModifiers(KModifier.PROTECTED)
-            }
-        }
-
-        val checkArgumentSlotAccess = MemberName("org.jetbrains.kotlin.bir.expressions", "checkArgumentSlotAccess", true)
-        generationCallback = {
-            addFunction(
-                FunSpec.builder("getValueArgument")
-                    .addParameter("index", int.toPoet())
-                    .returns(expression.toPoet().copy(nullable = true))
-                    .addCode("%M(\"value\", index, valueArguments.size)\n", checkArgumentSlotAccess)
-                    .addCode("return valueArguments[index]")
-                    .build()
-            )
-            addFunction(
-                FunSpec.builder("getTypeArgument")
-                    .addParameter("index", int.toPoet())
-                    .returns(irTypeType.toPoet().copy(nullable = true))
-                    .addCode("%M(\"type\", index, typeArguments.size)\n", checkArgumentSlotAccess)
-                    .addCode("return typeArguments[index]")
-                    .build()
-            )
-            addFunction(
-                FunSpec.builder("putValueArgument")
-                    .addParameter("index", int.toPoet())
-                    .addParameter("valueArgument", expression.toPoet().copy(nullable = true))
-                    .addCode("%M(\"value\", index, valueArguments.size)\n", checkArgumentSlotAccess)
-                    .addCode("valueArguments[index] = valueArgument")
-                    .build()
-            )
-            addFunction(
-                FunSpec.builder("putTypeArgument")
-                    .addParameter("index", int.toPoet())
-                    .addParameter("type", irTypeType.toPoet().copy(nullable = true))
-                    .addCode("%M(\"type\", index, typeArguments.size)\n", checkArgumentSlotAccess)
-                    .addCode("typeArguments[index] = type")
-                    .build()
-            )
-            addProperty(
-                PropertySpec.builder("valueArgumentsCount", int.toPoet())
-                    .getter(FunSpec.getterBuilder().addCode("return valueArguments.size").build())
-                    .build()
-            )
-            addProperty(
-                PropertySpec.builder("typeArgumentsCount", int.toPoet())
-                    .getter(FunSpec.getterBuilder().addCode("return typeArguments.size").build())
-                    .build()
-            )
-        }
+        +listField("valueArguments", expression.copy(nullable = true), mutability = Array, isChild = true)
+        +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array)
     }
     val functionAccessExpression: ElementConfig by element(Expression) {
         parent(memberAccessExpression.withArgs("S" to SymbolTypes.function))
@@ -611,9 +533,7 @@ object BirTree : AbstractTreeBuilder() {
         parent(functionAccessExpression)
 
         +symbol(SymbolTypes.constructor, mutable = true)
-        +field("source", type<SourceElement>()) {
-            code("%T.NO_SOURCE", SourceElement::class)
-        }
+        +field("source", type<SourceElement>())
         +field("constructorTypeArgumentsCount", int)
     }
     val getSingletonValue: ElementConfig by element(Expression) {
@@ -650,7 +570,6 @@ object BirTree : AbstractTreeBuilder() {
             generationCallback = {
                 addModifiers(KModifier.OVERRIDE)
             }
-            baseDefaultValue = code("ArrayList(2)")
         }
     }
     val block: ElementConfig by element(Expression) {
@@ -681,9 +600,7 @@ object BirTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("loop", loop)
-        +field("label", string, nullable = true) {
-            baseDefaultValue = code("null")
-        }
+        +field("label", string, nullable = true)
     }
     val `break` by element(Expression) {
         parent(breakContinue)
@@ -707,11 +624,13 @@ object BirTree : AbstractTreeBuilder() {
     val functionReference: ElementConfig by element(Expression) {
         parent(callableReference.withArgs("S" to SymbolTypes.function))
 
+        +symbol(SymbolTypes.function, mutable = true)
         +field("reflectionTarget", SymbolTypes.function, nullable = true)
     }
     val propertyReference: ElementConfig by element(Expression) {
         parent(callableReference.withArgs("S" to SymbolTypes.property))
 
+        +symbol(SymbolTypes.property, mutable = true)
         +field("field", SymbolTypes.field, nullable = true)
         +field("getter", SymbolTypes.simpleFunction, nullable = true)
         +field("setter", SymbolTypes.simpleFunction, nullable = true)
@@ -719,6 +638,7 @@ object BirTree : AbstractTreeBuilder() {
     val localDelegatedPropertyReference: ElementConfig by element(Expression) {
         parent(callableReference.withArgs("S" to localDelegatedProperty))
 
+        +symbol(localDelegatedProperty, mutable = true)
         +field("delegate", SymbolTypes.variable)
         +field("getter", SymbolTypes.simpleFunction)
         +field("setter", SymbolTypes.simpleFunction, nullable = true)
@@ -739,22 +659,6 @@ object BirTree : AbstractTreeBuilder() {
     }
     val constantValue: ElementConfig by element(Expression) {
         parent(expression)
-
-        generationCallback = {
-            addFunction(
-                FunSpec.builder("contentEquals")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .addParameter("other", constantValue.toPoet())
-                    .returns(boolean.toPoet())
-                    .build()
-            )
-            addFunction(
-                FunSpec.builder("contentHashCode")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .returns(int.toPoet())
-                    .build()
-            )
-        }
     }
     val constantPrimitive: ElementConfig by element(Expression) {
         parent(constantValue)
@@ -815,9 +719,7 @@ object BirTree : AbstractTreeBuilder() {
 
         +symbol(SymbolTypes.field, mutable = true)
         +field("superQualifierSymbol", SymbolTypes.`class`, nullable = true)
-        +field("receiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("null")
-        }
+        +field("receiver", expression, nullable = true, isChild = true)
         +field("origin", statementOriginType, nullable = true)
     }
     val getField: ElementConfig by element(Expression) {
@@ -848,13 +750,9 @@ object BirTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("origin", statementOriginType, nullable = true)
-        +field("body", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("null")
-        }
+        +field("body", expression, nullable = true, isChild = true)
         +field("condition", expression, isChild = true)
-        +field("label", string, nullable = true) {
-            baseDefaultValue = code("null")
-        }
+        +field("label", string, nullable = true)
     }
     val whileLoop: ElementConfig by element(Expression) {
         childrenOrderOverride = listOf("condition", "body")

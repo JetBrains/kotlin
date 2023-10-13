@@ -17,5 +17,5 @@ package org.jetbrains.kotlin.bir.expressions
 abstract class BirBreakContinue : BirExpression() {
     abstract var loop: BirLoop
 
-    var label: String? = null
+    abstract var label: String?
 }

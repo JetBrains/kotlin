@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 
 /**
- * A non-leaf IR tree element.
+ * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeOperatorCall]
  */
