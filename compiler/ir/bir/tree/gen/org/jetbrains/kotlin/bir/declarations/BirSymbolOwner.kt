@@ -9,13 +9,16 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.symbols.BirSymbol
+import org.jetbrains.kotlin.bir.symbols.BirUntypedPossiblyElementSymbol
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.symbolOwner]
  */
-interface BirSymbolOwner : BirElement {
-    val symbol: BirSymbol
+interface BirSymbolOwner : BirElement, BirUntypedPossiblyElementSymbol {
+    @ObsoleteDescriptorBasedAPI
+    val descriptor: DeclarationDescriptor
 }

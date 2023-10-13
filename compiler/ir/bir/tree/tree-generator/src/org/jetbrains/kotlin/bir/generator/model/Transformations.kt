@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.bir.generator.model
 
+import org.jetbrains.kotlin.bir.generator.BirTree
 import org.jetbrains.kotlin.bir.generator.config.*
 import org.jetbrains.kotlin.bir.generator.elementBaseType
+import org.jetbrains.kotlin.bir.generator.util.depthFirstSearch
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.addToStdlib.UnsafeCastFunction
 import org.jetbrains.kotlin.utils.addToStdlib.castAll
@@ -43,6 +45,7 @@ fun config2model(config: Config): Model {
     val rootElement = replaceElementRefs(config, ec2el)
     configureInterfacesAndAbstractClasses(elements)
     addAbstractElement(elements)
+    adjustSymbolOwners(elements)
     markLeaves(elements)
     configureDescriptorApiAnnotation(elements)
     processFieldOverrides(elements)
@@ -152,6 +155,24 @@ private fun markLeaves(elements: List<Element>) {
     }
 }
 
+private fun adjustSymbolOwners(elements: List<Element>) {
+    for (el in elements) {
+        if (depthFirstSearch(ElementRef(el)) { it.element.elementParents }.any { it.element.name == BirTree.symbolOwner.name }) {
+            val symbolField = el.fields.singleOrNull { it.name == "symbol" } as SingleField?
+            if (symbolField != null) {
+                el.fields.remove(symbolField)
+
+                val symbolType = when(val type = symbolField.type) {
+                    is ClassRef<*> -> type
+                    is TypeVariable -> type.bounds.single() as ClassRef<*>
+                    else -> error(type)
+                }
+                el.otherParents += symbolType
+            }
+        }
+    }
+}
+
 private fun addAbstractElement(elements: List<Element>) {
     for (el in elements) {
         if (el.kind!!.typeKind == TypeKind.Class && el.elementParents.none { it.element.kind!!.typeKind == TypeKind.Class }) {
@@ -253,3 +274,4 @@ private fun iterateElementsParentFirst(elements: List<Element>) = sequence {
         error("Cannot find next element to process")
     }
 }
+

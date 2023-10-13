@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.returnTarget]
  */
-interface BirReturnTarget : BirSymbolOwner {
+interface BirReturnTarget : BirSymbolOwner, BirReturnTargetSymbol {
     @ObsoleteDescriptorBasedAPI
-    val descriptor: FunctionDescriptor
-
-    override val symbol: BirReturnTargetSymbol
+    override val descriptor: FunctionDescriptor
 }

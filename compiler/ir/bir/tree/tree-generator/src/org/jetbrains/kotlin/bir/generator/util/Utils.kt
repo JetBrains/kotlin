@@ -30,3 +30,20 @@ fun TypeName.tryParameterizedBy(vararg typeArguments: TypeName) = when (this) {
 }
 
 fun code(code: String, vararg args: Any?) = CodeBlock.of(code, *args)
+
+
+fun <E> depthFirstSearch(root: E, getAdjacent: (E) -> Iterable<E>) = sequence<E> {
+    val visited = hashSetOf<E>(root)
+    val toYield = ArrayDeque<E>()
+    toYield += root
+    while (true) {
+        val element = toYield.removeFirstOrNull()
+            ?: break
+        yield(element)
+        for (next in getAdjacent(element)) {
+            if (visited.add(next)) {
+                toYield += next
+            }
+        }
+    }
+}

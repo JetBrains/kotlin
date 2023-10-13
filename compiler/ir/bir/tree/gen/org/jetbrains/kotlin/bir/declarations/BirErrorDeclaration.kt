@@ -16,7 +16,4 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.errorDeclaration]
  */
-abstract class BirErrorDeclaration : BirElementBase(), BirDeclaration {
-    override val symbol: BirSymbol
-        get() = error("Should never be called")
-}
+abstract class BirErrorDeclaration : BirElementBase(), BirDeclaration, BirSymbol
