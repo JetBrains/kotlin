@@ -132,7 +132,7 @@ object AbstractExpectActualCompatibilityChecker {
 
         val substitutor = createExpectActualTypeParameterSubstitutor(
             (expectTypeParameterSymbols zipIfSizesAreEqual actualTypeParameterSymbols)
-                ?: error("expect/actual type parameters sizes are checked above"),
+                ?: error("expect/actual type parameters sizes are checked earlier"),
             parentSubstitutor
         )
 
@@ -323,7 +323,14 @@ object AbstractExpectActualCompatibilityChecker {
         // We must prioritize to return STRONG incompatible over WEAK incompatible (because STRONG incompatibility allows to search for overloads)
         val annotationMode = expectContainingClass?.classKind == ClassKind.ANNOTATION_CLASS
         return getCallablesStrongIncompatibility(expectDeclaration, actualDeclaration, annotationMode, parentSubstitutor)
-            ?: getCallablesWeakIncompatibility(expectDeclaration, actualDeclaration, expectContainingClass, actualContainingClass)
+            ?: getCallablesWeakIncompatibility(
+                expectDeclaration,
+                actualDeclaration,
+                annotationMode,
+                parentSubstitutor,
+                expectContainingClass,
+                actualContainingClass
+            )
             ?: ExpectActualCompatibility.Compatible
     }
 
@@ -358,7 +365,7 @@ object AbstractExpectActualCompatibilityChecker {
 
         val substitutor = createExpectActualTypeParameterSubstitutor(
             (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
-                ?: error("expect/actual type parameters sizes are checked above"),
+                ?: error("expect/actual type parameters sizes are checked earlier"),
             parentSubstitutor
         )
 
@@ -376,17 +383,6 @@ object AbstractExpectActualCompatibilityChecker {
             return Incompatible.ParameterTypes
         }
 
-        if (shouldCheckReturnTypesOfCallables) {
-            if (!areCompatibleExpectActualTypes(
-                    substitutor.safeSubstitute(expectDeclaration.returnType),
-                    actualDeclaration.returnType,
-                    parameterOfAnnotationComparisonMode = insideAnnotationClass
-                )
-            ) {
-                return Incompatible.ReturnType
-            }
-        }
-
         if (!areCompatibleTypeParameterUpperBounds(expectedTypeParameters, actualTypeParameters, substitutor)) {
             return Incompatible.FunctionTypeParameterUpperBounds
         }
@@ -398,6 +394,8 @@ object AbstractExpectActualCompatibilityChecker {
     private fun getCallablesWeakIncompatibility(
         expectDeclaration: CallableSymbolMarker,
         actualDeclaration: CallableSymbolMarker,
+        insideAnnotationClass: Boolean,
+        parentSubstitutor: TypeSubstitutorMarker?,
         expectContainingClass: RegularClassSymbolMarker?,
         actualContainingClass: RegularClassSymbolMarker?,
     ): Incompatible.WeakIncompatible<*>? {
@@ -405,6 +403,23 @@ object AbstractExpectActualCompatibilityChecker {
         val actualTypeParameters = actualDeclaration.typeParameters
         val expectedValueParameters = expectDeclaration.valueParameters
         val actualValueParameters = actualDeclaration.valueParameters
+
+        if (shouldCheckReturnTypesOfCallables) {
+            val substitutor = createExpectActualTypeParameterSubstitutor(
+                (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
+                    ?: error("expect/actual type parameters sizes are checked earlier"),
+                parentSubstitutor
+            )
+
+            if (!areCompatibleExpectActualTypes(
+                    substitutor.safeSubstitute(expectDeclaration.returnType),
+                    actualDeclaration.returnType,
+                    parameterOfAnnotationComparisonMode = insideAnnotationClass
+                )
+            ) {
+                return Incompatible.ReturnType
+            }
+        }
 
         if (actualDeclaration.hasStableParameterNames && !equalsBy(expectedValueParameters, actualValueParameters) { it.name }) {
             return Incompatible.ParameterNames
