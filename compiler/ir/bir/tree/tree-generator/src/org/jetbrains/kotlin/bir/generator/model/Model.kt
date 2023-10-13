@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.bir.generator.model
 import com.squareup.kotlinpoet.CodeBlock
 import org.jetbrains.kotlin.bir.generator.config.ElementConfig
 import org.jetbrains.kotlin.bir.generator.config.FieldConfig
+import org.jetbrains.kotlin.bir.generator.config.SimpleFieldConfig
 import org.jetbrains.kotlin.bir.generator.util.Import
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.topologicalSort
@@ -100,6 +101,7 @@ sealed class Field(
     var isOverride = false
     var needsDescriptorApiAnnotation = false
     abstract val transformable: Boolean
+    val initializeToThis = (config as? SimpleFieldConfig)?.initializeToThis ?: false
 
     val kdoc = config.kdoc
 
