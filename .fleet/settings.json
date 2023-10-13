@@ -1,0 +1,9 @@
+{
+    "backend.maxHeapSizeMb": 2602,
+
+    // https://youtrack.jetbrains.com/issue/FL-22276
+    // Fleet cannot handle nested maven projects until FL-22276
+    "ignored.project.globs": [
+        "**/pom.xml"
+    ]
+}
