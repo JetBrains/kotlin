@@ -20,11 +20,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.variable]
  */
-abstract class BirVariable : BirValueDeclaration(), BirDeclaration {
+abstract class BirVariable : BirValueDeclaration(), BirDeclaration, BirVariableSymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptor
-
-    abstract override val symbol: BirVariableSymbol
 
     abstract var isVar: Boolean
 
