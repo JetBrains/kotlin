@@ -11,5 +11,5 @@ interface C07I02{
 }
 
 class C07C01: C07I01, C07I02 {
-    <!CONFLICTING_OVERLOADS!>override fun some()<!> {}
+    override fun some() {}
 }
