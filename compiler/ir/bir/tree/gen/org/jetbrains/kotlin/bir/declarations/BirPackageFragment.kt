@@ -26,7 +26,7 @@ abstract class BirPackageFragment : BirElementBase(), BirDeclarationContainer, B
     abstract override val symbol: BirPackageFragmentSymbol
 
     @ObsoleteDescriptorBasedAPI
-    abstract val packageFragmentDescriptor: PackageFragmentDescriptor
+    abstract val descriptor: PackageFragmentDescriptor
 
     abstract var packageFqName: FqName
 

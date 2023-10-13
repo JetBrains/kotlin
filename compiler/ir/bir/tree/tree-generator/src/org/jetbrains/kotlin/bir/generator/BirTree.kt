@@ -472,7 +472,7 @@ object BirTree : AbstractTreeBuilder() {
         parent(symbolOwner)
 
         +symbol(SymbolTypes.packageFragment)
-        +field("packageFragmentDescriptor", type(Packages.descriptors, "PackageFragmentDescriptor"), mutable = false)
+        +descriptor("PackageFragmentDescriptor")
         +field("packageFqName", type<FqName>())
         +field("fqName", type<FqName>()) {
             baseGetter = code("packageFqName")
