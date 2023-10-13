@@ -74,7 +74,7 @@ internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffse
     return source.convertWithOffsets(f)
 }
 
-internal inline fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
+internal fun <T : IrElement> FirPropertyAccessor?.convertWithOffsets(
     defaultStartOffset: Int, defaultEndOffset: Int, f: (startOffset: Int, endOffset: Int) -> T
 ): T {
     return if (this == null) return f(defaultStartOffset, defaultEndOffset) else source.convertWithOffsets(f)
@@ -95,7 +95,7 @@ internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (star
     return f(startOffset, endOffset)
 }
 
-internal inline fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
+internal fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     if (shouldUseCalleeReferenceAsItsSourceInIr()) {
         return convertWithOffsets(calleeReference, f)
     }
