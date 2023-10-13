@@ -50,6 +50,12 @@ public class FirPsiJvmIrSourceRangesTestGenerated extends AbstractFirPsiJvmIrSou
     }
 
     @Test
+    @TestMetadata("extensionLambdaCall.kt")
+    public void testExtensionLambdaCall() throws Exception {
+        runTest("compiler/testData/ir/sourceRanges/extensionLambdaCall.kt");
+    }
+
+    @Test
     @TestMetadata("kt17108.kt")
     public void testKt17108() throws Exception {
         runTest("compiler/testData/ir/sourceRanges/kt17108.kt");
