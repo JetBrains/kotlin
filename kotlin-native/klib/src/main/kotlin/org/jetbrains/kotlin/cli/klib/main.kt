@@ -58,31 +58,34 @@ fun printUsage() {
             Usage: klib <command> <library> [<option>]
 
             where the commands are:
-               info                  General information about the library
-               install               [DEPRECATED] Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
-                                       Install the library to the local repository
-               remove                [DEPRECATED] Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
-                                       Remove the library from the local repository
-               dump-ir               Dump the intermediate representation (IR) of all declarations in the library
-                                       (to be used for debugging purposes only)
-               dump-ir-signatures    Dump IR signatures of all public declarations in the library and all public declarations consumed
-                                       by this library (as two separate lists). This command relies purely on the data in IR.
-               signatures            [DEPRECATED] Please, use "dump-ir-signatures" instead.
-                                       Dump IR signatures of all public declarations in the library
-                                       Note that this command renders the signatures from the metadata. Signatures for certain
-                                       declarations in the metadata and in IR may differ if compiler plugins (such as Compose)
-                                       were applied during library compilation.
-               dump-metadata         Dump the metadata of all public declarations in the library in the form of Kotlin-alike code
-               contents              [DEPRECATED] Renamed to "dump-metadata". Please, use new command name
+               info                      General information about the library
+               install                   [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
+                                           Install the library to the local repository.
+               remove                    [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
+                                           Remove the library from the local repository.
+               dump-ir                   Dump the intermediate representation (IR) of all declarations in the library. The output of this
+                                           command is intended to be used for debugging purposes only.
+               dump-ir-signatures        Dump IR signatures of all public declarations in the library and all public declarations consumed
+                                           by this library (as two separate lists). This command relies purely on the data in IR.
+               signatures                [DEPRECATED] Please, use "dump-ir-signatures" instead.
+                                           Dump IR signatures of all public declarations in the library. Note, that this command renders
+                                           the signatures based on the library metadata. This is different from "dump-ir-signatures",
+                                           which renders signatures based on the IR. On practice, in most cases there is no difference
+                                           between output of these two commands. However, if IR transforming compiler plugins
+                                           (such as Compose) were used during compilation of the library, there would be different
+                                           signatures for patched declarations.
+               dump-metadata             Dump the metadata of all public declarations in the library in the form of Kotlin-alike code.
+                                           The output of this command is intended to be used for debugging purposes only.
+               contents                  [DEPRECATED] Renamed to "dump-metadata". Please, use new command name.
 
             and the options are:
-               -repository <path>    [DEPRECATED] Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
-                                       Work with the specified repository
+               -repository <path>        [DEPRECATED] Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098
+                                           Work with the specified repository.
                -signature-version {${KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.joinToString("|") { it.number.toString() }}}
-                                     Render IR signatures of a specific version. By default, the most up-to-date signature version
-                                       supported in the library is used.
+                                         Render IR signatures of a specific version. By default, the most up-to-date signature version
+                                           that is supported in the library is used.
                -print-signatures {true|false}
-                                     Print IR signature for every declaration (only for "dump-metadata" and "dump-ir" commands)
+                                         Print IR signature for every declaration. Applicable only to "dump-metadata" and "dump-ir" commands.
             """.trimIndent()
     )
 }
@@ -195,7 +198,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun install() {
-        logWarning("Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
+        logWarning("Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
 
         if (!repository.exists) {
             logWarning("Repository does not exist: $repository. Creating...")
@@ -213,7 +216,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun remove(blind: Boolean = false) {
-        logWarning("Usage of KLIB repositories will be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
+        logWarning("Local KLIB repositories to be dropped soon. See https://youtrack.jetbrains.com/issue/KT-61098")
 
         if (!repository.exists) logError("Repository does not exist: $repository")
 
