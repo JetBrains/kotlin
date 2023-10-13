@@ -34,6 +34,7 @@ internal object LLFirResolveMultiDesignationCollector {
     fun getDesignationsToResolveRecursively(target: FirElementWithResolveState): List<LLFirResolveTarget> {
         if (target is FirFile) return listOf(LLFirWholeElementResolveTarget(target))
 
+        if (!target.shouldBeResolved()) return emptyList()
         val designation = target.tryCollectDesignationWithFile() ?: return emptyList()
         val resolveTarget = LLFirWholeElementResolveTarget(designation.firFile, designation.path, target)
         return resolveTarget.withAnnotationContainer()
