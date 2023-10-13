@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.dependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
-import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 object FirExpectActualResolver {
     fun findExpectForActual(
@@ -33,7 +31,6 @@ object FirExpectActualResolver {
                 is FirCallableSymbol<*> -> {
                     val callableId = actualSymbol.callableId
                     val classId = callableId.classId
-                    var parentSubstitutor: ConeSubstitutor? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
                     var actualContainingClass: FirRegularClassSymbol? = null
                     val candidates = when {
@@ -43,12 +40,6 @@ object FirExpectActualResolver {
                             }
                             actualContainingClass = useSiteSession.symbolProvider.getClassLikeSymbolByClassId(classId)
                                 ?.fullyExpandedClass(useSiteSession)
-
-                            val expectTypeParameters = expectContainingClass?.typeParameterSymbols.orEmpty()
-                            val actualTypeParameters = actualContainingClass?.typeParameterSymbols.orEmpty()
-
-                            parentSubstitutor = (expectTypeParameters zipIfSizesAreEqual actualTypeParameters)
-                                ?.let { createExpectActualTypeParameterSubstitutor(it, useSiteSession) }
 
                             when (actualSymbol) {
                                 is FirConstructorSymbol -> expectContainingClass?.getConstructors(scopeSession)
@@ -70,7 +61,6 @@ object FirExpectActualResolver {
                         AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
                             expectDeclaration,
                             actualSymbol as CallableSymbolMarker,
-                            parentSubstitutor,
                             expectContainingClass,
                             actualContainingClass,
                             context
