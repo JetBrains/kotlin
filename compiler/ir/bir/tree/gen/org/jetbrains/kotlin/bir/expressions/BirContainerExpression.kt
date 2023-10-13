@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 abstract class BirContainerExpression : BirExpression(), BirStatementContainer {
     abstract var origin: IrStatementOrigin?
 
-    override val statements: MutableList<BirStatement> = ArrayList(2)
+    abstract override val statements: MutableList<BirStatement>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         statements.forEach { it.accept(data, visitor) }

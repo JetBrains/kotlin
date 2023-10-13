@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
 
 /**
- * A non-leaf IR tree element.
+ * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.enumConstructorCall]
  */

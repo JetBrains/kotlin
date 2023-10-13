@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 
 /**
- * A non-leaf IR tree element.
+ * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.propertyReference]
  */
 abstract class BirPropertyReference : BirCallableReference<BirPropertySymbol>() {
+    abstract override var symbol: BirPropertySymbol
+
     abstract var field: BirFieldSymbol?
 
     abstract var getter: BirSimpleFunctionSymbol?

@@ -32,6 +32,8 @@ abstract class BirSimpleFunction : BirOverridableDeclaration<BirSimpleFunctionSy
 
     abstract var correspondingPropertySymbol: BirPropertySymbol?
 
+    abstract override var overriddenSymbols: List<BirSimpleFunctionSymbol>
+
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         typeParameters.forEach { it.accept(data, visitor) }
         dispatchReceiverParameter?.accept(data, visitor)
