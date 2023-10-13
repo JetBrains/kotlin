@@ -66,7 +66,7 @@ open class BasicMapsOwner(val cachesDir: File) {
             val message = actionExceptions.entries.joinToString("\n") { entry ->
                 val storageFileName = entry.key
                 val exception = entry.value
-                "Error for action '$storageFileName': ${exception.stackTrace}"
+                "Error for action '$storageFileName': ${exception.stackTraceToString()}"
             }
 
             val desc = "Could not $actionName incremental caches in $cachesDir: {${message}}"
