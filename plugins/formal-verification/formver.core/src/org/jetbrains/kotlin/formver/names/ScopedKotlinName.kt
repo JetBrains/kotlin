@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.embeddings
+package org.jetbrains.kotlin.formver.names
 
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.FqName
 
@@ -14,22 +15,6 @@ import org.jetbrains.kotlin.name.FqName
 data class ScopedKotlinName(val scope: NameScope, val name: KotlinName, val type: TypeEmbedding? = null) : MangledName {
     override val mangled: String
         get() = listOfNotNull(scope.mangled, name.mangled, type?.name?.mangled).joinToString("$")
-
-    val isCollection: Boolean
-        // TODO: make this neater
-        get() = if (scope is ClassScope) {
-            scope.packageName.asString() == "kotlin.collections" && scope.className.name.asString() == "Collection"
-        } else {
-            false
-        }
-
-    val inCollectionsPkg: Boolean
-        // TODO: make this neater
-        get() = if (scope is PackagePrefixScope) {
-            scope.packageName.asString() == "kotlin.collections"
-        } else {
-            false
-        }
 }
 
 fun FqName.asViperString() = asString().replace('.', '$')

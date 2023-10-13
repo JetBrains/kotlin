@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.formver.embeddings.LocalScope
-import org.jetbrains.kotlin.formver.embeddings.ScopedKotlinName
-import org.jetbrains.kotlin.formver.embeddings.SimpleKotlinName
+import org.jetbrains.kotlin.formver.names.LocalScope
+import org.jetbrains.kotlin.formver.names.ScopedKotlinName
+import org.jetbrains.kotlin.formver.names.SimpleKotlinName
 import org.jetbrains.kotlin.name.Name
 
 data class LoopIdentifier(val targetName: String, val index: Int)

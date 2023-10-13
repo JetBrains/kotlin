@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.formver.names.SpecialName
 import org.jetbrains.kotlin.formver.viper.ast.BuiltinField
 import org.jetbrains.kotlin.formver.viper.ast.Type
 

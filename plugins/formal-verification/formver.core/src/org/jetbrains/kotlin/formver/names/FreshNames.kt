@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.conversion
+package org.jetbrains.kotlin.formver.names
 
 import org.jetbrains.kotlin.formver.viper.MangledName
 

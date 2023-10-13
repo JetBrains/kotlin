@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.conversion.AccessPolicy
-import org.jetbrains.kotlin.formver.conversion.SpecialName
+import org.jetbrains.kotlin.formver.names.NameMatcher
+import org.jetbrains.kotlin.formver.names.ScopedKotlinName
+import org.jetbrains.kotlin.formver.names.SpecialName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Field
@@ -51,13 +53,12 @@ object ListSizeFieldEmbedding : FieldEmbedding {
         listOf(Exp.GeCmp(v.fieldAccess(toViper()), Exp.IntLit(0)))
 }
 
-fun ScopedKotlinName.specialEmbedding(): FieldEmbedding? {
-    // in the future, new special properties can be added here (e.g. String.length)
-    return when {
-        isCollection -> when ((name as? MemberKotlinName)?.name.toString()) {
-            "size" -> ListSizeFieldEmbedding
-            else -> null
+fun ScopedKotlinName.specialEmbedding(): FieldEmbedding? =
+    NameMatcher.match(this) {
+        ifIsCollectionInterface {
+            ifMemberName("size") {
+                return ListSizeFieldEmbedding
+            }
         }
-        else -> null
+        return null
     }
-}

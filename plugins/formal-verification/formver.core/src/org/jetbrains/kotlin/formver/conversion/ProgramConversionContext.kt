@@ -17,6 +17,10 @@ import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
+import org.jetbrains.kotlin.formver.names.AnonymousName
+import org.jetbrains.kotlin.formver.names.CatchLabelName
+import org.jetbrains.kotlin.formver.names.ReturnLabelName
+import org.jetbrains.kotlin.formver.names.TryExitLabelName
 
 interface ProgramConversionContext {
     val config: PluginConfiguration

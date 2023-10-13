@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.formver.embeddings.ListSizeFieldEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
+import org.jetbrains.kotlin.formver.names.NameMatcher
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Exp.*
 
@@ -15,48 +16,43 @@ fun LocalVar.increasedSize(amount: Int): Exp =
     EqCmp(fieldAccess(ListSizeFieldEmbedding.toViper()), Add(Old(fieldAccess(ListSizeFieldEmbedding.toViper())), IntLit(amount)))
 
 fun NamedFunctionSignature.stdLibPreConditions(): List<Exp> =
-    if (inCollectionsPkg) {
-        when (sourceName) {
-            "emptyList" -> listOf()
-            "get" -> {
+    NameMatcher.match(this.name) {
+        ifInCollectionsPkg {
+            ifFunctionName("get") {
                 val receiver = receiver!!.toViper()
                 val indexArg = formalArgs[1].toViper()
-                listOf(
+                return listOf(
                     GeCmp(indexArg, IntLit(0)),
                     GtCmp(receiver.fieldAccess(ListSizeFieldEmbedding.toViper()), indexArg),
                 )
             }
-            else -> listOf()
         }
-    } else {
-        listOf()
+        return listOf()
     }
 
-
-fun NamedFunctionSignature.stdLibPostConditions(): List<Exp> {
-    val retVar = LocalVar(ReturnVariableName, returnType.viperType)
-    val receiver = receiver?.toViper()
-    return if (inCollectionsPkg) {
-        when (sourceName) {
-            "emptyList" -> listOf(
-                EqCmp(retVar.fieldAccess(ListSizeFieldEmbedding.toViper()), IntLit(0))
-            )
-            "get" -> {
-                listOf(receiver!!.sameSize())
+fun NamedFunctionSignature.stdLibPostConditions(): List<Exp> =
+    NameMatcher.match(this.name) {
+        val retVar = this@stdLibPostConditions.returnVar.toViper()
+        val receiver = receiver?.toViper()
+        ifInCollectionsPkg {
+            ifFunctionName("emptyList") {
+                return listOf(
+                    EqCmp(retVar.fieldAccess(ListSizeFieldEmbedding.toViper()), IntLit(0))
+                )
             }
-            "add" -> {
-                listOf(receiver!!.increasedSize(1))
+            ifFunctionName("get") {
+                return listOf(receiver!!.sameSize())
             }
-            "isEmpty" -> {
-                listOf(
+            ifFunctionName("add") {
+                return listOf(receiver!!.increasedSize(1))
+            }
+            ifFunctionName("isEmpty") {
+                return listOf(
                     receiver!!.sameSize(),
                     Implies(retVar, EqCmp(receiver.fieldAccess(ListSizeFieldEmbedding.toViper()), IntLit(0))),
                     Implies(Not(retVar), GtCmp(receiver.fieldAccess(ListSizeFieldEmbedding.toViper()), IntLit(0)))
                 )
             }
-            else -> listOf()
         }
-    } else {
-        listOf()
+        return listOf()
     }
-}

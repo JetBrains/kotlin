@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
-import org.jetbrains.kotlin.formver.embeddings.embedName
+import org.jetbrains.kotlin.formver.names.ReturnLabelName
+import org.jetbrains.kotlin.formver.names.ReturnVariableName
+import org.jetbrains.kotlin.formver.names.embedName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.Name
 

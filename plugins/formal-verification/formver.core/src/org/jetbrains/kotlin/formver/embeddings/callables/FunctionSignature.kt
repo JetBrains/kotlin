@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
-import org.jetbrains.kotlin.formver.conversion.ReturnVariableName
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.names.ReturnVariableName
 
 interface FunctionSignature : CallableSignature {
     val receiver: VariableEmbedding?

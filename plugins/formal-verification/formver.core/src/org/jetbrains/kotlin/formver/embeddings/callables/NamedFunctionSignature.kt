@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
-import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.toViper
+import org.jetbrains.kotlin.formver.names.FunctionKotlinName
+import org.jetbrains.kotlin.formver.names.ScopedKotlinName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Info
 import org.jetbrains.kotlin.formver.viper.ast.Position
@@ -19,12 +23,6 @@ interface NamedFunctionSignature : FunctionSignature {
             is FunctionKotlinName -> signatureName.name.asString()
             is ScopedKotlinName -> (signatureName.name as? FunctionKotlinName)?.name?.asString()
             else -> null
-        }
-
-    val inCollectionsPkg: Boolean
-        get() = when (val signatureName = name) {
-            is ScopedKotlinName -> signatureName.inCollectionsPkg
-            else -> false
         }
 }
 

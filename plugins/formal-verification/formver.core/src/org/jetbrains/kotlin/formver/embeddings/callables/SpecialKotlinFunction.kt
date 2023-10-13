@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.names.ClassKotlinName
+import org.jetbrains.kotlin.formver.names.GlobalScope
+import org.jetbrains.kotlin.formver.names.ScopedKotlinName
+import org.jetbrains.kotlin.formver.names.embedFunctionName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.name.CallableId
