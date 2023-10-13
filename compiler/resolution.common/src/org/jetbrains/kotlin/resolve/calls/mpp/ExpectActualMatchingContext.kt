@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
 
 interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemContext {
-    val shouldCheckReturnTypesOfCallables: Boolean
+    val shouldCheckReturnTypesOfCallables: Boolean // todo drop
 
     /*
      * This flag indicates how are type parameters of inner classes stored in the specific implementation of RegularClassSymbolMarker
