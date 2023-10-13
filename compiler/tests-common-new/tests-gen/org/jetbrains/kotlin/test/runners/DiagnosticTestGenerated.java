@@ -23465,6 +23465,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("returnTypeVsGenericsUpperBoundIncompatibility.kt")
+            public void testReturnTypeVsGenericsUpperBoundIncompatibility() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/returnTypeVsGenericsUpperBoundIncompatibility.kt");
+            }
+
+            @Test
             @TestMetadata("sealedClassWithPrivateConstructor.kt")
             public void testSealedClassWithPrivateConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/sealedClassWithPrivateConstructor.kt");
