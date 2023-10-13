@@ -24,12 +24,15 @@ import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import java.util.*
 
 /**
- * This object is responsible for matching and checking of
- * expect-actual pairs
+ * This object is responsible for matching of expect-actual pairs.
+ *
+ * - If you want to report the diagnostics then the declarations needs to be checked after they are matched ([AbstractExpectActualChecker]
+ *   is responsible for the checking)
+ * - In all other cases you only need the "matching" data
  *
  * See `/docs/fir/k2_kmp.md` for details
  */
-object AbstractExpectActualCompatibilityChecker {
+object AbstractExpectActualMatcher {
     fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
