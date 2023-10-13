@@ -771,6 +771,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("annotationArgRendering.kt")
+        public void testAnnotationArgRendering() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationArgRendering.kt");
+        }
+
+        @Test
         @TestMetadata("annotationArgumentsConstExpressions.kt")
         public void testAnnotationArgumentsConstExpressions() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationArgumentsConstExpressions.kt");
