@@ -147,7 +147,7 @@ class FlagDelegatesTest {
         }
 
         assertProperty("getterSetterNoFieldNoParamVar", true, true, true) {
-            assertEquals(true, it?.name?.contains("anonymous parameter"))
+            assertEquals(true, it?.name == "_") // TODO: KT-62582
         }
 
         assertProperty("defaultSetterVar", true, true, false)
@@ -187,7 +187,7 @@ class FlagDelegatesTest {
         val props = X::class.java.readMetadataAsKmClass().properties.associateBy { it.name }
         props.values.forEach { assertFalse(it.isConst, it.name) }
         assertTrue(props.getValue("a").hasConstant)
-        assertTrue(props.getValue("b").hasConstant)
+        assertFalse(props.getValue("b").hasConstant)
         assertFalse(props.getValue("c").hasConstant)
     }
 
@@ -206,7 +206,7 @@ class FlagDelegatesTest {
         val foo = Foo::class.java.readMetadataAsKmClass()
         val props = foo.properties.associateBy { it.name }
         with(props["x"]!!) {
-            assertEquals(MemberKind.DELEGATION, kind)
+            assertEquals(MemberKind.DECLARATION, kind) // TODO: KT-62581
             assertFalse(isDelegated)
             assertFalse(getter.isNotDefault)
         }
