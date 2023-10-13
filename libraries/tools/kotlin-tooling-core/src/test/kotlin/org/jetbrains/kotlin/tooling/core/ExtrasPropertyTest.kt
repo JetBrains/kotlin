@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.tooling.core
 
 import kotlin.test.*
 
+@Suppress("DEPRECATION")
 class ExtrasPropertyTest {
-
 
     class Subject : HasMutableExtras {
         override val extras: MutableExtras = mutableExtrasOf()
