@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.symbols.BirLocalDelegatedPropertySymbol
+import org.jetbrains.kotlin.bir.declarations.BirLocalDelegatedProperty
 import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
 
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.localDelegatedPropertyReference]
  */
 abstract class BirLocalDelegatedPropertyReference :
-        BirCallableReference<BirLocalDelegatedPropertySymbol>() {
+        BirCallableReference<BirLocalDelegatedProperty>() {
     abstract var delegate: BirVariableSymbol
 
     abstract var getter: BirSimpleFunctionSymbol
