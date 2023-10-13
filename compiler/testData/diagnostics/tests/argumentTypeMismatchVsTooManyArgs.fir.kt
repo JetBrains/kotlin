@@ -3,7 +3,7 @@
 fun foo(i1: Int) {}
 
 fun test() {
-    foo("",
+    foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>,
         <!TOO_MANY_ARGUMENTS!>2<!>
     )
 }

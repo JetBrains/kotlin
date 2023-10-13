@@ -10,7 +10,7 @@ fun test() {
     foo({})
 
     // Bad
-    foo(1) <!TOO_MANY_ARGUMENTS!>{}<!>
+    foo(<!ARGUMENT_TYPE_MISMATCH!>1<!>) <!TOO_MANY_ARGUMENTS!>{}<!>
     foo(f = {}) <!TOO_MANY_ARGUMENTS!>{}<!>
 
     // OK
@@ -21,14 +21,14 @@ fun test() {
 
     // Bad
     <!NO_VALUE_FOR_PARAMETER!>bar<!> {}
-    bar(<!NO_VALUE_FOR_PARAMETER!>{})<!>
+    bar(<!NO_VALUE_FOR_PARAMETER!><!ARGUMENT_TYPE_MISMATCH!>{}<!>)<!>
 
     // OK
     baz(other = false, f = {})
     baz({}, false)
 
     // Bad
-    <!NO_VALUE_FOR_PARAMETER!>baz<!> {}
-    baz<!NO_VALUE_FOR_PARAMETER!>()<!> {}
+    <!NO_VALUE_FOR_PARAMETER!>baz<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
+    baz<!NO_VALUE_FOR_PARAMETER!>()<!> <!ARGUMENT_TYPE_MISMATCH!>{}<!>
     baz(<!NO_VALUE_FOR_PARAMETER!>other = false)<!> <!TOO_MANY_ARGUMENTS!>{}<!>
 }

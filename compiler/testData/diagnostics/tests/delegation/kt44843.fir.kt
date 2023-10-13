@@ -1,13 +1,13 @@
 // WITH_STDLIB
 
 // FILE: test.kt
-val bar2 by bar2<!NO_VALUE_FOR_PARAMETER!>()<!>
+val bar2 by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar2<!><!NO_VALUE_FOR_PARAMETER!>()<!>
 
 // FILE: lt/neworld/compiler/Foo.kt
 package lt.neworld.compiler
 
 class Foo {
-    val bar by bar<!NO_VALUE_FOR_PARAMETER!>()<!>
+    val bar by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!><!NO_VALUE_FOR_PARAMETER!>()<!>
 }
 
 // FILE: lt/neworld/compiler/bar/Bar.kt
