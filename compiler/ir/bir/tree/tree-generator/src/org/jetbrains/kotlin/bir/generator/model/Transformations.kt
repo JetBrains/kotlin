@@ -251,6 +251,10 @@ private fun computeAllFields(elements: List<Element>) {
         val allFields = allFieldsMap.values.toList()
 
         element.allFields = allFields
+
+        for (field in allFields) {
+            field.passViaConstructorParameter = !(field is ListField && field.isChild && field.listType == type("kotlin.collections", "List")) && !field.initializeToThis
+        }
     }
 }
 
