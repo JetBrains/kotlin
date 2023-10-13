@@ -717,7 +717,7 @@ object BirTree : AbstractTreeBuilder() {
         +field("setter", SymbolTypes.simpleFunction, nullable = true)
     }
     val localDelegatedPropertyReference: ElementConfig by element(Expression) {
-        parent(callableReference.withArgs("S" to SymbolTypes.localDelegatedProperty))
+        parent(callableReference.withArgs("S" to localDelegatedProperty))
 
         +field("delegate", SymbolTypes.variable)
         +field("getter", SymbolTypes.simpleFunction)
@@ -914,7 +914,7 @@ object BirTree : AbstractTreeBuilder() {
     val valueAccessExpression: ElementConfig by element(Expression) {
         parent(declarationReference)
 
-        +symbol(SymbolTypes.value, mutable = true)
+        +symbol(valueDeclaration, mutable = true)
         +field("origin", statementOriginType, nullable = true)
     }
     val getValue: ElementConfig by element(Expression) {
