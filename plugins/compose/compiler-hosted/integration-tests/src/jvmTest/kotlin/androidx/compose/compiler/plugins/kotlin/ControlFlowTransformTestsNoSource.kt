@@ -40,7 +40,7 @@ class ControlFlowTransformTestsNoSource(
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -72,7 +72,7 @@ class ControlFlowTransformTestsNoSource(
             @Composable
             private fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -107,7 +107,7 @@ class ControlFlowTransformTestsNoSource(
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -124,7 +124,7 @@ class ControlFlowTransformTestsNoSource(
             }
             internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, <>)
                   }
@@ -155,7 +155,7 @@ class ControlFlowTransformTestsNoSource(
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }

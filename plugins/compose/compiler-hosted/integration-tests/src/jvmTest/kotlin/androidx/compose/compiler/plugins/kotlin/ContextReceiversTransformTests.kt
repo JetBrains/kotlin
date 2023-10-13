@@ -72,7 +72,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun Test(%context_receiver_0: Foo, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -110,7 +110,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun A(%context_receiver_0: Foo, %context_receiver_1: Bar, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A):Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -128,7 +128,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -166,7 +166,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun String.A(%context_receiver_0: Foo, %context_receiver_1: Bar, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A):Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -184,7 +184,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun String.B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -226,8 +226,8 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun A(%context_receiver_0: Foo, %context_receiver_1: Bar, a: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A):Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
-                if (%default and 0b0100 !== 0) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
+                if (%default and 0b0100 != 0) {
                   a = 1
                 }
                 if (isTraceInProgress()) {
@@ -247,11 +247,11 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B):Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
-                if (%default and 0b00010000 !== 0) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
+                if (%default and 0b00010000 != 0) {
                   b = ""
                 }
-                if (%default and 0b00100000 !== 0) {
+                if (%default and 0b00100000 != 0) {
                   c = 1
                 }
                 if (isTraceInProgress()) {
@@ -272,16 +272,16 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(C):Test.kt")
               val %dirty = %changed
-              if (%dirty and 0b0001 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001 != 0 || !%composer.skipping) {
                 %composer.startDefaults()
-                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0100 !== 0) {
+                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+                  if (%default and 0b0100 != 0) {
                     bar = Bar()
                     %dirty = %dirty and 0b001110000000.inv()
                   }
                 } else {
                   %composer.skipToGroupEnd()
-                  if (%default and 0b0100 !== 0) {
+                  if (%default and 0b0100 != 0) {
                     %dirty = %dirty and 0b001110000000.inv()
                   }
                 }
@@ -319,11 +319,11 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
         fun String.B(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar, a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(B):Test.kt")
-          if (%changed and 0b0001 !== 0 || !%composer.skipping) {
-            if (%default and 0b00010000 !== 0) {
+          if (%changed and 0b0001 != 0 || !%composer.skipping) {
+            if (%default and 0b00010000 != 0) {
               b = ""
             }
-            if (%default and 0b00100000 !== 0) {
+            if (%default and 0b00100000 != 0) {
               c = 1
             }
             if (isTraceInProgress()) {
@@ -366,10 +366,10 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)*<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -420,10 +420,10 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)*<A()>,<B()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -469,10 +469,10 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)*<A(2)>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -519,7 +519,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun Test(%context_receiver_0: A, %context_receiver_1: B, %context_receiver_2: C, %context_receiver_3: D, %context_receiver_4: E, %context_receiver_5: F, %context_receiver_6: G, %context_receiver_7: H, %context_receiver_8: I, %context_receiver_9: J, %context_receiver_10: K, %context_receiver_11: L, %composer: Composer?, %changed: Int, %changed1: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test):Test.kt")
-              if (%changed and 0b0001 !== 0 || %changed1 and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || %changed1 and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, %changed1, <>)
                 }
@@ -556,10 +556,10 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
                   %composer = %composer.startRestartGroup(<>)
                   sourceInformation(%composer, "C(Test)<b("yay...>:Test.kt")
                   val %dirty = %changed
-                  if (%changed and 0b001110000000 === 0) {
+                  if (%changed and 0b001110000000 == 0) {
                     %dirty = %dirty or if (%composer.changedInstance(b)) 0b000100000000 else 0b10000000
                   }
-                  if (%dirty and 0b001010000001 !== 0b10000000 || !%composer.skipping) {
+                  if (%dirty and 0b001010000001 != 0b10000000 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %dirty, -1, <>)
                     }
@@ -610,7 +610,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
             fun Parent(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Parent)*<Test()>,<Test(a>,<Test(b>,<Test(a>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -635,26 +635,26 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test):Test.kt")
               val %dirty = %changed
-              if (%default and 0b0001 !== 0) {
+              if (%default and 0b0001 != 0) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b1110 === 0) {
+              } else if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(%context_receiver_0)) 0b0100 else 0b0010
               }
-              if (%default and 0b0010 !== 0) {
+              if (%default and 0b0010 != 0) {
                 %dirty = %dirty or 0b00110000
-              } else if (%changed and 0b01110000 === 0) {
+              } else if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b00100000 else 0b00010000
               }
-              if (%default and 0b0100 !== 0) {
+              if (%default and 0b0100 != 0) {
                 %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b001110000000 === 0) {
+              } else if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(b)) 0b000100000000 else 0b10000000
               }
-              if (%dirty and 0b001011011011 !== 0b10010010 || !%composer.skipping) {
-                if (%default and 0b0010 !== 0) {
+              if (%dirty and 0b001011011011 != 0b10010010 || !%composer.skipping) {
+                if (%default and 0b0010 != 0) {
                   a = "A"
                 }
-                if (%default and 0b0100 !== 0) {
+                if (%default and 0b0100 != 0) {
                   b = 2
                 }
                 if (isTraceInProgress()) {

@@ -45,10 +45,10 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b0110 == 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -84,10 +84,10 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b0110 == 0) {
                 %dirty = %dirty or if (%composer.changedInstance(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -123,10 +123,10 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b0110 == 0) {
                 %dirty = %dirty or if (%composer.changedInstance(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -162,19 +162,19 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
-                %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changedInstance(x)) 0b0100 else 0b0010
+              if (%changed and 0b0110 == 0) {
+                %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changedInstance(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
                 %composer.startDefaults()
-                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0001 !== 0) {
+                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+                  if (%default and 0b0001 != 0) {
                     x = Foo()
                     %dirty = %dirty and 0b1110.inv()
                   }
                 } else {
                   %composer.skipToGroupEnd()
-                  if (%default and 0b0001 !== 0) {
+                  if (%default and 0b0001 != 0) {
                     %dirty = %dirty and 0b1110.inv()
                   }
                 }
@@ -217,15 +217,15 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
                 %composer = %composer.startRestartGroup(<>)
                 sourceInformation(%composer, "C(Test)")
                 val %dirty = %changed
-                if (%changed and 0b0110 === 0) {
-                  %dirty = %dirty or if (if (%changed and 0b1000 === 0) {
+                if (%changed and 0b0110 == 0) {
+                  %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
                     %composer.changed(x)
                   } else {
                     %composer.changedInstance(x)
                   }
                   ) 0b0100 else 0b0010
                 }
-                if (%dirty and 0b0011 !== 0b0010 || !%composer.skipping) {
+                if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %dirty, -1, <>)
                   }
@@ -272,27 +272,27 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(CanSkip)")
               val %dirty = %changed
-              if (%default and 0b0001 !== 0) {
+              if (%default and 0b0001 != 0) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (%changed and 0b0110 == 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00110000 === 0) {
-                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changedInstance(b)) 0b00100000 else 0b00010000
+              if (%changed and 0b00110000 == 0) {
+                %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changedInstance(b)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b00010011 !== 0b00010010 || !%composer.skipping) {
+              if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
                 %composer.startDefaults()
-                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0001 !== 0) {
+                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+                  if (%default and 0b0001 != 0) {
                     a = 0
                   }
-                  if (%default and 0b0010 !== 0) {
+                  if (%default and 0b0010 != 0) {
                     b = Foo()
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 } else {
                   %composer.skipToGroupEnd()
-                  if (%default and 0b0010 !== 0) {
+                  if (%default and 0b0010 != 0) {
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 }
@@ -317,13 +317,13 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(CannotSkip)")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b0110 == 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00110000 === 0) {
+              if (%changed and 0b00110000 == 0) {
                 %dirty = %dirty or if (%composer.changedInstance(b)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b00010011 !== 0b00010010 || !%composer.skipping) {
+              if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -344,7 +344,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             fun NoParams(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(NoParams)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -380,10 +380,10 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b0110 == 0) {
                 %dirty = %dirty or if (%composer.changed(i)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -419,7 +419,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -469,7 +469,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -512,7 +512,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -558,13 +558,13 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)P(1)")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b0110 == 0) {
                 %dirty = %dirty or if (%composer.changedInstance(foo)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00110000 === 0) {
+              if (%changed and 0b00110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(bar)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b00010011 !== 0b00010010 || !%composer.skipping) {
+              if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -614,18 +614,18 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)P(1)")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b0110 == 0) {
                 %dirty = %dirty or if (%composer.changedInstance(foo)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00110000 === 0) {
+              if (%changed and 0b00110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(bar)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b00010011 !== 0b00010010 || !%composer.skipping) {
+              if (%dirty and 0b00010011 != 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
                 val lambda = composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
-                  if (%changed and 0b0011 !== 0b0010 || !%composer.skipping) {
+                  if (%changed and 0b0011 != 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %changed, -1, <>)
                     }
@@ -674,7 +674,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
         fun Test(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Test)")
-          if (%changed !== 0 || !%composer.skipping) {
+          if (%changed != 0 || !%composer.skipping) {
             if (isTraceInProgress()) {
               traceEventStart(<>, %changed, -1, <>)
             }
@@ -731,7 +731,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             fun TestMemoizedFun(compute: TestFunInterface, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(TestMemoizedFun)")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -749,7 +749,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -803,10 +803,10 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
                 %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
               }
               %composer.endMovableGroup()
-              if (%dirty and 0b1110 === 0) {
+              if (%dirty and 0b1110 == 0) {
                 %dirty = %dirty or 0b0010
               }
-              if (%dirty and 0b0001 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -824,7 +824,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -867,7 +867,7 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
             val <iterator> = x.iterator()
             while (<iterator>.hasNext()) {
               val value = <iterator>.next()
-              %dirty = %dirty or if (if (%changed and 0b1000 === 0) {
+              %dirty = %dirty or if (if (%changed and 0b1000 == 0) {
                 %composer.changed(value)
               } else {
                 %composer.changedInstance(value)
@@ -875,10 +875,10 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
               ) 0b0100 else 0
             }
             %composer.endMovableGroup()
-            if (%dirty and 0b1110 === 0) {
+            if (%dirty and 0b1110 == 0) {
               %dirty = %dirty or 0b0010
             }
-            if (%dirty and 0b0011 !== 0b0010 || !%composer.skipping) {
+            if (%dirty and 0b0011 != 0b0010 || !%composer.skipping) {
               if (isTraceInProgress()) {
                 traceEventStart(<>, %dirty, -1, <>)
               }
