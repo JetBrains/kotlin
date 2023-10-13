@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.simpleFunction]
  */
 abstract class BirSimpleFunction : BirOverridableDeclaration<BirSimpleFunctionSymbol>(),
-        BirFunction, BirAttributeContainer {
-    abstract override val symbol: BirSimpleFunctionSymbol
-
+        BirFunction, BirAttributeContainer, BirSimpleFunctionSymbol {
     abstract var isTailrec: Boolean
 
     abstract var isSuspend: Boolean

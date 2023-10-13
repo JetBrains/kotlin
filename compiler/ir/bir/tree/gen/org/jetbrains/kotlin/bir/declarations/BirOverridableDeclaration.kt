@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.overridableDeclaration]
  */
-abstract class BirOverridableDeclaration<S : BirSymbol> : BirOverridableMember() {
-    abstract override val symbol: S
-
+abstract class BirOverridableDeclaration<S : BirSymbol> : BirOverridableMember(), BirSymbol {
     abstract var isFakeOverride: Boolean
 
     abstract var overriddenSymbols: List<S>

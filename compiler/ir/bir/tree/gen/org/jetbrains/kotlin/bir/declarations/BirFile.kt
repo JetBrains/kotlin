@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.file]
  */
 abstract class BirFile : BirPackageFragment(), BirAnnotationContainerElement,
-        BirMetadataSourceOwner {
-    abstract override val symbol: BirFileSymbol
-
+        BirMetadataSourceOwner, BirFileSymbol {
     abstract var module: BirModuleFragment
 
     abstract var fileEntry: IrFileEntry

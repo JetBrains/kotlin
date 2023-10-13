@@ -20,11 +20,10 @@ import org.jetbrains.kotlin.types.Variance
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.typeParameter]
  */
-abstract class BirTypeParameter : BirElementBase(), BirDeclaration, BirDeclarationWithName {
+abstract class BirTypeParameter : BirElementBase(), BirDeclaration, BirDeclarationWithName,
+        BirTypeParameterSymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: TypeParameterDescriptor
-
-    abstract override val symbol: BirTypeParameterSymbol
 
     abstract var variance: Variance
 

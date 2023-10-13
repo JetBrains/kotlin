@@ -21,11 +21,9 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  */
 abstract class BirProperty : BirOverridableDeclaration<BirPropertySymbol>(), BirDeclaration,
         BirPossiblyExternalDeclaration, BirMetadataSourceOwner, BirAttributeContainer,
-        BirMemberWithContainerSource {
+        BirMemberWithContainerSource, BirPropertySymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor
-
-    abstract override val symbol: BirPropertySymbol
 
     abstract var isVar: Boolean
 
