@@ -149,12 +149,6 @@ private fun calculateExpectActualScopeDiff(
     actual: FirRegularClassSymbol,
     context: CheckerContext,
 ): Set<ExpectActualMemberDiff<FirCallableSymbol<*>, FirRegularClassSymbol>> {
-    val classTypeSubstitutor = createExpectActualTypeParameterSubstitutor(
-        // It's responsibility of AbstractExpectActualCompatibilityChecker to report that
-        (expect.typeParameterSymbols zipIfSizesAreEqual actual.typeParameterSymbols) ?: return emptySet(),
-        context.session
-    )
-
     val matchingContext = context.session.expectActualMatchingContextFactory.create(
         context.session,
         context.scopeSession,
@@ -182,7 +176,6 @@ private fun calculateExpectActualScopeDiff(
                     AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
                         expectMember,
                         actualMember,
-                        classTypeSubstitutor,
                         expect,
                         actual,
                         matchingContext

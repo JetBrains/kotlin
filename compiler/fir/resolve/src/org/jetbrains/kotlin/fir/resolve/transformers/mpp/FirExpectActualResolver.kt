@@ -33,7 +33,6 @@ object FirExpectActualResolver {
                 is FirCallableSymbol<*> -> {
                     val callableId = actualSymbol.callableId
                     val classId = callableId.classId
-                    var parentSubstitutor: ConeSubstitutor? = null
                     var expectContainingClass: FirRegularClassSymbol? = null
                     var actualContainingClass: FirRegularClassSymbol? = null
                     val candidates = when {
@@ -46,9 +45,6 @@ object FirExpectActualResolver {
 
                             val expectTypeParameters = expectContainingClass?.typeParameterSymbols.orEmpty()
                             val actualTypeParameters = actualContainingClass?.typeParameterSymbols.orEmpty()
-
-                            parentSubstitutor = (expectTypeParameters zipIfSizesAreEqual actualTypeParameters)
-                                ?.let { createExpectActualTypeParameterSubstitutor(it, useSiteSession) }
 
                             when (actualSymbol) {
                                 is FirConstructorSymbol -> expectContainingClass?.getConstructors(scopeSession)
@@ -70,7 +66,6 @@ object FirExpectActualResolver {
                         AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
                             expectDeclaration,
                             actualSymbol as CallableSymbolMarker,
-                            parentSubstitutor,
                             expectContainingClass,
                             actualContainingClass,
                             context
