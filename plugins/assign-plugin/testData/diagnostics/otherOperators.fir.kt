@@ -42,8 +42,8 @@ fun `should not effect error reporting for other operators`() {
     nullTask?.input<!NO_SET_METHOD!>[0, 0, 0]<!> = StringProperty("Fail")
 
     // a?.b[c] += d
-    task.input[<!TOO_MANY_ARGUMENTS!>0<!>] <!UNRESOLVED_REFERENCE!>+=<!> StringProperty("Fail")
-    nullTask?.input[<!TOO_MANY_ARGUMENTS!>0<!>] <!UNRESOLVED_REFERENCE!>+=<!> StringProperty("Fail")
+    <!OPERATOR_MODIFIER_REQUIRED!>task.input[<!TOO_MANY_ARGUMENTS!>0<!>]<!> <!UNRESOLVED_REFERENCE!>+=<!> StringProperty("Fail")
+    <!OPERATOR_MODIFIER_REQUIRED!>nullTask?.input[<!TOO_MANY_ARGUMENTS!>0<!>]<!> <!UNRESOLVED_REFERENCE!>+=<!> StringProperty("Fail")
 
     // a[i] = b should not be translated to a.get(i).assign(b)
     operator fun Task.get(i: Int) = this.input

@@ -259,9 +259,7 @@ private fun mapInapplicableCandidateError(
 ): List<KtDiagnostic> {
     val typeContext = session.typeContext
     val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, diagnostic.candidate.symbol)
-    val diagnostics = diagnostic.candidate.diagnostics.filter {
-        it.applicability.userRelevantApplicability == diagnostic.applicability.userRelevantApplicability
-    }.mapNotNull { rootCause ->
+    val diagnostics = diagnostic.candidate.diagnostics.filter { !it.applicability.isSuccess }.mapNotNull { rootCause ->
         when (rootCause) {
             is VarargArgumentOutsideParentheses -> FirErrors.VARARG_OUTSIDE_PARENTHESES.createOn(
                 rootCause.argument.source ?: qualifiedAccessSource
@@ -369,12 +367,6 @@ private fun mapInapplicableCandidateError(
         diagnostics
     }
 }
-
-private val CandidateApplicability.userRelevantApplicability: CandidateApplicability
-    get() = when (this) {
-        CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR -> CandidateApplicability.INAPPLICABLE
-        else -> this
-    }
 
 private fun mapSystemHasContradictionError(
     session: FirSession,

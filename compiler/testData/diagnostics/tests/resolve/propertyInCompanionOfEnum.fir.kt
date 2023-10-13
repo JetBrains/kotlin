@@ -33,7 +33,7 @@ fun foo() {
 import test.E as U
 
 fun bar() {
-    U.Entry checkType { _<<!UNRESOLVED_REFERENCE!>E<!>>() }
+    U.Entry checkType { <!INAPPLICABLE_CANDIDATE!>_<!><<!UNRESOLVED_REFERENCE!>E<!>>() }
     U.Entry checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     U.Companion.Entry checkType { _<String>() }
     U.NotEntry checkType { _<String>() }

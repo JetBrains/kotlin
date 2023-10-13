@@ -22,9 +22,13 @@
 
 /otherOperators.fir.kt:(1057,1066): error: No 'set' operator method providing array access.
 
+/otherOperators.fir.kt:(1117,1130): error: 'operator' modifier is required on 'FirNamedFunctionSymbol /StringProperty.get' in 'get'.
+
 /otherOperators.fir.kt:(1128,1129): error: Too many arguments for 'public final fun /StringProperty.get(): kotlin/String'.
 
 /otherOperators.fir.kt:(1131,1133): error: Unresolved reference '+='.
+
+/otherOperators.fir.kt:(1161,1179): error: 'operator' modifier is required on 'FirNamedFunctionSymbol /StringProperty.get' in 'get'.
 
 /otherOperators.fir.kt:(1177,1178): error: Too many arguments for 'public final fun /StringProperty.get(): kotlin/String'.
 
