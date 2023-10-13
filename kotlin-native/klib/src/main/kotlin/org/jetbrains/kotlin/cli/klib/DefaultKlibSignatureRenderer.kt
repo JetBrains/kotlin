@@ -6,9 +6,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 
-internal class DefaultKlibSignatureRenderer(private val prefix: String? = null) : KlibSignatureRenderer {
+internal class DefaultKlibSignatureRenderer(
+        signatureVersion: KotlinIrSignatureVersion?,
+        private val prefix: String? = null,
+) : KlibSignatureRenderer {
     private val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
+    private val individualSignatureRenderer = signatureVersion.getMostSuitableSignatureRenderer()
 
     override fun render(descriptor: DeclarationDescriptor): String? {
         val idSignature = if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) {
@@ -18,8 +23,8 @@ internal class DefaultKlibSignatureRenderer(private val prefix: String? = null) 
         } ?: return null
 
         return if (prefix != null)
-            prefix + idSignature.render()
+            prefix + idSignature.render(individualSignatureRenderer)
         else
-            idSignature.render()
+            idSignature.render(individualSignatureRenderer)
     }
 }

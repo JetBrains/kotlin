@@ -67,13 +67,13 @@ fun printUsage() {
                                            command is intended to be used for debugging purposes only.
                dump-ir-signatures        Dump IR signatures of all public declarations in the library and all public declarations consumed
                                            by this library (as two separate lists). This command relies purely on the data in IR.
-               signatures                [DEPRECATED] Please, use "dump-ir-signatures" instead.
-                                           Dump IR signatures of all public declarations in the library. Note, that this command renders
+               dump-metadata-signatures  Dump IR signatures of all public declarations in the library. Note, that this command renders
                                            the signatures based on the library metadata. This is different from "dump-ir-signatures",
                                            which renders signatures based on the IR. On practice, in most cases there is no difference
                                            between output of these two commands. However, if IR transforming compiler plugins
                                            (such as Compose) were used during compilation of the library, there would be different
                                            signatures for patched declarations.
+               signatures                [DEPRECATED] Renamed to "dump-metadata-signatures". Please, use new command name.
                dump-metadata             Dump the metadata of all public declarations in the library in the form of Kotlin-alike code.
                                            The output of this command is intended to be used for debugging purposes only.
                contents                  [DEPRECATED] Renamed to "dump-metadata". Please, use new command name.
@@ -297,23 +297,30 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     fun contents(output: Appendable, printSignatures: Boolean) {
-        logWarning("\"contents\" has been renamed to \"dump-metadata\"")
+        logWarning("\"contents\" has been renamed to \"dump-metadata\". Please, use new command name.")
         dumpMetadata(output, printSignatures)
     }
 
     fun dumpMetadata(output: Appendable, printSignatures: Boolean) {
         val module = loadModule()
-        val signatureRenderer = if (printSignatures) DefaultKlibSignatureRenderer("// Signature: ") else KlibSignatureRenderer.NO_SIGNATURE
+        val signatureRenderer = if (printSignatures)
+            DefaultKlibSignatureRenderer(KotlinIrSignatureVersion.V1, "// Signature: ") // TODO: use the version from `-signature-version`
+        else
+            KlibSignatureRenderer.NO_SIGNATURE
         val printer = DeclarationPrinter(output, DefaultDeclarationHeaderRenderer, signatureRenderer)
 
         printer.print(module)
     }
 
-    fun signatures(output: Appendable) {
-        logWarning("\"signatures\" is deprecated. Please, use \"dump-ir-signatures\" instead")
+    fun signatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
+        logWarning("\"signatures\" has been renamed to \"dump-metadata-signatures\". Please, use new command name.")
+        dumpMetadataSignatures(output, signatureVersion)
+    }
 
+    fun dumpMetadataSignatures(output: Appendable, signatureVersion: KotlinIrSignatureVersion?) {
         val module = loadModule()
-        val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer())
+        // Don't call `checkSupportedInLibrary()` - the signatures are anyway generated on the fly.
+        val printer = SignaturePrinter(output, DefaultKlibSignatureRenderer(signatureVersion))
 
         printer.print(module)
     }
@@ -390,8 +397,9 @@ fun main(args: Array<String>) {
         "dump-ir" -> library.dumpIr(System.out, printSignatures)
         "dump-ir-signatures" -> library.dumpIrSignatures(System.out, signatureVersion)
         "dump-metadata" -> library.dumpMetadata(System.out, printSignatures)
+        "dump-metadata-signatures" -> library.dumpMetadataSignatures(System.out, signatureVersion)
         "contents" -> library.contents(System.out, printSignatures)
-        "signatures" -> library.signatures(System.out)
+        "signatures" -> library.signatures(System.out, signatureVersion)
         "info" -> library.info()
         "install" -> library.install()
         "remove" -> library.remove()
