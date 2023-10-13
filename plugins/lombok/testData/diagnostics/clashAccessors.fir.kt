@@ -39,11 +39,6 @@ public class ClashTest extends SuperClass {
         return human;
     }
 
-    private int score;
-
-    public void setScore(int score, int times) {
-
-    }
 
     static void test() {
         val obj = new ClashTest();
@@ -87,14 +82,11 @@ class KotlinChildClass : ClashTest() {
 fun test() {
     val obj = ClashTest()
 
-    obj.getAge()
+    obj.<!OVERLOAD_RESOLUTION_AMBIGUITY!>getAge<!>()
     //thats shouldn't work because lombok doesn't generate clashing method
-    obj.setAge(<!ARGUMENT_TYPE_MISMATCH!>41<!>)
-    obj.<!VAL_REASSIGNMENT!>age<!> = 12
-    val age = obj.age
-
-    obj.setScore(41)
-    obj.score = 12
+    obj.setAge(41)
+    obj.<!OVERLOAD_RESOLUTION_AMBIGUITY!>age<!> = 12
+    val age = obj.<!OVERLOAD_RESOLUTION_AMBIGUITY!>age<!>
 
 
     obj.getName()

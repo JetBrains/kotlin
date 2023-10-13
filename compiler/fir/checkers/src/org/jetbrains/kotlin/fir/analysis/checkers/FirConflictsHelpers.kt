@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.outerType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.TypeAliasConstructorsSubstitutingScope
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
@@ -153,84 +154,31 @@ class FirDeclarationCollector<D : FirBasedSymbol<*>>(
 fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirRegularClassSymbol) {
     val otherDeclarations = mutableMapOf<String, MutableList<FirBasedSymbol<*>>>()
     val functionDeclarations = mutableMapOf<String, MutableList<FirBasedSymbol<*>>>()
-    val scope = klass.unsubstitutedScope(context)
 
-    scope.collectLeafFunctions().forEach {
-        if (it.isCollectable() && it.isVisibleInClass(klass)) {
-            collect(it, FirRedeclarationPresenter.represent(it), functionDeclarations)
-        }
-    }
+    // TODO, KT-61243: Use declaredMemberScope
+    @OptIn(SymbolInternals::class)
+    for (it in klass.fir.declarations) {
+        if (!it.symbol.isCollectable()) continue
 
-    // Constructors of nested classes
-    // are collected when checking the outer
-    // class: this is because they may clash
-    // with functions from this outer class,
-    // so we should avoid checking them twice.
-    if (context.isTopLevel) {
-        scope.processDeclaredConstructors {
-            if (it.isCollectable() && it.isVisibleInClass(klass)) {
-                collect(it, FirRedeclarationPresenter.represent(it, klass), functionDeclarations)
+        when (it) {
+            is FirSimpleFunction -> collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), functionDeclarations)
+            is FirRegularClass -> {
+                collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), otherDeclarations)
+
+                // Objects have implicit FirPrimaryConstructors
+                if (it.symbol.classKind == ClassKind.OBJECT) {
+                    continue
+                }
+
+                it.symbol.expandedClassWithConstructorsScope(context)?.let { (_, scopeWithConstructors) ->
+                    scopeWithConstructors.processDeclaredConstructors { constructor ->
+                        collect(constructor, FirRedeclarationPresenter.represent(constructor, it.symbol), functionDeclarations)
+                    }
+                }
             }
-        }
-    }
-
-    val visitedProperties = mutableSetOf<FirVariableSymbol<*>>()
-
-    scope.collectLeafProperties().forEach {
-        if (it.isCollectable() && it.isVisibleInClass(klass)) {
-            collect(it, FirRedeclarationPresenter.represent(it), otherDeclarations)
-        }
-        visitedProperties.add(it)
-    }
-
-    klass.declaredMemberScope(context).processAllProperties {
-        if (it !in visitedProperties && it.isCollectable()) {
-            collect(it, FirRedeclarationPresenter.represent(it), otherDeclarations)
-        }
-    }
-
-    fun processClassifier(it: FirClassifierSymbol<*>) {
-        when {
-            !it.isCollectable() || !it.isVisibleInClass(klass) -> return
-            it is FirRegularClassSymbol -> collect(it, FirRedeclarationPresenter.represent(it), otherDeclarations)
-            it is FirTypeAliasSymbol -> collect(it, FirRedeclarationPresenter.represent(it), otherDeclarations)
+            is FirTypeAlias -> collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), otherDeclarations)
+            is FirVariable -> collect(it.symbol, FirRedeclarationPresenter.represent(it.symbol), otherDeclarations)
             else -> {}
-        }
-
-        // This `if` can't be merged with the `when`
-        // above, because otherwise the smartcast
-        // below doesn't work.
-        if (it !is FirClassLikeSymbol<*>) {
-            return
-        }
-
-        it.expandedClassWithConstructorsScope(context)?.let { (expandedClass, scopeWithConstructors) ->
-            // Objects have implicit FirPrimaryConstructors
-            if (expandedClass.classKind == ClassKind.OBJECT) {
-                return@let
-            }
-
-            scopeWithConstructors.processDeclaredConstructors { constructor ->
-                collect(constructor, FirRedeclarationPresenter.represent(constructor, it), functionDeclarations)
-            }
-        }
-    }
-
-    val visitedClassifiers = mutableSetOf<FirClassifierSymbol<*>>()
-
-    scope.processAllClassifiers {
-        processClassifier(it)
-        visitedClassifiers.add(it)
-    }
-
-    // Scopes refer to inner classifiers
-    // through maps indexed by names,
-    // so only the last declaration is
-    // observed when processing all
-    // classifiers
-    for (it in klass.declarationSymbols) {
-        if (it is FirClassifierSymbol<*> && it !in visitedClassifiers) {
-            processClassifier(it)
         }
     }
 }

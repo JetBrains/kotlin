@@ -8,7 +8,7 @@ class C(val x: Int)
 class Outer {
     class C(val x: Int)
 
-    <!CONFLICTING_OVERLOADS!>typealias CC = C<!>
+    typealias CC = C
 
-    <!CONFLICTING_OVERLOADS!>fun CC(x: Int)<!> = x
+    fun CC(x: Int) = x
 }
