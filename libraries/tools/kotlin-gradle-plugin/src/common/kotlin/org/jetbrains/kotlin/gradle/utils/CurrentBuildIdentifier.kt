@@ -11,13 +11,13 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.build.BuildState
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 
 internal fun Project.currentBuildId(): BuildIdentifier =
     (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier
 
-internal val Project.currentBuild: CurrentBuildIdentifier
-    get() = extraProperties.getOrPut("org.jetbrains.kotlin.gradle.utils.currentBuild") { CurrentBuildIdentifierImpl(this.currentBuildId()) }
+internal val Project.currentBuild: CurrentBuildIdentifier by projectStoredProperty {
+    CurrentBuildIdentifierImpl(this.currentBuildId())
+}
 
 /**
  * Utility that can be used to test if a certain project or [ComponentIdentifier] belongs

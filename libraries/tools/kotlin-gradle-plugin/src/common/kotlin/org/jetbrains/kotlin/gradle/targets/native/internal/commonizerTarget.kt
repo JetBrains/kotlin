@@ -20,17 +20,17 @@ import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.gradle.utils.futureExtension
+import org.jetbrains.kotlin.gradle.utils.extrasStoredFuture
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
-internal val KotlinSourceSet.commonizerTarget: Future<CommonizerTarget?> by futureExtension {
+internal val KotlinSourceSet.commonizerTarget: Future<CommonizerTarget?> by extrasStoredFuture {
     inferCommonizerTarget(internal.awaitPlatformCompilations())
 }
 
 internal val KotlinSourceSet.sharedCommonizerTarget: Future<SharedCommonizerTarget?>
     get() = project.future { commonizerTarget.await() as? SharedCommonizerTarget }
 
-internal val KotlinCompilation<*>.commonizerTarget: Future<CommonizerTarget?> by futureExtension {
+internal val KotlinCompilation<*>.commonizerTarget: Future<CommonizerTarget?> by extrasStoredFuture {
     KotlinPluginLifecycle.Stage.AfterFinaliseRefinesEdges.await()
     @OptIn(UnsafeApi::class)
     inferCommonizerTarget(this)

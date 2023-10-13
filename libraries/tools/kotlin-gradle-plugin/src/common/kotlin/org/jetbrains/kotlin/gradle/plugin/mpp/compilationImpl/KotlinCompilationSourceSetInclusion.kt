@@ -19,12 +19,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
+import org.jetbrains.kotlin.gradle.utils.extrasStoredProperty
 import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
-import org.jetbrains.kotlin.tooling.core.extrasFactoryProperty
 import java.util.concurrent.Callable
 
 internal class KotlinCompilationSourceSetInclusion(
-    private val addSourcesToCompileTask: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask
+    private val addSourcesToCompileTask: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask,
 ) {
 
     fun include(compilation: InternalKotlinCompilation<*>, sourceSet: KotlinSourceSet) {
@@ -81,7 +81,7 @@ internal class KotlinCompilationSourceSetInclusion(
          * to avoid re-processing of unnecessary source sets!
          */
         val InternalKotlinCompilation<*>.includedSourceSets: MutableSet<KotlinSourceSet>
-                by extrasFactoryProperty(KotlinCompilationSourceSetInclusion::class.java.name, { hashSetOf() })
+                by extrasStoredProperty { hashSetOf() }
     }
 
 
@@ -91,7 +91,7 @@ internal class KotlinCompilationSourceSetInclusion(
 
     object DefaultAddSourcesToCompileTask : AddSourcesToCompileTask {
         override fun addSources(
-            compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>
+            compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>,
         ) {
             addSourcesToKotlinCompileTask(
                 project = compilation.project,
@@ -137,7 +137,7 @@ internal class KotlinCompilationSourceSetInclusion(
      * and compiles them together.
      */
     class AddSourcesWithoutDependsOnClosure(
-        private val delegate: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask
+        private val delegate: AddSourcesToCompileTask = DefaultAddSourcesToCompileTask,
     ) : AddSourcesToCompileTask {
         override fun addSources(compilation: KotlinCompilation<*>, sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
             if (sourceSet !in compilation.kotlinSourceSets) return

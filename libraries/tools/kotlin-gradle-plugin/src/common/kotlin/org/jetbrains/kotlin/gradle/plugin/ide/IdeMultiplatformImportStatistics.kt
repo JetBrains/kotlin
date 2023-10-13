@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 
 
-internal val Project.kotlinIdeMultiplatformImportStatistics: IdeMultiplatformImportStatistics
-    get() = extensions.extraProperties.getOrPut(IdeMultiplatformImportStatistics::class.java.name) {
-        IdeMultiplatformImportStatistics()
-    }
+internal val Project.kotlinIdeMultiplatformImportStatistics: IdeMultiplatformImportStatistics by projectStoredProperty {
+    IdeMultiplatformImportStatistics()
+}
 
 /**
  * Simple implementation to track dependency resolution bottlenecks.

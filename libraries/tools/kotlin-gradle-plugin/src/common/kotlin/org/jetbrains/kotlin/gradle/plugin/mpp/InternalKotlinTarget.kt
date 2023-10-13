@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetImpl
-import org.jetbrains.kotlin.gradle.utils.futureExtension
+import org.jetbrains.kotlin.gradle.utils.extrasStoredFuture
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
@@ -39,7 +39,7 @@ internal val InternalKotlinTarget.compilerOptions: KotlinCommonCompilerOptions
         else -> throw IllegalStateException("Unexpected 'KotlinTarget' type: ${this.javaClass}")
     }
 
-internal val InternalKotlinTarget.isSourcesPublishableFuture by futureExtension("isSourcesPublishableFuture") {
+internal val InternalKotlinTarget.isSourcesPublishableFuture by extrasStoredFuture {
     KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
     isSourcesPublishable
 }

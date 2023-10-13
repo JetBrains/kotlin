@@ -10,11 +10,10 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetVisibilityProvider.PlatformCompilationData
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
-import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 import java.io.File
 
 private typealias KotlinSourceSetName = String
@@ -29,12 +28,12 @@ internal data class SourceSetVisibilityResult(
      * For some of the [visibleSourceSetNames], additional artifacts may be present that
      * the consumer should read the compiled source set metadata from.
      */
-    val hostSpecificMetadataArtifactBySourceSet: Map<String, File>
+    val hostSpecificMetadataArtifactBySourceSet: Map<String, File>,
 )
 
-private val Project.allPlatformCompilationData: List<PlatformCompilationData>
-    get() = extraProperties
-    .getOrPut("all${PlatformCompilationData::class.java.simpleName}") { collectAllPlatformCompilationData() }
+private val Project.allPlatformCompilationData: List<PlatformCompilationData> by projectStoredProperty {
+    collectAllPlatformCompilationData()
+}
 
 private fun Project.collectAllPlatformCompilationData(): List<PlatformCompilationData> {
     val multiplatformExtension = multiplatformExtensionOrNull ?: return emptyList()
@@ -63,7 +62,7 @@ internal class SourceSetVisibilityProvider(
     class PlatformCompilationData(
         val allSourceSets: Set<KotlinSourceSetName>,
         val resolvedDependenciesConfiguration: LazyResolvedConfiguration,
-        val hostSpecificMetadataConfiguration: LazyResolvedConfiguration?
+        val hostSpecificMetadataConfiguration: LazyResolvedConfiguration?,
     )
 
     /**
@@ -82,7 +81,7 @@ internal class SourceSetVisibilityProvider(
         visibleFromSourceSet: KotlinSourceSetName,
         resolvedRootMppDependency: ResolvedDependencyResult,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
-        resolvedToOtherProject: Boolean
+        resolvedToOtherProject: Boolean,
     ): SourceSetVisibilityResult {
         val resolvedRootMppDependencyId = resolvedRootMppDependency.selected.id
 

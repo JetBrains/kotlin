@@ -413,11 +413,9 @@ fun getKotlinPluginVersion(logger: Logger): String {
     return kotlinPluginVersionFromResources.value
 }
 
-val Project.kotlinToolingVersion: KotlinToolingVersion
-    get() = extensions.extraProperties.getOrPut("kotlinToolingVersion") {
-        KotlinToolingVersion(getKotlinPluginVersion())
-    }
-
+val Project.kotlinToolingVersion: KotlinToolingVersion by projectStoredProperty {
+    KotlinToolingVersion(getKotlinPluginVersion())
+}
 
 private fun loadKotlinPluginVersionFromResourcesOf(any: Any) =
     any.loadPropertyFromResources("project.properties", "project.version")

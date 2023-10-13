@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
-import org.jetbrains.kotlin.tooling.core.ExtrasLazyProperty
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
-import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 import java.io.Serializable
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.properties.ReadOnlyProperty
 
 /**
  * See [KotlinPluginLifecycle]:
@@ -67,12 +66,12 @@ internal fun CompletableFuture<Unit>.complete() = complete(Unit)
  * Extend a given [Receiver] with data produced by [block]:
  * This uses the [HasMutableExtras] infrastructure to store/share the produced future entity to the given [Receiver]
  * Note: The [block] will be lazily launched on first access to this extension!
- * @param name: The name of the extras key being used to store the future (see [extrasLazyProperty])
+ * @see extrasStoredProperty
  */
-internal inline fun <Receiver, reified T> futureExtension(
-    name: String? = null, noinline block: suspend Receiver.() -> T,
-): ExtrasLazyProperty<Receiver, Future<T>> where Receiver : HasMutableExtras, Receiver : HasProject {
-    return extrasLazyProperty<Receiver, Future<T>>(name) {
+internal inline fun <Receiver, reified T> extrasStoredFuture(
+    noinline block: suspend Receiver.() -> T,
+): ReadOnlyProperty<Receiver, Future<T>> where Receiver : HasMutableExtras, Receiver : HasProject {
+    return extrasStoredProperty {
         project.future { block() }
     }
 }
@@ -91,6 +90,7 @@ internal val <T> Future<T>.lenient: LenientFuture<T> get() = LenientFutureImpl(t
  * ```
  *
  * basically creating a future, which is launched lazily
+ * (on first call to on any of the returned Future's method)
  */
 internal fun <T> Project.lazyFuture(block: suspend Project.() -> T): Future<T> = LazyFutureImpl(lazy { future { block() } })
 

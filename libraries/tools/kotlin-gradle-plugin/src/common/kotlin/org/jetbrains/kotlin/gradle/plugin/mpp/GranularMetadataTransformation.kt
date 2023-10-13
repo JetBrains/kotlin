@@ -75,6 +75,7 @@ internal sealed class MetadataDependencyResolution(
 
             abstract class ProjectMetadataProvider : MetadataProvider() {
                 enum class MetadataConsumer { Ide, Cli }
+
                 abstract fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection?
             }
         }
@@ -317,12 +318,9 @@ internal class GranularMetadataTransformation(
 
 }
 
-private val Project.allProjectsData: Map<String, GranularMetadataTransformation.ProjectData>
-    get() = rootProject
-        .extraProperties
-        .getOrPut("all${GranularMetadataTransformation.ProjectData::class.java.simpleName}") {
-            collectAllProjectsData()
-        }
+private val Project.allProjectsData: Map<String, GranularMetadataTransformation.ProjectData> by projectStoredProperty {
+    collectAllProjectsData()
+}
 
 private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransformation.ProjectData> {
     return rootProject.allprojects.associateBy { it.path }.mapValues { (path, currentProject) ->

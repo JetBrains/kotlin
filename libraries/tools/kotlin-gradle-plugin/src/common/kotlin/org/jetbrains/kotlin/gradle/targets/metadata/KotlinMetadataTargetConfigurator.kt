@@ -399,7 +399,7 @@ internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<
         task.description = "Generates serialized project structure metadata of the current project (for tooling)"
     }
 
-internal val KotlinSourceSet.isNativeSourceSet: Future<Boolean> by futureExtension("isNativeSourceSet") {
+internal val KotlinSourceSet.isNativeSourceSet: Future<Boolean> by extrasStoredFuture {
     val compilations = internal.awaitPlatformCompilations()
     compilations.isNotEmpty() && compilations.all { it.platformType == KotlinPlatformType.native }
 }
