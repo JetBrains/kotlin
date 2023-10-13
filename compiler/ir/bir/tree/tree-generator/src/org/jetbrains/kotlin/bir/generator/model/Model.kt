@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir.generator.model
 
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import org.jetbrains.kotlin.bir.generator.config.ElementConfig
 import org.jetbrains.kotlin.bir.generator.config.FieldConfig
@@ -39,6 +40,8 @@ class Element(
     val propertyName = config.propertyName
     val kDoc = config.kDoc
     val additionalImports: List<Import> = config.additionalImports
+
+    val elementImplName = ClassName(packageName + ".impl", typeName + "Impl")
 
     override fun toString() = name
 
@@ -100,6 +103,7 @@ sealed class Field(
     var isOverride = false
     var needsDescriptorApiAnnotation = false
     abstract val transformable: Boolean
+    var passViaConstructorParameter = false
     val initializeToThis = (config as? SimpleFieldConfig)?.initializeToThis ?: false
 
     val kdoc = config.kdoc
@@ -127,7 +131,7 @@ class ListField(
     config: FieldConfig,
     name: String,
     var elementType: TypeRef,
-    private val listType: ClassRef<PositionTypeParameterRef>,
+    val listType: ClassRef<PositionTypeParameterRef>,
     nullable: Boolean,
     mutable: Boolean,
     isChild: Boolean,
