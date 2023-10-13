@@ -220,6 +220,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         }
     }
 
+    // TODO(Roman.Efremov): KT-62559 prevent reporting ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT twice in CLI mode in K2
     @OptIn(InternalDiagnosticFactoryMethod::class)
     private fun checkAnnotationsMatch(
         expectSymbol: FirBasedSymbol<*>,
