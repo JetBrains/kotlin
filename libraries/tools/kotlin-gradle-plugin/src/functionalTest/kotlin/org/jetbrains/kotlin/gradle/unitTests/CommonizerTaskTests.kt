@@ -65,6 +65,24 @@ class CommonizerTaskTests {
         subproject.tasks.getByName("commonize").assertDependsOn(rootProjectCommonizeNativeDistributionTask)
     }
 
+    @Test
+    fun `test commonizeNativeDistributionTask is not created eagerly`() {
+        val project = buildProjectWithMPP {
+            tasks.configureEach {
+                if (it.name == "commonizeNativeDistribution") {
+                    fail("Task $it was not expected to be created eagerly")
+                }
+            }
+
+            kotlin {
+                linuxArm64()
+                linuxX64()
+            }
+        }
+
+        project.evaluate()
+    }
+
     /**
      * Check if jvm-ecosystem plugin is applied when commonizer task is applied to the root project.
      * Context: https://github.com/gradle/gradle/issues/20145
@@ -127,7 +145,6 @@ class CommonizerTaskTests {
 
         assertNotNull(rootProject.plugins.findPlugin(JVM_ECOSYSTEM_PLUGIN_ID))
     }
-
 
     @Test
     fun `test commonizeCInteropTask`() {
