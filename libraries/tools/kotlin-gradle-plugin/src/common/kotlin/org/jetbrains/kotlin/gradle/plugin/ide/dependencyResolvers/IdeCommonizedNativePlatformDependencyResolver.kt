@@ -23,7 +23,7 @@ internal object IdeCommonizedNativePlatformDependencyResolver :
         val project = sourceSet.project
         val commonizerTarget = sourceSet.commonizerTarget.getOrThrow() as? SharedCommonizerTarget ?: return emptySet()
         val commonizerTask = project.commonizeNativeDistributionTask?.get() ?: return emptySet()
-        val outputDirectory = resolveCommonizedDirectory(commonizerTask.rootOutputDirectory, commonizerTarget)
+        val outputDirectory = resolveCommonizedDirectory(commonizerTask.rootOutputDirectoryProperty.get().asFile, commonizerTarget)
 
         return outputDirectory.listFiles().orEmpty()
             .filter { it.isDirectory || it.extension == KLIB_FILE_EXTENSION }

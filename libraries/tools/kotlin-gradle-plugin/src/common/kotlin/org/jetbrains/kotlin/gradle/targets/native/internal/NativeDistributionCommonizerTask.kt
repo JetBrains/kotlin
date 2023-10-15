@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.ProjectLayout
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -15,6 +17,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
@@ -45,6 +48,7 @@ internal abstract class NativeDistributionCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
+    private val projectLayout: ProjectLayout,
 ) : DefaultTask(), UsesBuildMetricsService {
 
     private val konanHome = project.file(project.konanHome)
@@ -80,19 +84,30 @@ internal abstract class NativeDistributionCommonizerTask
     private val additionalSettings = project.additionalCommonizerSettings
 
     @get:Internal
-    internal val rootOutputDirectory: File = project.file {
-        project.file(project.konanHome)
-            .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-            .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
-            .resolve(URLEncoder.encode(project.getKotlinPluginVersion(), Charsets.UTF_8.name()))
-    }
+    @Deprecated("Use lazy replacement", replaceWith = ReplaceWith("rootOutputDirectoryProperty.get().asFile"))
+    internal val rootOutputDirectory: File get() = rootOutputDirectoryProperty.asFile.get()
 
-    private val commonizerCache = NativeDistributionCommonizerCache(
-        outputDirectory = rootOutputDirectory,
-        konanHome = konanHome,
-        logger = logger,
-        isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
-    )
+    @get:OutputDirectory
+    internal val rootOutputDirectoryProperty: RegularFileProperty = objectFactory
+        .fileProperty()
+        .apply {
+            set(
+                project.file(project.konanHome)
+                    .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+                    .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
+                    .resolve(URLEncoder.encode(project.getKotlinPluginVersion(), Charsets.UTF_8.name()))
+            )
+        }
+
+    private val isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
+
+    private val commonizerCache
+        get() = NativeDistributionCommonizerCache(
+            outputDirectory = rootOutputDirectoryProperty.get().asFile,
+            konanHome = konanHome,
+            logger = logger,
+            isCachingEnabled = isCachingEnabled
+        )
 
     @get:Internal
     val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects

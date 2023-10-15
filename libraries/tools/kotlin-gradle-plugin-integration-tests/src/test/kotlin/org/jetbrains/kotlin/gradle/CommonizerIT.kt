@@ -91,6 +91,7 @@ open class CommonizerIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-61359: commonize native distribution and compile with configuration cache")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @GradleTest
     fun testCleanCommonizationWithConfigurationCache(gradleVersion: GradleVersion) {
         project("commonizeNativeDistributionWithConfigurationCache", gradleVersion) {

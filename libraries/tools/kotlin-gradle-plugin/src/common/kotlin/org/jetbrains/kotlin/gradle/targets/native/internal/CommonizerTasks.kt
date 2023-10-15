@@ -165,7 +165,7 @@ internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<CleanNa
                 group = "interop"
                 description = "Deletes all previously commonized klib's from the Kotlin/Native distribution"
 
-                commonizerDirectory.set(commonizeNativeDistributionTask.map { it.rootOutputDirectory })
+                commonizerDirectory.set(commonizeNativeDistributionTask.flatMap { it.rootOutputDirectoryProperty.asFile })
             }
         )
     }
