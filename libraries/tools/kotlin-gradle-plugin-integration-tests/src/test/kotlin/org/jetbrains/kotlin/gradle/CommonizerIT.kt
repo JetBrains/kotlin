@@ -14,9 +14,12 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
+import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -55,6 +58,34 @@ open class CommonizerIT : KGPBaseTest() {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertOutputContains("Native Distribution Commonization: Cache disabled")
                 assertOutputContains(commonizerOutput)
+            }
+        }
+    }
+
+    @DisplayName("Clean commonized native distribution")
+    @GradleTest
+    fun testCleanNativeDistributionCommonization(gradleVersion: GradleVersion, @TempDir konanData: Path) {
+        nativeProject("commonizeNativeDistributionWithIosLinuxWindows", gradleVersion) {
+            val buildOptions = defaultBuildOptions.copy(
+                konanDataDir = konanData
+            )
+
+            fun commonizationResultFilesCount() = konanData
+                .walk()
+                .filter { it.contains(Path(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)) }
+                .count()
+
+            build(":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+                assertTasksExecuted(":cleanNativeDistributionCommonization")
+            }
+            build(":commonizeNativeDistribution", buildOptions = buildOptions) {
+                assertTasksExecuted(":commonizeNativeDistribution")
+                if (commonizationResultFilesCount() == 0) fail("Expected some files after executing commonizeNativeDistribution")
+            }
+
+            build(":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+                assertTasksExecuted(":cleanNativeDistributionCommonization")
+                if (commonizationResultFilesCount() != 1) fail("Expected only .lock file after cleaning")
             }
         }
     }
