@@ -90,6 +90,37 @@ open class CommonizerIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-61359: commonize native distribution and compile with configuration cache")
+    @GradleTest
+    fun testCleanCommonizationWithConfigurationCache(gradleVersion: GradleVersion) {
+        project("commonizeNativeDistributionWithConfigurationCache", gradleVersion) {
+            val buildOptionsWithConfigurationCache = buildOptions.copy(configurationCache = true)
+            // Clean native distribution -> capture configuration cache state
+            build(":cleanNativeDistributionCommonization")
+            build(":compileNativeMainKotlinMetadata", buildOptions = buildOptionsWithConfigurationCache) {
+                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+                assertConfigurationCacheStored()
+            }
+
+            // Clean task outputs -> reuse configuration cache
+            build(":clean")
+            build(":compileNativeMainKotlinMetadata", buildOptions = buildOptionsWithConfigurationCache) {
+                assertTasksUpToDate(":commonizeNativeDistribution")
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+                assertConfigurationCacheReused()
+            }
+
+            // full clean -> reuse configuration cache
+            build("clean", ":cleanNativeDistributionCommonization")
+            build(":compileNativeMainKotlinMetadata", buildOptions = buildOptionsWithConfigurationCache) {
+                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+                assertConfigurationCacheReused()
+            }
+        }
+    }
+
     @DisplayName("Commonize Curl Interop UP-TO-DATE check")
     @GradleTest
     fun testCommonizeCurlInteropUTDCheck(gradleVersion: GradleVersion) {
