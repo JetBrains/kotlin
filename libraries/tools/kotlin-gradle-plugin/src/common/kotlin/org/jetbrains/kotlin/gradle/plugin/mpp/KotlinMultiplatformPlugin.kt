@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
-import org.jetbrains.kotlin.gradle.targets.native.createFatFrameworks
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizedCInteropApiElementsConfigurations
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
@@ -77,7 +76,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.locateOrRegisterIdeResolveDependenciesTask()
         project.launch { project.setupCInteropCommonizedCInteropApiElementsConfigurations() }
         project.addBuildListenerForXcode()
-        project.whenEvaluated { kotlinMultiplatformExtension.createFatFrameworks() }
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(

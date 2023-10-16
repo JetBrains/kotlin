@@ -10,8 +10,8 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
@@ -35,7 +35,7 @@ private data class FrameworkGroupDescription(
     val frameworkName: String,
     val targetFamilyName: String,
     val baseName: String,
-    val buildType: NativeBuildType
+    val buildType: NativeBuildType,
 )
 
 private val Framework.frameworkGroupDescription
@@ -58,8 +58,9 @@ internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTas
     addFrameworkArtifact(frameworkConfiguration, linkTask.flatMap { it.outputFile })
 }
 
-internal fun KotlinMultiplatformExtension.createFatFrameworks() {
-    val frameworkGroups = targets
+internal val CreateFatFrameworksSetupAction = KotlinProjectSetupCoroutine {
+    KotlinPluginLifecycle.Stage.FinaliseDsl.await()
+    val frameworkGroups = multiplatformExtension.targets
         .filterIsInstance<KotlinNativeTarget>()
         .filter { FatFrameworkTask.isSupportedTarget(it) }
         .flatMap { it.binaries }
@@ -78,7 +79,7 @@ private val FrameworkGroupDescription.fatFrameworkConfigurationName get() = lowe
 private fun Configuration.applyBinaryFrameworkGroupAttributes(
     project: Project,
     frameworkDescription: FrameworkGroupDescription,
-    targets: List<KotlinNativeTarget>
+    targets: List<KotlinNativeTarget>,
 ) {
     with(attributes) {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
