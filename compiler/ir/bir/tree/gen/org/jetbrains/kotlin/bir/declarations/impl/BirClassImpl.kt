@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
-import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
@@ -33,8 +31,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
-    override var originalBeforeInline: BirAttributeContainer?,
-    override var metadata: MetadataSource?,
     override var kind: ClassKind,
     override var modality: Modality,
     override var isCompanion: Boolean,
@@ -47,7 +43,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     override var superTypes: List<BirType>,
     thisReceiver: BirValueParameter?,
     override var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
-    override var sealedSubclasses: List<BirClassSymbol>,
 ) : BirClass() {
     override var typeParameters: BirChildElementList<BirTypeParameter> =
             BirChildElementList(this, 0)

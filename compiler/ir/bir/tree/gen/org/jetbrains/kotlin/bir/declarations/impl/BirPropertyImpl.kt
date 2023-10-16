@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     override var sourceSpan: SourceSpan,
@@ -39,9 +37,6 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     override var modality: Modality,
     override var isFakeOverride: Boolean,
     override var overriddenSymbols: List<BirPropertySymbol>,
-    override var metadata: MetadataSource?,
-    override var originalBeforeInline: BirAttributeContainer?,
-    override val containerSource: DeserializedContainerSource?,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,

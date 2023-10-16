@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 
 class BirConstantArrayImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
 ) : BirConstantArray() {
     override var attributeOwnerId: BirAttributeContainer = this

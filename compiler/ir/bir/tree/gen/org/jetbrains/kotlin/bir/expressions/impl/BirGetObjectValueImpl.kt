@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 
 class BirGetObjectValueImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var symbol: BirClassSymbol,
 ) : BirGetObjectValue() {
