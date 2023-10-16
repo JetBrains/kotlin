@@ -8,11 +8,13 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 
 class BirBlockBodyImpl(
     override var sourceSpan: SourceSpan,
-    override val statements: MutableList<BirStatement>,
-) : BirBlockBody()
+) : BirBlockBody() {
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this)
+}

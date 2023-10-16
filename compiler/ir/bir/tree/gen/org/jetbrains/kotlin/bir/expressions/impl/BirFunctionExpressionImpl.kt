@@ -20,7 +20,21 @@ class BirFunctionExpressionImpl(
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var origin: IrStatementOrigin,
-    override var function: BirSimpleFunction,
+    function: BirSimpleFunction,
 ) : BirFunctionExpression() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _function: BirSimpleFunction = function
+
+    override var function: BirSimpleFunction
+        get() = _function
+        set(value) {
+            if (_function != value) {
+                replaceChild(_function, value)
+                _function = value
+            }
+        }
+    init {
+        initChild(_function)
+    }
 }

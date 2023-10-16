@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
@@ -28,13 +29,13 @@ abstract class BirScript : BirElementBase(), BirDeclaration, BirDeclarationWithN
 
     abstract var baseClass: BirType?
 
-    abstract var explicitCallParameters: List<BirVariable>
+    abstract var explicitCallParameters: BirChildElementList<BirVariable>
 
-    abstract var implicitReceiversParameters: List<BirValueParameter>
+    abstract var implicitReceiversParameters: BirChildElementList<BirValueParameter>
 
     abstract var providedProperties: List<BirPropertySymbol>
 
-    abstract var providedPropertiesParameters: List<BirValueParameter>
+    abstract var providedPropertiesParameters: BirChildElementList<BirValueParameter>
 
     abstract var resultProperty: BirPropertySymbol?
 

@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.bir.accept
 abstract class BirTry : BirExpression() {
     abstract var tryResult: BirExpression
 
-    abstract val catches: MutableList<BirCatch>
+    abstract val catches: BirChildElementList<BirCatch>
 
     abstract var finallyExpression: BirExpression?
 

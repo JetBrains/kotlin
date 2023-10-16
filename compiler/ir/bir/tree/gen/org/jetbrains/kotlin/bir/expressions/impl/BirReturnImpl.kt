@@ -19,8 +19,22 @@ class BirReturnImpl(
     override var sourceSpan: SourceSpan,
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
-    override var value: BirExpression,
+    value: BirExpression,
     override var returnTargetSymbol: BirReturnTargetSymbol,
 ) : BirReturn() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _value: BirExpression = value
+
+    override var value: BirExpression
+        get() = _value
+        set(value) {
+            if (_value != value) {
+                replaceChild(_value, value)
+                _value = value
+            }
+        }
+    init {
+        initChild(_value)
+    }
 }
