@@ -17,6 +17,7 @@ class BirForest {
 
     private fun attachElement(element: BirElementBase) {
         element.owner = this
+        element.updateLevel()
     }
 
     internal fun rootElementAttached(element: BirElementBase) {
@@ -33,5 +34,6 @@ class BirForest {
 
     private fun detachElement(element: BirElementBase) {
         element.owner = null
+        element.updateLevel()
     }
 }
