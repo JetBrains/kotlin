@@ -72,7 +72,10 @@ fun TestProject.testResolveAllConfigurations(
 
 private fun generateResolveAllConfigurationsTask(excludes: List<String>) =
     """
-        task $RESOLVE_ALL_CONFIGURATIONS_TASK_NAME {
+        tasks.register("$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME") {
+            if ("commonizeNativeDistribution" in rootProject.tasks.names) {
+                dependsOn(":commonizeNativeDistribution")
+            }
             doFirst {
                 def excludeConfigs = ["default", "archives"]
                 ${computeExcludeConfigurations(excludes)}
@@ -100,7 +103,10 @@ private fun generateResolveAllConfigurationsTask(excludes: List<String>) =
 
 private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
     """
-        tasks.create("$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME") {
+        tasks.register("$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME") {
+            if ("commonizeNativeDistribution" in rootProject.tasks.names) {
+                dependsOn(":commonizeNativeDistribution")
+            }
             doFirst {
                 val excludeConfigs = mutableListOf("default", "archives")
                 ${computeExcludeConfigurations(excludes)}
