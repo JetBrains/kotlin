@@ -64,10 +64,10 @@ class StabilityPropagationTransformTests(useFir: Boolean) : AbstractIrTransformT
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Test)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")
           val %dirty = %changed
-          if (%changed and 0b1110 === 0) {
+          if (%changed and 0b1110 == 0) {
             %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
           }
-          if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+          if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
             if (isTraceInProgress()) {
               traceEventStart(<>, %dirty, -1, <>)
             }
@@ -144,7 +144,7 @@ class StabilityPropagationTransformTests(useFir: Boolean) : AbstractIrTransformT
             fun Example(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Example)<A(list...>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }

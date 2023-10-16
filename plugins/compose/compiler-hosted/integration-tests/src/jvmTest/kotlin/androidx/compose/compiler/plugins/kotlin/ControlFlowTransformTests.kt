@@ -293,10 +293,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               sourceInformation(%composer, "C(Test)<A()>,<M3>,<A()>:Test.kt")
               val tmp0_marker = %composer.currentMarker
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -363,13 +363,13 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               sourceInformation(%composer, "C(Test)<A()>,<M3>,<M3>,<A()>:Test.kt")
               val tmp0_marker = %composer.currentMarker
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
+              if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -445,10 +445,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<A()>,<M3>,<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -497,7 +497,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                 %this%T.compose(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
                   sourceInformation(%composer, "C<M1>:Test.kt")
                   val tmp0_marker = %composer.currentMarker
-                  if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %changed, -1, <>)
                     }
@@ -565,10 +565,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test_M3_M1_Return_M1)<A()>,<M3>,<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -626,10 +626,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test_M3_M1_Return_M3)<A()>,<M3>,<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -693,10 +693,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               sourceInformation(%composer, "C(testInline_M1_W_Return_Func)<A()>,<M1>,<A()>:Test.kt")
               val tmp0_marker = %composer.currentMarker
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -769,10 +769,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(testInline_M1_W_Return_Func)<A()>,<M3>,<M3>,<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -841,10 +841,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               sourceInformation(%composer, "C(test_CM1_CCM1_RetFun)<Text("...>,<M1>,<Text("...>:Test.kt")
               val tmp0_marker = %composer.currentMarker
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -970,10 +970,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -1093,10 +1093,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<IW>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -1141,10 +1141,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Text("...>,<Text("...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -1195,10 +1195,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               sourceInformation(%composer, "C(Test)<Text("...>,<M1>,<Text("...>:Test.kt")
               val tmp0_marker = %composer.currentMarker
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -1254,10 +1254,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Text("...>,<M1>,<Text("...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -1488,10 +1488,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               sourceInformation(%composer, "C(test_CM1_RetFun)<Text("...>,<M1>,<Text("...>:Test.kt")
               val tmp0_marker = %composer.currentMarker
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4009,10 +4009,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Example)<A(c)>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4071,10 +4071,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Example)<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4189,7 +4189,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<W>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -4207,7 +4207,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C<A()>:Test.kt")
-                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, <>)
                   }
@@ -4238,7 +4238,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<IW>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -4280,7 +4280,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Wrap>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -4298,7 +4298,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C<effect>:Test.kt")
-                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, <>)
                   }
@@ -4350,10 +4350,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)P(0:InlineClass)<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(value))) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4526,19 +4526,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test01):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4561,19 +4561,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test02)P(!2,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4596,19 +4596,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test03)P(!1,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4631,19 +4631,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test04)P(!1,2,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4666,19 +4666,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test05)P(!1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4701,19 +4701,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test06)P(!1,3,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4736,19 +4736,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test07)P(1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4771,19 +4771,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test08)P(1!1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4806,19 +4806,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test09)P(1,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4841,19 +4841,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test00)P(1,2,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4876,19 +4876,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test11)P(1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4911,19 +4911,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test12)P(1,3,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4946,19 +4946,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test13)P(2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -4981,19 +4981,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test14)P(2!1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5016,19 +5016,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test15)P(2,1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5051,19 +5051,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test16)P(2,1,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5086,19 +5086,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test17)P(2,3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5121,19 +5121,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test18)P(2,3,1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5156,19 +5156,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test19)P(3):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5191,19 +5191,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test20)P(3!1,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5226,19 +5226,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test21)P(3,1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5261,19 +5261,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test22)P(3,1,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5296,19 +5296,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test23)P(3,2):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5331,19 +5331,19 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test24)P(3,2,1):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(p3)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p2)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
+              if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p1)) 0b000100000000 else 0b10000000
               }
-              if (%changed and 0b0001110000000000 === 0) {
+              if (%changed and 0b0001110000000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(p0)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 != 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -5388,10 +5388,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)P(0:c#runtime.tests.LocalInlineClass):Test.kt#992ot2")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(value))) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, "androidx.compose.runtime.tests.Test (Test.kt:6)")
                 }
@@ -5435,7 +5435,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<b()>,<c()>,<d()>,<A(b(),>,<B()>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, "Test (Test.kt:4)")
                 }
@@ -5491,7 +5491,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               fun onCreate() {
                 setContent(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
                   sourceInformation(%composer, "C<B(a)>,<B(a)>:Test.kt")
-                  if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %changed, -1, "SomeClass.onCreate.<anonymous> (Test.kt:7)")
                     }
@@ -5512,7 +5512,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               var a = "Test"
               setContent(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C<B(a)>,<B(a)>:Test.kt")
-                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, "Test.<anonymous> (Test.kt:16)")
                   }
@@ -5561,7 +5561,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<W>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, "Test (Test.kt:4)")
                 }
@@ -5579,7 +5579,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C<IW>:Test.kt")
-                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, "ComposableSingletons%TestKt.lambda-1.<anonymous> (Test.kt:6)")
                   }
@@ -5666,7 +5666,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, "Test (Test.kt:16)")
                 }
@@ -5789,7 +5789,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             fun Test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, "Test (Test.kt:28)")
                 }
@@ -5881,7 +5881,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             fun AttemptedToRealizeGroupTwice(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(AttemptedToRealizeGroupTwice)<Wrappe...>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -5960,13 +5960,13 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)P(1)<rememb...>,*<get(bK...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(start)) 0b0100 else 0b0010
               }
-              if (%changed and 0b01110000 === 0) {
+              if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(end)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
+              if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -6023,10 +6023,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(ArrayConstructorTest)<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>,<rememb...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(n)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -6132,21 +6132,21 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(UiTextField)<Column>:Test.kt")
               val %dirty = %changed
-              if (%default and 0b0001 !== 0) {
+              if (%default and 0b0001 != 0) {
                 %dirty = %dirty or 0b00110000
-              } else if (%changed and 0b01110000 === 0) {
+              } else if (%changed and 0b01110000 == 0) {
                 %dirty = %dirty or if (%composer.changed(isError)) 0b00100000 else 0b00010000
               }
-              if (%default and 0b0010 !== 0) {
+              if (%default and 0b0010 != 0) {
                 %dirty = %dirty or 0b000110000000
-              } else if (%changed and 0b001110000000 === 0) {
+              } else if (%changed and 0b001110000000 == 0) {
                 %dirty = %dirty or if (%composer.changed(keyboardActions2)) 0b000100000000 else 0b10000000
               }
-              if (%dirty and 0b001011010001 !== 0b10010000 || !%composer.skipping) {
-                if (%default and 0b0001 !== 0) {
+              if (%dirty and 0b001011010001 != 0b10010000 || !%composer.skipping) {
+                if (%default and 0b0001 != 0) {
                   isError = false
                 }
-                if (%default and 0b0010 !== 0) {
+                if (%default and 0b0010 != 0) {
                   keyboardActions2 = false
                 }
                 if (isTraceInProgress()) {
@@ -6195,10 +6195,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Test(>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -6355,7 +6355,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             private fun Test(param: String?, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Inline...>:Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -6428,7 +6428,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
         fun Test2(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Test2):Test.kt")
-          if (%changed !== 0 || !%composer.skipping) {
+          if (%changed != 0 || !%composer.skipping) {
             if (isTraceInProgress()) {
               traceEventStart(<>, %changed, -1, <>)
             }
@@ -6447,7 +6447,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
         fun Test3(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Test3)<Wrappe...>:Test.kt")
-          if (%changed !== 0 || !%composer.skipping) {
+          if (%changed != 0 || !%composer.skipping) {
             if (isTraceInProgress()) {
               traceEventStart(<>, %changed, -1, <>)
             }
@@ -6465,7 +6465,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
         internal object ComposableSingletons%TestKt {
           val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
             sourceInformation(%composer, "C:Test.kt")
-            if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+            if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
@@ -6505,10 +6505,10 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
              %composer = %composer.startRestartGroup(<>)
              sourceInformation(%composer, "C(Test)<Dialog>:Test.kt")
              val %dirty = %changed
-             if (%changed and 0b1110 === 0) {
+             if (%changed and 0b1110 == 0) {
                %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
              }
-             if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+             if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                if (isTraceInProgress()) {
                  traceEventStart(<>, %dirty, -1, <>)
                }
@@ -6559,7 +6559,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             private fun Test(param: String?, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }

@@ -709,29 +709,29 @@ class LiveLiteralV2TransformTests(useFir: Boolean) : AbstractLiveLiteralTransfor
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(UiTextField)")
               val %dirty = %changed
-              if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(isError)) 0b00100000 else 0b00010000
+              if (%changed and 0b01110000 == 0) {
+                %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(isError)) 0b00100000 else 0b00010000
               }
-              if (%changed and 0b001110000000 === 0) {
-                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(keyboardActions2)) 0b000100000000 else 0b10000000
+              if (%changed and 0b001110000000 == 0) {
+                %dirty = %dirty or if (%default and 0b0010 == 0 && %composer.changed(keyboardActions2)) 0b000100000000 else 0b10000000
               }
-              if (%dirty and 0b001011010001 !== 0b10010000 || !%composer.skipping) {
+              if (%dirty and 0b001011010001 != 0b10010000 || !%composer.skipping) {
                 %composer.startDefaults()
-                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  if (%default and 0b0001 !== 0) {
+                if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
+                  if (%default and 0b0001 != 0) {
                     isError = LiveLiterals%TestKt.Boolean%param-isError%fun-UiTextField()
                     %dirty = %dirty and 0b01110000.inv()
                   }
-                  if (%default and 0b0010 !== 0) {
+                  if (%default and 0b0010 != 0) {
                     keyboardActions2 = LiveLiterals%TestKt.Boolean%param-keyboardActions2%fun-UiTextField()
                     %dirty = %dirty and 0b001110000000.inv()
                   }
                 } else {
                   %composer.skipToGroupEnd()
-                  if (%default and 0b0001 !== 0) {
+                  if (%default and 0b0001 != 0) {
                     %dirty = %dirty and 0b01110000.inv()
                   }
-                  if (%default and 0b0010 !== 0) {
+                  if (%default and 0b0010 != 0) {
                     %dirty = %dirty and 0b001110000000.inv()
                   }
                 }

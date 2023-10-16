@@ -261,7 +261,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
             fun VarArgsCaller(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(VarArgsCaller)<VarArg...>:Test.kt#2487m")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -310,10 +310,10 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                 %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
               }
               %composer.endMovableGroup()
-              if (%dirty and 0b1110 === 0) {
+              if (%dirty and 0b1110 == 0) {
                 %dirty = %dirty or 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -565,10 +565,10 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                   %composer = %composer.startRestartGroup(<>)
                   sourceInformation(%composer, "C(Wrapper)<block(...>:Test.kt#2487m")
                   val %dirty = %changed
-                  if (%changed and 0b1110 === 0) {
+                  if (%changed and 0b1110 == 0) {
                     %dirty = %dirty or if (%composer.changedInstance(block)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %dirty, -1, <>)
                     }
@@ -588,10 +588,10 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                   %composer = %composer.startRestartGroup(<>)
                   sourceInformation(%composer, "C(Leaf):Test.kt#2487m")
                   val %dirty = %changed
-                  if (%changed and 0b1110 === 0) {
+                  if (%changed and 0b1110 == 0) {
                     %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %dirty, -1, <>)
                     }
@@ -611,10 +611,10 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                   %composer = %composer.startRestartGroup(<>)
                   sourceInformation(%composer, "C(Test):Test.kt#2487m")
                   val %dirty = %changed
-                  if (%changed and 0b1110 === 0) {
+                  if (%changed and 0b1110 == 0) {
                     %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %dirty, -1, <>)
                     }
@@ -622,7 +622,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                     sourceInformation(%composer, "<Wrappe...>")
                     Wrapper(composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
                       sourceInformation(%composer, "C<Leaf("...>:Test.kt#2487m")
-                      if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (%changed and 0b1011 != 0b0010 || !%composer.skipping) {
                         if (isTraceInProgress()) {
                           traceEventStart(<>, %changed, -1, <>)
                         }
@@ -712,10 +712,10 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                   %composer = %composer.startRestartGroup(<>)
                   sourceInformation(%composer, "C(composeVector)<emit>:Test.kt#2487m")
                   val %dirty = %changed
-                  if (%changed and 0b1110 === 0) {
+                  if (%changed and 0b1110 == 0) {
                     %dirty = %dirty or if (%composer.changedInstance(composable)) 0b0100 else 0b0010
                   }
-                  if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                  if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %dirty, -1, <>)
                     }
@@ -839,7 +839,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                 fun test(%composer: Composer?, %changed: Int) {
                   %composer = %composer.startRestartGroup(<>)
                   sourceInformation(%composer, "C(test)*<foo>,<fooDel...>,<foo>:Test.kt#2487m")
-                  if (%changed !== 0 || !%composer.skipping) {
+                  if (%changed != 0 || !%composer.skipping) {
                     if (isTraceInProgress()) {
                       traceEventStart(<>, %changed, -1, <>)
                     }
@@ -929,7 +929,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
             fun test(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(test)*<foo>:Test.kt#2487m")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -997,10 +997,10 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(test)<delega...>:Test.kt#2487m")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(foo)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }

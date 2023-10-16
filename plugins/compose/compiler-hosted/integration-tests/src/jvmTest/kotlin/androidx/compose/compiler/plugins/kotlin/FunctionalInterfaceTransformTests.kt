@@ -53,10 +53,10 @@ class FunctionalInterfaceTransformTests(
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)*<Conten...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -77,7 +77,7 @@ class FunctionalInterfaceTransformTests(
             fun CallTest(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(CallTest)<Test>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -88,10 +88,10 @@ class FunctionalInterfaceTransformTests(
                       %composer = %composer.startRestartGroup(<>)
                       sourceInformation(%composer, "C(Content):Test.kt")
                       val %dirty = %changed
-                      if (%changed and 0b1110 === 0) {
+                      if (%changed and 0b1110 == 0) {
                         %dirty = %dirty or if (%composer.changed(%this%Test)) 0b0100 else 0b0010
                       }
-                      if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                         if (isTraceInProgress()) {
                           traceEventStart(<>, %dirty, -1, <>)
                         }
@@ -147,10 +147,10 @@ class FunctionalInterfaceTransformTests(
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Example)<Exampl...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -195,10 +195,10 @@ class FunctionalInterfaceTransformTests(
                     %composer = %composer.startRestartGroup(<>)
                     sourceInformation(%composer, "C(compute)<comput...>:Test.kt")
                     val %dirty = %changed
-                    if (%changed and 0b1110 === 0) {
+                    if (%changed and 0b1110 == 0) {
                       %dirty = %dirty or if (%composer.changed(it)) 0b0100 else 0b0010
                     }
-                    if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                    if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                       if (isTraceInProgress()) {
                         traceEventStart(<>, %dirty, -1, <>)
                       }
@@ -258,10 +258,10 @@ class FunctionalInterfaceTransformTests(
                     %composer = %composer.startRestartGroup(<>)
                     sourceInformation(%composer, "C(consume):Test.kt")
                     val %dirty = %changed
-                    if (%changed and 0b1110 === 0) {
+                    if (%changed and 0b1110 == 0) {
                       %dirty = %dirty or if (%composer.changed(string)) 0b0100 else 0b0010
                     }
-                    if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                    if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                       if (isTraceInProgress()) {
                         traceEventStart(<>, %dirty, -1, <>)
                       }
@@ -311,10 +311,10 @@ class FunctionalInterfaceTransformTests(
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(int)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -373,7 +373,7 @@ class FunctionalInterfaceTransformTests(
             fun Test(int: Int, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -425,7 +425,7 @@ class FunctionalInterfaceTransformTests(
             fun Test(int: Int, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -435,7 +435,7 @@ class FunctionalInterfaceTransformTests(
                     override fun invoke(<unused var>: Int, %composer: Composer?, %changed: Int) {
                       %composer = %composer.startRestartGroup(<>)
                       sourceInformation(%composer, "C(invoke):Test.kt")
-                      if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                      if (%changed and 0b0001 != 0 || !%composer.skipping) {
                         if (isTraceInProgress()) {
                           traceEventStart(<>, %changed, -1, <>)
                         }
@@ -468,7 +468,7 @@ class FunctionalInterfaceTransformTests(
             fun Example(consumer: Consumer, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Example):Test.kt")
-              if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+              if (%changed and 0b0001 != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }

@@ -46,7 +46,7 @@ class TraceInformationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
               fun B(x: Int, %composer: Composer?, %changed: Int) {
                 %composer = %composer.startRestartGroup(<>)
                 sourceInformation(%composer, "C(B):Test.kt")
-                if (%changed and 0b0001 !== 0 || !%composer.skipping) {
+                if (%changed and 0b0001 != 0 || !%composer.skipping) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, <>)
                   }
@@ -67,7 +67,7 @@ class TraceInformationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
             fun C(%composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(C)<B(1337...>:Test.kt")
-              if (%changed !== 0 || !%composer.skipping) {
+              if (%changed != 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
@@ -166,10 +166,10 @@ class TraceInformationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
               sourceInformation(%composer, "C(Test)<A()>,<Wrappe...>,<A()>:Test.kt")
               val tmp0_marker = %composer.currentMarker
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
