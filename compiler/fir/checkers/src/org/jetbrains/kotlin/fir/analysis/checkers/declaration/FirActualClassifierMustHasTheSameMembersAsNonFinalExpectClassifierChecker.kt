@@ -189,6 +189,7 @@ private fun calculateExpectActualScopeDiff(
                                 expect,
                                 actual,
                                 matchingContext,
+                                context.languageVersionSettings,
                             )
                             when (checkerCompatibility) {
                                 is ExpectActualCheckingCompatibility.Compatible -> null // One compatible is found, It's enough to not report the diagnostic

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.mpp
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -33,6 +34,7 @@ object AbstractExpectActualChecker {
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         checkClassScopesCompatibility: Boolean,
         context: ExpectActualMatchingContext<T>,
+        languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCheckingCompatibility<T> {
         val result = with(context) {
             getClassifiersCompatibility(
@@ -40,6 +42,7 @@ object AbstractExpectActualChecker {
                 actualClassLikeSymbol,
                 parentSubstitutor = null,
                 checkClassScopesCompatibility,
+                languageVersionSettings,
             )
         }
         @Suppress("UNCHECKED_CAST")
@@ -52,6 +55,7 @@ object AbstractExpectActualChecker {
         expectContainingClass: RegularClassSymbolMarker?,
         actualContainingClass: RegularClassSymbolMarker?,
         context: ExpectActualMatchingContext<T>,
+        languageVersionSettings: LanguageVersionSettings
     ): ExpectActualCheckingCompatibility<T> = with (context) {
         val expectTypeParameters = expectContainingClass?.typeParameters.orEmpty()
         val actualTypeParameters = actualContainingClass?.typeParameters.orEmpty()
@@ -63,6 +67,7 @@ object AbstractExpectActualChecker {
             parentSubstitutor,
             expectContainingClass,
             actualContainingClass,
+            languageVersionSettings,
         )
         @Suppress("UNCHECKED_CAST")
         result as ExpectActualCheckingCompatibility<T>
@@ -73,6 +78,7 @@ object AbstractExpectActualChecker {
     //    actualDeclarations: List<DeclarationSymbolMarker>,
     //    context: ExpectActualMatchingContext<T>,
     //    checkClassScopesCompatibility: Boolean,
+    //    languageVersionSettings: LanguageVersionSettings,
     //) {
     //    with(context) {
     //        matchSingleExpectAgainstPotentialActuals(
@@ -83,6 +89,7 @@ object AbstractExpectActualChecker {
     //            actualClassSymbol = null,
     //            unfulfilled = null,
     //            checkClassScopesCompatibility = true,
+    //            languageVersionSettings,
     //        )
     //    }
     //}
@@ -94,11 +101,13 @@ object AbstractExpectActualChecker {
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
         checkClassScopes: Boolean,
+        languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCheckingCompatibility<*> = getClassifiersIncompatibility(
         expectClassSymbol,
         actualClassLikeSymbol,
         parentSubstitutor,
         checkClassScopes,
+        languageVersionSettings,
     )
         ?: ExpectActualCheckingCompatibility.Compatible
 
@@ -109,6 +118,7 @@ object AbstractExpectActualChecker {
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
         checkClassScopesCompatibility: Boolean,
+        languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         require(expectClassSymbol.name == actualClassLikeSymbol.name) {
@@ -164,7 +174,7 @@ object AbstractExpectActualChecker {
         }
 
         if (checkClassScopesCompatibility) {
-            getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor)?.let { return it }
+            getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor, languageVersionSettings)?.let { return it }
         }
 
         return null
@@ -221,6 +231,7 @@ object AbstractExpectActualChecker {
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassSymbol: RegularClassSymbolMarker,
         substitutor: TypeSubstitutorMarker,
+        languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
         val mismatchedMembers =
             arrayListOf<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch<*>, List<DeclarationSymbolMarker?>>>>()
@@ -255,6 +266,7 @@ object AbstractExpectActualChecker {
                     actualClassSymbol,
                     incompatibleMembers, // todo convert vector to scalar
                     checkClassScopesCompatibility = true,
+                    languageVersionSettings,
                 )
             }
         }
@@ -283,6 +295,7 @@ object AbstractExpectActualChecker {
         actualClassSymbol: RegularClassSymbolMarker?,
         incompatibleMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>?,
         checkClassScopesCompatibility: Boolean, // todo actual value is always true
+        languageVersionSettings: LanguageVersionSettings,
     ) {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
@@ -292,6 +305,7 @@ object AbstractExpectActualChecker {
                     substitutor,
                     expectClassSymbol,
                     actualClassSymbol,
+                    languageVersionSettings
                 )
 
                 is RegularClassSymbolMarker -> {
@@ -301,6 +315,7 @@ object AbstractExpectActualChecker {
                         actualMember as ClassLikeSymbolMarker,
                         parentSubstitutor,
                         checkClassScopesCompatibility,
+                        languageVersionSettings,
                     )
                 }
                 else -> error("Unsupported declaration: $expectMember ($actualMembers)")
@@ -330,6 +345,7 @@ object AbstractExpectActualChecker {
         parentSubstitutor: TypeSubstitutorMarker?,
         expectContainingClass: RegularClassSymbolMarker?,
         actualContainingClass: RegularClassSymbolMarker?,
+        languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCheckingCompatibility<*> {
         require(
             (expectDeclaration is ConstructorSymbolMarker && actualDeclaration is ConstructorSymbolMarker) ||
@@ -358,6 +374,7 @@ object AbstractExpectActualChecker {
             parentSubstitutor,
             expectContainingClass,
             actualContainingClass,
+            languageVersionSettings,
         ) ?: ExpectActualCheckingCompatibility.Compatible
     }
 
@@ -422,6 +439,7 @@ object AbstractExpectActualChecker {
         parentSubstitutor: TypeSubstitutorMarker?,
         expectContainingClass: RegularClassSymbolMarker?,
         actualContainingClass: RegularClassSymbolMarker?,
+        languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
         val expectedTypeParameters = expectDeclaration.typeParameters
         val actualTypeParameters = actualDeclaration.typeParameters
@@ -461,7 +479,7 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.Modality
         }
 
-        if (!areCompatibleCallableVisibilities(expectDeclaration.visibility, expectModality, actualDeclaration.visibility)) {
+        if (!areCompatibleCallableVisibilities(expectDeclaration.visibility, expectModality, actualDeclaration.visibility, languageVersionSettings)) {
             return ExpectActualCheckingCompatibility.Visibility
         }
 
@@ -502,7 +520,7 @@ object AbstractExpectActualChecker {
                 getFunctionsIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
 
             expectDeclaration is PropertySymbolMarker && actualDeclaration is PropertySymbolMarker ->
-                getPropertiesIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
+                getPropertiesIncompatibility(expectDeclaration, actualDeclaration, languageVersionSettings)?.let { return it }
 
             expectDeclaration is EnumEntrySymbolMarker && actualDeclaration is EnumEntrySymbolMarker -> {
                 // do nothing, entries are matched only by name
@@ -593,6 +611,7 @@ object AbstractExpectActualChecker {
         expectVisibility: Visibility,
         expectModality: Modality?,
         actualVisibility: Visibility,
+        languageVersionSettings: LanguageVersionSettings,
     ): Boolean {
         val compare = Visibilities.compare(expectVisibility, actualVisibility)
         return if (expectModality != Modality.FINAL) {
@@ -682,12 +701,13 @@ object AbstractExpectActualChecker {
     private fun getPropertiesIncompatibility(
         expected: PropertySymbolMarker,
         actual: PropertySymbolMarker,
+        languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
         return when {
             !equalBy(expected, actual) { p -> p.isVar } -> ExpectActualCheckingCompatibility.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateinit } -> ExpectActualCheckingCompatibility.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> ExpectActualCheckingCompatibility.PropertyConstModifier
-            !arePropertySettersWithCompatibleVisibilities(expected, actual) ->
+            !arePropertySettersWithCompatibleVisibilities(expected, actual, languageVersionSettings) ->
                 ExpectActualCheckingCompatibility.PropertySetterVisibility
             else -> null
         }
@@ -697,6 +717,7 @@ object AbstractExpectActualChecker {
     private fun arePropertySettersWithCompatibleVisibilities(
         expected: PropertySymbolMarker,
         actual: PropertySymbolMarker,
+        languageVersionSettings: LanguageVersionSettings
     ): Boolean {
         val expectedSetter = expected.setter ?: return true
         val actualSetter = actual.setter ?: return true
@@ -704,6 +725,7 @@ object AbstractExpectActualChecker {
             expectedSetter.visibility,
             expectedSetter.modality,
             actualSetter.visibility,
+            languageVersionSettings
         )
     }
 

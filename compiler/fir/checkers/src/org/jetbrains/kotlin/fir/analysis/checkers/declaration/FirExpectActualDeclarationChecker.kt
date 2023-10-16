@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.*
@@ -142,6 +143,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                     actualContainingClass,
                     expectContainingClass,
                     expectActualMatchingContext,
+                    context.languageVersionSettings,
                 )
             }
             false -> null
@@ -237,6 +239,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         actualContainingClass: FirRegularClassSymbol?,
         expectContainingClass: FirRegularClassSymbol?,
         context: FirExpectActualMatchingContext,
+        languageVersionSettings: LanguageVersionSettings,
     ): ExpectActualCompatibility<FirBasedSymbol<*>> =
         when {
             actualSymbol is FirCallableSymbol<*> && expectSymbol is FirCallableSymbol<*> -> {
@@ -246,6 +249,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                     expectContainingClass,
                     actualContainingClass,
                     context,
+                    languageVersionSettings,
                 )
             }
             actualSymbol is FirClassLikeSymbol<*> && expectSymbol is RegularClassSymbolMarker -> {
@@ -254,6 +258,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                     actualSymbol,
                     checkClassScopesCompatibility = true,
                     context,
+                    languageVersionSettings
                 )
             }
             else -> error("These expect/actual shouldn't have been matched by FirExpectActualResolver")
