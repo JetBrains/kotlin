@@ -28,5 +28,16 @@ class BirInlinedFunctionBlockImpl(
 ) : BirInlinedFunctionBlock() {
     override var attributeOwnerId: BirAttributeContainer = this
 
-    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this)
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 0)
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.statements
+        else -> throwChildrenListWithIdNotFound(id)
+    }
 }

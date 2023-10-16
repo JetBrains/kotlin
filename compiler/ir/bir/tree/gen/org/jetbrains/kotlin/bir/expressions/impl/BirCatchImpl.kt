@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirCatch
@@ -42,5 +43,13 @@ class BirCatchImpl(
     init {
         initChild(_catchParameter)
         initChild(_result)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._catchParameter === old -> this.catchParameter = new as BirVariable
+            this._result === old -> this.result = new as BirExpression
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 }

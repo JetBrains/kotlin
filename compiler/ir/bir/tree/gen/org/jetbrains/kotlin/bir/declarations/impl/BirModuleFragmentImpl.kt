@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirFile
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
@@ -22,5 +23,16 @@ class BirModuleFragmentImpl(
     override val name: Name,
     override val irBuiltins: IrBuiltIns,
 ) : BirModuleFragment() {
-    override val files: BirChildElementList<BirFile> = BirChildElementList(this)
+    override val files: BirChildElementList<BirFile> = BirChildElementList(this, 0)
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.files
+        else -> throwChildrenListWithIdNotFound(id)
+    }
 }
