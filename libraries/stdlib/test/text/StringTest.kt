@@ -138,7 +138,7 @@ class StringTest {
     }
 
     @Test fun isEmptyAndBlank() = withOneCharSequenceArg { arg1 ->
-        class Case(val value: String?, val isNull: Boolean = false, val isEmpty: Boolean = false, val isBlank: Boolean = false)
+        data class Case(val value: String?, val isNull: Boolean = false, val isEmpty: Boolean = false, val isBlank: Boolean = false)
 
         val cases = listOf(
             Case(null,              isNull = true),
