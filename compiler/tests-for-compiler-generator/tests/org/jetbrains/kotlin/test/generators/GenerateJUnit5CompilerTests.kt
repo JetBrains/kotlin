@@ -201,6 +201,14 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("debug/stepping")
             }
 
+            testClass<AbstractModularIrLocalVariableBytecodeInlinerTestWithInlineScopes> {
+                model("inlineScopes")
+            }
+
+            testClass<AbstractModularIrLocalVariableBytecodeInlinerTestWithInlineScopesAndFlagEnabled> {
+                model("inlineScopes")
+            }
+
             testClass<AbstractIrSteppingWithBytecodeInlinerTestWithInlineScopes> {
                 model("debug/stepping")
             }

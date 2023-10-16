@@ -153,3 +153,13 @@ open class AbstractSteppingTestWithInlineScopes : AbstractSteppingTest() {
         builder.useInlineScopesNumbers()
     }
 }
+
+open class AbstractModularIrLocalVariableBytecodeInlinerTestWithInlineScopes : AbstractIrLocalVariableBytecodeInlinerTest()
+
+open class AbstractModularIrLocalVariableBytecodeInlinerTestWithInlineScopesAndFlagEnabled : AbstractIrLocalVariableBytecodeInlinerTest() {
+    override val targetBackend = TargetBackend.JVM_IR_WITH_INLINE_SCOPES
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.useInlineScopesNumbers()
+    }
+}

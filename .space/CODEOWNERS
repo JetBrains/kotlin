@@ -183,6 +183,7 @@
 /compiler/testData/serialization/nonStableParameterNames/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 /compiler/testData/serialization/klib/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 /compiler/testData/type/ "Kotlin Compiler Core"
+compiler/testData/inlineScopes/ "Kotlin JVM"
 /compiler/testData/typeQualifierNickname/ "Kotlin Compiler Core"
 /compiler/testData/versionRequirement/ "Kotlin JVM"
 /compiler/testData/writeFlags/ "Kotlin JVM"
