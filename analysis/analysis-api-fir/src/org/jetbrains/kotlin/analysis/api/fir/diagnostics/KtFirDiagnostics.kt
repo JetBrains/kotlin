@@ -3425,10 +3425,6 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val presentableString: String
     }
 
-    interface ConflictingJvmDeclarations : KtFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ConflictingJvmDeclarations::class
-    }
-
     interface OverrideCannotBeStatic : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }

@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.util.PrivateForInline
 @OptIn(PrivateForInline::class)
 object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     val DECLARATIONS by object : DiagnosticGroup("Declarations") {
-        val CONFLICTING_JVM_DECLARATIONS by error<PsiElement>()
-
         val OVERRIDE_CANNOT_BE_STATIC by error<PsiElement>()
         val JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE)

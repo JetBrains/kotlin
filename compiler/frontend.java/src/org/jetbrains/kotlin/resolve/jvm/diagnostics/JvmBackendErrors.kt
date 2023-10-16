@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.utils.join
 
 object JvmBackendErrors {
-    // TODO: slightly different errors of this type exist also in fir checkers, consider unifying
     val CONFLICTING_JVM_DECLARATIONS by error1<PsiElement, ConflictingJvmDeclarationsData>(DECLARATION_SIGNATURE_OR_DEFAULT)
     val CONFLICTING_INHERITED_JVM_DECLARATIONS by error1<PsiElement, ConflictingJvmDeclarationsData>(DECLARATION_SIGNATURE_OR_DEFAULT)
     val ACCIDENTAL_OVERRIDE by error1<PsiElement, ConflictingJvmDeclarationsData>(DECLARATION_SIGNATURE_OR_DEFAULT)
