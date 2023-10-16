@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
+import org.jetbrains.kotlin.gradle.utils.fileProperty
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
@@ -89,15 +90,12 @@ internal abstract class NativeDistributionCommonizerTask
 
     @get:OutputDirectory
     internal val rootOutputDirectoryProperty: RegularFileProperty = objectFactory
-        .fileProperty()
-        .apply {
-            set(
-                project.file(project.konanHome)
-                    .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
-                    .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
-                    .resolve(URLEncoder.encode(project.getKotlinPluginVersion(), Charsets.UTF_8.name()))
-            )
-        }
+        .fileProperty(
+            project.file(project.konanHome)
+                .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
+                .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
+                .resolve(URLEncoder.encode(project.getKotlinPluginVersion(), Charsets.UTF_8.name()))
+        )
 
     private val isCachingEnabled = project.kotlinPropertiesProvider.enableNativeDistributionCommonizationCache
 

@@ -108,6 +108,9 @@ internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularF
     }
 }
 
+internal fun ObjectFactory.fileProperty(initialValue: File): RegularFileProperty = fileProperty()
+    .apply { set(initialValue) }
+
 internal fun Project.filesProvider(
     vararg buildDependencies: Any,
     provider: () -> Any?
