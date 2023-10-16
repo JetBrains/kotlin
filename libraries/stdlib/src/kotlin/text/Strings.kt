@@ -329,6 +329,22 @@ public inline fun CharSequence?.isNullOrBlank(): Boolean {
     return this == null || this.isBlank()
 }
 
+
+/**
+ * Returns true if this nullable char sequence is not either null or empty or consists solely of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsNullOrBlank
+ */
+@kotlin.internal.InlineOnly
+public inline fun CharSequence?.isNotNullOrNotBlank(): Boolean {
+    contract {
+        returns(false) implies (this@isNotNullOrNotBlank != null)
+    }
+
+    return this != null || this.isNotBlank()
+}
+
+
 /**
  * Iterator for characters of the given char sequence.
  */
