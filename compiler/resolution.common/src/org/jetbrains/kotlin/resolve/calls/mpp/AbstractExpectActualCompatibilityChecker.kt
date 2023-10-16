@@ -69,6 +69,7 @@ object AbstractExpectActualCompatibilityChecker {
         expectDeclaration: DeclarationSymbolMarker,
         actualDeclarations: List<DeclarationSymbolMarker>,
         context: ExpectActualMatchingContext<T>,
+        checkClassScopesCompatibility: Boolean,
     ) {
         with(context) {
             matchSingleExpectAgainstPotentialActuals(
@@ -78,7 +79,7 @@ object AbstractExpectActualCompatibilityChecker {
                 expectClassSymbol = null,
                 actualClassSymbol = null,
                 unfulfilled = null,
-                checkClassScopesCompatibility = true,
+                checkClassScopesCompatibility = checkClassScopesCompatibility,
             )
         }
     }
