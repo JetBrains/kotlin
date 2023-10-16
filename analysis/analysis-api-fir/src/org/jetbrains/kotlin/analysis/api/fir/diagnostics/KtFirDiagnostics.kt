@@ -867,6 +867,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonSourceAnnotationOnInlinedLambdaExpression::class
     }
 
+    interface PotentiallyNonReportedAnnotation : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = PotentiallyNonReportedAnnotation::class
+    }
+
     interface WrongJsQualifier : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = WrongJsQualifier::class
     }

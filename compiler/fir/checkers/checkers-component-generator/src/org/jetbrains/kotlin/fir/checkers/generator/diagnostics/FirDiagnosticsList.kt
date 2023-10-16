@@ -403,6 +403,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
 
         val NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION by error<KtAnnotationEntry>()
+
+        val POTENTIALLY_NON_REPORTED_ANNOTATION by warning<KtAnnotationEntry>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

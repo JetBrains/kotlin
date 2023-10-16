@@ -55,7 +55,7 @@ var some: Int
 val another: Int = 42
 
 class My {
-    @E6
+    <!POTENTIALLY_NON_REPORTED_ANNOTATION!>@E6<!>
     override fun hashCode() = 0
 }
 

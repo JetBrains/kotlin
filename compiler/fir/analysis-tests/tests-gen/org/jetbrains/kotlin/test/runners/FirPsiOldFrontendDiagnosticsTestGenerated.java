@@ -1885,6 +1885,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("DeprecationOnAny.kt")
+            public void testDeprecationOnAny() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/DeprecationOnAny.kt");
+            }
+
+            @Test
             @TestMetadata("dontReportWarningAboutChangingExecutionOrderForVararg.kt")
             public void testDontReportWarningAboutChangingExecutionOrderForVararg() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/dontReportWarningAboutChangingExecutionOrderForVararg.kt");

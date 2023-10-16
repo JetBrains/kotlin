@@ -1038,6 +1038,11 @@ internal class NonSourceAnnotationOnInlinedLambdaExpressionImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.NonSourceAnnotationOnInlinedLambdaExpression
 
+internal class PotentiallyNonReportedAnnotationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KtFirDiagnostic.PotentiallyNonReportedAnnotation
+
 internal class WrongJsQualifierImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

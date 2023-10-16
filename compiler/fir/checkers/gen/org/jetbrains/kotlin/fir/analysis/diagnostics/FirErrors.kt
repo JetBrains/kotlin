@@ -302,6 +302,7 @@ object FirErrors {
     val VOLATILE_ON_VALUE by error0<KtAnnotationEntry>()
     val VOLATILE_ON_DELEGATE by error0<KtAnnotationEntry>()
     val NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION by error0<KtAnnotationEntry>()
+    val POTENTIALLY_NON_REPORTED_ANNOTATION by warning0<KtAnnotationEntry>()
 
     // OptIn
     val OPT_IN_USAGE by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
