@@ -29,6 +29,8 @@
 
 /.idea/ "Kotlin Build Infrastructure"
 
+/.fleet/ "Kotlin Build Infrastructure"
+
 /.space/ "Kotlin Build Infrastructure"
 
 /analysis/ "Kotlin IDE Analysis Core"
