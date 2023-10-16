@@ -1601,7 +1601,8 @@ open class PsiRawFirBuilder(
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
                     name = typeAlias.nameAsSafeName
-                    status = FirDeclarationStatusImpl(typeAlias.visibility, Modality.FINAL).apply {
+                    val isLocal = context.inLocalContext
+                    status = FirDeclarationStatusImpl(if (isLocal) Visibilities.Local else typeAlias.visibility, Modality.FINAL).apply {
                         isExpect = typeAliasIsExpect
                         isActual = typeAlias.hasActualModifier()
                     }

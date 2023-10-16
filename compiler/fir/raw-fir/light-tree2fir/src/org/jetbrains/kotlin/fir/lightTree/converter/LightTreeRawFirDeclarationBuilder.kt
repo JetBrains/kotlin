@@ -1164,7 +1164,8 @@ class LightTreeRawFirDeclarationBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 name = typeAliasName
-                status = FirDeclarationStatusImpl(modifiers.getVisibility(), Modality.FINAL).apply {
+                val isLocal = context.inLocalContext
+                status = FirDeclarationStatusImpl(if (isLocal) Visibilities.Local else modifiers.getVisibility(), Modality.FINAL).apply {
                     isExpect = typeAliasIsExpect
                     isActual = modifiers.hasActual()
                 }

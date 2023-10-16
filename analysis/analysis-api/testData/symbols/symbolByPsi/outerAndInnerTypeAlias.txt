@@ -102,7 +102,7 @@ KtTypeAliasSymbol:
   origin: SOURCE
   symbolKind: LOCAL
   typeParameters: []
-  visibility: Public
+  visibility: Local
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -124,7 +124,7 @@ KtTypeAliasSymbol:
   origin: SOURCE
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: Local
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -146,7 +146,7 @@ KtTypeAliasSymbol:
   origin: SOURCE
   symbolKind: LOCAL
   typeParameters: []
-  visibility: Public
+  visibility: Local
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -168,7 +168,7 @@ KtTypeAliasSymbol:
   origin: SOURCE
   symbolKind: CLASS_MEMBER
   typeParameters: []
-  visibility: Public
+  visibility: Local
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
