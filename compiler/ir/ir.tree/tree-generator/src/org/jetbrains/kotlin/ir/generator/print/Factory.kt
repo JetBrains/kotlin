@@ -5,66 +5,48 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
-import com.squareup.kotlinpoet.*
+import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
-import org.jetbrains.kotlin.generators.tree.type
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.ir.generator.IrTree
-import org.jetbrains.kotlin.ir.generator.Packages
 import org.jetbrains.kotlin.ir.generator.config.UseFieldAsParameterInIrFactoryStrategy
+import org.jetbrains.kotlin.ir.generator.irFactoryType
+import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Model
-import org.jetbrains.kotlin.ir.generator.util.parameterizedByIfAny
-import org.jetbrains.kotlin.ir.generator.util.tryParameterizedBy
+import org.jetbrains.kotlin.ir.generator.stageControllerType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
-internal val IR_FACTORY_TYPE = type(Packages.declarations, "IrFactory")
-
 @Suppress("DuplicatedCode")
-internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
-    val visitorType = TypeSpec.interfaceBuilder(IR_FACTORY_TYPE.toPoet() as ClassName).apply {
-        addProperty("stageController", ClassName(Packages.declarations, "StageController"))
-        model.elements
+internal fun printFactory(generationPath: File, model: Model): GeneratedFile = printGeneratedType(
+    generationPath,
+    TREE_GENERATOR_README,
+    irFactoryType.packageName,
+    irFactoryType.simpleName,
+) {
+    println()
+    println("interface ", irFactoryType.simpleName, " {")
+    withIndent {
+        println("val stageController: ", stageControllerType.render())
+        val factoryMethods = model.elements
             .filter { it.isLeaf && it.generateIrFactoryMethod }
             .sortedWith(compareBy({ it.packageName }, { it.name }))
-            .forEach { element ->
-                val typeParams = element.params.map { it.toPoet() }
-                addFunction(
-                    FunSpec.builder("create${element.name.capitalizeAsciiOnly()}")
-                        .addTypeVariables(typeParams)
-                        .apply {
-                            val fields = (element.allFieldsRecursively() + element.additionalFactoryMethodParameters)
-                                .filterNot { it.name in element.fieldsToSkipInIrFactoryMethod }
-                                .mapNotNull { field ->
-                                    (field.useInIrFactoryStrategy as? UseFieldAsParameterInIrFactoryStrategy.Yes)?.let {
-                                        field to it.defaultValue
-                                    }
-                                }
-                                .sortedBy { (_, defaultValue) -> defaultValue != null } // All parameters with default values must go last
-                            fields.forEach { (field, defaultValue) ->
-                                addParameter(
-                                    ParameterSpec.builder(field.name, field.typeRef.toPoet().copy(nullable = field.nullable))
-                                        .defaultValue(defaultValue)
-                                        .build(),
-                                )
-                            }
-                        }
-                        .returns(element.toPoet().parameterizedByIfAny(typeParams))
-                        .addModifiers(KModifier.ABSTRACT)
-                        .build(),
-                )
-            }
+            .map(::FactoryMethod)
 
-        fun replacement(name: String) = funSpecs.find { it.name == name } ?: error("Method '$name' not found")
+        factoryMethods.forEach { printFactoryMethod(it) }
+
+        fun replacement(name: String) = factoryMethods.find { it.name == name } ?: error("Method '$name' not found")
 
         addDeprecatedFunction(
             replacement("createBlockBody")
-                .toBuilder()
                 .addParameter(
                     "initializer",
-                    LambdaTypeName.get(receiver = IrTree.blockBody.toPoet(), returnType = UNIT)
-                )
-                .build()
+                    Lambda(receiver = IrTree.blockBody, returnType = StandardTypes.unit),
+                ),
         ) {
             deprecationMessage = "This method was moved to an extension."
             parameter("startOffset")
@@ -74,12 +56,10 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
 
         addDeprecatedFunction(
             replacement("createBlockBody")
-                .toBuilder()
                 .addParameter(
                     "statements",
-                    LIST.tryParameterizedBy(IrTree.statement.toPoet())
-                )
-                .build()
+                    StandardTypes.list.withArgs(IrTree.statement),
+                ),
         ) {
             deprecationMessage = "This method was moved to an extension."
             parameter("startOffset")
@@ -104,7 +84,7 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
             parameter("isExpect")
             parameter("isFun")
             parameter("source")
-            defaultValue["hasEnumEntries"] = false
+            defaultValue["hasEnumEntries"] = "false"
         }
 
         addDeprecatedFunction(replacement("createConstructor")) {
@@ -149,7 +129,7 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
         }
 
         addDeprecatedFunction(replacement("createFunctionWithLateBinding")) {
-            returnType = IrTree.simpleFunction.toPoet()
+            returnType = IrTree.simpleFunction
             parameter("startOffset")
             parameter("endOffset")
             parameter("origin")
@@ -195,7 +175,7 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
         }
 
         addDeprecatedFunction(replacement("createPropertyWithLateBinding")) {
-            returnType = IrTree.property.toPoet()
+            returnType = IrTree.property
             parameter("startOffset")
             parameter("endOffset")
             parameter("origin")
@@ -267,37 +247,64 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
             parameter("isHidden")
             parameter("isAssignable")
         }
-    }.build()
-
-    return printTypeCommon(generationPath, IR_FACTORY_TYPE.packageName, visitorType)
+    }
+    println("}")
 }
 
-private class DeprecatedFunctionBuilder(private val replacement: FunSpec) {
-    val deprecatedFunctionParameterSpecs = mutableListOf<ParameterSpec>()
+private class FactoryMethod(val element: Element) {
+
+    val name = "create" + element.name.capitalizeAsciiOnly()
+
+    val parameters = (element.allFieldsRecursively() + element.additionalFactoryMethodParameters)
+        .filterNot { it.name in element.fieldsToSkipInIrFactoryMethod }
+        .mapNotNull { field ->
+            (field.useInIrFactoryStrategy as? UseFieldAsParameterInIrFactoryStrategy.Yes)?.let {
+                FunctionParameter(field.name, field.typeRef, it.defaultValue)
+            }
+        }
+        .sortedBy { it.defaultValue != null } // All parameters with default values must go last
+        .toMutableList()
+
+    fun addParameter(name: String, type: TypeRef): FactoryMethod {
+        parameters.add(FunctionParameter(name, type))
+        return this
+    }
+}
+
+private const val MAX_FUNCTION_PARAMETERS_ON_ONE_LINE = 2
+
+context(ImportCollector)
+private fun SmartPrinter.printFactoryMethod(factoryMethod: FactoryMethod) {
+    println()
+    printFunctionDeclaration(
+        name = factoryMethod.name,
+        parameters = factoryMethod.parameters,
+        returnType = factoryMethod.element,
+        typeParameters = factoryMethod.element.params,
+        allParametersOnSeparateLines = factoryMethod.parameters.size > MAX_FUNCTION_PARAMETERS_ON_ONE_LINE,
+    )
+    println()
+}
+
+private class DeprecatedFunctionBuilder(private val replacement: FactoryMethod) {
+    val deprecatedFunctionParameters = mutableListOf<FunctionParameter>()
     var oldName = replacement.name
-    var returnType = replacement.returnType
+    var returnType: TypeRef = replacement.element
     var deprecationMessage: String? = null
-    val defaultValue = mutableMapOf<String, Any?>()
+    val defaultValue = mutableMapOf<String, String>()
 
     fun parameter(name: String, removeDefaultValue: Boolean = false) {
         val replacementParameter =
             replacement.parameters.find { it.name == name } ?: error("Parameter '$name' not found in $replacement")
-        deprecatedFunctionParameterSpecs.add(
-            replacementParameter
-                .toBuilder()
-                .applyIf(removeDefaultValue) {
-                    defaultValue(null)
-                }
-                .build()
-        )
+        deprecatedFunctionParameters.add(if (removeDefaultValue) replacementParameter.copy(defaultValue = null) else replacementParameter)
     }
 }
 
-private fun TypeSpec.Builder.addDeprecatedFunction(
-    replacement: FunSpec,
+context(ImportCollector)
+private fun SmartPrinter.addDeprecatedFunction(
+    replacement: FactoryMethod,
     build: DeprecatedFunctionBuilder.() -> Unit
-): TypeSpec.Builder {
-
+) {
     val builder = DeprecatedFunctionBuilder(replacement)
     builder.build()
 
@@ -307,46 +314,39 @@ private fun TypeSpec.Builder.addDeprecatedFunction(
         "The method's parameters were reordered."
     }
 
-    return addFunction(
-        FunSpec.builder(builder.oldName)
-            .addTypeVariables(replacement.typeVariables)
-            .addCode(
-                CodeBlock.builder()
-                    .add("return ")
-                    .add("%N(\n", replacement)
-                    .apply {
-                        for (parameter in replacement.parameters) {
-                            if (builder.deprecatedFunctionParameterSpecs.any { it.name == parameter.name }) {
-                                indent()
-                                add("%N,\n", parameter)
-                                unindent()
-                            } else {
-                                val value = builder.defaultValue[parameter.name]
-                                if (value != null) {
-                                    indent()
-                                    add("$value,\n")
-                                    unindent()
-                                }
-                            }
-                        }
-                    }
-                    .add(")")
-                    .build()
-            )
-            .addAnnotation(
-                AnnotationSpec.builder(Deprecated::class)
-                    .addMember(
-                        "message = %S + %S",
-                        message,
-                        " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-                    )
-                    .addMember("level = %T.%N", DeprecationLevel::class, DeprecationLevel.HIDDEN.name)
-                    .build(),
-            )
-            .addParameters(builder.deprecatedFunctionParameterSpecs)
-            .apply {
-                builder.returnType?.let { returns(it) }
-            }
-            .build(),
+    println()
+    println("@Deprecated(")
+    withIndent {
+        println("message = \"", message, "\" +")
+        println("        \" This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).\",")
+        println("level = DeprecationLevel.HIDDEN,")
+    }
+    println(")")
+    val allParametersOnSeparateLines = builder.deprecatedFunctionParameters.size > MAX_FUNCTION_PARAMETERS_ON_ONE_LINE
+    printFunctionDeclaration(
+        name = builder.oldName,
+        parameters = builder.deprecatedFunctionParameters,
+        returnType = builder.returnType,
+        typeParameters = replacement.element.params,
+        allParametersOnSeparateLines = allParametersOnSeparateLines,
     )
+    print(" = ", replacement.name, "(")
+
+    val renderedParameters = replacement.parameters.mapNotNull { parameter ->
+        if (builder.deprecatedFunctionParameters.any { it.name == parameter.name }) {
+            parameter.name
+        } else {
+            builder.defaultValue[parameter.name]
+        }
+    }
+
+    if (allParametersOnSeparateLines) {
+        println()
+        withIndent {
+            renderedParameters.forEach { println(it, ",") }
+        }
+    } else {
+        print(renderedParameters.joinToString())
+    }
+    println(")")
 }

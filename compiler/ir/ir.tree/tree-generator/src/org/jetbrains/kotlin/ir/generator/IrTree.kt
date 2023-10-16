@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.List
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.config.SimpleFieldConfig
 import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typeName
-import org.jetbrains.kotlin.ir.generator.print.IR_FACTORY_TYPE
 import org.jetbrains.kotlin.ir.generator.print.toPoet
 import org.jetbrains.kotlin.ir.generator.util.*
 import org.jetbrains.kotlin.ir.generator.util.Import
@@ -69,7 +68,7 @@ object IrTree : AbstractTreeBuilder() {
         }
     }
 
-    private val factory: SimpleFieldConfig = field("factory", IR_FACTORY_TYPE, mutable = false) {
+    private val factory: SimpleFieldConfig = field("factory", irFactoryType, mutable = false) {
         skipInIrFactory()
     }
 
@@ -132,7 +131,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationWithName)
 
         +field("isExternal", boolean) {
-            useFieldInIrFactory(false)
+            useFieldInIrFactory(defaultValue = "false")
         }
     }
     val symbolOwner: ElementConfig by element(Declaration) {
@@ -183,7 +182,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationWithName)
 
         +field("containerSource", type<DeserializedContainerSource>(), nullable = true, mutable = false) {
-            useFieldInIrFactory(defaultValue = code("null"))
+            useFieldInIrFactory(defaultValue = "null")
         }
     }
     val valueDeclaration: ElementConfig by element(Declaration) {
@@ -256,25 +255,25 @@ object IrTree : AbstractTreeBuilder() {
         +field("kind", type<ClassKind>())
         +field("modality", type<Modality>())
         +field("isCompanion", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
         }
         +field("isInner", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
         }
         +field("isData", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
         }
         +field("isValue", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
         }
         +field("isExpect", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
         }
         +field("isFun", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
         }
         +field("hasEnumEntries", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
             kDoc = """
             Returns true iff this is a class loaded from dependencies which has the `HAS_ENUM_ENTRIES` metadata flag set.
             This flag is useful for Kotlin/JVM to determine whether an enum class from dependency actually has the `entries` property
@@ -283,7 +282,7 @@ object IrTree : AbstractTreeBuilder() {
             """.trimIndent()
         }
         +field("source", type<SourceElement>(), mutable = false) {
-            useFieldInIrFactory(defaultValue = code("%T.NO_SOURCE", SourceElement::class))
+            useFieldInIrFactory(defaultValue = "SourceElement.NO_SOURCE")
         }
         +listField("superTypes", irTypeType, mutability = Var) {
             skipInIrFactory()
@@ -334,7 +333,7 @@ object IrTree : AbstractTreeBuilder() {
         +descriptor("ClassDescriptor") // TODO special descriptor for anonymous initializer blocks
         +symbol(anonymousInitializerSymbolType)
         +field("isStatic", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
         }
         +field("body", blockBody, isChild = true)
     }
@@ -440,7 +439,7 @@ object IrTree : AbstractTreeBuilder() {
 
         additionalIrFactoryMethodParameters.add(
             descriptor("DeclarationDescriptor", nullable = true).apply {
-                useFieldInIrFactory(defaultValue = code("null"))
+                useFieldInIrFactory(defaultValue = "null")
             }
         )
 
@@ -528,7 +527,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isLateinit", boolean)
         +field("isDelegated", boolean)
         +field("isExpect", boolean) {
-            useFieldInIrFactory(defaultValue = false)
+            useFieldInIrFactory(defaultValue = "false")
         }
         +isFakeOverrideField()
         +field("backingField", field, nullable = true, isChild = true)
@@ -537,12 +536,7 @@ object IrTree : AbstractTreeBuilder() {
     }
 
     private fun isFakeOverrideField() = field("isFakeOverride", boolean) {
-        useFieldInIrFactory(
-            defaultValue = code(
-                "origin == %T.FAKE_OVERRIDE",
-                type(Packages.declarations, "IrDeclarationOrigin").toPoet(),
-            ),
-        )
+        useFieldInIrFactory(defaultValue = "origin == IrDeclarationOrigin.FAKE_OVERRIDE")
     }
 
     //TODO: make IrScript as IrPackageFragment, because script is used as a file, not as a class
@@ -827,7 +821,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +symbol(constructorSymbolType, mutable = true)
         +field("source", type<SourceElement>()) {
-            useFieldInIrFactory(defaultValue = code("%T.NO_SOURCE", SourceElement::class))
+            useFieldInIrFactory(defaultValue = "SourceElement.NO_SOURCE")
         }
         +field("constructorTypeArgumentsCount", int)
     }

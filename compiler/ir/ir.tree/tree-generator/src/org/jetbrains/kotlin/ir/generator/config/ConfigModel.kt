@@ -10,6 +10,7 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
+import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.util.*
 
 class Config(
@@ -73,9 +74,19 @@ class ElementConfig(
 
     override fun toString() = element.name
 
+    override val packageName: String
+        get() = category.packageName
+
+    override val typeName: String
+        get() = Element.elementName2typeName(name)
+
     context(ImportCollector)
     override fun renderTo(appendable: Appendable) {
-        renderingIsNotSupported()
+        addImport(this)
+        appendable.append(typeName)
+        if (params.isNotEmpty()) {
+            params.joinTo(appendable, prefix = "<", postfix = ">") { it.name }
+        }
     }
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
@@ -87,7 +98,7 @@ class ElementConfig(
     }
 }
 
-sealed interface ElementConfigOrRef : ParametrizedTypeRef<ElementConfigOrRef, NamedTypeParameterRef>, TypeRefWithNullability {
+sealed interface ElementConfigOrRef : ParametrizedTypeRef<ElementConfigOrRef, NamedTypeParameterRef>, TypeRefWithNullability, Importable {
     val element: ElementConfig
 }
 
@@ -96,6 +107,13 @@ class ElementConfigRef(
     override val args: Map<NamedTypeParameterRef, TypeRef>,
     override val nullable: Boolean
 ) : ElementConfigOrRef {
+
+    override val packageName: String
+        get() = element.packageName
+
+    override val typeName: String
+        get() = element.typeName
+
     override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementConfigRef(element, args, nullable)
     override fun copy(nullable: Boolean) = ElementConfigRef(element, args, nullable)
 
@@ -103,7 +121,10 @@ class ElementConfigRef(
 
     context(ImportCollector)
     override fun renderTo(appendable: Appendable) {
-        renderingIsNotSupported()
+        addImport(element)
+        appendable.append(element.typeName)
+        renderArgsTo(appendable)
+        renderNullabilityTo(appendable)
     }
 }
 
@@ -111,7 +132,7 @@ sealed class UseFieldAsParameterInIrFactoryStrategy {
 
     data object No : UseFieldAsParameterInIrFactoryStrategy()
 
-    data class Yes(val defaultValue: CodeBlock?) : UseFieldAsParameterInIrFactoryStrategy()
+    data class Yes(val defaultValue: String?) : UseFieldAsParameterInIrFactoryStrategy()
 }
 
 sealed class FieldConfig(
@@ -126,12 +147,8 @@ sealed class FieldConfig(
     internal var useFieldInIrFactoryStrategy: UseFieldAsParameterInIrFactoryStrategy =
         if (isChild) UseFieldAsParameterInIrFactoryStrategy.No else UseFieldAsParameterInIrFactoryStrategy.Yes(null)
 
-    fun useFieldInIrFactory(defaultValue: CodeBlock? = null) {
+    fun useFieldInIrFactory(defaultValue: String? = null) {
         useFieldInIrFactoryStrategy = UseFieldAsParameterInIrFactoryStrategy.Yes(defaultValue)
-    }
-
-    fun useFieldInIrFactory(defaultValue: Boolean) {
-        useFieldInIrFactoryStrategy = UseFieldAsParameterInIrFactoryStrategy.Yes(code("%L", defaultValue))
     }
 
     fun skipInIrFactory() {

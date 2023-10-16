@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.generators.tree.printer.braces
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -168,6 +169,34 @@ data class ElementRef<Element : AbstractElement<Element, Field>, Field : Abstrac
     }
 }
 
+data class Lambda(
+    val receiver: TypeRefWithNullability?,
+    val parameterTypes: List<TypeRefWithNullability> = emptyList(),
+    val returnType: TypeRefWithNullability,
+    override val nullable: Boolean = false,
+) : TypeRefWithNullability {
+    override fun substitute(map: TypeParameterSubstitutionMap) =
+        Lambda(
+            receiver?.substitute(map) as TypeRefWithNullability?,
+            parameterTypes.map { it.substitute(map) as TypeRefWithNullability },
+            returnType.substitute(map) as TypeRefWithNullability,
+            nullable,
+        )
+
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        if (nullable) appendable.append("(")
+        receiver?.let {
+            it.renderTo(appendable)
+            appendable.append('.')
+        }
+        parameterTypes.joinToWithBuffer(appendable, prefix = "(", postfix = ") -> ") { it.renderTo(this) }
+        returnType.renderTo(appendable)
+        if (nullable) appendable.append(")?")
+    }
+
+    override fun copy(nullable: Boolean) = Lambda(receiver, parameterTypes, returnType, nullable)
+}
 
 sealed interface TypeParameterRef : TypeRef, TypeRefWithNullability {
     override fun substitute(map: TypeParameterSubstitutionMap): TypeRef = map[this] ?: this
@@ -216,7 +245,7 @@ interface TypeRefWithNullability : TypeRef {
     fun copy(nullable: Boolean): TypeRefWithNullability
 }
 
-private fun TypeRefWithNullability.renderNullabilityTo(appendable: Appendable) {
+fun TypeRefWithNullability.renderNullabilityTo(appendable: Appendable) {
     if (nullable) {
         appendable.append('?')
     }
@@ -232,7 +261,7 @@ interface ParametrizedTypeRef<Self : ParametrizedTypeRef<Self, P>, P : TypeParam
 }
 
 context(ImportCollector)
-private fun ParametrizedTypeRef<*, *>.renderArgsTo(appendable: Appendable) {
+fun ParametrizedTypeRef<*, *>.renderArgsTo(appendable: Appendable) {
     if (args.isNotEmpty()) {
         args.values.joinTo(appendable, prefix = "<", postfix = ">") {
             it.renderTo(appendable)

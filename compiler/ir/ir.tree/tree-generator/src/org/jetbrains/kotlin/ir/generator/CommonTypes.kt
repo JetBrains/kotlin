@@ -32,6 +32,8 @@ val elementTransformerType = type(visitors, "IrElementTransformer")
 val typeTransformerType = type(visitors, "IrTypeTransformer")
 val mutableAnnotationContainerType = type(declarations, "IrMutableAnnotationContainer")
 val irTypeType = type(types, "IrType")
+val irFactoryType = type(declarations, "IrFactory")
+val stageControllerType = type(declarations, "StageController", TypeKind.Class)
 
 val symbolType = type(symbols, "IrSymbol")
 val packageFragmentSymbolType = type(symbols, "IrPackageFragmentSymbol")
