@@ -48,7 +48,8 @@ internal fun collectActualCallablesMatchingToSpecificExpect(
     AbstractExpectActualCompatibilityChecker.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
         expectSymbol,
         actualSymbols,
-        context
+        context,
+        checkClassScopesCompatibility = false
     )
     return matchingActuals
 }

@@ -223,6 +223,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
             expectSymbol,
             actualSymbols,
             context,
+            checkClassScopesCompatibility = true
         )
     }
 
