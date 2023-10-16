@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
@@ -21,7 +22,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 abstract class BirConstantObject : BirConstantValue() {
     abstract var constructor: BirConstructorSymbol
 
-    abstract val valueArguments: MutableList<BirConstantValue>
+    abstract val valueArguments: BirChildElementList<BirConstantValue>
 
     abstract val typeArguments: MutableList<BirType>
 

@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirBranch
@@ -20,7 +21,8 @@ class BirWhenImpl(
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var origin: IrStatementOrigin?,
-    override val branches: MutableList<BirBranch>,
 ) : BirWhen() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    override val branches: BirChildElementList<BirBranch> = BirChildElementList(this)
 }

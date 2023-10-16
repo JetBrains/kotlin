@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirTypeAlias
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -28,10 +28,11 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override var typeParameters: List<BirTypeParameter>,
     override var isActual: Boolean,
     override var expandedType: BirType,
-) : BirTypeAlias()
+) : BirTypeAlias() {
+    override var typeParameters: BirChildElementList<BirTypeParameter> =
+            BirChildElementList(this)
+}

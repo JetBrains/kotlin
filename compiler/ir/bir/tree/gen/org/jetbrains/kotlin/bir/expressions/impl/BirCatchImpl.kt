@@ -15,6 +15,32 @@ import org.jetbrains.kotlin.bir.expressions.BirExpression
 
 class BirCatchImpl(
     override var sourceSpan: SourceSpan,
-    override var catchParameter: BirVariable,
-    override var result: BirExpression,
-) : BirCatch()
+    catchParameter: BirVariable,
+    result: BirExpression,
+) : BirCatch() {
+    private var _catchParameter: BirVariable = catchParameter
+
+    override var catchParameter: BirVariable
+        get() = _catchParameter
+        set(value) {
+            if (_catchParameter != value) {
+                replaceChild(_catchParameter, value)
+                _catchParameter = value
+            }
+        }
+
+    private var _result: BirExpression = result
+
+    override var result: BirExpression
+        get() = _result
+        set(value) {
+            if (_result != value) {
+                replaceChild(_result, value)
+                _result = value
+            }
+        }
+    init {
+        initChild(_catchParameter)
+        initChild(_result)
+    }
+}

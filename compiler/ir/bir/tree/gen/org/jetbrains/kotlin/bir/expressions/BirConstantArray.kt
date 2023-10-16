@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantArray]
  */
 abstract class BirConstantArray : BirConstantValue() {
-    abstract val elements: MutableList<BirConstantValue>
+    abstract val elements: BirChildElementList<BirConstantValue>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         elements.forEach { it.accept(data, visitor) }

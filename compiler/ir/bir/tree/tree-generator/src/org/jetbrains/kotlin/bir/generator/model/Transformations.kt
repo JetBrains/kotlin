@@ -65,15 +65,10 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
         fc.baseDefaultValue,
     )
     is ListFieldConfig -> {
-        val listType = when (fc.mutability) {
-            ListFieldConfig.Mutability.List -> type(
-                "kotlin.collections",
-                "MutableList",
-            )
-            ListFieldConfig.Mutability.Array -> type(
-                "kotlin.",
-                "Array",
-            )
+        val listType = when {
+            fc.isChild -> type("org.jetbrains.kotlin.bir", "BirChildElementList")
+            fc.mutability == ListFieldConfig.Mutability.List -> type("kotlin.collections", "MutableList")
+            fc.mutability == ListFieldConfig.Mutability.Array -> type("kotlin.", "Array")
             else -> type("kotlin.collections", "List")
         }
         ListField(
@@ -84,7 +79,6 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
             fc.nullable,
             fc.mutability == ListFieldConfig.Mutability.Var,
             fc.isChild,
-            fc.mutability != ListFieldConfig.Mutability.Immutable,
             fc.baseDefaultValue,
         )
     }
@@ -253,7 +247,7 @@ private fun computeAllFields(elements: List<Element>) {
         element.allFields = allFields
 
         for (field in allFields) {
-            field.passViaConstructorParameter = !(field is ListField && field.isChild && field.listType == type("kotlin.collections", "List")) && !field.initializeToThis
+            field.passViaConstructorParameter = !(field is ListField && field.isChild) && !field.initializeToThis
         }
     }
 }

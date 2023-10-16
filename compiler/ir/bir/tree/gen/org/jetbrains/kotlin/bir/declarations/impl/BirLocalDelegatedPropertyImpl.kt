@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirLocalDelegatedProperty
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.declarations.BirVariable
@@ -29,12 +28,49 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
     override var metadata: MetadataSource?,
     override var type: BirType,
     override var isVar: Boolean,
-    override var delegate: BirVariable,
-    override var getter: BirSimpleFunction,
-    override var setter: BirSimpleFunction?,
-) : BirLocalDelegatedProperty()
+    delegate: BirVariable,
+    getter: BirSimpleFunction,
+    setter: BirSimpleFunction?,
+) : BirLocalDelegatedProperty() {
+    private var _delegate: BirVariable = delegate
+
+    override var delegate: BirVariable
+        get() = _delegate
+        set(value) {
+            if (_delegate != value) {
+                replaceChild(_delegate, value)
+                _delegate = value
+            }
+        }
+
+    private var _getter: BirSimpleFunction = getter
+
+    override var getter: BirSimpleFunction
+        get() = _getter
+        set(value) {
+            if (_getter != value) {
+                replaceChild(_getter, value)
+                _getter = value
+            }
+        }
+
+    private var _setter: BirSimpleFunction? = setter
+
+    override var setter: BirSimpleFunction?
+        get() = _setter
+        set(value) {
+            if (_setter != value) {
+                replaceChild(_setter, value)
+                _setter = value
+            }
+        }
+    init {
+        initChild(_delegate)
+        initChild(_getter)
+        initChild(_setter)
+    }
+}

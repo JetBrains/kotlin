@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirDeclaration
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
@@ -19,10 +20,12 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
     override var sourceSpan: SourceSpan,
-    override val declarations: MutableList<BirDeclaration>,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: PackageFragmentDescriptor,
     override var signature: IdSignature,
     override var packageFqName: FqName,
     override val containerSource: DeserializedContainerSource?,
-) : BirExternalPackageFragment()
+) : BirExternalPackageFragment() {
+    override val declarations: BirChildElementList<BirDeclaration> =
+            BirChildElementList(this)
+}

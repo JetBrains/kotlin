@@ -18,7 +18,21 @@ class BirConstantPrimitiveImpl(
     override var sourceSpan: SourceSpan,
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
-    override var value: BirConst<*>,
+    value: BirConst<*>,
 ) : BirConstantPrimitive() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _value: BirConst<*> = value
+
+    override var value: BirConst<*>
+        get() = _value
+        set(value) {
+            if (_value != value) {
+                replaceChild(_value, value)
+                _value = value
+            }
+        }
+    init {
+        initChild(_value)
+    }
 }
