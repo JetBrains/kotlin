@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.native.createFatFrameworks
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizedCInteropApiElementsConfigurations
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*

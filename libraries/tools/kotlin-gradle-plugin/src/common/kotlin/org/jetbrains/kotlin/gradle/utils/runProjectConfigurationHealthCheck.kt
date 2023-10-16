@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 
 /**

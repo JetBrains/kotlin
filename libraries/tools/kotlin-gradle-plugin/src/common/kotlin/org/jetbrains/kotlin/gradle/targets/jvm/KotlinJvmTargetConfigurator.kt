@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 open class KotlinJvmTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinJvmCompilation, KotlinJvmTarget>(true),

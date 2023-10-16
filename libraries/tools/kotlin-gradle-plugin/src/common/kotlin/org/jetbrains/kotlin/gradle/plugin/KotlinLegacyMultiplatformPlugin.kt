@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.utils.androidPluginIds
-import org.jetbrains.kotlin.gradle.utils.getOrPut
-import java.util.concurrent.atomic.AtomicBoolean
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
     companion object {
@@ -198,48 +196,6 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             @Suppress("DEPRECATION")
             return getExtension(KOTLIN_DSL_NAME) ?: getExtension(KOTLIN_JS_DSL_NAME)
         }
-}
-
-internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
-    if (state.executed) {
-        fn()
-        return
-    }
-
-    /** If there's already an Android plugin applied, just dispatch the action to `afterEvaluate`, it gets executed after AGP's actions */
-    if (androidPluginIds.any { pluginManager.hasPlugin(it) }) {
-        afterEvaluate { fn() }
-        return
-    }
-
-    val isDispatchedAfterAndroid = AtomicBoolean(false)
-
-    /**
-     * This queue holds all actions submitted to `whenEvaluated` in this project, waiting for one of the Android plugins to be applied.
-     * After (and if) an Android plugin gets applied, we dispatch all the actions in the queue to `afterEvaluate`, so that they are
-     * executed after what AGP scheduled to `afterEvaluate`. There are different Android plugins, so actions in the queue also need to check
-     * if it's the first Android plugin, using `isDispatched` (each has its own instance).
-     */
-    val afterAndroidDispatchQueue = project.extensions.extraProperties.getOrPut("org.jetbrains.kotlin.whenEvaluated") {
-        val queue = mutableListOf<() -> Unit>()
-        // Trigger the actions on any plugin applied; the actions themselves ensure that they only dispatch the fn once.
-        androidPluginIds.forEach { id ->
-            pluginManager.withPlugin(id) { queue.forEach { it() } }
-        }
-        queue
-    }
-    afterAndroidDispatchQueue.add {
-        if (!isDispatchedAfterAndroid.getAndSet(true)) {
-            afterEvaluate { fn() }
-        }
-    }
-
-    afterEvaluate {
-        /** If no Android plugin was loaded, then the action was not dispatched, and we can freely execute it now */
-        if (!isDispatchedAfterAndroid.getAndSet(true)) {
-            fn()
-        }
-    }
 }
 
 private const val KOTLIN_12X_MPP_DEPRECATION_SUPPRESS_FLAG = "kotlin.internal.mpp12x.deprecation.suppress"

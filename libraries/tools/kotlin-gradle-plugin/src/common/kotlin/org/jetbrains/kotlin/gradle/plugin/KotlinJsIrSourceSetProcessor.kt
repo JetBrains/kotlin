@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.Kotlin2JsCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinJsIrLinkConfig
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal class KotlinJsIrSourceSetProcessor(

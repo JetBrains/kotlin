@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCom
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.applyUserDefinedAttributes
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 /**
  * This class encapsulated logic which should be invoked during not before the script evaluation is ready and
