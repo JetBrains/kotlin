@@ -1,0 +1,237 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] class MyClass : R|@R|Anno|(LAZY_EXPRESSION)  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(TYPES)] class MyClass : R|@R|Anno|(LAZY_EXPRESSION)  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class MyClass : R|@R|Anno|(LAZY_EXPRESSION)  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : R|@R|Anno|(LAZY_EXPRESSION)  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class MyClass : R|@R|Anno|()  Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|Anno|()  Foo| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithArgumentInsideSuperTypeCall.kt
+    public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : R|@R|Anno|()  Foo| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

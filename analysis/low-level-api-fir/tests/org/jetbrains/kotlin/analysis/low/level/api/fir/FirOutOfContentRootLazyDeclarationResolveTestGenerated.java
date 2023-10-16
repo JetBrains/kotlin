@@ -598,6 +598,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("annotationWithArgumentInsideSuperTypeCall.kt")
+        public void testAnnotationWithArgumentInsideSuperTypeCall() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithArgumentInsideSuperTypeCall.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationWithArgumentInsideSuperTypeCallUnresolved.kt")
+        public void testAnnotationWithArgumentInsideSuperTypeCallUnresolved() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithArgumentInsideSuperTypeCallUnresolved.kt");
+        }
+
+        @Test
         @TestMetadata("annotationWithTarget.kt")
         public void testAnnotationWithTarget() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/annotationWithTarget.kt");
@@ -766,6 +778,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         public void testSimpleLoopInOverride2() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/simpleLoopInOverride2.kt");
         }
+
+        @Test
+        @TestMetadata("unresolvedAnnotationOnFunctionType.kt")
+        public void testUnresolvedAnnotationOnFunctionType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/unresolvedAnnotationOnFunctionType.kt");
+        }
     }
 
     @Nested
@@ -876,6 +894,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         public void testSimpleLoopInOverride2() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverride2.kt");
         }
+
+        @Test
+        @TestMetadata("unresolvedAnnotationOnPropertyType.kt")
+        public void testUnresolvedAnnotationOnPropertyType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/unresolvedAnnotationOnPropertyType.kt");
+        }
     }
 
     @Nested
@@ -961,6 +985,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         @TestMetadata("typeAliasWithTypeParameters.kt")
         public void testTypeAliasWithTypeParameters() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/typeAliasWithTypeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedAnnotationOnTypeAlias.kt")
+        public void testUnresolvedAnnotationOnTypeAlias() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/typeAliases/unresolvedAnnotationOnTypeAlias.kt");
         }
     }
 }

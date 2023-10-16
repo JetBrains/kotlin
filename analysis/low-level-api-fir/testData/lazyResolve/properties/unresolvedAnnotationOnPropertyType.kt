@@ -1,0 +1,1 @@
+val pr<caret>op: @Anno(Foo) Foo

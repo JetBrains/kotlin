@@ -15,11 +15,11 @@ import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
-import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -326,14 +326,22 @@ private abstract class FirLazyAnnotationTransformer : FirTransformer<FirLazyAnno
         return name in session.annotationPlatformSupport.requiredAnnotationsShortClassNames
     }
 
+    override fun transformErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: FirLazyAnnotationTransformerData): FirTypeRef {
+        visitTypeAnnotations(errorTypeRef, data)
+        return super.transformErrorTypeRef(errorTypeRef, data)
+    }
+
     override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirLazyAnnotationTransformerData): FirTypeRef {
+        visitTypeAnnotations(resolvedTypeRef, data)
+        return super.transformResolvedTypeRef(resolvedTypeRef, data)
+    }
+
+    private fun visitTypeAnnotations(resolvedTypeRef: FirResolvedTypeRef, data: FirLazyAnnotationTransformerData) {
         resolvedTypeRef.coneType.forEachType { coneType ->
             for (typeArgumentAnnotation in coneType.customAnnotations) {
                 typeArgumentAnnotation.accept(this, data)
             }
         }
-
-        return super.transformResolvedTypeRef(resolvedTypeRef, data)
     }
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: FirLazyAnnotationTransformerData): FirStatement {

@@ -1,0 +1,125 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public? final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public? final? [ResolvedTo(RAW_FIR)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] class MyClass : @Anno[Unresolved](LAZY_EXPRESSION) Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public? final? [ResolvedTo(TYPES)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public final [ResolvedTo(STATUS)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public final [ResolvedTo(CONTRACTS)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            LAZY_super<<implicit>>
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

@@ -1,0 +1,69 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] unresolvedAnnotationOnPropertyType.kt
+    public? final? [ResolvedTo(RAW_FIR)] val prop: @Anno[Unresolved](LAZY_EXPRESSION) Foo
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) Foo
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public? final? [ResolvedTo(RAW_FIR)] val prop: @Anno[Unresolved](LAZY_EXPRESSION) Foo
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) Foo
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val prop: @Anno[Unresolved](LAZY_EXPRESSION) Foo
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): @Anno[Unresolved](LAZY_EXPRESSION) Foo
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val prop: @Anno[Unresolved](LAZY_EXPRESSION) Foo
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): @Anno[Unresolved](LAZY_EXPRESSION) Foo
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] val prop: @Anno[Unresolved](LAZY_EXPRESSION) Foo
+        public? [ResolvedTo(SUPER_TYPES)] get(): @Anno[Unresolved](LAZY_EXPRESSION) Foo
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public? final? [ResolvedTo(TYPES)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public? [ResolvedTo(TYPES)] get(): <ERROR TYPE REF: Symbol not found for Foo>
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(STATUS)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(STATUS)] get(): <ERROR TYPE REF: Symbol not found for Foo>
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <ERROR TYPE REF: Symbol not found for Foo>
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <ERROR TYPE REF: Symbol not found for Foo>
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(CONTRACTS)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(CONTRACTS)] get(): <ERROR TYPE REF: Symbol not found for Foo>
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Symbol not found for Foo>
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Symbol not found for Foo>
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Symbol not found for Foo>
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] unresolvedAnnotationOnPropertyType.kt
+    public final [ResolvedTo(BODY_RESOLVE)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
+        public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Symbol not found for Foo>
