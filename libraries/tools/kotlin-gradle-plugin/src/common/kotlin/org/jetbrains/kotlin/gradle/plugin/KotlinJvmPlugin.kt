@@ -80,8 +80,6 @@ internal open class KotlinJvmPlugin(
             kotlinExtension.compilerOptions,
             target.compilerOptions
         )
-
-        project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
     }
 
     override fun configureClassInspectionForIC(project: Project) {

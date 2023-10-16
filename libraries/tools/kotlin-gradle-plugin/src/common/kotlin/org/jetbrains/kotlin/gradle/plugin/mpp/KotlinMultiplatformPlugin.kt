@@ -62,8 +62,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         // propagate compiler plugin options to the source set language settings
         setupAdditionalCompilerArguments(project)
         project.setupGeneralKotlinExtensionParameters()
-
-        project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
     }
 
 

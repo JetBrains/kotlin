@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
 
+
 class ScriptingGradleSubplugin : Plugin<Project> {
     companion object {
         const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
@@ -87,6 +88,10 @@ class ScriptingGradleSubplugin : Plugin<Project> {
             }
         }
     }
+}
+
+internal val ScriptingGradleSubpluginSetupAction = KotlinProjectSetupAction {
+    project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 }
 
 private const val MAIN_CONFIGURATION_NAME = "kotlinScriptDef"
