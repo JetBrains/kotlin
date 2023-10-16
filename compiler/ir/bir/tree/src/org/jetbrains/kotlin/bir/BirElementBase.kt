@@ -18,8 +18,40 @@ package org.jetbrains.kotlin.bir
 
 abstract class BirElementBase : BirElement {
     internal var owner: BirForest? = null
-    final override var parent: BirElement? = null
+    final override var parent: BirElementBase? = null
         private set
+    private var level: UByte = 0u
+
+    val attachedToTree
+        get() = owner != null
+
+    internal fun updateLevel() {
+        val parent = parent
+        level = if (parent != null) {
+            val parentLevel = parent.level
+            if (parentLevel == UByte.MAX_VALUE) UByte.MAX_VALUE else (parentLevel + 1u).toUByte()
+        } else 0u
+    }
+
+    fun isAncestorOf(other: BirElementBase): Boolean {
+        // fixme: ensure level is tracked for of-the-tree cases
+        if (attachedToTree != other.attachedToTree) {
+            return false
+        }
+
+        val distance = other.level.toInt() - level.toInt()
+        if (distance < 0 || (distance == 0 && level != UByte.MAX_VALUE)) {
+            return false
+        }
+
+        var n = other
+        repeat(distance.toInt()) {
+            n = n.parent ?: return false
+            if (n === this) return true
+        }
+
+        return false
+    }
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
 
