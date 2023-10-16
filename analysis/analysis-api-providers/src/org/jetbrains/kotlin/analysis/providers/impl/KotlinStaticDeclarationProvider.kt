@@ -378,7 +378,7 @@ public class KotlinStaticDeclarationProviderMerger(private val project: Project)
     override fun merge(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
         providers.mergeSpecificProviders<_, KotlinStaticDeclarationProvider>(CompositeKotlinDeclarationProvider.factory) { targetProviders ->
             val combinedScope = GlobalSearchScope.union(targetProviders.map { it.scope })
-            project.createDeclarationProvider(combinedScope, module = null).apply {
+            project.createDeclarationProvider(combinedScope, contextualModule = null).apply {
                 check(this is KotlinStaticDeclarationProvider) {
                     "`KotlinStaticDeclarationProvider` can only be merged into a combined declaration provider of the same type."
                 }

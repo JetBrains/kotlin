@@ -74,8 +74,16 @@ public abstract class KotlinDeclarationProviderMerger : KotlinComposableProvider
     }
 }
 
-public fun Project.createDeclarationProvider(scope: GlobalSearchScope, module: KtModule?): KotlinDeclarationProvider =
-    KotlinDeclarationProviderFactory.getInstance(this).createDeclarationProvider(scope, module)
+/**
+ * Creates a [KotlinDeclarationProvider] providing symbols within the given [scope] in the context of the given [contextualModule].
+ *
+ * The contextual module is the [KtModule]
+ *
+ * TODO (marco): Document that `contextualModule` may also be used as a base for calculating the "package name set", in addition to outsider
+ *               module stuff. (Not sure how deep into detail we should go here, since it's an implementation detail.)
+ */
+public fun Project.createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider =
+    KotlinDeclarationProviderFactory.getInstance(this).createDeclarationProvider(scope, contextualModule)
 
 public fun Project.mergeDeclarationProviders(declarationProviders: List<KotlinDeclarationProvider>): KotlinDeclarationProvider =
     KotlinDeclarationProviderMerger.getInstance(this).merge(declarationProviders)
