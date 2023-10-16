@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -1267,7 +1266,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val ACTUAL_WITHOUT_EXPECT by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME_ONLY) {
             parameter<Symbol>("declaration")
-            parameter<Map<ExpectActualCompatibility<Symbol>, Collection<Symbol>>>("compatibility")
+            parameter<Map<out ExpectActualCompatibility<Symbol>, Collection<Symbol>>>("compatibility")
         }
 
         val AMBIGUOUS_ACTUALS by error<KtNamedDeclaration>(PositioningStrategy.INCOMPATIBLE_DECLARATION) {
@@ -1282,7 +1281,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME) {
             parameter<Symbol>("declaration")
-            parameter<List<Pair<Symbol, Map<Incompatible<Symbol>, Collection<Symbol>>>>>("members")
+            parameter<List<Pair<Symbol, Map<out ExpectActualCompatibility.MismatchOrIncompatible<Symbol>, Collection<Symbol>>>>>("members")
         }
 
         val ACTUAL_MISSING by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME)

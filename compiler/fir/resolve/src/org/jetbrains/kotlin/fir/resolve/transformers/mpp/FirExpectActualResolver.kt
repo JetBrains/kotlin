@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.getMatchedAndChecked
 
 object FirExpectActualResolver {
     fun findExpectForActual(
@@ -67,9 +69,9 @@ object FirExpectActualResolver {
                         )
                     }.let {
                         // If there is a compatible entry, return a map only containing it
-                        when (val compatibleSymbols = it[ExpectActualCompatibility.Compatible]) {
+                        when (val compatibleSymbols = it.getMatchedAndChecked()) {
                             null -> it
-                            else -> mapOf<ExpectActualCompatibility<FirBasedSymbol<*>>, _>(ExpectActualCompatibility.Compatible to compatibleSymbols)
+                            else -> mapOf<ExpectActualCompatibility<FirBasedSymbol<*>>, _>(ExpectActualMatchingCompatibility.MatchedSuccessfully to compatibleSymbols)
                         }
                     }
                 }

@@ -30,9 +30,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Compatible
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.MismatchOrIncompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 
 @Suppress("DuplicatedCode")
@@ -128,9 +129,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
         val source = declaration.source
         if (!declaration.isActual) {
-            if (compatibilityToMembersMap.allStrongIncompatibilities()) return
+            if (compatibilityToMembersMap.allMismatches()) return
 
-            if (Compatible in compatibilityToMembersMap) {
+            if (ExpectActualCheckingCompatibility.Compatible in compatibilityToMembersMap ||
+                ExpectActualMatchingCompatibility.MatchedSuccessfully in compatibilityToMembersMap
+            ) {
                 if (checkActual) {
                     reporter.reportOn(source, FirErrors.ACTUAL_MISSING, context)
                 }
@@ -140,7 +143,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
         val singleIncompatibility = compatibilityToMembersMap.keys.singleOrNull()
         when {
-            singleIncompatibility is Incompatible.ClassScopes -> {
+            singleIncompatibility is ExpectActualCheckingCompatibility.ClassScopes -> {
                 require(symbol is FirRegularClassSymbol || symbol is FirTypeAliasSymbol) {
                     "Incompatible.ClassScopes is only possible for a class or a typealias: $declaration"
                 }
@@ -150,13 +153,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
                 // later when this checker is called for them
                 fun hasSingleActualSuspect(
-                    expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>
+                    expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<out MismatchOrIncompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>
                 ): Boolean {
                     val (expectedMember, incompatibility) = expectedWithIncompatibility
                     val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
                     @OptIn(SymbolInternals::class)
                     return actualMember != null &&
-                            !incompatibility.allStrongIncompatibilities() &&
+                            !incompatibility.allMismatches() &&
                             actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
                 }
 
@@ -167,9 +170,10 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 }
             }
 
-            Compatible !in compatibilityToMembersMap -> {
+            ExpectActualCheckingCompatibility.Compatible !in compatibilityToMembersMap &&
+                    ExpectActualMatchingCompatibility.MatchedSuccessfully !in compatibilityToMembersMap -> {
                 // A nicer diagnostic for functions with default params
-                if (declaration is FirFunction && compatibilityToMembersMap.keys.any { it is Incompatible.ActualFunctionWithDefaultParameters }) {
+                if (declaration is FirFunction && compatibilityToMembersMap.keys.any { it is ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters }) {
                     reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
                 } else if (requireActualModifier(declaration.symbol, context.session)) {
                     reporter.reportOn(
@@ -247,8 +251,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         )
     }
 
-    fun Map<out ExpectActualCompatibility<*>, *>.allStrongIncompatibilities(): Boolean {
-        return keys.all { it is Incompatible.StrongIncompatible }
+    fun Map<out ExpectActualCompatibility<*>, *>.allMismatches(): Boolean {
+        return keys.all { it is ExpectActualMatchingCompatibility.Mismatch }
     }
 
     // we don't require `actual` modifier on

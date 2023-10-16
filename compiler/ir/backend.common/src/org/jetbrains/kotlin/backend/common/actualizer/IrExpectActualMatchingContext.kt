@@ -480,7 +480,7 @@ internal abstract class IrExpectActualMatchingContext(
             }
         }
 
-    override fun onMatchedMembers(
+    override fun onMatchedOrCompatibleMembers(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClassSymbol: RegularClassSymbolMarker?,

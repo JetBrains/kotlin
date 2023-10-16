@@ -258,9 +258,9 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
             recordActualForExpectDeclaration(expectSymbol, actualSymbol, destination)
         }
 
-        override fun onMismatchedMembersFromClassScope(
+        override fun onMismatchedOrIncompatibleMembersFromClassScope(
             expectSymbol: DeclarationSymbolMarker,
-            actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+            actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
             containingExpectClassSymbol: RegularClassSymbolMarker?,
             containingActualClassSymbol: RegularClassSymbolMarker?,
         ) {
