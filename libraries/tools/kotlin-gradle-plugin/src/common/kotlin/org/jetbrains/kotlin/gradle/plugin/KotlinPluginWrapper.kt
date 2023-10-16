@@ -263,6 +263,8 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
         plugin.apply(project)
 
+        project.runKotlinProjectSetupActions()
+
         project.addNpmDependencyExtension()
 
         project.registerBuildKotlinToolingMetadataTask()

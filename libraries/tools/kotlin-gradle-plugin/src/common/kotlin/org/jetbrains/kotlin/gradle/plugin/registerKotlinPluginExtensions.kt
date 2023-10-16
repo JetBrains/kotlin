@@ -31,6 +31,10 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.WasmSourceSetsNot
  * Active Extensions (using the [KotlinGradlePluginExtensionPoint] infrastructure) will be registered here by the Kotlin Gradle Plugin.
  */
 internal fun Project.registerKotlinPluginExtensions() {
+
+    KotlinProjectSetupAction.extensionPoint.apply {
+    }
+
     KotlinGradleProjectChecker.extensionPoint.apply {
         register(project, CommonMainOrTestWithDependsOnChecker)
         register(project, DeprecatedKotlinNativeTargetsChecker)
