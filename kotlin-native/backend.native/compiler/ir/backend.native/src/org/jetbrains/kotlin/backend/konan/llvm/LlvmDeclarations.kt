@@ -189,11 +189,54 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         super.visitClass(declaration)
     }
 
+    private fun packFields(declaration: IrClass): List<ClassLayoutBuilder.FieldInfo> {
+        val fields = context.getLayoutBuilder(declaration).getFields(llvm)
+        // The NoReorderFields annotation is internal, and only occurs on final classes with no inherited fields.
+        if (declaration.hasAnnotation(KonanFqNames.noReorderFields)) {
+            return fields
+        }
+
+        // offsetN indicates at what offset, if any, an N-byte appropriately aligned block can be packed.
+        // If no such block exists that does not overlap with a better aligned free block, offsetN will be -1.
+        var offset1 = -1L
+        var offset2 = -1L
+        var offset4 = -1L
+        var offset8 = 0L
+
+        // Allocates a block of the given size. Sizes smaller than 8 will be rounded up to a power of 2 and
+        // aligned according to that size. Other sizes will rounded up to a multiple of 8 and will be 8 byte aligned.
+        fun nextOffset(size: Long): Long = when (size) {
+            1L -> {
+                if (offset1 == -1L) nextOffset(2).also { offset1 = it + 1 }
+                else offset1.also { offset1 = -1 }
+            }
+            2L -> {
+                if (offset2 == -1L) nextOffset(4).also { offset2 = it + 2 }
+                else offset2.also { offset2 = -1 }
+            }
+            3L, 4L -> {
+                if (offset4 == -1L) nextOffset(8).also { offset4 = it + 4 }
+                else offset4.also { offset4 = -1 }
+            }
+            else -> offset8.also { offset8 += (size + 7) / 8 * 8 }
+        }
+
+        class IndexedField(val offset: Long, val field: ClassLayoutBuilder.FieldInfo)
+
+        val packedFields = mutableListOf<IndexedField>()
+        for (field in fields) {
+            val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
+            val offset = nextOffset(size)
+            packedFields.add(IndexedField(offset, field))
+        }
+        packedFields.sortBy { it.offset }
+        return packedFields.map { it.field }
+    }
+
     private fun createClassDeclarations(declaration: IrClass): ClassLlvmDeclarations {
         val internalName = qualifyInternalName(declaration)
 
-        val fields = context.getLayoutBuilder(declaration).getFields(llvm)
-        val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", fields)
+        val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", packFields(declaration))
 
         require(alignment == runtime.objectAlignment) {
             "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is $alignment"
