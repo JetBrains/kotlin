@@ -65,7 +65,7 @@ open class CommonizerIT : KGPBaseTest() {
     @DisplayName("Clean commonized native distribution")
     @GradleTest
     fun testCleanNativeDistributionCommonization(gradleVersion: GradleVersion, @TempDir konanData: Path) {
-        nativeProject("commonizeNativeDistributionWithConfigurationCache", gradleVersion) {
+        nativeProject("commonizeNativeDistributionWithIosLinuxWindows", gradleVersion) {
             val buildOptions = defaultBuildOptions.copy(
                 konanDataDir = konanData
             )
@@ -86,38 +86,6 @@ open class CommonizerIT : KGPBaseTest() {
             build(":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
                 assertTasksExecuted(":cleanNativeDistributionCommonization")
                 if (commonizationResultFilesCount() != 1) fail("Expected only .lock file after cleaning")
-            }
-        }
-    }
-
-    @DisplayName("KT-61359: commonize native distribution and compile with configuration cache")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
-    @GradleTest
-    fun testCleanCommonizationWithConfigurationCache(gradleVersion: GradleVersion) {
-        project("commonizeNativeDistributionWithConfigurationCache", gradleVersion) {
-            val buildOptionsWithConfigurationCache = buildOptions.copy(configurationCache = true)
-            // Clean native distribution -> capture configuration cache state
-            build(":cleanNativeDistributionCommonization")
-            build(":compileNativeMainKotlinMetadata", buildOptions = buildOptionsWithConfigurationCache) {
-                assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksExecuted(":compileNativeMainKotlinMetadata")
-                assertConfigurationCacheStored()
-            }
-
-            // Clean task outputs -> reuse configuration cache
-            build(":clean")
-            build(":compileNativeMainKotlinMetadata", buildOptions = buildOptionsWithConfigurationCache) {
-                assertTasksUpToDate(":commonizeNativeDistribution")
-                assertTasksExecuted(":compileNativeMainKotlinMetadata")
-                assertConfigurationCacheReused()
-            }
-
-            // full clean -> reuse configuration cache
-            build("clean", ":cleanNativeDistributionCommonization")
-            build(":compileNativeMainKotlinMetadata", buildOptions = buildOptionsWithConfigurationCache) {
-                assertTasksExecuted(":commonizeNativeDistribution")
-                assertTasksExecuted(":compileNativeMainKotlinMetadata")
-                assertConfigurationCacheReused()
             }
         }
     }

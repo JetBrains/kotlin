@@ -88,22 +88,34 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion, @TempDir konanHome: Path) {
         project("native-configuration-cache", gradleVersion) {
-            build(
-                ":commonizeNativeDistribution",
-            ) {
-                assertOutputContains("0 problems were found storing the configuration cache.")
+            val buildOptions = defaultBuildOptions.copy(konanDataDir = konanHome)
+            build(":lib:compileCommonMainKotlinMetadata", buildOptions = buildOptions) {
+                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
+                assertConfigurationCacheStored()
             }
 
-            // Override kotlin native home location to be able to run clean native distribution commonization task
-            // since by default it is global location on host
-            val buildOptions = defaultBuildOptions.copy(
-                freeArgs = listOf("-Porg.jetbrains.kotlin.native.home=$konanHome"),
-                konanDataDir = null
-            )
-            build(":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
-                assertOutputContains("0 problems were found storing the configuration cache.")
+            build("clean", ":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+                assertTasksExecuted(":cleanNativeDistributionCommonization")
+                assertConfigurationCacheStored()
             }
 
+            build(":lib:compileCommonMainKotlinMetadata", buildOptions = buildOptions) {
+                assertTasksExecuted(":commonizeNativeDistribution")
+                assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
+                assertConfigurationCacheReused()
+            }
+        }
+    }
+
+    @NativeGradlePluginTests
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+    )
+    @GradleTest
+    fun testCInteropCommonizer(gradleVersion: GradleVersion) {
+        project("native-configuration-cache", gradleVersion) {
             testConfigurationCacheOf(":lib:commonizeCInterop")
         }
     }
