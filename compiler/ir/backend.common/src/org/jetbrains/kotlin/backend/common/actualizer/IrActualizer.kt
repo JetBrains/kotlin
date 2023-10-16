@@ -119,7 +119,9 @@ object IrActualizer {
     }
 
     private fun mergeIrFragments(mainFragment: IrModuleFragment, dependentFragments: List<IrModuleFragment>) {
-        mainFragment.files.addAll(0, dependentFragments.flatMap { it.files })
+        val newFiles = dependentFragments.flatMap { it.files }
+        for (file in newFiles) file.module = mainFragment
+        mainFragment.files.addAll(0, newFiles)
     }
 }
 
