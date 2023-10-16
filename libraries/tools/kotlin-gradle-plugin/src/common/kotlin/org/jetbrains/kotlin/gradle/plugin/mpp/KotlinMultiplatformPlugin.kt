@@ -64,24 +64,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.setupGeneralKotlinExtensionParameters()
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
-
-        exportProjectStructureMetadataForOtherBuilds(kotlinMultiplatformExtension)
     }
 
-    private fun exportProjectStructureMetadataForOtherBuilds(
-        extension: KotlinMultiplatformExtension,
-    ) {
-        // Run in AfterEvaluate stage to avoid issues with Precompiled Script Plugins
-        // When Gradle runs `:generatePrecompiledScriptPluginAccessors` it creates dummy project and
-        // applies plugins from *.gradle.kts file to and generates accessors from it.
-        // These dummy projects never gets evaluated and should not expose any Project Structure Metadata.
-        // Putting registerProjectStructureMetadata in AfterEvaluate stage prevents PSM registration in dummy projects.
-        extension.project.launchInStage(AfterEvaluateBuildscript) {
-            GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(extension.project) {
-                extension.kotlinProjectStructureMetadata
-            }
-        }
-    }
 
     private fun setupAdditionalCompilerArguments(project: Project) {
         // common source sets use the compiler options from the metadata compilation:
