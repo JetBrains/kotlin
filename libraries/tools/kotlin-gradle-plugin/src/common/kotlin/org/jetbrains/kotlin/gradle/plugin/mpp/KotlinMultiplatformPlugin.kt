@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvalu
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.setupDefaultKotlinHierarchy
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
-import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependenciesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
@@ -70,7 +69,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         // Ensure that the instance is created and configured during apply
         project.kotlinIdeMultiplatformImport
-        project.locateOrRegisterIdeResolveDependenciesTask()
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
