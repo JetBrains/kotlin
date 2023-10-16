@@ -61,7 +61,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         // propagate compiler plugin options to the source set language settings
         setupAdditionalCompilerArguments(project)
-        project.setupGeneralKotlinExtensionParameters()
     }
 
 
@@ -162,41 +161,5 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         internal fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
             "kotlin.mpp.freeCompilerArgsForSourceSet.$sourceSetName"
-    }
-}
-
-internal fun Project.setupGeneralKotlinExtensionParameters() {
-    project.launch {
-        for (sourceSet in kotlinExtension.awaitSourceSets()) {
-            val languageSettings = sourceSet.languageSettings
-            if (languageSettings !is DefaultLanguageSettingsBuilder) continue
-
-            val isMainSourceSet = sourceSet
-                .internal
-                .awaitPlatformCompilations()
-                .any { KotlinSourceSetTree.orNull(it) == KotlinSourceSetTree.main }
-
-            if (isMainSourceSet) {
-                languageSettings.explicitApi = project.providers.provider {
-                    project.kotlinExtension.explicitApiModeAsCompilerArg()
-                }
-            }
-
-            languageSettings.freeCompilerArgsProvider = project.provider {
-                val propertyValue = with(project.extensions.extraProperties) {
-                    val sourceSetFreeCompilerArgsPropertyName = sourceSetFreeCompilerArgsPropertyName(sourceSet.name)
-                    if (has(sourceSetFreeCompilerArgsPropertyName)) {
-                        get(sourceSetFreeCompilerArgsPropertyName)
-                    } else null
-                }
-
-                mutableListOf<String>().apply {
-                    when (propertyValue) {
-                        is String -> add(propertyValue)
-                        is Iterable<*> -> addAll(propertyValue.map { it.toString() })
-                    }
-                }
-            }
-        }
     }
 }

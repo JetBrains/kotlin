@@ -155,7 +155,6 @@ internal abstract class AbstractKotlinPlugin(
 
         fun configureProjectGlobalSettings(project: Project) {
             customizeKotlinDependencies(project)
-            project.setupGeneralKotlinExtensionParameters()
         }
 
         fun configureTarget(
