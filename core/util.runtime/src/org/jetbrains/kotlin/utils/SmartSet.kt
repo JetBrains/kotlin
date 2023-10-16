@@ -25,7 +25,7 @@ import java.util.*
  * Also, [iterator] returns an iterator which does not support [MutableIterator.remove].
  */
 @Suppress("UNCHECKED_CAST")
-class SmartSet<T> private constructor() : AbstractSet<T>() {
+class SmartSet<T> private constructor() : AbstractMutableSet<T>() {
     companion object {
         private const val ARRAY_THRESHOLD = 5
 
