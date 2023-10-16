@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_I
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_BUILTIN_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE
@@ -247,5 +248,6 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Exported declaration contains non-consumable identifier ''{0}'', which cannot be represented inside TS definitions and ESM.",
             CommonRenderers.STRING,
         )
+        map.put(JSCODE_ARGUMENT_NON_CONST_EXPRESSION, "An argument for the 'js()' function must be a constant string expression.")
     }
 }

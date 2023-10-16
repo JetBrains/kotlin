@@ -5651,6 +5651,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.JSCODE_ARGUMENT_NON_CONST_EXPRESSION) { firDiagnostic ->
+        JscodeArgumentNonConstExpressionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirSyntaxErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
             firDiagnostic.a,

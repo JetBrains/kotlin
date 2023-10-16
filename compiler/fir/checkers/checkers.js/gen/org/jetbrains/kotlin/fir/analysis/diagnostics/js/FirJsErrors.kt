@@ -103,6 +103,9 @@ object FirJsErrors {
     val SPREAD_OPERATOR_IN_DYNAMIC_CALL by error0<KtElement>(SourceElementPositioningStrategies.SPREAD_OPERATOR)
     val WRONG_OPERATION_WITH_DYNAMIC by error1<KtElement, String>()
 
+    // JsCode
+    val JSCODE_ARGUMENT_NON_CONST_EXPRESSION by error0<KtElement>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)
     }

@@ -150,4 +150,8 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<String>("operation")
         }
     }
+
+    val JSCODE by object : DiagnosticGroup("JsCode") {
+        val JSCODE_ARGUMENT_NON_CONST_EXPRESSION by error<KtElement>()
+    }
 }

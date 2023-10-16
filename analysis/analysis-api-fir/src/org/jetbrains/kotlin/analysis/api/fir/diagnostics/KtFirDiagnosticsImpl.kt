@@ -4748,6 +4748,11 @@ internal class WrongOperationWithDynamicImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.WrongOperationWithDynamic
 
+internal class JscodeArgumentNonConstExpressionImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.JscodeArgumentNonConstExpression
+
 internal class SyntaxImpl(
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,
