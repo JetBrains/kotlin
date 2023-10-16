@@ -31,7 +31,7 @@ internal open class LLFirKotlinSymbolNamesProvider(
     }
 
     override fun getPackageNamesWithTopLevelCallables(): Set<String>? {
-        val packageNames = declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
+        val packageNames = declarationProvider.computePackageSetWithTopLevelCallableDeclarations() ?: return null
 
         if (allowKotlinPackage == false && packageNames.any { it.isKotlinPackage() }) {
             return packageNames.filterToSetOrEmpty { !it.isKotlinPackage() }

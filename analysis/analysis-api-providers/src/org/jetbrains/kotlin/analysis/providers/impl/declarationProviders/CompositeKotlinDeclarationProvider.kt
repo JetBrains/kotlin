@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.flatMapToNullableSet
 
 public class CompositeKotlinDeclarationProvider private constructor(
     override val providers: List<KotlinDeclarationProvider>
@@ -65,8 +66,8 @@ public class CompositeKotlinDeclarationProvider private constructor(
         return providers.flatMapTo(mutableListOf()) { it.findFilesForScript(scriptFqName) }
     }
 
-    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
-        return providers.flatMapTo(mutableSetOf()) { it.computePackageSetWithTopLevelCallableDeclarations() }
+    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String>? {
+        return providers.flatMapToNullableSet { it.computePackageSetWithTopLevelCallableDeclarations() }
     }
 
     public companion object {

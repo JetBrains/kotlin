@@ -45,7 +45,12 @@ public abstract class KotlinDeclarationProvider : KotlinComposableProvider {
 
     public abstract fun findFilesForScript(scriptFqName: FqName): Collection<KtScript>
 
-    public abstract fun computePackageSetWithTopLevelCallableDeclarations(): Set<String>
+    /**
+     * Calculates the set of package names which can be provided by this declaration provider and contain callables.
+     *
+     * The set may contain false positives. `null` may be returned if the package set is too expensive or impossible to compute.
+     */
+    public abstract fun computePackageSetWithTopLevelCallableDeclarations(): Set<String>?
 }
 
 public abstract class KotlinDeclarationProviderFactory {
