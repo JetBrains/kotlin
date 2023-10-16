@@ -63,11 +63,11 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass {
         regularClass.transformAnnotations(this, data)
+            .transformTypeParameters(transformer, data)
+            .transformSuperTypeRefs(transformer, data)
+
         withRegularClass(regularClass) {
-            regularClass
-                .transformTypeParameters(transformer, data)
-                .transformSuperTypeRefs(transformer, data)
-                .transformDeclarations(transformer, data)
+            regularClass.transformDeclarations(transformer, data)
         }
 
         return regularClass
