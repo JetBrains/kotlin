@@ -69,7 +69,7 @@ class CodegenMetadataTests(useFir: Boolean) : AbstractLoweringTests(useFir) {
 
                     val cls = (
                         KotlinClassMetadata.read(metadataAnnotation) as KotlinClassMetadata.Class
-                    ).toKmClass()
+                    ).kmClass
                     return cls.localDelegatedProperties.map { it.name }
                 }
 
