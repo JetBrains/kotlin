@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.PreHmppDependenci
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.WasmSourceSetsNotFoundChecker
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
+import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
 /**
  * Active Extensions (using the [KotlinGradlePluginExtensionPoint] infrastructure) will be registered here by the Kotlin Gradle Plugin.
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProje
 internal fun Project.registerKotlinPluginExtensions() {
     KotlinProjectSetupAction.extensionPoint.apply {
         register(project, AddNpmDependencyExtensionProjectSetupAction)
+        register(project, RegisterBuildKotlinToolingMetadataTask)
     }
 
     KotlinGradleProjectChecker.extensionPoint.apply {

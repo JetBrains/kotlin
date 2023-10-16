@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.tooling.toJsonString
 import java.io.File
 import javax.inject.Inject
 
-internal fun Project.registerBuildKotlinToolingMetadataTask() {
-    if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return
+internal val RegisterBuildKotlinToolingMetadataTask = KotlinProjectSetupAction {
+    if (!project.kotlinPropertiesProvider.enableKotlinToolingMetadataArtifact) return@KotlinProjectSetupAction
     buildKotlinToolingMetadataTask
 }
 

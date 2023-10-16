@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArt
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestsRegistry
-import org.jetbrains.kotlin.gradle.tooling.registerBuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
@@ -263,8 +262,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         plugin.apply(project)
 
         project.runKotlinProjectSetupActions()
-
-        project.registerBuildKotlinToolingMetadataTask()
 
         project.setupDiagnosticsChecksAndReporting()
     }
