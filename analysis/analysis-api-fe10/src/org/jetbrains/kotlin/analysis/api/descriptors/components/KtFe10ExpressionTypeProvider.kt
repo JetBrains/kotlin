@@ -191,6 +191,8 @@ class KtFe10ExpressionTypeProvider(
                     return null
                 }
 
+                if (parentExpression.typeReference == null) return null
+
                 val bindingContext = analysisContext.analyze(parentExpression)
                 val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, parentExpression]
                 if (descriptor is CallableDescriptor) {

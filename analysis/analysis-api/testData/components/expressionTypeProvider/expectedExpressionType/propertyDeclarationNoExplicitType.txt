@@ -1,2 +1,2 @@
-expression: av
+expression: ""
 expected type: null

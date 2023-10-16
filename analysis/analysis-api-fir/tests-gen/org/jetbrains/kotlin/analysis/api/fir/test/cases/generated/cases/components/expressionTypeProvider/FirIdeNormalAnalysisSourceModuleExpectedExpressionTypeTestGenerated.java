@@ -281,6 +281,12 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
     }
 
     @Test
+    @TestMetadata("propertyDeclarationNoExplicitType.kt")
+    public void testPropertyDeclarationNoExplicitType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclarationNoExplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("propertyDeclarationQualified.kt")
     public void testPropertyDeclarationQualified() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/propertyDeclarationQualified.kt");

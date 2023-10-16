@@ -317,6 +317,7 @@ internal class KtFirExpressionTypeProvider(
         // Given: `val x: T = expression`
         // Expected type of `expression` is `T`
         val property = expression.unwrapQualified<KtProperty> { property, expr -> property.initializer == expr } ?: return null
+        if (property.typeReference == null) return null
         return getReturnTypeForKtDeclaration(property).nonErrorTypeOrNull()
     }
 
@@ -329,6 +330,7 @@ internal class KtFirExpressionTypeProvider(
             // which may raise an exception if we attempt to retrieve, e.g., callable declaration from it.
             return null
         }
+        if (function.typeReference == null) return null
         return getReturnTypeForKtDeclaration(function).nonErrorTypeOrNull()
     }
 
