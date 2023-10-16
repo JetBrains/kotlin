@@ -158,6 +158,24 @@ class StringTest {
         }
     }
 
+    
+    @Test fun isNotNullOrNotBlank() = withOneCharSequenceArg { arg1 ->
+        data class Case(val value: String?, val isNull: Boolean = false, val isNotNullOrNotBlank: Boolean = false)
+
+        val cases = listOf(
+            Case(null,               isNull = true),
+            Case("",                 isNotNullOrNotBlank = false),
+            Case("  \r\n\t\u00A0",   isNotNullOrNotBlank = false),
+            Case(" Some ",    isNotNullOrNotBlank = true)
+        )
+
+        for (case in cases) {
+            val value = case.value?.let { arg1(it) }
+            assertEquals(case.isNull || case.isNotNullOrNotBlank, value.isNotNullOrNotBlank(), "failed for case '$value'")
+        }
+    }
+
+
     @Test fun orEmpty() {
         val s: String? = "hey"
         val ns: String? = null
