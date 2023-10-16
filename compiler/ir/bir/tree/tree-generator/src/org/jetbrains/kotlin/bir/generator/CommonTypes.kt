@@ -29,7 +29,7 @@ val elementVisitorType = type(visitors, "BirElementVisitor")
 val elementTransformerType = type(visitors, "BirElementTransformer")
 val mutableAnnotationContainerType = type(declarations, "BirMutableAnnotationContainer")
 val irTypeType = type(types, "BirType")
-//val symbolOwner = type(symbols, "BirSymbolOwner")
+val childElementList = type(tree, "BirChildElementList")
 
 val symbolType = type(symbols, "BirSymbol")
 object SymbolTypes {

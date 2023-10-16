@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirConstructor
@@ -46,7 +47,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     override var targetClass: BirClassSymbol?,
     override var constructor: BirConstructor?,
 ) : BirScript() {
-    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this)
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 0)
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
 
@@ -60,13 +61,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var explicitCallParameters: BirChildElementList<BirVariable> =
-            BirChildElementList(this)
+            BirChildElementList(this, 1)
 
     override var implicitReceiversParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this)
+            BirChildElementList(this, 2)
 
     override var providedPropertiesParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this)
+            BirChildElementList(this, 3)
 
     private var _earlierScriptsParameter: BirValueParameter? = earlierScriptsParameter
 
@@ -81,5 +82,22 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     init {
         initChild(_thisReceiver)
         initChild(_earlierScriptsParameter)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._thisReceiver === old -> this.thisReceiver = new as BirValueParameter
+            this._earlierScriptsParameter === old -> this.earlierScriptsParameter = new as
+                BirValueParameter
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.statements
+        id == 1 -> this.explicitCallParameters
+        id == 2 -> this.implicitReceiversParameters
+        id == 3 -> this.providedPropertiesParameters
+        else -> throwChildrenListWithIdNotFound(id)
     }
 }

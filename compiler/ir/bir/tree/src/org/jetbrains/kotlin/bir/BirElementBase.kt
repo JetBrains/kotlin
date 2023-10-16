@@ -21,9 +21,16 @@ abstract class BirElementBase : BirElement {
     final override var parent: BirElementBase? = null
         private set
     private var level: UByte = 0u
+    internal var containingListId: Byte = 0
 
     val attachedToTree
         get() = owner != null
+
+    internal fun getContainingList(): BirChildElementList<*>? {
+        val containingListId = containingListId.toInt()
+        return if (containingListId == 0) null
+        else parent?.getChildrenListById(containingListId)
+    }
 
     internal fun updateLevel() {
         val parent = parent
@@ -92,5 +99,69 @@ abstract class BirElementBase : BirElement {
 
     internal fun checkCanBeAttachedAsChild(newParent: BirElement) {
         require(parent == null) { "Cannot attach element $this as a child of $newParent as it is already a child of $parent." }
+    }
+
+
+    internal open fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        throwChildForReplacementNotFound(old)
+    }
+
+    protected fun throwChildForReplacementNotFound(old: BirElement): Nothing {
+        throw IllegalStateException("The child property $old not found in its parent $this")
+    }
+
+    internal open fun getChildrenListById(id: Int): BirChildElementList<*> {
+        throwChildrenListWithIdNotFound(id)
+    }
+
+    protected fun throwChildrenListWithIdNotFound(id: Int): Nothing {
+        throw IllegalStateException("The element $this does not have a children list with id $id")
+    }
+
+    internal fun removeFromList(
+        list: BirChildElementList<BirElement?>,
+    ) {
+        if (!list.remove(this)) {
+            list.parent.throwChildForReplacementNotFound(this)
+        }
+    }
+
+    internal fun replaceInsideList(
+        list: BirChildElementList<BirElement?>,
+        new: BirElement?,
+    ) {
+        if (!list.replace(this, new)) {
+            list.parent.throwChildForReplacementNotFound(this)
+        }
+    }
+}
+
+fun BirElement.replaceWith(new: BirElement?) {
+    this as BirElementBase
+
+    val parent = parent
+    require(parent != null && attachedToTree) { "Element is not attached to a tree" }
+
+    val list = getContainingList()
+    if (list != null) {
+        @Suppress("UNCHECKED_CAST")
+        replaceInsideList(list as BirChildElementList<BirElement?>, new)
+    } else {
+        parent.replaceChildProperty(this, new)
+    }
+}
+
+fun BirElement.remove() {
+    this as BirElementBase
+
+    val parent = parent
+    require(parent != null && attachedToTree) { "Element is not attached to a tree" }
+
+    val list = getContainingList()
+    if (list != null) {
+        @Suppress("UNCHECKED_CAST")
+        removeFromList(list as BirChildElementList<BirElement?>)
+    } else {
+        parent.replaceChildProperty(this, null)
     }
 }

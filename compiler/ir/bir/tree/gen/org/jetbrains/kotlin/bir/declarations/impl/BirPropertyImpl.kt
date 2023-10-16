@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.declarations.BirField
@@ -88,5 +89,14 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
         initChild(_backingField)
         initChild(_getter)
         initChild(_setter)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._backingField === old -> this.backingField = new as BirField
+            this._getter === old -> this.getter = new as BirSimpleFunction
+            this._setter === old -> this.setter = new as BirSimpleFunction
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 }

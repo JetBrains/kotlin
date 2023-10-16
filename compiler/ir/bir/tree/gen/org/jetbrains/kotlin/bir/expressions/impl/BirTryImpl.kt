@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirCatch
@@ -36,7 +37,7 @@ class BirTryImpl(
             }
         }
 
-    override val catches: BirChildElementList<BirCatch> = BirChildElementList(this)
+    override val catches: BirChildElementList<BirCatch> = BirChildElementList(this, 0)
 
     private var _finallyExpression: BirExpression? = finallyExpression
 
@@ -51,5 +52,18 @@ class BirTryImpl(
     init {
         initChild(_tryResult)
         initChild(_finallyExpression)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._tryResult === old -> this.tryResult = new as BirExpression
+            this._finallyExpression === old -> this.finallyExpression = new as BirExpression
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.catches
+        else -> throwChildrenListWithIdNotFound(id)
     }
 }

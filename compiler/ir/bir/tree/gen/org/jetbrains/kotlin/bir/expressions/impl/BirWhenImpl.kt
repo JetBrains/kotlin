@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirBranch
@@ -24,5 +25,16 @@ class BirWhenImpl(
 ) : BirWhen() {
     override var attributeOwnerId: BirAttributeContainer = this
 
-    override val branches: BirChildElementList<BirBranch> = BirChildElementList(this)
+    override val branches: BirChildElementList<BirBranch> = BirChildElementList(this, 0)
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.branches
+        else -> throwChildrenListWithIdNotFound(id)
+    }
 }

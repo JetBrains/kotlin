@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAnonymousInitializer
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
@@ -39,5 +40,12 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     init {
         initChild(_body)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._body === old -> this.body = new as BirBlockBody
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 }

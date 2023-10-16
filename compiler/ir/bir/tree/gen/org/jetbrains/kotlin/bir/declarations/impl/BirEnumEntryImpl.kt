@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirEnumEntry
@@ -54,5 +55,14 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     init {
         initChild(_initializerExpression)
         initChild(_correspondingClass)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._initializerExpression === old -> this.initializerExpression = new as
+                BirExpressionBody
+            this._correspondingClass === old -> this.correspondingClass = new as BirClass
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 }

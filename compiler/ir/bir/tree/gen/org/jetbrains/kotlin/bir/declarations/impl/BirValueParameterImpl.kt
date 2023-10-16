@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -48,5 +49,12 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     init {
         initChild(_defaultValue)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._defaultValue === old -> this.defaultValue = new as BirExpressionBody
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 }

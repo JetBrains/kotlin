@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirField
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -51,5 +52,12 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     init {
         initChild(_initializer)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._initializer === old -> this.initializer = new as BirExpressionBody
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 }
