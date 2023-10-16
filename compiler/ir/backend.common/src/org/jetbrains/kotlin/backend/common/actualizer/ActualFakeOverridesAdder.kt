@@ -117,24 +117,6 @@ internal class ActualFakeOverridesAdder(
                 processedMembers.addMember(memberFromSupertype as IrOverridableDeclaration<*>)
                 fakeOverrideInfo.addMember(newMember)
                 klass.addMember(newMember)
-            } else {
-                val baseMembers = collectActualCallablesMatchingToSpecificExpect(
-                    newMember.symbol,
-                    processedMembers.getMembersForActual(newMember),
-                    expectToActualClassMap,
-                    typeSystemContext
-                )
-
-                val errorFactory =
-                    if (baseMembers.all { ((it.owner as IrDeclaration).parent as IrClass).isInterface } && (memberFromSupertype.parent as IrClass).isInterface)
-                        CommonBackendErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
-                    else
-                        CommonBackendErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
-                diagnosticsReporter.at(klass).report(
-                    errorFactory,
-                    klass.name.asString(),
-                    (memberFromSupertype as IrDeclarationWithName).name.asString()
-                )
             }
         }
     }

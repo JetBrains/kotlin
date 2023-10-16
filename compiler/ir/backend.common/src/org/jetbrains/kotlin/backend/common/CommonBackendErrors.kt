@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 
 object CommonBackendErrors {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>()
-    val MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED by error2<PsiElement, String, String>()
-    val MANY_IMPL_MEMBER_NOT_IMPLEMENTED by error2<PsiElement, String, String>()
     val INCOMPATIBLE_MATCHING by error3<PsiElement, String, String, ExpectActualCompatibility.Incompatible<*>>()
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>()
     val EVALUATION_ERROR by error1<PsiElement, String>()
@@ -47,18 +45,6 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             "Expected {0} has no actual declaration in module {1}",
             STRING,
             MODULE_WITH_PLATFORM,
-        )
-        map.put(
-            CommonBackendErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
-            "{0} must override {1} because it inherits multiple interface methods of it",
-            STRING,
-            STRING,
-        )
-        map.put(
-            CommonBackendErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
-            "{0} must override {1} because it inherits many implementations of it",
-            STRING,
-            STRING,
         )
         map.put(
             CommonBackendErrors.INCOMPATIBLE_MATCHING,
