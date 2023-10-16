@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirDeclaration
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
@@ -27,5 +28,16 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
     override val containerSource: DeserializedContainerSource?,
 ) : BirExternalPackageFragment() {
     override val declarations: BirChildElementList<BirDeclaration> =
-            BirChildElementList(this)
+            BirChildElementList(this, 0)
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.declarations
+        else -> throwChildrenListWithIdNotFound(id)
+    }
 }

@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirErrorDeclaration
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -23,4 +24,10 @@ class BirErrorDeclarationImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-) : BirErrorDeclaration()
+) : BirErrorDeclaration() {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+}

@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -31,4 +32,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     override var index: Int,
     override var isReified: Boolean,
     override var superTypes: List<BirType>,
-) : BirTypeParameter()
+) : BirTypeParameter() {
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+}
