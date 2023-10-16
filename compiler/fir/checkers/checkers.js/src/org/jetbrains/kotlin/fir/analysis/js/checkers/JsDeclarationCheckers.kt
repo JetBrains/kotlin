@@ -50,6 +50,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
 
     override val fileCheckers: Set<FirFileChecker>
         get() = setOf(
+            FirJsPackageDirectiveChecker,
             FirJsNameClashFileTopLevelDeclarationsChecker
         )
 }

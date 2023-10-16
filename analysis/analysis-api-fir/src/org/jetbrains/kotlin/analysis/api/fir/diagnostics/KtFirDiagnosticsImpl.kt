@@ -3661,7 +3661,7 @@ internal class InvalidCharactersImpl(
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.InvalidCharacters
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InvalidCharacters
 
 internal class DangerousCharactersImpl(
     override val characters: String,

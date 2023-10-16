@@ -765,7 +765,7 @@ object FirErrors {
     val UNDERSCORE_IS_RESERVED by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER by warning0<KtNameReferenceExpression>()
-    val INVALID_CHARACTERS by error1<KtNamedDeclaration, String>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
+    val INVALID_CHARACTERS by error1<PsiElement, String>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val DANGEROUS_CHARACTERS by warning1<KtNamedDeclaration, String>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val EQUALITY_NOT_APPLICABLE by error3<KtBinaryExpression, String, ConeKotlinType, ConeKotlinType>()
     val EQUALITY_NOT_APPLICABLE_WARNING by warning3<KtBinaryExpression, String, ConeKotlinType, ConeKotlinType>()

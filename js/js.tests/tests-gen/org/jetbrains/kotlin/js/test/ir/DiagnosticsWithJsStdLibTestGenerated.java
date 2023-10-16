@@ -791,6 +791,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("legalPackageName.kt")
+        public void testLegalPackageName() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/legalPackageName.kt");
+        }
+
+        @Test
         @TestMetadata("methodAndMethod.kt")
         public void testMethodAndMethod() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/name/methodAndMethod.kt");

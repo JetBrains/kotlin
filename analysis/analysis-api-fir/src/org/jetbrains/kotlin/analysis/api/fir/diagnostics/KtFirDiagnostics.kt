@@ -3036,7 +3036,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ResolvedToUnderscoreNamedCatchParameter::class
     }
 
-    interface InvalidCharacters : KtFirDiagnostic<KtNamedDeclaration> {
+    interface InvalidCharacters : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvalidCharacters::class
         val message: String
     }
