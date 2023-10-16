@@ -68,6 +68,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val disableAllocatorOverheadEstimate by booleanOption()
 
     val enableSafepointSignposts by booleanOption()
+
+    val packFields by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
