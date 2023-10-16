@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.NoKotlinTargetsDe
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.PreHmppDependenciesUsageChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.WasmSourceSetsNotFoundChecker
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
@@ -40,7 +41,9 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, AddNpmDependencyExtensionProjectSetupAction)
         register(project, RegisterBuildKotlinToolingMetadataTask)
         register(project, KotlinToolingDiagnosticsSetupAction)
+
         if (isMultiplatform) {
+            register(project, AddBuildListenerForXCodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
         }
     }

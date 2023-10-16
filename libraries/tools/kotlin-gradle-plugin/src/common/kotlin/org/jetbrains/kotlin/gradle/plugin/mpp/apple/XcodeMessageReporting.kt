@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
@@ -27,15 +28,15 @@ private val Project.isXcodeTasksRequested: Boolean
         isSyncTask || isEmbedAndSignTask
     }
 
-internal fun Project.addBuildListenerForXcode() {
+internal val AddBuildListenerForXCodeSetupAction = KotlinProjectSetupAction action@{
     if (!useXcodeMessageStyle) {
-        return
+        return@action
     }
 
     if (isConfigurationCacheRequested) {
         // TODO https://youtrack.jetbrains.com/issue/KT-55832
         // Configuration cache case will be supported later
-        return
+        return@action
     }
 
     gradle.addBuildListener(XcodeBuildErrorListener)
