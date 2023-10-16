@@ -878,7 +878,6 @@ internal object DevirtualizationAnalysis {
             val directEdgesCount = IntArrayList()
             val reversedEdgesCount = IntArrayList()
 
-            @OptIn(ExperimentalUnsignedTypes::class)
             private fun addEdge(from: Node, to: Node) {
                 val fromId = from.id
                 val toId = to.id
@@ -1263,7 +1262,7 @@ internal object DevirtualizationAnalysis {
                             node.constructor?.let {
                                 doCall(
                                         it,
-                                        @OptIn(ExperimentalStdlibApi::class) buildList {
+                                        buildList {
                                             add(instanceNode)
                                             node.arguments?.forEach { add(edgeToConstraintNode(it)) }
                                         },
