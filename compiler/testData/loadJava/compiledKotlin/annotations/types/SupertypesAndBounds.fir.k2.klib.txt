@@ -4,6 +4,6 @@
 }
 
 public abstract interface Foo<T : R|@R|test/A|()  kotlin/Number|> : R|@R|test/A|()  kotlin/io/Serializable| {
-    public abstract fun <E, F : R|E|> bar(): R|kotlin/Unit|
+    public abstract fun <E, F : R|@R|test/A|()  E|> bar(): R|kotlin/Unit|
 
 }

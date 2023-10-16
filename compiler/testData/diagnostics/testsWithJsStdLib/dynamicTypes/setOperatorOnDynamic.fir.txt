@@ -1,6 +1,6 @@
 FILE: setOperatorOnDynamic.fir.kt
     public final fun foo(): R|kotlin/Unit| {
-        lval x1: R|kotlin/Any| = R|kotlin/arrayOf|<R|kotlin/String|>().R|kotlin/collections/fold|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = fold@fun <anonymous>(res: R|kotlin/String|, key: R|kotlin/String|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+        lval x1: R|kotlin/Any| = R|kotlin/arrayOf|<R|kotlin/String|>().R|kotlin/collections/fold|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = fold@fun <anonymous>(res: R|@R|kotlin/ParameterName|(name = String(acc))  kotlin/String|, key: R|kotlin/String|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
             R|<local>/res|.R|kotlin/String.length|
             ^ R|<local>/res|
         }

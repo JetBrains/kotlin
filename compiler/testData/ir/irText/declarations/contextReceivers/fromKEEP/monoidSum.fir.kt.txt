@@ -44,7 +44,7 @@ object StringMonoid : Monoid<String> {
 }
 
 fun <T : Any?> List<T>.sum($context_receiver_0: Monoid<T>): T {
-  return <this>.fold<T, T>(initial = $context_receiver_0.<get-unit>(), operation = local fun <anonymous>(acc: T, e: T): T {
+  return <this>.fold<T, T>(initial = $context_receiver_0.<get-unit>(), operation = local fun <anonymous>(acc: @ParameterName(name = "acc") T, e: T): T {
     return ($context_receiver_0, acc).combine(other = e)
   }
 )

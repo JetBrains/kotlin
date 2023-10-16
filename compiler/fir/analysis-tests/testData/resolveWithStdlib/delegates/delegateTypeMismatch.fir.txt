@@ -19,7 +19,7 @@ FILE: delegateTypeMismatch.kt
             public get(): R|kotlin/Boolean|
 
         private final fun <T> property(initialValue: R|T|): R|kotlin/properties/ReadWriteProperty<A, T>| {
-            ^property Q|kotlin/properties/Delegates|.R|kotlin/properties/Delegates.vetoable|<R|T|>(R|<local>/initialValue|, <L> = vetoable@fun <anonymous>(<unused var>: R|@R|kotlin/ParameterName|(name = String(property))  kotlin/reflect/KProperty<*>|, <unused var>: R|T|, <unused var>: R|T|): R|kotlin/Boolean| <inline=CrossInline>  {
+            ^property Q|kotlin/properties/Delegates|.R|kotlin/properties/Delegates.vetoable|<R|T|>(R|<local>/initialValue|, <L> = vetoable@fun <anonymous>(<unused var>: R|@R|kotlin/ParameterName|(name = String(property))  kotlin/reflect/KProperty<*>|, <unused var>: R|@R|kotlin/ParameterName|(name = String(oldValue))  T|, <unused var>: R|@R|kotlin/ParameterName|(name = String(newValue))  T|): R|kotlin/Boolean| <inline=CrossInline>  {
                 ^ when () {
                     this@R|/A|.R|/A.isLocked| ->  {
                         throw R|java/lang/IllegalStateException.IllegalStateException|(String(Cannot modify readonly DescriptorRendererOptions))

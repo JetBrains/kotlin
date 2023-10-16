@@ -25,21 +25,21 @@
     @10:4..12:5 PROPERTY name:observableProp visibility:public modality:FINAL [delegated,var]
       @10:4..12:5 FIELD PROPERTY_DELEGATE name:observableProp$delegate type:kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.String> visibility:private [final]
         @10:44..12:5 EXPRESSION_BODY
-          @10:44..12:5 CALL 'public final fun observable <T> (initialValue: T of kotlin.properties.Delegates.observable, onChange: kotlin.Function3<@[ParameterName(name = 'property')] kotlin.reflect.KProperty<*>, T of kotlin.properties.Delegates.observable, T of kotlin.properties.Delegates.observable, kotlin.Unit>): kotlin.properties.ReadWriteProperty<kotlin.Any?, T of kotlin.properties.Delegates.observable> [inline] declared in kotlin.properties.Delegates' type=kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.String> origin=null
+          @10:44..12:5 CALL 'public final fun observable <T> (initialValue: T of kotlin.properties.Delegates.observable, onChange: kotlin.Function3<@[ParameterName(name = 'property')] kotlin.reflect.KProperty<*>, @[ParameterName(name = 'oldValue')] T of kotlin.properties.Delegates.observable, @[ParameterName(name = 'newValue')] T of kotlin.properties.Delegates.observable, kotlin.Unit>): kotlin.properties.ReadWriteProperty<kotlin.Any?, T of kotlin.properties.Delegates.observable> [inline] declared in kotlin.properties.Delegates' type=kotlin.properties.ReadWriteProperty<kotlin.Any?, kotlin.String> origin=null
             @10:34..43 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Delegates modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.properties.Delegates
             @10:55..63 CONST String type=kotlin.String value="<none>"
-            @10:65..12:5 FUN_EXPR type=kotlin.Function3<@[ParameterName(name = 'property')] kotlin.reflect.KProperty<*>, kotlin.String, kotlin.String, kotlin.Unit> origin=LAMBDA
-              @10:65..12:5 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (prop:@[ParameterName(name = 'property')] kotlin.reflect.KProperty<*>, old:kotlin.String, new:kotlin.String) returnType:kotlin.Unit
+            @10:65..12:5 FUN_EXPR type=kotlin.Function3<@[ParameterName(name = 'property')] kotlin.reflect.KProperty<*>, @[ParameterName(name = 'oldValue')] kotlin.String, @[ParameterName(name = 'newValue')] kotlin.String, kotlin.Unit> origin=LAMBDA
+              @10:65..12:5 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (prop:@[ParameterName(name = 'property')] kotlin.reflect.KProperty<*>, old:@[ParameterName(name = 'oldValue')] kotlin.String, new:@[ParameterName(name = 'newValue')] kotlin.String) returnType:kotlin.Unit
                 @10:67..71 VALUE_PARAMETER name:prop index:0 type:@[ParameterName(name = 'property')] kotlin.reflect.KProperty<*>
-                @10:73..76 VALUE_PARAMETER name:old index:1 type:kotlin.String
-                @10:78..81 VALUE_PARAMETER name:new index:2 type:kotlin.String
+                @10:73..76 VALUE_PARAMETER name:old index:1 type:@[ParameterName(name = 'oldValue')] kotlin.String
+                @10:78..81 VALUE_PARAMETER name:new index:2 type:@[ParameterName(name = 'newValue')] kotlin.String
                 @11:8..37 BLOCK_BODY
                   @11:8..37 CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
                     @11:16..36 STRING_CONCATENATION type=kotlin.String
                       @11:17..21 CONST String type=kotlin.String value="Was "
-                      @11:22..25 GET_VAR 'old: kotlin.String declared in <root>.MyClass.observableProp$delegate.<anonymous>' type=kotlin.String origin=null
+                      @11:22..25 GET_VAR 'old: @[ParameterName(name = 'oldValue')] kotlin.String declared in <root>.MyClass.observableProp$delegate.<anonymous>' type=@[ParameterName(name = 'oldValue')] kotlin.String origin=null
                       @11:25..31 CONST String type=kotlin.String value=", now "
-                      @11:32..35 GET_VAR 'new: kotlin.String declared in <root>.MyClass.observableProp$delegate.<anonymous>' type=kotlin.String origin=null
+                      @11:32..35 GET_VAR 'new: @[ParameterName(name = 'newValue')] kotlin.String declared in <root>.MyClass.observableProp$delegate.<anonymous>' type=@[ParameterName(name = 'newValue')] kotlin.String origin=null
       @10:4..12:5 FUN DELEGATED_PROPERTY_ACCESSOR name:<get-observableProp> visibility:public modality:FINAL <> ($this:<root>.MyClass) returnType:kotlin.String
         @10:4..12:5 VALUE_PARAMETER name:<this> type:<root>.MyClass
         @10:34..12:5 BLOCK_BODY

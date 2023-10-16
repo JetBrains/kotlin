@@ -434,12 +434,12 @@ FILE: metaSerializable.kt
         lval reconstructed: R|Project2| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Project2|>(Q|Project2|.R|/Project2.Companion.serializer|(), R|<local>/string|)
         R|kotlin/test/assertEquals|<R|kotlin/String|>(String(name), R|<local>/reconstructed|.R|/Project2.name|)
         R|kotlin/test/assertEquals|<R|kotlin/String|>(String(lang), R|<local>/reconstructed|.R|/Project2.language|)
-        lval info: R|MySerializableWithInfo| = Q|Project2|.R|/Project2.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
+        lval info: R|@NoInfer MySerializableWithInfo| = Q|Project2|.R|/Project2.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(123), R|<local>/info|.R|/MySerializableWithInfo.value|)
         R|kotlin/test/assertEquals|<R|kotlin/reflect/KClass<out kotlin/Any>|>(<getClass>(Q|kotlin/String|), R|<local>/info|.R|/MySerializableWithInfo.kclass|)
     }
     public final fun testMetaSerializableOnProperty(): R|kotlin/Unit| {
-        lval info: R|MySerializableWithInfo| = Q|Wrapper|.R|/Wrapper.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.getElementAnnotations|(Int(0)).R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
+        lval info: R|@NoInfer MySerializableWithInfo| = Q|Wrapper|.R|/Wrapper.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.getElementAnnotations|(Int(0)).R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(234), R|<local>/info|.R|/MySerializableWithInfo.value|)
         R|kotlin/test/assertEquals|<R|kotlin/reflect/KClass<out kotlin/Any>|>(<getClass>(Q|kotlin/Int|), R|<local>/info|.R|/MySerializableWithInfo.kclass|)
     }
@@ -449,7 +449,7 @@ FILE: metaSerializable.kt
         lval reconstructed: R|Project3| = Q|kotlinx/serialization/json/Json|.R|kotlinx/serialization/json/Json.decodeFromString|<R|Project3|>(Q|Project3|.R|/Project3.Companion.serializer|(), R|<local>/string|)
         R|kotlin/test/assertEquals|<R|kotlin/String|>(String(name), R|<local>/reconstructed|.R|/Project3.name|)
         R|kotlin/test/assertEquals|<R|kotlin/String|>(String(lang), R|<local>/reconstructed|.R|/Project3.language|)
-        lval info: R|MySerializableWithInfo| = Q|Project3|.R|/Project3.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
+        lval info: R|@NoInfer MySerializableWithInfo| = Q|Project3|.R|/Project3.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(123), R|<local>/info|.R|/MySerializableWithInfo.value|)
         R|kotlin/test/assertEquals|<R|kotlin/reflect/KClass<out kotlin/Any>|>(<getClass>(Q|kotlin/String|), R|<local>/info|.R|/MySerializableWithInfo.kclass|)
     }
@@ -465,8 +465,8 @@ FILE: metaSerializable.kt
         lval serializerB: R|kotlinx/serialization/KSerializer<TestSealed.B>| = Q|TestSealed.B|.R|/TestSealed.B.Companion.serializer|()
         R|kotlin/test/assertNotNull|<R|kotlinx/serialization/KSerializer<TestSealed.A>|>(R|<local>/serializerA|)
         R|kotlin/test/assertNotNull|<R|kotlinx/serialization/KSerializer<TestSealed.B>|>(R|<local>/serializerB|)
-        lval infoA: R|MySerializableWithInfo| = R|<local>/serializerA|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
-        lval infoB: R|MySerializableWithInfo| = R|<local>/serializerB|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
+        lval infoA: R|@NoInfer MySerializableWithInfo| = R|<local>/serializerA|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
+        lval infoB: R|@NoInfer MySerializableWithInfo| = R|<local>/serializerB|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(123), R|<local>/infoA|.R|/MySerializableWithInfo.value|)
         R|kotlin/test/assertEquals|<R|kotlin/reflect/KClass<out kotlin/Any>|>(<getClass>(Q|kotlin/String|), R|<local>/infoA|.R|/MySerializableWithInfo.kclass|)
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(123), R|<local>/infoB|.R|/MySerializableWithInfo.value|)
@@ -477,8 +477,8 @@ FILE: metaSerializable.kt
         lval serializerB: R|kotlinx/serialization/KSerializer<TestAbstract.B>| = Q|TestAbstract.B|.R|/TestAbstract.B.Companion.serializer|()
         R|kotlin/test/assertNotNull|<R|kotlinx/serialization/KSerializer<TestAbstract.A>|>(R|<local>/serializerA|)
         R|kotlin/test/assertNotNull|<R|kotlinx/serialization/KSerializer<TestAbstract.B>|>(R|<local>/serializerB|)
-        lval infoA: R|MySerializableWithInfo| = R|<local>/serializerA|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
-        lval infoB: R|MySerializableWithInfo| = R|<local>/serializerB|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
+        lval infoA: R|@NoInfer MySerializableWithInfo| = R|<local>/serializerA|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
+        lval infoB: R|@NoInfer MySerializableWithInfo| = R|<local>/serializerB|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(123), R|<local>/infoA|.R|/MySerializableWithInfo.value|)
         R|kotlin/test/assertEquals|<R|kotlin/reflect/KClass<out kotlin/Any>|>(<getClass>(Q|kotlin/String|), R|<local>/infoA|.R|/MySerializableWithInfo.kclass|)
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(123), R|<local>/infoB|.R|/MySerializableWithInfo.value|)
@@ -487,14 +487,14 @@ FILE: metaSerializable.kt
     public final fun testEnum(): R|kotlin/Unit| {
         lval serializer: R|kotlinx/serialization/KSerializer<TestEnum>| = Q|TestEnum|.R|/TestEnum.Companion.serializer|()
         R|kotlin/test/assertNotNull|<R|kotlinx/serialization/KSerializer<TestEnum>|>(R|<local>/serializer|)
-        lval info: R|MySerializableWithInfo| = R|<local>/serializer|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
+        lval info: R|@NoInfer MySerializableWithInfo| = R|<local>/serializer|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(123), R|<local>/info|.R|/MySerializableWithInfo.value|)
         R|kotlin/test/assertEquals|<R|kotlin/reflect/KClass<out kotlin/Any>|>(<getClass>(Q|kotlin/String|), R|<local>/info|.R|/MySerializableWithInfo.kclass|)
     }
     public final fun testObject(): R|kotlin/Unit| {
         lval serializer: R|kotlinx/serialization/KSerializer<TestObject>| = Q|TestObject|.R|/TestObject.serializer|()
         R|kotlin/test/assertNotNull|<R|kotlinx/serialization/KSerializer<TestObject>|>(R|<local>/serializer|)
-        lval info: R|MySerializableWithInfo| = R|<local>/serializer|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|MySerializableWithInfo|>()
+        lval info: R|@NoInfer MySerializableWithInfo| = R|<local>/serializer|.R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlinx/serialization/descriptors/SerialDescriptor.annotations|.R|kotlin/collections/filterIsInstance|<R|MySerializableWithInfo|>().R|kotlin/collections/first|<R|@NoInfer MySerializableWithInfo|>()
         R|kotlin/test/assertEquals|<R|kotlin/Int|>(Int(123), R|<local>/info|.R|/MySerializableWithInfo.value|)
         R|kotlin/test/assertEquals|<R|kotlin/reflect/KClass<out kotlin/Any>|>(<getClass>(Q|kotlin/String|), R|<local>/info|.R|/MySerializableWithInfo.kclass|)
     }
