@@ -104,7 +104,6 @@ sealed class Field(
     abstract val baseDefaultValue: CodeBlock?
     var isOverride = false
     var needsDescriptorApiAnnotation = false
-    abstract val transformable: Boolean
     var passViaConstructorParameter = false
     val initializeToThis = (config as? SimpleFieldConfig)?.initializeToThis ?: false
 
@@ -125,8 +124,8 @@ class SingleField(
     isChild: Boolean,
     override val baseDefaultValue: CodeBlock?,
 ) : Field(config, name, nullable, mutable, isChild) {
-    override val transformable: Boolean
-        get() = mutable
+    val backingFieldName: String
+        get() = "_$name"
 }
 
 class ListField(
@@ -137,7 +136,6 @@ class ListField(
     nullable: Boolean,
     mutable: Boolean,
     isChild: Boolean,
-    override val transformable: Boolean,
     override val baseDefaultValue: CodeBlock?,
 ) : Field(config, name, nullable, mutable, isChild) {
     override val type: TypeRef

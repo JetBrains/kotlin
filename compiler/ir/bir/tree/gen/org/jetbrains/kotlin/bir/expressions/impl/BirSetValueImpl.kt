@@ -22,7 +22,21 @@ class BirSetValueImpl(
     override var type: BirType,
     override var symbol: BirValueDeclaration,
     override var origin: IrStatementOrigin?,
-    override var value: BirExpression,
+    value: BirExpression,
 ) : BirSetValue() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _value: BirExpression = value
+
+    override var value: BirExpression
+        get() = _value
+        set(value) {
+            if (_value != value) {
+                replaceChild(_value, value)
+                _value = value
+            }
+        }
+    init {
+        initChild(_value)
+    }
 }

@@ -18,7 +18,21 @@ class BirGetClassImpl(
     override var sourceSpan: SourceSpan,
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
-    override var argument: BirExpression,
+    argument: BirExpression,
 ) : BirGetClass() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _argument: BirExpression = argument
+
+    override var argument: BirExpression
+        get() = _argument
+        set(value) {
+            if (_argument != value) {
+                replaceChild(_argument, value)
+                _argument = value
+            }
+        }
+    init {
+        initChild(_argument)
+    }
 }

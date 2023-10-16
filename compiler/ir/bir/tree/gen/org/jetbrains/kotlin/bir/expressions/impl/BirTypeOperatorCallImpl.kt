@@ -20,8 +20,22 @@ class BirTypeOperatorCallImpl(
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var operator: IrTypeOperator,
-    override var argument: BirExpression,
+    argument: BirExpression,
     override var typeOperand: BirType,
 ) : BirTypeOperatorCall() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _argument: BirExpression = argument
+
+    override var argument: BirExpression
+        get() = _argument
+        set(value) {
+            if (_argument != value) {
+                replaceChild(_argument, value)
+                _argument = value
+            }
+        }
+    init {
+        initChild(_argument)
+    }
 }

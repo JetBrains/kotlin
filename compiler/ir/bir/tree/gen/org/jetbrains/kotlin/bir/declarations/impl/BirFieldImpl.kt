@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirField
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -30,7 +29,6 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
@@ -38,6 +36,20 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
     override var type: BirType,
     override var isFinal: Boolean,
     override var isStatic: Boolean,
-    override var initializer: BirExpressionBody?,
+    initializer: BirExpressionBody?,
     override var correspondingPropertySymbol: BirPropertySymbol?,
-) : BirField()
+) : BirField() {
+    private var _initializer: BirExpressionBody? = initializer
+
+    override var initializer: BirExpressionBody?
+        get() = _initializer
+        set(value) {
+            if (_initializer != value) {
+                replaceChild(_initializer, value)
+                _initializer = value
+            }
+        }
+    init {
+        initChild(_initializer)
+    }
+}

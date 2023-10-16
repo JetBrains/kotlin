@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.declarationContainer]
  */
 interface BirDeclarationContainer : BirDeclarationParent {
-    val declarations: MutableList<BirDeclaration>
+    val declarations: BirChildElementList<BirDeclaration>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         declarations.forEach { it.accept(data, visitor) }

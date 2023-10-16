@@ -23,8 +23,22 @@ class BirGetFieldImpl(
     override var type: BirType,
     override var symbol: BirFieldSymbol,
     override var superQualifierSymbol: BirClassSymbol?,
-    override var receiver: BirExpression?,
+    receiver: BirExpression?,
     override var origin: IrStatementOrigin?,
 ) : BirGetField() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _receiver: BirExpression? = receiver
+
+    override var receiver: BirExpression?
+        get() = _receiver
+        set(value) {
+            if (_receiver != value) {
+                replaceChild(_receiver, value)
+                _receiver = value
+            }
+        }
+    init {
+        initChild(_receiver)
+    }
 }

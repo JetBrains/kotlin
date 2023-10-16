@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirFile
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
@@ -20,5 +21,6 @@ class BirModuleFragmentImpl(
     override val descriptor: ModuleDescriptor,
     override val name: Name,
     override val irBuiltins: IrBuiltIns,
-    override val files: MutableList<BirFile>,
-) : BirModuleFragment()
+) : BirModuleFragment() {
+    override val files: BirChildElementList<BirFile> = BirChildElementList(this)
+}

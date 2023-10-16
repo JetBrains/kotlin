@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -23,14 +24,42 @@ class BirPropertyReferenceImpl(
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var symbol: BirPropertySymbol,
-    override var dispatchReceiver: BirExpression?,
-    override var extensionReceiver: BirExpression?,
+    dispatchReceiver: BirExpression?,
+    extensionReceiver: BirExpression?,
     override var origin: IrStatementOrigin?,
-    override val valueArguments: Array<BirExpression?>,
     override val typeArguments: Array<BirType?>,
     override var field: BirFieldSymbol?,
     override var getter: BirSimpleFunctionSymbol?,
     override var setter: BirSimpleFunctionSymbol?,
 ) : BirPropertyReference() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _dispatchReceiver: BirExpression? = dispatchReceiver
+
+    override var dispatchReceiver: BirExpression?
+        get() = _dispatchReceiver
+        set(value) {
+            if (_dispatchReceiver != value) {
+                replaceChild(_dispatchReceiver, value)
+                _dispatchReceiver = value
+            }
+        }
+
+    private var _extensionReceiver: BirExpression? = extensionReceiver
+
+    override var extensionReceiver: BirExpression?
+        get() = _extensionReceiver
+        set(value) {
+            if (_extensionReceiver != value) {
+                replaceChild(_extensionReceiver, value)
+                _extensionReceiver = value
+            }
+        }
+
+    override val valueArguments: BirChildElementList<BirExpression?> =
+            BirChildElementList(this)
+    init {
+        initChild(_dispatchReceiver)
+        initChild(_extensionReceiver)
+    }
 }
