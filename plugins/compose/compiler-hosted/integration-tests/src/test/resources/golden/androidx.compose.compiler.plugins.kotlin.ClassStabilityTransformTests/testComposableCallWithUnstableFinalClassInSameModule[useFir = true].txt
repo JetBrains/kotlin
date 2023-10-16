@@ -1,0 +1,51 @@
+
+            import androidx.compose.runtime.Composable
+
+            class Foo(var bar: Int = 0)
+            @Composable fun A(y: Int, x: Foo) {
+                used(y)
+                B(x)
+            }
+            @Composable fun B(x: Any) {
+                used(x)
+            }
+        
+/********
+ * TRANSFORMED
+ ********/
+
+@StabilityInferred(parameters = 0)
+class Foo(var bar: Int = 0) {
+  static val %stable: Int = 8
+}
+@Composable
+fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)P(1)<B(x)>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  used(y)
+  B(x, %composer, 0b1000)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(y, x, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
+@Composable
+fun B(x: Any, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(B):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  used(x)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    B(x, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

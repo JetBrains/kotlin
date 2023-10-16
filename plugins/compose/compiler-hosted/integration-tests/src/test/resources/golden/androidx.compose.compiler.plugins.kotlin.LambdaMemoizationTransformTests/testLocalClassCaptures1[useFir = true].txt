@@ -1,0 +1,47 @@
+
+            import androidx.compose.runtime.NonRestartableComposable
+            import androidx.compose.runtime.Composable
+
+            @NonRestartableComposable
+            @Composable
+            fun Err(y: Int, z: Int) {
+                class Local {
+                    val w = z
+                    fun something(x: Int): Int { return x + y + w }
+                }
+                {
+                  Local().something(2)
+                }
+            }
+        
+/********
+ * TRANSFORMED
+ ********/
+
+@NonRestartableComposable
+@Composable
+fun Err(y: Int, z: Int, %composer: Composer?, %changed: Int) {
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "C(Err):Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  class Local {
+    val w: Int = z
+    fun something(x: Int): Int {
+      return x + y + w
+    }
+  }
+  %composer.startReplaceableGroup(<>)
+  val tmpCache = %composer.cache(%composer.changed(y) or %composer.changed(z)) {
+    {
+      Local().something(2)
+    }
+  }
+  %composer.endReplaceableGroup()
+  tmpCache
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceableGroup()
+}

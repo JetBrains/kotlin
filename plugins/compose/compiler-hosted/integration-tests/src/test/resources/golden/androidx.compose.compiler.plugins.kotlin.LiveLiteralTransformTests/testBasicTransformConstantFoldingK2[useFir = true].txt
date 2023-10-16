@@ -1,0 +1,33 @@
+import androidx.compose.runtime.Composable
+
+    fun A() {
+        print(3 + 4)
+    }
+
+/********
+ * TRANSFORMED
+ ********/
+
+fun A() {
+  print(LiveLiterals%TestKt.Int%arg-0%call-print%fun-A())
+}
+@LiveLiteralFileInfo(file = "/Test.kt")
+internal object LiveLiterals%TestKt {
+  val Int%arg-0%call-print%fun-A: Int = 7
+  var State%Int%arg-0%call-print%fun-A: State<Int>?
+  @LiveLiteralInfo(key = "Int%arg-0%call-print%fun-A", offset = 74)
+  fun Int%arg-0%call-print%fun-A(): Int {
+    if (!isLiveLiteralsEnabled) {
+      return Int%arg-0%call-print%fun-A
+    }
+    val tmp0 = State%Int%arg-0%call-print%fun-A
+    return if (tmp0 == null) {
+      val tmp1 = liveLiteral("Int%arg-0%call-print%fun-A", Int%arg-0%call-print%fun-A)
+      State%Int%arg-0%call-print%fun-A = tmp1
+      tmp1
+    } else {
+      tmp0
+    }
+    .value
+  }
+}

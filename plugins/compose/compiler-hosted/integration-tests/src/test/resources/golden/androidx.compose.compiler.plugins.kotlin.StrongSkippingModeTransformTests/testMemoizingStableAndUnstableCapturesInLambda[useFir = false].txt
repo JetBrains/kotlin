@@ -1,0 +1,50 @@
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.ReadOnlyComposable
+
+
+@Composable
+fun Test() {
+    val foo = Foo(0)
+    val bar = Bar(1)
+    val lambda = {
+        foo
+        bar
+    }
+}
+
+/********
+ * TRANSFORMED
+ ********/
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    val foo = Foo(0)
+    val bar = Bar(1)
+    val lambda = <block>{
+      %composer.startReplaceableGroup(<>)
+      val tmpCache = %composer.cache(%composer.changedInstance(foo) or %composer.changed(bar)) {
+        {
+          foo
+          bar
+        }
+      }
+      %composer.endReplaceableGroup()
+      tmpCache
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

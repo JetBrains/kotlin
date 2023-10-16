@@ -1,0 +1,39 @@
+
+            import androidx.compose.runtime.*
+
+            @Composable
+            private fun Test(param: String?): String? {
+                InlineNonComposable {
+                    repeat(10) {
+                        Test("InsideInline")
+                    }
+                }
+                return Test("AfterInline")
+            }
+        
+/********
+ * TRANSFORMED
+ ********/
+
+@Composable
+private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "C(Test)<Test("...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "*<Test("...>")
+  InlineNonComposable {
+    repeat(10) { it: Int ->
+      Test("InsideInline", %composer, 0b0110)
+    }
+  }
+  %composer.endReplaceableGroup()
+  val tmp0 = Test("AfterInline", %composer, 0b0110)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceableGroup()
+  return tmp0
+}
