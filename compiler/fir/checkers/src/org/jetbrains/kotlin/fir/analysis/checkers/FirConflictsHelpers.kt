@@ -153,11 +153,20 @@ class FirDeclarationCollector<D : FirBasedSymbol<*>>(
 fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirRegularClassSymbol) {
     val otherDeclarations = mutableMapOf<String, MutableList<FirBasedSymbol<*>>>()
     val functionDeclarations = mutableMapOf<String, MutableList<FirBasedSymbol<*>>>()
-    val scope = klass.unsubstitutedScope(context)
+    val declaredMemberScope = klass.declaredMemberScope(context)
+    val unsubstitutedScope = klass.unsubstitutedScope(context)
 
-    scope.collectLeafFunctions().forEach {
-        if (it.isCollectable() && it.isVisibleInClass(klass)) {
-            collect(it, FirRedeclarationPresenter.represent(it), functionDeclarations)
+    declaredMemberScope.processAllFunctions { declaredFunction ->
+        if (!declaredFunction.isCollectable()) {
+            return@processAllFunctions
+        }
+
+        collect(declaredFunction, FirRedeclarationPresenter.represent(declaredFunction), functionDeclarations)
+
+        unsubstitutedScope.collectLeafFunctionsByName(declaredFunction.name).forEach { anotherFunction ->
+            if (anotherFunction != declaredFunction && anotherFunction.isCollectable() && anotherFunction.isVisibleInClass(klass)) {
+                collect(anotherFunction, FirRedeclarationPresenter.represent(anotherFunction), functionDeclarations)
+            }
         }
     }
 
@@ -167,25 +176,24 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirReg
     // with functions from this outer class,
     // so we should avoid checking them twice.
     if (context.isTopLevel) {
-        scope.processDeclaredConstructors {
+        unsubstitutedScope.processDeclaredConstructors {
             if (it.isCollectable() && it.isVisibleInClass(klass)) {
                 collect(it, FirRedeclarationPresenter.represent(it, klass), functionDeclarations)
             }
         }
     }
 
-    val visitedProperties = mutableSetOf<FirVariableSymbol<*>>()
-
-    scope.collectLeafProperties().forEach {
-        if (it.isCollectable() && it.isVisibleInClass(klass)) {
-            collect(it, FirRedeclarationPresenter.represent(it), otherDeclarations)
+    declaredMemberScope.processAllProperties { declaredProperty ->
+        if (!declaredProperty.isCollectable()) {
+            return@processAllProperties
         }
-        visitedProperties.add(it)
-    }
 
-    klass.declaredMemberScope(context).processAllProperties {
-        if (it !in visitedProperties && it.isCollectable()) {
-            collect(it, FirRedeclarationPresenter.represent(it), otherDeclarations)
+        collect(declaredProperty, FirRedeclarationPresenter.represent(declaredProperty), otherDeclarations)
+
+        unsubstitutedScope.collectLeafPropertiesByName(declaredProperty.name).forEach { anotherProperty ->
+            if (anotherProperty != declaredProperty && anotherProperty.isCollectable() && anotherProperty.isVisibleInClass(klass)) {
+                collect(anotherProperty, FirRedeclarationPresenter.represent(anotherProperty), otherDeclarations)
+            }
         }
     }
 
@@ -216,24 +224,29 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirReg
         }
     }
 
-    val visitedClassifiers = mutableSetOf<FirClassifierSymbol<*>>()
-
-    scope.processAllClassifiers {
-        processClassifier(it)
-        visitedClassifiers.add(it)
-    }
-
     // Scopes refer to inner classifiers
     // through maps indexed by names,
     // so only the last declaration is
     // observed when processing all
     // classifiers
-    for (it in klass.declarationSymbols) {
-        if (it is FirClassifierSymbol<*> && it !in visitedClassifiers) {
-            processClassifier(it)
+    for (declaredClassifier in klass.declarationSymbols) {
+        if (declaredClassifier is FirClassifierSymbol<*>) {
+            processClassifier(declaredClassifier)
+
+            unsubstitutedScope.processClassifiersByName(declaredClassifier.name) { anotherClassifier ->
+                if (anotherClassifier != declaredClassifier) {
+                    processClassifier(anotherClassifier)
+                }
+            }
         }
     }
 }
+
+private val FirClassifierSymbol<*>.name: Name
+    get() = when (this) {
+        is FirClassLikeSymbol -> name
+        is FirTypeParameterSymbol -> name
+    }
 
 fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContext): Map<FirFunctionSymbol<*>, Set<FirBasedSymbol<*>>> {
     val collectables =
