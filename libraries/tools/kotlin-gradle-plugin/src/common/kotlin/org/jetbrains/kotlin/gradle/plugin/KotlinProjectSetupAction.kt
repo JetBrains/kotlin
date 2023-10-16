@@ -1,3 +1,5 @@
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
@@ -12,6 +14,10 @@ internal fun interface KotlinProjectSetupAction {
     companion object {
         val extensionPoint = KotlinGradlePluginExtensionPoint<KotlinProjectSetupAction>()
     }
+}
+
+internal fun KotlinProjectSetupCoroutine(action: suspend Project.() -> Unit) = KotlinProjectSetupAction {
+    project.launch { action() }
 }
 
 internal fun Project.runKotlinProjectSetupActions() {
