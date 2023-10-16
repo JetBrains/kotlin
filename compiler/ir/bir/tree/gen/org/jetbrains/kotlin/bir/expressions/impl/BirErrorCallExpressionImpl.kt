@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 
 class BirErrorCallExpressionImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var description: String,
     explicitReceiver: BirExpression?,

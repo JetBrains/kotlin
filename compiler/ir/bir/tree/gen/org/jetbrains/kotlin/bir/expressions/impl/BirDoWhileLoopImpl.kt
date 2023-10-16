@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirDoWhileLoopImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var origin: IrStatementOrigin?,
     body: BirExpression?,

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 
 class BirConstantObjectImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var constructor: BirConstructorSymbol,
     override val typeArguments: MutableList<BirType>,
