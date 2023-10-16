@@ -471,6 +471,7 @@ internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisC
                     useSiteTarget = null,
                     arguments = value.getKtNamedAnnotationArguments(analysisContext),
                     index = null,
+                    emptyVarargParameter = null
                 )
             )
         }
@@ -624,6 +625,7 @@ internal fun AnnotationDescriptor.toKtAnnotationApplication(
     useSiteTarget = useSiteTarget,
     arguments = getKtNamedAnnotationArguments(analysisContext),
     index = index,
+    emptyVarargParameter = null
 )
 
 internal fun AnnotationDescriptor.toKtAnnotationInfo(index: Int): KtAnnotationApplicationInfo = KtAnnotationApplicationInfo(

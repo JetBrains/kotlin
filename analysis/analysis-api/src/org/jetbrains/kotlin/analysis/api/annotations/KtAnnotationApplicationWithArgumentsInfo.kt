@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.annotations
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 
 /**
@@ -17,12 +18,12 @@ public data class KtAnnotationApplicationWithArgumentsInfo(
     override val classId: ClassId?,
     override val psi: KtCallElement?,
     override val useSiteTarget: AnnotationUseSiteTarget?,
-
     /**
      * A list of annotation arguments which were applied when constructing annotation. Every argument is [KtAnnotationValue]
      */
     public val arguments: List<KtNamedAnnotationValue>,
     override val index: Int?,
+    public val emptyVarargParameter: Name?,
 ) : KtAnnotationApplication {
     override val isCallWithArguments: Boolean get() = arguments.isNotEmpty()
 }

@@ -22,20 +22,13 @@ import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.JvmStandardClassIds
@@ -88,13 +81,18 @@ internal fun FirAnnotation.toKtAnnotationApplication(
         mapAnnotationParameters(this),
         useSiteSession,
     )
-): KtAnnotationApplicationWithArgumentsInfo = KtAnnotationApplicationWithArgumentsInfo(
-    classId = toAnnotationClassId(useSiteSession),
-    psi = psi as? KtCallElement,
-    useSiteTarget = useSiteTarget,
-    arguments = arguments,
-    index = index,
-)
+): KtAnnotationApplicationWithArgumentsInfo {
+    val params = (this as? FirAnnotationCall)?.calleeReference?.toResolvedFunctionSymbol()?.valueParameterSymbols
+    val emptyVarargParameter = params?.firstOrNull { it.isVararg }?.name?.takeIf { it !in argumentMapping.mapping }
+    return KtAnnotationApplicationWithArgumentsInfo(
+        classId = toAnnotationClassId(useSiteSession),
+        psi = psi as? KtCallElement,
+        useSiteTarget = useSiteTarget,
+        arguments = arguments,
+        index = index,
+        emptyVarargParameter = emptyVarargParameter
+    )
+}
 
 internal fun FirAnnotation.toKtAnnotationInfo(
     useSiteSession: FirSession,

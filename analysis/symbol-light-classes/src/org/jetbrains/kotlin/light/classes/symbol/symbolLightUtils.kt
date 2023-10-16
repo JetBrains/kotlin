@@ -203,7 +203,9 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
         SymbolLightSimpleAnnotation(
             fqName = annotationValue.classId?.asFqNameString(),
             parent = parent,
-            arguments = annotationValue.arguments,
+            arguments = annotationValue.emptyVarargParameter?.let {
+                annotationValue.arguments + KtNamedAnnotationValue(it, KtArrayAnnotationValue(emptyList(), null))
+            } ?: annotationValue.arguments,
             kotlinOrigin = annotationValue.psi,
         )
 

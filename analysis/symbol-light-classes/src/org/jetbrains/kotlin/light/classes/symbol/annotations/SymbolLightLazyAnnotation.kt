@@ -9,6 +9,8 @@ import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtArrayAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -39,8 +41,14 @@ internal class SymbolLightLazyAnnotation(
     override fun getQualifiedName(): String = fqName.asString()
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
-        if (annotationApplication.isCallWithArguments) {
-            symbolLightAnnotationParameterList { annotationApplicationWithArgumentsInfo.value.arguments }
+        if (annotationApplication.isCallWithArguments || annotationApplicationWithArgumentsInfo.value.emptyVarargParameter != null) {
+            symbolLightAnnotationParameterList {
+                var args = annotationApplicationWithArgumentsInfo.value.arguments
+                annotationApplicationWithArgumentsInfo.value.emptyVarargParameter?.let {
+                    args += KtNamedAnnotationValue(it, KtArrayAnnotationValue(emptyList(), null))
+                }
+                args
+            }
         } else {
             symbolLightAnnotationParameterList()
         }

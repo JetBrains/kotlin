@@ -56,6 +56,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("annotationWithVaragArguments.kt")
+    public void testAnnotationWithVaragArguments() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotationWithVaragArguments.kt");
+    }
+
+    @Test
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/annotations.kt");

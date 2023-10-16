@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -132,6 +133,8 @@ internal object FirAnnotationValueConverter {
                             resolvedArgumentMapping?.entries?.forEach { (arg, param) ->
                                 resultMap[param.name] = arg
                             }
+                            val params = calleeReference.toResolvedFunctionSymbol()?.valueParameterSymbols
+                            val emptyVarargParameter = params?.firstOrNull { it.isVararg && it.name !in resultMap }?.name
 
                             KtAnnotationApplicationValue(
                                 KtAnnotationApplicationWithArgumentsInfo(
@@ -140,6 +143,7 @@ internal object FirAnnotationValueConverter {
                                     useSiteTarget = null,
                                     toNamedConstantValue(resultMap, session),
                                     index = null,
+                                    emptyVarargParameter = emptyVarargParameter,
                                 )
                             )
                         } else null

@@ -43,6 +43,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     }
 
     @Test
+    @TestMetadata("annotationWithVaragArguments.kt")
+    public void testAnnotationWithVaragArguments() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/annotationWithVaragArguments.kt");
+    }
+
+    @Test
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/annotations.kt");
