@@ -13,6 +13,7 @@ import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.KTypeProjection
+import kotlin.reflect.KVariance
 
 object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
     const val BASE_PACKAGE = "org.jetbrains.kotlin.fir.analysis.diagnostics"
@@ -116,6 +117,11 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         if (typeArgumentType == null) {
             print("*")
         } else {
+            when (typeArgument.variance) {
+                KVariance.INVARIANT, null -> {}
+                KVariance.IN -> print("in ")
+                KVariance.OUT -> print("out ")
+            }
             printType(typeArgumentType)
         }
     }

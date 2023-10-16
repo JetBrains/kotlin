@@ -105,11 +105,3 @@ val ExpectActualCompatibility<*>.isCompatibleOrWeaklyIncompatible: Boolean
 
 val ExpectActualCompatibility<*>.compatible: Boolean
     get() = this == ExpectActualCompatibility.Compatible
-
-@OptIn(ExperimentalContracts::class)
-fun ExpectActualCompatibility<*>.isIncompatible(): Boolean {
-    contract {
-        returns(true) implies (this@isIncompatible is ExpectActualCompatibility.Incompatible<*>)
-    }
-    return !compatible
-}
