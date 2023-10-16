@@ -91,6 +91,24 @@ class BodyResolveContext(
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
 
     /**
+     * This is required to avoid changing current mode into [FirTowerDataMode.CLASS_HEADER_ANNOTATIONS].
+     * E.g., we can visit the same annotation in two ways – during a class visiting and outside of this class
+     */
+    @set:PrivateForInline
+    var insideClassHeader: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun insideClassHeader(action: () -> Unit) {
+        val old = insideClassHeader
+        insideClassHeader = true
+        try {
+            action()
+        } finally {
+            insideClassHeader = old
+        }
+    }
+
+    /**
      * CS for an outer type system if it's relevant, for example, in the case of `val x by myGenericDelegateCall()`,
      * relevant `getValue` call is expected to be resolved in the context of an outer CS built from `myGenericDelegateCall()` and
      * probably using its type variables inside `getValue` candidates resolution.
@@ -751,8 +769,8 @@ class BodyResolveContext(
     inline fun <T> forAnnotation(
         f: () -> T
     ): T {
-        return when (containerIfAny) {
-            is FirRegularClass -> withTowerDataMode(FirTowerDataMode.CLASS_HEADER_ANNOTATIONS, f)
+        return when {
+            containerIfAny is FirRegularClass && !insideClassHeader -> withTowerDataMode(FirTowerDataMode.CLASS_HEADER_ANNOTATIONS, f)
             else -> f()
         }
     }

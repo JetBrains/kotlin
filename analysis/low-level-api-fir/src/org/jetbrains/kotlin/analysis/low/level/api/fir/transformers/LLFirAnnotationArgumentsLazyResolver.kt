@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodie
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveCon
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsResolveTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.util.PrivateForInline
 
 internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) {
     override fun resolve(
@@ -154,9 +154,17 @@ private class LLFirAnnotationArgumentsTargetResolver(
 internal fun LLFirAbstractBodyTargetResolver.transformAnnotations(target: FirElementWithResolveState) {
     when {
         target is FirRegularClass -> transformer.declarationsTransformer?.let { declarationsTransformer ->
-            target.transformAnnotations(declarationsTransformer, ResolutionMode.ContextIndependent)
-            target.transformTypeParameters(declarationsTransformer, ResolutionMode.ContextIndependent)
-            target.transformSuperTypeRefs(declarationsTransformer, ResolutionMode.ContextIndependent)
+            if (this is LLFirAnnotationArgumentsTargetResolver) {
+                target.transformAnnotations(declarationsTransformer, ResolutionMode.ContextIndependent)
+                target.transformTypeParameters(declarationsTransformer, ResolutionMode.ContextIndependent)
+                target.transformSuperTypeRefs(declarationsTransformer, ResolutionMode.ContextIndependent)
+            } else {
+                declarationsTransformer.context.insideClassHeader {
+                    target.transformAnnotations(declarationsTransformer, ResolutionMode.ContextIndependent)
+                    target.transformTypeParameters(declarationsTransformer, ResolutionMode.ContextIndependent)
+                    target.transformSuperTypeRefs(declarationsTransformer, ResolutionMode.ContextIndependent)
+                }
+            }
         }
 
         target is FirScript -> {
