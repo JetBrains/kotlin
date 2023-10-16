@@ -113,7 +113,7 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(
 internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportIncompatibleExpectActual(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    incompatibility: ExpectActualCompatibility.Incompatible<*>
+    incompatibility: ExpectActualCompatibility.MismatchOrIncompatible<*>
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration

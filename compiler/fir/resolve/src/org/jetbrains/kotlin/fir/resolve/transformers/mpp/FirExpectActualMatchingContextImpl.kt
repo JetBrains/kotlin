@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -450,7 +451,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             return symbol.source == null && symbol.origin !is FirDeclarationOrigin.Plugin
         }
 
-    override fun onMatchedMembers(
+    override fun onMatchedOrCompatibleMembers(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
@@ -462,13 +463,13 @@ class FirExpectActualMatchingContextImpl private constructor(
             expectSymbol.asSymbol(),
             actualSymbol.asSymbol(),
             containingExpectClassSymbol.asSymbol(),
-            ExpectActualCompatibility.Compatible
+            ExpectActualMatchingCompatibility.MatchedSuccessfully
         )
     }
 
-    override fun onMismatchedMembersFromClassScope(
+    override fun onMismatchedOrIncompatibleMembersFromClassScope(
         expectSymbol: DeclarationSymbolMarker,
-        actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+        actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?
     ) {
