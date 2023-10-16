@@ -243,7 +243,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                     generatedClasses.add(newClass)
                     return newExpression as IrConstantValue
                 }
-                return irConstantObject(clazz, @OptIn(ExperimentalStdlibApi::class) buildMap {
+                return irConstantObject(clazz, buildMap {
                     put("name", irConstantPrimitive(name))
                     put("getter", getterCallableReference.convert())
                     if (setterCallableReference != null) {
