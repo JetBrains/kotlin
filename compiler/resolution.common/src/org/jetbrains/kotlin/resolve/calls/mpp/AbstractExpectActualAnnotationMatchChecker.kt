@@ -315,7 +315,8 @@ object AbstractExpectActualAnnotationMatchChecker {
                 //    so we are sure that we found the right member.
                 checkClassScopesCompatibility = false,
             )
-            val expectMember = expectToCompatibilityMap.filter { it.value == ExpectActualCompatibility.Compatible }.keys.singleOrNull()
+            val expectMember = expectToCompatibilityMap
+                .filter { it.value is ExpectActualCompatibility.MatchedOrCompatible }.keys.singleOrNull()
             // Check also incompatible members if only one is found
                 ?: expectToCompatibilityMap.keys.singleOrNull()
                 ?: continue
