@@ -470,8 +470,7 @@ private class ElementsToShortenCollector(
         val typeElement = resolvedTypeRef.correspondingTypePsi ?: return
         if (typeElement.qualifier == null) return
 
-        val typeReferenceTextRange = typeElement.referenceExpression?.textRange
-        if (typeReferenceTextRange?.intersects(selection) != true) return
+        if (!typeElement.inSelection) return
 
         val classifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
 
@@ -544,8 +543,7 @@ private class ElementsToShortenCollector(
             else -> return
         }
 
-        val typeReferenceTextRange = wholeQualifierElement.selectorExpression?.textRange
-        if (typeReferenceTextRange?.intersects(selection) != true) return
+        if (!wholeQualifierElement.inSelection) return
 
         findTypeQualifierToShorten(wholeClassQualifier, wholeQualifierElement)?.let(::addElementToShorten)
     }
@@ -1035,8 +1033,7 @@ private class ElementsToShortenCollector(
         val propertyReferenceExpression = firPropertyAccess.correspondingNameReference ?: return
         val qualifiedProperty = propertyReferenceExpression.getQualifiedElement() as? KtDotQualifiedExpression ?: return
 
-        val propertyReferenceTextRange = propertyReferenceExpression.textRange
-        if (!propertyReferenceTextRange.intersects(selection)) return
+        if (!qualifiedProperty.inSelection) return
 
         val propertySymbol = firPropertyAccess.referencedSymbol ?: return
 
@@ -1081,8 +1078,7 @@ private class ElementsToShortenCollector(
         val qualifiedCallExpression = functionCall.psi as? KtDotQualifiedExpression ?: return
         val callExpression = qualifiedCallExpression.selectorExpression as? KtCallExpression ?: return
 
-        val calleeTextRange = callExpression.calleeExpression?.textRange
-        if (calleeTextRange?.intersects(selection) != true) return
+        if (!qualifiedCallExpression.inSelection) return
 
         val calleeReference = functionCall.calleeReference
         val calledSymbol = findUnambiguousReferencedCallableId(calleeReference) ?: return
@@ -1227,6 +1223,40 @@ private class ElementsToShortenCollector(
             is ShortenKDocQualifier -> addElementToShorten(elementInfoToShorten.element, nameToImport, isImportWithStar)
         }
     }
+
+    /**
+     * Checks whether type reference of [this] type is considered to be in the [selection] text range.
+     *
+     * Examples of calls:
+     *
+     * - `|foo.Bar<...>|` - true
+     * - `foo.|Bar|<...>` - true
+     * - `foo.|B|ar<...>` - true
+     * - `|foo|.Bar<...>` - false
+     * - `foo.Bar|<...>|` - false
+     */
+    private val KtUserType.inSelection: Boolean
+        get() {
+            val typeReference = referenceExpression ?: return false
+            return typeReference.textRange.intersects(selection)
+        }
+
+    /**
+     * Checks whether callee reference of [this] qualified expression is considered to be in the [selection] text range.
+     *
+     * Examples of calls:
+     *
+     *  - `|foo.bar()|` - true
+     * - `foo.|bar|()` - true
+     * - `foo.|b|ar()` - true
+     * - `|foo|.bar()` - false
+     * - `foo.bar|(...)|` - false
+     */
+    private val KtDotQualifiedExpression.inSelection: Boolean
+        get() {
+            val selectorReference = getQualifiedElementSelector() ?: return false
+            return selectorReference.textRange.intersects(selection)
+        }
 
     private val ClassId.outerClassesWithSelf: Sequence<ClassId>
         get() = generateSequence(this) { it.outerClassId }
