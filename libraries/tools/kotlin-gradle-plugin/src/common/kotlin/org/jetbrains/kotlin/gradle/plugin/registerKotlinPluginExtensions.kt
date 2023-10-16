@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
 import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.AndroidPluginWithoutAndroidTargetChecker
@@ -60,5 +61,13 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinTargetAlreadyDeclaredChecker)
         register(project, InternalGradlePropertiesUsageChecker)
         register(project, WasmSourceSetsNotFoundChecker)
+
+        if (isMultiplatform) {
+            register(project, KotlinMultiplatformAndroidGradlePluginCompatibilityChecker)
+        }
     }
 }
+
+/* Helper functions to make configuration code above easier to read */
+
+private val Project.isMultiplatform get() = multiplatformExtensionOrNull != null
