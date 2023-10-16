@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
@@ -59,7 +60,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     override var correspondingPropertySymbol: BirPropertySymbol?,
 ) : BirSimpleFunction() {
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this)
+            BirChildElementList(this, 0)
 
     private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
 
@@ -84,7 +85,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var valueParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this)
+            BirChildElementList(this, 1)
 
     private var _body: BirBody? = body
 
@@ -102,5 +103,22 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         initChild(_dispatchReceiverParameter)
         initChild(_extensionReceiverParameter)
         initChild(_body)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._dispatchReceiverParameter === old -> this.dispatchReceiverParameter = new as
+                BirValueParameter
+            this._extensionReceiverParameter === old -> this.extensionReceiverParameter = new as
+                BirValueParameter
+            this._body === old -> this.body = new as BirBody
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.typeParameters
+        id == 1 -> this.valueParameters
+        else -> throwChildrenListWithIdNotFound(id)
     }
 }

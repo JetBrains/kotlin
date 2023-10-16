@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.expressions.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirErrorCallExpression
@@ -35,8 +36,20 @@ class BirErrorCallExpressionImpl(
             }
         }
 
-    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this)
+    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 0)
     init {
         initChild(_explicitReceiver)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._explicitReceiver === old -> this.explicitReceiver = new as BirExpression
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.arguments
+        else -> throwChildrenListWithIdNotFound(id)
     }
 }

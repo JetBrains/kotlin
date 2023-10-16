@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.declarations.BirVariable
@@ -61,5 +62,15 @@ class BirSuspensionPointImpl(
         initChild(_suspensionPointIdParameter)
         initChild(_result)
         initChild(_resumeResult)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._suspensionPointIdParameter === old -> this.suspensionPointIdParameter = new as
+                BirVariable
+            this._result === old -> this.result = new as BirExpression
+            this._resumeResult === old -> this.resumeResult = new as BirExpression
+            else -> throwChildForReplacementNotFound(old)
+        }
     }
 }

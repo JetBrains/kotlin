@@ -7,11 +7,14 @@
 package org.jetbrains.kotlin.bir.generator.print
 
 import com.squareup.kotlinpoet.*
+import org.jetbrains.kotlin.bir.generator.BirTree.rootElement
 import org.jetbrains.kotlin.bir.generator.Packages
+import org.jetbrains.kotlin.bir.generator.childElementList
 import org.jetbrains.kotlin.bir.generator.elementBaseType
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
 import org.jetbrains.kotlin.bir.generator.model.SingleField
+import org.jetbrains.kotlin.bir.generator.util.tryParameterizedBy
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import java.io.File
 
@@ -30,6 +33,9 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
             val ctor = FunSpec.constructorBuilder()
 
             val allFields = element.allFields
+            val allChildren = allFields.filter { it.isChild }
+            val childrenLists = allChildren.filterIsInstance<ListField>()
+
             allFields.forEach { field ->
                 val poetType = field.type.toPoet().copy(nullable = field.nullable)
 
@@ -51,7 +57,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        initializer("BirChildElementList(this)")
+                        initializer("BirChildElementList(this, %L)", childrenLists.indexOf(field))
                     } else if (field is SingleField && field.isChild && field.mutable) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, poetType)
@@ -90,15 +96,54 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                 ctor.addAnnotation(descriptorApiAnnotation)
             }
 
-            val allChildren = allFields.filter { it.isChild }
             allChildren.forEachIndexed { fieldIndex, child ->
                 if (child is SingleField) {
                     ctor.addCode("initChild(${child.backingFieldName})\n")
                 }
             }
 
-
             primaryConstructor(ctor.build())
+
+            addFunction(
+                FunSpec
+                    .builder("replaceChildProperty")
+                    .addModifiers(KModifier.OVERRIDE)
+                    .addParameter("old", rootElement.toPoet())
+                    .addParameter("new", rootElement.toPoet().copy(nullable = true))
+                    .apply {
+                        addCode("when {\n")
+                        allChildren.forEach { field ->
+                            if (field is SingleField) {
+                                addCode(
+                                    "    this.%N === old -> this.%N = new as %T\n",
+                                    field.backingFieldName, field.name, field.type.toPoet()
+                                )
+                            }
+                        }
+                        addCode("    else -> throwChildForReplacementNotFound(old)\n")
+                        addCode("}\n")
+                    }
+                    .build()
+            )
+
+            if (childrenLists.isNotEmpty()) {
+                addFunction(
+                    FunSpec
+                        .builder("getChildrenListById")
+                        .addModifiers(KModifier.OVERRIDE)
+                        .addParameter("id", INT)
+                        .returns(childElementList.toPoet().tryParameterizedBy(STAR))
+                        .apply {
+                            addCode("return when {\n")
+                            childrenLists.forEachIndexed { id, field ->
+                                addCode("    id == %L -> this.%N\n", id, field.name)
+                            }
+                            addCode("    else -> throwChildrenListWithIdNotFound(id)\n")
+                            addCode("}\n")
+                        }
+                        .build()
+                )
+            }
         }.build()
 
         yield(printTypeCommon(generationPath, element.elementImplName.packageName, elementType))

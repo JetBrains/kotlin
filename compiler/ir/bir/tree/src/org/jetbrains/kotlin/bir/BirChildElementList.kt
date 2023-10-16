@@ -6,22 +6,62 @@
 package org.jetbrains.kotlin.bir
 
 class BirChildElementList<E : BirElement?>(
-    private val parent: BirElementBase,
+    internal val parent: BirElementBase,
+    id: Int,
 ) : AbstractMutableList<E>(), BirElementOrChildList {
     private var elementArray: Array<BirElementBase?> = EMPTY_ELEMENT_ARRAY
-    override var size: Int = 0
-        private set
+    private var sizeAndId: Int = id shl (32 - ID_BITS)
+
+    override var size: Int
+        get() = sizeAndId and SIZE_MASK
+        private set(value) {
+            sizeAndId = value or (sizeAndId and ID_MASK)
+        }
+
+    internal val id: Int
+        get() = sizeAndId.toInt() shr (32 - ID_BITS)
 
     override fun get(index: Int): E {
         checkElementIndex(index, size)
         return elementArray[index] as E
     }
 
+    override fun contains(element: E): Boolean {
+        return element != null && element.parent === parent && (element as BirElementBase).containingListId.toInt() == id
+    }
+
+    override fun indexOf(element: E): Int {
+        if (element != null && element !in this) {
+            return -1
+        }
+
+        for (index in 0..<size) {
+            if (this[index] === element) {
+                return index
+            }
+        }
+        return -1
+    }
+
+    override fun lastIndexOf(element: E): Int {
+        if (element != null && element !in this) {
+            return -1
+        }
+
+        for (index in size - 1 downTo 0) {
+            if (this[index] === element) {
+                return index
+            }
+        }
+        return -1
+    }
+
     override fun set(index: Int, element: E): E {
         checkElementIndex(index, size)
         element as BirElementBase?
         val old = elementArray[index]
-        parent.replaceChild(old, element)
+        replaceChild(old, element)
+        element?.containingListId = id.toByte()
         elementArray[index] = element
         return element
     }
@@ -38,7 +78,7 @@ class BirChildElementList<E : BirElement?>(
             elementArray = newArray
             this.elementArray = elementArray
         }
-        parent.initChild(element)
+        initChild(element)
         elementArray[index] = element
         size++
     }
@@ -60,8 +100,8 @@ class BirChildElementList<E : BirElement?>(
 
         var i = index
         for (element in elements) {
-            elementArray[i++] = element as BirElementBase
-            parent.initChild(element)
+            elementArray[i++] = element as BirElementBase?
+            initChild(element)
         }
         size = newSize
 
@@ -72,9 +112,27 @@ class BirChildElementList<E : BirElement?>(
         checkElementIndex(index, size)
         val elementArray = elementArray
         val element = elementArray[index]
-        parent.replaceChild(element, null)
+        replaceChild(element, null)
         elementArray.copyInto(elementArray, index, index + 1, size)
         return element as E
+    }
+
+    override fun remove(element: E): Boolean {
+        val index = indexOf(element)
+        if (index != -1) {
+            removeAt(index)
+            return true
+        }
+        return false
+    }
+
+    fun replace(old: E, new: E): Boolean {
+        val index = indexOf(old)
+        if (index != -1) {
+            this[index] = new
+            return true
+        }
+        return false
     }
 
     override fun clear() {
@@ -82,9 +140,20 @@ class BirChildElementList<E : BirElement?>(
         for (i in 0..<size) {
             val element = elementArray[i]
             elementArray[i] = null
-            parent.replaceChild(element, null)
+            replaceChild(element, null)
         }
         size = 0
+    }
+
+    private fun initChild(new: BirElementBase?) {
+        parent.initChild(new)
+        new?.containingListId = id.toByte()
+    }
+
+    private fun replaceChild(old: BirElementBase?, new: BirElementBase?) {
+        parent.replaceChild(old, new)
+        old?.containingListId = 0
+        new?.containingListId = id.toByte()
     }
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
@@ -96,6 +165,9 @@ class BirChildElementList<E : BirElement?>(
 
     companion object {
         private val EMPTY_ELEMENT_ARRAY = emptyArray<BirElementBase?>()
+        private const val ID_BITS = 3
+        private const val SIZE_MASK: Int = (-1 ushr (32 + ID_BITS))
+        private const val ID_MASK: Int = (-1 shl (32 - ID_BITS))
 
         private fun checkElementIndex(index: Int, size: Int) {
             if (index < 0 || index >= size) {

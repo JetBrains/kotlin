@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.bir.generator.model
 
 import org.jetbrains.kotlin.bir.generator.BirTree
+import org.jetbrains.kotlin.bir.generator.childElementList
 import org.jetbrains.kotlin.bir.generator.config.*
 import org.jetbrains.kotlin.bir.generator.elementBaseType
 import org.jetbrains.kotlin.bir.generator.util.depthFirstSearch
@@ -66,7 +67,7 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
     )
     is ListFieldConfig -> {
         val listType = when {
-            fc.isChild -> type("org.jetbrains.kotlin.bir", "BirChildElementList")
+            fc.isChild -> childElementList
             fc.mutability == ListFieldConfig.Mutability.List -> type("kotlin.collections", "MutableList")
             fc.mutability == ListFieldConfig.Mutability.Array -> type("kotlin.", "Array")
             else -> type("kotlin.collections", "List")

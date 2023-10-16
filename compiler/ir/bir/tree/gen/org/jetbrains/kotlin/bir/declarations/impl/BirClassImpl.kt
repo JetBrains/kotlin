@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -49,10 +50,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     override var sealedSubclasses: List<BirClassSymbol>,
 ) : BirClass() {
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this)
+            BirChildElementList(this, 0)
 
     override val declarations: BirChildElementList<BirDeclaration> =
-            BirChildElementList(this)
+            BirChildElementList(this, 1)
 
     override var attributeOwnerId: BirAttributeContainer = this
 
@@ -68,5 +69,18 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     init {
         initChild(_thisReceiver)
+    }
+
+    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
+        when {
+            this._thisReceiver === old -> this.thisReceiver = new as BirValueParameter
+            else -> throwChildForReplacementNotFound(old)
+        }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
+        id == 0 -> this.typeParameters
+        id == 1 -> this.declarations
+        else -> throwChildrenListWithIdNotFound(id)
     }
 }
