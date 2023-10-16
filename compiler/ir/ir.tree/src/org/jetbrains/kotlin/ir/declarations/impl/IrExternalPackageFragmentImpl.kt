@@ -47,6 +47,10 @@ class IrExternalPackageFragmentImpl(
     override val packageFragmentDescriptor: PackageFragmentDescriptor
         get() = symbol.descriptor
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override val moduleDescriptor: ModuleDescriptor
+        get() = packageFragmentDescriptor.containingDeclaration
+
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)

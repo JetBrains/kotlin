@@ -80,7 +80,7 @@ private abstract class BaseInteropIrTransformer(
             builder.getCompilerMessageLocation()
         }
 
-        val uniqueModuleName = irFile.packageFragmentDescriptor.module.name.asString()
+        val uniqueModuleName = irFile.moduleDescriptor.name.asString()
                 .let { it.substring(1, it.lastIndex) }
         val uniqueFileName = irFile.fileEntry.name
         val uniquePrefix = buildString {

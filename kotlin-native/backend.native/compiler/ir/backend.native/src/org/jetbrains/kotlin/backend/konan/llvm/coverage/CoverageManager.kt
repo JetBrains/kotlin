@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.supportsCodeCoverage
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 /**
  * "Umbrella" class of all the of the code coverage related logic.
@@ -75,7 +74,7 @@ internal class CoverageManager(val generationState: NativeGenerationState) {
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun fileCoverageFilter(file: IrFile) =
-            file.packageFragmentDescriptor.module in coveredModules
+            file.moduleDescriptor in coveredModules
 
     /**
      * Walk [irModuleFragment] subtree and collect [FileRegionInfo] for files that are part of [coveredModules].

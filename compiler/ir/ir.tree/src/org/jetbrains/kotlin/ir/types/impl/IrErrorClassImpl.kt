@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.types.impl
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -49,6 +46,8 @@ object IrErrorClassImpl : IrClassImpl(
 
             @ObsoleteDescriptorBasedAPI
             override val packageFragmentDescriptor: PackageFragmentDescriptor
+                get() = TODO("Not yet implemented")
+            override val moduleDescriptor: ModuleDescriptor
                 get() = TODO("Not yet implemented")
             override var packageFqName: FqName
                 get() = FqName.ROOT

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -68,6 +69,15 @@ class IrFileImpl(
     @ObsoleteDescriptorBasedAPI
     override val packageFragmentDescriptor: PackageFragmentDescriptor
         get() = symbol.descriptor
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override val moduleDescriptor: ModuleDescriptor
+        get() {
+            return if (this::module.isInitialized)
+                module.descriptor
+            else
+                packageFragmentDescriptor.containingDeclaration
+        }
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
 

@@ -618,6 +618,14 @@ object IrTree : AbstractTreeBuilder() {
 
         +symbol(packageFragmentSymbolType)
         +field("packageFragmentDescriptor", type(Packages.descriptors, "PackageFragmentDescriptor"), mutable = false)
+        +field("moduleDescriptor", type(Packages.descriptors, "ModuleDescriptor"), mutable = false) {
+            kdoc = """
+            This should be a link to [IrModuleFragment] instead. 
+               
+            Unfortunately, some package fragments (e.g. some synthetic ones and [IrExternalPackageFragment])
+            are not located in any IR module, but still have a module descriptor. 
+            """.trimIndent()
+        }
         +field("packageFqName", type<FqName>())
         +field("fqName", type<FqName>()) {
             baseGetter = code("packageFqName")

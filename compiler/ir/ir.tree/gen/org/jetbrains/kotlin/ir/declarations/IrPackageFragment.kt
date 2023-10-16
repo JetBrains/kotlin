@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -24,6 +25,15 @@ abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSy
 
     @ObsoleteDescriptorBasedAPI
     abstract val packageFragmentDescriptor: PackageFragmentDescriptor
+
+    /**
+     * This should be a link to [IrModuleFragment] instead. 
+     *    
+     * Unfortunately, some package fragments (e.g. some synthetic ones and
+     * [IrExternalPackageFragment])
+     * are not located in any IR module, but still have a module descriptor. 
+     */
+    abstract val moduleDescriptor: ModuleDescriptor
 
     abstract var packageFqName: FqName
 

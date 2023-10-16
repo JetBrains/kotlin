@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.overrides
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -94,14 +93,13 @@ abstract class FakeOverrideBuilderStrategy(
     protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, manglerCompatibleMode: Boolean)
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class) // Because of the LazyIR, have to use descriptors here.
 private fun IrOverridableMember.isPrivateToThisModule(
     thisClass: IrClass, memberClass: IrClass, friendModules: Map<String, Collection<String>>,
 ): Boolean {
     if (visibility != DescriptorVisibilities.INTERNAL) return false
 
-    val thisModule = thisClass.getPackageFragment().packageFragmentDescriptor.containingDeclaration
-    val memberModule = memberClass.getPackageFragment().packageFragmentDescriptor.containingDeclaration
+    val thisModule = thisClass.getPackageFragment().moduleDescriptor
+    val memberModule = memberClass.getPackageFragment().moduleDescriptor
 
     return thisModule != memberModule && !isInFriendModules(thisModule, memberModule, friendModules)
 }

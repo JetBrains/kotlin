@@ -90,7 +90,7 @@ val IrPackageFragment.konanLibrary: KotlinLibrary?
             val moduleDescriptor = fileMetadata?.descriptors?.singleOrNull() as? ModuleDescriptor
             moduleDescriptor?.konanLibrary?.let { return it }
         }
-        return this.packageFragmentDescriptor.containingDeclaration.konanLibrary
+        return this.moduleDescriptor.konanLibrary
     }
 // Any changes made to konanLibrary here should be ported to the containsDeclaration
 // function in LlvmModuleSpecificationBase in LlvmModuleSpecificationImpl.kt

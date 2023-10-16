@@ -332,7 +332,7 @@ internal class KonanIrLinker(
 
     fun getCachedDeclarationModuleDeserializer(declaration: IrDeclaration): KonanPartialModuleDeserializer? {
         val packageFragment = declaration.getPackageFragment()
-        val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
+        val moduleDescriptor = packageFragment.moduleDescriptor
         val klib = packageFragment.konanLibrary
         val declarationBeingCached = packageFragment is IrFile && klib != null && libraryBeingCached?.klib == klib
                 && libraryBeingCached.strategy.contains(packageFragment.path)
@@ -394,7 +394,7 @@ internal class KonanIrLinker(
         is IrFile -> packageFragment.path
 
         is IrExternalPackageFragment -> {
-            val moduleDescriptor = packageFragment.packageFragmentDescriptor.containingDeclaration
+            val moduleDescriptor = packageFragment.moduleDescriptor
             val moduleDeserializer = moduleDeserializers[moduleDescriptor] ?: error("No module deserializer for $moduleDescriptor")
             moduleDeserializer.getFileNameOf(declaration)
         }
