@@ -220,7 +220,6 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
-        @OptIn(ExperimentalUnsignedTypes::class)
         fun computeVersionedCacheDirectory(baseCacheDirectory: File, library: KotlinLibrary, allLibraries: Map<String, KotlinLibrary>): File {
             val dependencies = library.getAllTransitiveDependencies(allLibraries)
             val messageDigest = MessageDigest.getInstance("SHA-256")
@@ -229,8 +228,8 @@ class CachedLibraries(
             dependencies.sortedBy { it.uniqueName }.forEach { messageDigest.digestLibrary(it) }
 
             val version = library.versions.libraryVersion ?: "unspecified"
-            val hashString = messageDigest.digest().asUByteArray()
-                    .joinToString("") { it.toString(radix = 16).padStart(2, '0') }
+            val hashString = messageDigest.digest()
+                    .joinToString("") { it.toUByte().toString(radix = 16).padStart(2, '0') }
             return baseCacheDirectory.child(library.uniqueName).child(version).child(hashString)
         }
 
