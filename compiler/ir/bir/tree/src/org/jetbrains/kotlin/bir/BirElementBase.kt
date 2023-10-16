@@ -17,17 +17,21 @@
 package org.jetbrains.kotlin.bir
 
 abstract class BirElementBase : BirElement {
+    internal var owner: BirForest? = null
     final override var parent: BirElement? = null
         private set
 
-    override fun<D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
 
     internal fun initChild(new: BirElement?) {
         new as BirElementBase?
 
         new?.checkCanBeAttachedAsChild(this)
 
-        new?.parent = this
+        if (new != null) {
+            new.parent = this
+            childAttached(new)
+        }
     }
 
     internal fun replaceChild(old: BirElement?, new: BirElement?) {
@@ -36,8 +40,22 @@ abstract class BirElementBase : BirElement {
 
         new?.checkCanBeAttachedAsChild(this)
 
-        old?.parent = null
-        new?.parent = this
+        if (old != null) {
+            old.parent = null
+            childDetached(old)
+        }
+        if (new != null) {
+            new.parent = this
+            childAttached(new)
+        }
+    }
+
+    private fun childDetached(childElement: BirElementBase) {
+        owner?.elementDetached(childElement)
+    }
+
+    private fun childAttached(childElement: BirElementBase) {
+        owner?.elementAttached(childElement)
     }
 
     internal fun checkCanBeAttachedAsChild(newParent: BirElement) {
