@@ -84,7 +84,6 @@ val runtimeJar = runtimeJar {
 sourcesJar()
 javadocJar()
 testsJar()
-useD8Plugin()
 
 val distCompat by configurations.creating {
     isCanBeResolved = false

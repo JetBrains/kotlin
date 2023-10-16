@@ -13,7 +13,7 @@ private object V8Utils {
     lateinit var d8Plugin: D8RootExtension
 
     fun useD8Plugin(project: Project) {
-        d8Plugin = D8RootPlugin.apply(project.rootProject)
+        d8Plugin = D8RootPlugin.apply(project)
         d8Plugin.version = project.v8Version
     }
 }

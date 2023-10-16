@@ -92,7 +92,6 @@ dependencies {
 
 val generationRoot = projectDir.resolve("tests-gen")
 
-useD8Plugin()
 optInToExperimentalCompilerApi()
 
 sourceSets {

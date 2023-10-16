@@ -95,6 +95,8 @@ rootProject.apply {
     from(rootProject.file("gradle/retryPublishing.gradle.kts"))
 }
 
+useD8Plugin()
+
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {

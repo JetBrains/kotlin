@@ -161,7 +161,7 @@ sourceSets {
 }
 
 testsJar()
-useD8Plugin()
+
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform {
