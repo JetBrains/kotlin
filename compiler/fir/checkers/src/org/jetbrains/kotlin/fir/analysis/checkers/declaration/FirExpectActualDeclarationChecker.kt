@@ -125,25 +125,24 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         val matchingCompatibilityToMembersMap = symbol.expectForActual ?: return
         val expectedSingleCandidate =
             matchingCompatibilityToMembersMap[ExpectActualMatchingCompatibility.MatchedSuccessfully]?.singleOrNull()
-        val expectedSingleCandidateCombinedCompatibility = when (expectedSingleCandidate != null) { // todo rename
+        val checkingCompatibility = when (expectedSingleCandidate != null) {
             true -> {
-                context.session.expectActualMatchingContextFactory.create(
+                val expectActualMatchingContext = context.session.expectActualMatchingContextFactory.create(
                     context.session, context.scopeSession,
                     allowedWritingMemberExpectForActualMapping = true,
-                ).let { expectActualMatchingContext ->
-                    val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
-                    val expectContainingClass = actualContainingClass
-                        ?.expectForActual
-                        ?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
-                        ?.singleOrNull() as? FirRegularClassSymbol
-                    getCheckingCompatibility(
-                        symbol,
-                        expectedSingleCandidate,
-                        actualContainingClass,
-                        expectContainingClass,
-                        expectActualMatchingContext,
-                    )
-                }
+                )
+                val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
+                val expectContainingClass = actualContainingClass
+                    ?.expectForActual
+                    ?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)
+                    ?.singleOrNull() as? FirRegularClassSymbol
+                getCheckingCompatibility(
+                    symbol,
+                    expectedSingleCandidate,
+                    actualContainingClass,
+                    expectContainingClass,
+                    expectActualMatchingContext,
+                )
             }
             false -> null
         }
@@ -163,7 +162,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         }
 
         when {
-            expectedSingleCandidateCombinedCompatibility is ExpectActualCheckingCompatibility.ClassScopes -> {
+            checkingCompatibility is ExpectActualCheckingCompatibility.ClassScopes -> {
                 require(symbol is FirRegularClassSymbol || symbol is FirTypeAliasSymbol) {
                     "Incompatible.ClassScopes is only possible for a class or a typealias: $declaration"
                 }
@@ -183,7 +182,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                             actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
                 }
 
-                val nonTrivialUnfulfilled = expectedSingleCandidateCombinedCompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
+                val nonTrivialUnfulfilled = checkingCompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
 
                 if (nonTrivialUnfulfilled.isNotEmpty()) {
                     reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialUnfulfilled, context)
@@ -201,18 +200,18 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 )
             }
 
-            expectedSingleCandidateCombinedCompatibility != null &&
-                    expectedSingleCandidateCombinedCompatibility != ExpectActualCheckingCompatibility.Compatible -> {
+            checkingCompatibility != null &&
+                    checkingCompatibility != ExpectActualCheckingCompatibility.Compatible -> {
                 check(expectedSingleCandidate != null)
                 // A nicer diagnostic for functions with default params
-                if (declaration is FirFunction && expectedSingleCandidateCombinedCompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
+                if (declaration is FirFunction && checkingCompatibility == ExpectActualCheckingCompatibility.ActualFunctionWithDefaultParameters) {
                     reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
                 } else {
                     reporter.reportOn(
                         source,
                         FirErrors.ACTUAL_WITHOUT_EXPECT,
                         symbol,
-                        mapOf(expectedSingleCandidateCombinedCompatibility to listOf(expectedSingleCandidate)),
+                        mapOf(checkingCompatibility to listOf(expectedSingleCandidate)),
                         context
                     )
                 }

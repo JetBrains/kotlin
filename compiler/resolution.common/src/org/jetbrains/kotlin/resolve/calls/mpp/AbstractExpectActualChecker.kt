@@ -29,7 +29,7 @@ import java.util.*
 
 object AbstractExpectActualChecker {
     fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
-        expectClassSymbol: RegularClassSymbolMarker, // todo wtf different types for expect and actual
+        expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         checkClassScopesCompatibility: Boolean,
         context: ExpectActualMatchingContext<T>,
