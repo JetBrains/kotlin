@@ -9,11 +9,16 @@ import org.jetbrains.kotlin.utils.ThreadSafe
 
 /**
  * [PersistentStorage] which reads from another underlying [PersistentStorage], keeps all changes to it in memory, and writes the changes
- * back to the underlying storage on [applyChanges] or [close].
+ * back to the underlying storage on [applyChanges], [flush], or [close].
  */
 interface InMemoryStorageInterface<KEY, VALUE> : PersistentStorage<KEY, VALUE> {
 
-    /** Applies in-memory changes to the underlying [PersistentStorage], then calls [clearChanges]. */
+    /**
+     * Applies in-memory changes to the underlying [PersistentStorage], then calls [clearChanges].
+     *
+     * Note that the changes are only propagated to the underlying [PersistentStorage], they may not be written to [storageFile] yet. If
+     * you want to propagate the changes to [storageFile], call [flush] instead.
+     */
     fun applyChanges()
 
     /** Removes all in-memory changes. */
@@ -118,6 +123,12 @@ open class InMemoryStorage<KEY, VALUE>(
         modifiedEntries.clear()
         appendedEntries.clear()
         removedKeys.clear()
+    }
+
+    @Synchronized
+    override fun flush() {
+        applyChanges()
+        storage.flush()
     }
 
     @Synchronized

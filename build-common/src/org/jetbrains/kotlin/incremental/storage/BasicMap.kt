@@ -34,15 +34,6 @@ interface BasicMap<KEY, VALUE> : PersistentStorage<KEY, VALUE> {
     }
 
     /**
-     * DEPRECATED: This method should be removed because
-     *   - The `memoryCachesOnly` parameter is not used (it is always `false`).
-     *   - There is currently no good use case for flushing. In fact, the current implementation of this method does nothing.
-     */
-    fun flush(memoryCachesOnly: Boolean) {
-        check(!memoryCachesOnly) { "Expected memoryCachesOnly = false but it is `true`" }
-    }
-
-    /**
      * Deletes [storageFile] or a group of files associated with [storageFile] (e.g., an implementation of [PersistentStorage] may use a
      * [com.intellij.util.io.PersistentHashMap], which creates files such as "storageFile.tab", "storageFile.tab.len", etc.).
      *
@@ -52,18 +43,6 @@ interface BasicMap<KEY, VALUE> : PersistentStorage<KEY, VALUE> {
         check(IOUtil.deleteAllFilesStartingWith(storageFile)) {
             "Unable to delete storage file(s) with name prefix: ${storageFile.path}"
         }
-    }
-
-    /**
-     * DEPRECATED: This method should be removed because:
-     *   - The method name is ambiguous (it may be confused with [clear], and it does not exactly describe the current implementation).
-     *   - The method currently calls close(). However, close() is often already called separately and automatically, so calling this method
-     *     means that close() will likely be called twice.
-     * Instead, just inline this method or call either close() or deleteStorageFiles() directly.
-     */
-    fun clean() {
-        close()
-        deleteStorageFiles()
     }
 
     @TestOnly
