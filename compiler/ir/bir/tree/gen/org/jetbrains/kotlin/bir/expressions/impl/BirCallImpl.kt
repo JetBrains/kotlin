@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirCallImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var symbol: BirSimpleFunctionSymbol,
     dispatchReceiver: BirExpression?,

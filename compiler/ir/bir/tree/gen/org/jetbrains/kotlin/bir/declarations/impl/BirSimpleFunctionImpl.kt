@@ -25,10 +25,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     override var sourceSpan: SourceSpan,
@@ -40,8 +38,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
-    override val containerSource: DeserializedContainerSource?,
-    override var metadata: MetadataSource?,
     override var isInline: Boolean,
     override var isExpect: Boolean,
     override var returnType: BirType,
@@ -52,7 +48,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     override var modality: Modality,
     override var isFakeOverride: Boolean,
     override var overriddenSymbols: List<BirSimpleFunctionSymbol>,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var isTailrec: Boolean,
     override var isSuspend: Boolean,
     override var isOperator: Boolean,

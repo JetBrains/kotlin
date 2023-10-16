@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 
 class BirTryImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     tryResult: BirExpression,
     finallyExpression: BirExpression?,

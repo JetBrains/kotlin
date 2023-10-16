@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 
 class BirSuspensionPointImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     suspensionPointIdParameter: BirVariable,
     result: BirExpression,

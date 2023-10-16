@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirInlinedFunctionBlockImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var origin: IrStatementOrigin?,
     override var inlineCall: BirFunctionAccessExpression,

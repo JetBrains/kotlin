@@ -8,13 +8,9 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-
 /**
  * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.memberWithContainerSource]
  */
-interface BirMemberWithContainerSource : BirDeclarationWithName {
-    val containerSource: DeserializedContainerSource?
-}
+interface BirMemberWithContainerSource : BirDeclarationWithName

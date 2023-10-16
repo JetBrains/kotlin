@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     override var sourceSpan: SourceSpan,
@@ -36,8 +34,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
-    override val containerSource: DeserializedContainerSource?,
-    override var metadata: MetadataSource?,
     override var isInline: Boolean,
     override var isExpect: Boolean,
     override var returnType: BirType,

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
 
 class BirDynamicOperatorExpressionImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var operator: IrDynamicOperator,
     receiver: BirExpression,

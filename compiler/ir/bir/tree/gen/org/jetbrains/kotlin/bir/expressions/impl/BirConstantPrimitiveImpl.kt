@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 
 class BirConstantPrimitiveImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     value: BirConst<*>,
 ) : BirConstantPrimitive() {

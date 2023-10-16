@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirFunctionReferenceImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var symbol: BirFunctionSymbol,
     dispatchReceiver: BirExpression?,

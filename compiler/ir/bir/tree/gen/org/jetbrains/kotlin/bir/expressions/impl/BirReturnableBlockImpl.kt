@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 
 class BirReturnableBlockImpl @ObsoleteDescriptorBasedAPI constructor(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var origin: IrStatementOrigin?,
     @property:ObsoleteDescriptorBasedAPI

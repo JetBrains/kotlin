@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 
 class BirClassReferenceImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var symbol: BirClassifierSymbol,
     override var classType: BirType,

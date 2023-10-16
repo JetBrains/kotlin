@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 
@@ -29,7 +28,6 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var packageFqName: FqName,
     override var annotations: List<BirConstructorCall>,
-    override var metadata: MetadataSource?,
     override var module: BirModuleFragment,
     override var fileEntry: IrFileEntry,
 ) : BirFile() {

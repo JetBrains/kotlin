@@ -20,6 +20,7 @@ abstract class BirElementBase : BirElement {
     internal var owner: BirForest? = null
     final override var parent: BirElementBase? = null
         private set
+    private var dynamicProperties: Array<Any?>? = null
     private var level: UByte = 0u
     internal var containingListId: Byte = 0
 
@@ -133,6 +134,33 @@ abstract class BirElementBase : BirElement {
         if (!list.replace(this, new)) {
             list.parent.throwChildForReplacementNotFound(this)
         }
+    }
+
+
+    internal fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
+        return dynamicProperties?.get(token.key.index) as T?
+    }
+
+    internal fun <T> setDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
+        var dynamicProperties = dynamicProperties
+        if (dynamicProperties == null) {
+            if (value == null) {
+                // optimization: next read will return null if the array is null, so no need to initialize it
+                return
+            }
+
+            val size = token.manager.getInitialDynamicPropertyArraySize(javaClass)
+            require(size != 0) { "This element is not supposed to store any aux data" }
+            dynamicProperties = arrayOfNulls(size)
+            this.dynamicProperties = dynamicProperties
+        }
+
+        dynamicProperties[token.key.index] = value
+    }
+
+    // todo: fine-grained control of which data to copy
+    internal fun copyDynamicProperties(from: BirElementBase) {
+        dynamicProperties = from.dynamicProperties?.copyOf()
     }
 }
 

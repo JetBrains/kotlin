@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirPropertyReferenceImpl(
     override var sourceSpan: SourceSpan,
-    override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var symbol: BirPropertySymbol,
     dispatchReceiver: BirExpression?,
