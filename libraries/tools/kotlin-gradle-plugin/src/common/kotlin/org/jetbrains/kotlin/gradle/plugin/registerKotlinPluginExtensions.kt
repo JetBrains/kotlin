@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.WasmSourceSetsNot
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
 /**
@@ -43,6 +44,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinToolingDiagnosticsSetupAction)
 
         if (isMultiplatform) {
+            register(project, CInteropCommonizedCInteropApiElementsConfigurationsSetupAction)
             register(project, AddBuildListenerForXCodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
         }

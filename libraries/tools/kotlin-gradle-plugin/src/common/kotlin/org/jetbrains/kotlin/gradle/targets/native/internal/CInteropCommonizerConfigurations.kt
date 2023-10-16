@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.commonizer.identityString
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.launch
@@ -26,9 +27,9 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 /* Elements configuration */
 
-internal suspend fun Project.setupCInteropCommonizedCInteropApiElementsConfigurations() {
-    val extension = multiplatformExtensionOrNull ?: return
-    val cinteropCommonizerTask = commonizeCInteropTask() ?: return
+internal val CInteropCommonizedCInteropApiElementsConfigurationsSetupAction = KotlinProjectSetupCoroutine setup@{
+    val extension = multiplatformExtensionOrNull ?: return@setup
+    val cinteropCommonizerTask = commonizeCInteropTask() ?: return@setup
 
     /*
     Expose api dependencies from Source Sets to the elements configuration

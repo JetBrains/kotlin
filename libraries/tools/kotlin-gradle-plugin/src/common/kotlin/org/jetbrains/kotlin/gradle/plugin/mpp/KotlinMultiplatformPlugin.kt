@@ -26,10 +26,8 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
-import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizedCInteropApiElementsConfigurations
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
@@ -73,7 +71,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         // Ensure that the instance is created and configured during apply
         project.kotlinIdeMultiplatformImport
         project.locateOrRegisterIdeResolveDependenciesTask()
-        project.launch { project.setupCInteropCommonizedCInteropApiElementsConfigurations() }
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
