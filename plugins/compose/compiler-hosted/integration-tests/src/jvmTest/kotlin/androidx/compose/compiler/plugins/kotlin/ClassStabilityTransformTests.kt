@@ -1282,11 +1282,11 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(A)<A()>,<A(Empt...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Sing...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(Doub...>,<A(X(li...>,<A(X(li...>,<A(NonB...>,<A(NonB...>,<A(Stab...>,<A(Unst...>:Test.kt")
               val %dirty = %changed
-              if (%default and 0b0001 !== 0) {
+              if (%default and 0b0001 != 0) {
                 %dirty = %dirty or 0b0010
               }
-              if (%default and 0b0001 !== 0b0001 || %dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
-                if (%default and 0b0001 !== 0) {
+              if (%default and 0b0001 != 0b0001 || %dirty and 0b1011 != 0b0010 || !%composer.skipping) {
+                if (%default and 0b0001 != 0) {
                   y = null
                 }
                 if (isTraceInProgress()) {
@@ -1506,10 +1506,10 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(B)<A(Wrap...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b1110 === 0) {
+              if (%changed and 0b1110 == 0) {
                 %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+              if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
@@ -1564,10 +1564,10 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
               val lambda-1: Function3<String, Composer, Int, Unit> = composableLambdaInstance(<>, false) { item: String, %composer: Composer?, %changed: Int ->
                 sourceInformation(%composer, "C<A(item...>,<A(Wrap...>:Test.kt")
                 val %dirty = %changed
-                if (%changed and 0b1110 === 0) {
+                if (%changed and 0b1110 == 0) {
                   %dirty = %dirty or if (%composer.changed(item)) 0b0100 else 0b0010
                 }
-                if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
+                if (%dirty and 0b01011011 != 0b00010010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %dirty, -1, <>)
                   }

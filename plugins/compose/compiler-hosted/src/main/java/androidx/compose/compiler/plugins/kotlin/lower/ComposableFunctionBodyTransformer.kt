@@ -367,10 +367,10 @@ interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
  *
  *     @Composable fun A(x: Int, $composer: Composer<*>, $changed: Int) {
  *       var $dirty = $changed
- *       if ($changed and 0b0110 === 0) {
+ *       if ($changed and 0b0110 == 0) {
  *         $dirty = $dirty or if ($composer.changed(x)) 0b0010 else 0b0100
  *       }
- *      if (%dirty and 0b1011 !== 0b1010 || !$composer.skipping) {
+ *      if (%dirty and 0b1011 != 0b1010 || !$composer.skipping) {
  *        f(x)
  *      } else {
  *        $composer.skipToGroupEnd()
@@ -1575,7 +1575,7 @@ class ComposableFunctionBodyTransformer(
                 irIfThenElse(
                     // this prevents us from re-executing the defaults if this function is getting
                     // executed from a recomposition
-                    // if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
+                    // if (%changed and 0b0001 == 0 || %composer.defaultsInvalid) {
                     condition = irOrOr(
                         irEqual(changedParam.irLowBit(), irConst(0)),
                         irDefaultsInvalid()
