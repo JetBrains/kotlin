@@ -23976,6 +23976,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("arrayVsOutArray.kt")
+                public void testArrayVsOutArray() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/arrayVsOutArray.kt");
+                }
+
+                @Test
+                @TestMetadata("arrayVsVararg.kt")
+                public void testArrayVsVararg() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/arrayVsVararg.kt");
+                }
+
+                @Test
                 @TestMetadata("basicOnDeclaration.kt")
                 public void testBasicOnDeclaration() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/basicOnDeclaration.kt");
