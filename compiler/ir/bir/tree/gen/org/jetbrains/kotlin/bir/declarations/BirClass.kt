@@ -52,16 +52,6 @@ abstract class BirClass : BirElementBase(), BirDeclaration, BirPossiblyExternalD
 
     abstract var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?
 
-    /**
-     * If this is a sealed class or interface, this list contains symbols of all its immediate
-     * subclasses.
-     * Otherwise, this is an empty list.
-     *
-     * NOTE: If this [BirClass] was deserialized from a klib, this list will always be empty!
-     * See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
-     */
-    abstract var sealedSubclasses: List<BirClassSymbol>
-
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         typeParameters.forEach { it.accept(data, visitor) }
         declarations.forEach { it.accept(data, visitor) }

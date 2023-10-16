@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
@@ -36,7 +35,6 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
     override var name: Name,
-    override var metadata: MetadataSource?,
     thisReceiver: BirValueParameter?,
     override var baseClass: BirType?,
     override var providedProperties: List<BirPropertySymbol>,

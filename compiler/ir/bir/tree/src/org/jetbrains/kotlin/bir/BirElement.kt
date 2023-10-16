@@ -17,3 +17,19 @@ interface BirElement : BirElementOrChildList {
     val sourceSpan: SourceSpan
     val parent: BirElement?
 }
+
+
+operator fun <E : BirElement, T> E.get(token: BirElementDynamicPropertyToken<E, T>): T? {
+    return (this as BirElementBase).getDynamicProperty(token)
+}
+
+operator fun <E : BirElement, T> E.set(token: BirElementDynamicPropertyToken<E, T>, value: T?) {
+    (this as BirElementBase).setDynamicProperty(token, value)
+}
+
+fun <E : BirElement, T> E.computeIfAbsentDynamicProperty(token: BirElementDynamicPropertyToken<E, T>, compute: () -> T): T {
+    this as BirElementBase
+    return getDynamicProperty(token) ?: compute().also {
+        setDynamicProperty(token, it)
+    }
+}

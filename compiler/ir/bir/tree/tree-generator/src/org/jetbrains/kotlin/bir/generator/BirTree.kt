@@ -94,13 +94,6 @@ object BirTree : AbstractTreeBuilder() {
         }
     }
     val metadataSourceOwner: ElementConfig by element(Declaration) {
-        val metadataField = +field("metadata", type("org.jetbrains.kotlin.ir.declarations", "MetadataSource"), nullable = true) {
-            kdoc = """
-            The arbitrary metadata associated with this IR node.
-            
-            @see ${elementName2typeName(this@element.name)}
-            """.trimIndent()
-        }
         kDoc = """
         An [${elementName2typeName(rootElement.name)}] capable of holding something which backends can use to write
         as the metadata for the declaration.
@@ -109,9 +102,6 @@ object BirTree : AbstractTreeBuilder() {
         so a descriptor in case of K1, and [org.jetbrains.kotlin.fir.FirElement] in case of K2,
         and the backend invokes a metadata serializer on it to obtain metadata and write it, for example, to `@kotlin.Metadata`
         on JVM.
-        
-        In Kotlin/Native, [${metadataField.name}] is used to store some LLVM-related stuff in an IR declaration,
-        but this is only for performance purposes (before it was done using simple maps).
         """.trimIndent()
     }
     val overridableMember: ElementConfig by element(Declaration) {
@@ -133,8 +123,6 @@ object BirTree : AbstractTreeBuilder() {
     }
     val memberWithContainerSource: ElementConfig by element(Declaration) {
         parent(declarationWithName)
-
-        +field("containerSource", type<DeserializedContainerSource>(), nullable = true, mutable = false)
     }
     val valueDeclaration: ElementConfig by element(Declaration) {
         parent(declarationWithName)
@@ -214,15 +202,6 @@ object BirTree : AbstractTreeBuilder() {
             type<ValueClassRepresentation<*>>().withArgs(type(Packages.types, "BirSimpleType")),
             nullable = true,
         )
-        +listField("sealedSubclasses", SymbolTypes.`class`, mutability = Var) {
-            kdoc = """
-            If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
-            Otherwise, this is an empty list.
-            
-            NOTE: If this [${elementName2typeName(this@element.name)}] was deserialized from a klib, this list will always be empty!
-            See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
-            """.trimIndent()
-        }
     }
     val attributeContainer: ElementConfig by element(Declaration) {
         kDoc = """
@@ -230,16 +209,11 @@ object BirTree : AbstractTreeBuilder() {
             useful, for example, to keep track of generated names for anonymous declarations.
             @property attributeOwnerId original element before copying. Always satisfies the following
               invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
-            @property originalBeforeInline original element before inlining. Useful only with IR
-              inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
-              idempotence invariant and can contain a chain of declarations.
         """.trimIndent()
 
         +field("attributeOwnerId", attributeContainer) {
             initializeToThis = true
         }
-        // null <=> this element wasn't inlined
-        +field("originalBeforeInline", attributeContainer, nullable = true)
     }
 
     // Equivalent of IrMutableAnnotationContainer which is not an IR element (but could be)

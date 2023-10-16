@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 
 /**
  * An [BirElement] capable of holding something which backends can use to write
@@ -22,16 +21,6 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
  * to `@kotlin.Metadata`
  * on JVM.
  *
- * In Kotlin/Native, [metadata] is used to store some LLVM-related stuff in an IR declaration,
- * but this is only for performance purposes (before it was done using simple maps).
- *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.metadataSourceOwner]
  */
-interface BirMetadataSourceOwner : BirElement {
-    /**
-     * The arbitrary metadata associated with this IR node.
-     *
-     * @see BirMetadataSourceOwner
-     */
-    var metadata: MetadataSource?
-}
+interface BirMetadataSourceOwner : BirElement
