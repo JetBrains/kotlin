@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.modules.TargetId
 
 class IncrementalCompilationComponentsImpl(
-        private val caches: Map<TargetId, IncrementalCache>
-): IncrementalCompilationComponents {
+    private val caches: Map<TargetId, IncrementalCache>
+) : IncrementalCompilationComponents {
     override fun getIncrementalCache(target: TargetId): IncrementalCache =
-            caches[target] ?: throw Exception("Incremental cache for target ${target.name} not found")
+        caches[target] ?: throw Exception("Incremental cache for target ${target.name} not found")
 }
