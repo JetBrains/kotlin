@@ -20,20 +20,20 @@ fun <T> test0(a: T) where T : KRunnable, T : Function0<Unit> {
 fun test1(a: Function0<Unit>) {
   when {
     a is KRunnable -> { // BLOCK
-      run1(r = a /*as KRunnable */)
+      run1(r = a /*as Any */)
     }
   }
 }
 
 fun test2(a: KRunnable) {
   a as Function0<Unit> /*~> Unit */
-  run1(r = a /*as Function0<Unit> */)
+  run1(r = a /*as Any */)
 }
 
 fun test3(a: Function0<Unit>) {
   when {
     a is KRunnable -> { // BLOCK
-      run2(r1 = a /*as KRunnable */, r2 = a /*as KRunnable */)
+      run2(r1 = a /*as Any */, r2 = a /*as Any */)
     }
   }
 }
@@ -41,7 +41,7 @@ fun test3(a: Function0<Unit>) {
 fun test4(a: Function0<Unit>, b: Function0<Unit>) {
   when {
     a is KRunnable -> { // BLOCK
-      run2(r1 = a /*as KRunnable */, r2 = b /*-> KRunnable */)
+      run2(r1 = a /*as Any */, r2 = b /*-> KRunnable */)
     }
   }
 }
@@ -58,7 +58,7 @@ fun test5x(a: Any) {
   when {
     a is KRunnable -> { // BLOCK
       a /*as KRunnable */ as Function0<Unit> /*~> Unit */
-      run1(r = a /*as KRunnable */)
+      run1(r = a)
     }
   }
 }
@@ -70,12 +70,12 @@ fun test6(a: Any) {
 
 fun test7(a: Function1<Int, Int>) {
   a as Function0<Unit> /*~> Unit */
-  run1(r = a /*as Function0<Unit> */ /*-> KRunnable */)
+  run1(r = a /*as Function<Any> */ /*-> KRunnable */)
 }
 
 fun <T : Function1<Int, Int>> test7a(a: T) {
   a as Function0<Unit> /*~> Unit */
-  run1(r = a /*as Function0<Unit> */ /*-> KRunnable */)
+  run1(r = a /*as Function<Any> */ /*-> KRunnable */)
 }
 
 fun <T> test7b(a: T) where T : Function1<Int, Unit>, T : Function0<Unit> {

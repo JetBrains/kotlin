@@ -104,8 +104,8 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B
     BLOCK_BODY
-      VAR name:v type:<root>.I [val]
-        WHEN type=<root>.I origin=IF
+      VAR name:v type:<root>.K [val]
+        WHEN type=<root>.K origin=IF
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'a: <root>.A declared in <root>.testIntersection' type=<root>.A origin=null
@@ -113,11 +113,12 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'b: <root>.B declared in <root>.testIntersection' type=<root>.B origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: GET_VAR 'val v: <root>.I declared in <root>.testIntersection' type=<root>.I origin=null
+        $this: TYPE_OP type=<root>.I origin=IMPLICIT_CAST typeOperand=<root>.I
+          GET_VAR 'val v: <root>.K declared in <root>.testIntersection' type=<root>.K origin=null
   FUN name:testFlexible1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:v type:<root>.I? [val]
-        WHEN type=<root>.I? origin=IF
+      VAR name:v type:<root>.K? [val]
+        WHEN type=<root>.K? origin=IF
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun a (): @[FlexibleNullability] <root>.A? declared in <root>.Java' type=@[FlexibleNullability] <root>.A? origin=null
@@ -125,13 +126,13 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun b (): @[FlexibleNullability] <root>.B? declared in <root>.Java' type=@[FlexibleNullability] <root>.B? origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: GET_VAR 'val v: <root>.I? declared in <root>.testFlexible1' type=<root>.I? origin=null
+        $this: GET_VAR 'val v: <root>.K? declared in <root>.testFlexible1' type=<root>.K? origin=null
   FUN name:testFlexible2 visibility:public modality:FINAL <> (a:<root>.A, b:<root>.B) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     VALUE_PARAMETER name:b index:1 type:<root>.B
     BLOCK_BODY
-      VAR name:v type:<root>.I? [val]
-        WHEN type=<root>.I? origin=IF
+      VAR name:v type:<root>.K? [val]
+        WHEN type=<root>.K? origin=IF
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public open fun id <T> (x: @[FlexibleNullability] T of <root>.Java.id?): @[FlexibleNullability] T of <root>.Java.id? declared in <root>.Java' type=@[FlexibleNullability] <root>.A? origin=null
@@ -143,4 +144,4 @@ FILE fqName:<root> fileName:/receiverOfIntersectionType.kt
               <T>: @[FlexibleNullability] <root>.B?
               x: GET_VAR 'b: <root>.B declared in <root>.testFlexible2' type=<root>.B origin=null
       CALL 'public abstract fun ff (): kotlin.Unit declared in <root>.I' type=kotlin.Unit origin=null
-        $this: GET_VAR 'val v: <root>.I? declared in <root>.testFlexible2' type=<root>.I? origin=null
+        $this: GET_VAR 'val v: <root>.K? declared in <root>.testFlexible2' type=<root>.K? origin=null

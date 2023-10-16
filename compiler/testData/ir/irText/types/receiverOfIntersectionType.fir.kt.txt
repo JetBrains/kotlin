@@ -36,15 +36,15 @@ class B : I, J {
 }
 
 fun testIntersection(a: A, b: B) {
-  val v: I = when {
+  val v: K = when {
     true -> a
     else -> b
   }
-  v.ff()
+  v /*as I */.ff()
 }
 
 fun testFlexible1() {
-  val v: I? = when {
+  val v: K? = when {
     true -> a()
     else -> b()
   }
@@ -52,9 +52,10 @@ fun testFlexible1() {
 }
 
 fun testFlexible2(a: A, b: B) {
-  val v: I? = when {
+  val v: K? = when {
     true -> id<@FlexibleNullability A?>(x = a)
     else -> id<@FlexibleNullability B?>(x = b)
   }
   v.ff()
 }
+

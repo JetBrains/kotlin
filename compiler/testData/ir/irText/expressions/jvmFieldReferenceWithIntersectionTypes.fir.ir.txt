@@ -128,8 +128,8 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Derived1' type=<root>.Derived1 origin=null
       VAR name:d2 type:<root>.Derived2 [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Derived2' type=<root>.Derived2 origin=null
-      VAR name:k type:<root>.JFieldOwner [val]
-        WHEN type=<root>.JFieldOwner origin=IF
+      VAR name:k type:kotlin.Any [val]
+        WHEN type=kotlin.Any origin=IF
           BRANCH
             if: GET_VAR 'b: kotlin.Boolean declared in <root>.test' type=kotlin.Boolean origin=null
             then: GET_VAR 'val d1: <root>.Derived1 declared in <root>.test' type=<root>.Derived1 origin=null
@@ -137,17 +137,19 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'val d2: <root>.Derived2 declared in <root>.test' type=<root>.Derived2 origin=null
       SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
-        receiver: GET_VAR 'val k: <root>.JFieldOwner declared in <root>.test' type=<root>.JFieldOwner origin=null
+        receiver: TYPE_OP type=<root>.JFieldOwner origin=IMPLICIT_CAST typeOperand=<root>.JFieldOwner
+          GET_VAR 'val k: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
         value: CONST Int type=kotlin.Int value=42
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
-          receiver: GET_VAR 'val k: <root>.JFieldOwner declared in <root>.test' type=<root>.JFieldOwner origin=null
+          receiver: TYPE_OP type=<root>.JFieldOwner origin=IMPLICIT_CAST typeOperand=<root>.JFieldOwner
+            GET_VAR 'val k: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
       VAR name:md1 type:<root>.DerivedThroughMid1 [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.DerivedThroughMid1' type=<root>.DerivedThroughMid1 origin=null
       VAR name:md2 type:<root>.DerivedThroughMid2 [val]
         CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.DerivedThroughMid2' type=<root>.DerivedThroughMid2 origin=null
-      VAR name:mk type:<root>.Mid [val]
-        WHEN type=<root>.Mid origin=IF
+      VAR name:mk type:kotlin.Any [val]
+        WHEN type=kotlin.Any origin=IF
           BRANCH
             if: GET_VAR 'b: kotlin.Boolean declared in <root>.test' type=kotlin.Boolean origin=null
             then: GET_VAR 'val md1: <root>.DerivedThroughMid1 declared in <root>.test' type=<root>.DerivedThroughMid1 origin=null
@@ -155,8 +157,10 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: GET_VAR 'val md2: <root>.DerivedThroughMid2 declared in <root>.test' type=<root>.DerivedThroughMid2 origin=null
       SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
-        receiver: GET_VAR 'val mk: <root>.Mid declared in <root>.test' type=<root>.Mid origin=null
+        receiver: TYPE_OP type=<root>.Mid origin=IMPLICIT_CAST typeOperand=<root>.Mid
+          GET_VAR 'val mk: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
         value: CONST Int type=kotlin.Int value=44
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
-          receiver: GET_VAR 'val mk: <root>.Mid declared in <root>.test' type=<root>.Mid origin=null
+          receiver: TYPE_OP type=<root>.Mid origin=IMPLICIT_CAST typeOperand=<root>.Mid
+            GET_VAR 'val mk: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null

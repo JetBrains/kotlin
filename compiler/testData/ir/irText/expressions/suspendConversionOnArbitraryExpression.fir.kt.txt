@@ -175,15 +175,16 @@ fun testSmartCastOnVarWithSuspendConversion(a: Any) {
 
 fun testSmartCastVsSuspendConversion(a: Function0<Unit>) {
   a as SuspendFunction0<Unit> /*~> Unit */
-  useSuspend(sfn = a /*as SuspendFunction0<Unit> */)
+  useSuspend(sfn = a /*as Function<Unit> */)
 }
 
 fun testSmartCastOnVarVsSuspendConversion(a: Function0<Unit>) {
   var b: Function0<Unit> = a
   b as SuspendFunction0<Unit> /*~> Unit */
-  useSuspend(sfn = b /*as SuspendFunction0<Unit> */)
+  useSuspend(sfn = b /*as Function<Unit> */)
 }
 
 fun <T> testIntersectionVsSuspendConversion(x: T) where T : Function0<Unit>, T : SuspendFunction0<Unit> {
   useSuspend(sfn = x)
 }
+

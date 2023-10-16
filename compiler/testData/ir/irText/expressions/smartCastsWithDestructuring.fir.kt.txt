@@ -18,7 +18,7 @@ fun test(x: I1) {
   when {
     x !is I2 -> return Unit
   }
-  val tmp_0: I1 = x /*as I2 */
-  val c1: Int = tmp_0 /*as I2 */.component1()
-  val c2: String = tmp_0 /*as I2 */.component2()
+  val tmp_0: I1 = x /*as Any */
+  val c1: Int = tmp_0 /*as Any */.component1()
+  val c2: String = tmp_0 /*as Any */.component2()
 }

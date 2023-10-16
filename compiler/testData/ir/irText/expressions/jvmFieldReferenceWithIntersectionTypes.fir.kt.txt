@@ -50,19 +50,19 @@ class DerivedThroughMid2 : Mid, IFoo {
 fun test(b: Boolean) {
   val d1: Derived1 = Derived1()
   val d2: Derived2 = Derived2()
-  val k: JFieldOwner = when {
+  val k: Any = when {
     b -> d1
     else -> d2
   }
-  k.#f = 42
-  k.#f /*~> Unit */
+  k /*as JFieldOwner */.#f = 42
+  k /*as JFieldOwner */.#f /*~> Unit */
   val md1: DerivedThroughMid1 = DerivedThroughMid1()
   val md2: DerivedThroughMid2 = DerivedThroughMid2()
-  val mk: Mid = when {
+  val mk: Any = when {
     b -> md1
     else -> md2
   }
-  mk.#f = 44
-  mk.#f /*~> Unit */
+  mk /*as Mid */.#f = 44
+  mk /*as Mid */.#f /*~> Unit */
 }
 

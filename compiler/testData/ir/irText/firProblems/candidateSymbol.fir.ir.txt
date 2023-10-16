@@ -132,8 +132,8 @@ FILE fqName:<root> fileName:/candidateSymbol.kt
   FUN name:foo visibility:public modality:FINAL <> (candidate:<root>.Candidate) returnType:kotlin.Unit
     VALUE_PARAMETER name:candidate index:0 type:<root>.Candidate
     BLOCK_BODY
-      VAR name:me type:<root>.FirSymbolOwner<*> [val]
-        CALL 'public final fun <get-fir> (): E of <root>.AbstractFirBasedSymbol declared in <root>.AbstractFirBasedSymbol' type=<root>.FirSymbolOwner<*> origin=GET_PROPERTY
+      VAR name:me type:kotlin.Any [val]
+        CALL 'public final fun <get-fir> (): E of <root>.AbstractFirBasedSymbol declared in <root>.AbstractFirBasedSymbol' type=kotlin.Any origin=GET_PROPERTY
           $this: CALL 'public final fun <get-symbol> (): <root>.AbstractFirBasedSymbol<*> declared in <root>.Candidate' type=<root>.AbstractFirBasedSymbol<*> origin=GET_PROPERTY
             $this: GET_VAR 'candidate: <root>.Candidate declared in <root>.foo' type=<root>.Candidate origin=null
       WHEN type=kotlin.Unit origin=IF
@@ -141,12 +141,12 @@ FILE fqName:<root> fileName:/candidateSymbol.kt
           if: WHEN type=kotlin.Boolean origin=ANDAND
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.FirCallableMemberDeclaration<*>
-                GET_VAR 'val me: <root>.FirSymbolOwner<*> declared in <root>.foo' type=<root>.FirSymbolOwner<*> origin=null
+                GET_VAR 'val me: kotlin.Any declared in <root>.foo' type=kotlin.Any origin=null
               then: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                 $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                   arg0: CALL 'public abstract fun <get-symbol> (): <root>.AbstractFirBasedSymbol<F of <root>.FirCallableMemberDeclaration> declared in <root>.FirCallableMemberDeclaration' type=<root>.AbstractFirBasedSymbol<out <root>.FirCallableMemberDeclaration<*>> origin=GET_PROPERTY
                     $this: TYPE_OP type=<root>.FirCallableMemberDeclaration<*> origin=IMPLICIT_CAST typeOperand=<root>.FirCallableMemberDeclaration<*>
-                      GET_VAR 'val me: <root>.FirSymbolOwner<*> declared in <root>.foo' type=<root>.FirSymbolOwner<*> origin=null
+                      GET_VAR 'val me: kotlin.Any declared in <root>.foo' type=kotlin.Any origin=null
                   arg1: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
