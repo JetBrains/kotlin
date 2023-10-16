@@ -10,6 +10,7 @@ import groovy.lang.GString
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.reflect.TypeOf
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.warnNpmGenerateExternals
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -63,9 +64,8 @@ interface DevNpmDependencyExtension :
 interface PeerNpmDependencyExtension :
     BaseNpmDependencyExtension
 
-internal fun Project.addNpmDependencyExtension() {
+internal val AddNpmDependencyExtensionProjectSetupAction = KotlinProjectSetupAction {
     val extensions = (dependencies as ExtensionAware).extensions
-
     values()
         .forEach { scope ->
             val type = when (scope) {

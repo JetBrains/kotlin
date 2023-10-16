@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.DefaultUnameExecutorVariantFactory
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.UnameExecutor
-import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
@@ -264,8 +263,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         plugin.apply(project)
 
         project.runKotlinProjectSetupActions()
-
-        project.addNpmDependencyExtension()
 
         project.registerBuildKotlinToolingMetadataTask()
 
