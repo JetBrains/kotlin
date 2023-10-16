@@ -336,12 +336,12 @@ public inline fun CharSequence?.isNullOrBlank(): Boolean {
  * @sample samples.text.Strings.stringIsNullOrBlank
  */
 @kotlin.internal.InlineOnly
-public inline fun CharSequence?.isNotNullOrNotBlank(): Boolean {
+public inline fun CharSequence?.isNotNullAndNotBlank(): Boolean {
     contract {
-        returns(false) implies (this@isNotNullOrNotBlank != null)
+        returns(false) implies (this@isNotNullAndNotBlank != null)
     }
 
-    return this != null || this.isNotBlank()
+    return this != null && this.isNotBlank()
 }
 
 
