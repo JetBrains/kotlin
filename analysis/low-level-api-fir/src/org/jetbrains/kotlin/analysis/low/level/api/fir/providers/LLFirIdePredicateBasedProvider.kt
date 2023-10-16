@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.psi.*
 internal class LLFirIdePredicateBasedProvider(
     private val session: LLFirSourcesSession,
     private val annotationsResolver: KotlinAnnotationsResolver,
-    private val declarationProvider: KotlinDeclarationProvider,
 ) : FirPredicateBasedProvider() {
     private val projectStructureProvider by lazy { ProjectStructureProvider.getInstance(session.project) }
 

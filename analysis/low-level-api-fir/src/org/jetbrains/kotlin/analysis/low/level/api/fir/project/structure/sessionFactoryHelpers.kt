@@ -85,9 +85,6 @@ internal fun LLFirSourcesSession.registerCompilerPluginServices(
 
     // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process
     register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
-    register(
-        FirPredicateBasedProvider::class,
-        LLFirIdePredicateBasedProvider(this, annotationsResolver, project.createDeclarationProvider(projectWithDependenciesScope, module))
-    )
+    register(FirPredicateBasedProvider::class, LLFirIdePredicateBasedProvider(this, annotationsResolver))
 
 }
