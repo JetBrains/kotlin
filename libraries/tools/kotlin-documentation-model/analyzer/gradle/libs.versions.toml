@@ -23,7 +23,7 @@ intellij-platform = "213.7172.25"
 jsoup = "1.15.3"
 freemarker = "2.3.31"
 soywiz-korte = "2.7.0"
-kotlinx-html = "0.7.5"
+kotlinx-html = "0.9.1"
 
 ## Markdown
 jetbrains-markdown = "0.3.1"
