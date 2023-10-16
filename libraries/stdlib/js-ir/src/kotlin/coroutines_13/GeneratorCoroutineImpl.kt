@@ -8,14 +8,11 @@ package kotlin.coroutines
 import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.internal.InlineOnly
 
+// It should be replaced with the regular function generator after the bootstrapping
 internal val dummyGenerator = js("""
-    function*(suspended, c){
-      var a = c();
-      if (a === suspended) {
-        a = yield a;
-      }
-      return a;
-    }
+    // TO PREVENT PREVIOUS VERSIONS OF THE COMPILER FAIL TO COMPILE THE CODE
+    var generatorFactory = new Function("return function*(suspended, c) { var a = c(); if (a === suspended) a = yield a; return a }")
+    generatorFactory()
 """)
 
 internal val GeneratorFunction = dummyGenerator.constructor.prototype
