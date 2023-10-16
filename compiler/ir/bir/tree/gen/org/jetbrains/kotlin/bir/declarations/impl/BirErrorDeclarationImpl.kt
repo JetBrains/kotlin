@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirErrorDeclaration
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -24,5 +23,4 @@ class BirErrorDeclarationImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
 ) : BirErrorDeclaration()

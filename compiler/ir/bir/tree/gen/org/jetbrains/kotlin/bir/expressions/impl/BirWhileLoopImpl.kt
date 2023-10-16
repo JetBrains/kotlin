@@ -20,9 +20,35 @@ class BirWhileLoopImpl(
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var origin: IrStatementOrigin?,
-    override var body: BirExpression?,
-    override var condition: BirExpression,
+    body: BirExpression?,
+    condition: BirExpression,
     override var label: String?,
 ) : BirWhileLoop() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _body: BirExpression? = body
+
+    override var body: BirExpression?
+        get() = _body
+        set(value) {
+            if (_body != value) {
+                replaceChild(_body, value)
+                _body = value
+            }
+        }
+
+    private var _condition: BirExpression = condition
+
+    override var condition: BirExpression
+        get() = _condition
+        set(value) {
+            if (_condition != value) {
+                replaceChild(_condition, value)
+                _condition = value
+            }
+        }
+    init {
+        initChild(_body)
+        initChild(_condition)
+    }
 }

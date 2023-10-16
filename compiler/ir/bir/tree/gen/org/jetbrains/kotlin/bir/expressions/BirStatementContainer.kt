@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.BirStatement
-import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.*
 
 /**
  * A non-leaf IR tree element.
@@ -19,7 +16,7 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.statementContainer]
  */
 interface BirStatementContainer : BirElement {
-    val statements: MutableList<BirStatement>
+    val statements: BirChildElementList<BirStatement>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         statements.forEach { it.accept(data, visitor) }

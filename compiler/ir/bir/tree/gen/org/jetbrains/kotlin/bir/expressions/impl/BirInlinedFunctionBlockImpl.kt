@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.SourceSpan
@@ -21,10 +22,11 @@ class BirInlinedFunctionBlockImpl(
     override var sourceSpan: SourceSpan,
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
-    override val statements: MutableList<BirStatement>,
     override var origin: IrStatementOrigin?,
     override var inlineCall: BirFunctionAccessExpression,
     override var inlinedElement: BirElement,
 ) : BirInlinedFunctionBlock() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this)
 }

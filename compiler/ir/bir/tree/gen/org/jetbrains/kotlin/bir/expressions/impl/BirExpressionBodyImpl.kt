@@ -14,5 +14,19 @@ import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 
 class BirExpressionBodyImpl(
     override var sourceSpan: SourceSpan,
-    override var expression: BirExpression,
-) : BirExpressionBody()
+    expression: BirExpression,
+) : BirExpressionBody() {
+    private var _expression: BirExpression = expression
+
+    override var expression: BirExpression
+        get() = _expression
+        set(value) {
+            if (_expression != value) {
+                replaceChild(_expression, value)
+                _expression = value
+            }
+        }
+    init {
+        initChild(_expression)
+    }
+}

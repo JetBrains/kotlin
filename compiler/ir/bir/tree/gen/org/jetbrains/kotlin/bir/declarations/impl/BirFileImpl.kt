@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirDeclaration
 import org.jetbrains.kotlin.bir.declarations.BirFile
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.name.FqName
 
 class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     override var sourceSpan: SourceSpan,
-    override val declarations: MutableList<BirDeclaration>,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: PackageFragmentDescriptor,
     override var signature: IdSignature,
@@ -31,4 +31,7 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     override var metadata: MetadataSource?,
     override var module: BirModuleFragment,
     override var fileEntry: IrFileEntry,
-) : BirFile()
+) : BirFile() {
+    override val declarations: BirChildElementList<BirDeclaration> =
+            BirChildElementList(this)
+}

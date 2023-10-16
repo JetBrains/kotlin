@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -28,12 +29,9 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
-    override var typeParameters: List<BirTypeParameter>,
-    override val declarations: MutableList<BirDeclaration>,
     override var originalBeforeInline: BirAttributeContainer?,
     override var metadata: MetadataSource?,
     override var kind: ClassKind,
@@ -46,9 +44,29 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     override var isFun: Boolean,
     override val source: SourceElement,
     override var superTypes: List<BirType>,
-    override var thisReceiver: BirValueParameter?,
+    thisReceiver: BirValueParameter?,
     override var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
     override var sealedSubclasses: List<BirClassSymbol>,
 ) : BirClass() {
+    override var typeParameters: BirChildElementList<BirTypeParameter> =
+            BirChildElementList(this)
+
+    override val declarations: BirChildElementList<BirDeclaration> =
+            BirChildElementList(this)
+
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _thisReceiver: BirValueParameter? = thisReceiver
+
+    override var thisReceiver: BirValueParameter?
+        get() = _thisReceiver
+        set(value) {
+            if (_thisReceiver != value) {
+                replaceChild(_thisReceiver, value)
+                _thisReceiver = value
+            }
+        }
+    init {
+        initChild(_thisReceiver)
+    }
 }

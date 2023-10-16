@@ -8,9 +8,13 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.declarations.*
+import org.jetbrains.kotlin.bir.declarations.BirConstructor
+import org.jetbrains.kotlin.bir.declarations.BirScript
+import org.jetbrains.kotlin.bir.declarations.BirValueParameter
+import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
@@ -30,20 +34,52 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
-    override val statements: MutableList<BirStatement>,
     override var metadata: MetadataSource?,
-    override var thisReceiver: BirValueParameter?,
+    thisReceiver: BirValueParameter?,
     override var baseClass: BirType?,
-    override var explicitCallParameters: List<BirVariable>,
-    override var implicitReceiversParameters: List<BirValueParameter>,
     override var providedProperties: List<BirPropertySymbol>,
-    override var providedPropertiesParameters: List<BirValueParameter>,
     override var resultProperty: BirPropertySymbol?,
-    override var earlierScriptsParameter: BirValueParameter?,
+    earlierScriptsParameter: BirValueParameter?,
     override var importedScripts: List<BirScriptSymbol>?,
     override var earlierScripts: List<BirScriptSymbol>?,
     override var targetClass: BirClassSymbol?,
     override var constructor: BirConstructor?,
-) : BirScript()
+) : BirScript() {
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this)
+
+    private var _thisReceiver: BirValueParameter? = thisReceiver
+
+    override var thisReceiver: BirValueParameter?
+        get() = _thisReceiver
+        set(value) {
+            if (_thisReceiver != value) {
+                replaceChild(_thisReceiver, value)
+                _thisReceiver = value
+            }
+        }
+
+    override var explicitCallParameters: BirChildElementList<BirVariable> =
+            BirChildElementList(this)
+
+    override var implicitReceiversParameters: BirChildElementList<BirValueParameter> =
+            BirChildElementList(this)
+
+    override var providedPropertiesParameters: BirChildElementList<BirValueParameter> =
+            BirChildElementList(this)
+
+    private var _earlierScriptsParameter: BirValueParameter? = earlierScriptsParameter
+
+    override var earlierScriptsParameter: BirValueParameter?
+        get() = _earlierScriptsParameter
+        set(value) {
+            if (_earlierScriptsParameter != value) {
+                replaceChild(_earlierScriptsParameter, value)
+                _earlierScriptsParameter = value
+            }
+        }
+    init {
+        initChild(_thisReceiver)
+        initChild(_earlierScriptsParameter)
+    }
+}

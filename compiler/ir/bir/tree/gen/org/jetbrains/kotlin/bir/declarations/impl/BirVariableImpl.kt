@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -27,12 +26,25 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
     override var type: BirType,
     override val isAssignable: Boolean,
     override var isVar: Boolean,
     override var isConst: Boolean,
     override var isLateinit: Boolean,
-    override var initializer: BirExpression?,
-) : BirVariable()
+    initializer: BirExpression?,
+) : BirVariable() {
+    private var _initializer: BirExpression? = initializer
+
+    override var initializer: BirExpression?
+        get() = _initializer
+        set(value) {
+            if (_initializer != value) {
+                replaceChild(_initializer, value)
+                _initializer = value
+            }
+        }
+    init {
+        initChild(_initializer)
+    }
+}

@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementBase
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.name.Name
@@ -28,7 +25,7 @@ abstract class BirModuleFragment : BirElementBase(), BirElement {
 
     abstract val irBuiltins: IrBuiltIns
 
-    abstract val files: MutableList<BirFile>
+    abstract val files: BirChildElementList<BirFile>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         files.forEach { it.accept(data, visitor) }

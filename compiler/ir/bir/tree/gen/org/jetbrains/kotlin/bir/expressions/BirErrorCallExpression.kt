@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 
@@ -19,7 +20,7 @@ import org.jetbrains.kotlin.bir.accept
 abstract class BirErrorCallExpression : BirErrorExpression() {
     abstract var explicitReceiver: BirExpression?
 
-    abstract val arguments: MutableList<BirExpression>
+    abstract val arguments: BirChildElementList<BirExpression>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         explicitReceiver?.accept(data, visitor)

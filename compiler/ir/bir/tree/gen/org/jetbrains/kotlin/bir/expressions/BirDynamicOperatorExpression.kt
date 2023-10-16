@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
@@ -22,7 +23,7 @@ abstract class BirDynamicOperatorExpression : BirDynamicExpression() {
 
     abstract var receiver: BirExpression
 
-    abstract val arguments: MutableList<BirExpression>
+    abstract val arguments: BirChildElementList<BirExpression>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         receiver.accept(data, visitor)

@@ -9,7 +9,10 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.declarations.*
+import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
+import org.jetbrains.kotlin.bir.declarations.BirField
+import org.jetbrains.kotlin.bir.declarations.BirProperty
+import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -29,7 +32,6 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
@@ -44,9 +46,47 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     override var isLateinit: Boolean,
     override var isDelegated: Boolean,
     override var isExpect: Boolean,
-    override var backingField: BirField?,
-    override var getter: BirSimpleFunction?,
-    override var setter: BirSimpleFunction?,
+    backingField: BirField?,
+    getter: BirSimpleFunction?,
+    setter: BirSimpleFunction?,
 ) : BirProperty() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _backingField: BirField? = backingField
+
+    override var backingField: BirField?
+        get() = _backingField
+        set(value) {
+            if (_backingField != value) {
+                replaceChild(_backingField, value)
+                _backingField = value
+            }
+        }
+
+    private var _getter: BirSimpleFunction? = getter
+
+    override var getter: BirSimpleFunction?
+        get() = _getter
+        set(value) {
+            if (_getter != value) {
+                replaceChild(_getter, value)
+                _getter = value
+            }
+        }
+
+    private var _setter: BirSimpleFunction? = setter
+
+    override var setter: BirSimpleFunction?
+        get() = _setter
+        set(value) {
+            if (_setter != value) {
+                replaceChild(_setter, value)
+                _setter = value
+            }
+        }
+    init {
+        initChild(_backingField)
+        initChild(_getter)
+        initChild(_setter)
+    }
 }

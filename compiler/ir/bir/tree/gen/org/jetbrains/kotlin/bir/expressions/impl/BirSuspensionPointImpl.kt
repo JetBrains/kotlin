@@ -19,9 +19,47 @@ class BirSuspensionPointImpl(
     override var sourceSpan: SourceSpan,
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
-    override var suspensionPointIdParameter: BirVariable,
-    override var result: BirExpression,
-    override var resumeResult: BirExpression,
+    suspensionPointIdParameter: BirVariable,
+    result: BirExpression,
+    resumeResult: BirExpression,
 ) : BirSuspensionPoint() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _suspensionPointIdParameter: BirVariable = suspensionPointIdParameter
+
+    override var suspensionPointIdParameter: BirVariable
+        get() = _suspensionPointIdParameter
+        set(value) {
+            if (_suspensionPointIdParameter != value) {
+                replaceChild(_suspensionPointIdParameter, value)
+                _suspensionPointIdParameter = value
+            }
+        }
+
+    private var _result: BirExpression = result
+
+    override var result: BirExpression
+        get() = _result
+        set(value) {
+            if (_result != value) {
+                replaceChild(_result, value)
+                _result = value
+            }
+        }
+
+    private var _resumeResult: BirExpression = resumeResult
+
+    override var resumeResult: BirExpression
+        get() = _resumeResult
+        set(value) {
+            if (_resumeResult != value) {
+                replaceChild(_resumeResult, value)
+                _resumeResult = value
+            }
+        }
+    init {
+        initChild(_suspensionPointIdParameter)
+        initChild(_result)
+        initChild(_resumeResult)
+    }
 }

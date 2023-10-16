@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
@@ -22,11 +23,12 @@ class BirReturnableBlockImpl @ObsoleteDescriptorBasedAPI constructor(
     override var sourceSpan: SourceSpan,
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
-    override val statements: MutableList<BirStatement>,
     override var origin: IrStatementOrigin?,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor,
     override var signature: IdSignature,
 ) : BirReturnableBlock() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this)
 }

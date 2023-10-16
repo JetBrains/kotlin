@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -27,7 +26,6 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
     override var type: BirType,
     override val isAssignable: Boolean,
@@ -36,5 +34,19 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     override var isCrossinline: Boolean,
     override var isNoinline: Boolean,
     override var isHidden: Boolean,
-    override var defaultValue: BirExpressionBody?,
-) : BirValueParameter()
+    defaultValue: BirExpressionBody?,
+) : BirValueParameter() {
+    private var _defaultValue: BirExpressionBody? = defaultValue
+
+    override var defaultValue: BirExpressionBody?
+        get() = _defaultValue
+        set(value) {
+            if (_defaultValue != value) {
+                replaceChild(_defaultValue, value)
+                _defaultValue = value
+            }
+        }
+    init {
+        initChild(_defaultValue)
+    }
+}

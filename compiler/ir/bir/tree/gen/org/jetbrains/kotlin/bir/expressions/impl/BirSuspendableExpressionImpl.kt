@@ -18,8 +18,34 @@ class BirSuspendableExpressionImpl(
     override var sourceSpan: SourceSpan,
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
-    override var suspensionPointId: BirExpression,
-    override var result: BirExpression,
+    suspensionPointId: BirExpression,
+    result: BirExpression,
 ) : BirSuspendableExpression() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _suspensionPointId: BirExpression = suspensionPointId
+
+    override var suspensionPointId: BirExpression
+        get() = _suspensionPointId
+        set(value) {
+            if (_suspensionPointId != value) {
+                replaceChild(_suspensionPointId, value)
+                _suspensionPointId = value
+            }
+        }
+
+    private var _result: BirExpression = result
+
+    override var result: BirExpression
+        get() = _result
+        set(value) {
+            if (_result != value) {
+                replaceChild(_result, value)
+                _result = value
+            }
+        }
+    init {
+        initChild(_suspensionPointId)
+        initChild(_result)
+    }
 }

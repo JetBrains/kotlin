@@ -8,13 +8,12 @@
 
 package org.jetbrains.kotlin.bir
 
-/**
- * The root interface of the IR tree. Each IR node implements this interface.
- *
- * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.rootElement]
- */
-interface BirElement {
-    val sourceSpan: SourceSpan
 
+sealed interface BirElementOrChildList {
     fun<D> acceptChildren(visitor: BirElementVisitor<D>, data: D)
+}
+
+interface BirElement : BirElementOrChildList {
+    val sourceSpan: SourceSpan
+    val parent: BirElement?
 }

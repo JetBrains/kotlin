@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirBody
@@ -38,7 +39,7 @@ interface BirFunction : BirDeclaration, BirPossiblyExternalDeclaration,
 
     var extensionReceiverParameter: BirValueParameter?
 
-    var valueParameters: List<BirValueParameter>
+    var valueParameters: BirChildElementList<BirValueParameter>
 
     var contextReceiverParametersCount: Int
 

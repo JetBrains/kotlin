@@ -66,7 +66,6 @@ object BirTree : AbstractTreeBuilder() {
 
         +descriptor("DeclarationDescriptor")
         +field("origin", type("org.jetbrains.kotlin.ir.declarations", "IrDeclarationOrigin"))
-        +field("parent", declarationParent)
     }
     val declarationParent: ElementConfig by element(Declaration)
     val declarationWithVisibility: ElementConfig by element(Declaration) {

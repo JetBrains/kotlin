@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.bir.generator.Packages
 import org.jetbrains.kotlin.bir.generator.elementBaseType
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
+import org.jetbrains.kotlin.bir.generator.model.SingleField
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.type
 import java.io.File
 
 fun printElementImpls(generationPath: File, model: Model) = sequence {
@@ -51,12 +51,37 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        when (field.listType) {
-                            type("kotlin.collections", "MutableList") -> initializer("mutableListOf()")
-                            type("kotlin.", "Array") -> initializer("arrayOf()")
-                        }
+                        initializer("BirChildElementList(this)")
+                    } else if (field is SingleField && field.isChild && field.mutable) {
+                        addProperty(
+                            PropertySpec.builder(field.backingFieldName, poetType)
+                                .mutable(true)
+                                .addModifiers(KModifier.PRIVATE)
+                                .apply {
+                                    if (field.initializeToThis) initializer("this") else initializer("%N", field.name)
+                                }
+                                .build()
+                        )
+                        getter(
+                            FunSpec.getterBuilder()
+                                .addCode("return ${field.backingFieldName}")
+                                .build()
+                        )
                     } else {
                         if (field.initializeToThis) initializer("this") else initializer("%N", field.name)
+                    }
+
+                    if (field is SingleField && field.isChild && field.mutable) {
+                        setter(
+                            FunSpec.setterBuilder()
+                                .addParameter(ParameterSpec("value", poetType))
+                                .apply {
+                                    addCode("if (${field.backingFieldName} != value) {\n")
+                                    addCode("    replaceChild(${field.backingFieldName}, value)\n")
+                                    addCode("    ${field.backingFieldName} = value\n")
+                                    addCode("}\n")
+                                }.build()
+                        )
                     }
                 }.build())
             }
@@ -64,6 +89,14 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
             if (allFields.any { it.needsDescriptorApiAnnotation }) {
                 ctor.addAnnotation(descriptorApiAnnotation)
             }
+
+            val allChildren = allFields.filter { it.isChild }
+            allChildren.forEachIndexed { fieldIndex, child ->
+                if (child is SingleField) {
+                    ctor.addCode("initChild(${child.backingFieldName})\n")
+                }
+            }
+
 
             primaryConstructor(ctor.build())
         }.build()

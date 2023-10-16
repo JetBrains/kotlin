@@ -19,7 +19,21 @@ class BirDynamicMemberExpressionImpl(
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var memberName: String,
-    override var receiver: BirExpression,
+    receiver: BirExpression,
 ) : BirDynamicMemberExpression() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _receiver: BirExpression = receiver
+
+    override var receiver: BirExpression
+        get() = _receiver
+        set(value) {
+            if (_receiver != value) {
+                replaceChild(_receiver, value)
+                _receiver = value
+            }
+        }
+    init {
+        initChild(_receiver)
+    }
 }

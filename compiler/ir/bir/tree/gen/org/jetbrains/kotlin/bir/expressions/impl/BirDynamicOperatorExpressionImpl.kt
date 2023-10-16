@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirDynamicOperatorExpression
@@ -20,8 +21,23 @@ class BirDynamicOperatorExpressionImpl(
     override var originalBeforeInline: BirAttributeContainer?,
     override var type: BirType,
     override var operator: IrDynamicOperator,
-    override var receiver: BirExpression,
-    override val arguments: MutableList<BirExpression>,
+    receiver: BirExpression,
 ) : BirDynamicOperatorExpression() {
     override var attributeOwnerId: BirAttributeContainer = this
+
+    private var _receiver: BirExpression = receiver
+
+    override var receiver: BirExpression
+        get() = _receiver
+        set(value) {
+            if (_receiver != value) {
+                replaceChild(_receiver, value)
+                _receiver = value
+            }
+        }
+
+    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this)
+    init {
+        initChild(_receiver)
+    }
 }

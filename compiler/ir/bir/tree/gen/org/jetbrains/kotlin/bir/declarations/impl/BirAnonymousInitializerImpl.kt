@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAnonymousInitializer
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -25,7 +24,20 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var isStatic: Boolean,
-    override var body: BirBlockBody,
-) : BirAnonymousInitializer()
+    body: BirBlockBody,
+) : BirAnonymousInitializer() {
+    private var _body: BirBlockBody = body
+
+    override var body: BirBlockBody
+        get() = _body
+        set(value) {
+            if (_body != value) {
+                replaceChild(_body, value)
+                _body = value
+            }
+        }
+    init {
+        initChild(_body)
+    }
+}

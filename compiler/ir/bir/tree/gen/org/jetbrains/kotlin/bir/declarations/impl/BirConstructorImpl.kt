@@ -8,9 +8,9 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirConstructor
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.BirBody
@@ -32,20 +32,61 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
     override var isExternal: Boolean,
     override var visibility: DescriptorVisibility,
-    override var typeParameters: List<BirTypeParameter>,
     override val containerSource: DeserializedContainerSource?,
     override var metadata: MetadataSource?,
     override var isInline: Boolean,
     override var isExpect: Boolean,
     override var returnType: BirType,
-    override var dispatchReceiverParameter: BirValueParameter?,
-    override var extensionReceiverParameter: BirValueParameter?,
-    override var valueParameters: List<BirValueParameter>,
+    dispatchReceiverParameter: BirValueParameter?,
+    extensionReceiverParameter: BirValueParameter?,
     override var contextReceiverParametersCount: Int,
-    override var body: BirBody?,
+    body: BirBody?,
     override var isPrimary: Boolean,
-) : BirConstructor()
+) : BirConstructor() {
+    override var typeParameters: BirChildElementList<BirTypeParameter> =
+            BirChildElementList(this)
+
+    private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
+
+    override var dispatchReceiverParameter: BirValueParameter?
+        get() = _dispatchReceiverParameter
+        set(value) {
+            if (_dispatchReceiverParameter != value) {
+                replaceChild(_dispatchReceiverParameter, value)
+                _dispatchReceiverParameter = value
+            }
+        }
+
+    private var _extensionReceiverParameter: BirValueParameter? = extensionReceiverParameter
+
+    override var extensionReceiverParameter: BirValueParameter?
+        get() = _extensionReceiverParameter
+        set(value) {
+            if (_extensionReceiverParameter != value) {
+                replaceChild(_extensionReceiverParameter, value)
+                _extensionReceiverParameter = value
+            }
+        }
+
+    override var valueParameters: BirChildElementList<BirValueParameter> =
+            BirChildElementList(this)
+
+    private var _body: BirBody? = body
+
+    override var body: BirBody?
+        get() = _body
+        set(value) {
+            if (_body != value) {
+                replaceChild(_body, value)
+                _body = value
+            }
+        }
+    init {
+        initChild(_dispatchReceiverParameter)
+        initChild(_extensionReceiverParameter)
+        initChild(_body)
+    }
+}

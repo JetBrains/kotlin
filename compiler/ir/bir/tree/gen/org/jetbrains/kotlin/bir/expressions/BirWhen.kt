@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 abstract class BirWhen : BirExpression() {
     abstract var origin: IrStatementOrigin?
 
-    abstract val branches: MutableList<BirBranch>
+    abstract val branches: BirChildElementList<BirBranch>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         branches.forEach { it.accept(data, visitor) }

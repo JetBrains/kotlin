@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
+import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.types.BirType
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 abstract class BirVararg : BirExpression() {
     abstract var varargElementType: BirType
 
-    abstract val elements: MutableList<BirVarargElement>
+    abstract val elements: BirChildElementList<BirVarargElement>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         elements.forEach { it.accept(data, visitor) }

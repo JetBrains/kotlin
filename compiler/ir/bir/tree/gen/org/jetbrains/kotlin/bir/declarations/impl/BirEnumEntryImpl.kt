@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirClass
-import org.jetbrains.kotlin.bir.declarations.BirDeclarationParent
 import org.jetbrains.kotlin.bir.declarations.BirEnumEntry
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -27,8 +26,33 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     override var signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
     override var origin: IrDeclarationOrigin,
-    override var parent: BirDeclarationParent,
     override var name: Name,
-    override var initializerExpression: BirExpressionBody?,
-    override var correspondingClass: BirClass?,
-) : BirEnumEntry()
+    initializerExpression: BirExpressionBody?,
+    correspondingClass: BirClass?,
+) : BirEnumEntry() {
+    private var _initializerExpression: BirExpressionBody? = initializerExpression
+
+    override var initializerExpression: BirExpressionBody?
+        get() = _initializerExpression
+        set(value) {
+            if (_initializerExpression != value) {
+                replaceChild(_initializerExpression, value)
+                _initializerExpression = value
+            }
+        }
+
+    private var _correspondingClass: BirClass? = correspondingClass
+
+    override var correspondingClass: BirClass?
+        get() = _correspondingClass
+        set(value) {
+            if (_correspondingClass != value) {
+                replaceChild(_correspondingClass, value)
+                _correspondingClass = value
+            }
+        }
+    init {
+        initChild(_initializerExpression)
+        initChild(_correspondingClass)
+    }
+}
