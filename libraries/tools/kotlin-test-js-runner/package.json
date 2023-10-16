@@ -11,7 +11,7 @@
     "lib/**/*"
   ],
   "scripts": {
-    "build": "rimraf lib/* && copyfiles static/* lib && rollup -c rollup.config.js"
+    "build": "rimraf lib/* && copyfiles static/* lib && rollup -c rollup.config.js --silent"
   },
   "dependencies": {
     "format-util": "^1.0.5"
