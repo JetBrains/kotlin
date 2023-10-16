@@ -11,6 +11,8 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -19,9 +21,9 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 internal class FirDelegatedConstructorCallImpl(
     override val source: KtSourceElement?,

@@ -15,15 +15,10 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirOperation
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirAugmentedArraySetCallImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirAugmentedArraySetCallBuilder : FirAnnotationContainerBuilder {
@@ -52,7 +47,7 @@ class FirAugmentedArraySetCallBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildAugmentedArraySetCall(init: FirAugmentedArraySetCallBuilder.() -> Unit): FirAugmentedArraySetCall {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirAugmentedArraySetCallBuilder().apply(init).build()
 }

@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirOuterClassTypeParameterRefImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,

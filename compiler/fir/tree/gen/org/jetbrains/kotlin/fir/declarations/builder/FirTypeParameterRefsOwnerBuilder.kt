@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirTypeParameterRefsOwnerBuilder {

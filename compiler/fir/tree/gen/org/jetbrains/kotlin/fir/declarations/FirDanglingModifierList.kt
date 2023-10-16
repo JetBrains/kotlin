@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirDanglingModifierSymbol
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.danglingModifierList]

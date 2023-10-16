@@ -19,13 +19,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirTryExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirTryExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -54,7 +51,7 @@ class FirTryExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuil
 @OptIn(ExperimentalContracts::class)
 inline fun buildTryExpression(init: FirTryExpressionBuilder.() -> Unit): FirTryExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirTryExpressionBuilder().apply(init).build()
 }

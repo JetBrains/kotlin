@@ -18,13 +18,10 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirElvisExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirElvisExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -51,7 +48,7 @@ class FirElvisExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBu
 @OptIn(ExperimentalContracts::class)
 inline fun buildElvisExpression(init: FirElvisExpressionBuilder.() -> Unit): FirElvisExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirElvisExpressionBuilder().apply(init).build()
 }

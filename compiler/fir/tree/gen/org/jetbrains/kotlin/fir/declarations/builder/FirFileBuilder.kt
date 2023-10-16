@@ -19,21 +19,10 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
-import org.jetbrains.kotlin.fir.declarations.asResolveState
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirFileBuilder : FirAnnotationContainerBuilder {
@@ -77,7 +66,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildFile(init: FirFileBuilder.() -> Unit): FirFile {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirFileBuilder().apply(init).build()
 }

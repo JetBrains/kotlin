@@ -18,13 +18,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.StandardClassIds
 
 @FirBuilderDsl
 class FirElseIfTrueConditionBuilder : FirAnnotationContainerBuilder {
@@ -44,7 +38,7 @@ class FirElseIfTrueConditionBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildElseIfTrueCondition(init: FirElseIfTrueConditionBuilder.() -> Unit = {}): FirExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirElseIfTrueConditionBuilder().apply(init).build()
 }

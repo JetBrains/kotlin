@@ -20,14 +20,10 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -63,7 +59,7 @@ class FirPropertyAccessExpressionBuilder : FirQualifiedAccessExpressionBuilder, 
 @OptIn(ExperimentalContracts::class)
 inline fun buildPropertyAccessExpression(init: FirPropertyAccessExpressionBuilder.() -> Unit): FirPropertyAccessExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirPropertyAccessExpressionBuilder().apply(init).build()
 }

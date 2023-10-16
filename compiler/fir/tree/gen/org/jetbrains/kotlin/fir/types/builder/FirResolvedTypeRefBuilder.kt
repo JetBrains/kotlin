@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
@@ -45,7 +44,7 @@ class FirResolvedTypeRefBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedTypeRef(init: FirResolvedTypeRefBuilder.() -> Unit): FirResolvedTypeRef {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedTypeRefBuilder().apply(init).build()
 }

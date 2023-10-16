@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.impl.FirDelegateFieldReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirDelegateFieldReferenceBuilder {
@@ -36,7 +34,7 @@ class FirDelegateFieldReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildDelegateFieldReference(init: FirDelegateFieldReferenceBuilder.() -> Unit): FirDelegateFieldReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirDelegateFieldReferenceBuilder().apply(init).build()
 }

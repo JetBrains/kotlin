@@ -12,16 +12,13 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirExpressionRef
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
 internal class FirSafeCallExpressionImpl(

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedNamedReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
@@ -38,7 +37,7 @@ class FirResolvedNamedReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedNamedReference(init: FirResolvedNamedReferenceBuilder.() -> Unit): FirResolvedNamedReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedNamedReferenceBuilder().apply(init).build()
 }

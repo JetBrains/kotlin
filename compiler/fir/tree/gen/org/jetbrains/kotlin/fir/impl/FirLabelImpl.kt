@@ -12,7 +12,8 @@ package org.jetbrains.kotlin.fir.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirLabelImpl(
     override val source: KtSourceElement?,

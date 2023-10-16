@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirExplicitSuperReferenceBuilder {
@@ -37,7 +36,7 @@ class FirExplicitSuperReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildExplicitSuperReference(init: FirExplicitSuperReferenceBuilder.() -> Unit): FirSuperReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirExplicitSuperReferenceBuilder().apply(init).build()
 }

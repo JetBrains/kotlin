@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.impl.FirEffectDeclarationImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirEffectDeclarationBuilder {
@@ -35,7 +34,7 @@ class FirEffectDeclarationBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildEffectDeclaration(init: FirEffectDeclarationBuilder.() -> Unit): FirEffectDeclaration {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirEffectDeclarationBuilder().apply(init).build()
 }

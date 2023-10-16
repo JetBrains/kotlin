@@ -12,8 +12,9 @@ package org.jetbrains.kotlin.fir.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirPackageDirective
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirPackageDirectiveImpl(
     override val source: KtSourceElement?,

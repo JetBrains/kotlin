@@ -13,7 +13,8 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirConstructedClassTypeParameterRefImpl(
     override val source: KtSourceElement?,

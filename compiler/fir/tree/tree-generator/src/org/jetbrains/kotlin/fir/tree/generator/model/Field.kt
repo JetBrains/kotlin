@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.generics
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 
@@ -104,7 +103,7 @@ class FieldWithDefault(val origin: Field) : Field() {
         get() = origin.customInitializationCall
         set(_) {}
 
-    override var optInAnnotation: ArbitraryImportable?
+    override var optInAnnotation: ClassRef<*>?
         get() = origin.optInAnnotation
         set(_) {}
 

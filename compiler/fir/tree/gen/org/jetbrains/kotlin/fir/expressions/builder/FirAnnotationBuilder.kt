@@ -18,14 +18,10 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -60,7 +56,7 @@ class FirAnnotationBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder
 @OptIn(ExperimentalContracts::class)
 inline fun buildAnnotation(init: FirAnnotationBuilder.() -> Unit): FirAnnotation {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirAnnotationBuilder().apply(init).build()
 }

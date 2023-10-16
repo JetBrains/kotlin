@@ -11,15 +11,11 @@
 package org.jetbrains.kotlin.fir.declarations.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirResolvedImportBuilder {
@@ -40,7 +36,7 @@ class FirResolvedImportBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedImport(init: FirResolvedImportBuilder.() -> Unit): FirResolvedImport {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedImportBuilder().apply(init).build()
 }

@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.ir.generator.util.*
 import org.jetbrains.kotlin.types.Variance
 import  org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
-fun Element.toPoet() = ClassName(packageName, typeName)
+fun Element.toPoet() = ClassName(packageName, this.typeName)
 fun Element.toPoetSelfParameterized() = toPoet().parameterizedByIfAny(poetTypeVariables)
 fun Element.toPoetStarParameterized() = toPoet().parameterizedByIfAny(List(params.size) { STAR })
 val Element.poetTypeVariables get() = params.map { TypeVariableName(it.name) }
 
 fun TypeRef.toPoet(): TypeName {
     return when (this) {
-        is GenericElementRef<*, *> -> ClassName(element.packageName!!, element.type).parameterizedByIfAny(typeArgsToPoet())
+        is GenericElementRef<*, *> -> ClassName(element.packageName, element.typeName).parameterizedByIfAny(typeArgsToPoet())
         is ClassRef<*> -> ClassName(packageName, simpleNames).parameterizedByIfAny(typeArgsToPoet())
         is NamedTypeParameterRef -> TypeVariableName(name)
         is ElementConfigOrRef -> ClassName(this.element.category.packageName, elementName2typeName(element.name)).parameterizedByIfAny(

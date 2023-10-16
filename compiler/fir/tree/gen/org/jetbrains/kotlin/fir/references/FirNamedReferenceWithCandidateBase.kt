@@ -11,8 +11,9 @@ package org.jetbrains.kotlin.fir.references
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.fir.visitors.*
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.namedReferenceWithCandidateBase]

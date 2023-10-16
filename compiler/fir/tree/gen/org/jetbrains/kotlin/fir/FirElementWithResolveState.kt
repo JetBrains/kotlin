@@ -9,11 +9,10 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.asResolveState
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.elementWithResolveState]

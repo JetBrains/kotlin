@@ -14,17 +14,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
-import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.builder.FirFunctionBuilder
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -32,7 +22,6 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @FirBuilderDsl

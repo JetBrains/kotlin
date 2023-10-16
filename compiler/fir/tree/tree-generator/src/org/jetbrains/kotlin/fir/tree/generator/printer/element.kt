@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.fir.tree.generator.*
+import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.util.get
@@ -15,15 +17,12 @@ import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
 fun Element.generateCode(generationPath: File): GeneratedFile =
-    printGeneratedType(generationPath, TREE_GENERATOR_README, packageName, type) {
-        val imports = collectImports()
-        imports.forEach { println("import $it") }
-        if (imports.isNotEmpty()) {
-            println()
-        }
+    printGeneratedType(generationPath, TREE_GENERATOR_README, packageName, this.typeName) {
+        println()
         printElement(this@generateCode)
     }
 
+context(ImportCollector)
 fun SmartPrinter.printElement(element: Element) {
     with(element) {
         val isInterface = kind == ImplementationKind.Interface || kind == ImplementationKind.SealedInterface
@@ -40,13 +39,13 @@ fun SmartPrinter.printElement(element: Element) {
         }
 
         printKDoc(element.extendedKDoc())
-        print("${kind!!.title} $type")
+        print("${kind!!.title} $typeName")
         print(typeParameters())
         val parentRefs = element.parentRefs
         if (parentRefs.isNotEmpty()) {
             print(
                 parentRefs.sortedBy { it.typeKind }.joinToString(prefix = " : ") { parent ->
-                    parent.typeWithArguments + parent.inheritanceClauseParenthesis()
+                    parent.render() + parent.inheritanceClauseParenthesis()
                 }
             )
         }
@@ -66,8 +65,9 @@ fun SmartPrinter.printElement(element: Element) {
                 if (allFields.isNotEmpty()) {
                     println()
                 }
+
                 override()
-                println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =")
+                println("fun <R, D> accept(visitor: ${firVisitorType.render()}<R, D>, data: D): R =")
                 withIndent {
                     println("visitor.visit${element.name}(this, data)")
                 }
@@ -77,7 +77,13 @@ fun SmartPrinter.printElement(element: Element) {
                 println()
                 println("@Suppress(\"UNCHECKED_CAST\")")
                 override()
-                println("fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =")
+                println(
+                    "fun <E : ",
+                    AbstractFirTreeBuilder.baseFirElement.render(),
+                    ", D> transform(transformer: ",
+                    firTransformerType.render(),
+                    "<D>, data: D): E ="
+                )
                 withIndent {
                     println("transformer.transform$name(this, data) as E")
                 }
@@ -86,7 +92,7 @@ fun SmartPrinter.printElement(element: Element) {
             fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRefWithNullability? = null, forceNullable: Boolean = false) {
                 println()
                 if (name == "source") {
-                    println("@FirImplementationDetail")
+                    println("@${firImplementationDetailType.render()}")
                 }
                 abstract()
                 if (override) print("override ")
@@ -95,7 +101,7 @@ fun SmartPrinter.printElement(element: Element) {
 
             allFields.filter { it.withReplace }.forEach {
                 val override = overridenFields[it, it] &&
-                        !(it.name == "source" && fullQualifiedName.endsWith("FirQualifiedAccessExpression"))
+                        !(it.name == "source" && element == FirTreeBuilder.qualifiedAccessExpression)
                 it.replaceDeclaration(override, forceNullable = it.useNullableForReplace)
                 for (overridenType in it.overridenTypes) {
                     it.replaceDeclaration(true, overridenType)
@@ -109,7 +115,7 @@ fun SmartPrinter.printElement(element: Element) {
                 if (field.fromParent && field.parentHasSeparateTransform) {
                     print("override ")
                 }
-                println(field.transformFunctionDeclaration(typeWithArguments))
+                println(field.transformFunctionDeclaration(element))
             }
             if (needTransformOtherChildren) {
                 println()
@@ -117,7 +123,7 @@ fun SmartPrinter.printElement(element: Element) {
                 if (element.elementParents.any { it.element.needTransformOtherChildren }) {
                     print("override ")
                 }
-                println(transformFunctionDeclaration("OtherChildren", typeWithArguments))
+                println(transformFunctionDeclaration("OtherChildren", element))
             }
 
             if (element.isRootElement) {
@@ -125,16 +131,16 @@ fun SmartPrinter.printElement(element: Element) {
                     "$element must be an interface"
                 }
                 println()
-                println("fun accept(visitor: FirVisitorVoid) = accept(visitor, null)")
+                println("fun accept(visitor: ${firVisitorVoidType.render()}) = accept(visitor, null)")
                 if (element.hasAcceptChildrenMethod) {
                     println()
-                    println("fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D)")
+                    println("fun <R, D> acceptChildren(visitor: ${firVisitorType.render()}<R, D>, data: D)")
                 }
                 println()
-                println("fun acceptChildren(visitor: FirVisitorVoid) = acceptChildren(visitor, null)")
+                println("fun acceptChildren(visitor: ${firVisitorVoidType.render()}) = acceptChildren(visitor, null)")
                 if (element.hasTransformChildrenMethod) {
                     println()
-                    println("fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement")
+                    println("fun <D> transformChildren(transformer: ${firTransformerType.render()}<D>, data: D): FirElement")
                 }
             }
         }

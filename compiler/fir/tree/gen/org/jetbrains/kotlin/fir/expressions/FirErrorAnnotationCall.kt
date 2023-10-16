@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.errorAnnotationCall]

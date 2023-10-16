@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirDynamicTypeRefImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirDynamicTypeRefBuilder : FirAnnotationContainerBuilder {
@@ -39,7 +38,7 @@ class FirDynamicTypeRefBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildDynamicTypeRef(init: FirDynamicTypeRefBuilder.() -> Unit): FirDynamicTypeRef {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirDynamicTypeRefBuilder().apply(init).build()
 }

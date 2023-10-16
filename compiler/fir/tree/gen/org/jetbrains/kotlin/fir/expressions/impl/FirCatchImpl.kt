@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirCatchImpl(
     override val source: KtSourceElement?,

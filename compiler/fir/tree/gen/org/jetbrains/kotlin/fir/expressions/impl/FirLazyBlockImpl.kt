@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirLazyBlockImpl : FirLazyBlock() {
     override val source: KtSourceElement?

@@ -17,12 +17,9 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirClassReferenceExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirClassReferenceExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -45,7 +42,7 @@ class FirClassReferenceExpressionBuilder : FirAnnotationContainerBuilder, FirExp
 @OptIn(ExperimentalContracts::class)
 inline fun buildClassReferenceExpression(init: FirClassReferenceExpressionBuilder.() -> Unit): FirClassReferenceExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirClassReferenceExpressionBuilder().apply(init).build()
 }

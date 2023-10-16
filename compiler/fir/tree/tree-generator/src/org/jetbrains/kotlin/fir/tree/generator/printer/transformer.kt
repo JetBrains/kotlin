@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.multipleUpperBoundsList
 import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.generators.tree.printer.typeParameters
+import org.jetbrains.kotlin.generators.tree.render
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
 fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFile =
     printGeneratedType(generationPath, TREE_GENERATOR_README, VISITOR_PACKAGE, "FirTransformer") {
-        elements.forEach { println("import ${it.fullQualifiedName}") }
         println()
         println("abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {")
         println()
@@ -29,8 +29,16 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
                 print("open fun ")
                 element.typeParameters(end = " ").takeIf { it.isNotBlank() }?.let { print(it) }
                 println(
-                    "transform${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
-                        .typeWithArguments}${element.multipleUpperBoundsList()} {",
+                    "transform",
+                    element.name,
+                    "(",
+                    varName,
+                    ": ",
+                    element.render(),
+                    ", data: D): ",
+                    element.transformerType.render(),
+                    element.multipleUpperBoundsList(),
+                    " {",
                 )
                 withIndent {
                     println("return transformElement($varName, data)")
@@ -45,8 +53,16 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
                 element.typeParameters(end = " ").takeIf { it.isNotBlank() }?.let { print(it) }
 
                 println(
-                    "visit${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
-                        .typeWithArguments}${element.multipleUpperBoundsList()} {",
+                    "visit",
+                    element.name,
+                    "(",
+                    varName,
+                    ": ",
+                    element.render(),
+                    ", data: D): ",
+                    element.transformerType.render(),
+                    element.multipleUpperBoundsList(),
+                    " {"
                 )
                 withIndent {
                     println("return transform${element.name}($varName, data)")

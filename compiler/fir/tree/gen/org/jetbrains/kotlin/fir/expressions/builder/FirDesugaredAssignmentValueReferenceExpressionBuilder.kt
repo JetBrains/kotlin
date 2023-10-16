@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirDesugaredAssignmentValueReferenceExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirDesugaredAssignmentValueReferenceExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -46,7 +43,7 @@ class FirDesugaredAssignmentValueReferenceExpressionBuilder : FirAnnotationConta
 @OptIn(ExperimentalContracts::class)
 inline fun buildDesugaredAssignmentValueReferenceExpression(init: FirDesugaredAssignmentValueReferenceExpressionBuilder.() -> Unit): FirDesugaredAssignmentValueReferenceExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirDesugaredAssignmentValueReferenceExpressionBuilder().apply(init).build()
 }

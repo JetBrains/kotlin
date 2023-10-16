@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirImportImpl
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -42,7 +41,7 @@ class FirImportBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildImport(init: FirImportBuilder.() -> Unit): FirImport {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirImportBuilder().apply(init).build()
 }

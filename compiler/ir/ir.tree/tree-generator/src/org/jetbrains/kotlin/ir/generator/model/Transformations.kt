@@ -14,13 +14,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 private object InferredOverriddenType : TypeRefWithNullability {
-    override val type: String
-        get() = error("not supported")
-    override val packageName: String?
-        get() = null
 
-    override val typeWithArguments: String
-        get() = error("not supported")
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        renderingIsNotSupported()
+    }
 
     override fun substitute(map: TypeParameterSubstitutionMap) = this
 

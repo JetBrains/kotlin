@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirFromMissingDependenciesNamedReferenceImpl
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
@@ -35,7 +34,7 @@ class FirFromMissingDependenciesNamedReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildFromMissingDependenciesNamedReference(init: FirFromMissingDependenciesNamedReferenceBuilder.() -> Unit): FirFromMissingDependenciesNamedReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirFromMissingDependenciesNamedReferenceBuilder().apply(init).build()
 }

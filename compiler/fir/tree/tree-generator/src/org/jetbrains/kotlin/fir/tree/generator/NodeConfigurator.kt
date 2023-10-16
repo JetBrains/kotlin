@@ -50,7 +50,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeParameterRef.configure {
-            +symbol(typeParameterSymbolType.type)
+            +symbol(typeParameterSymbolType.typeName)
         }
 
         typeParametersOwner.configure {
@@ -85,7 +85,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
                 isMutable = true; isVolatile = true; isFinal = true; isLateinit = true
                 customInitializationCall = "resolvePhase.asResolveState()"
                 arbitraryImportables += phaseAsResolveStateExtentionImport
-                optInAnnotation = resolveStateAccessImport
+                optInAnnotation = resolveStateAccessAnnotation
             }
 
             +field("moduleData", firModuleDataType)
@@ -137,7 +137,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         expression.configure {
             +field("coneTypeOrNull", coneKotlinTypeType, nullable = true, withReplace = true).apply {
-                optInAnnotation = unresolvedExpressionTypeAccessImport
+                optInAnnotation = unresolvedExpressionTypeAccessAnnotation
             }
             +annotations
         }

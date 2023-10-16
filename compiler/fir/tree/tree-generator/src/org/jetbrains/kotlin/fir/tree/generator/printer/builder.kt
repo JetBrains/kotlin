@@ -5,32 +5,38 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.declarationAttributesType
+import org.jetbrains.kotlin.fir.tree.generator.*
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.generators.tree.ImportCollector
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
+import org.jetbrains.kotlin.generators.tree.render
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
 fun Builder.generateCode(generationPath: File): GeneratedFile =
-    printGeneratedType(generationPath, TREE_GENERATOR_README, packageName, type, fileSuppressions = listOf("DuplicatedCode", "unused")) {
-        val imports = collectImports()
-        imports.forEach { println("import $it") }
-        if (imports.isNotEmpty()) {
-            println()
-        }
+    printGeneratedType(
+        generationPath,
+        TREE_GENERATOR_README,
+        packageName,
+        typeName,
+        fileSuppressions = listOf("DuplicatedCode", "unused"),
+    ) {
+        println()
+        addAllImports(usedTypes)
         printBuilder(this@generateCode)
     }
 
+context(ImportCollector)
 private fun SmartPrinter.printBuilder(builder: Builder) {
     if (builder is LeafBuilder && builder.allFields.isEmpty()) {
         printDslBuildFunction(builder, false)
         return
     }
 
-    println("@FirBuilderDsl")
+    println("@${firBuilderDslAnnotation.render()}")
     when (builder) {
         is IntermediateBuilder -> print("interface ")
         is LeafBuilder -> {
@@ -40,9 +46,9 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
             print("class ")
         }
     }
-    print(builder.typeWithArguments)
+    print(builder.render())
     if (builder.parents.isNotEmpty()) {
-        print(builder.parents.joinToString(separator = ", ", prefix = " : ") { it.type })
+        print(builder.parents.joinToString(separator = ", ", prefix = " : ") { it.render() })
     }
     var hasRequiredFields = false
     println(" {")
@@ -58,11 +64,11 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
             println()
         }
         val buildType = when (builder) {
-            is LeafBuilder -> builder.implementation.element.typeWithArguments
-            is IntermediateBuilder -> builder.materializedElement!!.typeWithArguments.replace(Regex("<.>"), "<*>")
+            is LeafBuilder -> builder.implementation.element.render()
+            is IntermediateBuilder -> builder.materializedElement!!.withStarArgs().render()
         }
         if (builder is LeafBuilder && builder.implementation.isPublic) {
-            println("@OptIn(FirImplementationDetail::class)")
+            println("@OptIn(${firImplementationDetailType.render()}::class)")
         }
         if (builder.parents.isNotEmpty()) {
             print("override ")
@@ -71,13 +77,16 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
         if (builder is LeafBuilder) {
             println(" {")
             withIndent {
-                println("return ${builder.implementation.type}(")
+                println("return ${builder.implementation.render()}(")
                 withIndent {
                     for (field in builder.allFields) {
                         if (field.invisibleField) continue
                         val name = field.name
                         print(name)
-                        if (field.isMutableOrEmpty) print(".toMutableOrEmpty()")
+                        if (field.isMutableOrEmpty) {
+                            addImport(toMutableOrEmptyImport)
+                            print(".toMutableOrEmpty()")
+                        }
                         println(",")
                     }
                 }
@@ -132,15 +141,17 @@ private fun FieldWithDefault.needBackingField(fieldIsUseless: Boolean) =
 private fun FieldWithDefault.needNotNullDelegate(fieldIsUseless: Boolean) =
     needBackingField(fieldIsUseless) && (typeRef == StandardTypes.boolean || typeRef == StandardTypes.int)
 
-
-private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: Builder, fieldIsUseless: Boolean): Pair<Boolean, Boolean> {
+context(ImportCollector)
+private fun SmartPrinter.printFieldInBuilder(
+    field: FieldWithDefault,
+    builder: Builder,
+    fieldIsUseless: Boolean,
+): Pair<Boolean, Boolean> {
     if (field.withGetter && !fieldIsUseless || field.invisibleField) return false to false
     if (field.origin is FieldList) {
         printFieldListInBuilder(field.origin, builder, fieldIsUseless)
         return true to false
     }
-    val name = field.name
-    val type = field.typeRef.typeWithArguments
     val defaultValue = if (fieldIsUseless)
         field.defaultValueInImplementation.also { requireNotNull(it) }
     else
@@ -148,7 +159,7 @@ private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: B
 
     printDeprecationOnUselessFieldIfNeeded(field, builder, fieldIsUseless)
     printModifiers(builder, field, fieldIsUseless)
-    print("var $name: $type")
+    print("var ${field.name}: ${field.typeRef.render()}")
     var hasRequiredFields = false
     val needNewLine = when {
         fieldIsUseless -> {
@@ -169,7 +180,7 @@ private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: B
             false
         }
         field.needNotNullDelegate(fieldIsUseless) -> {
-            println(" by kotlin.properties.Delegates.notNull<${field.typeRef.type}>()")
+            println(" by kotlin.properties.Delegates.notNull<${field.typeRef.render()}>()")
             hasRequiredFields = true
             true
         }
@@ -200,14 +211,19 @@ private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: B
 
 private fun SmartPrinter.printDeprecationOnUselessFieldIfNeeded(field: Field, builder: Builder, fieldIsUseless: Boolean) {
     if (fieldIsUseless) {
-        println("@Deprecated(\"Modification of '${field.name}' has no impact for ${builder.type}\", level = DeprecationLevel.HIDDEN)")
+        println("@Deprecated(\"Modification of '${field.name}' has no impact for ${builder.typeName}\", level = DeprecationLevel.HIDDEN)")
     }
 }
 
-private fun SmartPrinter.printFieldListInBuilder(field: FieldList, builder: Builder, fieldIsUseless: Boolean) {
+context(ImportCollector)
+private fun SmartPrinter.printFieldListInBuilder(
+    field: FieldList,
+    builder: Builder,
+    fieldIsUseless: Boolean,
+) {
     printDeprecationOnUselessFieldIfNeeded(field, builder, fieldIsUseless)
     printModifiers(builder, field, fieldIsUseless)
-    print("val ${field.name}: ${field.getMutableType(forBuilder = true).typeWithArguments}")
+    print("val ${field.name}: ${field.getMutableType(forBuilder = true).render()}")
     if (builder is LeafBuilder) {
         print(" = mutableListOf()")
     }
@@ -228,69 +244,71 @@ private fun SmartPrinter.printModifiers(builder: Builder, field: Field, fieldIsU
     }
 }
 
+context(ImportCollector)
 private fun SmartPrinter.printDslBuildFunction(
     builder: LeafBuilder,
     hasRequiredFields: Boolean
 ) {
     val isEmpty = builder.allFields.isEmpty()
     if (!isEmpty) {
-        println("@OptIn(ExperimentalContracts::class)")
+        println("@OptIn(${experimentalContractsAnnotation.render()}::class)")
         print("inline ")
-    } else if(builder.implementation.isPublic) {
-        println("@OptIn(FirImplementationDetail::class)")
+    } else if (builder.implementation.isPublic) {
+        println("@OptIn(${firImplementationDetailType.render()}::class)")
     }
     print("fun ")
     builder.implementation.element.params.takeIf { it.isNotEmpty() }?.let {
         print(it.joinToString(separator = ", ", prefix = "<", postfix = "> "))
     }
-    val builderType = builder.typeWithArguments
     val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name
     print("build${name}(")
     if (!isEmpty) {
-        print("init: $builderType.() -> Unit")
+        print("init: ${builder.render()}.() -> Unit")
         if (!hasRequiredFields) {
             print(" = {}")
         }
     }
-    println("): ${builder.implementation.element.typeWithArguments} {")
+    println("): ${builder.implementation.element.render()} {")
     withIndent {
         if (!isEmpty) {
+            addStarImport("kotlin.contracts")
             println("contract {")
             withIndent {
-                println("callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)")
+                println("callsInPlace(init, InvocationKind.EXACTLY_ONCE)")
             }
             println("}")
         }
         print("return ")
         if (isEmpty) {
-            println("${builder.implementation.type}()")
+            println("${builder.implementation.render()}()")
         } else {
-            println("$builderType().apply(init).build()")
+            println("${builder.render()}().apply(init).build()")
         }
     }
     println("}")
 }
 
+context(ImportCollector)
 private fun SmartPrinter.printDslBuildCopyFunction(
     builder: LeafBuilder,
     hasRequiredFields: Boolean,
 ) {
     val optIns =
-        builder.allFields.filter { !it.invisibleField }.mapNotNullTo(mutableSetOf("ExperimentalContracts")) { it.optInAnnotation?.type }
-    println("@OptIn(${optIns.joinToString { "$it::class" }})")
+        builder.allFields.filter { !it.invisibleField }.mapNotNullTo(mutableSetOf(experimentalContractsAnnotation)) { it.optInAnnotation }
+    println("@OptIn(${optIns.joinToString { "${it.render()}::class" }})")
     print("inline ")
     print("fun ")
     builder.implementation.element.params.takeIf { it.isNotEmpty() }?.let {
         print(it.joinToString(separator = ", ", prefix = "<", postfix = "> "))
     }
-    val builderType = builder.typeWithArguments
+    val builderType = builder.render()
     val name = builder.implementation.name?.replaceFirst("Fir", "") ?: builder.implementation.element.name
     print("build${name}Copy(")
-    print("original: ${builder.implementation.element.typeWithArguments}, init: $builderType.() -> Unit")
+    print("original: ${builder.implementation.element.render()}, init: $builderType.() -> Unit")
     if (!hasRequiredFields) {
         print(" = {}")
     }
-    println("): ${builder.implementation.element.typeWithArguments} {")
+    println("): ${builder.implementation.element.render()} {")
     withIndent {
         println("contract {")
         withIndent {

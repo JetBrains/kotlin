@@ -15,22 +15,15 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
-import org.jetbrains.kotlin.fir.declarations.asResolveState
-import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousInitializerImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
@@ -64,7 +57,7 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationConta
 @OptIn(ExperimentalContracts::class)
 inline fun buildAnonymousInitializer(init: FirAnonymousInitializerBuilder.() -> Unit): FirAnonymousInitializer {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirAnonymousInitializerBuilder().apply(init).build()
 }

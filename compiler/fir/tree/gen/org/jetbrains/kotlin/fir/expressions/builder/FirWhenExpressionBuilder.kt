@@ -16,18 +16,11 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirVariable
-import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -60,7 +53,7 @@ class FirWhenExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBui
 @OptIn(ExperimentalContracts::class)
 inline fun buildWhenExpression(init: FirWhenExpressionBuilder.() -> Unit): FirWhenExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirWhenExpressionBuilder().apply(init).build()
 }

@@ -632,7 +632,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         configureFieldInAllImplementations(
             "status",
-            implementationPredicate = { it.type in implementationsWithoutStatusAndTypeParameters }
+            implementationPredicate = { it.typeName in implementationsWithoutStatusAndTypeParameters }
         ) {
             default(it, "FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS")
             useTypes(resolvedDeclarationStatusImplType)
@@ -640,7 +640,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         configureFieldInAllImplementations(
             "typeParameters",
-            implementationPredicate = { it.type in implementationsWithoutStatusAndTypeParameters }
+            implementationPredicate = { it.typeName in implementationsWithoutStatusAndTypeParameters }
         ) {
             defaultEmptyList(it)
             useTypes(resolvedDeclarationStatusImplType)
@@ -650,7 +650,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
     private fun configureAllImplementations() {
         configureFieldInAllImplementations(
             field = "controlFlowGraphReference",
-            implementationPredicate = { it.type != "FirAnonymousFunctionImpl" }
+            implementationPredicate = { it.typeName != "FirAnonymousFunctionImpl" }
         ) {
             defaultNull(it)
         }
@@ -682,7 +682,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         )
         configureFieldInAllImplementations(
             field = "typeRef",
-            implementationPredicate = { it.type !in implementationWithConfigurableTypeRef },
+            implementationPredicate = { it.typeName !in implementationWithConfigurableTypeRef },
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")
@@ -691,7 +691,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         configureFieldInAllImplementations(
             field = "lValueTypeRef",
-            implementationPredicate = { it.type in "FirVariableAssignmentImpl" },
+            implementationPredicate = { it.typeName in "FirVariableAssignmentImpl" },
             fieldPredicate = { it.defaultValueInImplementation == null }
         ) {
             default(it, "FirImplicitTypeRefImplWithoutSource")

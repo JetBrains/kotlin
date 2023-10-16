@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirQualifiedAccessExpressionBuilder {

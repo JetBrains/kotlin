@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.references.impl.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.calls.CallableReferenceMappedArguments
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
@@ -44,7 +43,7 @@ class FirResolvedCallableReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedCallableReference(init: FirResolvedCallableReferenceBuilder.() -> Unit): FirResolvedCallableReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedCallableReferenceBuilder().apply(init).build()
 }

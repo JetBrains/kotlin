@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-interface ImplementationKindOwner : Importable {
+interface ImplementationKindOwner : TypeRef, Importable {
     var kind: ImplementationKind?
     val allParents: List<ImplementationKindOwner>
 }

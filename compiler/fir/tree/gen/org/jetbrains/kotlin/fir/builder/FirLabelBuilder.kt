@@ -13,9 +13,7 @@ package org.jetbrains.kotlin.fir.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.impl.FirLabelImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirLabelBuilder {
@@ -34,7 +32,7 @@ class FirLabelBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildLabel(init: FirLabelBuilder.() -> Unit): FirLabel {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirLabelBuilder().apply(init).build()
 }

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractElementDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
 import org.jetbrains.kotlin.fir.contracts.impl.FirContractElementDeclarationImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirContractElementDeclarationBuilder {
@@ -35,7 +34,7 @@ class FirContractElementDeclarationBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildContractElementDeclaration(init: FirContractElementDeclarationBuilder.() -> Unit): FirContractElementDeclaration {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirContractElementDeclarationBuilder().apply(init).build()
 }

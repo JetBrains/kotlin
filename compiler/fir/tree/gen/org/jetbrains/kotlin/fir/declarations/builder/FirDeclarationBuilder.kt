@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirDeclarationBuilder {

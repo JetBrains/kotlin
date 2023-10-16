@@ -11,13 +11,11 @@
 package org.jetbrains.kotlin.fir.references.builder
 
 import kotlin.contracts.*
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.impl.FirImplicitThisReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirImplicitThisReferenceBuilder {
@@ -38,7 +36,7 @@ class FirImplicitThisReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildImplicitThisReference(init: FirImplicitThisReferenceBuilder.() -> Unit = {}): FirThisReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirImplicitThisReferenceBuilder().apply(init).build()
 }

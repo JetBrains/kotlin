@@ -19,15 +19,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirLoopJumpBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirBreakExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.StandardClassIds
 
 @FirBuilderDsl
 class FirBreakExpressionBuilder : FirLoopJumpBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -55,7 +48,7 @@ class FirBreakExpressionBuilder : FirLoopJumpBuilder, FirAnnotationContainerBuil
 @OptIn(ExperimentalContracts::class)
 inline fun buildBreakExpression(init: FirBreakExpressionBuilder.() -> Unit): FirBreakExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirBreakExpressionBuilder().apply(init).build()
 }

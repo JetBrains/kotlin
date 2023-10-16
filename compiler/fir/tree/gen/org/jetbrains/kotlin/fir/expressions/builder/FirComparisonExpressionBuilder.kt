@@ -19,13 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirComparisonExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.StandardClassIds
 
 @FirBuilderDsl
 class FirComparisonExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -55,7 +50,7 @@ class FirComparisonExpressionBuilder : FirAnnotationContainerBuilder, FirExpress
 @OptIn(ExperimentalContracts::class)
 inline fun buildComparisonExpression(init: FirComparisonExpressionBuilder.() -> Unit): FirComparisonExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirComparisonExpressionBuilder().apply(init).build()
 }

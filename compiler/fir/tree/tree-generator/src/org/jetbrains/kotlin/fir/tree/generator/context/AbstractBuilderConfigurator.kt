@@ -153,18 +153,18 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
                 val message = buildString {
                     appendLine("${this@extractImplementation} has multiple implementations:")
                     for (implementation in allImplementations) {
-                        appendLine("  - ${implementation.type}")
+                        appendLine("  - ${implementation.typeName}")
                     }
                     appendLine("Please specify implementation is needed")
                 }
                 throw IllegalArgumentException(message)
             }
         } else {
-            allImplementations.firstOrNull { it.type == type } ?: this@AbstractBuilderConfigurator.run {
+            allImplementations.firstOrNull { it.typeName == type } ?: this@AbstractBuilderConfigurator.run {
                 val message = buildString {
                     appendLine("${this@extractImplementation} has not implementation $type. Existing implementations:")
                     for (implementation in allImplementations) {
-                        appendLine("  - ${implementation.type}")
+                        appendLine("  - ${implementation.typeName}")
                     }
                     appendLine("Please specify implementation is needed")
                 }

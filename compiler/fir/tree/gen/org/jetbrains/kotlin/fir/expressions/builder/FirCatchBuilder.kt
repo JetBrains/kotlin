@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.expressions.impl.FirCatchImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirCatchBuilder {
@@ -38,7 +37,7 @@ class FirCatchBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildCatch(init: FirCatchBuilder.() -> Unit): FirCatch {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirCatchBuilder().apply(init).build()
 }

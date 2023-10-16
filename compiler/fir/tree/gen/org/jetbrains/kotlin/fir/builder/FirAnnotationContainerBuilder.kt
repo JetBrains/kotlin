@@ -12,9 +12,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirAnnotationContainerBuilder {

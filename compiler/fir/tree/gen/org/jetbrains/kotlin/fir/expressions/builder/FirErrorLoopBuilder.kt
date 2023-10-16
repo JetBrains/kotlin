@@ -17,14 +17,9 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorLoopImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirErrorLoopBuilder : FirAnnotationContainerBuilder {
@@ -47,7 +42,7 @@ class FirErrorLoopBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildErrorLoop(init: FirErrorLoopBuilder.() -> Unit): FirErrorLoop {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorLoopBuilder().apply(init).build()
 }

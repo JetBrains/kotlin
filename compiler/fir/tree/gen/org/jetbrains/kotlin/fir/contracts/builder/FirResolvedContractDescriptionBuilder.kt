@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.contracts.FirContractElementDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirResolvedContractDescriptionImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirResolvedContractDescriptionBuilder {
@@ -38,7 +37,7 @@ class FirResolvedContractDescriptionBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedContractDescription(init: FirResolvedContractDescriptionBuilder.() -> Unit = {}): FirResolvedContractDescription {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedContractDescriptionBuilder().apply(init).build()
 }

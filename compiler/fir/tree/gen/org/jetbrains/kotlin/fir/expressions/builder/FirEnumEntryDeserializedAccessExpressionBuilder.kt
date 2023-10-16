@@ -17,13 +17,8 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirEnumEntryDeserializedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirEnumEntryDeserializedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassType
-import org.jetbrains.kotlin.fir.types.toLookupTag
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -59,7 +54,7 @@ class FirEnumEntryDeserializedAccessExpressionBuilder : FirAnnotationContainerBu
 @OptIn(ExperimentalContracts::class)
 inline fun buildEnumEntryDeserializedAccessExpression(init: FirEnumEntryDeserializedAccessExpressionBuilder.() -> Unit): FirEnumEntryDeserializedAccessExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirEnumEntryDeserializedAccessExpressionBuilder().apply(init).build()
 }

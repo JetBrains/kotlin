@@ -33,13 +33,13 @@ fun printHierarchyGraph(builder: AbstractFirTreeBuilder) {
         with(printer) {
             println("digraph FirTree {")
             elements.forEach {
-                println("    ${it.type} [color=${it.kind!!.toColor()}]")
+                println("    ${it.typeName} [color=${it.kind!!.toColor()}]")
             }
             println()
             val edges = mutableSetOf<Edge>()
             elements.forEach { element ->
                 element.allParents.forEach { parent ->
-                    edges += Edge(parent.type, element.type)
+                    edges += Edge(parent.typeName, element.typeName)
                 }
             }
             edges.forEach {

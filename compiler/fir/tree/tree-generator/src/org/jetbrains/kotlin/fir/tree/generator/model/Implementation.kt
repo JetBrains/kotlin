@@ -5,18 +5,13 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.generics
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.generics
 
 class ImplementationWithArg(
     val implementation: Implementation,
     val argument: Importable?
 ) : FieldContainer by implementation, ImplementationKindOwner by implementation {
     val element: Element get() = implementation.element
-
-    override val typeWithArguments: String
-        get() = type + generics
 }
 
 class Implementation(val element: Element, val name: String?) : FieldContainer, ImplementationKindOwner {
@@ -25,7 +20,8 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
 
     override val allParents: List<ImplementationKindOwner> get() = listOf(element) + parents
     val isDefault = name == null
-    override val type = name ?: element.type + "Impl"
+    override val typeName = name ?: (element.typeName + "Impl")
+
     override val allFields = element.allFields.toMutableList().mapTo(mutableListOf()) {
         FieldWithDefault(it)
     }
@@ -42,12 +38,19 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
             }
         }
 
-    override val typeWithArguments: String
-        get() = type + element.generics
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        addImport(this)
+        appendable.append(this.typeName)
+        if (element.params.isNotEmpty()) {
+            element.params.joinTo(appendable, prefix = "<", postfix = ">") { it.name }
+        }
+    }
+
+    override fun substitute(map: TypeParameterSubstitutionMap) = this
 
     override val packageName = element.packageName + ".impl"
     val usedTypes = mutableListOf<Importable>()
-    val arbitraryImportables = mutableListOf<ArbitraryImportable>()
 
     var isPublic = false
     var requiresOptIn = false

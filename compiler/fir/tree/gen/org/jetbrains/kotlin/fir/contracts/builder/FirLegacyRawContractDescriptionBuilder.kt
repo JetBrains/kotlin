@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirLegacyRawContractDescriptionImpl
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirLegacyRawContractDescriptionBuilder {
@@ -35,7 +34,7 @@ class FirLegacyRawContractDescriptionBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildLegacyRawContractDescription(init: FirLegacyRawContractDescriptionBuilder.() -> Unit): FirLegacyRawContractDescription {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirLegacyRawContractDescriptionBuilder().apply(init).build()
 }

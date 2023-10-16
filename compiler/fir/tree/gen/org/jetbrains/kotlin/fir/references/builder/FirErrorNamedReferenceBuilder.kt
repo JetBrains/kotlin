@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirErrorNamedReferenceImpl
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirErrorNamedReferenceBuilder {
@@ -36,7 +34,7 @@ class FirErrorNamedReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildErrorNamedReference(init: FirErrorNamedReferenceBuilder.() -> Unit): FirErrorNamedReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorNamedReferenceBuilder().apply(init).build()
 }

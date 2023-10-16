@@ -115,3 +115,14 @@ val errorTypeRefImplType = type("fir.types.impl", "FirErrorTypeRefImpl")
 val annotationResolvePhaseType = generatedType("expressions", "FirAnnotationResolvePhase")
 
 val typeRefMarkerType = type("mpp", "TypeRefMarker")
+
+val firVisitorType = type("fir.visitors", "FirVisitor", kind = TypeKind.Class)
+val firVisitorVoidType = type("fir.visitors", "FirVisitorVoid", kind = TypeKind.Class)
+val firDefaultVisitorType = type("fir.visitors", "FirDefaultVisitor", kind = TypeKind.Class)
+val firDefaultVisitorVoidType = type("fir.visitors", "FirDefaultVisitorVoid", kind = TypeKind.Class)
+val firTransformerType = type("fir.visitors", "FirTransformer", kind = TypeKind.Class)
+
+val resolveStateAccessAnnotation = type("fir.declarations", "ResolveStateAccess", kind = TypeKind.Class)
+val unresolvedExpressionTypeAccessAnnotation = type("fir.expressions", "UnresolvedExpressionTypeAccess", kind = TypeKind.Class)
+val firBuilderDslAnnotation = type("fir.builder", "FirBuilderDsl", kind = TypeKind.Class)
+val experimentalContractsAnnotation = type("kotlin.contracts", "ExperimentalContracts", exactPackage = true, kind = TypeKind.Class)

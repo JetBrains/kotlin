@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.types.FirStarProjection
 import org.jetbrains.kotlin.fir.types.impl.FirStarProjectionImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirStarProjectionBuilder {
@@ -32,7 +31,7 @@ class FirStarProjectionBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildStarProjection(init: FirStarProjectionBuilder.() -> Unit = {}): FirStarProjection {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirStarProjectionBuilder().apply(init).build()
 }

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.impl.FirVariableAssignmentImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirVariableAssignmentBuilder : FirAnnotationContainerBuilder {
@@ -42,7 +41,7 @@ class FirVariableAssignmentBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildVariableAssignment(init: FirVariableAssignmentBuilder.() -> Unit): FirVariableAssignment {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirVariableAssignmentBuilder().apply(init).build()
 }

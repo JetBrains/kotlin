@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.builder.FirLoopBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirDoWhileLoopImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirDoWhileLoopBuilder : FirLoopBuilder, FirAnnotationContainerBuilder {
@@ -47,7 +45,7 @@ class FirDoWhileLoopBuilder : FirLoopBuilder, FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildDoWhileLoop(init: FirDoWhileLoopBuilder.() -> Unit): FirDoWhileLoop {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirDoWhileLoopBuilder().apply(init).build()
 }

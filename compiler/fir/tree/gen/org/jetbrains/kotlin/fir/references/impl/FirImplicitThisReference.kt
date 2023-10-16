@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirImplicitThisReference(
     override val boundSymbol: FirBasedSymbol<*>?,

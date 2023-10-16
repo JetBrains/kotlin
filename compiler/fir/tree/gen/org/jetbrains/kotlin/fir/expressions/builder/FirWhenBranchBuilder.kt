@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenBranchImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirWhenBranchBuilder {
@@ -38,7 +37,7 @@ class FirWhenBranchBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildWhenBranch(init: FirWhenBranchBuilder.() -> Unit): FirWhenBranch {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirWhenBranchBuilder().apply(init).build()
 }

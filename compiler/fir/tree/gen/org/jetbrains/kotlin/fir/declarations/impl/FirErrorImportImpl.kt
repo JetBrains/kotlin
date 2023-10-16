@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirErrorImportImpl(
     override val aliasSource: KtSourceElement?,

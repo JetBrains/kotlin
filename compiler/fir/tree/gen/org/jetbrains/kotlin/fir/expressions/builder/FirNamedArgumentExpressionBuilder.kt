@@ -18,11 +18,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirNamedArgumentExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
@@ -55,7 +52,7 @@ class FirNamedArgumentExpressionBuilder : FirAnnotationContainerBuilder, FirExpr
 @OptIn(ExperimentalContracts::class)
 inline fun buildNamedArgumentExpression(init: FirNamedArgumentExpressionBuilder.() -> Unit): FirNamedArgumentExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirNamedArgumentExpressionBuilder().apply(init).build()
 }

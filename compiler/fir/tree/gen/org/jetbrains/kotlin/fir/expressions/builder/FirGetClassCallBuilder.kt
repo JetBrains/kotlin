@@ -17,14 +17,9 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirGetClassCallImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirGetClassCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -47,7 +42,7 @@ class FirGetClassCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, Fi
 @OptIn(ExperimentalContracts::class)
 inline fun buildGetClassCall(init: FirGetClassCallBuilder.() -> Unit): FirGetClassCall {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirGetClassCallBuilder().apply(init).build()
 }

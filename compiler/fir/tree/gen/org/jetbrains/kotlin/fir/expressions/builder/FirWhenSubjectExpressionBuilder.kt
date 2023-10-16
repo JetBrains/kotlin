@@ -19,13 +19,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.StandardClassIds
 
 @FirBuilderDsl
 class FirWhenSubjectExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -53,7 +48,7 @@ class FirWhenSubjectExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
 @OptIn(ExperimentalContracts::class)
 inline fun buildWhenSubjectExpression(init: FirWhenSubjectExpressionBuilder.() -> Unit): FirWhenSubjectExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirWhenSubjectExpressionBuilder().apply(init).build()
 }

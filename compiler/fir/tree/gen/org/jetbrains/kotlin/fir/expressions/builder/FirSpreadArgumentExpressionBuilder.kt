@@ -18,11 +18,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirSpreadArgumentExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirSpreadArgumentExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -50,7 +47,7 @@ class FirSpreadArgumentExpressionBuilder : FirAnnotationContainerBuilder, FirExp
 @OptIn(ExperimentalContracts::class)
 inline fun buildSpreadArgumentExpression(init: FirSpreadArgumentExpressionBuilder.() -> Unit): FirSpreadArgumentExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirSpreadArgumentExpressionBuilder().apply(init).build()
 }

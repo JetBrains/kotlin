@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.impl.FirBackingFieldReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirBackingFieldReferenceBuilder {
@@ -36,7 +34,7 @@ class FirBackingFieldReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildBackingFieldReference(init: FirBackingFieldReferenceBuilder.() -> Unit): FirBackingFieldReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirBackingFieldReferenceBuilder().apply(init).build()
 }

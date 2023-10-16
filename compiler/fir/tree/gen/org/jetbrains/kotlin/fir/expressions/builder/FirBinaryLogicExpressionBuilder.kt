@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirBinaryLogicExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -50,7 +47,7 @@ class FirBinaryLogicExpressionBuilder : FirAnnotationContainerBuilder, FirExpres
 @OptIn(ExperimentalContracts::class)
 inline fun buildBinaryLogicExpression(init: FirBinaryLogicExpressionBuilder.() -> Unit): FirBinaryLogicExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirBinaryLogicExpressionBuilder().apply(init).build()
 }

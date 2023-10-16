@@ -13,8 +13,8 @@ fun field(name: String, type: TypeRefWithNullability, nullable: Boolean = false,
     return SimpleField(name, type.copy(nullable), withReplace)
 }
 
-fun field(type: TypeRefWithNullability, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(type.type.replaceFirstChar(Char::lowercaseChar), type.copy(nullable), withReplace)
+fun field(type: ClassRef<*>, nullable: Boolean = false, withReplace: Boolean = false): Field {
+    return SimpleField(type.simpleName.replaceFirstChar(Char::lowercaseChar), type.copy(nullable), withReplace)
 }
 
 fun booleanField(name: String, withReplace: Boolean = false): Field {

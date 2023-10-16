@@ -12,7 +12,6 @@ package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -21,14 +20,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirThisReceiverExpressionImpl
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -80,7 +75,7 @@ class FirThisReceiverExpressionBuilder : FirQualifiedAccessExpressionBuilder, Fi
 @OptIn(ExperimentalContracts::class)
 inline fun buildThisReceiverExpression(init: FirThisReceiverExpressionBuilder.() -> Unit): FirThisReceiverExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirThisReceiverExpressionBuilder().apply(init).build()
 }

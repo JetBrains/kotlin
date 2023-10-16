@@ -13,10 +13,8 @@ package org.jetbrains.kotlin.fir.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.impl.FirFunctionTypeParameterImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
@@ -38,7 +36,7 @@ class FirFunctionTypeParameterBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildFunctionTypeParameter(init: FirFunctionTypeParameterBuilder.() -> Unit): FirFunctionTypeParameter {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirFunctionTypeParameterBuilder().apply(init).build()
 }

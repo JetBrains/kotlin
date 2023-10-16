@@ -15,19 +15,10 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.builder.FirDeclarationBuilder
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirClassBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {

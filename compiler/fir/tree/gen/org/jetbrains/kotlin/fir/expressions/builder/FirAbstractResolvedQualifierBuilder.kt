@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 

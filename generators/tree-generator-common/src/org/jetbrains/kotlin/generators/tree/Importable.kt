@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.generators.tree
 
 interface Importable {
-    val type: String
-    val packageName: String?
-    val fullQualifiedName: String? get() = packageName?.let { "$it.${type.replace(Regex("<.+>"), "")}" }
 
-    val typeWithArguments: String
+    /**
+     * The name of the entity to import.
+     */
+    val typeName: String
+
+    val packageName: String
 }

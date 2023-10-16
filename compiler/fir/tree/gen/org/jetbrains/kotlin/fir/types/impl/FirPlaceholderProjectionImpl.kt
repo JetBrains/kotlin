@@ -12,7 +12,8 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.types.FirPlaceholderProjection
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirPlaceholderProjectionImpl(
     override val source: KtSourceElement?,

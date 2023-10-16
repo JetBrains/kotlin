@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirLoopJumpBuilder {

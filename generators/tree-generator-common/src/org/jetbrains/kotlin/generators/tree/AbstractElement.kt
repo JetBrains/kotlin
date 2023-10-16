@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-import org.jetbrains.kotlin.generators.tree.printer.generics
-
 /**
  * A class representing a FIR or IR tree element.
  */
@@ -43,8 +41,14 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
     override val allParents: List<Element>
         get() = elementParents.map { it.element }
 
-    final override val typeWithArguments: String
-        get() = type + generics
+    context(ImportCollector)
+    final override fun renderTo(appendable: Appendable) {
+        addImport(this)
+        appendable.append(typeName)
+        if (params.isNotEmpty()) {
+            params.joinTo(appendable, prefix = "<", postfix = ">") { it.name }
+        }
+    }
 
     abstract override val allFields: List<Field>
 
@@ -66,4 +70,6 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
 
     @Suppress("UNCHECKED_CAST")
     override fun substitute(map: TypeParameterSubstitutionMap): Element = this as Element
+
+    fun withStarArgs(): ElementRef<Element, Field> = copy(params.associateWith { TypeRef.Star })
 }

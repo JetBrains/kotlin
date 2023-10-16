@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.generators.tree.FieldContainer
-import org.jetbrains.kotlin.generators.tree.Importable
-import org.jetbrains.kotlin.generators.tree.printer.generics
+import org.jetbrains.kotlin.generators.tree.*
 
 private const val DEFAULT_BUILDER_PACKAGE = "org.jetbrains.kotlin.fir.tree.builder"
 
-sealed class Builder : FieldContainer, Importable {
+sealed class Builder : FieldContainer, TypeRef, Importable {
     val parents: MutableList<IntermediateBuilder> = mutableListOf()
     val usedTypes: MutableList<Importable> = mutableListOf()
     abstract override val allFields: List<FieldWithDefault>
@@ -21,7 +19,7 @@ sealed class Builder : FieldContainer, Importable {
 
     override fun get(fieldName: String): FieldWithDefault {
         return allFields.firstOrNull { it.name == fieldName }
-            ?: throw IllegalArgumentException("Builder $type doesn't contains field $fieldName")
+            ?: throw IllegalArgumentException("Builder $typeName doesn't contains field $fieldName")
     }
 
     private val fieldsFromParentIndex: Map<String, Boolean> by lazy {
@@ -33,18 +31,23 @@ sealed class Builder : FieldContainer, Importable {
     }
 
     fun isFromParent(field: Field): Boolean = fieldsFromParentIndex.getValue(field.name)
+
+    override fun substitute(map: TypeParameterSubstitutionMap) = this
 }
 
 class LeafBuilder(val implementation: Implementation) : Builder() {
-    override val type: String
+    override val typeName: String
         get() = if (implementation.name != null) {
             "${implementation.name}Builder"
         } else {
-            "${implementation.element.type}Builder"
+            "${implementation.element.typeName}Builder"
         }
 
-    override val typeWithArguments: String
-        get() = type + implementation.element.generics
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        addImport(this)
+        appendable.append(typeName)
+    }
 
     override val allFields: List<FieldWithDefault> by lazy { implementation.fieldsWithoutDefault }
 
@@ -59,7 +62,7 @@ class LeafBuilder(val implementation: Implementation) : Builder() {
     var wantsCopy: Boolean = false
 }
 
-class IntermediateBuilder(override val type: String) : Builder() {
+class IntermediateBuilder(override val typeName: String) : Builder() {
     val fields: MutableList<FieldWithDefault> = mutableListOf()
     var materializedElement: Element? = null
 
@@ -73,6 +76,9 @@ class IntermediateBuilder(override val type: String) : Builder() {
     override val uselessFields: List<FieldWithDefault> = emptyList()
     override var packageName: String = DEFAULT_BUILDER_PACKAGE
 
-    override val typeWithArguments: String
-        get() = type
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        addImport(this)
+        appendable.append(typeName)
+    }
 }

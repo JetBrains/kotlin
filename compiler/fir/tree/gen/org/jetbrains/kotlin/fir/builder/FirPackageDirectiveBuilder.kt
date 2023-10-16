@@ -13,9 +13,7 @@ package org.jetbrains.kotlin.fir.builder
 import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirPackageDirective
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.impl.FirPackageDirectiveImpl
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.FqName
 
 @FirBuilderDsl
@@ -35,7 +33,7 @@ class FirPackageDirectiveBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildPackageDirective(init: FirPackageDirectiveBuilder.() -> Unit): FirPackageDirective {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirPackageDirectiveBuilder().apply(init).build()
 }

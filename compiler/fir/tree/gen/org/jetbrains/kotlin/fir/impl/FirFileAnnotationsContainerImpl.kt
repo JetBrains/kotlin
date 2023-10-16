@@ -13,15 +13,16 @@ package org.jetbrains.kotlin.fir.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 @OptIn(ResolveStateAccess::class)
 internal class FirFileAnnotationsContainerImpl(

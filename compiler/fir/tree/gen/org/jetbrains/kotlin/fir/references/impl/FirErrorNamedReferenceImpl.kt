@@ -13,8 +13,9 @@ package org.jetbrains.kotlin.fir.references.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirErrorNamedReferenceImpl(
     override val source: KtSourceElement?,

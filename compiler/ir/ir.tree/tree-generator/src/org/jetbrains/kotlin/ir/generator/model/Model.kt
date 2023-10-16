@@ -46,11 +46,8 @@ class Element(
         null -> null
     }
 
-    val typeName
+    override val typeName
         get() = elementName2typeName(name)
-
-    override val type: String
-        get() = typeName
 
     var isLeaf = config.isForcedLeaf
     val childrenOrderOverride: List<String>? = config.childrenOrderOverride

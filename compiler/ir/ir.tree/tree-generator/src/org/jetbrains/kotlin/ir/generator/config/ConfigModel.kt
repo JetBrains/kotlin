@@ -10,7 +10,6 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
-import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.util.*
 
 class Config(
@@ -74,11 +73,10 @@ class ElementConfig(
 
     override fun toString() = element.name
 
-    override val packageName: String
-        get() = category.packageName
-
-    override val type: String
-        get() = Element.elementName2typeName(name)
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        renderingIsNotSupported()
+    }
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
         Expression("expressions", "expression"),
@@ -103,11 +101,10 @@ class ElementConfigRef(
 
     override fun toString() = element.name
 
-    override val type: String
-        get() = element.type
-
-    override val packageName: String
-        get() = element.packageName
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        renderingIsNotSupported()
+    }
 }
 
 sealed class UseFieldAsParameterInIrFactoryStrategy {

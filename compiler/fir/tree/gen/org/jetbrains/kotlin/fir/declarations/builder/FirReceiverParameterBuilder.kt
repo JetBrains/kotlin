@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirReceiverParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirReceiverParameterBuilder : FirAnnotationContainerBuilder {
@@ -40,7 +39,7 @@ class FirReceiverParameterBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildReceiverParameter(init: FirReceiverParameterBuilder.() -> Unit): FirReceiverParameter {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirReceiverParameterBuilder().apply(init).build()
 }

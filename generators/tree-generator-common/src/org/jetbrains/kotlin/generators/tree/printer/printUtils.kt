@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.generators.tree.printer
 
 import org.jetbrains.kotlin.generators.tree.AbstractElement
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.ImportCollector
+import org.jetbrains.kotlin.generators.tree.render
 import org.jetbrains.kotlin.utils.SmartPrinter
 
 /**
@@ -17,9 +19,10 @@ import org.jetbrains.kotlin.utils.SmartPrinter
  *
  * @param end The string to add after the closing angle bracket of the type parameter list
  */
+context(ImportCollector)
 fun AbstractElement<*, *>.typeParameters(end: String = ""): String = params.takeIf { it.isNotEmpty() }
     ?.joinToString(", ", "<", ">$end") { param ->
-        param.name + (param.bounds.singleOrNull()?.let { " : ${it.typeWithArguments}" } ?: "")
+        param.name + (param.bounds.singleOrNull()?.let { " : ${it.render()}" } ?: "")
     } ?: ""
 
 /**
@@ -28,12 +31,13 @@ fun AbstractElement<*, *>.typeParameters(end: String = ""): String = params.take
  *
  * Otherwise, an empty string.
  */
+context(ImportCollector)
 fun AbstractElement<*, *>.multipleUpperBoundsList(): String {
     val paramsWithMultipleUpperBounds = params.filter { it.bounds.size > 1 }.takeIf { it.isNotEmpty() } ?: return ""
     return buildString {
         append(" where ")
         paramsWithMultipleUpperBounds.joinTo(this, separator = ", ") { param ->
-            param.bounds.joinToString(", ") { bound -> "$param : ${bound.typeWithArguments}" }
+            param.bounds.joinToString(", ") { bound -> "$param : ${bound.render()}" }
         }
         append("")
     }
@@ -47,11 +51,6 @@ fun ImplementationKind?.braces(): String = when (this) {
     ImplementationKind.OpenClass, ImplementationKind.AbstractClass, ImplementationKind.SealedClass -> "()"
     else -> throw IllegalStateException(this.toString())
 }
-
-val AbstractElement<*, *>.generics: String
-    get() = params.takeIf { it.isNotEmpty() }
-        ?.let { it.joinToString(", ", "<", ">") { it.name } }
-        ?: ""
 
 fun SmartPrinter.printKDoc(kDoc: String?) {
     if (kDoc == null) return

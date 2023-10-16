@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorImportImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
 class FirErrorImportBuilder {
@@ -40,7 +37,7 @@ class FirErrorImportBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildErrorImport(init: FirErrorImportBuilder.() -> Unit): FirErrorImport {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirErrorImportBuilder().apply(init).build()
 }

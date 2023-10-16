@@ -18,11 +18,8 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirWrappedDelegateExpressionImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirWrappedDelegateExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -52,7 +49,7 @@ class FirWrappedDelegateExpressionBuilder : FirAnnotationContainerBuilder, FirEx
 @OptIn(ExperimentalContracts::class)
 inline fun buildWrappedDelegateExpression(init: FirWrappedDelegateExpressionBuilder.() -> Unit): FirWrappedDelegateExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirWrappedDelegateExpressionBuilder().apply(init).build()
 }

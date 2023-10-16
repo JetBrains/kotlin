@@ -19,13 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirEqualityOperatorCallImpl
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.constructClassLikeType
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.StandardClassIds
 
 @FirBuilderDsl
 class FirEqualityOperatorCallBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -55,7 +50,7 @@ class FirEqualityOperatorCallBuilder : FirAnnotationContainerBuilder, FirExpress
 @OptIn(ExperimentalContracts::class)
 inline fun buildEqualityOperatorCall(init: FirEqualityOperatorCallBuilder.() -> Unit): FirEqualityOperatorCall {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirEqualityOperatorCallBuilder().apply(init).build()
 }

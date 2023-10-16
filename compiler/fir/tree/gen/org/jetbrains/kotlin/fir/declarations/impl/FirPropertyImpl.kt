@@ -12,20 +12,9 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirBackingField
-import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.FirPropertyBodyResolveState
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.asResolveState
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -34,12 +23,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 @OptIn(ResolveStateAccess::class)
 internal class FirPropertyImpl(

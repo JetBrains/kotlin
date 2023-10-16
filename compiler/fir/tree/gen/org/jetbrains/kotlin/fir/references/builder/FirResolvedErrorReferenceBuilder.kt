@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirResolvedErrorReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
@@ -41,7 +40,7 @@ class FirResolvedErrorReferenceBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedErrorReference(init: FirResolvedErrorReferenceBuilder.() -> Unit): FirResolvedErrorReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedErrorReferenceBuilder().apply(init).build()
 }

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.impl.FirContextReceiverImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 @FirBuilderDsl
@@ -40,7 +39,7 @@ class FirContextReceiverBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildContextReceiver(init: FirContextReceiverBuilder.() -> Unit): FirContextReceiver {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirContextReceiverBuilder().apply(init).build()
 }

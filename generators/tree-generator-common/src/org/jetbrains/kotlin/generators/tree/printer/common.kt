@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tree.printer
 
+import org.jetbrains.kotlin.generators.tree.ImportCollector
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 
@@ -23,11 +24,12 @@ fun printGeneratedType(
     packageName: String,
     typeName: String,
     fileSuppressions: List<String> = emptyList(),
-    body: SmartPrinter.() -> Unit,
+    body: context(ImportCollector) SmartPrinter.() -> Unit,
 ): GeneratedFile {
     val stringBuilder = StringBuilder()
     val file = getPathForFile(generationPath, packageName, typeName)
-    SmartPrinter(stringBuilder).body()
+    val importCollector = ImportCollector(packageName)
+    body(importCollector, SmartPrinter(stringBuilder))
     return GeneratedFile(
         file,
         buildString {
@@ -43,6 +45,7 @@ fun printGeneratedType(
             }
             appendLine("package $packageName")
             appendLine()
+            importCollector.printAllImports(this)
             append(stringBuilder)
         }
     )

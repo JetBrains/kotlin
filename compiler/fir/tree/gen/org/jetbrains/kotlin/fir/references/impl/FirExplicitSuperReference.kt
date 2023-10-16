@@ -13,7 +13,8 @@ package org.jetbrains.kotlin.fir.references.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal class FirExplicitSuperReference(
     override val source: KtSourceElement?,

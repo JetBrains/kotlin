@@ -14,17 +14,10 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
-import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
-import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.impl.FirFileAnnotationsContainerImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirFileAnnotationsContainerBuilder : FirAnnotationContainerBuilder {
@@ -49,7 +42,7 @@ class FirFileAnnotationsContainerBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildFileAnnotationsContainer(init: FirFileAnnotationsContainerBuilder.() -> Unit): FirFileAnnotationsContainer {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirFileAnnotationsContainerBuilder().apply(init).build()
 }

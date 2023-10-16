@@ -17,13 +17,9 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirInaccessibleReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirInaccessibleReceiverExpressionImpl
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirInaccessibleReceiverExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -46,7 +42,7 @@ class FirInaccessibleReceiverExpressionBuilder : FirAnnotationContainerBuilder, 
 @OptIn(ExperimentalContracts::class)
 inline fun buildInaccessibleReceiverExpression(init: FirInaccessibleReceiverExpressionBuilder.() -> Unit): FirInaccessibleReceiverExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirInaccessibleReceiverExpressionBuilder().apply(init).build()
 }

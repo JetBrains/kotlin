@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.impl.FirAssignmentOperatorStatementImpl
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirAssignmentOperatorStatementBuilder : FirAnnotationContainerBuilder {
@@ -45,7 +44,7 @@ class FirAssignmentOperatorStatementBuilder : FirAnnotationContainerBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildAssignmentOperatorStatement(init: FirAssignmentOperatorStatementBuilder.() -> Unit): FirAssignmentOperatorStatement {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirAssignmentOperatorStatementBuilder().apply(init).build()
 }

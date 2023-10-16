@@ -16,17 +16,12 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedErrorAccessExpression
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedErrorAccessExpressionImpl
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirQualifiedErrorAccessExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -58,7 +53,7 @@ class FirQualifiedErrorAccessExpressionBuilder : FirAnnotationContainerBuilder, 
 @OptIn(ExperimentalContracts::class)
 inline fun buildQualifiedErrorAccessExpression(init: FirQualifiedErrorAccessExpressionBuilder.() -> Unit): FirQualifiedErrorAccessExpression {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirQualifiedErrorAccessExpressionBuilder().apply(init).build()
 }

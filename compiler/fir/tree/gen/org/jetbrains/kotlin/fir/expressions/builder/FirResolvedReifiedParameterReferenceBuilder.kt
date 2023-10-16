@@ -17,12 +17,9 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirResolvedReifiedParameterReference
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedReifiedParameterReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirResolvedReifiedParameterReferenceBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
@@ -45,7 +42,7 @@ class FirResolvedReifiedParameterReferenceBuilder : FirAnnotationContainerBuilde
 @OptIn(ExperimentalContracts::class)
 inline fun buildResolvedReifiedParameterReference(init: FirResolvedReifiedParameterReferenceBuilder.() -> Unit): FirResolvedReifiedParameterReference {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirResolvedReifiedParameterReferenceBuilder().apply(init).build()
 }

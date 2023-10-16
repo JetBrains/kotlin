@@ -26,7 +26,7 @@ abstract class AbstractField {
 
     open val arbitraryImportables: MutableList<Importable> = mutableListOf()
 
-    open var optInAnnotation: ArbitraryImportable? = null
+    open var optInAnnotation: ClassRef<*>? = null
 
     abstract val isMutable: Boolean
     open val withGetter: Boolean get() = false

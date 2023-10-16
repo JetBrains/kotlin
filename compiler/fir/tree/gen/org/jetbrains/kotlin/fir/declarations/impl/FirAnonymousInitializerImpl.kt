@@ -12,21 +12,14 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.asResolveState
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.MutableOrEmptyList
-import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @OptIn(ResolveStateAccess::class)
 internal class FirAnonymousInitializerImpl(

@@ -18,23 +18,8 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
-import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirResolveState
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
-import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
-import org.jetbrains.kotlin.fir.declarations.asResolveState
-import org.jetbrains.kotlin.fir.declarations.builder.FirAbstractConstructorBuilder
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -42,7 +27,6 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 @FirBuilderDsl
@@ -103,7 +87,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
 @OptIn(ExperimentalContracts::class)
 inline fun buildConstructor(init: FirConstructorBuilder.() -> Unit): FirConstructor {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirConstructorBuilder().apply(init).build()
 }

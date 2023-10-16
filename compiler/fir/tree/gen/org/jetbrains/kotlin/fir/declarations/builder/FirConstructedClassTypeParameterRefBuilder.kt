@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructedClassTypeParameterRefImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 class FirConstructedClassTypeParameterRefBuilder {
@@ -35,7 +34,7 @@ class FirConstructedClassTypeParameterRefBuilder {
 @OptIn(ExperimentalContracts::class)
 inline fun buildConstructedClassTypeParameterRef(init: FirConstructedClassTypeParameterRefBuilder.() -> Unit): FirConstructedClassTypeParameterRef {
     contract {
-        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
     return FirConstructedClassTypeParameterRefBuilder().apply(init).build()
 }

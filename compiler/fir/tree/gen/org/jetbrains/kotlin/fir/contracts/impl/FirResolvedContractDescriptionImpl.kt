@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirContractElementDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 internal class FirResolvedContractDescriptionImpl(
     override val source: KtSourceElement?,
