@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -323,6 +323,11 @@ interface IdeMultiplatformImport {
 
 internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport by projectStoredProperty {
     IdeMultiplatformImport(project.kotlinExtension)
+}
+
+internal val IdeMultiplatformImportSetupAction = KotlinProjectSetupAction {
+    /* Ensure instance is created */
+    kotlinIdeMultiplatformImport
 }
 
 /**

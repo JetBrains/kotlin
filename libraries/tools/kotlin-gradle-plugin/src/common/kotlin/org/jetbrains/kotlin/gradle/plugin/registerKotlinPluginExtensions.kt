@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.NoKotlinTargetsDe
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.PreHmppDependenciesUsageChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnusedSourceSetsChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.WasmSourceSetsNotFoundChecker
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
@@ -45,6 +46,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinToolingDiagnosticsSetupAction)
 
         if (isMultiplatform) {
+            register(project, IdeMultiplatformImportSetupAction)
             register(project, IdeResolveDependenciesTaskSetupAction)
             register(project, CInteropCommonizedCInteropApiElementsConfigurationsSetupAction)
             register(project, AddBuildListenerForXCodeSetupAction)

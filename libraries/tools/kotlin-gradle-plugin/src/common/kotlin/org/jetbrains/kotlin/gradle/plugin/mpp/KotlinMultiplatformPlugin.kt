@@ -66,9 +66,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 
         exportProjectStructureMetadataForOtherBuilds(kotlinMultiplatformExtension)
-
-        // Ensure that the instance is created and configured during apply
-        project.kotlinIdeMultiplatformImport
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
