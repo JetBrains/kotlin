@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -37,7 +37,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val innerClassesCapturesOuterTypeParameters: Boolean
         get() = true
 
-    val enumConstructorsAreAlwaysCompatible: Boolean
+    val enumConstructorsAreAlwaysCompatible: Boolean // todo compatible or matched?
         get() = false
 
     // Try to drop it once KT-61105 is fixed
@@ -164,6 +164,13 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
+        containingExpectClassSymbol: RegularClassSymbolMarker?,
+        containingActualClassSymbol: RegularClassSymbolMarker?,
+    ) {}
+
+    fun onIncompatibleMembersFromClassScope(
+        expectSymbol: DeclarationSymbolMarker,
+        actualSymbolsByIncompatibility: Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?,
     ) {}

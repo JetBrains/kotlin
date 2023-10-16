@@ -432,7 +432,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbolsByIncompatibility: Map<ExpectActualMatchingCompatibility.Mismatch<*>, List<DeclarationSymbolMarker>>,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
-        containingActualClassSymbol: RegularClassSymbolMarker?
+        containingActualClassSymbol: RegularClassSymbolMarker?,
     ) {
         if (containingExpectClassSymbol == null || containingActualClassSymbol == null) return
 

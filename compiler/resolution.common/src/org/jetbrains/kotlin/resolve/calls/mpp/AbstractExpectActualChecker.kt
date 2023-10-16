@@ -222,7 +222,10 @@ object AbstractExpectActualChecker {
         actualClassSymbol: RegularClassSymbolMarker,
         substitutor: TypeSubstitutorMarker,
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
-        val unfulfilled = arrayListOf<Pair<DeclarationSymbolMarker, Map<ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker?>>>>()
+        val mismatchedMembers =
+            arrayListOf<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch<*>, List<DeclarationSymbolMarker?>>>>()
+        val incompatibleMembers =
+            arrayListOf<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>()
 
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { it.name }
 
@@ -234,15 +237,26 @@ object AbstractExpectActualChecker {
                         expectMember is RegularClassSymbolMarker && actualMember is RegularClassSymbolMarker
             }.orEmpty()
 
-            checkSingleExpectAgainstPotentialActuals(
+            val matched = AbstractExpectActualMatcher.matchSingleExpectAgainstPotentialActuals(
                 expectMember,
                 actualMembers,
                 substitutor,
                 expectClassSymbol,
                 actualClassSymbol,
-                unfulfilled,
-                checkClassScopesCompatibility = true,
+                mismatchedMembers,
             )
+
+            if (matched != null) {
+                checkSingleExpectAgainstPotentialActuals(
+                    expectMember,
+                    listOf(matched), // todo convert vector to scalar
+                    substitutor,
+                    expectClassSymbol,
+                    actualClassSymbol,
+                    incompatibleMembers, // todo convert vector to scalar
+                    checkClassScopesCompatibility = true,
+                )
+            }
         }
 
         if (expectClassSymbol.classKind == ClassKind.ENUM_CLASS) {
@@ -254,9 +268,10 @@ object AbstractExpectActualChecker {
 
         // TODO: check static scope?
 
-        if (unfulfilled.isEmpty()) return null
-
-        return ExpectActualCheckingCompatibility.ClassScopes(unfulfilled)
+        return when (mismatchedMembers.isNotEmpty() || incompatibleMembers.isNotEmpty()) {
+            true -> ExpectActualCheckingCompatibility.ClassScopes(mismatchedMembers, incompatibleMembers)
+            false -> null
+        }
     }
 
     context(ExpectActualMatchingContext<*>)
@@ -266,8 +281,8 @@ object AbstractExpectActualChecker {
         substitutor: TypeSubstitutorMarker?,
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
-        unfulfilled: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker?>>>>?,
-        checkClassScopesCompatibility: Boolean,
+        incompatibleMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>?,
+        checkClassScopesCompatibility: Boolean, // todo actual value is always true
     ) {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
@@ -292,11 +307,11 @@ object AbstractExpectActualChecker {
             }
         }
 
-        val incompatibilityMap = mutableMapOf<ExpectActualCompatibility.MismatchOrIncompatible<*>, MutableList<DeclarationSymbolMarker>>()
+        val incompatibilityMap = mutableMapOf<ExpectActualCheckingCompatibility.Incompatible<*>, MutableList<DeclarationSymbolMarker>>()
         for ((actualMember, compatibility) in mapping) {
             when (compatibility) {
                 ExpectActualCheckingCompatibility.Compatible -> {
-                    onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol)
+                    onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol) // todo onCompatibleMembers
                     return
                 }
 
@@ -304,9 +319,8 @@ object AbstractExpectActualChecker {
             }
         }
 
-        unfulfilled?.add(expectMember to incompatibilityMap)
-        // todo report checking incompatibilities to backend
-        //onMismatchedMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
+        incompatibleMembers?.add(expectMember to incompatibilityMap)
+        onIncompatibleMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
     }
 
     context(ExpectActualMatchingContext<*>)
@@ -347,59 +361,59 @@ object AbstractExpectActualChecker {
         ) ?: ExpectActualCheckingCompatibility.Compatible
     }
 
-    context(ExpectActualMatchingContext<*>)
-    private fun getCallablesStrongIncompatibility(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        parentSubstitutor: TypeSubstitutorMarker?,
-    ): ExpectActualMatchingCompatibility.Mismatch<*>? {
-        if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
-            return ExpectActualMatchingCompatibility.CallableKind
-        }
-
-        val expectedReceiverType = expectDeclaration.extensionReceiverType
-        val actualReceiverType = actualDeclaration.extensionReceiverType
-        if ((expectedReceiverType != null) != (actualReceiverType != null)) {
-            return ExpectActualMatchingCompatibility.ParameterShape
-        }
-
-        val expectedValueParameters = expectDeclaration.valueParameters
-        val actualValueParameters = actualDeclaration.valueParameters
-        if (!valueParametersCountCompatible(expectDeclaration, actualDeclaration, expectedValueParameters, actualValueParameters)) {
-            return ExpectActualMatchingCompatibility.ParameterCount
-        }
-
-        val expectedTypeParameters = expectDeclaration.typeParameters
-        val actualTypeParameters = actualDeclaration.typeParameters
-        if (expectedTypeParameters.size != actualTypeParameters.size) {
-            return ExpectActualMatchingCompatibility.FunctionTypeParameterCount
-        }
-
-        val substitutor = createExpectActualTypeParameterSubstitutor(
-            (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
-                ?: error("expect/actual type parameters sizes are checked earlier"),
-            parentSubstitutor
-        )
-
-        if (
-            !areCompatibleTypeLists(
-                expectedValueParameters.toTypeList(substitutor),
-                actualValueParameters.toTypeList(createEmptySubstitutor())
-            ) ||
-            !areCompatibleExpectActualTypes(
-                expectedReceiverType?.let { substitutor.safeSubstitute(it) },
-                actualReceiverType
-            )
-        ) {
-            return ExpectActualMatchingCompatibility.ParameterTypes
-        }
-
-        if (!areCompatibleTypeParameterUpperBounds(expectedTypeParameters, actualTypeParameters, substitutor)) {
-            return ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds
-        }
-
-        return null
-    }
+    //context(ExpectActualMatchingContext<*>)
+    //private fun getCallablesStrongIncompatibility(
+    //    expectDeclaration: CallableSymbolMarker,
+    //    actualDeclaration: CallableSymbolMarker,
+    //    parentSubstitutor: TypeSubstitutorMarker?,
+    //): ExpectActualMatchingCompatibility.Mismatch<*>? {
+    //    if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
+    //        return ExpectActualMatchingCompatibility.CallableKind
+    //    }
+    //
+    //    val expectedReceiverType = expectDeclaration.extensionReceiverType
+    //    val actualReceiverType = actualDeclaration.extensionReceiverType
+    //    if ((expectedReceiverType != null) != (actualReceiverType != null)) {
+    //        return ExpectActualMatchingCompatibility.ParameterShape
+    //    }
+    //
+    //    val expectedValueParameters = expectDeclaration.valueParameters
+    //    val actualValueParameters = actualDeclaration.valueParameters
+    //    if (!valueParametersCountCompatible(expectDeclaration, actualDeclaration, expectedValueParameters, actualValueParameters)) {
+    //        return ExpectActualMatchingCompatibility.ParameterCount
+    //    }
+    //
+    //    val expectedTypeParameters = expectDeclaration.typeParameters
+    //    val actualTypeParameters = actualDeclaration.typeParameters
+    //    if (expectedTypeParameters.size != actualTypeParameters.size) {
+    //        return ExpectActualMatchingCompatibility.FunctionTypeParameterCount
+    //    }
+    //
+    //    val substitutor = createExpectActualTypeParameterSubstitutor(
+    //        (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
+    //            ?: error("expect/actual type parameters sizes are checked earlier"),
+    //        parentSubstitutor
+    //    )
+    //
+    //    if (
+    //        !areCompatibleTypeLists(
+    //            expectedValueParameters.toTypeList(substitutor),
+    //            actualValueParameters.toTypeList(createEmptySubstitutor())
+    //        ) ||
+    //        !areCompatibleExpectActualTypes(
+    //            expectedReceiverType?.let { substitutor.safeSubstitute(it) },
+    //            actualReceiverType
+    //        )
+    //    ) {
+    //        return ExpectActualMatchingCompatibility.ParameterTypes
+    //    }
+    //
+    //    if (!areCompatibleTypeParameterUpperBounds(expectedTypeParameters, actualTypeParameters, substitutor)) {
+    //        return ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds
+    //    }
+    //
+    //    return null
+    //}
 
     context(ExpectActualMatchingContext<*>)
     private fun getCallablesCheckingIncompatibility(
@@ -500,21 +514,21 @@ object AbstractExpectActualChecker {
         return null
     }
 
-    context(ExpectActualMatchingContext<*>)
-    private fun valueParametersCountCompatible(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        expectValueParameters: List<ValueParameterSymbolMarker>,
-        actualValueParameters: List<ValueParameterSymbolMarker>,
-    ): Boolean {
-        if (expectValueParameters.size == actualValueParameters.size) return true
-
-        return if (expectDeclaration.isAnnotationConstructor() && actualDeclaration.isAnnotationConstructor()) {
-            expectValueParameters.isEmpty() && actualValueParameters.all { it.hasDefaultValue }
-        } else {
-            false
-        }
-    }
+    //context(ExpectActualMatchingContext<*>)
+    //private fun valueParametersCountCompatible(
+    //    expectDeclaration: CallableSymbolMarker,
+    //    actualDeclaration: CallableSymbolMarker,
+    //    expectValueParameters: List<ValueParameterSymbolMarker>,
+    //    actualValueParameters: List<ValueParameterSymbolMarker>,
+    //): Boolean {
+    //    if (expectValueParameters.size == actualValueParameters.size) return true
+    //
+    //    return if (expectDeclaration.isAnnotationConstructor() && actualDeclaration.isAnnotationConstructor()) {
+    //        expectValueParameters.isEmpty() && actualValueParameters.all { it.hasDefaultValue }
+    //    } else {
+    //        false
+    //    }
+    //}
 
     context(ExpectActualMatchingContext<*>)
     private fun areCompatibleTypeLists(

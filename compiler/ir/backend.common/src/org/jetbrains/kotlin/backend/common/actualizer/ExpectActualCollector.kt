@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import java.io.File
 
@@ -260,6 +261,21 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
             recordActualForExpectDeclaration(expectSymbol, actualSymbol, destination)
         }
 
+        override fun onIncompatibleMembersFromClassScope(
+            expectSymbol: DeclarationSymbolMarker,
+            actualSymbolsByIncompatibility: Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+            containingExpectClassSymbol: RegularClassSymbolMarker?,
+            containingActualClassSymbol: RegularClassSymbolMarker?
+        ) {
+            require(expectSymbol is IrSymbol)
+            for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
+                for (actualSymbol in actualMemberSymbols) {
+                    require(actualSymbol is IrSymbol)
+                    diagnosticsReporter.reportIncompatibleExpectActual(expectSymbol, actualSymbol, incompatibility)
+                }
+            }
+        }
+
         override fun onMismatchedMembersFromClassScope(
             expectSymbol: DeclarationSymbolMarker,
             actualSymbolsByIncompatibility: Map<ExpectActualMatchingCompatibility.Mismatch<*>, List<DeclarationSymbolMarker>>,
@@ -273,7 +289,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
             for ((incompatibility, actualMemberSymbols) in actualSymbolsByIncompatibility) {
                 for (actualSymbol in actualMemberSymbols) {
                     require(actualSymbol is IrSymbol)
-                    diagnosticsReporter.reportIncompatibleExpectActual(expectSymbol, actualSymbol, incompatibility)
+                    diagnosticsReporter.reportExpectActualMismatch(expectSymbol, actualSymbol, incompatibility)
                 }
             }
         }

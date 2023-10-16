@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.backend.common
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY
-import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.INCOMPATIBILITY
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
@@ -24,13 +23,15 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 object CommonBackendErrors {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>()
     val MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED by error2<PsiElement, String, String>()
     val MANY_IMPL_MEMBER_NOT_IMPLEMENTED by error2<PsiElement, String, String>()
-    val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualCompatibility.MismatchOrIncompatible<*>>()
+    val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch<*>>()
+    val INCOMPATIBLE_EXPECT_ACTUAL by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>()
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>()
     val EVALUATION_ERROR by error1<PsiElement, String>()
     val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>()
@@ -65,7 +66,14 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             "Expect declaration `{0}` doesn''t match actual `{1}` because {2}",
             STRING,
             STRING,
-            INCOMPATIBILITY
+            BackendDiagnosticRenderers.EXPECT_ACTUAL_MISMATCH
+        )
+        map.put(
+            CommonBackendErrors.INCOMPATIBLE_EXPECT_ACTUAL,
+            "Expect declaration `{0}` is incompatible with actual `{1}` because {2}",
+            STRING,
+            STRING,
+            BackendDiagnosticRenderers.EXPECT_ACTUAL_INCOMPATIBLE
         )
         map.put(
             CommonBackendErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
@@ -89,7 +97,10 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
 }
 
 object BackendDiagnosticRenderers {
-    val INCOMPATIBILITY = Renderer<ExpectActualCompatibility.MismatchOrIncompatible<*>> {
+    val EXPECT_ACTUAL_MISMATCH = Renderer<ExpectActualMatchingCompatibility.Mismatch<*>> {
+        it.reason ?: "<unknown>"
+    }
+    val EXPECT_ACTUAL_INCOMPATIBLE = Renderer<ExpectActualCheckingCompatibility.Incompatible<*>> {
         it.reason ?: "<unknown>"
     }
     val SYMBOL_OWNER_DECLARATION_FQ_NAME = Renderer<IrSymbol> {

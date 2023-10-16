@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -70,8 +69,7 @@ object AbstractExpectActualMatcher {
                 substitutor = null,
                 expectClassSymbol = null,
                 actualClassSymbol = null,
-                unfulfilled = null,
-                checkClassScopesCompatibility = checkClassScopesCompatibility,
+                mismatchedMembers = null,
             )
         }
     }
@@ -244,15 +242,14 @@ object AbstractExpectActualMatcher {
     //}
 
     context(ExpectActualMatchingContext<*>)
-    private fun matchSingleExpectAgainstPotentialActuals(
+    internal fun matchSingleExpectAgainstPotentialActuals(
         expectMember: DeclarationSymbolMarker,
         actualMembers: List<DeclarationSymbolMarker>,
         substitutor: TypeSubstitutorMarker?,
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
-        unfulfilled: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch<*>, List<DeclarationSymbolMarker?>>>>?,
-        checkClassScopesCompatibility: Boolean,
-    ) {
+        mismatchedMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch<*>, List<DeclarationSymbolMarker?>>>>?,
+    ): DeclarationSymbolMarker? {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
                 is CallableSymbolMarker -> getCallablesCompatibility(
@@ -282,15 +279,16 @@ object AbstractExpectActualMatcher {
             when (compatibility) {
                 ExpectActualMatchingCompatibility.MatchedSuccessfully -> {
                     onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol)
-                    return
+                    return actualMember
                 }
 
                 is ExpectActualMatchingCompatibility.Mismatch -> incompatibilityMap.getOrPut(compatibility) { SmartList() }.add(actualMember)
             }
         }
 
-        unfulfilled?.add(expectMember to incompatibilityMap)
+        mismatchedMembers?.add(expectMember to incompatibilityMap)
         onMismatchedMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
+        return null
     }
 
     context(ExpectActualMatchingContext<*>)

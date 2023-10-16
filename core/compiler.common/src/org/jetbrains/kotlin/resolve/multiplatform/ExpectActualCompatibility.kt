@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility.Mismatch
+
 // todo cleanup "strong" "weak" comments
+// todo cleanup 'out D' generic
 
 private const val TYPE_PARAMETER_COUNT = "number of type parameters is different"
+private const val TYPE_PARAMETER_UPPER_BOUNDS = "upper bounds of type parameters are different"
 
 // Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
 sealed interface ExpectActualCompatibility<out D> { // todo try to drop // todo convert to class
@@ -34,7 +38,7 @@ sealed class ExpectActualMatchingCompatibility<out D> : ExpectActualCompatibilit
     object ParameterTypes : Mismatch<Nothing>("parameter types are different")
 
     // FunctionTypeParameterUpperBounds is weak because functions can be overloaded by type parameter upper bounds
-    object FunctionTypeParameterUpperBounds : Mismatch<Nothing>("upper bounds of type parameters are different")
+    object FunctionTypeParameterUpperBounds : Mismatch<Nothing>(TYPE_PARAMETER_UPPER_BOUNDS)
 
     object MatchedSuccessfully : ExpectActualMatchingCompatibility<Nothing>()
 }
@@ -77,9 +81,10 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object ClassModifiers : Incompatible<Nothing>("modifiers are different (companion, inner, inline, value)")
     object FunInterfaceModifier : Incompatible<Nothing>("actual declaration for fun expect interface is not a functional interface")
     object Supertypes : Incompatible<Nothing>("some supertypes are missing in the actual declaration")
+    // todo add KDoc?
     class ClassScopes<D>(
-        // todo convert to CheckingIncompatibility?. WTF org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.onMatchedMembers
-        val unfulfilled: List<Pair<D, Map<out ExpectActualCompatibility.MismatchOrIncompatible<D>, Collection<D>>>>
+        val mismatchedMembers: List<Pair<D, Map<Mismatch<D>, Collection<D>>>>,
+        val incompatibleMembers: List<Pair<D, Map<Incompatible<D>, Collection<D>>>>,
     ) : Incompatible<D>("some expected members have no actual ones")
     object EnumEntries : Incompatible<Nothing>("some entries from expected enum are missing in the actual enum")
 
@@ -87,7 +92,7 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object Modality : Incompatible<Nothing>("modality is different")
     object Visibility : Incompatible<Nothing>("visibility is different")
 
-    object ClassTypeParameterUpperBounds : Incompatible<Nothing>(ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds.reason)
+    object ClassTypeParameterUpperBounds : Incompatible<Nothing>(TYPE_PARAMETER_UPPER_BOUNDS)
     object TypeParameterVariance : Incompatible<Nothing>("declaration-site variances of type parameters are different")
     object TypeParameterReified : Incompatible<Nothing>(
         "some type parameter is reified in one declaration and non-reified in the other"

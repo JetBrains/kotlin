@@ -151,7 +151,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
         val source = declaration.source
         if (!declaration.isActual) {
-            if (matchingCompatibilityToMembersMap.allStrongIncompatibilities()) return
+            if (matchingCompatibilityToMembersMap.allMismatches()) return
 
             if (ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap) {
                 if (checkActual) {
@@ -171,6 +171,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 // (albeit maybe incompatible) single actual suspect, declared in the actual class.
                 // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
                 // later when this checker is called for them
+                // todo rewrite
                 fun hasSingleActualSuspect(
                     expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<out ExpectActualCompatibility.MismatchOrIncompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>,
                 ): Boolean {
@@ -178,14 +179,19 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                     val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
                     @OptIn(SymbolInternals::class)
                     return actualMember != null &&
-                            !incompatibility.allStrongIncompatibilities() &&
+                            !incompatibility.allMismatches() &&
                             actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
                 }
 
-                val nonTrivialUnfulfilled = checkingCompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
+                // todo simplify
+                val nonTrivialIncompatibleMembers = checkingCompatibility.incompatibleMembers.filterNot(::hasSingleActualSuspect)
+                val nonTrivialMismatchedMembers = checkingCompatibility.mismatchedMembers.filterNot(::hasSingleActualSuspect)
 
-                if (nonTrivialUnfulfilled.isNotEmpty()) {
-                    reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialUnfulfilled, context)
+                if (nonTrivialIncompatibleMembers.isNotEmpty()) {
+                    reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialIncompatibleMembers, context)
+                }
+                if (nonTrivialMismatchedMembers.isNotEmpty()) {
+                    reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialMismatchedMembers, context)
                 }
             }
 
@@ -303,7 +309,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         )
     }
 
-    fun Map<out ExpectActualCompatibility<*>, *>.allStrongIncompatibilities(): Boolean { // todo drop
+    fun Map<out ExpectActualCompatibility<*>, *>.allMismatches(): Boolean { // todo drop
         return keys.all { it is ExpectActualMatchingCompatibility.Mismatch }
     }
 
