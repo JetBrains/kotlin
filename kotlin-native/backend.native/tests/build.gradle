@@ -831,6 +831,31 @@ standaloneTest("cleaner_in_tls_worker") {
     flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
+standaloneTest('logging') {
+    outputChecker = { out ->
+        out.toLowerCase().contains("[logging]") && // loging reports configured log levels on info level
+        out.toLowerCase().contains("logging = debug") &&
+        out.toLowerCase().contains("gc = info") &&
+        out.toLowerCase().contains("mm = warning") &&
+        out.toLowerCase().contains("tls = error") &&
+        out.toLowerCase().contains("[gc]") // gc reports initialization on info level
+    }
+    source = "runtime/basic/logging.kt"
+    flags = ['-Xruntime-logs=gc=info,mm=warning,tls=error,logging=debug']
+}
+
+standaloneTest('logging_invalid') {
+    outputChecker = { it.isEmpty() }
+    source = "runtime/basic/logging.kt"
+    flags = ['-Xruntime-logs=invalid=unknown,logging=debug']
+}
+
+standaloneTest('logging_override') {
+    outputChecker = { it.isEmpty() }
+    source = "runtime/basic/logging.kt"
+    flags = ['-Xruntime-logs=logging=info,logging=debug,logging=none']
+}
+
 standaloneTest("worker_bound_reference0") {
     source = "runtime/concurrent/worker_bound_reference0.kt"
     flags = ['-tr']

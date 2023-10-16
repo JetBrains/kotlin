@@ -77,7 +77,7 @@ public:
     public:
         explicit Worker(ParallelProcessor& dispatcher) : dispatcher_(dispatcher) {
             dispatcher_.registeredWorkers_.fetch_add(1, std::memory_order_relaxed);
-            RuntimeLogDebug({ "balancing" }, "Worker registered");
+            RuntimeLogDebug({ kTagBalancing }, "Worker registered");
         }
 
         ALWAYS_INLINE bool localEmpty() const noexcept {
@@ -96,7 +96,7 @@ public:
             if (batch_.full()) {
                 bool released = dispatcher_.releaseBatch(std::move(batch_));
                 if (!released) {
-                    RuntimeLogDebug({ "balancing" }, "Batches pool overflow");
+                    RuntimeLogDebug({ kTagBalancing }, "Batches pool overflow");
                     batch_.transferAllInto(overflowList_);
                 }
                 batch_ = Batch{};
@@ -111,7 +111,7 @@ public:
                     if (!acquired) {
                         if (!overflowList_.empty()) {
                             batch_.fillFrom(overflowList_);
-                            RuntimeLogDebug({ "balancing" }, "Acquired %zu elements from the overflow list", batch_.elementsCount());
+                            RuntimeLogDebug({ kTagBalancing }, "Acquired %zu elements from the overflow list", batch_.elementsCount());
                         } else {
                             bool newWorkAvailable = waitForMoreWork();
                             if (newWorkAvailable) continue;
@@ -134,7 +134,7 @@ public:
             std::unique_lock lock(dispatcher_.waitMutex_);
 
             auto nowWaiting = dispatcher_.waitingWorkers_.fetch_add(1, std::memory_order_relaxed) + 1;
-            RuntimeLogDebug({ "balancing" }, "Worker goes to sleep (now sleeping %zu of %zu)",
+            RuntimeLogDebug({ kTagBalancing }, "Worker goes to sleep (now sleeping %zu of %zu)",
                             nowWaiting, dispatcher_.registeredWorkers_.load(std::memory_order_relaxed));
 
             if (dispatcher_.allDone_) {
@@ -144,7 +144,7 @@ public:
 
             if (nowWaiting == dispatcher_.registeredWorkers_.load(std::memory_order_relaxed)) {
                 // we are the last ones awake
-                RuntimeLogDebug({ "balancing" }, "Worker has detected termination");
+                RuntimeLogDebug({ kTagBalancing }, "Worker has detected termination");
                 dispatcher_.allDone_ = true;
                 lock.unlock();
                 dispatcher_.waitCV_.notify_all();
@@ -157,7 +157,7 @@ public:
             if (dispatcher_.allDone_) {
                 return false;
             }
-            RuntimeLogDebug({ "balancing" }, "Worker woke up");
+            RuntimeLogDebug({ kTagBalancing }, "Worker woke up");
 
             return true;
         }
@@ -181,7 +181,7 @@ public:
 private:
     bool releaseBatch(Batch&& batch) {
         RuntimeAssert(!batch.empty(), "A batch to release into shared pool must be non-empty");
-        RuntimeLogDebug({ "balancing" }, "Releasing batch of %zu elements", batch.elementsCount());
+        RuntimeLogDebug({ kTagBalancing }, "Releasing batch of %zu elements", batch.elementsCount());
         bool shared = sharedBatches_.enqueue(std::move(batch));
         if (shared) {
             if (waitingWorkers_.load(std::memory_order_relaxed) > 0) {
@@ -196,7 +196,7 @@ private:
         auto acquired = sharedBatches_.dequeue();
         if (acquired) {
             dst = std::move(*acquired);
-            RuntimeLogDebug({ "balancing" }, "Acquired a batch of %zu elements", dst.elementsCount());
+            RuntimeLogDebug({ kTagBalancing }, "Acquired a batch of %zu elements", dst.elementsCount());
             return true;
         }
         return false;

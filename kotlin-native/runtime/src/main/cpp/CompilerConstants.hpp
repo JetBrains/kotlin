@@ -26,7 +26,7 @@ extern "C" const int32_t Kotlin_needDebugInfo;
 extern "C" const int32_t Kotlin_runtimeAssertsMode;
 extern "C" const int32_t Kotlin_disableMmap;
 extern "C" const int32_t Kotlin_disableAllocatorOverheadEstimate;
-extern "C" const char* const Kotlin_runtimeLogs;
+extern "C" const int32_t Kotlin_runtimeLogs[];
 extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_freezingEnabled;
@@ -82,8 +82,8 @@ ALWAYS_INLINE inline bool disableAllocatorOverheadEstimate() noexcept {
     return Kotlin_disableAllocatorOverheadEstimate != 0;
 }
 
-ALWAYS_INLINE inline std::string_view runtimeLogs() noexcept {
-    return Kotlin_runtimeLogs == nullptr ? std::string_view() : std::string_view(Kotlin_runtimeLogs);
+ALWAYS_INLINE inline const int32_t* runtimeLogs() noexcept {
+    return Kotlin_runtimeLogs;
 }
 
 ALWAYS_INLINE inline bool freezingEnabled() noexcept {

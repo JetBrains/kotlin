@@ -31,7 +31,7 @@ ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::MutatorPauseHandle(c
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kNative);
     // no special reason, fill free to implement pause from native if needed
     RuntimeAssert(prevState == ThreadState::kRunnable, "Expected runnable state");
-    RuntimeLogDebug({kTagPause}, "Suspending mutation (%s)", reason_);
+    RuntimeLogDebug({logging::Tag::kPause}, "Suspending mutation (%s)", reason_);
 }
 
 ALWAYS_INLINE mm::ThreadSuspensionData::MutatorPauseHandle::~MutatorPauseHandle() noexcept {
@@ -43,7 +43,7 @@ ALWAYS_INLINE void mm::ThreadSuspensionData::MutatorPauseHandle::resume() noexce
     auto prevState = threadData_.suspensionData().setStateNoSafePoint(ThreadState::kRunnable);
     RuntimeAssert(prevState == ThreadState::kNative, "Expected native state");
     auto pauseTimeMicros = konan::getTimeMicros() - pauseStartTimeMicros_;
-    RuntimeLogInfo({kTagPause}, "Resuming mutation after %" PRIu64 " microseconds of suspension (%s)", pauseTimeMicros, reason_);
+    RuntimeLogInfo({logging::Tag::kPause}, "Resuming mutation after %" PRIu64 " microseconds of suspension (%s)", pauseTimeMicros, reason_);
     resumed = true;
 }
 

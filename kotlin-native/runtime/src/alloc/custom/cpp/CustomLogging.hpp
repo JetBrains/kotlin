@@ -8,9 +8,9 @@
 
 #include "Logging.hpp"
 
-#define CustomAllocInfo(format, ...) RuntimeLogInfo({"alloc"}, format, ##__VA_ARGS__)
-#define CustomAllocDebug(format, ...) RuntimeLogDebug({"alloc"}, format, ##__VA_ARGS__)
-#define CustomAllocWarning(format, ...) RuntimeLogWarning({"alloc"}, format, ##__VA_ARGS__)
-#define CustomAllocError(format, ...) RuntimeLogError({"alloc"}, format, ##__VA_ARGS__)
+#define CustomAllocInfo(format, ...) RuntimeLogInfo({kotlin::logging::Tag::kAlloc}, format, ##__VA_ARGS__)
+#define CustomAllocDebug(format, ...) RuntimeLogDebug({kotlin::logging::Tag::kAlloc}, format, ##__VA_ARGS__)
+#define CustomAllocWarning(format, ...) RuntimeLogWarning({kotlin::logging::Tag::kAlloc}, format, ##__VA_ARGS__)
+#define CustomAllocError(format, ...) RuntimeLogError({kotlin::logging::Tag::kAlloc}, format, ##__VA_ARGS__)
 
 #endif

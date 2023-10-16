@@ -22,7 +22,7 @@ void internal::setCurrentThreadName(std::string_view name) noexcept {
     // TODO: On Linux the maximum thread name is 16 characters. Handle automatically?
     int result = pthread_setname_np(pthread_self(), name.data());
     if (result != 0) {
-        RuntimeLogWarning({"rt"}, "Failed to set thread name: %s", std::strerror(result));
+        RuntimeLogWarning({logging::Tag::kRT}, "Failed to set thread name: %s", std::strerror(result));
     }
 #endif
 }

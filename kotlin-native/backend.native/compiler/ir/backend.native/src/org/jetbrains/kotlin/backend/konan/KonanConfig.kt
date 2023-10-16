@@ -118,7 +118,40 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Legacy exception handling in workers is deprecated")
         }
     } ?: WorkerExceptionHandling.USE_HOOK
-    val runtimeLogs: String? get() = configuration.get(KonanConfigKeys.RUNTIME_LOGS)
+
+    val runtimeLogsEnabled: Boolean by lazy {
+        configuration.get(KonanConfigKeys.RUNTIME_LOGS) != null
+    }
+
+    val runtimeLogs: Map<LoggingTag, LoggingLevel> by lazy {
+        val default = LoggingTag.entries.associateWith { LoggingLevel.None }
+
+        val cfgString = configuration.get(KonanConfigKeys.RUNTIME_LOGS) ?: return@lazy default
+
+        fun <T> error(message: String): T? {
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "$message. No logging will be performed.")
+            return null
+        }
+
+        fun parseSingleTagLevel(tagLevel: String): Pair<LoggingTag, LoggingLevel>? {
+            val parts = tagLevel.split("=")
+            val tagStr = parts[0]
+            val tag = tagStr.let {
+                LoggingTag.parse(it) ?: error("Failed to parse log tag at \"$tagStr\"")
+            }
+            val levelStr = parts.getOrNull(1) ?: error("Failed to parse log tag-level pair at \"$tagLevel\"")
+            val level = parts.getOrNull(1)?.let {
+                LoggingLevel.parse(it) ?: error("Failed to parse log level at \"$levelStr\"")
+            }
+            if (level == LoggingLevel.None) return error("Invalid log level: \"$levelStr\"")
+            return tag?.let { t -> level?.let { l -> Pair(t, l) } }
+        }
+
+        val configured = cfgString.split(",").map { parseSingleTagLevel(it) ?: return@lazy default }
+        default + configured
+    }
+
+
     val suspendFunctionsFromAnyThreadFromObjC: Boolean by lazy { configuration.get(BinaryOptions.objcExportSuspendFunctionLaunchThreadRestriction) == ObjCExportSuspendFunctionLaunchThreadRestriction.NONE }
     val freezing: Freezing get() = configuration.get(BinaryOptions.freezing)?.also {
         if (it != Freezing.Disabled) {
@@ -474,7 +507,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val ignoreCacheReason = when {
         optimizationsEnabled -> "for optimized compilation"
         sanitizer != null -> "with sanitizers enabled"
-        runtimeLogs != null -> "with runtime logs"
+        runtimeLogsEnabled -> "with runtime logs"
         else -> null
     }
 

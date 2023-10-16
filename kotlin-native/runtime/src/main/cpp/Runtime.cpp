@@ -10,6 +10,7 @@
 #include "KAssert.h"
 #include "MainQueueProcessor.hpp"
 #include "Memory.h"
+#include "Logging.hpp"
 #include "ObjCExportInit.h"
 #include "Porting.h"
 #include "Runtime.h"
@@ -139,6 +140,7 @@ RuntimeState* initRuntime() {
     Kotlin_ObjCExport_initialize();
 #endif
     InitOrDeinitGlobalVariables(INIT_GLOBALS, result->memoryState);
+    logging::OnRuntimeInit();
   }
   InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, result->memoryState);
   RuntimeAssert(result->status == RuntimeStatus::kUninitialized, "Runtime must still be in the uninitialized state");

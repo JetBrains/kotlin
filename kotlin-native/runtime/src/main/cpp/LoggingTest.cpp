@@ -19,12 +19,12 @@ namespace {
 std_support::span<char> FormatLogEntry(
         std_support::span<char> buffer,
         logging::Level level,
-        std::initializer_list<const char*> tags,
+        std::initializer_list<logging::Tag> tags,
         int threadId,
         kotlin::nanoseconds timestamp,
         const char* format,
         ...) {
-    std_support::span<const char* const> tagsSpan(std::data(tags), std::size(tags));
+    std_support::span<const logging::Tag> tagsSpan(std::data(tags), std::size(tags));
     std::va_list args;
     va_start(args, format);
     auto result = logging::internal::FormatLogEntry(buffer, level, tagsSpan, threadId, timestamp, format, args);
@@ -32,87 +32,61 @@ std_support::span<char> FormatLogEntry(
     return result;
 }
 
-class LogFilter {
-public:
-    explicit LogFilter(std::string_view filter) : logFilter_(logging::internal::CreateLogFilter(filter)) {}
-
-    bool Empty() const { return logFilter_->Empty(); }
-
-    bool Enabled(logging::Level level, std::initializer_list<const char*> tags) const {
-        std_support::span<const char* const> tagsSpan(std::data(tags), std::size(tags));
-        return logFilter_->Enabled(level, tagsSpan);
-    }
-
-private:
-    std::unique_ptr<logging::internal::LogFilter> logFilter_;
-};
-
-class MockLogFilter : public logging::internal::LogFilter {
-public:
-    MOCK_METHOD(bool, Empty, (), (const, noexcept, override));
-    MOCK_METHOD(bool, Enabled, (logging::Level, std_support::span<const char* const>), (const, noexcept, override));
-};
-
-class MockLogger : public logging::internal::Logger {
-public:
-    MOCK_METHOD(void, Log, (logging::Level, std_support::span<const char* const>, std::string_view), (const, noexcept, override));
-};
-
 } // namespace
 
 TEST(LoggingTest, FormatLogEntry_Debug_OneTag) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kDebug, {"t1"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1][tid#123][42.500s] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kDebug, {logging::Tag::kRT}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][rt][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Debug_TwoTags) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kDebug, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1,t2][tid#123][42.500s] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kDebug, {logging::Tag::kRT, logging::Tag::kGC}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][rt,gc][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Info_OneTag) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kInfo, {"t1"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1][tid#123][42.500s] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kInfo, {logging::Tag::kRT}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][rt][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Info_TwoTags) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kInfo, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1,t2][tid#123][42.500s] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kInfo, {logging::Tag::kRT, logging::Tag::kGC}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][rt,gc][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Warning_OneTag) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kWarning, {"t1"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1][tid#123][42.500s] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kWarning, {logging::Tag::kRT}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[WARNING][rt][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Warning_TwoTags) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kWarning, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1,t2][tid#123][42.500s] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kWarning, {logging::Tag::kRT, logging::Tag::kGC}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[WARNING][rt,gc][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Error_OneTag) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kError, {"t1"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1][tid#123][42.500s] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kError, {logging::Tag::kRT}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][rt][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Error_TwoTags) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kError, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2][tid#123][42.500s] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kError, {logging::Tag::kRT, logging::Tag::kGC}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][rt,gc][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Overflow) {
     std::array<char, 20> buffer;
-    FormatLogEntry(buffer, logging::Level::kError, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    FormatLogEntry(buffer, logging::Level::kError, {logging::Tag::kRT, logging::Tag::kGC}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
     // Only 18 characters are used for the log string contents, another 2 are \n and \0.
-    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2][tid\n"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][rt,gc][tid\n"));
 }
 
 TEST(LoggingDeathTest, StderrLogger) {
@@ -125,118 +99,80 @@ TEST(LoggingDeathTest, StderrLogger) {
             "Message for the log");
 }
 
-TEST(LoggingTest, LogFilter_Empty) {
-    LogFilter filter("");
-    EXPECT_TRUE(filter.Empty());
+namespace {
+
+class LogFilter {
+public:
+    explicit LogFilter(std::map<logging::Tag, logging::Level> tagToLevel) {
+        logLevels_.resize(static_cast<size_t>(logging::Tag::kEnumSize));
+        for (auto [tag, level] : tagToLevel) {
+            logLevels_[static_cast<size_t>(tag)] = static_cast<int32_t>(level);
+        }
+    }
+
+    bool Empty() const {
+        return std::all_of(logLevels_.begin(), logLevels_.end(), [](int32_t levelOrd){
+            return static_cast<logging::Level>(levelOrd) == logging::Level::kNone;
+        });
+    }
+
+    bool Enabled(logging::Level level, std::initializer_list<logging::Tag> tags) const {
+        std_support::span<const logging::Tag> tagsSpan(std::data(tags), std::size(tags));
+        return logging::internal::enabled(level, tagsSpan, logLevels_.data());
+    }
+
+private:
+    std::vector<int32_t> logLevels_;
+};
+
 }
 
 TEST(LoggingTest, LogFilter_EnableOne) {
-    LogFilter filter("t1=info");
+    LogFilter filter({{logging::Tag::kRT, logging::Level::kInfo}});
     EXPECT_FALSE(filter.Empty());
 
-    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {"t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {"t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {"t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {"t1"}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {logging::Tag::kRT}));
 
-    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {"t2"}));
-    EXPECT_FALSE(filter.Enabled(logging::Level::kInfo, {"t2"}));
-    EXPECT_FALSE(filter.Enabled(logging::Level::kWarning, {"t2"}));
-    EXPECT_FALSE(filter.Enabled(logging::Level::kError, {"t2"}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {logging::Tag::kGC}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kInfo, {logging::Tag::kGC}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kWarning, {logging::Tag::kGC}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kError, {logging::Tag::kGC}));
 
-    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {"t1", "t2"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {"t1", "t2"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {"t1", "t2"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {"t1", "t2"}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {logging::Tag::kRT, logging::Tag::kGC}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {logging::Tag::kRT, logging::Tag::kGC}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {logging::Tag::kRT, logging::Tag::kGC}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {logging::Tag::kRT, logging::Tag::kGC}));
 
-    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {"t2", "t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {"t2", "t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {"t2", "t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {"t2", "t1"}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {logging::Tag::kGC, logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {logging::Tag::kGC, logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {logging::Tag::kGC, logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {logging::Tag::kGC, logging::Tag::kRT}));
 }
 
 TEST(LoggingTest, LogFilter_EnableTwo) {
-    LogFilter filter("t1=info,t2=warning");
+    LogFilter filter({{logging::Tag::kRT, logging::Level::kInfo}, {logging::Tag::kGC, logging::Level::kWarning}});
     EXPECT_FALSE(filter.Empty());
 
-    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {"t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {"t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {"t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {"t1"}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {logging::Tag::kRT}));
 
-    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {"t2"}));
-    EXPECT_FALSE(filter.Enabled(logging::Level::kInfo, {"t2"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {"t2"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {"t2"}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {logging::Tag::kGC}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kInfo, {logging::Tag::kGC}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {logging::Tag::kGC}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {logging::Tag::kGC}));
 
-    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {"t1", "t2"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {"t1", "t2"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {"t1", "t2"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {"t1", "t2"}));
+    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {logging::Tag::kRT, logging::Tag::kGC}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {logging::Tag::kRT, logging::Tag::kGC}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {logging::Tag::kRT, logging::Tag::kGC}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {logging::Tag::kRT, logging::Tag::kGC}));
 
-    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {"t2", "t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {"t2", "t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {"t2", "t1"}));
-    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {"t2", "t1"}));
-}
-
-TEST(LoggingTest, LogFilter_Broken) {
-    EXPECT_TRUE(LogFilter("t1").Empty());
-    EXPECT_TRUE(LogFilter("t1=").Empty());
-    EXPECT_TRUE(LogFilter("t1=oops").Empty());
-    EXPECT_TRUE(LogFilter("t1=info,t2").Empty());
-    EXPECT_TRUE(LogFilter("t1=info,t2=").Empty());
-    EXPECT_TRUE(LogFilter("t1=info,t2=oops").Empty());
-}
-
-namespace {
-
-class LoggingLogTest : public testing::Test {
-public:
-    void Log(
-            logging::Level level,
-            std::initializer_list<const char*> tags,
-            int threadId,
-            kotlin::nanoseconds timestamp,
-            const char* format,
-            ...) {
-        std::va_list args;
-        va_start(args, format);
-        logging::internal::Log(
-                logFilter_, logger_, level, std_support::span<const char* const>(std::data(tags), std::size(tags)), threadId, timestamp,
-                format, args);
-        va_end(args);
-    }
-
-    MockLogFilter& logFilter() { return logFilter_; }
-    MockLogger& logger() { return logger_; }
-
-private:
-    testing::StrictMock<MockLogFilter> logFilter_;
-    testing::StrictMock<MockLogger> logger_;
-};
-
-MATCHER_P(TagsAre, tags, "") {
-    std::vector<std::string_view> actualTags;
-    for (auto tag : arg) {
-        actualTags.push_back(tag);
-    }
-    return testing::ExplainMatchResult(testing::ElementsAreArray(tags), actualTags, result_listener);
-}
-
-} // namespace
-
-TEST_F(LoggingLogTest, Log_Fail) {
-    constexpr auto level = logging::Level::kInfo;
-    const std::initializer_list<const char*> tags = {"t1", "t2"};
-    EXPECT_CALL(logFilter(), Enabled(level, TagsAre(tags))).WillOnce(testing::Return(false));
-    Log(level, tags, 123, kotlin::nanoseconds(42'500'000'000), "Message %d", 42);
-}
-
-TEST_F(LoggingLogTest, Log_Success) {
-    constexpr auto level = logging::Level::kInfo;
-    const std::initializer_list<const char*> tags = {"t1", "t2"};
-    EXPECT_CALL(logFilter(), Enabled(level, TagsAre(tags))).WillOnce(testing::Return(true));
-    EXPECT_CALL(logger(), Log(level, TagsAre(tags), "[INFO][t1,t2][tid#123][42.500s] Message 42\n"));
-    Log(level, tags, 123, kotlin::nanoseconds(42'500'000'000), "Message %d", 42);
+    EXPECT_FALSE(filter.Enabled(logging::Level::kDebug, {logging::Tag::kGC, logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kInfo, {logging::Tag::kGC, logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kWarning, {logging::Tag::kGC, logging::Tag::kRT}));
+    EXPECT_TRUE(filter.Enabled(logging::Level::kError, {logging::Tag::kGC, logging::Tag::kRT}));
 }

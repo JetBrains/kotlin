@@ -18,30 +18,80 @@
 namespace kotlin {
 namespace logging {
 
-enum class Level {
-    kDebug,
-    kInfo,
-    kWarning,
-    kError,
+// Must match LoggingLevel in RuntimeLogging.kt
+enum class Level : int32_t {
+    kNone = 0,
+    kError = 1,
+    kWarning = 2,
+    kInfo = 3,
+    kDebug = 4,
+};
+
+// Must match LoggingTag in RuntimeLogging.kt
+enum class Tag : int32_t {
+    kLogging = 0,
+    kRT = 1,
+    kGC = 2,
+    kMM = 3,
+    kTLS = 4,
+    kPause = 5,
+    kAlloc = 6,
+    kBalancing = 7,
+
+    kEnumSize = 8
 };
 
 namespace internal {
 
-class LogFilter {
-public:
-    virtual ~LogFilter() = default;
+inline const char* name(Level level) {
+    switch (level) {
+        case Level::kNone: return "NONE";
+        case Level::kError: return "ERROR";
+        case Level::kWarning: return "WARNING";
+        case Level::kInfo: return "INFO";
+        case Level::kDebug: return "DEBUG";
+    }
+}
 
-    virtual bool Empty() const noexcept = 0;
-    virtual bool Enabled(Level level, std_support::span<const char* const> tags) const noexcept = 0;
-};
+inline const char* name(Tag tag) {
+    switch (tag) {
+        case Tag::kLogging: return "logging";
+        case Tag::kRT: return "rt";
+        case Tag::kGC: return "gc";
+        case Tag::kMM: return "mm";
+        case Tag::kTLS: return "tls";
+        case Tag::kPause: return "pause";
+        case Tag::kAlloc: return "alloc";
+        case Tag::kBalancing: return "balancing";
 
-std::unique_ptr<LogFilter> CreateLogFilter(std::string_view tagsFilter) noexcept;
+        case Tag::kEnumSize: break;
+    }
+    RuntimeFail("Unexpected logging tag %d", tag);
+}
+
+ALWAYS_INLINE inline Level maxLevel(Tag tag, const int32_t logLevels[]) {
+    return static_cast<logging::Level>(logLevels[static_cast<int>(tag)]);
+}
+
+ALWAYS_INLINE inline bool enabled(logging::Level level, std_support::span<const logging::Tag> tags, const int32_t logLevels[]) {
+    for (auto tag: tags) {
+        if (level <= maxLevel(tag, logLevels)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+ALWAYS_INLINE inline bool enabled(logging::Level level, std::initializer_list<const logging::Tag> tags) noexcept {
+    std_support::span<const logging::Tag> tagsSpan(std::data(tags), std::size(tags));
+    return enabled(level, tagsSpan, compiler::runtimeLogs());
+}
 
 class Logger {
 public:
     virtual ~Logger() = default;
 
-    virtual void Log(Level level, std_support::span<const char* const> tags, std::string_view message) const noexcept = 0;
+    virtual void Log(Level level, std_support::span<const Tag> tags, std::string_view message) const noexcept = 0;
 };
 
 std::unique_ptr<Logger> CreateStderrLogger() noexcept;
@@ -49,17 +99,16 @@ std::unique_ptr<Logger> CreateStderrLogger() noexcept;
 std_support::span<char> FormatLogEntry(
         std_support::span<char> buffer,
         Level level,
-        std_support::span<const char* const> tags,
+        std_support::span<const Tag> tags,
         int threadId,
         kotlin::nanoseconds timestamp,
         const char* format,
         std::va_list args) noexcept;
 
 void Log(
-        const LogFilter& logFilter,
         const Logger& logger,
         Level level,
-        std_support::span<const char* const> tags,
+        std_support::span<const Tag> tags,
         int threadId,
         kotlin::nanoseconds timestamp,
         const char* format,
@@ -67,18 +116,20 @@ void Log(
 
 } // namespace internal
 
-__attribute__((format(printf, 3, 4))) void Log(Level level, std::initializer_list<const char*> tags, const char* format, ...) noexcept;
-void VLog(Level level, std::initializer_list<const char*> tags, const char* format, std::va_list args) noexcept;
+void OnRuntimeInit() noexcept;
+
+__attribute__((format(printf, 3, 4)))
+void Log(Level level, std::initializer_list<Tag> tags, const char* format, ...) noexcept;
+void VLog(Level level, std::initializer_list<Tag> tags, const char* format, std::va_list args) noexcept;
 
 } // namespace logging
 
 // Well known tags.
 // These are defined outside of logging namespace for simpler usage.
-
-inline constexpr const char* kTagGC = "gc";
-inline constexpr const char* kTagMM = "mm";
-inline constexpr const char* kTagTLS = "tls";
-inline constexpr const char* kTagPause = "pause";
+inline constexpr auto kTagGC = logging::Tag::kGC;
+inline constexpr auto kTagMM = logging::Tag::kMM;
+inline constexpr auto kTagTLS = logging::Tag::kTLS;
+inline constexpr auto kTagBalancing = logging::Tag::kBalancing;
 
 } // namespace kotlin
 
@@ -89,14 +140,14 @@ inline constexpr const char* kTagPause = "pause";
 
 #define RuntimeLog(level, tags, format, ...) \
     do { \
-        if (!::kotlin::compiler::runtimeLogs().empty()) { \
+        if (::kotlin::logging::internal::enabled(level, tags)) { \
             ::kotlin::logging::Log(level, tags, format, ##__VA_ARGS__); \
         } \
     } while (false)
 
 #define RuntimeVLog(level, tags, format, args) \
     do { \
-        if (!::kotlin::compiler::runtimeLogs().empty()) { \
+        if (::kotlin::logging::internal::enabled(level, tags)) { \
             ::kotlin::logging::VLog(level, tags, format, args); \
         } \
     } while (false)
