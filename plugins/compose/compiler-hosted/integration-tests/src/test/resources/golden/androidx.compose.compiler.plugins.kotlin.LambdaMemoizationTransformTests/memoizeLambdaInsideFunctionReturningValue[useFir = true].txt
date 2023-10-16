@@ -1,0 +1,34 @@
+
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Test(foo: Foo): Int =
+              Consume { foo.value }
+        
+/********
+ * TRANSFORMED
+ ********/
+
+@Composable
+fun Test(foo: Foo, %composer: Composer?, %changed: Int): Int {
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "C(Test)<Consum...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  val tmp0 = Consume(<block>{
+    %composer.startReplaceableGroup(<>)
+    val tmpCache = %composer.cache(%composer.changed(foo)) {
+      {
+        foo.value
+      }
+    }
+    %composer.endReplaceableGroup()
+    tmpCache
+  }, %composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceableGroup()
+  return tmp0
+}

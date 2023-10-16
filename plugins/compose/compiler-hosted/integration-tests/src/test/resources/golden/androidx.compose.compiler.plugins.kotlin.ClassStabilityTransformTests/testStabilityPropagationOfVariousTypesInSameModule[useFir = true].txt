@@ -1,0 +1,66 @@
+
+            import a.*
+            import androidx.compose.runtime.Composable
+
+            class X<T>(val p1: List<T>)
+            class StableDelegateProp {
+                var p1 by StableDelegate()
+            }
+            class UnstableDelegateProp {
+                var p1 by UnstableDelegate()
+            }
+            @Composable fun A(y: Any) {
+                used(y)
+                A(X(listOf(StableClass())))
+                A(StableDelegateProp())
+                A(UnstableDelegateProp())
+            }
+        
+/********
+ * TRANSFORMED
+ ********/
+
+@StabilityInferred(parameters = 0)
+class X<T> (val p1: List<T>) {
+  static val %stable: Int = 8
+}
+@StabilityInferred(parameters = 0)
+class StableDelegateProp {
+  var p1: StableDelegate = StableDelegate()
+    get() {
+      return <this>.p1%delegate.getValue(<this>, ::p1)
+    }
+    set(value) {
+      <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+    }
+  static val %stable: Int = 0
+}
+@StabilityInferred(parameters = 0)
+class UnstableDelegateProp {
+  var p1: UnstableDelegate = UnstableDelegate()
+    get() {
+      return <this>.p1%delegate.getValue(<this>, ::p1)
+    }
+    set(value) {
+      <this>.p1%delegate.setValue(<this>, ::p1, <set-?>)
+    }
+  static val %stable: Int = UnstableDelegate.%stable
+}
+@Composable
+fun A(y: Any, %composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  used(y)
+  A(X(listOf(StableClass())), %composer, 0b1000)
+  A(StableDelegateProp(), %composer, 0)
+  A(UnstableDelegateProp(), %composer, UnstableDelegate.%stable)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    A(y, %composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -1,0 +1,42 @@
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.key
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable @Composable
+fun Example(x: Int) {
+    if (x > 0) {
+        while (x > 0) {
+            A()
+        }
+        A()
+    }
+}
+
+/********
+ * TRANSFORMED
+ ********/
+
+@NonRestartableComposable
+@Composable
+fun Example(x: Int, %composer: Composer?, %changed: Int) {
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "C(Example)<A()>:Test.kt")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  if (x > 0) {
+    %composer.startReplaceableGroup(<>)
+    sourceInformation(%composer, "*<A()>")
+    while (x > 0) {
+      A(%composer, 0)
+    }
+    %composer.endReplaceableGroup()
+    A(%composer, 0)
+  }
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceableGroup()
+}

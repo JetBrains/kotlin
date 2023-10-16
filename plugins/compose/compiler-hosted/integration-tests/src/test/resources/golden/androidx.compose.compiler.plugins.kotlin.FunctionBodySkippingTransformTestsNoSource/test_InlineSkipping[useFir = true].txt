@@ -1,0 +1,35 @@
+
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test() {
+                InlineWrapperParam {
+                    Text("Function $it")
+                }
+            }
+        
+/********
+ * TRANSFORMED
+ ********/
+
+@Composable
+fun Test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(Test)")
+  if (%changed != 0 || !%composer.skipping) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    InlineWrapperParam({ it: Int, %composer: Composer?, %changed: Int ->
+      Text("Function %it", %composer, 0)
+    }, %composer, 0)
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    Test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}

@@ -24,9 +24,8 @@ abstract class AbstractControlFlowTransformTests(
     protected fun controlFlow(
         @Language("kotlin")
         source: String,
-        expectedTransformed: String,
         dumpTree: Boolean = false,
-    ) = verifyComposeIrTransform(
+    ) = verifyGoldenComposeIrTransform(
         """
             import androidx.compose.runtime.Composable
             import androidx.compose.runtime.ReadOnlyComposable
@@ -35,7 +34,6 @@ abstract class AbstractControlFlowTransformTests(
 
             $source
         """.trimIndent(),
-        expectedTransformed,
         """
             import androidx.compose.runtime.Composable
 

@@ -1,0 +1,34 @@
+@file:OptIn(
+  InternalComposeApi::class,
+)
+package test
+
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.NonRestartableComposable
+
+
+@NonRestartableComposable
+@Composable fun Example() {
+    Example()
+}
+
+/********
+ * TRANSFORMED
+ ********/
+
+@NonRestartableComposable
+@Composable
+fun Example(%composer: Composer?, %changed: Int) {
+  %composer.startReplaceableGroup(<>)
+  sourceInformation(%composer, "C(Example)<Exampl...>:Test.kt#2487m")
+  if (isTraceInProgress()) {
+    traceEventStart(<>, %changed, -1, <>)
+  }
+  Example(%composer, 0)
+  if (isTraceInProgress()) {
+    traceEventEnd()
+  }
+  %composer.endReplaceableGroup()
+}
