@@ -14,14 +14,12 @@ import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirFile
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.name.Name
 
 class BirModuleFragmentImpl(
     sourceSpan: SourceSpan,
     override val descriptor: ModuleDescriptor,
     override val name: Name,
-    override val irBuiltins: IrBuiltIns,
 ) : BirModuleFragment() {
     private var _sourceSpan: SourceSpan = sourceSpan
 

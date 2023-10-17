@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.declarations.BirLocalDelegatedProperty
+import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
+import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirLocalDelegatedPropertyReference
-import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
-import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
@@ -28,9 +28,9 @@ class BirLocalDelegatedPropertyReferenceImpl(
     extensionReceiver: BirExpression?,
     origin: IrStatementOrigin?,
     override var typeArguments: List<BirType?>,
-    delegate: BirVariableSymbol,
-    getter: BirSimpleFunctionSymbol,
-    setter: BirSimpleFunctionSymbol?,
+    delegate: BirVariable,
+    getter: BirSimpleFunction,
+    setter: BirSimpleFunction?,
 ) : BirLocalDelegatedPropertyReference() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -114,9 +114,9 @@ class BirLocalDelegatedPropertyReferenceImpl(
     override val valueArguments: BirChildElementList<BirExpression?> =
             BirChildElementList(this, 0)
 
-    private var _delegate: BirVariableSymbol = delegate
+    private var _delegate: BirVariable = delegate
 
-    override var delegate: BirVariableSymbol
+    override var delegate: BirVariable
         get() = _delegate
         set(value) {
             if (_delegate != value) {
@@ -125,9 +125,9 @@ class BirLocalDelegatedPropertyReferenceImpl(
             }
         }
 
-    private var _getter: BirSimpleFunctionSymbol = getter
+    private var _getter: BirSimpleFunction = getter
 
-    override var getter: BirSimpleFunctionSymbol
+    override var getter: BirSimpleFunction
         get() = _getter
         set(value) {
             if (_getter != value) {
@@ -136,9 +136,9 @@ class BirLocalDelegatedPropertyReferenceImpl(
             }
         }
 
-    private var _setter: BirSimpleFunctionSymbol? = setter
+    private var _setter: BirSimpleFunction? = setter
 
-    override var setter: BirSimpleFunctionSymbol?
+    override var setter: BirSimpleFunction?
         get() = _setter
         set(value) {
             if (_setter != value) {
