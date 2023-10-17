@@ -8,25 +8,19 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.targetFromPresetInternal
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
-import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.setupDefaultKotlinHierarchy
-import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
-import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
@@ -58,49 +52,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         configurePublishingWithMavenPublish(project)
 
         kotlinMultiplatformExtension.targets.withType(InternalKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
-
-        // propagate compiler plugin options to the source set language settings
-        setupAdditionalCompilerArguments(project)
     }
 
-
-    private fun setupAdditionalCompilerArguments(project: Project) {
-        // common source sets use the compiler options from the metadata compilation:
-        val metadataCompilation =
-            project.multiplatformExtension.metadata().compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-
-        val primaryCompilationsBySourceSet by lazy { // don't evaluate eagerly: Android targets are not created at this point
-            val allCompilationsForSourceSets = project.multiplatformExtension.sourceSets.associateWith { sourceSet ->
-                sourceSet.internal.compilations.filter { compilation -> compilation.target.platformType != KotlinPlatformType.common }
-            }
-
-            allCompilationsForSourceSets.mapValues { (_, compilations) -> // choose one primary compilation
-                when (compilations.size) {
-                    0 -> metadataCompilation
-                    1 -> compilations.single()
-                    else -> {
-                        val sourceSetTargets = compilations.map { it.target }.distinct()
-                        when (sourceSetTargets.size) {
-                            1 -> sourceSetTargets.single().compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                                ?: // use any of the compilations for now, looks OK for Android TODO maybe reconsider
-                                compilations.first()
-
-                            else -> metadataCompilation
-                        }
-                    }
-                }
-            }
-        }
-
-        project.kotlinExtension.sourceSets.all { sourceSet ->
-            (sourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
-                compilerPluginOptionsTask = lazy {
-                    val associatedCompilation = primaryCompilationsBySourceSet[sourceSet] ?: metadataCompilation
-                    project.tasks.getByName(associatedCompilation.compileKotlinTaskName) as AbstractKotlinCompileTool<*>
-                }
-            }
-        }
-    }
 
     fun setupDefaultPresets(project: Project) {
         with(project.multiplatformExtension.presets) {
