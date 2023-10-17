@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -50,17 +52,15 @@ object AbstractExpectActualMatcher {
         expectDeclaration: DeclarationSymbolMarker,
         actualDeclarations: List<DeclarationSymbolMarker>,
         context: ExpectActualMatchingContext<T>,
-    ) {
-        with(context) {
-            matchSingleExpectAgainstPotentialActuals(
-                expectDeclaration,
-                actualDeclarations,
-                substitutor = null,
-                expectClassSymbol = null,
-                actualClassSymbol = null,
-                unfulfilled = null,
-            )
-        }
+    ): DeclarationSymbolMarker? = with(context) {
+        matchSingleExpectAgainstPotentialActuals(
+            expectDeclaration,
+            actualDeclarations,
+            substitutor = null,
+            expectClassSymbol = null,
+            actualClassSymbol = null,
+            mismatchedMembers = null,
+        )
     }
 
     fun matchClassifiers(
@@ -100,7 +100,7 @@ object AbstractExpectActualMatcher {
                 substitutor,
                 expectClassSymbol,
                 actualClassSymbol,
-                unfulfilled = null,
+                mismatchedMembers = null,
             )
         }
 
@@ -114,7 +114,7 @@ object AbstractExpectActualMatcher {
         substitutor: TypeSubstitutorMarker?,
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
-        unfulfilled: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker?>>>>?,
+        mismatchedMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker?>>>>?,
     ): DeclarationSymbolMarker? {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
@@ -145,8 +145,8 @@ object AbstractExpectActualMatcher {
             }
         }
 
-        unfulfilled?.add(expectMember to incompatibilityMap)
-        onMismatchedOrIncompatibleMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
+        mismatchedMembers?.add(expectMember to incompatibilityMap)
+        onMismatchedMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
         return null
     }
 

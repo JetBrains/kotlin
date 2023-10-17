@@ -318,8 +318,7 @@ object AbstractExpectActualChecker {
         }
 
         incompatibleMembers?.add(expectMember to incompatibilityMap)
-        // Temporarily comment out reporting checking incompatibilities to backend. KT-62590 is in progress
-        //onMismatchedOrIncompatibleMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
+        onIncompatibleMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
     }
 
     context(ExpectActualMatchingContext<*>)
