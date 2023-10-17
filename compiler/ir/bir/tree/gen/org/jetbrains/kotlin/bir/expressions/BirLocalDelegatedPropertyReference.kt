@@ -11,8 +11,8 @@ package org.jetbrains.kotlin.bir.expressions
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.declarations.BirLocalDelegatedProperty
-import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
-import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
+import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
+import org.jetbrains.kotlin.bir.declarations.BirVariable
 
 /**
  * A leaf IR tree element.
@@ -23,11 +23,11 @@ abstract class BirLocalDelegatedPropertyReference :
         BirCallableReference<BirLocalDelegatedProperty>() {
     abstract override var symbol: BirLocalDelegatedProperty
 
-    abstract var delegate: BirVariableSymbol
+    abstract var delegate: BirVariable
 
-    abstract var getter: BirSimpleFunctionSymbol
+    abstract var getter: BirSimpleFunction
 
-    abstract var setter: BirSimpleFunctionSymbol?
+    abstract var setter: BirSimpleFunction?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         dispatchReceiver?.accept(data, visitor)

@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.IrFileEntry
  */
 abstract class BirFile : BirPackageFragment(), BirAnnotationContainerElement,
         BirMetadataSourceOwner, BirFileSymbol {
-    abstract var module: BirModuleFragment
-
     abstract var fileEntry: IrFileEntry
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

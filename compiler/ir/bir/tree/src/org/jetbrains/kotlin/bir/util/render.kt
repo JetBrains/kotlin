@@ -6,5 +6,18 @@
 package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.types.*
 
 fun BirElement.render(): String = TODO()
+
+fun BirElement.dump(): String = TODO()
+
+fun BirType.render(): String = TODO()
+
+fun BirSimpleType.render(): String = (this as BirType).render()
+
+fun BirTypeArgument.render(): String =
+    when (this) {
+        is BirStarProjection -> "*"
+        is BirTypeProjection -> "$variance ${type.render()}"
+    }
