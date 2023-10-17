@@ -483,6 +483,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationInstancesEmptyDefaultLowered.kt");
             }
 
+            @TestMetadata("AnnotationInstantiationWithArray.kt")
+            public void testAnnotationInstantiationWithArray() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/AnnotationInstantiationWithArray.kt");
+            }
+
             @TestMetadata("annotationJvmHashCode.kt")
             public void testAnnotationJvmHashCode() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationJvmHashCode.kt");

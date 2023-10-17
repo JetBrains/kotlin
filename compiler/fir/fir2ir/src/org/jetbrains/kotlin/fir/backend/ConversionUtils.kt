@@ -774,12 +774,10 @@ fun IrActualizedResult?.extractFirDeclarations(): Set<FirDeclaration>? {
 
 // This method is intended to be used for default values of annotation parameters (compile-time strings, numbers, enum values, KClasses)
 // where they are needed and may produce incorrect results for values that may be encountered outside annotations.
-fun FirExpression.asCompileTimeIrInitializer(components: Fir2IrComponents): IrExpressionBody? {
-    return when (val elem = this.accept(Fir2IrVisitor(components, Fir2IrConversionScope(components.configuration)), null)) {
-        is IrExpressionBody -> elem
-        is IrExpression -> components.irFactory.createExpressionBody(elem)
-        else -> null
-    }
+fun FirExpression.asCompileTimeIrInitializer(components: Fir2IrComponents, expectedType: ConeKotlinType? = null): IrExpressionBody {
+    val visitor = Fir2IrVisitor(components, Fir2IrConversionScope(components.configuration))
+    val expression = visitor.convertToIrExpression(this, expectedType = expectedType)
+    return components.irFactory.createExpressionBody(expression)
 }
 
 /**

@@ -52,7 +52,6 @@ interface HolderWithEmpty {
 import Holder
 import ByteHolder
 import HolderWithDefault
-// This line still provokes SOE in K2
-//import HolderWithEmpty
+import HolderWithEmpty
 
 fun box() = "OK"

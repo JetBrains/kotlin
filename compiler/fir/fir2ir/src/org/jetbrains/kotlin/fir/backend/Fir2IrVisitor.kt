@@ -894,7 +894,12 @@ class Fir2IrVisitor(
 
     internal fun convertToIrExpression(
         expression: FirExpression,
-        isDelegate: Boolean = false
+        isDelegate: Boolean = false,
+        // This argument is used for a corner case with deserialized empty array literals
+        // These array literals normally have a type of Array<Any>,
+        // so FIR2IR should instead use a type of corresponding property
+        // See also KT-62598
+        expectedType: ConeKotlinType? = null,
     ): IrExpression {
         return when (expression) {
             is FirBlock -> expression.convertToIrExpressionOrBlock(
@@ -908,6 +913,7 @@ class Fir2IrVisitor(
             else -> {
                 when (val unwrappedExpression = expression.unwrapArgument()) {
                     is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
+                    is FirArrayLiteral -> convertToArrayLiteral(unwrappedExpression, expectedType)
                     else -> expression.accept(this, null) as IrExpression
                 }
             }
@@ -1577,9 +1583,13 @@ class Fir2IrVisitor(
             classifierStorage.getOrCreateIrClass(it).symbol
         }
 
-    private fun convertToArrayLiteral(arrayLiteral: FirArrayLiteral): IrVararg {
+    private fun convertToArrayLiteral(
+        arrayLiteral: FirArrayLiteral,
+        // See comment to convertToIrExpression
+        expectedType: ConeKotlinType?,
+    ): IrVararg {
         return arrayLiteral.convertWithOffsets { startOffset, endOffset ->
-            val arrayType = arrayLiteral.resolvedType.toIrType()
+            val arrayType = (expectedType ?: arrayLiteral.resolvedType).toIrType()
             val elementType = arrayType.getArrayElementType(irBuiltIns)
             IrVarargImpl(
                 startOffset, endOffset,
@@ -1588,10 +1598,6 @@ class Fir2IrVisitor(
                 elements = arrayLiteral.arguments.map { it.convertToIrVarargElement() }
             )
         }
-    }
-
-    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Any?): IrElement = whileAnalysing(session, arrayLiteral) {
-        return convertToArrayLiteral(arrayLiteral)
     }
 
     override fun visitAugmentedArraySetCall(

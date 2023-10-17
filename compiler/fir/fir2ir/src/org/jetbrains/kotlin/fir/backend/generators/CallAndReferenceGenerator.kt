@@ -1032,10 +1032,17 @@ class CallAndReferenceGenerator(
         parameter: FirValueParameter?,
         substitutor: ConeSubstitutor,
     ): IrExpression {
-        var irArgument = visitor.convertToIrExpression(argument)
-        if (parameter != null) {
+        val parameterConeType = parameter?.returnTypeRef?.coneType
+        // Normally argument type should be correct itself.
+        // However, for deserialized annotations it's possible to have imprecise Array<Any> type
+        // for empty integer literal arguments.
+        // In this case we have to use parameter type itself which is more precise, like Array<String> or IntArray.
+        // See KT-62598 and its fix for details.
+        val expectedType = parameterConeType.takeIf { visitor.annotationMode && parameterConeType?.isArrayType == true }
+        var irArgument = visitor.convertToIrExpression(argument, expectedType = expectedType)
+        if (parameterConeType != null) {
             with(visitor.implicitCastInserter) {
-                irArgument = irArgument.cast(argument, argument.resolvedType, parameter.returnTypeRef.coneType)
+                irArgument = irArgument.cast(argument, argument.resolvedType, parameterConeType)
             }
         }
         with(adapterGenerator) {

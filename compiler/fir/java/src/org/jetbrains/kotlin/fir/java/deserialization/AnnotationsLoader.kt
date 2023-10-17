@@ -7,18 +7,11 @@ package org.jetbrains.kotlin.fir.java.deserialization
 
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.createConstantOrError
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.getProperties
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -99,10 +92,22 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 override fun visitEnd() {
                     visitExpression(name, buildArrayLiteral {
                         @OptIn(UnresolvedExpressionTypeAccess::class)
+                        // 1. Calculate array literal type using its element, if any
+                        // 2. If array literal is empty, try to "guess" type (works only for default values)
+                        // 3. If both ways don't work, use Array<Any> as an approximation; later FIR2IR will calculate more precise type
+                        // See KT-62598
+                        // Note: we suppose that (1) can be dropped without real semantic changes;
+                        // in this case array literal argument types will be always Array<Any> at FIR level (even for non-empty literals),
+                        // but at IR level we will still have a real array type, like Array<String> or IntArray
+                        // Maybe we can drop also (2), see KT-62929, with the same consequences
+                        // Anyway, FIR provides no guarantees on having exact type of deserialized array literals in annotations,
+                        // including non-empty ones.
                         elements.firstOrNull()?.coneTypeOrNull?.createOutArrayType()?.let {
                             coneTypeOrNull = it
                         } ?: guessArrayTypeIfNeeded(name, elements)?.let {
                             coneTypeOrNull = it.coneTypeOrNull
+                        } ?: run {
+                            coneTypeOrNull = StandardClassIds.Any.constructClassLikeType().createOutArrayType()
                         }
                         argumentList = buildArgumentList {
                             arguments += elements
@@ -136,7 +141,6 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
         return object : AnnotationsLoaderVisitorImpl(enumEntryReferenceCreator) {
             private val argumentMap = mutableMapOf<Name, FirExpression>()
-            private val scopeSession: ScopeSession = ScopeSession()
 
             override fun visitExpression(name: Name?, expr: FirExpression) {
                 if (name != null) argumentMap[name] = expr
@@ -145,21 +149,9 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             override val visitNullNames: Boolean = false
 
             override fun guessArrayTypeIfNeeded(name: Name?, arrayOfElements: List<FirExpression>): FirTypeRef? {
-                // Needed if we load a default value which is another annotation that has array value in it. e.g.:
-                // To instantiate Deprecated() we need a default value for ReplaceWith() that has imports: Array<String> with default value [].
-                if (name == null) return null
-                // Note: generally we are not allowed to resolve anything, as this is might lead to recursive resolve problems
-                // However, K1 deserializer did exactly the same and no issues were reported.
-                val classSymbol = session.symbolProvider.getRegularClassSymbolByClassId(annotationClassId) ?: return null
-                // We need to enhance java classes, but we can't call unsubstitutedScope unconditionally because
-                // for Kotlin types, it will resolve the class to the SUPER_TYPES phase which can lead to a contract violation.
-                val scope = if (classSymbol.isJavaOrEnhancement) {
-                    classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
-                } else {
-                    classSymbol.declaredMemberScope(session, memberRequiredPhase = null)
-                }
-                val propS = scope.getProperties(name).firstOrNull()
-                return propS?.resolvedReturnTypeRef
+                // Array<Any> will be created, later FIR2IR will use more precise type
+                // See KT-62598
+                return null
             }
 
             override fun visitEnd() {
