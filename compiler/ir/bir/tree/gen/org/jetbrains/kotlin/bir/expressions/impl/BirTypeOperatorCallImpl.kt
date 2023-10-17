@@ -17,13 +17,55 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 
 class BirTypeOperatorCallImpl(
-    override var sourceSpan: SourceSpan,
-    override var type: BirType,
-    override var operator: IrTypeOperator,
+    sourceSpan: SourceSpan,
+    type: BirType,
+    operator: IrTypeOperator,
     argument: BirExpression,
-    override var typeOperand: BirType,
+    typeOperand: BirType,
 ) : BirTypeOperatorCall() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _operator: IrTypeOperator = operator
+
+    override var operator: IrTypeOperator
+        get() = _operator
+        set(value) {
+            if (_operator != value) {
+                _operator = value
+                invalidate()
+            }
+        }
 
     private var _argument: BirExpression = argument
 
@@ -33,6 +75,18 @@ class BirTypeOperatorCallImpl(
             if (_argument != value) {
                 replaceChild(_argument, value)
                 _argument = value
+                invalidate()
+            }
+        }
+
+    private var _typeOperand: BirType = typeOperand
+
+    override var typeOperand: BirType
+        get() = _typeOperand
+        set(value) {
+            if (_typeOperand != value) {
+                _typeOperand = value
+                invalidate()
             }
         }
     init {

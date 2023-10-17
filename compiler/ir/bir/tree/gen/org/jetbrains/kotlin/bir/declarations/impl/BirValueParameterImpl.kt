@@ -21,22 +21,132 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var type: BirType,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    type: BirType,
     override val isAssignable: Boolean,
-    override var index: Int,
-    override var varargElementType: BirType?,
-    override var isCrossinline: Boolean,
-    override var isNoinline: Boolean,
-    override var isHidden: Boolean,
+    index: Int,
+    varargElementType: BirType?,
+    isCrossinline: Boolean,
+    isNoinline: Boolean,
+    isHidden: Boolean,
     defaultValue: BirExpressionBody?,
 ) : BirValueParameter() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _index: Int = index
+
+    override var index: Int
+        get() = _index
+        set(value) {
+            if (_index != value) {
+                _index = value
+                invalidate()
+            }
+        }
+
+    private var _varargElementType: BirType? = varargElementType
+
+    override var varargElementType: BirType?
+        get() = _varargElementType
+        set(value) {
+            if (_varargElementType != value) {
+                _varargElementType = value
+                invalidate()
+            }
+        }
+
+    private var _isCrossinline: Boolean = isCrossinline
+
+    override var isCrossinline: Boolean
+        get() = _isCrossinline
+        set(value) {
+            if (_isCrossinline != value) {
+                _isCrossinline = value
+                invalidate()
+            }
+        }
+
+    private var _isNoinline: Boolean = isNoinline
+
+    override var isNoinline: Boolean
+        get() = _isNoinline
+        set(value) {
+            if (_isNoinline != value) {
+                _isNoinline = value
+                invalidate()
+            }
+        }
+
+    private var _isHidden: Boolean = isHidden
+
+    override var isHidden: Boolean
+        get() = _isHidden
+        set(value) {
+            if (_isHidden != value) {
+                _isHidden = value
+                invalidate()
+            }
+        }
+
     private var _defaultValue: BirExpressionBody? = defaultValue
 
     override var defaultValue: BirExpressionBody?
@@ -45,6 +155,7 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_defaultValue != value) {
                 replaceChild(_defaultValue, value)
                 _defaultValue = value
+                invalidate()
             }
         }
     init {

@@ -17,14 +17,56 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirDoWhileLoopImpl(
-    override var sourceSpan: SourceSpan,
-    override var type: BirType,
-    override var origin: IrStatementOrigin?,
+    sourceSpan: SourceSpan,
+    type: BirType,
+    origin: IrStatementOrigin?,
     body: BirExpression?,
     condition: BirExpression,
-    override var label: String?,
+    label: String?,
 ) : BirDoWhileLoop() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrStatementOrigin? = origin
+
+    override var origin: IrStatementOrigin?
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
 
     private var _body: BirExpression? = body
 
@@ -34,6 +76,7 @@ class BirDoWhileLoopImpl(
             if (_body != value) {
                 replaceChild(_body, value)
                 _body = value
+                invalidate()
             }
         }
 
@@ -45,6 +88,18 @@ class BirDoWhileLoopImpl(
             if (_condition != value) {
                 replaceChild(_condition, value)
                 _condition = value
+                invalidate()
+            }
+        }
+
+    private var _label: String? = label
+
+    override var label: String?
+        get() = _label
+        set(value) {
+            if (_label != value) {
+                _label = value
+                invalidate()
             }
         }
     init {
