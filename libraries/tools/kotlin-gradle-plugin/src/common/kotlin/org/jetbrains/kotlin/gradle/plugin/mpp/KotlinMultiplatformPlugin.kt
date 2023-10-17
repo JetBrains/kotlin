@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.targetFromPresetInternal
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.setupDefaultKotlinHierarchy
@@ -34,20 +32,11 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         project.plugins.apply(JavaBasePlugin::class.java)
 
-        val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
-
         setupDefaultPresets(project)
         customizeKotlinDependencies(project)
         configureSourceSets(project)
         setupTargetsBuildStatsReport(project)
-
-        // set up metadata publishing
-        kotlinMultiplatformExtension.targetFromPresetInternal(
-            KotlinMetadataTargetPreset(project),
-            METADATA_TARGET_NAME
-        )
     }
-
 
     fun setupDefaultPresets(project: Project) {
         with(project.multiplatformExtension.presets) {

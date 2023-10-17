@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetu
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
+import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
@@ -61,6 +62,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         }
 
         if (isMultiplatform) {
+            register(project, KotlinMetadataTargetSetupAction)
             register(project, KotlinArtifactsExtensionSetupAction)
             register(project, MultiplatformPublishingSetupAction)
             register(project, LanguageSettingsSetupAction)
