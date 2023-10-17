@@ -48,8 +48,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
             METADATA_TARGET_NAME
         )
         project.registerKotlinArtifactsExtension()
-
-        configurePublishingWithMavenPublish(project)
     }
 
 

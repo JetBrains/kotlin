@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.WasmSourceSetsNot
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.GlobalProjectStructureMetadataStorageSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.MultiplatformPublishingSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.SyncLanguageSettingsWithKotlinExtensionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.UserDefinedAttributesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
@@ -59,6 +60,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         }
 
         if (isMultiplatform) {
+            register(project, MultiplatformPublishingSetupAction)
             register(project, LanguageSettingsSetupAction)
             register(project, GlobalProjectStructureMetadataStorageSetupAction)
             register(project, IdeMultiplatformImportSetupAction)
