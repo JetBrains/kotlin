@@ -555,6 +555,8 @@ object BirTree : AbstractTreeBuilder() {
         }
     }
     val block: ElementConfig by element(Expression) {
+        isForcedLeaf = true
+
         parent(containerExpression)
     }
     val composite: ElementConfig by element(Expression) {
@@ -824,6 +826,8 @@ object BirTree : AbstractTreeBuilder() {
         +listField("branches", branch, mutability = List, isChild = true)
     }
     val branch: ElementConfig by element(Expression) {
+        isForcedLeaf = true
+
         +field("condition", expression, isChild = true)
         +field("result", expression, isChild = true)
     }
