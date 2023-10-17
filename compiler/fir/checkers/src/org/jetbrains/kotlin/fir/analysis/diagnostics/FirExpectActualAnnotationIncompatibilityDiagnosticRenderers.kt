@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
-import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
-import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForReadability
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.renderer.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
@@ -54,6 +51,7 @@ internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
         return FirRenderer(
             typeRenderer = ConeTypeRenderer(),
             idRenderer = ConeIdShortRenderer(),
+            referencedSymbolRenderer = FirIdRendererBasedSymbolRenderer(),
         ).renderElementAsString(ann, trim = true)
     }
 }

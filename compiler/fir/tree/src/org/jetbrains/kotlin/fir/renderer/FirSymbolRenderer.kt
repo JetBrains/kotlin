@@ -14,7 +14,7 @@ open class FirSymbolRenderer {
     internal lateinit var components: FirRendererComponents
     protected val printer get() = components.printer
 
-    fun printReference(symbol: FirBasedSymbol<*>) {
+    open fun printReference(symbol: FirBasedSymbol<*>) {
         printer.print(renderReference(symbol))
     }
 
