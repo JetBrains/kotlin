@@ -163,7 +163,7 @@ class FirCallCompleter(
 
         val system = when {
             inferenceSession is FirBuilderInferenceSession2 && isCandidateSimpleVariable ->
-                (inferenceSession as FirBuilderInferenceSession2).outerSystem
+                (inferenceSession as FirBuilderInferenceSession2).currentCommonSystem
             else -> candidate.system
         }
         when {
@@ -394,7 +394,7 @@ class FirCallCompleter(
 
                 if (builderInferenceSession != null) {
                     transformer.context.withInferenceSession(builderInferenceSession) {
-                        transformer.context.withOuterConstraintStorage(builderInferenceSession.outerSystem.currentStorage()) {
+                        transformer.context.withOuterConstraintStorage(candidate.system.currentStorage()) {
                             lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
                         }
                     }
