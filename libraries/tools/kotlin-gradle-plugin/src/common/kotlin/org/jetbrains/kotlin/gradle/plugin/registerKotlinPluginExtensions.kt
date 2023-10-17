@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSe
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
+import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
 import org.jetbrains.kotlin.gradle.tooling.RegisterBuildKotlinToolingMetadataTask
 
 /**
@@ -60,6 +61,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         }
 
         if (isMultiplatform) {
+            register(project, KotlinArtifactsExtensionSetupAction)
             register(project, MultiplatformPublishingSetupAction)
             register(project, LanguageSettingsSetupAction)
             register(project, GlobalProjectStructureMetadataStorageSetupAction)

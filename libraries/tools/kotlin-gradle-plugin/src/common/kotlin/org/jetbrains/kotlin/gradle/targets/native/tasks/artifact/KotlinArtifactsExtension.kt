@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeArtifactDSL.ExperimentalArtifactDsl
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
@@ -17,7 +18,8 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 import javax.inject.Inject
 
 private const val KOTLIN_ARTIFACTS_EXTENSION_NAME = "kotlinArtifacts"
-internal fun Project.registerKotlinArtifactsExtension() {
+
+internal val KotlinArtifactsExtensionSetupAction = KotlinProjectSetupAction {
     val kotlinArtifactsExt = objects.newInstance(KotlinArtifactsExtensionImpl::class.java, this)
     extensions.add(KOTLIN_ARTIFACTS_EXTENSION_NAME, kotlinArtifactsExt)
     kotlinArtifactsExt.artifacts.all { it.registerAssembleTask(this) }
