@@ -51,6 +51,7 @@ public fun <K, V> Map<K, V>.withDefault(defaultValue: (key: K) -> V): Map<K, V> 
  *
  * @sample samples.collections.Maps.Usage.getValueWithDefault
  * @sample samples.collections.Maps.Usage.getValueWithReplacedDefault
+ * @sample samples.collections.Maps.Usage.changesToMutableMapWithDefaultPropagateToUnderlyingMap
  */
 @kotlin.jvm.JvmName("withDefaultMutable")
 public fun <K, V> MutableMap<K, V>.withDefault(defaultValue: (key: K) -> V): MutableMap<K, V> =

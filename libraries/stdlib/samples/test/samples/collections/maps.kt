@@ -222,7 +222,7 @@ class Maps {
                     else -> "Negative"
                 }
             }
-            val actual = (-1..3).associateBy( { it }, { mapWithDefault.getValue(it) } )
+            val actual = (-1..3).associateWith { mapWithDefault.getValue(it) }
             assertPrints(actual, "{-1=Negative, 0=Zero, 1=One, 2=Two, 3=Positive}")
         }
 
@@ -232,6 +232,16 @@ class Maps {
             assertPrints(mapWithDefault.getValue(0), "Other")
             val mapWithReplacedDefault = mapWithDefault.withDefault { _ -> "Unknown" }
             assertPrints(mapWithReplacedDefault.getValue(0), "Unknown")
+        }
+
+        @Sample
+        fun changesToMutableMapWithDefaultPropagateToUnderlyingMap() {
+            val mutableMap = mutableMapOf(1 to "One", 2 to "Two")
+            val mutableMapWithDefault = mutableMap.withDefault { _ -> "Other" }
+            assertPrints(mutableMapWithDefault.getValue(0), "Other")
+            mutableMapWithDefault[0] = "Zero"
+            assertPrints(mutableMapWithDefault.getValue(0), "Zero")
+            assertPrints(mutableMap.getValue(0), "Zero")
         }
 
     }
