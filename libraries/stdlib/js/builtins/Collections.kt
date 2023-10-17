@@ -197,6 +197,7 @@ public interface List<out E> : Collection<E> {
      */
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 
+    @ExperimentalJsExport
     public fun asJsArrayView() = createJsArrayImmutableViewFrom(this)
 }
 
@@ -266,6 +267,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
     // View
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
 
+    @ExperimentalJsExport
     public fun asJsArrayMutableView() = createJsArrayMutableViewFrom(this)
 }
 
@@ -289,6 +291,7 @@ public interface Set<out E> : Collection<E> {
     // Bulk Operations
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
+    @ExperimentalJsExport
     public fun asJsSetView() = createJsSetImmutableViewFrom(this)
 }
 
@@ -322,6 +325,7 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     override fun clear(): Unit
 
+    @ExperimentalJsExport
     public fun asJsSetMutableView() = createJsSetMutableViewFrom(this)
 }
 
@@ -392,6 +396,7 @@ public interface Map<K, out V> {
         public val value: V
     }
 
+    @ExperimentalJsExport
     public fun asJsMapView() = createJsMapImmutableViewFrom(this)
 }
 
@@ -456,5 +461,6 @@ public interface MutableMap<K, V> : Map<K, V> {
         public fun setValue(newValue: V): V
     }
 
+    @ExperimentalJsExport
     public fun asJsMapMutableView() = createJsMapMutableViewFrom(this)
 }
