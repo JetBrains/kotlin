@@ -50,8 +50,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.registerKotlinArtifactsExtension()
 
         configurePublishingWithMavenPublish(project)
-
-        kotlinMultiplatformExtension.targets.withType(InternalKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
     }
 
 

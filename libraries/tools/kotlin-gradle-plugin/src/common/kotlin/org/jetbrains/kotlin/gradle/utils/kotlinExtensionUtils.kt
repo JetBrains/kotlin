@@ -16,3 +16,12 @@ internal val KotlinProjectExtension.targets: Iterable<KotlinTarget>
         is KotlinMultiplatformExtension -> targets
         else -> error("Unexpected 'kotlin' extension $this")
     }
+
+
+internal fun KotlinProjectExtension.forAllTargets(action: (target: KotlinTarget) -> Unit) {
+    when (this) {
+        is KotlinSingleTargetExtension<*> -> action(this.target)
+        is KotlinMultiplatformExtension -> targets.all(action)
+        else -> error("Unexpected 'kotlin' extension $this")
+    }
+}

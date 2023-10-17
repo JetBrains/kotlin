@@ -62,8 +62,6 @@ internal abstract class AbstractKotlinPlugin(
             { compilation -> buildSourceSetProcessor(project, compilation) }
         )
 
-        applyUserDefinedAttributes(target)
-
         rewriteMppDependenciesInPom(target)
 
         configureProjectGlobalSettings(project)

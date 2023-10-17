@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCompilerOptionsForTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.applyUserDefinedAttributes
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
@@ -55,7 +54,6 @@ internal open class KotlinAndroidPlugin(
                 }
             }
         ) { androidTarget ->
-            applyUserDefinedAttributes(androidTarget)
             customizeKotlinDependencies(project)
             registry.register(KotlinModelBuilder(project.getKotlinPluginVersion(), androidTarget))
             project.whenEvaluated { project.components.addAll(androidTarget.components) }

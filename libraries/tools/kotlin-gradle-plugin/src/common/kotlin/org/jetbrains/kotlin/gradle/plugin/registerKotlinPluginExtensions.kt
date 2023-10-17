@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportSetupAction
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeResolveDependenciesTaskSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.GlobalProjectStructureMetadataStorageSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.SyncLanguageSettingsWithKotlinExtensionSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.UserDefinedAttributesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
@@ -50,6 +51,8 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, RegisterBuildKotlinToolingMetadataTask)
         register(project, KotlinToolingDiagnosticsSetupAction)
         register(project, SyncLanguageSettingsWithKotlinExtensionSetupAction)
+        register(project, UserDefinedAttributesSetupAction)
+
 
         if (isJvm || isMultiplatform) {
             register(project, ScriptingGradleSubpluginSetupAction)
@@ -100,3 +103,5 @@ private val Project.isMultiplatform get() = multiplatformExtensionOrNull != null
 private val Project.isJvm get() = kotlinJvmExtensionOrNull != null
 
 private val Project.isJs get() = kotlinExtensionOrNull is KotlinJsProjectExtension
+
+private val Project.isAndroid get() = kotlinExtension is KotlinAndroidProjectExtension
