@@ -26,11 +26,9 @@ class FirBuilderInferenceSession2(
     private val inferenceComponents: InferenceComponents,
 ) : FirInferenceSession() {
 
-    val outerSystem = outerCandidate.system
+    var currentCommonSystem = outerCandidate.system
 
-    private var systemAccumulator = outerSystem
-
-    private val outerCS: ConstraintStorage get() = outerSystem.currentStorage()
+    private val initialOuterTypeVariables = outerCandidate.system.currentStorage().allTypeVariables.keys
     private val qualifiedAccessesToProcess = mutableSetOf<FirExpression>()
 
     override fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
@@ -58,12 +56,12 @@ class FirBuilderInferenceSession2(
     }
 
     override fun <T> runLambdaCompletion(candidate: Candidate, block: () -> T): T {
-        val previous = systemAccumulator
+        val previous = currentCommonSystem
         return try {
-            systemAccumulator = candidate.system
+            currentCommonSystem = candidate.system
             block()
         } finally {
-            systemAccumulator = previous
+            currentCommonSystem = previous
         }
     }
 
@@ -86,7 +84,7 @@ class FirBuilderInferenceSession2(
         outerCandidate.postponedCalls += call
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
-        systemAccumulator.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
+        currentCommonSystem.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
     }
 
     fun integrateChildSession(
@@ -95,7 +93,7 @@ class FirBuilderInferenceSession2(
         afterCompletion: (ConeSubstitutor) -> Unit,
     ) {
         outerCandidate.postponedCalls += childCalls
-        systemAccumulator.addOtherSystem(childStorage)
+        currentCommonSystem.addOtherSystem(childStorage)
         outerCandidate.callbacks += afterCompletion
     }
 
@@ -103,7 +101,7 @@ class FirBuilderInferenceSession2(
         resolutionMode: ResolutionMode,
     ) {
         val additionalBindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
-        val system = (this as? FirResolvable)?.candidate()?.system ?: outerSystem
+        val system = (this as? FirResolvable)?.candidate()?.system ?: currentCommonSystem
 
         if (resolutionMode is ResolutionMode.ReceiverResolution) {
             fixVariablesForMemberScope(resolvedType, system)?.let { additionalBindings += it }
@@ -145,7 +143,7 @@ class FirBuilderInferenceSession2(
         val variableWithConstraints = myCs.notFixedTypeVariables[coneTypeVariableTypeConstructor] ?: return null
         val c = myCs.getBuilder()
         val resultType = c.run {
-            withTypeVariablesThatAreNotCountedAsProperTypes(myCs.allTypeVariables.keys - outerCS.allTypeVariables.keys) {
+            withTypeVariablesThatAreNotCountedAsProperTypes(myCs.allTypeVariables.keys - initialOuterTypeVariables) {
                 inferenceComponents.resultTypeResolver.findResultType(
                     c,
                     variableWithConstraints,
@@ -164,8 +162,8 @@ class FirBuilderInferenceSession2(
         usedOuterCs
 
     override fun outerCSForCandidate(candidate: Candidate): ConstraintStorage? {
-        if (candidate.needsToBePostponed()) return outerCS
-        if (candidate.callInfo.arguments.any { it.isLambda() }) return outerCS
+        if (candidate.needsToBePostponed()) return currentCommonSystem.currentStorage()
+        if (candidate.callInfo.arguments.any { it.isLambda() }) return currentCommonSystem.currentStorage()
         // TODO: context receivers
         return null
     }
@@ -188,7 +186,7 @@ class FirBuilderInferenceSession2(
 
     private fun ConeKotlinType.containsNotFixedTypeVariables(): Boolean =
         contains {
-            it is ConeTypeVariableType && it.typeConstructor in outerSystem.allTypeVariables
+            it is ConeTypeVariableType && it.typeConstructor in currentCommonSystem.allTypeVariables
         }
 
     // TODO: Get rid of them
