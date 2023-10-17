@@ -17,4 +17,6 @@ import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
  */
 abstract class BirSyntheticBody : BirBody() {
     abstract var kind: IrSyntheticBodyKind
+
+    companion object
 }

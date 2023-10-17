@@ -30,4 +30,6 @@ abstract class BirConstructorCall : BirFunctionAccessExpression() {
         extensionReceiver?.accept(data, visitor)
         valueArguments.forEach { it?.accept(data, visitor) }
     }
+
+    companion object
 }

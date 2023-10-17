@@ -15,4 +15,6 @@ import org.jetbrains.kotlin.bir.BirElement
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.varargElement]
  */
-interface BirVarargElement : BirElement
+interface BirVarargElement : BirElement {
+    companion object
+}

@@ -11,6 +11,8 @@ dependencies {
     implementation(project(":compiler:backend.jvm.lower"))
     implementation(project(":compiler:backend.jvm.codegen"))
     compileOnly(intellijCore())
+
+    implementation(project(":compiler:bir"))
 }
 
 optInToUnsafeDuringIrConstructionAPI()

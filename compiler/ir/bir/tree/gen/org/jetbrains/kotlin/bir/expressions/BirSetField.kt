@@ -23,4 +23,6 @@ abstract class BirSetField : BirFieldAccessExpression() {
         receiver?.accept(data, visitor)
         value.accept(data, visitor)
     }
+
+    companion object
 }

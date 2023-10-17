@@ -23,4 +23,6 @@ abstract class BirStringConcatenation : BirExpression() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         arguments.forEach { it.accept(data, visitor) }
     }
+
+    companion object
 }

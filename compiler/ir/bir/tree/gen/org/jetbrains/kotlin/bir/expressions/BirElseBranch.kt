@@ -21,4 +21,6 @@ abstract class BirElseBranch : BirBranch() {
         condition.accept(data, visitor)
         result.accept(data, visitor)
     }
+
+    companion object
 }

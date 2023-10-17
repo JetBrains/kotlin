@@ -27,4 +27,6 @@ abstract class BirFunctionReference : BirCallableReference<BirFunctionSymbol>() 
         extensionReceiver?.accept(data, visitor)
         valueArguments.forEach { it?.accept(data, visitor) }
     }
+
+    companion object
 }

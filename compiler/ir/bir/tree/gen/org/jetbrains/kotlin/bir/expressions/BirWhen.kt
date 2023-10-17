@@ -26,4 +26,6 @@ abstract class BirWhen : BirExpression() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         branches.forEach { it.accept(data, visitor) }
     }
+
+    companion object
 }

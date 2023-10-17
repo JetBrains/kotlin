@@ -27,4 +27,6 @@ abstract class BirBranch : BirElementBase(), BirElement {
         condition.accept(data, visitor)
         result.accept(data, visitor)
     }
+
+    companion object
 }

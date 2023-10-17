@@ -19,4 +19,6 @@ abstract class BirConst<T> : BirExpression() {
     abstract var kind: IrConstKind<T>
 
     abstract var value: T
+
+    companion object
 }

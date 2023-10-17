@@ -17,4 +17,6 @@ import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
  */
 abstract class BirInstanceInitializerCall : BirExpression() {
     abstract var classSymbol: BirClassSymbol
+
+    companion object
 }

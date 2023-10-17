@@ -35,4 +35,6 @@ abstract class BirVariable : BirValueDeclaration(), BirDeclaration, BirVariableS
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         initializer?.accept(data, visitor)
     }
+
+    companion object
 }

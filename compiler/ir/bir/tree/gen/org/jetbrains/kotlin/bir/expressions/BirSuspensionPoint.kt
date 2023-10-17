@@ -29,4 +29,6 @@ abstract class BirSuspensionPoint : BirExpression() {
         result.accept(data, visitor)
         resumeResult.accept(data, visitor)
     }
+
+    companion object
 }
