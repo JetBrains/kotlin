@@ -62,6 +62,8 @@ class ElementConfig(
     override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementConfigRef(this, args, false)
     override fun copy(nullable: Boolean) = ElementConfigRef(this, args, nullable)
 
+    override fun substitute(map: TypeParameterSubstitutionMap): ElementConfig = this
+
     operator fun TypeVariable.unaryPlus() = apply {
         params.add(this)
     }
@@ -77,8 +79,6 @@ class ElementConfig(
 
     override val type: String
         get() = Element.elementName2typeName(name)
-
-    override fun getTypeWithArguments(notNull: Boolean): String = type
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
         Expression("expressions", "expression"),
@@ -108,8 +108,6 @@ class ElementConfigRef(
 
     override val packageName: String
         get() = element.packageName
-
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
 }
 
 sealed class UseFieldAsParameterInIrFactoryStrategy {
@@ -152,7 +150,7 @@ sealed class FieldConfig(
 
 class SimpleFieldConfig(
     name: String,
-    val type: TypeRef?,
+    val type: TypeRefWithNullability?,
     val nullable: Boolean,
     val mutable: Boolean,
     isChildElement: Boolean,

@@ -79,9 +79,11 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             withIndent {
                 fieldsWithoutDefault.forEachIndexed { _, field ->
                     if (field.isParameter) {
-                        println("${field.name}: ${field.typeWithArguments},")
+                        print("${field.name}: ${field.typeRef.typeWithArguments}")
+                        if (field.nullable) print("?")
+                        println(",")
                     } else if (!field.isFinal) {
-                        printField(field, isImplementation = true, override = true, inConstructor = true, notNull = field.notNull)
+                        printField(field, isImplementation = true, override = true, inConstructor = true)
                     }
                 }
             }
@@ -99,7 +101,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 allFields.forEach {
 
                     abstract()
-                    printField(it, isImplementation = true, override = true, notNull = it.notNull)
+                    printField(it, isImplementation = true, override = true)
                 }
             } else {
                 fieldsWithDefault.forEach {
@@ -112,7 +114,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
 
             val bindingCalls = element.allFields.filter {
-                it.withBindThis && it.type.contains("Symbol") && it !is FieldList && it.name != "companionObjectSymbol"
+                it.withBindThis && it.typeRef.type.contains("Symbol") && it !is FieldList && it.name != "companionObjectSymbol"
             }.takeIf {
                 it.isNotEmpty() && !isInterface && !isAbstract &&
                         !element.type.contains("Reference")
@@ -322,7 +324,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
             fun generateReplace(
                 field: Field,
-                overridenType: TypeRef? = null,
+                overridenType: TypeRefWithNullability? = null,
                 forceNullable: Boolean = false,
                 body: () -> Unit,
             ) {
@@ -375,7 +377,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
                 for (overridenType in field.overridenTypes) {
                     generateReplace(field, overridenType) {
-                        println("require($newValue is ${field.typeWithArguments})")
+                        println("require($newValue is ${field.typeRef.typeWithArguments})")
                         println("replace$capitalizedFieldName($newValue)")
                     }
                 }

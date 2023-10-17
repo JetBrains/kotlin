@@ -5,26 +5,16 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.generators.tree.NamedTypeParameterRef
-import org.jetbrains.kotlin.generators.tree.StandardTypes
-import org.jetbrains.kotlin.generators.tree.TypeRef
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
+import org.jetbrains.kotlin.generators.tree.*
 
 // ----------- Simple field -----------
 
-fun field(name: String, type: TypeRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(name, type.typeWithArguments, type.packageName, nullable, withReplace)
+fun field(name: String, type: TypeRefWithNullability, nullable: Boolean = false, withReplace: Boolean = false): Field {
+    return SimpleField(name, type.copy(nullable), withReplace)
 }
 
-fun field(name: String, typeWithArgs: Pair<TypeRef, List<TypeRef>>, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    val (type, args) = typeWithArgs
-    return SimpleField(name, type.typeWithArguments, type.packageName, nullable, withReplace).apply {
-        arguments += args
-    }
-}
-
-fun field(type: TypeRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(type.type.replaceFirstChar(Char::lowercaseChar), type.typeWithArguments, type.packageName, nullable, withReplace)
+fun field(type: TypeRefWithNullability, nullable: Boolean = false, withReplace: Boolean = false): Field {
+    return SimpleField(type.type.replaceFirstChar(Char::lowercaseChar), type.copy(nullable), withReplace)
 }
 
 fun booleanField(name: String, withReplace: Boolean = false): Field {
@@ -41,20 +31,12 @@ fun intField(name: String, withReplace: Boolean = false): Field {
 
 // ----------- Fir field -----------
 
-fun field(name: String, type: TypeRef, argument: String? = null, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return if (argument == null) {
-        field(name, type, nullable, withReplace)
-    } else {
-        field(name, type to listOf(NamedTypeParameterRef(argument)), nullable, withReplace)
-    }
-}
-
 fun field(name: String, element: ElementOrRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return FirField(name, element, nullable, withReplace)
+    return FirField(name, element.copy(nullable), withReplace)
 }
 
 fun field(element: Element, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return FirField(element.name.replaceFirstChar(Char::lowercaseChar), element, nullable, withReplace)
+    return FirField(element.name.replaceFirstChar(Char::lowercaseChar), element.copy(nullable), withReplace)
 }
 
 // ----------- Field list -----------

@@ -445,7 +445,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         configureFieldInAllLeafBuilders(
             field = "attributes",
-            fieldPredicate = { it.type == declarationAttributesType.type }
+            fieldPredicate = { it.typeRef == declarationAttributesType }
         ) {
             default(it, "${declarationAttributesType.type}()")
         }

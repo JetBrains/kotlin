@@ -235,7 +235,6 @@ fun printElements(generationPath: File, model: Model) = sequence {
                                 val elRef = child.typeRef as GenericElementRef<Element, Field>
                                 if (!elRef.element.hasTransformMethod) {
                                     append(" as %T")
-                                    if (child.nullable) append("?")
                                     args.add(elRef.toPoet())
                                 }
                             }

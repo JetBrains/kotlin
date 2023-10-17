@@ -11,6 +11,13 @@ import java.util.*
 import kotlin.reflect.KClass
 
 interface TypeRef : Importable {
+
+    /**
+     * Constructs a new [TypeRef] by recursively replacing referenced [TypeParameterRef]s with other types according to the provided
+     * substitution map.
+     */
+    fun substitute(map: TypeParameterSubstitutionMap): TypeRef
+
     object Star : TypeRef {
         override val type: String
             get() = "*"
@@ -19,6 +26,8 @@ interface TypeRef : Importable {
             get() = null
 
         override fun getTypeWithArguments(notNull: Boolean): String = type
+
+        override fun substitute(map: TypeParameterSubstitutionMap) = this
 
         override fun toString(): String = type
     }
@@ -65,8 +74,6 @@ class ClassRef<P : TypeParameterRef> private constructor(
     override val fullQualifiedName: String
         get() = canonicalName
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
-
     /**
      * The enclosing classes, outermost first, followed by the simple name. This is `["Map", "Entry"]`
      * for `Map.Entry`.
@@ -77,12 +84,44 @@ class ClassRef<P : TypeParameterRef> private constructor(
     override fun copy(nullable: Boolean) = ClassRef(kind, names, args, nullable)
 
     override fun toString() = canonicalName
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ClassRef<*>) return false
+        return kind == other.kind && args == other.args && nullable == other.nullable && names == other.names
+    }
+
+    override fun hashCode(): Int = Objects.hash(kind, args, nullable, names)
+}
+
+/**
+ * Used for specifying a type argument with use-site variance, e.g. `FirClassSymbol<out FirClass>`.
+ */
+data class TypeRefWithVariance<out T : TypeRef>(val variance: Variance, val typeRef: T) : TypeRef {
+
+    override val type: String
+        get() = buildString {
+            if (variance != Variance.INVARIANT) {
+                append(variance)
+                append(" ")
+            }
+            append(typeRef.typeWithArguments)
+        }
+
+    override val packageName: String?
+        get() = null
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type
+
+    override fun substitute(map: TypeParameterSubstitutionMap): TypeRefWithVariance<*> =
+        TypeRefWithVariance(variance, typeRef.substitute(map))
 }
 
 interface ElementOrRef<Element, Field> : ParametrizedTypeRef<ElementOrRef<Element, Field>, NamedTypeParameterRef>, ClassOrElementRef
         where Element : AbstractElement<Element, Field>,
               Field : AbstractField {
     val element: Element
+
+    override fun copy(nullable: Boolean): ElementRef<Element, Field>
 }
 
 data class ElementRef<Element : AbstractElement<Element, Field>, Field : AbstractField>(
@@ -98,10 +137,6 @@ data class ElementRef<Element : AbstractElement<Element, Field>, Field : Abstrac
     override val packageName: String?
         get() = element.packageName
 
-    override fun getTypeWithArguments(notNull: Boolean): String {
-        return element.type + generics
-    }
-
     override fun toString() = buildString {
         append(element.name)
         append("<")
@@ -114,10 +149,13 @@ data class ElementRef<Element : AbstractElement<Element, Field>, Field : Abstrac
 }
 
 
-sealed interface TypeParameterRef : TypeRef
+sealed interface TypeParameterRef : TypeRef, TypeRefWithNullability {
+    override fun substitute(map: TypeParameterSubstitutionMap): TypeRef = map[this] ?: this
+}
 
 data class PositionTypeParameterRef(
     val index: Int,
+    override val nullable: Boolean = false,
 ) : TypeParameterRef {
     override fun toString() = index.toString()
 
@@ -128,10 +166,13 @@ data class PositionTypeParameterRef(
         get() = null
 
     override fun getTypeWithArguments(notNull: Boolean): String = type
+
+    override fun copy(nullable: Boolean) = PositionTypeParameterRef(index, nullable)
 }
 
 open class NamedTypeParameterRef(
     val name: String,
+    override val nullable: Boolean = false,
 ) : TypeParameterRef {
     override fun equals(other: Any?): Boolean {
         return other is NamedTypeParameterRef && other.name == name
@@ -150,6 +191,8 @@ open class NamedTypeParameterRef(
         get() = null
 
     override fun getTypeWithArguments(notNull: Boolean) = name
+
+    final override fun copy(nullable: Boolean) = NamedTypeParameterRef(name, nullable)
 }
 
 interface TypeRefWithNullability : TypeRef {
@@ -158,20 +201,29 @@ interface TypeRefWithNullability : TypeRef {
     fun copy(nullable: Boolean): TypeRefWithNullability
 }
 
-interface ParametrizedTypeRef<Self, P : TypeParameterRef> : TypeRef {
+interface ParametrizedTypeRef<Self : ParametrizedTypeRef<Self, P>, P : TypeParameterRef> : TypeRef {
     val args: Map<P, TypeRef>
 
     fun copy(args: Map<P, TypeRef>): Self
+
+    override fun substitute(map: TypeParameterSubstitutionMap): Self =
+        copy(args.mapValues { it.value.substitute(map) })
+
+    override fun getTypeWithArguments(notNull: Boolean): String = type + generics + (if (nullable) "?" else "")
 }
+
+typealias TypeParameterSubstitutionMap = Map<out TypeParameterRef, TypeRef>
 
 val ParametrizedTypeRef<*, *>.generics: String
     get() = if (args.isEmpty()) "" else args.values.joinToString(prefix = "<", postfix = ">") { it.typeWithArguments }
 
-fun <T> ParametrizedTypeRef<T, NamedTypeParameterRef>.withArgs(vararg args: Pair<String, TypeRef>) =
-    copy(args.associate { (k, v) -> NamedTypeParameterRef(k) to v })
+fun <Self : ParametrizedTypeRef<Self, NamedTypeParameterRef>> ParametrizedTypeRef<Self, NamedTypeParameterRef>.withArgs(
+    vararg args: Pair<String, TypeRef>
+) = copy(args.associate { (k, v) -> NamedTypeParameterRef(k) to v })
 
-fun <T> ParametrizedTypeRef<T, PositionTypeParameterRef>.withArgs(vararg args: TypeRef) =
-    copy(args.withIndex().associate { (i, t) -> PositionTypeParameterRef(i) to t })
+fun <Self : ParametrizedTypeRef<Self, PositionTypeParameterRef>> ParametrizedTypeRef<Self, PositionTypeParameterRef>.withArgs(
+    vararg args: TypeRef
+) = copy(args.withIndex().associate { (i, t) -> PositionTypeParameterRef(i) to t })
 
 
 class TypeVariable(
@@ -211,3 +263,6 @@ fun ClassOrElementRef.inheritanceClauseParenthesis(): String = when (this) {
         TypeKind.Interface -> ""
     }
 }
+
+val TypeRef.nullable: Boolean
+    get() = (this as? TypeRefWithNullability)?.nullable ?: false

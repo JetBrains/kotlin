@@ -30,8 +30,9 @@ fun Builder.collectImports(): List<String> {
                 usedTypes.mapNotNullTo(this) { it.fullQualifiedName }
                 for (field in allFields) {
                     if (field.invisibleField) continue
-                    field.fullQualifiedName?.let(this::add)
-                    field.arguments.mapNotNullTo(this) { it.fullQualifiedName }
+                    // TODO: Use recursive import collection for TypeRefs
+                    field.typeRef.fullQualifiedName?.let(this::add)
+                    (field.typeRef as? ParametrizedTypeRef<*, *>)?.args?.values?.mapNotNullTo(this) { it.fullQualifiedName }
                 }
 
                 add(materializedElement?.fullQualifiedName ?: throw IllegalStateException(type))
@@ -72,9 +73,9 @@ fun Element.collectImports(): List<String> {
 }
 
 private fun Element.collectImportsInternal(base: List<String>, kind: ImportKind): List<String> {
-    val fqns = base + allFields.mapNotNull { it.fullQualifiedName } +
+    val fqns = base + allFields.mapNotNull { it.typeRef.fullQualifiedName } +
             allFields.flatMap { it.overridenTypes.mapNotNull { it.fullQualifiedName } + it.arbitraryImportables.mapNotNull { it.fullQualifiedName } } +
-            allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
+            allFields.flatMap { (it.typeRef as? ParametrizedTypeRef<*, *>)?.args?.values?.mapNotNull { it.fullQualifiedName } ?: emptyList() } + // TODO: Use recursive import collection for TypeRefs
             params.flatMap { it.bounds.mapNotNull { it.fullQualifiedName } }
     val result = fqns.filterRedundantImports(packageName, kind).toMutableList()
 
@@ -122,23 +123,21 @@ fun transformFunctionDeclaration(transformName: String, returnType: String): Str
     return "fun <D> transform$transformName(transformer: FirTransformer<D>, data: D): $returnType"
 }
 
-fun Field.replaceFunctionDeclaration(overridenType: TypeRef? = null, forceNullable: Boolean = false): String {
+fun Field.replaceFunctionDeclaration(overridenType: TypeRefWithNullability? = null, forceNullable: Boolean = false): String {
     val capName = name.replaceFirstChar(Char::uppercaseChar)
-    val type = overridenType?.typeWithArguments ?: typeWithArguments
-
-    val typeWithNullable = if (forceNullable && !type.endsWith("?")) "$type?" else type
-
-    return "fun replace$capName(new$capName: $typeWithNullable)"
+    val type = overridenType ?: typeRef
+    val typeWithNullable = if (forceNullable) type.copy(nullable = true) else type
+    return "fun replace$capName(new$capName: ${typeWithNullable.typeWithArguments})"
 }
 
-fun Field.getMutableType(forBuilder: Boolean = false, notNull: Boolean = false): String = when (this) {
+fun Field.getMutableType(forBuilder: Boolean = false): TypeRef = when (this) {
     is FieldList -> when {
-        isMutableOrEmpty && !forBuilder -> "MutableOrEmpty$typeWithArguments"
-        isMutable -> "Mutable$typeWithArguments"
-        else -> typeWithArguments
-    }
-    is FieldWithDefault -> if (isMutable) origin.getMutableType(notNull) else getTypeWithArguments(notNull)
-    else -> getTypeWithArguments(notNull)
+        isMutableOrEmpty && !forBuilder -> type(BASE_PACKAGE, "MutableOrEmptyList", kind = TypeKind.Class)
+        isMutable -> StandardTypes.mutableList
+        else -> StandardTypes.list
+    }.withArgs(baseType).copy(nullable)
+    is FieldWithDefault -> if (isMutable) origin.getMutableType() else typeRef
+    else -> typeRef
 }
 
 fun Field.call(): String = if (nullable) "?." else "."
@@ -147,8 +146,3 @@ val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" e
 
 val ImplementationWithArg.generics: String
     get() = argument?.let { "<${it.type}>" } ?: ""
-
-val Field.generics: String
-    get() = arguments.takeIf { it.isNotEmpty() }
-        ?.let { it.joinToString(", ", "<", ">") { it.typeWithArguments } }
-        ?: ""

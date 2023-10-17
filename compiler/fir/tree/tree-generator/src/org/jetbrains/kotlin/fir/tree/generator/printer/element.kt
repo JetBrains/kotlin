@@ -82,7 +82,7 @@ fun SmartPrinter.printElement(element: Element) {
                 }
             }
 
-            fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRef? = null, forceNullable: Boolean = false) {
+            fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRefWithNullability? = null, forceNullable: Boolean = false) {
                 println()
                 if (name == "source") {
                     println("@FirImplementationDetail")

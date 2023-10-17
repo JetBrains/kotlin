@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
  * a type of [Field], except when that [Field] is explicitly opted out of it via [Field.useInBaseTransformerDetection].
  */
 fun detectBaseTransformerTypes(builder: AbstractFirTreeBuilder) {
-    val usedAsFieldType = hashSetOf<GenericElementOrRef<*, *>>()
+    val usedAsFieldType = hashSetOf<Element>()
     for (element in builder.elements) {
         for (field in element.allFirFields) {
             if (!field.useInBaseTransformerDetection) continue
             val fieldElement = when (field) {
-                is FirField -> field.element
-                is FieldList -> field.baseType as GenericElementOrRef<*, *>
+                is FirField -> field.element.element
+                is FieldList -> (field.baseType as GenericElementOrRef<*, *>).element as Element
                 else -> error("Invalid field type: $field")
             }
             if (fieldElement == AbstractFirTreeBuilder.baseFirElement) continue

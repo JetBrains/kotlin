@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-abstract class AbstractField : Importable {
+abstract class AbstractField {
 
     abstract val name: String
 
-    open val typeRef: TypeRef
-        get() = type(packageName!!, type).withArgs(*arguments.toTypedArray()).copy(nullable = nullable)
+    abstract val typeRef: TypeRefWithNullability
 
-    open val arguments = mutableListOf<TypeRef>()
-
-    abstract val nullable: Boolean
+    val nullable: Boolean
+        get() = typeRef.nullable
 
     abstract val isVolatile: Boolean
 

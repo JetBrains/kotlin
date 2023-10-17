@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.TypeRef
+import org.jetbrains.kotlin.generators.tree.withArgs
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -52,9 +54,12 @@ val coneSimpleKotlinTypeType = type<ConeSimpleKotlinType>()
 val coneClassLikeTypeType = type<ConeClassLikeType>()
 val standardClassIdsType = type<StandardClassIds>()
 
-val whenRefType = generatedType("", "FirExpressionRef<FirWhenExpression>")
-val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef<FirExpression>")
-val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef<FirCheckedSafeCallSubject>")
+val whenRefType = generatedType("", "FirExpressionRef")
+    .withArgs(FirTreeBuilder.whenExpression)
+val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef")
+    .withArgs(FirTreeBuilder.expression)
+val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef")
+    .withArgs(FirTreeBuilder.checkedSafeCallSubject)
 
 val firModuleDataType = type("fir", "FirModuleData")
 val firImplicitTypeWithoutSourceType = generatedType("types.impl", "FirImplicitTypeRefImplWithoutSource")
@@ -75,7 +80,7 @@ val firBasedSymbolType = type("fir.symbols", "FirBasedSymbol")
 val functionSymbolType = type("fir.symbols.impl", "FirFunctionSymbol")
 val backingFieldSymbolType = type("fir.symbols.impl", "FirBackingFieldSymbol")
 val delegateFieldSymbolType = type("fir.symbols.impl", "FirDelegateFieldSymbol")
-val classLikeSymbolType = type("fir.symbols.impl", "FirClassLikeSymbol<*>")
+val classLikeSymbolType = type("fir.symbols.impl", "FirClassLikeSymbol").withArgs(TypeRef.Star)
 val regularClassSymbolType = type("fir.symbols.impl", "FirRegularClassSymbol")
 val typeParameterSymbolType = type("fir.symbols.impl", "FirTypeParameterSymbol")
 val emptyArgumentListType = type("fir.expressions", "FirEmptyArgumentList")

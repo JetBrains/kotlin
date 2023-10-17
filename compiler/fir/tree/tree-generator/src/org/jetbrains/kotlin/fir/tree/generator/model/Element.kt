@@ -104,7 +104,7 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
                 existingField.needTransformInOtherChildren = existingField.needTransformInOtherChildren || parentField.needTransformInOtherChildren
                 existingField.withReplace = parentField.withReplace || existingField.withReplace
                 existingField.parentHasSeparateTransform = parentField.needsSeparateTransform
-                if (parentField.type != existingField.type && parentField.withReplace) {
+                if (parentField.typeRef.copy(nullable = false) != existingField.typeRef.copy(nullable = false) && parentField.withReplace) {
                     existingField.overridenTypes += parentField.typeRef
                     overridenFields[existingField, parentField] = false
                 } else {
@@ -126,15 +126,9 @@ class Element(override val name: String, kind: Kind) : AbstractElement<Element, 
             val parent = parentRef.element
             val fields = parent.allFields.map { field ->
                 val copy = (field as? SimpleField)?.let { simpleField ->
-                    // FIXME: Replace with parentRef.args[simpleField.typeRef]
-                    parentRef.args[NamedTypeParameterRef(simpleField.type)]?.let {
-                        simpleField.replaceType(it)
-                    }
+                    simpleField.replaceType(simpleField.typeRef.substitute(parentRef.args) as TypeRefWithNullability)
                 } ?: field.copy()
                 copy.apply {
-                    arguments.replaceAll {
-                        parentRef.args[it] ?: it
-                    }
                     fromParent = true
                 }
             }

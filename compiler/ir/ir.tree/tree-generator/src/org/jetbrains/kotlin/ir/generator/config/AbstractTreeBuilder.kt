@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.config
 
 import org.jetbrains.kotlin.generators.tree.TypeRef
+import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
 import org.jetbrains.kotlin.generators.tree.TypeVariable
 import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.types.Variance
@@ -36,7 +37,7 @@ abstract class AbstractTreeBuilder {
 
     protected fun field(
         name: String,
-        type: TypeRef?,
+        type: TypeRefWithNullability?,
         nullable: Boolean = false,
         mutable: Boolean = true,
         isChild: Boolean = false,

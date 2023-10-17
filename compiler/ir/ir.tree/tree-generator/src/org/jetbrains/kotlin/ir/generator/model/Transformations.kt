@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.castAll
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
-private object InferredOverriddenType : TypeRef {
+private object InferredOverriddenType : TypeRefWithNullability {
     override val type: String
         get() = error("not supported")
     override val packageName: String?
@@ -22,6 +22,13 @@ private object InferredOverriddenType : TypeRef {
     override fun getTypeWithArguments(notNull: Boolean): String {
         error("not supported")
     }
+
+    override fun substitute(map: TypeParameterSubstitutionMap) = this
+
+    override val nullable: Boolean
+        get() = false
+
+    override fun copy(nullable: Boolean) = this
 }
 
 data class Model(val elements: List<Element>, val rootElement: Element)
@@ -57,8 +64,7 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
     is SimpleFieldConfig -> SingleField(
         fc,
         fc.name,
-        fc.type ?: InferredOverriddenType,
-        fc.nullable,
+        fc.type?.copy(fc.nullable) ?: InferredOverriddenType,
         fc.mutable,
         fc.isChild,
         fc.baseDefaultValue,
@@ -74,8 +80,7 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
             fc,
             fc.name,
             fc.elementType ?: InferredOverriddenType,
-            listType,
-            fc.nullable,
+            listType.copy(fc.nullable),
             fc.mutability == ListFieldConfig.Mutability.Var,
             fc.isChild,
             fc.mutability != ListFieldConfig.Mutability.Immutable,
@@ -127,7 +132,7 @@ private fun replaceElementRefs(config: Config, mapping: Map<ElementConfig, Eleme
         for (field in el.fields) {
             when (field) {
                 is SingleField -> {
-                    field.typeRef = transform(field.typeRef)
+                    field.typeRef = transform(field.typeRef) as TypeRefWithNullability
                 }
                 is ListField -> {
                     field.elementType = transform(field.elementType)
@@ -186,7 +191,8 @@ private fun processFieldOverrides(elements: List<Element>) {
                             type.takeUnless { it is InferredOverriddenType } ?: overriddenType
                         when (field) {
                             is SingleField -> {
-                                field.typeRef = transformInferredType(field.typeRef, (overriddenField as SingleField).typeRef)
+                                field.typeRef =
+                                    transformInferredType(field.typeRef, (overriddenField as SingleField).typeRef) as TypeRefWithNullability
                             }
                             is ListField -> {
                                 field.elementType = transformInferredType(field.elementType, (overriddenField as ListField).elementType)

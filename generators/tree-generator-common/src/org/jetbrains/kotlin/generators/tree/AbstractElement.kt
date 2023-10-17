@@ -55,4 +55,7 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
     @Suppress("UNCHECKED_CAST")
     final override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) =
         ElementRef(this as Element, args, nullable)
+
+    @Suppress("UNCHECKED_CAST")
+    override fun substitute(map: TypeParameterSubstitutionMap): Element = this as Element
 }
