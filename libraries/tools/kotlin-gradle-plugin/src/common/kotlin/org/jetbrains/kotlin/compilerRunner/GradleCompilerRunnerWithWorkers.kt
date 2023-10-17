@@ -79,13 +79,12 @@ internal class GradleCompilerRunnerWithWorkers(
                 // In the other cases where there is nothing the user can fix in their project, we should not restore the outputs.
                 // Otherwise, the next build(s) will likely fail in exactly the same way as this build because their inputs and outputs are
                 // the same.
-                if (taskOutputsBackup != null && (e is CompilationErrorException || e is OOMErrorException)) {
+                taskOutputsBackup?.tryRestoringOnRecoverableException(e) { restoreAction ->
                     parameters.metricsReporter.get().measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
-                        logger.info("Restoring task outputs to pre-compilation state")
-                        taskOutputsBackup.restoreOutputs()
+                        logger.info(DEFAULT_BACKUP_RESTORE_MESSAGE)
+                        restoreAction()
                     }
                 }
-
                 throw e
             } finally {
                 taskOutputsBackup?.deleteSnapshot()

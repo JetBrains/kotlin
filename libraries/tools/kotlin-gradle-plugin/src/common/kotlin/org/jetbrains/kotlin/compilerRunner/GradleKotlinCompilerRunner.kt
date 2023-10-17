@@ -253,12 +253,11 @@ internal open class GradleCompilerRunner(
             kotlinCompilerRunnable.run()
         } catch (e: FailedCompilationException) {
             // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
-            if (taskOutputsBackup != null && (e is CompilationErrorException || e is OOMErrorException)) {
+            taskOutputsBackup?.tryRestoringOnRecoverableException(e) { restoreAction ->
                 buildMetrics.measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
-                    taskOutputsBackup.restoreOutputs()
+                    restoreAction()
                 }
             }
-
             throw e
         }
 

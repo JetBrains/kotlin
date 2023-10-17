@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.CompilationErrorException
 import org.jetbrains.kotlin.gradle.tasks.FailedCompilationException
 import org.jetbrains.kotlin.gradle.tasks.OOMErrorException
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
@@ -171,15 +170,9 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
             throwExceptionIfCompilationFailed(result.asExitCode, executionStrategy)
         } catch (e: FailedCompilationException) {
-            // Restore outputs only in cases where we expect that the user will make some changes to their project:
-            //   - For a compilation error, the user will need to fix their source code
-            //   - For an OOM error, the user will need to increase their memory settings
-            // In the other cases where there is nothing the user can fix in their project, we should not restore the outputs.
-            // Otherwise, the next build(s) will likely fail in exactly the same way as this build because their inputs and outputs are
-            // the same.
-            if (backup != null && (e is CompilationErrorException || e is OOMErrorException)) {
-                log.info("Restoring task outputs to pre-compilation state")
-                backup.restoreOutputs()
+            backup?.tryRestoringOnRecoverableException(e) { restoreAction ->
+                log.info(DEFAULT_BACKUP_RESTORE_MESSAGE)
+                restoreAction()
             }
             throw e
         } finally {

@@ -166,3 +166,26 @@ internal class TaskOutputsBackup(
     private val Int.asSnapshotDirectoryName: String
         get() = "$this"
 }
+
+internal fun interface BackupRestoreWrapper {
+    fun wrap(restoreAction: () -> Unit)
+}
+
+internal fun TaskOutputsBackup.tryRestoringOnRecoverableException(
+    e: FailedCompilationException,
+    restoreWrapper: BackupRestoreWrapper,
+) {
+    // Restore outputs only in cases where we expect that the user will make some changes to their project:
+    //   - For a compilation error, the user will need to fix their source code
+    //   - For an OOM error, the user will need to increase their memory settings
+    // In the other cases where there is nothing the user can fix in their project, we should not restore the outputs.
+    // Otherwise, the next build(s) will likely fail in exactly the same way as this build because their inputs and outputs are
+    // the same.
+    if (e is CompilationErrorException || e is OOMErrorException) {
+        restoreWrapper.wrap {
+            restoreOutputs()
+        }
+    }
+}
+
+internal const val DEFAULT_BACKUP_RESTORE_MESSAGE = "Restoring task outputs to pre-compilation state"
