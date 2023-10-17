@@ -401,6 +401,16 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/TwoOverrides.kt");
         }
 
+        @TestMetadata("typeAliasActualization.kt")
+        public void testTypeAliasActualization() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/typeAliasActualization.kt");
+        }
+
+        @TestMetadata("typeAliasActualization2.kt")
+        public void testTypeAliasActualization2() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/typeAliasActualization2.kt");
+        }
+
         @TestMetadata("unresolvedQuialifierInAnnotation.kt")
         public void testUnresolvedQuialifierInAnnotation() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/unresolvedQuialifierInAnnotation.kt");

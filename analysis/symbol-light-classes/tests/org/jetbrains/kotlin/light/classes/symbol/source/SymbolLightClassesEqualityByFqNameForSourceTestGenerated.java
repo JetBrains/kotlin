@@ -466,6 +466,18 @@ public class SymbolLightClassesEqualityByFqNameForSourceTestGenerated extends Ab
         }
 
         @Test
+        @TestMetadata("typeAliasActualization.kt")
+        public void testTypeAliasActualization() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/typeAliasActualization.kt");
+        }
+
+        @Test
+        @TestMetadata("typeAliasActualization2.kt")
+        public void testTypeAliasActualization2() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/typeAliasActualization2.kt");
+        }
+
+        @Test
         @TestMetadata("unresolvedQuialifierInAnnotation.kt")
         public void testUnresolvedQuialifierInAnnotation() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/compilationErrors/unresolvedQuialifierInAnnotation.kt");
