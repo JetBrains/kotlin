@@ -331,7 +331,7 @@ public inline fun CharSequence?.isNullOrBlank(): Boolean {
 
 
 /**
- * Returns true if this nullable char sequence is not either null or empty or consists solely of whitespace characters.
+ * Returns true if this nullable char sequence is not either null or blank and consists solely of whitespace characters.
  *
  * @sample samples.text.Strings.stringIsNullOrBlank
  */
