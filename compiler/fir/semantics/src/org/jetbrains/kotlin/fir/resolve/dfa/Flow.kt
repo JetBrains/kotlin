@@ -19,7 +19,7 @@ abstract class Flow {
 class PersistentFlow internal constructor(
     private val previousFlow: PersistentFlow?,
     private val approvedTypeStatements: PersistentMap<RealVariable, PersistentTypeStatement>,
-    internal val logicStatements: PersistentMap<DataFlowVariable, PersistentList<Implication>>,
+    internal val implications: PersistentMap<DataFlowVariable, PersistentList<Implication>>,
     // RealVariable describes a storage in memory; a pair of RealVariable with its assignment
     // index at a particular execution point forms an SSA value corresponding to the result of
     // an initializer.
@@ -60,7 +60,7 @@ class PersistentFlow internal constructor(
     fun fork(): MutableFlow = MutableFlow(
         this,
         approvedTypeStatements.builder(),
-        logicStatements.builder(),
+        implications.builder(),
         assignmentIndex.builder(),
         directAliasMap.builder(),
         backwardsAliasMap.builder(),

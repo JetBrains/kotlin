@@ -90,7 +90,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     }
 
     fun approveOperationStatement(flow: PersistentFlow, statement: OperationStatement): TypeStatements {
-        return approveOperationStatement(flow.logicStatements, statement, removeApprovedOrImpossible = false)
+        return approveOperationStatement(flow.implications.toMutableMap(), statement, removeApprovedOrImpossible = false)
     }
 
     fun approveOperationStatement(
