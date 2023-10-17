@@ -7,43 +7,40 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
 @DeprecatedTargetPresetApi
 open class KotlinJsIrTargetPreset(
-    project: Project
+    project: Project,
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
     project
 ) {
-    internal var mixedMode: Boolean? = null
-
     open val isMpp: Boolean
         get() = true
 
     override val platformType: KotlinPlatformType = KotlinPlatformType.js
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
-        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode).apply {
+        return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType).apply {
             this.isMpp = this@KotlinJsIrTargetPreset.isMpp
-            if (!mixedMode) {
-                project.runProjectConfigurationHealthCheckWhenEvaluated {
-                    val buildStatsService = KotlinBuildStatsService.getInstance()
-                    when {
-                        isBrowserConfigured && isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "both")
-                        isBrowserConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "browser")
-                        isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "nodejs")
-                        !isBrowserConfigured && !isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "none")
-                    }
-                    Unit
+            project.runProjectConfigurationHealthCheckWhenEvaluated {
+
+                val buildStatsService = KotlinBuildStatsService.getInstance()
+                when {
+                    isBrowserConfigured && isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "both")
+                    isBrowserConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "browser")
+                    isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "nodejs")
+                    !isBrowserConfigured && !isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "none")
                 }
+                Unit
             }
         }
     }
@@ -55,21 +52,18 @@ open class KotlinJsIrTargetPreset(
 
     //TODO[Ilya Goncharov] remove public morozov
     public override fun createCompilationFactory(
-        forTarget: KotlinJsIrTarget
+        forTarget: KotlinJsIrTarget,
     ): KotlinCompilationFactory<KotlinJsIrCompilation> =
         KotlinJsIrCompilationFactory(forTarget)
 
     companion object {
-        val JS_PRESET_NAME = lowerCamelCaseName(
-            "js",
-            KotlinJsCompilerType.IR.lowerName
-        )
+        val JS_PRESET_NAME = "js"
     }
 }
 
 @DeprecatedTargetPresetApi
 class KotlinJsIrSingleTargetPreset(
-    project: Project
+    project: Project,
 ) : KotlinJsIrTargetPreset(
     project
 ) {
@@ -78,13 +72,7 @@ class KotlinJsIrSingleTargetPreset(
 
     // In a Kotlin/JS single-platform project, we don't need any disambiguation suffixes or prefixes in the names:
     override fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<KotlinJsIrCompilation>): String? {
-        return if (mixedMode!!) {
-            super.provideTargetDisambiguationClassifier(target)
-                ?.removePrefix(target.name.removeJsCompilerSuffix(KotlinJsCompilerType.IR))
-                ?.decapitalizeAsciiOnly()
-        } else {
-            null
-        }
+        return null
     }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =

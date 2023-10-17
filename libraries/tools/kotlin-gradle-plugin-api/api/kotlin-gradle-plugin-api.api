@@ -1002,18 +1002,18 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType$Compa
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder {
-	public abstract fun getBOTH ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public abstract synthetic fun getBOTH ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public abstract fun getCompilerTypeFromProperties ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public abstract fun getDefaultJsCompilerType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public abstract fun getIR ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
-	public abstract fun getLEGACY ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public abstract synthetic fun getLEGACY ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder$DefaultImpls {
-	public static fun getBOTH (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public static synthetic fun getBOTH (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun getDefaultJsCompilerType (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 	public static fun getIR (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
-	public static fun getLEGACY (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
+	public static synthetic fun getLEGACY (Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeHolder;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerType;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinJsCompilerTypeKt {

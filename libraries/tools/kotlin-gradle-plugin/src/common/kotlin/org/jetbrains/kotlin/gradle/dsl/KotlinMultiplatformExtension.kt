@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
 import org.jetbrains.kotlin.gradle.internal.syncCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
@@ -46,12 +45,13 @@ abstract class KotlinMultiplatformExtension
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
 
+    @Deprecated("Because only IR compiler is left, no more necessary to know about compiler type in properties")
+    override val compilerTypeFromProperties: KotlinJsCompilerType? = null
+
     internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {
         AfterFinaliseDsl.await()
         return targets
     }
-
-    override val compilerTypeFromProperties: KotlinJsCompilerType? = project.kotlinPropertiesProvider.jsCompiler
 
     private val presetExtension = project.objects.newInstance(
         DefaultTargetsFromPresetExtension::class.java,

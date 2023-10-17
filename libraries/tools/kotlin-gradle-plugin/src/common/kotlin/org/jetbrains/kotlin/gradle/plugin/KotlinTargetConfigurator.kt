@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.toAttribute
@@ -430,10 +429,6 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     }
 
     val publishJsCompilerAttribute = PropertiesProvider(target.project).publishJsCompilerAttribute
-
-    if (publishJsCompilerAttribute && target is KotlinJsTarget) {
-        attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
-    }
 
     if (publishJsCompilerAttribute && target is KotlinJsIrTarget) {
         if (target.platformType == KotlinPlatformType.js) {

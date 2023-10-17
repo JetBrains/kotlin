@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsIrCompilationSourceSetsContainerFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJsCompilerOptionsFactory
 
@@ -31,8 +29,6 @@ class KotlinJsIrCompilationFactory internal constructor(
                 target.project.files()
             }
         ),
-        compilationSourceSetsContainerFactory = JsIrCompilationSourceSetsContainerFactory,
-        compilationDependencyConfigurationsFactory = JsKotlinCompilationDependencyConfigurationsFactory,
         preConfigureAction = DefaultKotlinCompilationPreConfigure + { compilation ->
             if (compilation.platformType == KotlinPlatformType.wasm && compilation.isMain()) {
                 val artifactNameAppendix = (compilation.target as KotlinJsIrTarget).wasmDecamelizedDefaultNameOrNull()

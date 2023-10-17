@@ -133,16 +133,9 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 
     fun setupDefaultPresets(project: Project) {
-        @Suppress("DEPRECATION")
         with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project))
-            add(KotlinJsTargetPreset(project).apply { irPreset = null })
-            add(KotlinJsIrTargetPreset(project).apply { mixedMode = false })
-            add(
-                KotlinJsTargetPreset(project).apply {
-                    irPreset = KotlinJsIrTargetPreset(project).apply { mixedMode = true }
-                }
-            )
+            add(KotlinJsIrTargetPreset(project))
             add(KotlinWasmTargetPreset(project, KotlinWasmTargetType.JS))
             add(KotlinWasmTargetPreset(project, KotlinWasmTargetType.WASI))
             add(project.objects.newInstance(KotlinAndroidTargetPreset::class.java, project))

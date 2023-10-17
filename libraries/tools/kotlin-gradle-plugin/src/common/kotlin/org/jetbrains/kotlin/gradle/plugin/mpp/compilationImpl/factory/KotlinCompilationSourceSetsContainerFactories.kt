@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
 import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 internal class DefaultKotlinCompilationSourceSetsContainerFactory(
@@ -49,29 +47,5 @@ internal class AndroidCompilationSourceSetsContainerFactory(
         val sourceSetName = target.project.kotlinAndroidSourceSetLayout.naming.defaultKotlinSourceSetName(this.target, variant)
             ?: lowerCamelCaseName(target.disambiguationClassifier, compilationName)
         return KotlinCompilationSourceSetsContainer(target.project.kotlinExtension.sourceSets.maybeCreate(sourceSetName))
-    }
-}
-
-internal object JsCompilationSourceSetsContainerFactory : KotlinCompilationImplFactory.KotlinCompilationSourceSetsContainerFactory {
-    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationSourceSetsContainer {
-        val defaultSourceSetName = lowerCamelCaseName(
-            if (target is KotlinJsTarget && target.irTarget != null) target.disambiguationClassifierInPlatform
-            else target.disambiguationClassifier,
-            compilationName
-        )
-
-        return KotlinCompilationSourceSetsContainer(target.project.kotlinExtension.sourceSets.maybeCreate(defaultSourceSetName))
-    }
-}
-
-internal object JsIrCompilationSourceSetsContainerFactory : KotlinCompilationImplFactory.KotlinCompilationSourceSetsContainerFactory {
-    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationSourceSetsContainer {
-        val defaultSourceSetName = lowerCamelCaseName(
-            if (target is KotlinJsIrTarget && target.mixedMode) target.disambiguationClassifierInPlatform
-            else target.disambiguationClassifier,
-            compilationName
-        )
-
-        return KotlinCompilationSourceSetsContainer(target.project.kotlinExtension.sourceSets.maybeCreate(defaultSourceSetName))
     }
 }

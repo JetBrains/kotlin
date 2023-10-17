@@ -65,7 +65,7 @@ kotlin {
     targets {
         fromPreset(presets.android, 'androidApp')
         fromPreset(presets.jvm, 'jvmApp')
-        fromPreset(presets.jsIr, 'jsApp')
+        fromPreset(presets.js, 'jsApp')
     }
 }
 

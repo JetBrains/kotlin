@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinHierarchyBuilder
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
@@ -28,7 +27,6 @@ class KotlinHierarchyBuilderTest {
         buildProjectWithMPP().multiplatformExtension.presets
 
             // JS targets are special and therefore are only handled manually using `withJs()`
-            .filter { it !is KotlinJsTargetPreset }
             .filter { it !is KotlinJsIrTargetPreset }
             .filter { it !is KotlinWasmTargetPreset }
 

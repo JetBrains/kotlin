@@ -87,7 +87,7 @@ kotlin {
             publishAllLibraryVariants()
         }
         fromPreset(presets.jvm, 'jvmLib')
-        fromPreset(presets.jsIr, 'jsLib')
+        fromPreset(presets.js, 'jsLib')
     }
 }
 

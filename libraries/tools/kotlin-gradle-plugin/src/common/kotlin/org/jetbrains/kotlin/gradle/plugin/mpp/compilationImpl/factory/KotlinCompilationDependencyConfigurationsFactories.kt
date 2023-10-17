@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompi
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
 
@@ -50,20 +49,6 @@ internal object NativeKotlinCompilationDependencyConfigurationsFactory :
     }
 }
 
-internal object JsKotlinCompilationDependencyConfigurationsFactory :
-    KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
-
-    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
-        val defaultNaming = ConfigurationNaming.Default(target, compilationName)
-        return KotlinCompilationDependencyConfigurationsContainer(
-            target, compilationName, withRuntime = true,
-            naming = ConfigurationNaming.Js(target, compilationName),
-            compileClasspathConfigurationName = defaultNaming.name(compileClasspath),
-            runtimeClasspathConfigurationName = defaultNaming.name(runtimeClasspath)
-        )
-    }
-}
-
 internal class JvmWithJavaCompilationDependencyConfigurationsFactory(private val target: KotlinWithJavaTarget<*, *>) :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
@@ -90,22 +75,6 @@ private fun interface ConfigurationNaming {
         override fun name(vararg parts: String): String = lowerCamelCaseName(
             target.disambiguationClassifier, compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }, *parts
         )
-    }
-
-    class Js(
-        private val target: KotlinTarget,
-        private val compilationName: String
-    ) : ConfigurationNaming {
-        override fun name(vararg parts: String): String = lowerCamelCaseName(
-            target.disambiguationClassifierInPlatform, compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }, *parts
-        )
-
-        private val KotlinTarget.disambiguationClassifierInPlatform: String?
-            get() = when (this) {
-                is KotlinJsTarget -> disambiguationClassifierInPlatform
-                is KotlinJsIrTarget -> disambiguationClassifierInPlatform
-                else -> error("Unexpected target type of $this")
-            }
     }
 }
 

@@ -7,19 +7,12 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.getOrCreate
-import org.jetbrains.kotlin.gradle.utils.targets
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
@@ -108,65 +101,8 @@ internal class DefaultKotlinSourceSetFactory(
                 if (project.isKotlinGranularMetadataEnabled) {
                     attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
                 }
-
-                project.afterEvaluate {
-                    setJsCompilerIfNecessary(sourceSet, this)
-                }
             }
         }
-    }
-
-    // KT-47163
-    // It is necessary to set jsCompilerAttribute to configurations which associated with ONLY js source sets
-    // Otherwise configuration cannot be resolved because ambiguity between IR and Legacy variants inside one module
-    private val notOnlyJsSourceSets = mutableSetOf<KotlinSourceSet>()
-
-    private val jsOnlySourceSetsAttributes = mutableMapOf<KotlinSourceSet, KotlinJsCompilerAttribute>()
-
-    private fun setJsCompilerIfNecessary(sourceSet: KotlinSourceSet, configuration: Configuration) {
-        if (sourceSet in notOnlyJsSourceSets) return
-
-        if (sourceSet in jsOnlySourceSetsAttributes) {
-            configuration.attributes.attribute(
-                KotlinJsCompilerAttribute.jsCompilerAttribute,
-                jsOnlySourceSetsAttributes.getValue(sourceSet)
-            )
-            return
-        }
-
-        project.kotlinExtension.targets
-            .filter { it !is KotlinJsIrTarget && it !is KotlinJsTarget }
-            .forEach { target ->
-                target.compilations.forEach { compilation ->
-                    notOnlyJsSourceSets.addAll(compilation.allKotlinSourceSets)
-                }
-            }
-
-        if (sourceSet in notOnlyJsSourceSets) return
-
-        fun chooseCompilerAttribute(target: KotlinTarget): KotlinJsCompilerAttribute {
-            if (target is KotlinJsIrTarget) {
-                return KotlinJsCompilerAttribute.ir
-            }
-
-            target as KotlinJsTarget
-            return if (target.irTarget != null) KotlinJsCompilerAttribute.ir else KotlinJsCompilerAttribute.legacy
-        }
-
-        project.kotlinExtension.targets
-            .filter { it is KotlinJsTarget || (it is KotlinJsIrTarget && it.platformType == KotlinPlatformType.js) }
-            .forEach { target ->
-                target.compilations
-                    .filterIsInstance<KotlinJsCompilation>()
-                    .forEach { compilation ->
-                        if (sourceSet in compilation.allKotlinSourceSets) {
-                            val compilerAttribute = chooseCompilerAttribute(target)
-                            jsOnlySourceSetsAttributes[sourceSet] = compilerAttribute
-                            configuration.attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, compilerAttribute)
-                            return
-                        }
-                    }
-            }
     }
 
     override fun doCreateSourceSet(name: String): DefaultKotlinSourceSet =
