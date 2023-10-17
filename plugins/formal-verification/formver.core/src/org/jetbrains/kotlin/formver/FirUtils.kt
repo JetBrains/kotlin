@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.formver.viper.ast.Position
 
 val FirElement.calleeSymbol: FirBasedSymbol<*>
     get() = calleeReference?.toResolvedBaseSymbol()!!
@@ -24,3 +26,8 @@ val FirFunctionCall.functionCallArguments: List<FirExpression>
     get() = listOfNotNull(dispatchReceiver) + argumentList.arguments
 val FirFunctionSymbol<*>.effects: List<FirEffectDeclaration>
     get() = this.resolvedContractDescription?.effects ?: emptyList()
+val KtSourceElement?.asPosition: Position
+    get() = when (this) {
+        null -> Position.NoPosition
+        else -> Position.Wrapped(this)
+    }

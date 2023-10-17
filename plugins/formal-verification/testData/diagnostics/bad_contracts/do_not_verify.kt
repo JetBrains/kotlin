@@ -6,7 +6,9 @@ import kotlin.contracts.ExperimentalContracts
 @NeverVerify
 @OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>bad_returns<!>(): Boolean {
-    contract { returns(true) }
+    contract {
+        returns(true)
+    }
     return false
 }
 

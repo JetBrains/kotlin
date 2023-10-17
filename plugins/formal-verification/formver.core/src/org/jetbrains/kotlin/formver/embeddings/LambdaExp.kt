@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.formver.conversion.MethodConversionContext
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
@@ -19,13 +20,18 @@ class LambdaExp(
     val signature: FunctionSignature,
     val function: FirAnonymousFunction,
     private val parentCtx: MethodConversionContext,
+    override val source: KtSourceElement?,
 ) : CallableEmbedding, ExpEmbedding,
     FunctionSignature by signature {
     override val type: TypeEmbedding = FunctionTypeEmbedding(signature.asData)
 
     override fun toViper(): Exp = TODO("create new function object with counter, duplicable (requires toViper restructuring)")
 
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding {
         val inlineBody = function.body ?: throw IllegalArgumentException("Lambda $function has a null body")
         val paramNames = function.valueParameters.map { it.name }
         return ctx.insertInlineFunctionCall(signature, paramNames, args, inlineBody, parentCtx, ctx.signature.sourceName)

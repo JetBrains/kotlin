@@ -426,5 +426,5 @@ sealed interface Exp : IntoSilver<viper.silver.ast.Exp> {
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
     ): AccessPredicate.FieldAccessPredicate =
-        AccessPredicate.FieldAccessPredicate(fieldAccess(field), permission, pos, info, trafos)
+        AccessPredicate.FieldAccessPredicate(fieldAccess(field, pos), permission, pos, info, trafos)
 }

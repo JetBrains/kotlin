@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
-class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding) : ExpEmbedding, PropertyAccessEmbedding {
+class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding, override val source: KtSourceElement? = null) :
+    ExpEmbedding,
+    PropertyAccessEmbedding {
 
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
@@ -19,7 +23,7 @@ class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding)
     ): Declaration.LocalVarDecl = Declaration.LocalVarDecl(name, type.viperType, pos, info, trafos)
 
 
-    override fun toViper(): Exp.LocalVar = Exp.LocalVar(name, type.viperType)
+    override fun toViper(): Exp.LocalVar = Exp.LocalVar(name, type.viperType, source.asPosition)
 
     fun toFieldAccess(
         field: Field,
@@ -28,10 +32,10 @@ class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding)
         trafos: Trafos = Trafos.NoTrafos,
     ): Exp.FieldAccess = Exp.FieldAccess(toViper(), field, pos, info, trafos)
 
-    override fun getValue(ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding = this
+    override fun getValue(ctx: StmtConversionContext<ResultTrackingContext>, source: KtSourceElement?): ExpEmbedding = this
 
-    override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>) {
-        ctx.addStatement(Stmt.LocalVarAssign(toViper(), value.withType(type).toViper()))
+    override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>, source: KtSourceElement?) {
+        ctx.addStatement(Stmt.LocalVarAssign(toViper(), value.withType(type).toViper(), source.asPosition))
     }
 
     fun pureInvariants(): List<Exp> = type.pureInvariants(toViper())

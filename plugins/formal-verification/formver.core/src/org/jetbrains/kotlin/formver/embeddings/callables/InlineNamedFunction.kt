@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
@@ -17,7 +18,11 @@ class InlineNamedFunction(
     val symbol: FirFunctionSymbol<*>,
 ) : CallableEmbedding, FullNamedFunctionSignature by signature {
     @OptIn(SymbolInternals::class)
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?
+    ): ExpEmbedding {
         val inlineBody = symbol.fir.body ?: throw IllegalArgumentException("Function symbol $symbol has a null body")
         val paramNames = symbol.valueParameterSymbols.map { it.name }
         return ctx.insertInlineFunctionCall(signature, paramNames, args, inlineBody)

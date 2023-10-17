@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.ErrorCollector
 import org.jetbrains.kotlin.formver.PluginConfiguration
 import org.jetbrains.kotlin.formver.UnsupportedFeatureBehaviour
+import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.*
@@ -157,9 +158,10 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val retType = symbol.resolvedReturnTypeRef.type
         val receiverType = symbol.receiverType
         return object : FunctionSignature {
-            override val receiver = receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
+            override val receiver =
+                receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it), symbol.receiverParameter?.source) }
             override val params = symbol.valueParameterSymbols.map {
-                VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
+                VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType), it.source)
             }
             override val returnType = embedType(retType)
         }
@@ -261,13 +263,13 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     0,
                     returnPointName = signature.sourceName
                 )
-            val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(), NoopResultTrackerFactory)
+            val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(it.source), NoopResultTrackerFactory)
             signature.formalArgs.forEach { arg ->
                 // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
                 // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
                 // provenInvariants don't contain permissions.
                 arg.provenInvariants().forEach { invariant ->
-                    stmtCtx.addStatement(Stmt.Inhale(invariant))
+                    stmtCtx.addStatement(Stmt.Inhale(invariant, arg.source.asPosition))
                 }
             }
             stmtCtx.addDeclaration(methodCtx.returnLabel.toDecl())
@@ -276,12 +278,12 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             stmtCtx.block
         }
 
-        return signature.toViperMethod(body)
+        return signature.toViperMethod(body, declaration.source.asPosition)
     }
 
     private fun convertMethodWithoutBody(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): Method? =
         symbol.isInline.ifFalse {
-            signature.toViperMethod(null)
+            signature.toViperMethod(null, symbol.source.asPosition)
         }
 
     private fun unimplementedTypeEmbedding(type: ConeKotlinType): TypeEmbedding =

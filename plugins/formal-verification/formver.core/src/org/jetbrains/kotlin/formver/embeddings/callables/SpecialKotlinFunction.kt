@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.*
@@ -49,7 +50,11 @@ object KotlinContractFunction : SpecialKotlinFunction {
         listOf(FunctionTypeEmbedding(CallableSignatureData(contractBuilderType, listOf(), UnitTypeEmbedding)))
     override val returnType: TypeEmbedding = UnitTypeEmbedding
 
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding = UnitLit
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding = UnitLit
 }
 
 abstract class KotlinIntSpecialFunction : SpecialKotlinFunction {
@@ -63,25 +68,41 @@ abstract class KotlinIntSpecialFunction : SpecialKotlinFunction {
 
 object KotlinIntPlusFunctionImplementation : KotlinIntSpecialFunction() {
     override val name: String = "plus"
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding =
         Add(args[0], args[1])
 }
 
 object KotlinIntMinusFunctionImplementation : KotlinIntSpecialFunction() {
     override val name: String = "minus"
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding =
         Sub(args[0], args[1])
 }
 
 object KotlinIntTimesFunctionImplementation : KotlinIntSpecialFunction() {
     override val name: String = "times"
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding =
         Mul(args[0], args[1])
 }
 
 object KotlinIntDivFunctionImplementation : KotlinIntSpecialFunction() {
     override val name: String = "div"
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding {
         ctx.addStatement(Stmt.Inhale(NeCmp(args[1], IntLit(0)).toViper()))
         return Div(args[0], args[1])
     }
@@ -98,7 +119,11 @@ abstract class KotlinBooleanSpecialFunction : SpecialKotlinFunction {
 
 object KotlinBooleanNotFunctionImplementation : KotlinBooleanSpecialFunction() {
     override val name: String = "not"
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding =
         Not(args[0])
 }
 
@@ -111,13 +136,17 @@ object KotlinRunSpecialFunction : SpecialKotlinFunction {
         listOf(FunctionTypeEmbedding(CallableSignatureData(null, emptyList(), NullableTypeEmbedding(AnyTypeEmbedding))))
     override val returnType: TypeEmbedding = NullableTypeEmbedding(AnyTypeEmbedding)
 
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding {
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?
+    ): ExpEmbedding {
         val lambda = when (val arg = args[0].ignoringCasts()) {
             is LambdaExp -> arg
             else -> throw IllegalStateException("kotlin.run must be called with a lambda argument at the moment")
         }
 
-        return lambda.insertCallImpl(listOf(), ctx)
+        return lambda.insertCallImpl(listOf(), ctx, source)
     }
 }
 

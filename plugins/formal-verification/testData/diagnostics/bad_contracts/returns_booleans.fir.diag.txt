@@ -8,7 +8,6 @@ method global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean()
   label label$ret$0
 }
 
-/returns_booleans.kt:(121,146): warning: Viper verification error: Postcondition of global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean might not hold. Assertion ret == true might not hold. (<no position>)
-
-
 /returns_booleans.kt:(121,146): warning: Function incorrectly_returns_false may not satisfy its contract.
+
+/returns_booleans.kt:(183,196): warning: Viper verification error: Postcondition of global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean might not hold. Assertion ret == true might not hold.

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.formver.domains
 
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.*
 
@@ -44,13 +46,13 @@ object CastingDomain : BuiltinDomain("Casting") {
 
     private val castFunc = createDomainFunc("cast", listOf(a.decl(), newType.decl()), B)
 
-    fun cast(exp: Exp, newType: Exp, newViperType: Type) =
-        funcApp(castFunc, listOf(exp, newType), mapOf(A to exp.type, B to newViperType))
+    fun cast(exp: Exp, newType: Exp, newViperType: Type, source: KtSourceElement? = null) =
+        funcApp(castFunc, listOf(exp, newType), mapOf(A to exp.type, B to newViperType), source.asPosition)
 
     // Prefer this cast method if you have access to a `TypeEmbedding`.
     // An example of where this is not the case is when defining generic domain axioms.
-    fun cast(exp: Exp, newType: TypeEmbedding) =
-        cast(exp, newType.runtimeType, newType.viperType)
+    fun cast(exp: Exp, newType: TypeEmbedding, source: KtSourceElement?) =
+        cast(exp, newType.runtimeType, newType.viperType, source)
 
     override val functions: List<DomainFunc> = listOf(castFunc)
 
@@ -88,5 +90,5 @@ object CastingDomain : BuiltinDomain("Casting") {
     override val axioms: List<DomainAxiom> = listOf(nullCast, typeOfCast)
 }
 
-fun Exp.convertType(currentType: TypeEmbedding, newType: TypeEmbedding) =
-    if (newType == currentType) this else CastingDomain.cast(this, newType)
+fun Exp.convertType(currentType: TypeEmbedding, newType: TypeEmbedding, source: KtSourceElement?) =
+    if (newType == currentType) this else CastingDomain.cast(this, newType, source)

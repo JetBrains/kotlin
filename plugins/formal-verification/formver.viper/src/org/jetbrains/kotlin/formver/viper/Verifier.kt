@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.formver.viper
 
 import org.jetbrains.kotlin.formver.viper.ast.Program
+import org.jetbrains.kotlin.formver.viper.errors.ConsistencyError
+import org.jetbrains.kotlin.formver.viper.errors.ErrorAdapter
+import org.jetbrains.kotlin.formver.viper.errors.GenericConsistencyError
+import org.jetbrains.kotlin.formver.viper.errors.VerificationError
 import viper.silicon.Config
 import viper.silicon.logger.MemberSymbExLogger
 import viper.silicon.logger.`NoopSymbExLog$`
@@ -14,17 +18,6 @@ import viper.silicon.verifier.DefaultMainVerifier
 import viper.silver.cfg.silver.SilverCfg
 import viper.silver.reporter.StdIOReporter
 
-sealed interface VerifierError {
-    val msg: String
-}
-
-data class ConsistencyError(val err: viper.silver.verifier.ConsistencyError) : VerifierError {
-    override val msg = err.toString()
-}
-
-data class VerificationError(val result: viper.silicon.interfaces.VerificationResult) : VerifierError {
-    override val msg = result.toString()
-}
 
 class Verifier {
     private val verifier: DefaultMainVerifier
@@ -41,20 +34,22 @@ class Verifier {
         )
     }
 
-    /** Check whether the Viper program is consistent.  Return true on success.
+    /**
+     * Check whether the Viper program is consistent.  Return true on success.
      */
     fun checkConsistency(program: Program, onFailure: (ConsistencyError) -> Unit): Boolean {
         val viperProgram = program.toSilver()
         val consistencyResults = viperProgram.checkTransitively()
         var success = true
         for (result in consistencyResults) {
-            onFailure(ConsistencyError(result))
+            onFailure(GenericConsistencyError(result))
             success = false
         }
         return success
     }
 
-    /** Verify the program.  Returns true on successful verification.
+    /**
+     * Verify the program. Returns true on successful verification.
      */
     fun verify(program: Program, onFailure: (VerificationError) -> Unit): Boolean {
         val viperProgram = program.toSilver()
@@ -65,7 +60,7 @@ class Verifier {
         var success = true
         for (result in results) {
             if (result.isFatal) {
-                onFailure(VerificationError(result))
+                onFailure(ErrorAdapter.translate(result))
                 success = false
             }
         }

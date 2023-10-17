@@ -5,18 +5,29 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.callables.FunctionEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
 
-class CustomGetter(val getterMethod: CallableEmbedding) : GetterEmbedding {
-    override fun getValue(receiver: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
-        getterMethod.insertCall(listOf(receiver), ctx)
+class CustomGetter(val getterMethod: FunctionEmbedding) : GetterEmbedding {
+    override fun getValue(
+        receiver: ExpEmbedding,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding =
+        getterMethod.insertCall(listOf(receiver), ctx, source)
 }
 
 class CustomSetter(val setterMethod: CallableEmbedding) : SetterEmbedding {
-    override fun setValue(receiver: ExpEmbedding, value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>) {
-        setterMethod.insertCall(listOf(receiver, value), ctx)
+    override fun setValue(
+        receiver: ExpEmbedding,
+        value: ExpEmbedding,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ) {
+        setterMethod.insertCall(listOf(receiver, value), ctx, source)
     }
 }

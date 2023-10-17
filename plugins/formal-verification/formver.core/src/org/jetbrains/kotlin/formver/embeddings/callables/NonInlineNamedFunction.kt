@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.conversion.withResult
@@ -13,9 +15,13 @@ import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 class NonInlineNamedFunction(
     val signature: FullNamedFunctionSignature,
 ) : CallableEmbedding, FullNamedFunctionSignature by signature {
-    override fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>): ExpEmbedding =
+    override fun insertCallImpl(
+        args: List<ExpEmbedding>,
+        ctx: StmtConversionContext<ResultTrackingContext>,
+        source: KtSourceElement?,
+    ): ExpEmbedding =
         ctx.withResult(returnType) {
-            addStatement(toMethodCall(args, resultCtx.resultVar))
+            addStatement(toMethodCall(args, resultCtx.resultVar, source.asPosition))
             resultExp
         }
 }
