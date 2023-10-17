@@ -125,6 +125,11 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         })
     }
 
+    fun filterNecessaryToKeep(): ConeAttributes {
+        return if (all { it.keepInInferredDeclarationType }) this
+        else create(filter { it.keepInInferredDeclarationType })
+    }
+
     private inline fun perform(other: ConeAttributes, op: ConeAttribute<*>.(ConeAttribute<*>?) -> ConeAttribute<*>?): ConeAttributes {
         if (this.isEmpty() && other.isEmpty()) return this
         val attributes = mutableListOf<ConeAttribute<*>>()

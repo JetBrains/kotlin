@@ -30,8 +30,19 @@ fun FirTypeRef.approximateDeclarationType(
     }
 
     val preparedType = if (isLocal) baseType else baseType.substituteAlternativesInPublicType(session)
-    val approximatedType = session.typeApproximator.approximateToSuperType(preparedType, configuration) ?: preparedType
+    var approximatedType = session.typeApproximator.approximateToSuperType(preparedType, configuration) ?: preparedType
+    if (approximatedType.contains { type -> type.attributes.any { !it.keepInInferredDeclarationType } }) {
+        approximatedType = UnnecessaryAttributesRemover(session).substituteOrSelf(approximatedType)
+    }
     return this.withReplacedConeType(approximatedType).applyIf(stripEnhancedNullability) { withoutEnhancedNullability() }
+}
+
+private class UnnecessaryAttributesRemover(session: FirSession) : AbstractConeSubstitutor(session.typeContext) {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        val filteredAttributes = type.attributes.filterNecessaryToKeep()
+        return if (filteredAttributes === type.attributes) null
+        else type.withAttributes(filteredAttributes)
+    }
 }
 
 private fun ConeKotlinType.substituteAlternativesInPublicType(session: FirSession): ConeKotlinType {
