@@ -5,9 +5,9 @@ gradlePlugin-kotlin = "1.9.10"
 gradlePlugin-android = "4.2.2"
 gradlePlugin-dokka = "1.9.10"
 
-kotlinx-coroutines = "1.6.3"
-kotlinx-collections-immutable = "0.3.4"
-kotlinx-bcv = "0.12.1"
+kotlinx-coroutines = "1.7.3"
+kotlinx-collections-immutable = "0.3.6"
+kotlinx-bcv = "0.13.2"
 
 ## Analysis
 kotlin-compiler = "1.9.10"
@@ -20,8 +20,8 @@ kotlin-compiler-k2 = "1.9.30-dev-3330"
 intellij-platform = "213.7172.25"
 
 ## HTML
-jsoup = "1.15.3"
-freemarker = "2.3.31"
+jsoup = "1.16.1"
+freemarker = "2.3.32"
 korlibs-template = "4.0.10"
 kotlinx-html = "0.9.1"
 
@@ -39,7 +39,7 @@ apacheMaven-archiver = "2.5"
 apacheMaven-pluginTools = "3.5.2"
 
 ## CLI
-kotlinx-cli = "0.3.4"
+kotlinx-cli = "0.3.6"
 
 ## NPM | Frontend
 node = "16.13.0"
@@ -51,8 +51,8 @@ gradlePlugin-gradlePluginPublish = "0.20.0"
 gradlePlugin-gradleNode = "3.5.1"
 
 ## Test
-junit = "5.9.2"
-eclipse-jgit = "5.12.0.202106070339-r"
+junit = "5.9.3"
+eclipse-jgit = "5.13.2.202306221912-r" # jgit 6.X requires Java 11 to run
 
 [libraries]
 
