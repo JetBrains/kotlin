@@ -23,5 +23,5 @@ interface BirSymbolOwner : BirElement, BirUntypedPossiblyElementSymbol {
     @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
 
-    override var signature: IdSignature
+    override var signature: IdSignature?
 }

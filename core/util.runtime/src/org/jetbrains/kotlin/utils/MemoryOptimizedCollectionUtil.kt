@@ -145,3 +145,31 @@ inline fun <reified T> Iterable<*>.findIsInstanceAnd(predicate: (T) -> Boolean):
  * @see Collection.toMutableList
  */
 fun <T> Collection<T>.toSmartList(): List<T> = SmartList<T>(this)
+
+
+/**
+ * An optimized version of [List.map].
+ * If the [transform] function returns the same object (===) for every item
+ * (i.e. it turns out to be an identity function), returns itself.
+ * Otherwise, acts as [memoryOptimizedMap].
+ * @see memoryOptimizedMap
+ * @see Iterable.map
+ */
+fun <T> List<T>.mapOrTakeThisIfIdentity(transform: (T) -> T): List<T> {
+    var newList: ArrayList<T>? = null
+    for (i in indices) {
+        val old = this[i]
+        val new = transform(old)
+        if (newList != null) {
+            newList.add(new)
+        } else if (new !== old) {
+            newList = ArrayList(size)
+            for (j in 0 until i) {
+                newList.add(this[j])
+            }
+            newList.add(new)
+        }
+    }
+
+    return newList?.compactIfPossible() ?: this
+}

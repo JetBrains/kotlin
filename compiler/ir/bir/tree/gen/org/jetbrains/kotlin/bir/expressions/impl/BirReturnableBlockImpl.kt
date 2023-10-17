@@ -26,7 +26,7 @@ class BirReturnableBlockImpl @ObsoleteDescriptorBasedAPI constructor(
     origin: IrStatementOrigin?,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor,
-    signature: IdSignature,
+    signature: IdSignature?,
 ) : BirReturnableBlock() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -74,9 +74,9 @@ class BirReturnableBlockImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _signature: IdSignature = signature
+    private var _signature: IdSignature? = signature
 
-    override var signature: IdSignature
+    override var signature: IdSignature?
         get() = _signature
         set(value) {
             if (_signature != value) {
