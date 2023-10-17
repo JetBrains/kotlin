@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -1629,8 +1630,10 @@ internal class CodeGeneratorVisitor(
             onCheck: (argument: LLVMValueRef, checkResult: LLVMValueRef) -> LLVMValueRef,
     ) : LLVMValueRef {
         val srcArg = evaluateExpression(value.argument, resultSlot)
-        require(srcArg.type == codegen.kObjHeaderPtr)
-        val isSuperClassCast = value.argument.type.isSubtypeOfClass(dstClass.symbol)
+        require(srcArg.type == codegen.kObjHeaderPtr) { "Expected ObjHeader but was ${llvmtype2string(srcArg.type)} for ${value.argument.dump()}" }
+        val srcType = value.argument.type
+        val isSuperClassCast = srcType.classifierOrNull !is IrTypeParameterSymbol // Due to unsafe casts, see unchecked_cast8.kt as an example.
+                && srcType.isSubtypeOfClass(dstClass.symbol)
 
         if (isSuperClassCast) {
             onSuperClassCast(srcArg)?.let { return it }

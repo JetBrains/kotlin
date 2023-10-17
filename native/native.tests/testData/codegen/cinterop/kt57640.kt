@@ -198,20 +198,6 @@ private fun testAssignmentBaseToDerived() {
     assertFalse(delegate12_Base is BarProtocol)
     assertFalse(delegate12_Base is Derived)
     assertEquals(base, delegate12_Base)
-    val delegate16_Bar: BarProtocol? = derived.delegate()
-    val delegate16_Any: Any? = delegate16_Bar
-    assertTrue(delegate16_Bar is Base)
-    assertTrue(delegate16_Any is Base)
-    assertFalse(delegate16_Bar is FooProtocol)
-    assertFalse(delegate16_Any is FooProtocol)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't BarProtocol, and the "is" result is "false"
-//    assertFalse(delegate16_Bar is BarProtocol)
-    assertFalse(delegate16_Any is BarProtocol)  // actual type is Base, which isn't BarProtocol
-    assertFalse(delegate16_Bar is Derived)
-    assertFalse(delegate16_Any is Derived)
-    assertEquals(base, delegate16_Bar)
-    assertEquals(base, delegate16_Any)
 
     val delegate13_Base: Base? = (derived as Base).delegate
     assertTrue(delegate13_Base is Base)
@@ -226,64 +212,11 @@ private fun testAssignmentBaseToDerived() {
     assertFalse(delegate17_Base is Derived)
     assertEquals(base, delegate17_Base)
 
-    val delegate14_Foo: FooProtocol? = (derived as FooProtocol).delegate
-    val delegate14_Any: Any? = delegate14_Foo
-    assertTrue(delegate14_Foo is Base)
-    assertTrue(delegate14_Any is Base)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't FooProtocol, and the "is" result is "false"
-//    assertFalse(delegate14_Foo is FooProtocol)
-    assertFalse(delegate14_Any is FooProtocol) // actual type is Base, which isn't FooProtocol
-    assertFalse(delegate14_Foo is BarProtocol)
-    assertFalse(delegate14_Any is BarProtocol)
-    assertFalse(delegate14_Foo is Derived)
-    assertEquals(base, delegate14_Foo as Base)
-    assertEquals(base, delegate14_Any as Base)
-
-    val delegate18_Foo: FooProtocol? = (derived as FooProtocol).delegate()
-    val delegate18_Any: Any? = delegate18_Foo
-    assertTrue(delegate18_Foo is Base)
-    assertTrue(delegate18_Any is Base)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't FooProtocol, and the "is" result is "false"
-//    assertFalse(delegate18_Foo is FooProtocol)
-    assertFalse(delegate18_Any is FooProtocol) // actual type is Base, which isn't FooProtocol
-    assertFalse(delegate18_Foo is BarProtocol)
-    assertFalse(delegate18_Any is BarProtocol)
-    assertFalse(delegate18_Foo is Derived)
-    assertFalse(delegate18_Any is Derived)
-    assertEquals(base, delegate18_Foo)
-    assertEquals(base, delegate18_Any)
-
-    val delegate15_Bar: BarProtocol? = (derived as BarProtocol).delegate
-    val delegate15_Any: Any? = delegate15_Bar
-    assertTrue(delegate15_Bar is Base)
-    assertTrue(delegate15_Any is Base)
-    assertFalse(delegate15_Bar is FooProtocol)
-    assertFalse(delegate15_Any is FooProtocol)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't BarProtocol, and the "is" result is "false"
-//    assertFalse(delegate15_Bar is BarProtocol)
-    assertFalse(delegate15_Any is BarProtocol) // actual type is Base, which isn't BarProtocol
-    assertFalse(delegate15_Bar is Derived)
-    assertFalse(delegate15_Any is Derived)
-    assertEquals(base, delegate15_Bar as Base)
-    assertEquals(base, delegate15_Any as Base)
-
-    val delegate19_Bar: BarProtocol? = (derived as BarProtocol).delegate()
-    val delegate19_Any: Any? = delegate19_Bar
-    assertTrue(delegate19_Bar is Base)
-    assertTrue(delegate19_Any is Base)
-    assertFalse(delegate19_Bar is FooProtocol)
-    assertFalse(delegate19_Any is FooProtocol)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't BarProtocol, and the "is" result is "false"
-//    assertFalse(delegate19_Bar is BarProtocol)
-    assertFalse(delegate19_Any is BarProtocol) // actual type is Base, which isn't BarProtocol
-    assertFalse(delegate19_Bar is Derived)
-    assertFalse(delegate19_Any is Derived)
-    assertEquals(base, delegate19_Bar)
-    assertEquals(base, delegate19_Any)
+    val derivedFoo = derived as FooProtocol
+    val derivedBar = derived as BarProtocol
+    assertFailsWith<ClassCastException> { val delegate14_Foo: FooProtocol? = derivedFoo.delegate }
+    assertFailsWith<ClassCastException> { val delegate15_Bar: BarProtocol? = derivedBar.delegate }
+    assertFailsWith<ClassCastException> { val delegate16_Bar: BarProtocol? = derived.delegate() }
 }
 
 private fun testAssignmentDerivedWithPropertyOverrideToDerivedWithPropertyOverride() {
@@ -393,12 +326,6 @@ private fun testAssignmentBaseToDerivedWithPropertyOverride() {
     assertFalse(delegate12_Base is BarProtocol)
     assertFalse(delegate12_Base is DerivedWithPropertyOverride)
     assertEquals(base, delegate12_Base)
-    val delegate19_DerivedWithPropertyOverride: DerivedWithPropertyOverride? = derived.delegate()
-    assertTrue(delegate19_DerivedWithPropertyOverride is Base)
-    assertTrue(delegate19_DerivedWithPropertyOverride is FooProtocol)
-    assertTrue(delegate19_DerivedWithPropertyOverride is BarProtocol)
-    assertTrue(delegate19_DerivedWithPropertyOverride is DerivedWithPropertyOverride)
-    assertEquals(base, delegate19_DerivedWithPropertyOverride)
 
     val delegate13_Base: Base? = (derived as Base).delegate
     assertTrue(delegate13_Base is Base)
@@ -413,39 +340,13 @@ private fun testAssignmentBaseToDerivedWithPropertyOverride() {
     assertFalse(delegate17_Base is DerivedWithPropertyOverride)
     assertEquals(base, delegate17_Base)
 
-    val delegate14_Foo: FooProtocol? = (derived as FooProtocol).delegate
-    assertTrue(delegate14_Foo is Base)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't FooProtocol, and the "is" result is "false"
-//    assertFalse(delegate14_Foo is FooProtocol)
-    assertFalse(delegate14_Foo is BarProtocol)
-    assertFalse(delegate14_Foo is DerivedWithPropertyOverride)
-    assertEquals(base, delegate14_Foo)
-    val delegate18_Foo: FooProtocol? = (derived as FooProtocol).delegate() // static type is FooProtocol?, not DerivedWithPropertyOverride?, this deserves a diagnostic test
-    assertTrue(delegate18_Foo is Base)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't FooProtocol, and the "is" result is "false"
-//    assertFalse(delegate18_Foo is FooProtocol)
-    assertFalse(delegate18_Foo is BarProtocol)
-    assertFalse(delegate18_Foo is DerivedWithPropertyOverride)
-    assertEquals(base, delegate18_Foo)
-
-    val delegate15_Bar: BarProtocol? = (derived as BarProtocol).delegate
-    assertTrue(delegate15_Bar is Base)
-    assertFalse(delegate15_Bar is FooProtocol)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't BarProtocol, and the "is" result is "false"
-//    assertFalse(delegate15_Bar is BarProtocol)
-    assertFalse(delegate15_Bar is DerivedWithPropertyOverride)
-    assertEquals(base, delegate15_Bar)
-    val delegate19_Bar: BarProtocol? = (derived as BarProtocol).delegate() // static type is BarProtocol?, not DerivedWithPropertyOverride?, this deserves a diagnostic test
-    assertTrue(delegate19_Bar is Base)
-    assertFalse(delegate19_Bar is FooProtocol)
-// Behavior of next "is" check depends on existence of static type analysis: static analysis calculates "is" result as "true",
-// while at run-time, the type is Base, which isn't BarProtocol, and the "is" result is "false"
-//    assertFalse(delegate19_Bar is BarProtocol)
-    assertFalse(delegate19_Bar is DerivedWithPropertyOverride)
-    assertEquals(base, delegate19_Bar)
+    val derived_Foo = derived as FooProtocol
+    val derivedBar = derived as BarProtocol
+    assertFailsWith<ClassCastException> { val delegate19_DerivedWithPropertyOverride: DerivedWithPropertyOverride? = derived.delegate() }
+    assertFailsWith<ClassCastException> { val delegate14_Foo: FooProtocol? = derived_Foo.delegate }
+    assertFailsWith<ClassCastException> { val delegate18_Foo: FooProtocol? = derived_Foo.delegate() } // static type is FooProtocol?, not DerivedWithPropertyOverride?, this deserves a diagnostic test
+    assertFailsWith<ClassCastException> { val delegate15_Bar: BarProtocol? = derivedBar.delegate }
+    assertFailsWith<ClassCastException> { val delegate19_Bar: BarProtocol? = derivedBar.delegate() } // static type is BarProtocol?, not DerivedWithPropertyOverride?, this deserves a diagnostic test
 }
 
 private fun testGrandDerived() {
