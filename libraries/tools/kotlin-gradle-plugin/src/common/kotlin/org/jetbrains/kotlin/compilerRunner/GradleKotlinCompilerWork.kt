@@ -246,13 +246,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             exitCodeFromProcessExitCode(log, res.get())
         } catch (e: Throwable) {
             bufferingMessageCollector.flush(messageCollector)
-            if (e is OutOfMemoryError || e.hasOOMCause()) {
-                throw OOMErrorException(kotlinDaemonOOMHelperMessage)
-            } else if (e is RemoteException) {
-                throw DaemonCrashedException(e)
-            } else {
-                throw e
-            }
+            wrapAndRethrowCompilationException(KotlinCompilerExecutionStrategy.DAEMON, e)
         } finally {
             val memoryUsageAfterBuild = runCatching { daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get() }.getOrNull()
 

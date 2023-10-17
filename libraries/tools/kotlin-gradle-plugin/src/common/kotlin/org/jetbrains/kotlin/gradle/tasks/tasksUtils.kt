@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import org.jetbrains.kotlin.incremental.deleteRecursivelyOrThrow
 import java.io.File
+import java.rmi.RemoteException
 
 /** Throws [FailedCompilationException] if compilation completed with [exitCode] != [ExitCode.OK]. */
 fun throwExceptionIfCompilationFailed(
@@ -20,14 +21,7 @@ fun throwExceptionIfCompilationFailed(
         ExitCode.COMPILATION_ERROR -> throw CompilationErrorException("Compilation error. See log for more details")
         ExitCode.INTERNAL_ERROR -> throw FailedCompilationException("Internal compiler error. See log for more details")
         ExitCode.SCRIPT_EXECUTION_ERROR -> throw FailedCompilationException("Script execution error. See log for more details")
-        ExitCode.OOM_ERROR -> {
-            val exceptionMessage = when (executionStrategy) {
-                KotlinCompilerExecutionStrategy.DAEMON -> kotlinDaemonOOMHelperMessage
-                KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinInProcessOOMHelperMessage
-                KotlinCompilerExecutionStrategy.OUT_OF_PROCESS -> kotlinOutOfProcessOOMHelperMessage
-            }
-            throw OOMErrorException(exceptionMessage)
-        }
+        ExitCode.OOM_ERROR -> throw OOMErrorException(executionStrategy)
         ExitCode.OK -> Unit
         else -> throw IllegalStateException("Unexpected exit code: $exitCode")
     }
@@ -49,6 +43,21 @@ internal fun Throwable.hasOOMCause(): Boolean = when (cause) {
     else -> cause?.hasOOMCause() ?: false
 }
 
+/**
+ * Wraps an exception occurred during compiler execution.
+ * Covers the case when compiler invocation failed before returning any [ExitCode].
+ * Always throws some kind of exception.
+ */
+internal fun wrapAndRethrowCompilationException(executionStrategy: KotlinCompilerExecutionStrategy, e: Throwable): Nothing {
+    if (e is OutOfMemoryError || e.hasOOMCause()) {
+        throw OOMErrorException(executionStrategy)
+    } else if (e is RemoteException) {
+        throw DaemonCrashedException(e)
+    } else {
+        throw e
+    }
+}
+
 /** Exception thrown when [ExitCode] != [ExitCode.OK]. */
 internal open class FailedCompilationException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
 
@@ -57,6 +66,15 @@ internal class CompilationErrorException(message: String) : FailedCompilationExc
 
 /** Exception thrown when [ExitCode] == [ExitCode.OOM_ERROR]. */
 internal class OOMErrorException(message: String) : FailedCompilationException(message)
+
+private fun OOMErrorException(executionStrategy: KotlinCompilerExecutionStrategy): OOMErrorException {
+    val exceptionMessage = when (executionStrategy) {
+        KotlinCompilerExecutionStrategy.DAEMON -> kotlinDaemonOOMHelperMessage
+        KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinInProcessOOMHelperMessage
+        KotlinCompilerExecutionStrategy.OUT_OF_PROCESS -> kotlinOutOfProcessOOMHelperMessage
+    }
+    return OOMErrorException(exceptionMessage)
+}
 
 /** Exception thrown when during the compilation [java.rmi.RemoteException] is caught */
 internal class DaemonCrashedException(cause: Throwable) : FailedCompilationException(kotlinDaemonCrashedMessage, cause)

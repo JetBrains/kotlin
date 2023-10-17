@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.FailedCompilationException
-import org.jetbrains.kotlin.gradle.tasks.OOMErrorException
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.slf4j.LoggerFactory
@@ -130,18 +129,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 workArguments.compilerArgs.toList(),
             )
         } catch (e: Throwable) {
-            if (e is OutOfMemoryError || e.hasOOMCause()) {
-                val helpMessage = when (executionStrategy) {
-                    KotlinCompilerExecutionStrategy.DAEMON -> kotlinDaemonOOMHelperMessage
-                    KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinInProcessOOMHelperMessage
-                    else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
-                }
-                throw OOMErrorException(helpMessage)
-            } else if (e is RemoteException) {
-                throw DaemonCrashedException(e)
-            } else {
-                throw e
-            }
+            wrapAndRethrowCompilationException(executionStrategy, e)
         } finally {
             log.info(executionStrategy.asFinishLogMessage)
         }
