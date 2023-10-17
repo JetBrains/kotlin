@@ -76,7 +76,7 @@ fun addBenchmarkTask(
 
 val acceptAndroidSdkLicenses = tasks.register("acceptAndroidSdkLicenses") {
     useAndroidSdk()
-    doLast { acceptAndroidSdkLicenses() }
+    acceptAndroidSdkLicenses()
 }
 
 fun JavaExec.usesAndroidSdk() {

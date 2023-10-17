@@ -21,7 +21,6 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.*
 import org.gradle.kotlin.dsl.support.serviceOf
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import java.io.File
 import java.lang.Character.isLowerCase
 import java.lang.Character.isUpperCase
@@ -118,7 +117,7 @@ fun Project.projectTest(
     minHeapSizeMb: Int? = null,
     reservedCodeCacheSizeMb: Int = 256,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
-    body: Test.() -> Unit = {}
+    body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
@@ -229,7 +228,7 @@ fun Project.projectTest(
         val teamcity = project.rootProject.findProperty("teamcity") as? Map<*, *>
         doFirst {
             val systemTempRoot =
-                // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
+            // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
                 // Should be fixed soon on Teamcity side
                 (teamcity?.get("teamcity.build.tempDir") as? String)
                     ?: System.getProperty("java.io.tmpdir")
@@ -335,10 +334,13 @@ fun Task.useAndroidJar() {
 }
 
 fun Task.acceptAndroidSdkLicenses() {
-    val separator = System.lineSeparator()
-    with(project) {
-        val androidSdk = configurations["androidSdk"].singleFile
-        val sdkLicensesDir = androidSdk.resolve("licenses").also {
+    val androidSdkConfiguration = project.configurations["androidSdk"]
+    val androidSdk = project.objects.fileProperty().apply { set { androidSdkConfiguration.singleFile } }
+
+    dependsOn(androidSdkConfiguration)
+
+    doFirst {
+        val sdkLicensesDir = androidSdk.get().asFile.resolve("licenses").also {
             if (!it.exists()) it.mkdirs()
         }
 
@@ -353,16 +355,12 @@ fun Task.acceptAndroidSdkLicenses() {
         if (!sdkLicenseFile.exists()) {
             sdkLicenseFile.createNewFile()
             sdkLicenseFile.writeText(
-                sdkLicenses.joinToString(separator = separator)
+                sdkLicenses.joinToString(separator = System.lineSeparator())
             )
         } else {
             sdkLicenses
-                .subtract(
-                    sdkLicenseFile.readText().lines()
-                )
-                .forEach {
-                    sdkLicenseFile.appendText("$it$separator")
-                }
+                .subtract(sdkLicenseFile.readText().lines().toSet())
+                .forEach { sdkLicenseFile.appendText("$it${System.lineSeparator()}") }
         }
 
         val sdkPreviewLicenseFile = sdkLicensesDir.resolve("android-sdk-preview-license")
@@ -381,7 +379,7 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
     val firPluginJsAnnotations: Configuration by configurations.creating {
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_RUNTIME))
-            attribute(org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.attribute, org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.js)
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         }
     }
 
