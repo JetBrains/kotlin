@@ -21,18 +21,60 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirPropertyReferenceImpl(
-    override var sourceSpan: SourceSpan,
-    override var type: BirType,
-    override var symbol: BirPropertySymbol,
+    sourceSpan: SourceSpan,
+    type: BirType,
+    symbol: BirPropertySymbol,
     dispatchReceiver: BirExpression?,
     extensionReceiver: BirExpression?,
-    override var origin: IrStatementOrigin?,
-    override val typeArguments: Array<BirType?>,
-    override var field: BirFieldSymbol?,
-    override var getter: BirSimpleFunctionSymbol?,
-    override var setter: BirSimpleFunctionSymbol?,
+    origin: IrStatementOrigin?,
+    override var typeArguments: List<BirType?>,
+    field: BirFieldSymbol?,
+    getter: BirSimpleFunctionSymbol?,
+    setter: BirSimpleFunctionSymbol?,
 ) : BirPropertyReference() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _symbol: BirPropertySymbol = symbol
+
+    override var symbol: BirPropertySymbol
+        get() = _symbol
+        set(value) {
+            if (_symbol != value) {
+                _symbol = value
+                invalidate()
+            }
+        }
 
     private var _dispatchReceiver: BirExpression? = dispatchReceiver
 
@@ -42,6 +84,7 @@ class BirPropertyReferenceImpl(
             if (_dispatchReceiver != value) {
                 replaceChild(_dispatchReceiver, value)
                 _dispatchReceiver = value
+                invalidate()
             }
         }
 
@@ -53,11 +96,56 @@ class BirPropertyReferenceImpl(
             if (_extensionReceiver != value) {
                 replaceChild(_extensionReceiver, value)
                 _extensionReceiver = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrStatementOrigin? = origin
+
+    override var origin: IrStatementOrigin?
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
             }
         }
 
     override val valueArguments: BirChildElementList<BirExpression?> =
             BirChildElementList(this, 0)
+
+    private var _field: BirFieldSymbol? = field
+
+    override var field: BirFieldSymbol?
+        get() = _field
+        set(value) {
+            if (_field != value) {
+                _field = value
+                invalidate()
+            }
+        }
+
+    private var _getter: BirSimpleFunctionSymbol? = getter
+
+    override var getter: BirSimpleFunctionSymbol?
+        get() = _getter
+        set(value) {
+            if (_getter != value) {
+                _getter = value
+                invalidate()
+            }
+        }
+
+    private var _setter: BirSimpleFunctionSymbol? = setter
+
+    override var setter: BirSimpleFunctionSymbol?
+        get() = _setter
+        set(value) {
+            if (_setter != value) {
+                _setter = value
+                invalidate()
+            }
+        }
     init {
         initChild(_dispatchReceiver)
         initChild(_extensionReceiver)

@@ -14,9 +14,31 @@ import org.jetbrains.kotlin.bir.expressions.BirSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 
 class BirSyntheticBodyImpl(
-    override var sourceSpan: SourceSpan,
-    override var kind: IrSyntheticBodyKind,
+    sourceSpan: SourceSpan,
+    kind: IrSyntheticBodyKind,
 ) : BirSyntheticBody() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _kind: IrSyntheticBodyKind = kind
+
+    override var kind: IrSyntheticBodyKind
+        get() = _kind
+        set(value) {
+            if (_kind != value) {
+                _kind = value
+                invalidate()
+            }
+        }
+
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
             else -> throwChildForReplacementNotFound(old)

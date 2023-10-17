@@ -19,15 +19,79 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirInlinedFunctionBlockImpl(
-    override var sourceSpan: SourceSpan,
-    override var type: BirType,
-    override var origin: IrStatementOrigin?,
-    override var inlineCall: BirFunctionAccessExpression,
-    override var inlinedElement: BirElement,
+    sourceSpan: SourceSpan,
+    type: BirType,
+    origin: IrStatementOrigin?,
+    inlineCall: BirFunctionAccessExpression,
+    inlinedElement: BirElement,
 ) : BirInlinedFunctionBlock() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
 
     override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 0)
+
+    private var _origin: IrStatementOrigin? = origin
+
+    override var origin: IrStatementOrigin?
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _inlineCall: BirFunctionAccessExpression = inlineCall
+
+    override var inlineCall: BirFunctionAccessExpression
+        get() = _inlineCall
+        set(value) {
+            if (_inlineCall != value) {
+                _inlineCall = value
+                invalidate()
+            }
+        }
+
+    private var _inlinedElement: BirElement = inlinedElement
+
+    override var inlinedElement: BirElement
+        get() = _inlinedElement
+        set(value) {
+            if (_inlinedElement != value) {
+                _inlinedElement = value
+                invalidate()
+            }
+        }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
