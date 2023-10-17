@@ -88,7 +88,7 @@ object BirTree : AbstractTreeBuilder() {
         parent(type(Packages.symbols, "BirUntypedPossiblyElementSymbol"))
 
         +descriptor("DeclarationDescriptor")
-        +field("signature", type("org.jetbrains.kotlin.ir.util", "IdSignature")) {
+        +field("signature", type("org.jetbrains.kotlin.ir.util", "IdSignature"), nullable = true) {
             generationCallback = {
                 addModifiers(KModifier.OVERRIDE)
             }
