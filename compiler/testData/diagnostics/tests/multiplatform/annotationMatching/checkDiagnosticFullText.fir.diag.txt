@@ -23,4 +23,4 @@ All annotations from expect 'fun <T> inTypeParam(): Unit' must be present with t
 All annotations from expect 'val onGetter: String    get(): String' must be present with the same arguments on actual 'val onGetter: String    get(): String', otherwise they might behave incorrectly.
 
 /jvm.kt:(547,553): warning: Annotation `@Ann()` is missing on actual declaration.
-All annotations from expect 'fun onType(param: @R|Ann|()  Any): Unit' must be present with the same arguments on actual 'fun onType(param: Any): Unit', otherwise they might behave incorrectly.
+All annotations from expect 'fun onType(param: @Ann() Any): Unit' must be present with the same arguments on actual 'fun onType(param: Any): Unit', otherwise they might behave incorrectly.

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForReadability
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -18,9 +19,10 @@ import org.jetbrains.kotlin.utils.Printer
 internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
     @OptIn(SymbolInternals::class)
     val SYMBOL_RENDERER = Renderer<FirBasedSymbol<*>> {
+        val idRendererCreator = { ConeIdShortRenderer() }
         FirRenderer(
-            typeRenderer = ConeTypeRenderer(),
-            idRenderer = ConeIdShortRenderer(),
+            typeRenderer = ConeTypeRendererForReadability(idRendererCreator),
+            idRenderer = idRendererCreator(),
             classMemberRenderer = null,
             bodyRenderer = null,
             annotationRenderer = null,
