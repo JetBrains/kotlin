@@ -16,4 +16,6 @@ package org.jetbrains.kotlin.bir.declarations
  */
 interface BirPossiblyExternalDeclaration : BirDeclarationWithName {
     var isExternal: Boolean
+
+    companion object
 }

@@ -29,4 +29,6 @@ abstract class BirTry : BirExpression() {
         catches.forEach { it.accept(data, visitor) }
         finallyExpression?.accept(data, visitor)
     }
+
+    companion object
 }

@@ -20,4 +20,6 @@ abstract class BirGetField : BirFieldAccessExpression() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         receiver?.accept(data, visitor)
     }
+
+    companion object
 }

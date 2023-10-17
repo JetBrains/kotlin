@@ -18,4 +18,6 @@ abstract class BirBreakContinue : BirExpression() {
     abstract var loop: BirLoop
 
     abstract var label: String?
+
+    companion object
 }

@@ -16,4 +16,6 @@ package org.jetbrains.kotlin.bir.expressions
  */
 abstract class BirErrorExpression : BirExpression() {
     abstract var description: String
+
+    companion object
 }

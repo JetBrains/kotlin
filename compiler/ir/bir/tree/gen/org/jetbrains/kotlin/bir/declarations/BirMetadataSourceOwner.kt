@@ -23,4 +23,6 @@ import org.jetbrains.kotlin.bir.BirElement
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.metadataSourceOwner]
  */
-interface BirMetadataSourceOwner : BirElement
+interface BirMetadataSourceOwner : BirElement {
+    companion object
+}

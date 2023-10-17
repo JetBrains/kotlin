@@ -17,4 +17,6 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
  */
 abstract class BirDeclarationReference : BirExpression() {
     abstract val symbol: BirSymbol
+
+    companion object
 }

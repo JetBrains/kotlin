@@ -13,4 +13,6 @@ package org.jetbrains.kotlin.bir.expressions
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.dynamicExpression]
  */
-abstract class BirDynamicExpression : BirExpression()
+abstract class BirDynamicExpression : BirExpression() {
+    companion object
+}

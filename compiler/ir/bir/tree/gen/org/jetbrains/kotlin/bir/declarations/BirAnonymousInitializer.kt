@@ -33,4 +33,6 @@ abstract class BirAnonymousInitializer : BirElementBase(), BirDeclaration,
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         body.accept(data, visitor)
     }
+
+    companion object
 }

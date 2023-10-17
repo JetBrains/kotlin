@@ -22,4 +22,6 @@ abstract class BirSetValue : BirValueAccessExpression() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         value.accept(data, visitor)
     }
+
+    companion object
 }

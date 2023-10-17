@@ -21,4 +21,6 @@ abstract class BirWhileLoop : BirLoop() {
         body?.accept(data, visitor)
         condition.accept(data, visitor)
     }
+
+    companion object
 }

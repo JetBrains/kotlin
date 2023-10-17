@@ -25,4 +25,6 @@ abstract class BirFunctionAccessExpression : BirMemberAccessExpression<BirFuncti
         extensionReceiver?.accept(data, visitor)
         valueArguments.forEach { it?.accept(data, visitor) }
     }
+
+    companion object
 }

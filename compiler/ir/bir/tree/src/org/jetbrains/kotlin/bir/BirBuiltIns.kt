@@ -163,7 +163,8 @@ class BirBuiltIns(
         irBuiltIns.findProperties(Name.identifier("isInitialized"), FqName("kotlin")).single()
     ).getter as BirSimpleFunction
 
-    val linkageErrorSymbol: BirSimpleFunction = remapSymbolOwner(irBuiltIns.linkageErrorSymbol)
+    val linkageErrorSymbol: BirSimpleFunction
+        get() = TODO("TODO in IrBuiltInsOverFir")
 
     private val functionNCache = ConcurrentHashMap<IrClass, BirClass>()
     private val kFunctionNCache = ConcurrentHashMap<IrClass, BirClass>()

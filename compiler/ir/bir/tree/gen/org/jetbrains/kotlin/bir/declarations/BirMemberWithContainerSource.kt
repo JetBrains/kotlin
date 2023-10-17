@@ -13,4 +13,6 @@ package org.jetbrains.kotlin.bir.declarations
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.memberWithContainerSource]
  */
-interface BirMemberWithContainerSource : BirDeclarationWithName
+interface BirMemberWithContainerSource : BirDeclarationWithName {
+    companion object
+}

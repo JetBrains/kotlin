@@ -22,4 +22,6 @@ abstract class BirExpressionBody : BirBody() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         expression.accept(data, visitor)
     }
+
+    companion object
 }

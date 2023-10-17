@@ -30,4 +30,6 @@ abstract class BirLoop : BirExpression() {
         body?.accept(data, visitor)
         condition.accept(data, visitor)
     }
+
+    companion object
 }

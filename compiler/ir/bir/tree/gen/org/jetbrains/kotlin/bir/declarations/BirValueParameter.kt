@@ -72,4 +72,6 @@ abstract class BirValueParameter : BirValueDeclaration(), BirDeclaration,
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         defaultValue?.accept(data, visitor)
     }
+
+    companion object
 }

@@ -57,4 +57,6 @@ abstract class BirScript : BirElementBase(), BirDeclaration, BirDeclarationWithN
         providedPropertiesParameters.forEach { it.accept(data, visitor) }
         earlierScriptsParameter?.accept(data, visitor)
     }
+
+    companion object
 }

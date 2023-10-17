@@ -41,4 +41,6 @@ abstract class BirField : BirElementBase(), BirDeclaration, BirPossiblyExternalD
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         initializer?.accept(data, visitor)
     }
+
+    companion object
 }

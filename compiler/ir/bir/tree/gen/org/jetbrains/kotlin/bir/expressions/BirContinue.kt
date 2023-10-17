@@ -13,4 +13,6 @@ package org.jetbrains.kotlin.bir.expressions
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.continue]
  */
-abstract class BirContinue : BirBreakContinue()
+abstract class BirContinue : BirBreakContinue() {
+    companion object
+}

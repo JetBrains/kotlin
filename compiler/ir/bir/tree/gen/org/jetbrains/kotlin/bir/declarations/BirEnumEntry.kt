@@ -34,4 +34,6 @@ abstract class BirEnumEntry : BirElementBase(), BirDeclaration, BirDeclarationWi
         initializerExpression?.accept(data, visitor)
         correspondingClass?.accept(data, visitor)
     }
+
+    companion object
 }

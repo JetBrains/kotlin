@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-@ObsoleteDescriptorBasedAPI
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBase() {
     private val modules = createElementMap<BirModuleFragment, IrModuleFragment>(1)
     private val classes = createElementMap<BirClass, IrClass>((expectedTreeSize * 0.004).toInt())
@@ -111,6 +111,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         is IrWhen -> copyWhen(old)
         is IrElseBranch -> copyElseBranch(old)
         is IrBranch -> copyBranch(old)
+        is IrErrorExpression -> copyErrorExpression(old)
         else -> error(old)
     } as Bir
 
@@ -1124,6 +1125,16 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
             condition = copyElement(old.condition),
             result = copyElement(old.result),
+        )
+        new.copyAuxData(old)
+        new
+    }
+
+    private fun copyErrorExpression(old: IrErrorExpression): BirErrorExpression = copyNotReferencedElement(old) {
+        val new = BirErrorExpressionImpl(
+            sourceSpan = SourceSpan(old.startOffset, old.endOffset),
+            type = remapType(old.type),
+            description = old.description,
         )
         new.copyAuxData(old)
         new

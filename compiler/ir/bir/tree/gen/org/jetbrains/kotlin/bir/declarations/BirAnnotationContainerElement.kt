@@ -18,4 +18,6 @@ import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
  */
 interface BirAnnotationContainerElement : BirElement, BirAnnotationContainer {
     override var annotations: List<BirConstructorCall>
+
+    companion object
 }

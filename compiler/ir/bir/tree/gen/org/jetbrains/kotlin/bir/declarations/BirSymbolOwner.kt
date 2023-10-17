@@ -24,4 +24,6 @@ interface BirSymbolOwner : BirElement, BirUntypedPossiblyElementSymbol {
     val descriptor: DeclarationDescriptor
 
     override var signature: IdSignature?
+
+    companion object
 }

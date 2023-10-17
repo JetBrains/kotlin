@@ -19,4 +19,6 @@ abstract class BirOverridableDeclaration<S : BirSymbol> : BirOverridableMember()
     abstract var isFakeOverride: Boolean
 
     abstract var overriddenSymbols: List<S>
+
+    companion object
 }

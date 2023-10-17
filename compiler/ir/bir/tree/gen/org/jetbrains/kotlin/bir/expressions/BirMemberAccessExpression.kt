@@ -38,4 +38,6 @@ abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReferenc
         extensionReceiver?.accept(data, visitor)
         valueArguments.forEach { it?.accept(data, visitor) }
     }
+
+    companion object
 }

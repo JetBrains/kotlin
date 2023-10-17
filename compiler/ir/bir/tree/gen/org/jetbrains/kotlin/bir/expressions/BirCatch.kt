@@ -28,4 +28,6 @@ abstract class BirCatch : BirElementBase(), BirElement {
         catchParameter.accept(data, visitor)
         result.accept(data, visitor)
     }
+
+    companion object
 }

@@ -23,4 +23,6 @@ interface BirTypeParametersContainer : BirDeclaration, BirDeclarationParent {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         typeParameters.forEach { it.accept(data, visitor) }
     }
+
+    companion object
 }

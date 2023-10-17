@@ -115,7 +115,10 @@ val irCompilerModules = arrayOf(
     ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
-    ":wasm:wasm.ir"
+    ":wasm:wasm.ir",
+    ":compiler:bir",
+    ":compiler:bir.tree",
+    ":compiler:bir.backend",
 ).also { extra["irCompilerModules"] = it }
 
 val irCompilerModulesForIDE = arrayOf(
@@ -485,8 +488,8 @@ val projectsWithEnabledContextReceivers by extra {
         ":native:swift:sir:tree-generator",
         ":generators:tree-generator-common",
         ":compiler:bir",
-        ":compiler:bir:tree",
-        ":compiler:bir:backend",
+        ":compiler:bir.tree",
+        ":compiler:bir.backend",
     )
 }
 

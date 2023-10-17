@@ -17,4 +17,6 @@ import org.jetbrains.kotlin.name.Name
  */
 interface BirDeclarationWithName : BirDeclaration {
     var name: Name
+
+    companion object
 }

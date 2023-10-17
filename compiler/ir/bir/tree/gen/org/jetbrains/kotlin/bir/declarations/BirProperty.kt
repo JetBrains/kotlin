@@ -50,4 +50,6 @@ abstract class BirProperty : BirOverridableDeclaration<BirPropertySymbol>(), Bir
         getter?.accept(data, visitor)
         setter?.accept(data, visitor)
     }
+
+    companion object
 }

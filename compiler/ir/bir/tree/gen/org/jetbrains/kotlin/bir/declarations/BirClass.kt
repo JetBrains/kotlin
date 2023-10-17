@@ -68,4 +68,6 @@ abstract class BirClass : BirElementBase(), BirDeclaration, BirPossiblyExternalD
         declarations.forEach { it.accept(data, visitor) }
         thisReceiver?.accept(data, visitor)
     }
+
+    companion object
 }

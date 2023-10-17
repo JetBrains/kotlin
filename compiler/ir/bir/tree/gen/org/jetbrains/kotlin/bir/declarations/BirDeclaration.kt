@@ -23,4 +23,6 @@ interface BirDeclaration : BirStatement, BirSymbolOwner, BirAnnotationContainerE
     override val descriptor: DeclarationDescriptor
 
     var origin: IrDeclarationOrigin
+
+    companion object
 }
