@@ -13,18 +13,18 @@ import org.jetbrains.kotlin.generators.tree.typeWithArguments
 // ----------- Simple field -----------
 
 fun field(name: String, type: TypeRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(name, type.typeWithArguments, type.packageName, null, nullable, withReplace)
+    return SimpleField(name, type.typeWithArguments, type.packageName, nullable, withReplace)
 }
 
 fun field(name: String, typeWithArgs: Pair<TypeRef, List<TypeRef>>, nullable: Boolean = false, withReplace: Boolean = false): Field {
     val (type, args) = typeWithArgs
-    return SimpleField(name, type.typeWithArguments, type.packageName, null, nullable, withReplace).apply {
+    return SimpleField(name, type.typeWithArguments, type.packageName, nullable, withReplace).apply {
         arguments += args
     }
 }
 
 fun field(type: TypeRef, nullable: Boolean = false, withReplace: Boolean = false): Field {
-    return SimpleField(type.type.replaceFirstChar(Char::lowercaseChar), type.typeWithArguments, type.packageName, null, nullable, withReplace)
+    return SimpleField(type.type.replaceFirstChar(Char::lowercaseChar), type.typeWithArguments, type.packageName, nullable, withReplace)
 }
 
 fun booleanField(name: String, withReplace: Boolean = false): Field {

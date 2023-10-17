@@ -153,7 +153,6 @@ class SimpleField(
     override val name: String,
     override val type: String,
     override val packageName: String?,
-    val customType: TypeRef? = null,
     override val nullable: Boolean,
     override var withReplace: Boolean,
     override var isVolatile: Boolean = false,
@@ -162,9 +161,6 @@ class SimpleField(
     override var isParameter: Boolean = false,
 ) : Field() {
     override val isFirType: Boolean = false
-    override val fullQualifiedName: String?
-        get() = customType?.fullQualifiedName ?: super.fullQualifiedName
-
     override var isMutable: Boolean = withReplace
     override var isMutableOrEmpty: Boolean = false
 
@@ -173,7 +169,6 @@ class SimpleField(
             name = name,
             type = type,
             packageName = packageName,
-            customType = customType,
             nullable = nullable,
             withReplace = withReplace,
             isVolatile = isVolatile,
@@ -189,7 +184,6 @@ class SimpleField(
         name = name,
         type = newType.type,
         packageName = newType.packageName,
-        customType = customType,
         nullable = nullable,
         withReplace = withReplace,
         isVolatile = isVolatile,
