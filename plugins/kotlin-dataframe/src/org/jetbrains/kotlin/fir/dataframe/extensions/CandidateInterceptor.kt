@@ -105,7 +105,7 @@ class CandidateInterceptor(
         val newSymbol = FirNamedFunctionSymbol(generatedName)
 
         // possibly null if explicit receiver type is AnyFrame
-        val argument = (callInfo.explicitReceiver?.typeRef as? FirResolvedTypeRef)?.type?.typeArguments?.singleOrNull()
+        val argument = (callInfo.explicitReceiver?.coneTypeOrNull)?.typeArguments?.singleOrNull()
         val suggestedName = if (argument == null) {
             "${callInfo.name.identifier.titleCase()}_$hash"
         } else {
@@ -190,7 +190,6 @@ class CandidateInterceptor(
         callableState.compute(generatedName.callableName) { name, it ->
             if (it != null) error("$name is not unique")
             function
-
         }
         originalSymbol.compute(generatedName.callableName) { name, it ->
             if (it != null) error("$name is not unique")
@@ -296,15 +295,15 @@ class CandidateInterceptor(
         }, null)
 
         val receiver = buildString {
-            append(call.explicitReceiver?.typeRef?.coneType?.classId?.asFqNameString()!!)
-            if (call.explicitReceiver!!.typeRef.coneType.typeArguments.isNotEmpty()) {
-                if (call.explicitReceiver!!.typeRef.coneType.typeArguments[0] is ConeStarProjection ||
-                    (call.explicitReceiver!!.typeRef.coneType.typeArguments[0].type?.toSymbol(session)!! as FirRegularClassSymbol).isLocal
+            append(call.explicitReceiver?.coneTypeOrNull?.classId?.asFqNameString()!!)
+            if (call.explicitReceiver!!.coneTypeOrNull!!.typeArguments.isNotEmpty()) {
+                if (call.explicitReceiver!!.coneTypeOrNull!!.typeArguments[0] is ConeStarProjection ||
+                    (call.explicitReceiver!!.coneTypeOrNull!!.typeArguments[0].type?.toSymbol(session)!! as FirRegularClassSymbol).isLocal
                 ) {
                     append("<*>")
                 } else {
                     append("<")
-                    append(call.explicitReceiver!!.typeRef.coneType.typeArguments.joinToString { it.type?.classId?.asFqNameString()!! })
+                    append(call.explicitReceiver!!.coneTypeOrNull!!.typeArguments.joinToString { it.type?.classId?.asFqNameString()!! })
                     append(">")
                 }
             }
@@ -354,7 +353,7 @@ class CandidateInterceptor(
                 }
             }
         }
-        block.replaceTypeRef(anonymousFunction.body?.typeRef!!)
+        block.replaceConeTypeOrNull(anonymousFunction.body?.coneTypeOrNull)
         anonymousFunction.replaceBody(block)
         return newCall
     }

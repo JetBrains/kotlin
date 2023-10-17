@@ -69,10 +69,9 @@ private class Checker : FirFunctionCallChecker() {
         if (calleeReference !is FirResolvedNamedReference || calleeReference.toResolvedCallableSymbol()?.callableId != CAST_ID) {
             return
         }
-        val typeRef = expression.explicitReceiver?.typeRef
-        if (typeRef != null) {
-
-            val sourceType = typeRef.coneType.fullyExpandedType(session).typeArguments[0].type as? ConeClassLikeType
+        val coneType = expression.explicitReceiver?.coneTypeOrNull
+        if (coneType != null) {
+            val sourceType = coneType.fullyExpandedType(session).typeArguments[0].type as? ConeClassLikeType
                 ?: return
             val source = pluginDataFrameSchema(sourceType)
             val targetProjection = expression.typeArguments[0] as? FirTypeProjectionWithVariance ?: return
