@@ -24078,6 +24078,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("defaultValueParametersRendering.kt")
+                public void testDefaultValueParametersRendering() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/defaultValueParametersRendering.kt");
+                }
+
+                @Test
                 @TestMetadata("deprecatedAnnotationOnlyOnActual_useInPlatform.kt")
                 public void testDeprecatedAnnotationOnlyOnActual_useInPlatform() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/deprecatedAnnotationOnlyOnActual_useInPlatform.kt");
