@@ -35,7 +35,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         setupDefaultPresets(project)
         customizeKotlinDependencies(project)
         configureSourceSets(project)
-        setupTargetsBuildStatsReport(project)
     }
 
     fun setupDefaultPresets(project: Project) {
@@ -79,18 +78,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
             project.setupDefaultKotlinHierarchy()
         }
     }
-
-    private fun setupTargetsBuildStatsReport(project: Project) {
-        project.multiplatformExtension.targets.all { target ->
-            /* Report the platform to tbe build stats service */
-            val targetName = if (target is KotlinNativeTarget)
-                target.konanTarget.name
-            else
-                target.platformType.name
-            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
-        }
-    }
-
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"

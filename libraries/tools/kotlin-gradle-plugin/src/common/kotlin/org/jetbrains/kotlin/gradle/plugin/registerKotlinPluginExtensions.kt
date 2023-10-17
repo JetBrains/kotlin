@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.SyncLanguageSettingsWithKotlinExte
 import org.jetbrains.kotlin.gradle.plugin.mpp.UserDefinedAttributesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
+import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
@@ -62,6 +63,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         }
 
         if (isMultiplatform) {
+            register(project, MultiplatformBuildStatsReportSetupAction)
             register(project, KotlinMetadataTargetSetupAction)
             register(project, KotlinArtifactsExtensionSetupAction)
             register(project, MultiplatformPublishingSetupAction)
