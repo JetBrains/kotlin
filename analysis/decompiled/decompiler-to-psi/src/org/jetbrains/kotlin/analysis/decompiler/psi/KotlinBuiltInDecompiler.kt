@@ -23,19 +23,19 @@ import java.io.ByteArrayInputStream
 class KotlinBuiltInDecompiler : KotlinMetadataDecompiler<BuiltInsBinaryVersion>(
     KotlinBuiltInFileType, { BuiltInSerializerProtocol },
     FlexibleTypeDeserializer.ThrowException, { BuiltInsBinaryVersion.INSTANCE }, { BuiltInsBinaryVersion.INVALID_VERSION },
-    KotlinStubVersions.BUILTIN_STUB_VERSION
+    stubVersionForStubBuilderAndDecompiler,
 ) {
     override val metadataStubBuilder: KotlinMetadataStubBuilder =
         KotlinBuiltInMetadataStubBuilder(::readFileSafely)
 
     override fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata? {
-        return BuiltInDefinitionFile.read(bytes, file)
+        return KotlinBuiltInDecompilationInterceptor.readFile(bytes, file) ?: BuiltInDefinitionFile.read(bytes, file)
     }
 }
 
 private class KotlinBuiltInMetadataStubBuilder(
     readFile: (VirtualFile, ByteArray) -> FileWithMetadata?,
-) : KotlinMetadataStubBuilder(KotlinStubVersions.BUILTIN_STUB_VERSION, KotlinBuiltInFileType, { BuiltInSerializerProtocol }, readFile) {
+) : KotlinMetadataStubBuilder(stubVersionForStubBuilderAndDecompiler, KotlinBuiltInFileType, { BuiltInSerializerProtocol }, readFile) {
     override fun createCallableSource(file: FileWithMetadata.Compatible, filename: String): SourceElement? {
         val fileNameForFacade = when (val withoutExtension = filename.removeSuffix(BuiltInSerializerProtocol.DOT_DEFAULT_EXTENSION)) {
             // this is the filename used in stdlib, others should match
@@ -48,15 +48,23 @@ private class KotlinBuiltInMetadataStubBuilder(
     }
 }
 
+/**
+ * This version is used for .kotlin_builtins and is not used for .kotlin_metadata files:
+ * K1 IDE and K2 IDE produce different decompiled files and stubs for .kotlin_builtins, but not for .kotlin_metadata
+ */
+private val stubVersionForStubBuilderAndDecompiler: Int
+    get() = KotlinStubVersions.BUILTIN_STUB_VERSION + KotlinBuiltInStubVersionOffsetProvider.getVersionOffset()
+
 class BuiltInDefinitionFile(
     proto: ProtoBuf.PackageFragment,
     version: BuiltInsBinaryVersion,
     val packageDirectory: VirtualFile,
     val isMetadata: Boolean,
+    private val filterOutClassesExistingAsClassFiles: Boolean = true,
 ) : KotlinMetadataStubBuilder.FileWithMetadata.Compatible(proto, version, BuiltInSerializerProtocol) {
     override val classesToDecompile: List<ProtoBuf.Class>
         get() = super.classesToDecompile.let { classes ->
-            if (isMetadata || !FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES) classes
+            if (isMetadata || !FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES || !filterOutClassesExistingAsClassFiles) classes
             else classes.filter { classProto ->
                 shouldDecompileBuiltInClass(nameResolver.getClassId(classProto.fqName))
             }
@@ -71,7 +79,11 @@ class BuiltInDefinitionFile(
         var FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = true
             @TestOnly set
 
-        fun read(contents: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata? {
+        @JvmOverloads
+        fun read(
+            contents: ByteArray, file: VirtualFile,
+            filterOutClassesExistingAsClassFiles: Boolean = true
+        ): KotlinMetadataStubBuilder.FileWithMetadata? {
             val stream = ByteArrayInputStream(contents)
 
             val version = BuiltInsBinaryVersion.readFrom(stream)
@@ -81,7 +93,11 @@ class BuiltInDefinitionFile(
 
             val proto = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
             val result =
-                BuiltInDefinitionFile(proto, version, file.parent, file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION)
+                BuiltInDefinitionFile(
+                    proto, version, file.parent,
+                    file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION,
+                    filterOutClassesExistingAsClassFiles
+                )
             val packageProto = result.proto.`package`
             if (result.classesToDecompile.isEmpty() &&
                 packageProto.typeAliasCount == 0 && packageProto.functionCount == 0 && packageProto.propertyCount == 0
