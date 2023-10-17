@@ -21,7 +21,7 @@ class BirErrorDeclarationImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: DeclarationDescriptor,
-    signature: IdSignature,
+    signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
 ) : BirErrorDeclaration() {
@@ -36,9 +36,9 @@ class BirErrorDeclarationImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _signature: IdSignature = signature
+    private var _signature: IdSignature? = signature
 
-    override var signature: IdSignature
+    override var signature: IdSignature?
         get() = _signature
         set(value) {
             if (_signature != value) {

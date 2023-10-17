@@ -25,7 +25,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor,
-    signature: IdSignature,
+    signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     name: Name,
@@ -56,9 +56,9 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _signature: IdSignature = signature
+    private var _signature: IdSignature? = signature
 
-    override var signature: IdSignature
+    override var signature: IdSignature?
         get() = _signature
         set(value) {
             if (_signature != value) {

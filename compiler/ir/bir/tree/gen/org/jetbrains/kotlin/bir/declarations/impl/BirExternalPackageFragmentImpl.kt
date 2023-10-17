@@ -23,7 +23,7 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: PackageFragmentDescriptor,
-    signature: IdSignature,
+    signature: IdSignature?,
     packageFqName: FqName,
     override val containerSource: DeserializedContainerSource?,
 ) : BirExternalPackageFragment() {
@@ -41,9 +41,9 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
     override val declarations: BirChildElementList<BirDeclaration> =
             BirChildElementList(this, 0)
 
-    private var _signature: IdSignature = signature
+    private var _signature: IdSignature? = signature
 
-    override var signature: IdSignature
+    override var signature: IdSignature?
         get() = _signature
         set(value) {
             if (_signature != value) {
