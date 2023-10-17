@@ -84,7 +84,7 @@ internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (star
     val startOffset: Int
     val endOffset: Int
 
-    if (isCompiledElement(psi)) {
+    if (isCompiledElement(psi) || this?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers) {
         startOffset = UNDEFINED_OFFSET
         endOffset = UNDEFINED_OFFSET
     } else {

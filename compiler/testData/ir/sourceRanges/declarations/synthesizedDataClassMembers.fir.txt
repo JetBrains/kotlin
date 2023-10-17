@@ -37,35 +37,35 @@
           @3:8..18 RETURN type=kotlin.Nothing from='public final fun <get-z> (): kotlin.Any declared in <root>.C'
             @3:8..18 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               @3:8..18 GET_VAR '<this>: <root>.C declared in <root>.C.<get-z>' type=<root>.C origin=null
-    @1:8..18 FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int [operator]
-      @1:8..18 VALUE_PARAMETER name:<this> type:<root>.C
+    @-1:-1..-1 FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int [operator]
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:<root>.C
       @-1:-1..-1 BLOCK_BODY
         @-1:-1..-1 RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.C'
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.component1' type=<root>.C origin=null
-    @2:8..21 FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String [operator]
-      @2:8..21 VALUE_PARAMETER name:<this> type:<root>.C
+    @-1:-1..-1 FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String [operator]
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:<root>.C
       @-1:-1..-1 BLOCK_BODY
         @-1:-1..-1 RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String [operator] declared in <root>.C'
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.component2' type=<root>.C origin=null
-    @3:8..18 FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Any [operator]
-      @3:8..18 VALUE_PARAMETER name:<this> type:<root>.C
+    @-1:-1..-1 FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Any [operator]
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:<root>.C
       @-1:-1..-1 BLOCK_BODY
         @-1:-1..-1 RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Any [operator] declared in <root>.C'
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.component3' type=<root>.C origin=null
-    @0:0..4:1 FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.C, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.C
-      @0:0..4:1 VALUE_PARAMETER name:<this> type:<root>.C
-      @1:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    @-1:-1..-1 FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.C, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.C
+      @-1:-1..-1 VALUE_PARAMETER name:<this> type:<root>.C
+      @-1:-1..-1 VALUE_PARAMETER name:x index:0 type:kotlin.Int
         @-1:-1..-1 EXPRESSION_BODY
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.copy' type=<root>.C origin=null
-      @2:8..21 VALUE_PARAMETER name:y index:1 type:kotlin.String
+      @-1:-1..-1 VALUE_PARAMETER name:y index:1 type:kotlin.String
         @-1:-1..-1 EXPRESSION_BODY
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.copy' type=<root>.C origin=null
-      @3:8..18 VALUE_PARAMETER name:z index:2 type:kotlin.Any
+      @-1:-1..-1 VALUE_PARAMETER name:z index:2 type:kotlin.Any
         @-1:-1..-1 EXPRESSION_BODY
           @-1:-1..-1 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
             @-1:-1..-1 GET_VAR '<this>: <root>.C declared in <root>.C.copy' type=<root>.C origin=null
