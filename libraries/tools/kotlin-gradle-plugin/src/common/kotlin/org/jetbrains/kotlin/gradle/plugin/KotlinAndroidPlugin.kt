@@ -38,7 +38,7 @@ internal open class KotlinAndroidPlugin(
                     project
                 ).also { target ->
                     val kotlinAndroidExtension = project.kotlinExtension as KotlinAndroidProjectExtension
-                    kotlinAndroidExtension.target = target
+                    kotlinAndroidExtension.targetFuture.complete(target)
                     project.configureCompilerOptionsForTarget(
                         kotlinAndroidExtension.compilerOptions,
                         target.compilerOptions

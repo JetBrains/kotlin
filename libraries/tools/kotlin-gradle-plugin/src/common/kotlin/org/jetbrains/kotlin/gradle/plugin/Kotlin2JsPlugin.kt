@@ -52,7 +52,7 @@ internal open class Kotlin2JsPlugin(
             }
         ) as KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
 
-        (project.kotlinExtension as Kotlin2JsProjectExtension).setTarget(target)
+        (project.kotlinExtension as Kotlin2JsProjectExtension).targetFuture.complete(target)
         super.apply(project)
     }
 }

@@ -17,15 +17,21 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.CoroutineStart.Undispatched
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.CompletableFuture
+import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
@@ -180,17 +186,21 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
 
 abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Project) : KotlinProjectExtension(project) {
     abstract val target: TARGET
-
+    internal abstract val targetFuture: Future<TARGET>
     fun target(body: Action<TARGET>) = body.execute(target)
 }
 
 abstract class KotlinSingleJavaTargetExtension(project: Project) : KotlinSingleTargetExtension<KotlinWithJavaTarget<*, *>>(project)
 
 abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    override lateinit var target: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
-        internal set
+    override val target: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>
+        get() = targetFuture.getOrThrow()
 
-    open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit) = target.run(body)
+    override val targetFuture = CompletableFuture<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>>()
+
+    open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit) {
+        project.launch(Undispatched) { targetFuture.await().body() }
+    }
 
     val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
@@ -206,20 +216,16 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
 }
 
 abstract class Kotlin2JsProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    private lateinit var _target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
-
     override val target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>
         get() {
-            if (!::_target.isInitialized) throw IllegalStateException("Extension target is not initialized!")
-
-            return _target
+            if (!targetFuture.isCompleted) throw IllegalStateException("Extension target is not initialized!")
+            return targetFuture.getOrThrow()
         }
 
-    internal fun setTarget(target: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>) {
-        _target = target
+    override val targetFuture = CompletableFuture<KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>>()
+    open fun target(body: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>.() -> Unit) {
+        project.launch(Undispatched) { targetFuture.await().body() }
     }
-
-    open fun target(body: KotlinWithJavaTarget<KotlinJsOptions, KotlinJsCompilerOptions>.() -> Unit) = target.run(body)
 }
 
 abstract class KotlinJsProjectExtension(project: Project) :
@@ -227,45 +233,31 @@ abstract class KotlinJsProjectExtension(project: Project) :
     KotlinJsCompilerTypeHolder {
     lateinit var irPreset: KotlinJsIrSingleTargetPreset
 
-    private val targetSetObservers = mutableListOf<(KotlinJsTargetDsl?) -> Unit>()
+    @Deprecated("Use js() instead", ReplaceWith("js()"))
+    override val target: KotlinJsTargetDsl
+        get() = targetFuture.lenient.getOrNull() ?: js()
 
     @Deprecated("Because only IR compiler is left, no more necessary to know about compiler type in properties")
     override val compilerTypeFromProperties: KotlinJsCompilerType? = null
 
-    // target is public property
-    // Users can write kotlin.target and it should work
-    // So call of target should init default configuration
-    @Deprecated("Use `target` instead", ReplaceWith("target"))
-    var _target: KotlinJsTargetDsl? = null
-        private set(value) {
-            field = value
-            targetSetObservers.forEach { it(value) }
-        }
+    override val targetFuture = CompletableFuture<KotlinJsTargetDsl>()
 
     fun registerTargetObserver(observer: (KotlinJsTargetDsl?) -> Unit) {
-        targetSetObservers.add(observer)
-    }
-
-    @Deprecated("Use js() instead", ReplaceWith("js()"))
-    @Suppress("DEPRECATION")
-    override val target: KotlinJsTargetDsl
-        get() {
-            if (_target == null) {
-                js {}
-            }
-            return _target!!
+        project.launch(Undispatched) {
+            observer(targetFuture.await())
         }
+    }
 
     @Suppress("DEPRECATION")
     private fun jsInternal(
         compiler: KotlinJsCompilerType? = null,
         body: KotlinJsTargetDsl.() -> Unit,
     ): KotlinJsTargetDsl {
-        if (_target == null) {
+        if (!targetFuture.isCompleted) {
             val target: KotlinJsTargetDsl = irPreset
                 .createTargetInternal("js")
 
-            this._target = target
+            this.targetFuture.complete(target)
 
             target.project.components.addAll(target.components)
         }
@@ -317,26 +309,31 @@ abstract class KotlinJsProjectExtension(project: Project) :
     )
     @Suppress("DEPRECATION")
     fun getTargets(): NamedDomainObjectContainer<KotlinTarget>? =
-        _target?.let { target ->
+        targetFuture.lenient.getOrNull()?.let { target ->
             target.project.container(KotlinTarget::class.java)
                 .apply { add(target) }
         }
 }
 
 abstract class KotlinCommonProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
-    override lateinit var target: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>
-        internal set
+    override val target: KotlinWithJavaTarget<*, *> get() = targetFuture.getOrThrow()
+    override val targetFuture =
+        CompletableFuture<KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>>()
 
     open fun target(
         body: KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>.() -> Unit,
-    ) = target.run(body)
+    ) = project.launch(Undispatched) {
+        targetFuture.await().body()
+    }
 }
 
 abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTargetExtension<KotlinAndroidTarget>(project) {
-    override lateinit var target: KotlinAndroidTarget
-        internal set
+    override val target: KotlinAndroidTarget get() = targetFuture.getOrThrow()
+    override val targetFuture = CompletableFuture<KotlinAndroidTarget>()
 
-    open fun target(body: KotlinAndroidTarget.() -> Unit) = target.run(body)
+    open fun target(body: KotlinAndroidTarget.() -> Unit) = project.launch(Undispatched) {
+        targetFuture.await().body()
+    }
 
     val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance(KotlinJvmCompilerOptionsDefault::class.java)

@@ -38,8 +38,7 @@ open class KotlinJsPlugin: Plugin<Project> {
         }
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {
-            @Suppress("DEPRECATION")
-            if (kotlinExtension._target == null) {
+            if (!kotlinExtension.targetFuture.isCompleted) {
                 project.logger.warn(
                     """
                         Please initialize the Kotlin/JS target. Use:

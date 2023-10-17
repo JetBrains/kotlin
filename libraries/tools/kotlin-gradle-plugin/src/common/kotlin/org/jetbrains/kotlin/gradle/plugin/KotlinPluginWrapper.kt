@@ -319,8 +319,7 @@ abstract class AbstractKotlinJsPluginWrapper : KotlinBasePluginWrapper() {
         get() = KotlinJsProjectExtension::class
 
     override fun whenBuildEvaluated(project: Project) = project.runProjectConfigurationHealthCheck {
-        val isJsTargetUninitialized = (project.kotlinExtension as KotlinJsProjectExtension)
-            ._target == null
+        val isJsTargetUninitialized = !(project.kotlinExtension as KotlinJsProjectExtension).targetFuture.isCompleted
 
         if (isJsTargetUninitialized) {
             throw GradleException(

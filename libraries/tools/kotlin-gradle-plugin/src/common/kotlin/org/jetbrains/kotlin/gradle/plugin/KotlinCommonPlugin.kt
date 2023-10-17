@@ -47,7 +47,7 @@ internal open class KotlinCommonPlugin(
                 }
             }
         ) as KotlinWithJavaTarget<KotlinMultiplatformCommonOptions, KotlinMultiplatformCommonCompilerOptions>
-        (project.kotlinExtension as KotlinCommonProjectExtension).target = target
+        (project.kotlinExtension as KotlinCommonProjectExtension).targetFuture.complete(target)
 
         super.apply(project)
     }

@@ -72,7 +72,7 @@ internal open class KotlinJvmPlugin(
                 disambiguationClassifier = null // don't add anything to the task names
             }
         val kotlinExtension = project.kotlinExtension as KotlinJvmProjectExtension
-        kotlinExtension.target = target
+        kotlinExtension.targetFuture.complete(target)
 
         super.apply(project)
 
