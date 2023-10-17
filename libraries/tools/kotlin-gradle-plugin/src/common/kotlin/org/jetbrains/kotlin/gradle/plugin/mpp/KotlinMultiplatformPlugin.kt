@@ -10,11 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.hierarchy.setupDefaultKotlinHierarchy
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
@@ -22,7 +18,6 @@ import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 class KotlinMultiplatformPlugin : Plugin<Project> {
 
@@ -34,7 +29,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         setupDefaultPresets(project)
         customizeKotlinDependencies(project)
-        configureSourceSets(project)
     }
 
     fun setupDefaultPresets(project: Project) {
@@ -65,17 +59,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
                     add(targetToAdd)
                 }
-        }
-    }
-
-
-    private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
-        /* Create 'commonMain' and 'commonTest' SourceSets */
-        sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
-        sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
-
-        project.launch {
-            project.setupDefaultKotlinHierarchy()
         }
     }
 
