@@ -1,0 +1,55 @@
+FILE: flexibleReturnType.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface ActivePlayer : R|kotlin/Any| {
+        public abstract val char: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val timestamp: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/experimental/ExperimentalTypeInference|))) @R|kotlin/OverloadResolutionByLambdaReturnType|() public final fun <T, V : R|java/time/temporal/Temporal|> R|org/jetbrains/kotlinx/dataframe/DataRow<T>|.diff(unit: R|java/time/temporal/ChronoUnit|, expression: R|org/jetbrains/kotlinx/dataframe/RowExpression<T, V>|): R|kotlin/Long?| {
+        ^diff this@R|org/jetbrains/kotlinx/dataframe/diff|.R|org/jetbrains/kotlinx/dataframe/api/prev|<R|T|>()?.{ $subj$.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataRow<T>|, R|kotlin/Long|>(<L> = let@fun <anonymous>(p: R|org/jetbrains/kotlinx/dataframe/DataRow<T>|): R|kotlin/Long| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|<local>/unit|.R|java/time/temporal/ChronoUnit.between|(R|<local>/expression|.R|SubstitutionOverride<kotlin/Function2.invoke: R|V|>|(this@R|org/jetbrains/kotlinx/dataframe/diff|, this@R|org/jetbrains/kotlinx/dataframe/diff|), R|<local>/expression|.R|SubstitutionOverride<kotlin/Function2.invoke: R|V|>|(R|<local>/p|, R|<local>/p|))
+        }
+        ) }
+    }
+    public final fun box(): R|kotlin/String| {
+        lval df: <ERROR TYPE REF: Unresolved name: readDelimStr> = @R|org/jetbrains/kotlinx/dataframe/annotations/DisableInterpretation|() Q|org/jetbrains/kotlinx/dataframe/DataFrame|.<Unresolved name: readDelimStr>#(String(
+        char,level,race,charclass,zone,guild,timestamp
+        59425,1,Orc,Rogue,Orgrimmar,165,01/01/08 00:02:04
+        65494,9,Orc,Hunter,Durotar,-1,01/01/08 00:02:04
+    ).R|kotlin/text/trimIndent|())
+        lval df: <ERROR TYPE REF: Ambiguity: cast, [org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast]> = R|<local>/df|.<Ambiguity: cast, [org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast, org/jetbrains/kotlinx/dataframe/api/cast]>#<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>()
+        lval format: R|java/time/format/DateTimeFormatter!| = Q|java/time/format/DateTimeFormatter|.R|java/time/format/DateTimeFormatter.ofPattern*s|(String(MM/dd/yy HH:mm:ss))
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ActivePlayer>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/String>| <inline=NoInline>  {
+            ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamp|
+        }
+        ).R|org/jetbrains/kotlinx/dataframe/api/with|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|, R|java/time/LocalDateTime|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|kotlin/String|): R|java/time/LocalDateTime| <inline=NoInline>  {
+            ^ Q|java/time/LocalDateTime|.R|java/time/LocalDateTime.parse*s|(R|<local>/it|, R|<local>/format|)!!
+        }
+        ).R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Boolean|, R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>(String(tsDiff), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/diff<Inapplicable(INAPPLICABLE): org/jetbrains/kotlinx/dataframe/diff>#|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, <ERROR TYPE REF: Cannot infer argument for type parameter V>>(Q|java/time/temporal/ChronoUnit|.R|java/time/temporal/ChronoUnit.MINUTES|, <L> = diff@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): <ERROR TYPE REF: Cannot infer argument for type parameter V> <inline=NoInline>  {
+                ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamp|
+            }
+            )?.{ $subj$.R|kotlin/let|<R|kotlin/Long|, R|kotlin/Boolean|>(<L> = let@fun <anonymous>(it: R|kotlin/Long|): R|kotlin/Boolean| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ CMP(>, R|<local>/it|.R|kotlin/Long.compareTo|(Int(20)))
+            }
+            ) } ?: Boolean(true)
+        }
+        )
+        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>()
+        ^box String(OK)
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package org.jetbrains.kotlinx.dataframe
+
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.char: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.char: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.timestamp: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.timestamp: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|

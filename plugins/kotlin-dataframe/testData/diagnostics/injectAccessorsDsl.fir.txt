@@ -1,8 +1,8 @@
 FILE: injectAccessorsDsl.kt
     public final fun Dsl is evaluated to (df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|kotlin/Unit| {
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenAdd_2988969>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenAdd_2988969>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenAdd_2988969>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>| = R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class DataFrameType1 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|<local>/DataFrameType1| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -15,39 +15,39 @@ FILE: injectAccessorsDsl.kt
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope0| {
+                public constructor(): R|<local>/Scope0| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col1)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
                         ^ (this@R|<local>/col1|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(col1)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.col1: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.col1: R|kotlin/Int|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col1)) public get(): R|kotlin/Int| {
                         ^ (this@R|<local>/col1|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(col1)) as R|kotlin/Int|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.col2: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.col2: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col2)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>| {
                         ^ (this@R|<local>/col2|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(col2)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.col2: R|kotlin/Int|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.col2: R|kotlin/Int|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_col2)) public get(): R|kotlin/Int| {
                         ^ (this@R|<local>/col2|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(col2)) as R|kotlin/Int|)
                     }
 
             }
 
-            local abstract class TokenAdd_2988969 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenAdd_2988969| {
-                    super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
+            local abstract class TokenAdd_2988969 : R|<local>/DataFrameType1| {
+                public constructor(): R|<local>/TokenAdd_2988969| {
+                    super<R|<local>/DataFrameType1|>()
                 }
 
-                public abstract val scope0: R|org/jetbrains/kotlinx/dataframe/Scope0|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/Scope0|
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
             }
 
@@ -61,7 +61,7 @@ FILE: injectAccessorsDsl.kt
                 }
                 )).R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/api/AddDsl.into: R|kotlin/Boolean|>|(String(col2))
             }
-            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenAdd_2988969>|)
+            ) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenAdd_2988969>|)
         }
         )
         (this@R|/Dsl is evaluated to |, R|<local>/df1|).R|<local>/col1|
