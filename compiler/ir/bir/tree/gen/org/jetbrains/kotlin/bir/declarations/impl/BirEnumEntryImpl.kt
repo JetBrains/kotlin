@@ -21,16 +21,60 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
+    origin: IrDeclarationOrigin,
+    name: Name,
     initializerExpression: BirExpressionBody?,
     correspondingClass: BirClass?,
 ) : BirEnumEntry() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
     private var _initializerExpression: BirExpressionBody? = initializerExpression
 
     override var initializerExpression: BirExpressionBody?
@@ -39,6 +83,7 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_initializerExpression != value) {
                 replaceChild(_initializerExpression, value)
                 _initializerExpression = value
+                invalidate()
             }
         }
 
@@ -50,6 +95,7 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_correspondingClass != value) {
                 replaceChild(_correspondingClass, value)
                 _correspondingClass = value
+                invalidate()
             }
         }
     init {

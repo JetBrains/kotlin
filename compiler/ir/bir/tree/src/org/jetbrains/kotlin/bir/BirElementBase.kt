@@ -23,6 +23,7 @@ abstract class BirElementBase : BirElement {
     private var dynamicProperties: Array<Any?>? = null
     private var level: UByte = 0u
     internal var containingListId: Byte = 0
+    internal var indexSlot: UByte = 0u
 
     val attachedToTree
         get() = owner != null
@@ -156,12 +157,22 @@ abstract class BirElementBase : BirElement {
             this.dynamicProperties = dynamicProperties
         }
 
-        dynamicProperties[token.key.index] = value
+        val index = token.key.index
+        val old = dynamicProperties[index]
+        if (old != value) {
+            dynamicProperties[index] = value
+            invalidate()
+        }
     }
 
     // todo: fine-grained control of which data to copy
     internal fun copyDynamicProperties(from: BirElementBase) {
         dynamicProperties = from.dynamicProperties?.copyOf()
+    }
+
+
+    internal fun invalidate() {
+        owner?.elementIndexInvalidated(this)
     }
 }
 

@@ -16,12 +16,54 @@ import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.types.BirType
 
 class BirDynamicMemberExpressionImpl(
-    override var sourceSpan: SourceSpan,
-    override var type: BirType,
-    override var memberName: String,
+    sourceSpan: SourceSpan,
+    type: BirType,
+    memberName: String,
     receiver: BirExpression,
 ) : BirDynamicMemberExpression() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _memberName: String = memberName
+
+    override var memberName: String
+        get() = _memberName
+        set(value) {
+            if (_memberName != value) {
+                _memberName = value
+                invalidate()
+            }
+        }
 
     private var _receiver: BirExpression = receiver
 
@@ -31,6 +73,7 @@ class BirDynamicMemberExpressionImpl(
             if (_receiver != value) {
                 replaceChild(_receiver, value)
                 _receiver = value
+                invalidate()
             }
         }
     init {

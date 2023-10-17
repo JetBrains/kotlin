@@ -16,11 +16,53 @@ import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 
 class BirInstanceInitializerCallImpl(
-    override var sourceSpan: SourceSpan,
-    override var type: BirType,
-    override var classSymbol: BirClassSymbol,
+    sourceSpan: SourceSpan,
+    type: BirType,
+    classSymbol: BirClassSymbol,
 ) : BirInstanceInitializerCall() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _classSymbol: BirClassSymbol = classSymbol
+
+    override var classSymbol: BirClassSymbol
+        get() = _classSymbol
+        set(value) {
+            if (_classSymbol != value) {
+                _classSymbol = value
+                invalidate()
+            }
+        }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {

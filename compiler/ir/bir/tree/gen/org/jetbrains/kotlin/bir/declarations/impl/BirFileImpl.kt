@@ -22,17 +22,72 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 
 class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: PackageFragmentDescriptor,
-    override var signature: IdSignature,
-    override var packageFqName: FqName,
+    signature: IdSignature,
+    packageFqName: FqName,
     override var annotations: List<BirConstructorCall>,
-    override var module: BirModuleFragment,
-    override var fileEntry: IrFileEntry,
+    module: BirModuleFragment,
+    fileEntry: IrFileEntry,
 ) : BirFile() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
     override val declarations: BirChildElementList<BirDeclaration> =
             BirChildElementList(this, 0)
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _packageFqName: FqName = packageFqName
+
+    override var packageFqName: FqName
+        get() = _packageFqName
+        set(value) {
+            if (_packageFqName != value) {
+                _packageFqName = value
+                invalidate()
+            }
+        }
+
+    private var _module: BirModuleFragment = module
+
+    override var module: BirModuleFragment
+        get() = _module
+        set(value) {
+            if (_module != value) {
+                _module = value
+                invalidate()
+            }
+        }
+
+    private var _fileEntry: IrFileEntry = fileEntry
+
+    override var fileEntry: IrFileEntry
+        get() = _fileEntry
+        set(value) {
+            if (_fileEntry != value) {
+                _fileEntry = value
+                invalidate()
+            }
+        }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {

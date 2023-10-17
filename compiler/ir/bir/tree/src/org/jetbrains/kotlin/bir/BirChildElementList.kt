@@ -60,9 +60,12 @@ class BirChildElementList<E : BirElement?>(
         checkElementIndex(index, size)
         element as BirElementBase?
         val old = elementArray[index]
-        replaceChild(old, element)
-        element?.containingListId = id.toByte()
-        elementArray[index] = element
+        if (element !== old) {
+            replaceChild(old, element)
+            element?.containingListId = id.toByte()
+            elementArray[index] = element
+            invalidate()
+        }
         return element
     }
 
@@ -78,12 +81,17 @@ class BirChildElementList<E : BirElement?>(
             elementArray = newArray
             this.elementArray = elementArray
         }
-        initChild(element)
+        addChild(element)
         elementArray[index] = element
         size++
+        invalidate()
     }
 
     override fun addAll(index: Int, elements: Collection<E>): Boolean {
+        if (elements.isEmpty()) {
+            return false
+        }
+
         checkElementIndex(index, size + 1)
         var elementArray = elementArray
         val newSize = size + elements.size
@@ -101,9 +109,10 @@ class BirChildElementList<E : BirElement?>(
         var i = index
         for (element in elements) {
             elementArray[i++] = element as BirElementBase?
-            initChild(element)
+            addChild(element)
         }
         size = newSize
+        invalidate()
 
         return true
     }
@@ -114,6 +123,7 @@ class BirChildElementList<E : BirElement?>(
         val element = elementArray[index]
         replaceChild(element, null)
         elementArray.copyInto(elementArray, index, index + 1, size)
+        invalidate()
         return element as E
     }
 
@@ -127,6 +137,10 @@ class BirChildElementList<E : BirElement?>(
     }
 
     fun replace(old: E, new: E): Boolean {
+        if (new === old) {
+            return true
+        }
+
         val index = indexOf(old)
         if (index != -1) {
             this[index] = new
@@ -136,6 +150,10 @@ class BirChildElementList<E : BirElement?>(
     }
 
     override fun clear() {
+        if (size == 0) {
+            return
+        }
+
         val elementArray = elementArray
         for (i in 0..<size) {
             val element = elementArray[i]
@@ -143,10 +161,11 @@ class BirChildElementList<E : BirElement?>(
             replaceChild(element, null)
         }
         size = 0
+        invalidate()
     }
 
-    private fun initChild(new: BirElementBase?) {
-        parent.initChild(new)
+    private fun addChild(new: BirElementBase?) {
+        parent.replaceChild(null, new)
         new?.containingListId = id.toByte()
     }
 
@@ -154,6 +173,10 @@ class BirChildElementList<E : BirElement?>(
         parent.replaceChild(old, new)
         old?.containingListId = 0
         new?.containingListId = id.toByte()
+    }
+
+    private fun invalidate() {
+        parent.invalidate()
     }
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

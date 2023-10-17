@@ -58,7 +58,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
                         initializer("BirChildElementList(this, %L)", childrenLists.indexOf(field))
-                    } else if (field is SingleField && field.isChild && field.mutable) {
+                    } else if (field is SingleField && field.mutable) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, poetType)
                                 .mutable(true)
@@ -77,14 +77,17 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         if (field.initializeToThis) initializer("this") else initializer("%N", field.name)
                     }
 
-                    if (field is SingleField && field.isChild && field.mutable) {
+                    if (field is SingleField && field.mutable) {
                         setter(
                             FunSpec.setterBuilder()
                                 .addParameter(ParameterSpec("value", poetType))
                                 .apply {
                                     addCode("if (${field.backingFieldName} != value) {\n")
-                                    addCode("    replaceChild(${field.backingFieldName}, value)\n")
+                                    if (field.isChild) {
+                                        addCode("    replaceChild(${field.backingFieldName}, value)\n")
+                                    }
                                     addCode("    ${field.backingFieldName} = value\n")
+                                    addCode("    invalidate()\n")
                                     addCode("}\n")
                                 }.build()
                         )

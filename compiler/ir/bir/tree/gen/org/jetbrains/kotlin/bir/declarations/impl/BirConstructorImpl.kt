@@ -25,26 +25,125 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassConstructorDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var isExternal: Boolean,
-    override var visibility: DescriptorVisibility,
-    override var isInline: Boolean,
-    override var isExpect: Boolean,
-    override var returnType: BirType,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    isExternal: Boolean,
+    visibility: DescriptorVisibility,
+    isInline: Boolean,
+    isExpect: Boolean,
+    returnType: BirType,
     dispatchReceiverParameter: BirValueParameter?,
     extensionReceiverParameter: BirValueParameter?,
-    override var contextReceiverParametersCount: Int,
+    contextReceiverParametersCount: Int,
     body: BirBody?,
-    override var isPrimary: Boolean,
+    isPrimary: Boolean,
 ) : BirConstructor() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _isExternal: Boolean = isExternal
+
+    override var isExternal: Boolean
+        get() = _isExternal
+        set(value) {
+            if (_isExternal != value) {
+                _isExternal = value
+                invalidate()
+            }
+        }
+
+    private var _visibility: DescriptorVisibility = visibility
+
+    override var visibility: DescriptorVisibility
+        get() = _visibility
+        set(value) {
+            if (_visibility != value) {
+                _visibility = value
+                invalidate()
+            }
+        }
+
     override var typeParameters: BirChildElementList<BirTypeParameter> =
             BirChildElementList(this, 0)
+
+    private var _isInline: Boolean = isInline
+
+    override var isInline: Boolean
+        get() = _isInline
+        set(value) {
+            if (_isInline != value) {
+                _isInline = value
+                invalidate()
+            }
+        }
+
+    private var _isExpect: Boolean = isExpect
+
+    override var isExpect: Boolean
+        get() = _isExpect
+        set(value) {
+            if (_isExpect != value) {
+                _isExpect = value
+                invalidate()
+            }
+        }
+
+    private var _returnType: BirType = returnType
+
+    override var returnType: BirType
+        get() = _returnType
+        set(value) {
+            if (_returnType != value) {
+                _returnType = value
+                invalidate()
+            }
+        }
 
     private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
 
@@ -54,6 +153,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_dispatchReceiverParameter != value) {
                 replaceChild(_dispatchReceiverParameter, value)
                 _dispatchReceiverParameter = value
+                invalidate()
             }
         }
 
@@ -65,11 +165,23 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_extensionReceiverParameter != value) {
                 replaceChild(_extensionReceiverParameter, value)
                 _extensionReceiverParameter = value
+                invalidate()
             }
         }
 
     override var valueParameters: BirChildElementList<BirValueParameter> =
             BirChildElementList(this, 1)
+
+    private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
+
+    override var contextReceiverParametersCount: Int
+        get() = _contextReceiverParametersCount
+        set(value) {
+            if (_contextReceiverParametersCount != value) {
+                _contextReceiverParametersCount = value
+                invalidate()
+            }
+        }
 
     private var _body: BirBody? = body
 
@@ -79,6 +191,18 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_body != value) {
                 replaceChild(_body, value)
                 _body = value
+                invalidate()
+            }
+        }
+
+    private var _isPrimary: Boolean = isPrimary
+
+    override var isPrimary: Boolean
+        get() = _isPrimary
+        set(value) {
+            if (_isPrimary != value) {
+                _isPrimary = value
+                invalidate()
             }
         }
     init {

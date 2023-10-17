@@ -21,18 +21,95 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: TypeParameterDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var variance: Variance,
-    override var index: Int,
-    override var isReified: Boolean,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    variance: Variance,
+    index: Int,
+    isReified: Boolean,
     override var superTypes: List<BirType>,
 ) : BirTypeParameter() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _variance: Variance = variance
+
+    override var variance: Variance
+        get() = _variance
+        set(value) {
+            if (_variance != value) {
+                _variance = value
+                invalidate()
+            }
+        }
+
+    private var _index: Int = index
+
+    override var index: Int
+        get() = _index
+        set(value) {
+            if (_index != value) {
+                _index = value
+                invalidate()
+            }
+        }
+
+    private var _isReified: Boolean = isReified
+
+    override var isReified: Boolean
+        get() = _isReified
+        set(value) {
+            if (_isReified != value) {
+                _isReified = value
+                invalidate()
+            }
+        }
+
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
             else -> throwChildForReplacementNotFound(old)

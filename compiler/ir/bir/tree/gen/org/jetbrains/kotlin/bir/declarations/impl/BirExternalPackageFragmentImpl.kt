@@ -20,15 +20,48 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: PackageFragmentDescriptor,
-    override var signature: IdSignature,
-    override var packageFqName: FqName,
+    signature: IdSignature,
+    packageFqName: FqName,
     override val containerSource: DeserializedContainerSource?,
 ) : BirExternalPackageFragment() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
     override val declarations: BirChildElementList<BirDeclaration> =
             BirChildElementList(this, 0)
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _packageFqName: FqName = packageFqName
+
+    override var packageFqName: FqName
+        get() = _packageFqName
+        set(value) {
+            if (_packageFqName != value) {
+                _packageFqName = value
+                invalidate()
+            }
+        }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {

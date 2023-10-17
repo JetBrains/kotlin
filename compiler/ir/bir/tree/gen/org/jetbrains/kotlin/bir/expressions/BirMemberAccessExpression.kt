@@ -31,7 +31,7 @@ abstract class BirMemberAccessExpression<S : BirSymbol> : BirDeclarationReferenc
 
     abstract val valueArguments: BirChildElementList<BirExpression?>
 
-    abstract val typeArguments: Array<BirType?>
+    abstract var typeArguments: List<BirType?>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         dispatchReceiver?.accept(data, visitor)

@@ -18,11 +18,53 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirWhenImpl(
-    override var sourceSpan: SourceSpan,
-    override var type: BirType,
-    override var origin: IrStatementOrigin?,
+    sourceSpan: SourceSpan,
+    type: BirType,
+    origin: IrStatementOrigin?,
 ) : BirWhen() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrStatementOrigin? = origin
+
+    override var origin: IrStatementOrigin?
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
 
     override val branches: BirChildElementList<BirBranch> = BirChildElementList(this, 0)
 

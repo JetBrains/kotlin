@@ -23,19 +23,96 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: TypeAliasDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var visibility: DescriptorVisibility,
-    override var isActual: Boolean,
-    override var expandedType: BirType,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    visibility: DescriptorVisibility,
+    isActual: Boolean,
+    expandedType: BirType,
 ) : BirTypeAlias() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _visibility: DescriptorVisibility = visibility
+
+    override var visibility: DescriptorVisibility
+        get() = _visibility
+        set(value) {
+            if (_visibility != value) {
+                _visibility = value
+                invalidate()
+            }
+        }
+
     override var typeParameters: BirChildElementList<BirTypeParameter> =
             BirChildElementList(this, 0)
+
+    private var _isActual: Boolean = isActual
+
+    override var isActual: Boolean
+        get() = _isActual
+        set(value) {
+            if (_isActual != value) {
+                _isActual = value
+                invalidate()
+            }
+        }
+
+    private var _expandedType: BirType = expandedType
+
+    override var expandedType: BirType
+        get() = _expandedType
+        set(value) {
+            if (_expandedType != value) {
+                _expandedType = value
+                invalidate()
+            }
+        }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {

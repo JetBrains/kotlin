@@ -18,11 +18,22 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.name.Name
 
 class BirModuleFragmentImpl(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     override val descriptor: ModuleDescriptor,
     override val name: Name,
     override val irBuiltins: IrBuiltIns,
 ) : BirModuleFragment() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
     override val files: BirChildElementList<BirFile> = BirChildElementList(this, 0)
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

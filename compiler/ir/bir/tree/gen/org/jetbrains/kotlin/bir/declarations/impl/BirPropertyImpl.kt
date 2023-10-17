@@ -25,28 +25,180 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var isExternal: Boolean,
-    override var visibility: DescriptorVisibility,
-    override var modality: Modality,
-    override var isFakeOverride: Boolean,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    isExternal: Boolean,
+    visibility: DescriptorVisibility,
+    modality: Modality,
+    isFakeOverride: Boolean,
     override var overriddenSymbols: List<BirPropertySymbol>,
-    override var isVar: Boolean,
-    override var isConst: Boolean,
-    override var isLateinit: Boolean,
-    override var isDelegated: Boolean,
-    override var isExpect: Boolean,
+    isVar: Boolean,
+    isConst: Boolean,
+    isLateinit: Boolean,
+    isDelegated: Boolean,
+    isExpect: Boolean,
     backingField: BirField?,
     getter: BirSimpleFunction?,
     setter: BirSimpleFunction?,
 ) : BirProperty() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _isExternal: Boolean = isExternal
+
+    override var isExternal: Boolean
+        get() = _isExternal
+        set(value) {
+            if (_isExternal != value) {
+                _isExternal = value
+                invalidate()
+            }
+        }
+
+    private var _visibility: DescriptorVisibility = visibility
+
+    override var visibility: DescriptorVisibility
+        get() = _visibility
+        set(value) {
+            if (_visibility != value) {
+                _visibility = value
+                invalidate()
+            }
+        }
+
+    private var _modality: Modality = modality
+
+    override var modality: Modality
+        get() = _modality
+        set(value) {
+            if (_modality != value) {
+                _modality = value
+                invalidate()
+            }
+        }
+
+    private var _isFakeOverride: Boolean = isFakeOverride
+
+    override var isFakeOverride: Boolean
+        get() = _isFakeOverride
+        set(value) {
+            if (_isFakeOverride != value) {
+                _isFakeOverride = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _isVar: Boolean = isVar
+
+    override var isVar: Boolean
+        get() = _isVar
+        set(value) {
+            if (_isVar != value) {
+                _isVar = value
+                invalidate()
+            }
+        }
+
+    private var _isConst: Boolean = isConst
+
+    override var isConst: Boolean
+        get() = _isConst
+        set(value) {
+            if (_isConst != value) {
+                _isConst = value
+                invalidate()
+            }
+        }
+
+    private var _isLateinit: Boolean = isLateinit
+
+    override var isLateinit: Boolean
+        get() = _isLateinit
+        set(value) {
+            if (_isLateinit != value) {
+                _isLateinit = value
+                invalidate()
+            }
+        }
+
+    private var _isDelegated: Boolean = isDelegated
+
+    override var isDelegated: Boolean
+        get() = _isDelegated
+        set(value) {
+            if (_isDelegated != value) {
+                _isDelegated = value
+                invalidate()
+            }
+        }
+
+    private var _isExpect: Boolean = isExpect
+
+    override var isExpect: Boolean
+        get() = _isExpect
+        set(value) {
+            if (_isExpect != value) {
+                _isExpect = value
+                invalidate()
+            }
+        }
 
     private var _backingField: BirField? = backingField
 
@@ -56,6 +208,7 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_backingField != value) {
                 replaceChild(_backingField, value)
                 _backingField = value
+                invalidate()
             }
         }
 
@@ -67,6 +220,7 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_getter != value) {
                 replaceChild(_getter, value)
                 _getter = value
+                invalidate()
             }
         }
 
@@ -78,6 +232,7 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_setter != value) {
                 replaceChild(_setter, value)
                 _setter = value
+                invalidate()
             }
         }
     init {

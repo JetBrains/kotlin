@@ -14,10 +14,21 @@ import org.jetbrains.kotlin.bir.expressions.BirElseBranch
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 
 class BirElseBranchImpl(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     condition: BirExpression,
     result: BirExpression,
 ) : BirElseBranch() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
     private var _condition: BirExpression = condition
 
     override var condition: BirExpression
@@ -26,6 +37,7 @@ class BirElseBranchImpl(
             if (_condition != value) {
                 replaceChild(_condition, value)
                 _condition = value
+                invalidate()
             }
         }
 
@@ -37,6 +49,7 @@ class BirElseBranchImpl(
             if (_result != value) {
                 replaceChild(_result, value)
                 _result = value
+                invalidate()
             }
         }
     init {

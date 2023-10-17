@@ -19,15 +19,59 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var isStatic: Boolean,
+    origin: IrDeclarationOrigin,
+    isStatic: Boolean,
     body: BirBlockBody,
 ) : BirAnonymousInitializer() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _isStatic: Boolean = isStatic
+
+    override var isStatic: Boolean
+        get() = _isStatic
+        set(value) {
+            if (_isStatic != value) {
+                _isStatic = value
+                invalidate()
+            }
+        }
+
     private var _body: BirBlockBody = body
 
     override var body: BirBlockBody
@@ -36,6 +80,7 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_body != value) {
                 replaceChild(_body, value)
                 _body = value
+                invalidate()
             }
         }
     init {

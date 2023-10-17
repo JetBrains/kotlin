@@ -29,33 +29,132 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var isExternal: Boolean,
-    override var visibility: DescriptorVisibility,
-    override var isInline: Boolean,
-    override var isExpect: Boolean,
-    override var returnType: BirType,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    isExternal: Boolean,
+    visibility: DescriptorVisibility,
+    isInline: Boolean,
+    isExpect: Boolean,
+    returnType: BirType,
     dispatchReceiverParameter: BirValueParameter?,
     extensionReceiverParameter: BirValueParameter?,
-    override var contextReceiverParametersCount: Int,
+    contextReceiverParametersCount: Int,
     body: BirBody?,
-    override var modality: Modality,
-    override var isFakeOverride: Boolean,
+    modality: Modality,
+    isFakeOverride: Boolean,
     override var overriddenSymbols: List<BirSimpleFunctionSymbol>,
-    override var isTailrec: Boolean,
-    override var isSuspend: Boolean,
-    override var isOperator: Boolean,
-    override var isInfix: Boolean,
-    override var correspondingPropertySymbol: BirPropertySymbol?,
+    isTailrec: Boolean,
+    isSuspend: Boolean,
+    isOperator: Boolean,
+    isInfix: Boolean,
+    correspondingPropertySymbol: BirPropertySymbol?,
 ) : BirSimpleFunction() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _isExternal: Boolean = isExternal
+
+    override var isExternal: Boolean
+        get() = _isExternal
+        set(value) {
+            if (_isExternal != value) {
+                _isExternal = value
+                invalidate()
+            }
+        }
+
+    private var _visibility: DescriptorVisibility = visibility
+
+    override var visibility: DescriptorVisibility
+        get() = _visibility
+        set(value) {
+            if (_visibility != value) {
+                _visibility = value
+                invalidate()
+            }
+        }
+
     override var typeParameters: BirChildElementList<BirTypeParameter> =
             BirChildElementList(this, 0)
+
+    private var _isInline: Boolean = isInline
+
+    override var isInline: Boolean
+        get() = _isInline
+        set(value) {
+            if (_isInline != value) {
+                _isInline = value
+                invalidate()
+            }
+        }
+
+    private var _isExpect: Boolean = isExpect
+
+    override var isExpect: Boolean
+        get() = _isExpect
+        set(value) {
+            if (_isExpect != value) {
+                _isExpect = value
+                invalidate()
+            }
+        }
+
+    private var _returnType: BirType = returnType
+
+    override var returnType: BirType
+        get() = _returnType
+        set(value) {
+            if (_returnType != value) {
+                _returnType = value
+                invalidate()
+            }
+        }
 
     private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
 
@@ -65,6 +164,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_dispatchReceiverParameter != value) {
                 replaceChild(_dispatchReceiverParameter, value)
                 _dispatchReceiverParameter = value
+                invalidate()
             }
         }
 
@@ -76,11 +176,23 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_extensionReceiverParameter != value) {
                 replaceChild(_extensionReceiverParameter, value)
                 _extensionReceiverParameter = value
+                invalidate()
             }
         }
 
     override var valueParameters: BirChildElementList<BirValueParameter> =
             BirChildElementList(this, 1)
+
+    private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
+
+    override var contextReceiverParametersCount: Int
+        get() = _contextReceiverParametersCount
+        set(value) {
+            if (_contextReceiverParametersCount != value) {
+                _contextReceiverParametersCount = value
+                invalidate()
+            }
+        }
 
     private var _body: BirBody? = body
 
@@ -90,10 +202,97 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_body != value) {
                 replaceChild(_body, value)
                 _body = value
+                invalidate()
             }
         }
 
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _modality: Modality = modality
+
+    override var modality: Modality
+        get() = _modality
+        set(value) {
+            if (_modality != value) {
+                _modality = value
+                invalidate()
+            }
+        }
+
+    private var _isFakeOverride: Boolean = isFakeOverride
+
+    override var isFakeOverride: Boolean
+        get() = _isFakeOverride
+        set(value) {
+            if (_isFakeOverride != value) {
+                _isFakeOverride = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _isTailrec: Boolean = isTailrec
+
+    override var isTailrec: Boolean
+        get() = _isTailrec
+        set(value) {
+            if (_isTailrec != value) {
+                _isTailrec = value
+                invalidate()
+            }
+        }
+
+    private var _isSuspend: Boolean = isSuspend
+
+    override var isSuspend: Boolean
+        get() = _isSuspend
+        set(value) {
+            if (_isSuspend != value) {
+                _isSuspend = value
+                invalidate()
+            }
+        }
+
+    private var _isOperator: Boolean = isOperator
+
+    override var isOperator: Boolean
+        get() = _isOperator
+        set(value) {
+            if (_isOperator != value) {
+                _isOperator = value
+                invalidate()
+            }
+        }
+
+    private var _isInfix: Boolean = isInfix
+
+    override var isInfix: Boolean
+        get() = _isInfix
+        set(value) {
+            if (_isInfix != value) {
+                _isInfix = value
+                invalidate()
+            }
+        }
+
+    private var _correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
+
+    override var correspondingPropertySymbol: BirPropertySymbol?
+        get() = _correspondingPropertySymbol
+        set(value) {
+            if (_correspondingPropertySymbol != value) {
+                _correspondingPropertySymbol = value
+                invalidate()
+            }
+        }
     init {
         initChild(_dispatchReceiverParameter)
         initChild(_extensionReceiverParameter)

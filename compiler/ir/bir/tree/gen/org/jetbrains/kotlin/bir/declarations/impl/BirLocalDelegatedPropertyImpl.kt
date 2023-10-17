@@ -22,19 +22,85 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptorWithAccessors,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var type: BirType,
-    override var isVar: Boolean,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    type: BirType,
+    isVar: Boolean,
     delegate: BirVariable,
     getter: BirSimpleFunction,
     setter: BirSimpleFunction?,
 ) : BirLocalDelegatedProperty() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _isVar: Boolean = isVar
+
+    override var isVar: Boolean
+        get() = _isVar
+        set(value) {
+            if (_isVar != value) {
+                _isVar = value
+                invalidate()
+            }
+        }
+
     private var _delegate: BirVariable = delegate
 
     override var delegate: BirVariable
@@ -43,6 +109,7 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_delegate != value) {
                 replaceChild(_delegate, value)
                 _delegate = value
+                invalidate()
             }
         }
 
@@ -54,6 +121,7 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_getter != value) {
                 replaceChild(_getter, value)
                 _getter = value
+                invalidate()
             }
         }
 
@@ -65,6 +133,7 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_setter != value) {
                 replaceChild(_setter, value)
                 _setter = value
+                invalidate()
             }
         }
     init {

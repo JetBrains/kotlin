@@ -19,16 +19,58 @@ import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirFunctionReferenceImpl(
-    override var sourceSpan: SourceSpan,
-    override var type: BirType,
-    override var symbol: BirFunctionSymbol,
+    sourceSpan: SourceSpan,
+    type: BirType,
+    symbol: BirFunctionSymbol,
     dispatchReceiver: BirExpression?,
     extensionReceiver: BirExpression?,
-    override var origin: IrStatementOrigin?,
-    override val typeArguments: Array<BirType?>,
-    override var reflectionTarget: BirFunctionSymbol?,
+    origin: IrStatementOrigin?,
+    override var typeArguments: List<BirType?>,
+    reflectionTarget: BirFunctionSymbol?,
 ) : BirFunctionReference() {
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _symbol: BirFunctionSymbol = symbol
+
+    override var symbol: BirFunctionSymbol
+        get() = _symbol
+        set(value) {
+            if (_symbol != value) {
+                _symbol = value
+                invalidate()
+            }
+        }
 
     private var _dispatchReceiver: BirExpression? = dispatchReceiver
 
@@ -38,6 +80,7 @@ class BirFunctionReferenceImpl(
             if (_dispatchReceiver != value) {
                 replaceChild(_dispatchReceiver, value)
                 _dispatchReceiver = value
+                invalidate()
             }
         }
 
@@ -49,11 +92,34 @@ class BirFunctionReferenceImpl(
             if (_extensionReceiver != value) {
                 replaceChild(_extensionReceiver, value)
                 _extensionReceiver = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrStatementOrigin? = origin
+
+    override var origin: IrStatementOrigin?
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
             }
         }
 
     override val valueArguments: BirChildElementList<BirExpression?> =
             BirChildElementList(this, 0)
+
+    private var _reflectionTarget: BirFunctionSymbol? = reflectionTarget
+
+    override var reflectionTarget: BirFunctionSymbol?
+        get() = _reflectionTarget
+        set(value) {
+            if (_reflectionTarget != value) {
+                _reflectionTarget = value
+                invalidate()
+            }
+        }
     init {
         initChild(_dispatchReceiver)
         initChild(_extensionReceiver)
