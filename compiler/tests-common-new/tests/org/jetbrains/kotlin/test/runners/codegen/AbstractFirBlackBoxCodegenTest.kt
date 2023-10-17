@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.test.runners.codegen
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.ir.CodegenWithIrFakeOverrideGeneratorSuppressor
-import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
-import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
+import org.jetbrains.kotlin.test.backend.ir.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
@@ -64,7 +61,10 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
             }
 
             configureIrHandlersStep {
-                useHandlers(::IrDiagnosticsHandler)
+                useHandlers(
+                    ::IrDiagnosticsHandler,
+                    ::IrConstCheckerHandler
+                )
             }
 
             useAfterAnalysisCheckers(
