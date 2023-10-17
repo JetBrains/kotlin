@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
@@ -109,18 +110,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val kotlinPluginVersion = config.kotlinPluginVersion
     private val kotlinLanguageVersion = config.kotlinLanguageVersion
 
-    private val log: KotlinLogger =
-        TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
-            ?: run {
-                val logger = LoggerFactory.getLogger("GradleKotlinCompilerWork")
-                val kotlinLogger = if (logger is Logger) {
-                    GradleKotlinLogger(logger)
-                } else SL4JKotlinLogger(logger)
-
-                kotlinLogger.apply {
-                    debug("Could not get logger for '$taskPath'. Falling back to sl4j logger")
-                }
-            }
+    private val log: KotlinLogger = getTaskLogger(taskPath, null, "GradleKotlinCompilerWork")
 
     private val isIncremental: Boolean
         get() = incrementalCompilationEnvironment != null

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.logging.SL4JKotlinLogger
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.FailedCompilationException
 import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
@@ -58,19 +59,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private val taskPath
         get() = workArguments.taskPath
 
-    private val log: KotlinLogger by lazy(LazyThreadSafetyMode.NONE) {
-        TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it, LOGGER_PREFIX).apply { debug("Using '$taskPath' logger") } }
-            ?: run {
-                val logger = LoggerFactory.getLogger("GradleKotlinCompilerWork")
-                val kotlinLogger = if (logger is org.gradle.api.logging.Logger) {
-                    GradleKotlinLogger(logger, LOGGER_PREFIX)
-                } else SL4JKotlinLogger(logger, LOGGER_PREFIX)
-
-                kotlinLogger.apply {
-                    debug("Could not get logger for '$taskPath'. Falling back to sl4j logger")
-                }
-            }
-    }
+    private val log: KotlinLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName)
 
     private fun performCompilation(): CompilationResult {
         val executionStrategy = workArguments.compilerExecutionSettings.strategy
