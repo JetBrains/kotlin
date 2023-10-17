@@ -101,6 +101,12 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
+    @TestMetadata("notEnabledKotlinPackage.kt")
+    public void testNotEnabledKotlinPackage() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/notEnabledKotlinPackage.kt");
+    }
+
+    @Test
     @TestMetadata("simpleScopeContextForPosition.kt")
     public void testSimpleScopeContextForPosition() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/simpleScopeContextForPosition.kt");
