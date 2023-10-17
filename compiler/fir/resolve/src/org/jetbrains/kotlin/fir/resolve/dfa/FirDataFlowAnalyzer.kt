@@ -1384,18 +1384,22 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private fun MutableFlow.addAllStatements(statements: TypeStatements) =
+    private fun MutableFlow.addAllStatements(statements: TypeStatements) {
         statements.values.forEach { addTypeStatement(it) }
+    }
 
-    private fun MutableFlow.addAllConditionally(condition: OperationStatement, statements: TypeStatements) =
+    private fun MutableFlow.addAllConditionally(condition: OperationStatement, statements: TypeStatements) {
         statements.values.forEach { addImplication(condition implies it) }
+    }
 
-    private fun MutableFlow.addAllConditionally(condition: OperationStatement, from: Flow) =
+    private fun MutableFlow.addAllConditionally(condition: OperationStatement, from: Flow) {
         from.knownVariables.forEach {
             // Only add the statement if this variable is not aliasing another in `this` (but it could be aliasing in `from`).
             if (unwrapVariable(it) == it) addImplication(condition implies (from.getTypeStatement(it) ?: return@forEach))
         }
+    }
 
-    private fun MutableFlow.commitOperationStatement(statement: OperationStatement) =
+    private fun MutableFlow.commitOperationStatement(statement: OperationStatement) {
         addAllStatements(logicSystem.approveOperationStatement(this, statement, removeApprovedOrImpossible = true))
+    }
 }

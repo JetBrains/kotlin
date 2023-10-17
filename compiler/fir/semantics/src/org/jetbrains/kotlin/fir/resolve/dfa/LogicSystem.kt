@@ -17,8 +17,9 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     abstract val variableStorage: VariableStorageImpl
 
-    protected open fun ConeKotlinType.isAcceptableForSmartcast(): Boolean =
-        !isNullableNothing
+    protected open fun ConeKotlinType.isAcceptableForSmartcast(): Boolean {
+        return !isNullableNothing
+    }
 
     fun joinFlow(flows: Collection<PersistentFlow>, union: Boolean): MutableFlow {
         when (flows.size) {
@@ -62,8 +63,8 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     fun addImplication(flow: MutableFlow, implication: Implication) {
         val effect = implication.effect
         if (effect == implication.condition) return
-        if (effect is TypeStatement && (effect.isEmpty ||
-                    flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true)
+        if (effect is TypeStatement &&
+            (effect.isEmpty || flow.approvedTypeStatements[effect.variable]?.exactType?.containsAll(effect.exactType) == true)
         ) return
         val variable = implication.condition.variable
         flow.logicStatements[variable] = flow.logicStatements[variable]?.add(implication) ?: persistentListOf(implication)
@@ -88,14 +89,17 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         }.build()
     }
 
-    fun approveOperationStatement(flow: PersistentFlow, statement: OperationStatement): TypeStatements =
-        approveOperationStatement(flow.logicStatements, statement, removeApprovedOrImpossible = false)
+    fun approveOperationStatement(flow: PersistentFlow, statement: OperationStatement): TypeStatements {
+        return approveOperationStatement(flow.logicStatements, statement, removeApprovedOrImpossible = false)
+    }
 
     fun approveOperationStatement(
         flow: MutableFlow,
         statement: OperationStatement,
         removeApprovedOrImpossible: Boolean,
-    ): TypeStatements = approveOperationStatement(flow.logicStatements, statement, removeApprovedOrImpossible)
+    ): TypeStatements {
+        return approveOperationStatement(flow.logicStatements, statement, removeApprovedOrImpossible)
+    }
 
     fun recordNewAssignment(flow: MutableFlow, variable: RealVariable, index: Int) {
         flow.replaceVariable(variable, null)
@@ -294,8 +298,9 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         exactType += other.exactType
     }
 
-    fun and(a: TypeStatement?, b: TypeStatement): TypeStatement =
-        a?.toMutable()?.apply { this += b } ?: b
+    fun and(a: TypeStatement?, b: TypeStatement): TypeStatement {
+        return a?.toMutable()?.apply { this += b } ?: b
+    }
 
     fun and(statements: Collection<TypeStatement>): TypeStatement? {
         when (statements.size) {
@@ -372,13 +377,14 @@ private fun MutableMap<DataFlowVariable, PersistentList<Implication>>.replaceVar
     }
 }
 
-private inline fun <T> PersistentList<T>.replaceAll(block: (T) -> T): PersistentList<T> =
-    mutate { result ->
+private inline fun <T> PersistentList<T>.replaceAll(block: (T) -> T): PersistentList<T> {
+    return mutate { result ->
         val it = result.listIterator()
         while (it.hasNext()) {
             it.set(block(it.next()))
         }
     }
+}
 
 private fun Implication.replaceVariable(from: RealVariable, to: RealVariable): Implication = when {
     condition.variable == from -> Implication(condition.copy(variable = to), effect.replaceVariable(from, to))
@@ -386,9 +392,11 @@ private fun Implication.replaceVariable(from: RealVariable, to: RealVariable): I
     else -> this
 }
 
-private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Statement =
-    if (variable != from) this else when (this) {
+private fun Statement.replaceVariable(from: RealVariable, to: RealVariable): Statement {
+    if (variable != from) return this
+    return when (this) {
         is OperationStatement -> copy(variable = to)
         is PersistentTypeStatement -> copy(variable = to)
         is MutableTypeStatement -> MutableTypeStatement(to, exactType)
     }
+}
