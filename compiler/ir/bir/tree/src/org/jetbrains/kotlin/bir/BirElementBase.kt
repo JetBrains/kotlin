@@ -138,6 +138,7 @@ abstract class BirElementBase : BirElement {
 
 
     internal fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
+        @Suppress("UNCHECKED_CAST")
         return dynamicProperties?.get(token.key.index) as T?
     }
 
