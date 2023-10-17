@@ -14,7 +14,7 @@ expect fun onType(): @Ann2("") Any?
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual annotation class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("annotation class Ann : Annotation; annotation class Ann : Annotation; Annotation `@Target(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|))` is missing on actual declaration")!>Ann<!><!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual annotation class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("annotation class Ann : Annotation; annotation class Ann : Annotation; Annotation `@Target(allowedTargets = vararg(Q|AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|))` is missing on actual declaration")!>Ann<!><!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun stringConcat(): Unit; fun stringConcat(): Unit; Annotation `@Ann2(s = String(1).R|kotlin/String.plus|(String(2)))` is missing on actual declaration")!>stringConcat<!>() {}<!>
 

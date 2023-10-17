@@ -1183,7 +1183,7 @@ class FirRenderer(
             print("Q|")
             val classId = resolvedQualifier.classId
             if (classId != null) {
-                print(classId.asString())
+                idRenderer.renderClassId(classId)
             } else {
                 print(resolvedQualifier.packageFqName.asString().replace(".", "/"))
             }
