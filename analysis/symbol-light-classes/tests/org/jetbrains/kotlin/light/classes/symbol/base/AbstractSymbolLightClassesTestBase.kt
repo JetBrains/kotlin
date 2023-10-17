@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.light.classes.symbol.base
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
@@ -43,7 +45,7 @@ private const val TEST_MODULE_NAME = "light_idea_test_case"
 
 abstract class AbstractSymbolLightClassesTestBase(
     override val configurator: AnalysisApiTestConfigurator
-) : AbstractAnalysisApiBasedSingleModuleTest() {
+) : AbstractAnalysisApiBasedTest() {
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
@@ -58,7 +60,13 @@ abstract class AbstractSymbolLightClassesTestBase(
         }
     }
 
-    override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val lastModule = moduleStructure.modules.last()
+        val ktFiles = testServices.ktModuleProvider.getModuleFiles(lastModule).filterIsInstance<KtFile>()
+        doTestByFileStructure(ktFiles, lastModule, testServices)
+    }
+
+    open fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         if (isTestAgainstCompiledCode && CompilerExecutor.Directives.COMPILATION_ERRORS in module.directives) {
             return
         }
