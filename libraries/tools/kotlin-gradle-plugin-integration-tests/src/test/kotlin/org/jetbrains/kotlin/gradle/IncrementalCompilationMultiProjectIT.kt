@@ -338,6 +338,22 @@ abstract class IncrementalCompilationJvmMultiProjectWithPreciseBackupIT : Increm
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }
 
+class IncrementalCompilationK2JvmMultiProjectBuildToolsApiDaemonIT : IncrementalCompilationJvmMultiProjectWithPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
+
+    @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
+    override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
+    }
+}
+
+class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : IncrementalCompilationJvmMultiProjectWithPreciseBackupIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
+
+    @Disabled("Doesn't make sense since Build Tools API supports incremental compilation for the in-process mode")
+    override fun testMissingIncrementalState(gradleVersion: GradleVersion) {
+    }
+}
+
 class IncrementalCompilationK1JvmMultiProjectWithPreciseBackupIT : IncrementalCompilationJvmMultiProjectWithPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
@@ -897,7 +913,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
     @DisplayName("Test compilation when incremental state is missing")
     @GradleTest
-    fun testMissingIncrementalState(gradleVersion: GradleVersion) {
+    open fun testMissingIncrementalState(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
             // Perform the first non-incremental build without using Kotlin daemon so that incremental state is not produced
             build(

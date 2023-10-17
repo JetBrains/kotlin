@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -181,4 +182,12 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
 
 class KotlinAndroidIncrementalWithPreciseBackupIT : KotlinAndroidIncrementalIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+}
+
+class KotlinAndroidIncrementalBuildToolsApiDaemonIT : KotlinAndroidIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
+}
+
+class KotlinAndroidIncrementalBuildToolsApiInProcessIT : KotlinAndroidIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 }

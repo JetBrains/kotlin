@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -100,6 +101,56 @@ class IncrementalK1JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
 @DisplayName("Default incremental compilation with default precise java tracking on K2")
 class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
+    }
+}
+
+@DisplayName("Default incremental compilation via Build Tools API")
+class IncrementalK2JavaChangeBuildToolsApiDaemonIT : IncrementalJavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
+        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
+    }
+
+    @Disabled("KT-57147")
+    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
+        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
+    }
+}
+
+@DisplayName("Incremental compilation via Build Tools API using in-process strategy")
+class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
 
     @Disabled("KT-57147")
     override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
