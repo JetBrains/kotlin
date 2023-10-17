@@ -16432,6 +16432,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("overloadResolutionByLambdaReturnTypeInsideBI.kt")
+                public void testOverloadResolutionByLambdaReturnTypeInsideBI() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/overloadResolutionByLambdaReturnTypeInsideBI.kt");
+                }
+
+                @Test
                 @TestMetadata("propertySubstitution.kt")
                 public void testPropertySubstitution() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/propertySubstitution.kt");
