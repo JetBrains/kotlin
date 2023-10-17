@@ -39196,6 +39196,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("returnsImpliesAndSafeCalls.kt")
+                public void testReturnsImpliesAndSafeCalls() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/returnsImpliesAndSafeCalls.kt");
+                }
+
+                @Test
                 @TestMetadata("safecallAndReturnsNull.kt")
                 public void testSafecallAndReturnsNull() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts/safecallAndReturnsNull.kt");

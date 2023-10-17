@@ -822,10 +822,41 @@ abstract class FirDataFlowAnalyzer(
             // Otherwise if the result is non-null, then `b` executed, which implies `a` is not null
             // and every statement from `b` holds.
             val expressionVariable = variableStorage.getOrCreate(flow, safeCall)
-            // TODO? all new implications in previous node's flow are valid here if receiver != null
-            //  (that requires a second level of implications: receiver != null => condition => effect).
-            //  KT-59689
-            flow.addAllConditionally(expressionVariable notEq null, node.lastPreviousNode.getFlow(path))
+            val previousFlow = node.lastPreviousNode.getFlow(path)
+
+            flow.addAllConditionally(expressionVariable notEq null, previousFlow)
+
+            /*
+             * If we have some implication about rhs of safe call in the previous flow, then we can expand them to the whole
+             *   safe call variable
+             *
+             * a?.foo() // original call
+             * subj.foo() // rhs of safe call
+             *
+             * previousFlow:
+             *  - subj.foo() == True -> X_1
+             *  - subj.foo() == False -> X_2
+             *  - subj.foo() != Null -> X_3
+             *  - subj.foo() == Null -> X_4
+             *
+             * flow:
+             *  - a?.foo() == True -> X_1
+             *  - a?.foo() == False -> X_2
+             *  - a?.foo() != Null -> X_3
+             *
+             * Note that we don't pass implication with 'subj.foo() == Null' in the condition because there are two different ways
+             *   why `a?.foo()` may be `null` -- it's either `a` is `null` or `subj.foo()` is `null`, and we can't differentiate between
+             *   them
+             *
+             * Also, an implementation note: in the following lines we use `expressionVariable` made on safe call expression when looking
+             *   for implications from previous flow in the subject, because VariableStorage doesn't differ between the whole safe call
+             *   and synthetically generated selector, see [variableStorage.getOrCreate] implementation
+             */
+            previousFlow.implications[expressionVariable]?.forEach {
+                if (it.condition.operation != Operation.EqNull) {
+                    flow.addImplication(it)
+                }
+            }
         }
     }
 
@@ -1073,8 +1104,6 @@ abstract class FirDataFlowAnalyzer(
             // If `left && right` is true, then both are evaluated to true. If `left || right` is false, then both are false.
             // Approved type statements for RHS already contain everything implied by the corresponding value of LHS.
             val bothEvaluated = operatorVariable eq isAnd
-            // TODO? `bothEvaluated` also implies all implications from RHS. This requires a second level
-            //  of implications, which the logic system currently doesn't support. See also safe calls. KT-59689
             flow.addAllConditionally(bothEvaluated, flowFromRight)
             if (rightIsBoolean) {
                 flow.addAllConditionally(bothEvaluated, logicSystem.approveOperationStatement(flowFromRight, rightVariable!! eq isAnd))
