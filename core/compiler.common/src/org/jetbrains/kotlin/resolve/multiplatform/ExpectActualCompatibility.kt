@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.multiplatform
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility.Mismatch
 
 private const val TYPE_PARAMETER_COUNT = "number of type parameters is different"
+private const val TYPE_PARAMETER_UPPER_BOUNDS = "upper bounds of type parameters are different"
 
 // Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
 /**
@@ -37,7 +38,7 @@ sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothi
     object ParameterCount : Mismatch("number of value parameters is different")
     object FunctionTypeParameterCount : Mismatch(TYPE_PARAMETER_COUNT)
     object ParameterTypes : Mismatch("parameter types are different")
-    object FunctionTypeParameterUpperBounds : Mismatch("upper bounds of type parameters are different")
+    object FunctionTypeParameterUpperBounds : Mismatch(TYPE_PARAMETER_UPPER_BOUNDS)
     object MatchedSuccessfully : ExpectActualMatchingCompatibility()
 }
 
@@ -90,7 +91,7 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object Modality : Incompatible<Nothing>("modality is different")
     object Visibility : Incompatible<Nothing>("visibility is different")
 
-    object ClassTypeParameterUpperBounds : Incompatible<Nothing>(ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds.reason)
+    object ClassTypeParameterUpperBounds : Incompatible<Nothing>(TYPE_PARAMETER_UPPER_BOUNDS)
     object TypeParameterVariance : Incompatible<Nothing>("declaration-site variances of type parameters are different")
     object TypeParameterReified : Incompatible<Nothing>("some type parameter is reified in one declaration and non-reified in the other")
     object Compatible : ExpectActualCheckingCompatibility<Nothing>()
