@@ -13,4 +13,6 @@ package org.jetbrains.kotlin.bir.expressions
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.getSingletonValue]
  */
-abstract class BirGetSingletonValue : BirDeclarationReference()
+abstract class BirGetSingletonValue : BirDeclarationReference() {
+    companion object
+}

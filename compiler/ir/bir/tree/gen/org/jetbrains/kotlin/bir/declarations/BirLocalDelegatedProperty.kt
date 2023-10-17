@@ -42,4 +42,6 @@ abstract class BirLocalDelegatedProperty : BirElementBase(), BirDeclaration,
         getter.accept(data, visitor)
         setter?.accept(data, visitor)
     }
+
+    companion object
 }

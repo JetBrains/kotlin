@@ -27,4 +27,6 @@ abstract class BirContainerExpression : BirExpression(), BirStatementContainer {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         statements.forEach { it.accept(data, visitor) }
     }
+
+    companion object
 }

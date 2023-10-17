@@ -34,4 +34,6 @@ abstract class BirLocalDelegatedPropertyReference :
         extensionReceiver?.accept(data, visitor)
         valueArguments.forEach { it?.accept(data, visitor) }
     }
+
+    companion object
 }

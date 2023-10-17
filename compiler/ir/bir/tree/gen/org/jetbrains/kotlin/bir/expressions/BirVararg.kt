@@ -26,4 +26,6 @@ abstract class BirVararg : BirExpression() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         elements.forEach { it.accept(data, visitor) }
     }
+
+    companion object
 }

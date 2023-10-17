@@ -26,4 +26,6 @@ abstract class BirErrorCallExpression : BirErrorExpression() {
         explicitReceiver?.accept(data, visitor)
         arguments.forEach { it.accept(data, visitor) }
     }
+
+    companion object
 }

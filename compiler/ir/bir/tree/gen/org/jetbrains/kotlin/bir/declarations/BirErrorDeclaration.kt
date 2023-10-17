@@ -15,4 +15,6 @@ import org.jetbrains.kotlin.bir.BirElementBase
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.errorDeclaration]
  */
-abstract class BirErrorDeclaration : BirElementBase(), BirDeclaration
+abstract class BirErrorDeclaration : BirElementBase(), BirDeclaration {
+    companion object
+}

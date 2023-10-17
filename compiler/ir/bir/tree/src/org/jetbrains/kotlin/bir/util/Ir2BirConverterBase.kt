@@ -186,6 +186,7 @@ abstract class Ir2BirConverterBase {
     }
 
     protected fun <Ir : IrElement, Bir : BirElement> BirChildElementList<Bir>.copyElements(from: List<Ir>) {
+        ensureCapacity(from.size)
         for (ir in from) {
             val bir = copyElement<Bir>(ir)
             this += bir
@@ -193,6 +194,7 @@ abstract class Ir2BirConverterBase {
     }
 
     protected fun BirMemberAccessExpression<*>.copyIrMemberAccessExpressionValueArguments(from: IrMemberAccessExpression<*>) {
+        valueArguments.ensureCapacity(from.valueArgumentsCount)
         for (i in 0 until from.valueArgumentsCount) {
             val arg = from.getValueArgument(i)
             valueArguments += arg?.let { copyElement(it) as BirExpression }
@@ -272,6 +274,7 @@ abstract class Ir2BirConverterBase {
     companion object {
         fun IrElement.convertToBir(birForest: BirForest): BirElement {
             val converter = Ir2BirConverter()
+            converter.birForest = birForest
             return converter.copyIrTree(listOf(this)).single()
         }
     }
