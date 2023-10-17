@@ -39,6 +39,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     override var isValue: Boolean,
     override var isExpect: Boolean,
     override var isFun: Boolean,
+    override var hasEnumEntries: Boolean,
     override val source: SourceElement,
     override var superTypes: List<BirType>,
     thisReceiver: BirValueParameter?,
