@@ -43,7 +43,7 @@ class FirDelegatedPropertyInferenceSession(
 
     private val currentConstraintSystem =
         (delegateExpression as? FirResolvable)?.candidate()?.system
-            ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.outerSystem
+            ?: (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem
             ?: components.session.inferenceComponents.createConstraintSystem()
     val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
 
