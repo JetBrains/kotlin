@@ -567,28 +567,22 @@ class MethodInliner(
                 val isInlineFunctionMarker = name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
                 val newName = when {
                     inliningContext.isRoot && !isInlineFunctionMarker -> {
-                        if (inliningContext.inlineScopesGenerator != null) {
-                            calculateNewNameUsingScopeNumbers(name)
-                        } else {
-                            calculateNewNameUsingTheOldScheme(name)
-                        }
+                        calculateNewNamePrefix(name) + INLINE_FUN_VAR_SUFFIX
                     }
                     else -> name
                 }
                 super.visitLocalVariable(newName, desc, signature, start, end, getNewIndex(index))
             }
 
-            private fun calculateNewNameUsingScopeNumbers(name: String): String {
+            private fun calculateNewNamePrefix(name: String): String {
                 if (name.startsWith(AsmUtil.THIS)) {
-                    val scopeNumber = name.getInlineScopeInfo()?.scopeNumber ?: return AsmUtil.INLINE_DECLARATION_SITE_THIS
-                    return "${AsmUtil.INLINE_DECLARATION_SITE_THIS}$INLINE_SCOPE_NUMBER_SEPARATOR$scopeNumber"
+                    if (inliningContext.inlineScopesGenerator != null) {
+                        val scopeNumber = name.getInlineScopeInfo()?.scopeNumber ?: return AsmUtil.INLINE_DECLARATION_SITE_THIS
+                        return "${AsmUtil.INLINE_DECLARATION_SITE_THIS}$INLINE_SCOPE_NUMBER_SEPARATOR$scopeNumber"
+                    }
+                    return AsmUtil.INLINE_DECLARATION_SITE_THIS
                 }
                 return name
-            }
-
-            private fun calculateNewNameUsingTheOldScheme(name: String): String {
-                val namePrefix = if (name == AsmUtil.THIS) AsmUtil.INLINE_DECLARATION_SITE_THIS else name
-                return namePrefix + INLINE_FUN_VAR_SUFFIX
             }
         }
 
@@ -1334,25 +1328,16 @@ private fun incrementScopeNumbersOfVariables(node: MethodNode, label: Label): In
 
 private fun incrementScopeNumbers(name: String): String {
     val (scopeNumber, callSiteLineNumber, surroundingScopeNumber) = name.getInlineScopeInfo() ?: return name
-    return buildString {
-        append(name.dropInlineScopeInfo())
-        append(INLINE_SCOPE_NUMBER_SEPARATOR)
-        append(scopeNumber + 1)
-
-        if (callSiteLineNumber != null) {
-            append(INLINE_SCOPE_NUMBER_SEPARATOR)
-            append(callSiteLineNumber)
-        }
-
-        if (surroundingScopeNumber != null) {
-            val resultingSurroundingScopeNumber =
-                if (surroundingScopeNumber != 0) {
-                    surroundingScopeNumber + 1
-                } else {
-                    0
-                }
-            append(INLINE_SCOPE_NUMBER_SEPARATOR)
-            append(resultingSurroundingScopeNumber)
-        }
+    val nameBuilder = VariableNameBuilder(name)
+    nameBuilder.callSiteLineNumber = callSiteLineNumber
+    nameBuilder.scopeNumber = scopeNumber + 1
+    if (surroundingScopeNumber != null) {
+        nameBuilder.surroundingScopeNumber =
+            if (surroundingScopeNumber != 0) {
+                surroundingScopeNumber + 1
+            } else {
+                0
+            }
     }
+    return nameBuilder.build()
 }

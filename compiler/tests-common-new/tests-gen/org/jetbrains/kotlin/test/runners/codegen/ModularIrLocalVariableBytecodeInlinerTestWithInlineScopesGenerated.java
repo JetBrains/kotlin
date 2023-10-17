@@ -72,4 +72,10 @@ public class ModularIrLocalVariableBytecodeInlinerTestWithInlineScopesGenerated 
     public void testInlineScopes8() throws Exception {
         runTest("compiler/testData/inlineScopes/inlineScopes8.kt");
     }
+
+    @Test
+    @TestMetadata("inlineScopes9.kt")
+    public void testInlineScopes9() throws Exception {
+        runTest("compiler/testData/inlineScopes/inlineScopes9.kt");
+    }
 }

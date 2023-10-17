@@ -52,28 +52,28 @@ fun box() {
 // test.kt:43 box:
 // test.kt:44 box: m:int=-1:int
 // library.kt:11 box: m:int=-1:int, $i$f$bar\1\44:int=0:int
-// library.kt:12 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int
-// library.kt:21 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int
-// library.kt:22 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int
-// library.kt:27 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int, $i$f$x2\3\92:int=0:int
-// library.kt:28 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int, $i$f$x2\3\92:int=0:int, x2\3:int=2:int
-// library.kt:23 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int
-// library.kt:24 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int, x3\2:int=3:int
-// library.kt:13 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int
+// library.kt:12 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1$iv:int=0:int
+// library.kt:21 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1$iv:int=0:int, $i$f$x1\2\82:int=0:int
+// library.kt:22 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1$iv:int=0:int, $i$f$x1\2\82:int=0:int, x1\2$iv$iv:int=1:int
+// library.kt:27 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1$iv:int=0:int, $i$f$x1\2\82:int=0:int, x1\2$iv$iv:int=1:int, $i$f$x2\3\92:int=0:int
+// library.kt:28 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1$iv:int=0:int, $i$f$x1\2\82:int=0:int, x1\2$iv$iv:int=1:int, $i$f$x2\3\92:int=0:int, x2\3$iv$iv$iv:int=2:int
+// library.kt:23 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1$iv:int=0:int, $i$f$x1\2\82:int=0:int, x1\2$iv$iv:int=1:int
+// library.kt:24 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1$iv:int=0:int, $i$f$x1\2\82:int=0:int, x1\2$iv$iv:int=1:int, x3\2$iv$iv:int=3:int
+// library.kt:13 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1$iv:int=0:int
 // test.kt:45 box: m:int=-1:int
 // library.kt:5 box: m:int=-1:int, $i$f$foo\4\45:int=0:int
-// library.kt:6 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int
-// test.kt:46 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int, it\5:int=8:int, $i$a$-foo-TestKt$box$1\5\100\0:int=0:int
-// test.kt:47 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int, it\5:int=8:int, $i$a$-foo-TestKt$box$1\5\100\0:int=0:int, x8\5:int=8:int
-// library.kt:6 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int
-// library.kt:7 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int
-// library.kt:8 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int, x7\4:int=7:int
+// library.kt:6 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4$iv:int=6:int
+// test.kt:46 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4$iv:int=6:int, it\5:int=8:int, $i$a$-foo-TestKt$box$1\5\100\0:int=0:int
+// test.kt:47 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4$iv:int=6:int, it\5:int=8:int, $i$a$-foo-TestKt$box$1\5\100\0:int=0:int, x8\5:int=8:int
+// library.kt:6 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4$iv:int=6:int
+// library.kt:7 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4$iv:int=6:int
+// library.kt:8 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4$iv:int=6:int, x7\4$iv:int=7:int
 // test.kt:48 box: m:int=-1:int
 // library.kt:16 box: m:int=-1:int, $i$f$baz\6\48:int=0:int
 // library.kt:31 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x4\7\103:int=0:int
-// library.kt:32 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x4\7\103:int=0:int, x4\7:int=4:int
+// library.kt:32 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x4\7\103:int=0:int, x4\7$iv$iv:int=4:int
 // library.kt:17 box: m:int=-1:int, $i$f$baz\6\48:int=0:int
 // library.kt:35 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x5\8\106:int=0:int
-// library.kt:36 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x5\8\106:int=0:int, x5\8:int=5:int
+// library.kt:36 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x5\8\106:int=0:int, x5\8$iv$iv:int=5:int
 // library.kt:18 box: m:int=-1:int, $i$f$baz\6\48:int=0:int
 // test.kt:49 box: m:int=-1:int
