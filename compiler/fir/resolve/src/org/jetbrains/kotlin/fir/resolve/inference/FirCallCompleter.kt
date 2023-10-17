@@ -94,7 +94,7 @@ class FirCallCompleter(
 
             when {
                 inferenceSession is FirBuilderInferenceSession2 -> when {
-                    inferenceSession.shouldAvoidFullCompletion(call) && it == ConstraintSystemCompletionMode.FULL -> ConstraintSystemCompletionMode.ONLY_LAMBDAS
+                    inferenceSession.shouldAvoidFullCompletion(call) && it == ConstraintSystemCompletionMode.FULL -> ConstraintSystemCompletionMode.PARTIAL_BI
                     else -> it
                 }
                 else -> when {
