@@ -18,13 +18,18 @@ import org.jetbrains.kotlin.formver.viper.ast.*
  *   function cast(a: A, newType: Type): B
  *
  *   axiom null_cast {
- *     (forall newType: Type :: { (cast((null_val(): Nullable[A]), NullableType(newType)): Nullable[B]) }
- *       (cast((null_val(): Nullable[A]), NullableType(newType)): Nullable[B]) == (null_val(): Nullable[B]))
+ *     (forall newType: Type ::
+ *       { (cast((null_val(): Nullable[A]), newType): Nullable[B]) }
+ *       is_nullable_type(newType) ==>
+ *         (cast((null_val(): Nullable[A]), newType): Nullable[B])
+ *            ==
+ *         (null_val(): Nullable[B]))
  *   }
  *
  *   axiom type_of_cast {
- *     (forall a: A, newType: Type :: { (typeOf((cast(a, newType): B)): Type) }
- *       (typeOf((cast(a, newType): B)): Type) == newType)
+ *     (forall a: A, newType: Type ::
+ *       { (typeOf((cast(a, newType): B)): Type) }
+ *       isSubtype((typeOf((cast(a, newType): B)): Type), newType))
  *   }
  * }
  * ```
@@ -55,11 +60,14 @@ object CastingDomain : BuiltinDomain("Casting") {
             Exp.Forall1(
                 newType.decl(),
                 Exp.Trigger1(
-                    cast(NullableDomain.nullVal(A), TypeDomain.nullableType(newType.use()), NullableDomain.nullableType(B))
+                    cast(NullableDomain.nullVal(A), newType.use(), NullableDomain.nullableType(B))
                 ),
-                Exp.EqCmp(
-                    cast(NullableDomain.nullVal(A), TypeDomain.nullableType(newType.use()), NullableDomain.nullableType(B)),
-                    NullableDomain.nullVal(B)
+                Exp.Implies(
+                    TypeDomain.isNullableType(newType.use()),
+                    Exp.EqCmp(
+                        cast(NullableDomain.nullVal(A), newType.use(), NullableDomain.nullableType(B)),
+                        NullableDomain.nullVal(B)
+                    )
                 )
             )
         )

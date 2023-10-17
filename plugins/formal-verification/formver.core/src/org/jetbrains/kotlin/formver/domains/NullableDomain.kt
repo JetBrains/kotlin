@@ -15,18 +15,21 @@ import org.jetbrains.kotlin.formver.viper.ast.*
  *   function null_val(): Nullable[T]
  *
  *   axiom some_not_null {
- *     (forall x: T, newType: Type :: { (cast(x, NullableType(newType)): Nullable[T]) }
+ *     (forall x: T, newType: Type ::
+ *       { (cast(x, NullableType(newType)): Nullable[T]) }
  *       !is_nullable_type(newType) ==>
  *         (cast(x, NullableType(newType)): Nullable[T]) != (null_val(): Nullable[T]))
  *   }
  *
  *   axiom val_of_nullable_of_val {
- *     (forall x: T, newType: Type :: { (cast((cast(x, NullableType(newType)): Nullable[T]), (typeOf(x): Type)): T) }
+ *     (forall x: T, newType: Type ::
+ *       { (cast((cast(x, NullableType(newType)): Nullable[T]), (typeOf(x): Type)): T) }
  *       (cast((cast(x, NullableType(newType)): Nullable[T]), (typeOf(x): Type)): T) == x)
  *   }
  *
  *   axiom nullable_of_val_of_nullable {
- *     (forall nx: Nullable[T], newType: Type :: { (cast((cast(nx, newType): T), (typeOf(nx): Type)): Nullable[T]) }
+ *     (forall nx: Nullable[T], newType: Type ::
+ *       { (cast((cast(nx, newType): T), (typeOf(nx): Type)): Nullable[T]) }
  *       nx != (null_val(): Nullable[T]) ==>
  *         (cast((cast(nx, newType): T), (typeOf(nx): Type)): Nullable[T]) == nx)
  *   }

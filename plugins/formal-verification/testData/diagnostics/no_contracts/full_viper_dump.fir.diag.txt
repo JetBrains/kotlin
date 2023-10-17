@@ -10,8 +10,9 @@ domain dom$Casting[A, B]  {
 
   axiom dom$Casting$null_cast {
     (forall newType: dom$Type ::
-      { (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), dom$Type$special$Nullable(newType)): dom$Nullable[B]) }
-      (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), dom$Type$special$Nullable(newType)): dom$Nullable[B]) ==
+      { (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), newType): dom$Nullable[B]) }
+      dom$Type$is_nullable_type(newType) ==>
+      (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[A]), newType): dom$Nullable[B]) ==
       (dom$Nullable$null(): dom$Nullable[B]))
   }
 
