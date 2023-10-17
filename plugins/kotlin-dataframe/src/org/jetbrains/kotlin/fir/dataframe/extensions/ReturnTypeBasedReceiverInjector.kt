@@ -23,7 +23,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
     }
 
     private fun generatedTokenOrNull(call: FirFunctionCall): ConeClassLikeType? {
-        val callReturnType = call.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
+        val callReturnType = call.coneTypeSafe<ConeClassLikeType>() ?: return null
         if (callReturnType.classId != Names.DF_CLASS_ID) return null
         val rootMarker = callReturnType.typeArguments[0]
         if (rootMarker !is ConeClassLikeType) {

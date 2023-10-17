@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler
 import org.jetbrains.kotlin.test.backend.handlers.IrTreeVerifierHandler
 import org.jetbrains.kotlin.test.backend.handlers.JvmBoxRunner
+import org.jetbrains.kotlin.test.backend.ir.IrActualizerAndPluginsFacade
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.fir2IrStep
@@ -67,6 +68,7 @@ abstract class AbstractDataFrameTransformTest : BaseTestRunner() {
             )
         }
         fir2IrStep()
+        facadeStep(::IrActualizerAndPluginsFacade)
         irHandlersStep {
             useHandlers(
                 ::IrTextDumpHandler,

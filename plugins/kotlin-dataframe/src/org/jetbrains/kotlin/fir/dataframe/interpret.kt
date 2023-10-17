@@ -169,7 +169,7 @@ fun <T> KotlinTypeFacade.interpret(
             }
 
             is Interpreter.ReturnType -> {
-                val returnType = it.expression.typeRef.coneType.returnType(session)
+                val returnType = it.expression.coneTypeOrNull!!.returnType(session)
                 Interpreter.Success(Marker(returnType))
             }
 
@@ -201,7 +201,7 @@ fun <T> KotlinTypeFacade.interpret(
                     null
                 } else {
                     val arg = objectWithSchema.schemaArg
-                    val schemaTypeArg = (objectWithSchema.typeRef.coneType as ConeClassLikeType).typeArguments[arg]
+                    val schemaTypeArg = (objectWithSchema.typeRef as ConeClassLikeType).typeArguments[arg]
                     val schema = if (schemaTypeArg.isStarProjection) {
                         PluginDataFrameSchema(emptyList())
                     } else {
@@ -259,7 +259,7 @@ internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClass
 }
 
 private fun KotlinTypeFacade.columnWithPathApproximations(result: FirPropertyAccessExpression): List<ColumnWithPathApproximation> {
-    return (result.typeRef as FirResolvedTypeRef).type.let {
+    return result.coneTypeOrNull!!.let {
         val column = when {
             it.classId == Names.DATA_COLUMN_CLASS_ID -> {
                 val arg = it.typeArguments.single() as ConeClassLikeType
@@ -324,9 +324,9 @@ private fun isDataFrame(it: FirPropertySymbol) =
 
 fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
     val colName = f(propertyAccessExpression)
-    val typeRef = propertyAccessExpression.dispatchReceiver.typeRef
+    val typeRef = propertyAccessExpression.dispatchReceiver?.coneTypeOrNull
     val joinDsl = ClassId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("JoinDsl"))
-    if (typeRef is FirResolvedTypeRef && typeRef.type.classId?.equals(joinDsl) == true && colName == "right") {
+    if (typeRef?.classId?.equals(joinDsl) == true && colName == "right") {
         return emptyList()
     }
     return when (val explicitReceiver = propertyAccessExpression.explicitReceiver) {
@@ -378,11 +378,11 @@ internal fun FirFunctionCall.collectArgumentExpressions(): Arguments {
 internal val KotlinTypeFacade.getSchema: FirExpression.() -> ObjectWithSchema? get() = { getSchema(session) }
 
 internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
-    return typeRef.toClassLikeSymbol(session)?.let {
-        val (typeRef, symbol) = if (it is FirTypeAliasSymbol) {
-            it.resolvedExpandedTypeRef to it.resolvedExpandedTypeRef.toClassLikeSymbol(session)!!
+    return coneTypeSafe<ConeClassLikeType>()?.toSymbol(session)?.let {
+        val (typeRef: ConeKotlinType?, symbol) = if (it is FirTypeAliasSymbol) {
+            it.resolvedExpandedTypeRef.coneType to it.resolvedExpandedTypeRef.toClassLikeSymbol(session)!!
         } else {
-            typeRef to it
+            coneTypeOrNull!! to it
         }
         symbol.annotations.firstNotNullOfOrNull {
             runIf(it.fqName(session)?.asString() == HasSchema::class.qualifiedName!!) {
@@ -394,4 +394,4 @@ internal fun FirExpression.getSchema(session: FirSession): ObjectWithSchema? {
     }
 }
 
-internal class ObjectWithSchema(val schemaArg: Int, val typeRef: FirTypeRef)
+internal class ObjectWithSchema(val schemaArg: Int, val typeRef: ConeKotlinType)
