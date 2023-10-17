@@ -25,4 +25,6 @@ abstract class BirCallableReference<S : BirSymbol> : BirMemberAccessExpression<S
         extensionReceiver?.accept(data, visitor)
         valueArguments.forEach { it?.accept(data, visitor) }
     }
+
+    companion object
 }

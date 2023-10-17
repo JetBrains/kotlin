@@ -100,6 +100,8 @@ fun printElements(generationPath: File, model: Model) = sequence {
 
             generateElementKDoc(element)
 
+            addType(TypeSpec.companionObjectBuilder().build())
+
             element.generationCallback?.invoke(this)
         }.build()
 

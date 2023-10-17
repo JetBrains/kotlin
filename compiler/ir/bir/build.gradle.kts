@@ -4,13 +4,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:bir:tree"))
-    api(project(":compiler:bir:backend"))
+    api(project(":compiler:bir.backend"))
 
-    api(project(":compiler:backend"))
-    api(project(":compiler:ir.tree"))
-    api(project(":compiler:ir.backend.common"))
-    api(project(":compiler:backend.common.jvm"))
+    //api(project(":compiler:backend"))
+    //api(project(":compiler:backend.common.jvm"))
+    //api(project(":compiler:ir.tree"))
+    //api(project(":compiler:ir.backend.common"))
     compileOnly(intellijCore())
 }
 

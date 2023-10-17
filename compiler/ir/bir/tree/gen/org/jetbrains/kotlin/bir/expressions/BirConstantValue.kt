@@ -13,4 +13,6 @@ package org.jetbrains.kotlin.bir.expressions
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constantValue]
  */
-abstract class BirConstantValue : BirExpression()
+abstract class BirConstantValue : BirExpression() {
+    companion object
+}

@@ -16,4 +16,6 @@ import org.jetbrains.kotlin.bir.BirElementBase
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.body]
  */
-abstract class BirBody : BirElementBase(), BirElement
+abstract class BirBody : BirElementBase(), BirElement {
+    companion object
+}

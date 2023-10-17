@@ -29,4 +29,6 @@ abstract class BirConstantObject : BirConstantValue() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         valueArguments.forEach { it.accept(data, visitor) }
     }
+
+    companion object
 }

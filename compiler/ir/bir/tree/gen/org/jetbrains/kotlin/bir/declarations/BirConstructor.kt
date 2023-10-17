@@ -33,4 +33,6 @@ abstract class BirConstructor : BirElementBase(), BirFunction, BirConstructorSym
         valueParameters.forEach { it.accept(data, visitor) }
         body?.accept(data, visitor)
     }
+
+    companion object
 }

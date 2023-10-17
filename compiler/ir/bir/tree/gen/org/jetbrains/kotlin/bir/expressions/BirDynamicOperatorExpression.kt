@@ -29,4 +29,6 @@ abstract class BirDynamicOperatorExpression : BirDynamicExpression() {
         receiver.accept(data, visitor)
         arguments.forEach { it.accept(data, visitor) }
     }
+
+    companion object
 }
