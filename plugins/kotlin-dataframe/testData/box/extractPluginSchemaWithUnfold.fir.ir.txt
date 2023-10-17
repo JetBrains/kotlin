@@ -141,6 +141,41 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
           CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, vararg: kotlin.Boolean) declared in org.jetbrains.kotlinx.dataframe.Type' type=org.jetbrains.kotlinx.dataframe.Type origin=null
             name: GET_VAR 'name: kotlin.String declared in org.jetbrains.kotlinx.dataframe.Type.copy' type=kotlin.String origin=null
             vararg: GET_VAR 'vararg: kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.Type.copy' type=kotlin.Boolean origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:org.jetbrains.kotlinx.dataframe.Type) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.Type
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.Type'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="Type("
+            CONST String type=kotlin.String value="name="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.Type declared in org.jetbrains.kotlinx.dataframe.Type.toString' type=org.jetbrains.kotlinx.dataframe.Type origin=null
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="vararg="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:vararg type:kotlin.Boolean visibility:private [final]' type=kotlin.Boolean origin=null
+              receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.Type declared in org.jetbrains.kotlinx.dataframe.Type.toString' type=org.jetbrains.kotlinx.dataframe.Type origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:org.jetbrains.kotlinx.dataframe.Type) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.Type
+      BLOCK_BODY
+        VAR name:result type:kotlin.Int [var]
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.Type declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=org.jetbrains.kotlinx.dataframe.Type origin=null
+        SET_VAR 'var result: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Boolean' type=kotlin.Int origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:vararg type:kotlin.Boolean visibility:private [final]' type=kotlin.Boolean origin=null
+                receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.Type declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=org.jetbrains.kotlinx.dataframe.Type origin=null
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.Type'
+          GET_VAR 'var result: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:org.jetbrains.kotlinx.dataframe.Type, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -185,41 +220,6 @@ FILE fqName:org.jetbrains.kotlinx.dataframe fileName:/extractPluginSchemaWithUnf
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in org.jetbrains.kotlinx.dataframe.Type'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:org.jetbrains.kotlinx.dataframe.Type) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.Type
-      BLOCK_BODY
-        VAR name:result type:kotlin.Int [var]
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.Type declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=org.jetbrains.kotlinx.dataframe.Type origin=null
-        SET_VAR 'var result: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=kotlin.Unit origin=EQ
-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: GET_VAR 'var result: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=kotlin.Int origin=null
-              other: CONST Int type=kotlin.Int value=31
-            other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Boolean' type=kotlin.Int origin=null
-              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:vararg type:kotlin.Boolean visibility:private [final]' type=kotlin.Boolean origin=null
-                receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.Type declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=org.jetbrains.kotlinx.dataframe.Type origin=null
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in org.jetbrains.kotlinx.dataframe.Type'
-          GET_VAR 'var result: kotlin.Int declared in org.jetbrains.kotlinx.dataframe.Type.hashCode' type=kotlin.Int origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:org.jetbrains.kotlinx.dataframe.Type) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:org.jetbrains.kotlinx.dataframe.Type
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in org.jetbrains.kotlinx.dataframe.Type'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Type("
-            CONST String type=kotlin.String value="name="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
-              receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.Type declared in org.jetbrains.kotlinx.dataframe.Type.toString' type=org.jetbrains.kotlinx.dataframe.Type origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="vararg="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:vararg type:kotlin.Boolean visibility:private [final]' type=kotlin.Boolean origin=null
-              receiver: GET_VAR '<this>: org.jetbrains.kotlinx.dataframe.Type declared in org.jetbrains.kotlinx.dataframe.Type.toString' type=org.jetbrains.kotlinx.dataframe.Type origin=null
-            CONST String type=kotlin.String value=")"
   CLASS CLASS name:Parameter modality:FINAL visibility:public superTypes:[org.jetbrains.kotlinx.dataframe.api.DataRowSchema]
     annotations:
       DataSchema(isOpen = <null>)

@@ -162,7 +162,7 @@ FILE fqName:org.jetbrains.kotlinx.dataframe.api fileName:/lowerGeneratedImplicit
             then: CONST String type=kotlin.String value="OK"
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: CALL 'public final fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
+            then: CALL 'public open fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
               $this: CALL 'public abstract fun get (index: kotlin.Int): T of org.jetbrains.kotlinx.dataframe.DataColumn declared in org.jetbrains.kotlinx.dataframe.DataColumn' type=kotlin.Int origin=null
                 $this: GET_VAR 'val col: org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in org.jetbrains.kotlinx.dataframe.api.box' type=org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> origin=null
                 index: CONST Int type=kotlin.Int value=0

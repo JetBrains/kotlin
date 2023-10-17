@@ -2,9 +2,9 @@ FILE: readJson.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final fun box(): R|kotlin/String| {
-        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_655021129>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_655021129>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_655021129>| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJsonDefault_655021129>| = Q|org/jetbrains/kotlinx/dataframe/DataFrame|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJsonDefault_655021129>|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame.Companion|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJsonDefault_655021129>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class members : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/members| {
+                public constructor(): R|<local>/members| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -32,76 +32,76 @@ FILE: readJson.kt
             }
 
             local final class Scope0 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope0| {
+                public constructor(): R|<local>/Scope0| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/members>|.login: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/members>|.login: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(members_login)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/login|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(login)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/members>|.login: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/members>|.login: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(members_login)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/login|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(login)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/members>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/members>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(members_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/members>|.id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/members>|.id: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(members_id)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(id)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/members>|.node_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/members>|.node_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(members_node_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/node_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(node_id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/members>|.node_id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/members>|.node_id: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(members_node_id)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/node_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(node_id)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/members>|.gravatar_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/members>|.gravatar_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(members_gravatar_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/gravatar_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(gravatar_id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/members>|.gravatar_id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/members>|.gravatar_id: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(members_gravatar_id)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/gravatar_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(gravatar_id)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/members>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/members>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(members_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/members>|.url: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/members>|.url: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(members_url)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(url)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/members>|.type: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/members>|.type: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(members_type)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/type|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(type)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/members>|.type: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/members>|.type: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(members_type)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/type|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(type)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/members>|.site_admin: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/members>|.site_admin: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(members_site_admin)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/site_admin|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(site_admin)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/members>|.site_admin: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/members>|.site_admin: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(members_site_admin)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/site_admin|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(site_admin)) as R|kotlin/String|)
                     }
@@ -109,7 +109,7 @@ FILE: readJson.kt
             }
 
             local abstract class license : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/license| {
+                public constructor(): R|<local>/license| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -131,56 +131,56 @@ FILE: readJson.kt
             }
 
             local final class Scope1 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope1| {
+                public constructor(): R|<local>/Scope1| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/license>|.key: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/license>|.key: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(license_key)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
                         ^ (this@R|<local>/key|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(key)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|.key: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|.key: R|kotlin/String?|
                     @R|kotlin/jvm/JvmName|(name = String(license_key)) public get(): R|kotlin/String?| {
                         ^ (this@R|<local>/key|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(key)) as R|kotlin/String?|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/license>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/license>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(license_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
                         ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|.name: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|.name: R|kotlin/String?|
                     @R|kotlin/jvm/JvmName|(name = String(license_name)) public get(): R|kotlin/String?| {
                         ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(name)) as R|kotlin/String?|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/license>|.spdx_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/license>|.spdx_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(license_spdx_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
                         ^ (this@R|<local>/spdx_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(spdx_id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|.spdx_id: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|.spdx_id: R|kotlin/String?|
                     @R|kotlin/jvm/JvmName|(name = String(license_spdx_id)) public get(): R|kotlin/String?| {
                         ^ (this@R|<local>/spdx_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(spdx_id)) as R|kotlin/String?|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/license>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/license>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(license_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|.url: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|.url: R|kotlin/String?|
                     @R|kotlin/jvm/JvmName|(name = String(license_url)) public get(): R|kotlin/String?| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(url)) as R|kotlin/String?|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/license>|.node_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/license>|.node_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(license_node_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
                         ^ (this@R|<local>/node_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(node_id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|.node_id: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|.node_id: R|kotlin/String?|
                     @R|kotlin/jvm/JvmName|(name = String(license_node_id)) public get(): R|kotlin/String?| {
                         ^ (this@R|<local>/node_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(node_id)) as R|kotlin/String?|)
                     }
@@ -188,7 +188,7 @@ FILE: readJson.kt
             }
 
             local abstract class contributors : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/contributors| {
+                public constructor(): R|<local>/contributors| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -219,86 +219,86 @@ FILE: readJson.kt
             }
 
             local final class Scope2 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope2| {
+                public constructor(): R|<local>/Scope2| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/contributors>|.login: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/contributors>|.login: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_login)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/login|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(login)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/contributors>|.login: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/contributors>|.login: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_login)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/login|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(login)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/contributors>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/contributors>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/contributors>|.id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/contributors>|.id: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_id)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(id)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/contributors>|.node_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/contributors>|.node_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_node_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/node_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(node_id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/contributors>|.node_id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/contributors>|.node_id: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_node_id)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/node_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(node_id)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/contributors>|.gravatar_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/contributors>|.gravatar_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_gravatar_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/gravatar_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(gravatar_id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/contributors>|.gravatar_id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/contributors>|.gravatar_id: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_gravatar_id)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/gravatar_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(gravatar_id)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/contributors>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/contributors>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/contributors>|.url: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/contributors>|.url: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_url)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(url)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/contributors>|.type: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/contributors>|.type: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_type)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/type|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(type)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/contributors>|.type: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/contributors>|.type: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_type)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/type|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(type)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/contributors>|.site_admin: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/contributors>|.site_admin: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_site_admin)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/site_admin|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(site_admin)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/contributors>|.site_admin: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/contributors>|.site_admin: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_site_admin)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/site_admin|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(site_admin)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/contributors>|.contributions: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/contributors>|.contributions: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_contributions)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/contributions|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(contributions)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/contributors>|.contributions: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/contributors>|.contributions: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(contributors_contributions)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/contributions|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(contributions)) as R|kotlin/String|)
                     }
@@ -306,7 +306,7 @@ FILE: readJson.kt
             }
 
             local abstract class permissions : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/permissions| {
+                public constructor(): R|<local>/permissions| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -328,56 +328,56 @@ FILE: readJson.kt
             }
 
             local final class Scope3 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope3| {
+                public constructor(): R|<local>/Scope3| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/permissions>|.admin: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/permissions>|.admin: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_admin)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/admin|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(admin)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|.admin: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|.admin: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_admin)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/admin|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(admin)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/permissions>|.maintain: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/permissions>|.maintain: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_maintain)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/maintain|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(maintain)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|.maintain: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|.maintain: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_maintain)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/maintain|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(maintain)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/permissions>|.push: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/permissions>|.push: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_push)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/push|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(push)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|.push: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|.push: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_push)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/push|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(push)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/permissions>|.triage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/permissions>|.triage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_triage)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/triage|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(triage)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|.triage: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|.triage: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_triage)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/triage|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(triage)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/permissions>|.pull: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/permissions>|.pull: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_pull)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/pull|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(pull)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|.pull: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|.pull: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(permissions_pull)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/pull|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(pull)) as R|kotlin/String|)
                     }
@@ -385,7 +385,7 @@ FILE: readJson.kt
             }
 
             local abstract class repos : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/repos| {
+                public constructor(): R|<local>/repos| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -491,396 +491,396 @@ FILE: readJson.kt
                 public abstract val default_branch: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val permissions: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|
+                public abstract val permissions: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|
 
-                public abstract val contributors: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/contributors>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/contributors>|
+                public abstract val contributors: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/contributors>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/contributors>|
 
-                public abstract val license: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|
+                public abstract val license: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|
 
             }
 
             local final class Scope4 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope4| {
+                public constructor(): R|<local>/Scope4| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.id: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_id)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(id)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.node_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.node_id: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_node_id)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/node_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(node_id)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.node_id: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.node_id: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_node_id)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/node_id|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(node_id)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.name: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.name: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_name)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(name)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.full_name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_full_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(full_name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.full_name: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.full_name: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_full_name)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/full_name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(full_name)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.private: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.private: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_private)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/private|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(private)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.private: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.private: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_private)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/private|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(private)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_html_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(html_url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.html_url: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.html_url: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_html_url)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/html_url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(html_url)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.description: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.description: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_description)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
                         ^ (this@R|<local>/description|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(description)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.description: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.description: R|kotlin/String?|
                     @R|kotlin/jvm/JvmName|(name = String(repos_description)) public get(): R|kotlin/String?| {
                         ^ (this@R|<local>/description|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(description)) as R|kotlin/String?|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.fork: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.fork: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_fork)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/fork|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(fork)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.fork: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.fork: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_fork)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/fork|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(fork)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.url: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.url: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_url)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(url)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.created_at: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.created_at: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_created_at)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/created_at|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(created_at)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.created_at: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.created_at: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_created_at)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/created_at|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(created_at)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.updated_at: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.updated_at: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_updated_at)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/updated_at|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(updated_at)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.updated_at: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.updated_at: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_updated_at)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/updated_at|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(updated_at)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.pushed_at: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.pushed_at: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_pushed_at)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/pushed_at|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(pushed_at)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.pushed_at: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.pushed_at: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_pushed_at)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/pushed_at|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(pushed_at)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.homepage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.homepage: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_homepage)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
                         ^ (this@R|<local>/homepage|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(homepage)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.homepage: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.homepage: R|kotlin/String?|
                     @R|kotlin/jvm/JvmName|(name = String(repos_homepage)) public get(): R|kotlin/String?| {
                         ^ (this@R|<local>/homepage|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(homepage)) as R|kotlin/String?|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.size: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.size: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_size)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/size|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(size)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.size: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.size: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_size)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/size|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(size)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.stargazers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_stargazers_count)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(stargazers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.stargazers_count: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.stargazers_count: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_stargazers_count)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/stargazers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(stargazers_count)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.watchers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.watchers_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_watchers_count)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/watchers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(watchers_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.watchers_count: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.watchers_count: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_watchers_count)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/watchers_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(watchers_count)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.language: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.language: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_language)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>| {
                         ^ (this@R|<local>/language|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(language)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String?>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.language: R|kotlin/String?|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.language: R|kotlin/String?|
                     @R|kotlin/jvm/JvmName|(name = String(repos_language)) public get(): R|kotlin/String?| {
                         ^ (this@R|<local>/language|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(language)) as R|kotlin/String?|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.has_issues: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.has_issues: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_issues)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/has_issues|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(has_issues)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.has_issues: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.has_issues: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_issues)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/has_issues|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(has_issues)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.has_projects: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.has_projects: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_projects)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/has_projects|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(has_projects)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.has_projects: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.has_projects: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_projects)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/has_projects|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(has_projects)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.has_downloads: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.has_downloads: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_downloads)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/has_downloads|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(has_downloads)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.has_downloads: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.has_downloads: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_downloads)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/has_downloads|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(has_downloads)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.has_wiki: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.has_wiki: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_wiki)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/has_wiki|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(has_wiki)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.has_wiki: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.has_wiki: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_wiki)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/has_wiki|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(has_wiki)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.has_pages: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.has_pages: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_pages)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/has_pages|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(has_pages)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.has_pages: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.has_pages: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_has_pages)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/has_pages|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(has_pages)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.forks_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.forks_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_forks_count)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/forks_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(forks_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.forks_count: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.forks_count: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_forks_count)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/forks_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(forks_count)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.archived: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.archived: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_archived)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/archived|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(archived)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.archived: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.archived: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_archived)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/archived|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(archived)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.disabled: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.disabled: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_disabled)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/disabled|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(disabled)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.disabled: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.disabled: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_disabled)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/disabled|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(disabled)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.open_issues_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.open_issues_count: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_open_issues_count)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/open_issues_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(open_issues_count)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.open_issues_count: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.open_issues_count: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_open_issues_count)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/open_issues_count|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(open_issues_count)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.allow_forking: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.allow_forking: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_allow_forking)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/allow_forking|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(allow_forking)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.allow_forking: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.allow_forking: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_allow_forking)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/allow_forking|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(allow_forking)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.is_template: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.is_template: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_is_template)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/is_template|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(is_template)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.is_template: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.is_template: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_is_template)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/is_template|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(is_template)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.topics: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_topics)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(topics)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.topics: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.topics: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_topics)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/topics|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(topics)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.visibility: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.visibility: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_visibility)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/visibility|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(visibility)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.visibility: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.visibility: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_visibility)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/visibility|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(visibility)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.forks: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.forks: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_forks)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/forks|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(forks)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.forks: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.forks: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_forks)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/forks|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(forks)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.open_issues: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.open_issues: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_open_issues)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/open_issues|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(open_issues)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.open_issues: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.open_issues: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_open_issues)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/open_issues|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(open_issues)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.watchers: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_watchers)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(watchers)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.watchers: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.watchers: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_watchers)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/watchers|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(watchers)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.default_branch: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.default_branch: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(repos_default_branch)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/default_branch|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(default_branch)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.default_branch: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.default_branch: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(repos_default_branch)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/default_branch|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(default_branch)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.permissions: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/permissions>|
-                    @R|kotlin/jvm/JvmName|(name = String(repos_permissions)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/permissions>| {
-                        ^ (this@R|<local>/permissions|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(permissions)) as R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/permissions>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.permissions: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/permissions>|
+                    @R|kotlin/jvm/JvmName|(name = String(repos_permissions)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/permissions>| {
+                        ^ (this@R|<local>/permissions|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(permissions)) as R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/permissions>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.permissions: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|
-                    @R|kotlin/jvm/JvmName|(name = String(repos_permissions)) public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>| {
-                        ^ (this@R|<local>/permissions|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(permissions)) as R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/permissions>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.permissions: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|
+                    @R|kotlin/jvm/JvmName|(name = String(repos_permissions)) public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>| {
+                        ^ (this@R|<local>/permissions|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(permissions)) as R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/permissions>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.contributors: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/contributors>>|
-                    @R|kotlin/jvm/JvmName|(name = String(repos_contributors)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/contributors>>| {
-                        ^ (this@R|<local>/contributors|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(contributors)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/contributors>>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.contributors: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/contributors>>|
+                    @R|kotlin/jvm/JvmName|(name = String(repos_contributors)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/contributors>>| {
+                        ^ (this@R|<local>/contributors|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(contributors)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/contributors>>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.contributors: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/contributors>|
-                    @R|kotlin/jvm/JvmName|(name = String(repos_contributors)) public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/contributors>| {
-                        ^ (this@R|<local>/contributors|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(contributors)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/contributors>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.contributors: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/contributors>|
+                    @R|kotlin/jvm/JvmName|(name = String(repos_contributors)) public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/contributors>| {
+                        ^ (this@R|<local>/contributors|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(contributors)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/contributors>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/repos>|.license: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/license>|
-                    @R|kotlin/jvm/JvmName|(name = String(repos_license)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/license>| {
-                        ^ (this@R|<local>/license|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(license)) as R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<org/jetbrains/kotlinx/dataframe/license>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/repos>|.license: R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/license>|
+                    @R|kotlin/jvm/JvmName|(name = String(repos_license)) public get(): R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/license>| {
+                        ^ (this@R|<local>/license|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(license)) as R|org/jetbrains/kotlinx/dataframe/columns/ColumnGroup<<local>/license>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/repos>|.license: R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|
-                    @R|kotlin/jvm/JvmName|(name = String(repos_license)) public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>| {
-                        ^ (this@R|<local>/license|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(license)) as R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/license>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/repos>|.license: R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|
+                    @R|kotlin/jvm/JvmName|(name = String(repos_license)) public get(): R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>| {
+                        ^ (this@R|<local>/license|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(license)) as R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/license>|)
                     }
 
             }
 
             local abstract class DataFrameType1 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
+                public constructor(): R|<local>/DataFrameType1| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -890,87 +890,87 @@ FILE: readJson.kt
                 public abstract val name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
-                public abstract val repos: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/repos>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/repos>|
+                public abstract val repos: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/repos>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/repos>|
 
-                public abstract val members: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/members>|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/members>|
+                public abstract val members: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/members>|
+                    public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/members>|
 
             }
 
             local final class Scope5 : R|kotlin/Any| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope5| {
+                public constructor(): R|<local>/Scope5| {
                     super<R|kotlin/Any|>()
                 }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.url: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_url)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(url)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.url: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.url: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_url)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/url|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(url)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.name: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_name)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>| {
                         ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(name)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.name: R|kotlin/String|
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.name: R|kotlin/String|
                     @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_name)) public get(): R|kotlin/String| {
                         ^ (this@R|<local>/name|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(name)) as R|kotlin/String|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.repos: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/repos>>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_repos)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/repos>>| {
-                        ^ (this@R|<local>/repos|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(repos)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/repos>>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.repos: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/repos>>|
+                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_repos)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/repos>>| {
+                        ^ (this@R|<local>/repos|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(repos)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/repos>>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.repos: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/repos>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_repos)) public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/repos>| {
-                        ^ (this@R|<local>/repos|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(repos)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/repos>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.repos: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/repos>|
+                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_repos)) public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/repos>| {
+                        ^ (this@R|<local>/repos|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(repos)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/repos>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.members: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/members>>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_members)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/members>>| {
-                        ^ (this@R|<local>/members|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(members)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/members>>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/DataFrameType1>|.members: R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/members>>|
+                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_members)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/members>>| {
+                        ^ (this@R|<local>/members|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/ColumnsContainer.get: R|org/jetbrains/kotlinx/dataframe/DataColumn<*>|>|(String(members)) as R|org/jetbrains/kotlinx/dataframe/DataColumn<org/jetbrains/kotlinx/dataframe/DataFrame<<local>/members>>|)
                     }
 
-                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/DataFrameType1>|.members: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/members>|
-                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_members)) public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/members>| {
-                        ^ (this@R|<local>/members|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(members)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/members>|)
+                public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/DataFrameType1>|.members: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/members>|
+                    @R|kotlin/jvm/JvmName|(name = String(DataFrameType1_members)) public get(): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/members>| {
+                        ^ (this@R|<local>/members|.R|SubstitutionOverride<org/jetbrains/kotlinx/dataframe/DataRow.get: R|kotlin/Any?|>|(String(members)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/members>|)
                     }
 
             }
 
-            local abstract class TokenReadJsonDefault_655021129 : R|org/jetbrains/kotlinx/dataframe/DataFrameType1| {
-                public constructor(): R|org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_655021129| {
-                    super<R|org/jetbrains/kotlinx/dataframe/DataFrameType1|>()
+            local abstract class TokenReadJsonDefault_655021129 : R|<local>/DataFrameType1| {
+                public constructor(): R|<local>/TokenReadJsonDefault_655021129| {
+                    super<R|<local>/DataFrameType1|>()
                 }
 
-                public abstract val scope0: R|org/jetbrains/kotlinx/dataframe/Scope0|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/Scope0|
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
-                public abstract val scope1: R|org/jetbrains/kotlinx/dataframe/Scope1|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/Scope1|
+                public abstract val scope1: R|<local>/Scope1|
+                    public get(): R|<local>/Scope1|
 
-                public abstract val scope2: R|org/jetbrains/kotlinx/dataframe/Scope2|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/Scope2|
+                public abstract val scope2: R|<local>/Scope2|
+                    public get(): R|<local>/Scope2|
 
-                public abstract val scope3: R|org/jetbrains/kotlinx/dataframe/Scope3|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/Scope3|
+                public abstract val scope3: R|<local>/Scope3|
+                    public get(): R|<local>/Scope3|
 
-                public abstract val scope4: R|org/jetbrains/kotlinx/dataframe/Scope4|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/Scope4|
+                public abstract val scope4: R|<local>/Scope4|
+                    public get(): R|<local>/Scope4|
 
-                public abstract val scope5: R|org/jetbrains/kotlinx/dataframe/Scope5|
-                    public get(): R|org/jetbrains/kotlinx/dataframe/Scope5|
+                public abstract val scope5: R|<local>/Scope5|
+                    public get(): R|<local>/Scope5|
 
             }
 
-            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readJsonDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains.json)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/TokenReadJsonDefault_655021129>|)
+            ^ (R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readJsonDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains.json)) as R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadJsonDefault_655021129>|)
         }
         )
         (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/name|
