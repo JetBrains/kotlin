@@ -27,14 +27,7 @@ dependencies {
     }
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-
-    // KT-61897: Workaround for https://github.com/gradle/gradle/issues/26358
-    // (wrong conflict resolution, causing selection of not the latest version of `:kotlin-util-klib` module)
-    if (rootProject.name == "native-build-tools" || rootProject.name == "executors") {
-        implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.extra["bootstrapKotlinVersion"]}")
-    } else {
-        implementation(project(":native:kotlin-native-utils"))
-    }
+    implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.extra["bootstrapKotlinVersion"]}")
 }
 
 group = "org.jetbrains.kotlin"

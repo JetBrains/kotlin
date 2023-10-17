@@ -39,6 +39,14 @@ sourceSets {
 
 testsJar {}
 
+// KT-61897: Workaround for https://github.com/gradle/gradle/issues/26358
+// (wrong conflict resolution, causing selection of not the latest version of `:kotlin-util-klib` module)
+configurations.all {
+    resolutionStrategy {
+        preferProjectModules()
+    }
+}
+
 // Tasks that run different sorts of tests. Most frequent use case: running specific tests at TeamCity.
 val infrastructureTest = nativeTest("infrastructureTest", "infrastructure")
 val codegenBoxTest = nativeTest("codegenBoxTest", "codegen & !frontend-fir")
