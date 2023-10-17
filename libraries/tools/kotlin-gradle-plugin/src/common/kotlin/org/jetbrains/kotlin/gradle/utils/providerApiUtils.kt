@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -109,6 +110,9 @@ internal fun Project.newFileProperty(initialize: (() -> File)? = null): RegularF
 }
 
 internal fun ObjectFactory.fileProperty(initialValue: File): RegularFileProperty = fileProperty()
+    .apply { set(initialValue) }
+
+internal fun ObjectFactory.directoryProperty(initialValue: File): DirectoryProperty = directoryProperty()
     .apply { set(initialValue) }
 
 internal fun Project.filesProvider(

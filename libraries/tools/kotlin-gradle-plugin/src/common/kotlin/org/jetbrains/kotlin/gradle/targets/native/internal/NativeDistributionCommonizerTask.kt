@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
-import org.jetbrains.kotlin.gradle.utils.fileProperty
+import org.jetbrains.kotlin.gradle.utils.directoryProperty
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
@@ -89,8 +89,8 @@ internal abstract class NativeDistributionCommonizerTask
     internal val rootOutputDirectory: File get() = rootOutputDirectoryProperty.asFile.get()
 
     @get:OutputDirectory
-    internal val rootOutputDirectoryProperty: RegularFileProperty = objectFactory
-        .fileProperty(
+    internal val rootOutputDirectoryProperty: DirectoryProperty = objectFactory
+        .directoryProperty(
             project.file(project.konanHome)
                 .resolve(KONAN_DISTRIBUTION_KLIB_DIR)
                 .resolve(KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR)
