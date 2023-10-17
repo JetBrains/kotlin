@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 object IrErrorClassImpl : IrClassImpl(
     UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.ERROR_CLASS, IrClassSymbolImpl(),
@@ -24,34 +25,34 @@ object IrErrorClassImpl : IrClassImpl(
     override var parent: IrDeclarationParent
         get() = object : IrFile() {
             override val startOffset: Int
-                get() = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
             override val endOffset: Int
-                get() = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
             override var annotations: List<IrConstructorCall>
-                get() = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
                 set(_) {}
             override val declarations: MutableList<IrDeclaration>
-                get() = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
             override val symbol: IrFileSymbol
-                get() = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
             override var module: IrModuleFragment
-                get() = TODO("Not yet implemented")
-                set(_) = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
+                set(_) = shouldNotBeCalled()
             override var fileEntry: IrFileEntry
-                get() = TODO("Not yet implemented")
-                set(_) = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
+                set(_) = shouldNotBeCalled()
             override var metadata: MetadataSource?
-                get() = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
                 set(_) {}
 
             @ObsoleteDescriptorBasedAPI
             override val packageFragmentDescriptor: PackageFragmentDescriptor
-                get() = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
             override val moduleDescriptor: ModuleDescriptor
-                get() = TODO("Not yet implemented")
+                get() = shouldNotBeCalled()
             override var packageFqName: FqName
                 get() = FqName.ROOT
-                set(_) = TODO("Not yet implemented")
+                set(_) = shouldNotBeCalled()
         }
-        set(_) = TODO()
+        set(_) = shouldNotBeCalled()
 }
