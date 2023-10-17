@@ -504,7 +504,7 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(s)
         +field("origin", statementOriginType, nullable = true)
         +listField("valueArguments", expression.copy(nullable = true), mutability = Array, isChild = true)
-        +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array)
+        +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Var)
     }
     val functionAccessExpression: ElementConfig by element(Expression) {
         parent(memberAccessExpression.withArgs("S" to SymbolTypes.function))
@@ -652,7 +652,7 @@ object BirTree : AbstractTreeBuilder() {
 
         +field("constructor", SymbolTypes.constructor)
         +listField("valueArguments", constantValue, mutability = List, isChild = true)
-        +listField("typeArguments", irTypeType, mutability = List)
+        +listField("typeArguments", irTypeType, mutability = Var)
     }
     val constantArray: ElementConfig by element(Expression) {
         parent(constantValue)
