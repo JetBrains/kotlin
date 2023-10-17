@@ -21,20 +21,108 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var type: BirType,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    type: BirType,
     override val isAssignable: Boolean,
-    override var isVar: Boolean,
-    override var isConst: Boolean,
-    override var isLateinit: Boolean,
+    isVar: Boolean,
+    isConst: Boolean,
+    isLateinit: Boolean,
     initializer: BirExpression?,
 ) : BirVariable() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _type: BirType = type
+
+    override var type: BirType
+        get() = _type
+        set(value) {
+            if (_type != value) {
+                _type = value
+                invalidate()
+            }
+        }
+
+    private var _isVar: Boolean = isVar
+
+    override var isVar: Boolean
+        get() = _isVar
+        set(value) {
+            if (_isVar != value) {
+                _isVar = value
+                invalidate()
+            }
+        }
+
+    private var _isConst: Boolean = isConst
+
+    override var isConst: Boolean
+        get() = _isConst
+        set(value) {
+            if (_isConst != value) {
+                _isConst = value
+                invalidate()
+            }
+        }
+
+    private var _isLateinit: Boolean = isLateinit
+
+    override var isLateinit: Boolean
+        get() = _isLateinit
+        set(value) {
+            if (_isLateinit != value) {
+                _isLateinit = value
+                invalidate()
+            }
+        }
+
     private var _initializer: BirExpression? = initializer
 
     override var initializer: BirExpression?
@@ -43,6 +131,7 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_initializer != value) {
                 replaceChild(_initializer, value)
                 _initializer = value
+                invalidate()
             }
         }
     init {

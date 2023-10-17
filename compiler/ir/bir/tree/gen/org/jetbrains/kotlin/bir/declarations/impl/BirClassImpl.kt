@@ -22,36 +22,210 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
-    override var isExternal: Boolean,
-    override var visibility: DescriptorVisibility,
-    override var kind: ClassKind,
-    override var modality: Modality,
-    override var isCompanion: Boolean,
-    override var isInner: Boolean,
-    override var isData: Boolean,
-    override var isValue: Boolean,
-    override var isExpect: Boolean,
-    override var isFun: Boolean,
-    override var hasEnumEntries: Boolean,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    isExternal: Boolean,
+    visibility: DescriptorVisibility,
+    kind: ClassKind,
+    modality: Modality,
+    isCompanion: Boolean,
+    isInner: Boolean,
+    isData: Boolean,
+    isValue: Boolean,
+    isExpect: Boolean,
+    isFun: Boolean,
+    hasEnumEntries: Boolean,
     override val source: SourceElement,
     override var superTypes: List<BirType>,
     thisReceiver: BirValueParameter?,
-    override var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
+    valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
 ) : BirClass() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
+    private var _isExternal: Boolean = isExternal
+
+    override var isExternal: Boolean
+        get() = _isExternal
+        set(value) {
+            if (_isExternal != value) {
+                _isExternal = value
+                invalidate()
+            }
+        }
+
+    private var _visibility: DescriptorVisibility = visibility
+
+    override var visibility: DescriptorVisibility
+        get() = _visibility
+        set(value) {
+            if (_visibility != value) {
+                _visibility = value
+                invalidate()
+            }
+        }
+
     override var typeParameters: BirChildElementList<BirTypeParameter> =
             BirChildElementList(this, 0)
 
     override val declarations: BirChildElementList<BirDeclaration> =
             BirChildElementList(this, 1)
 
-    override var attributeOwnerId: BirAttributeContainer = this
+    private var _attributeOwnerId: BirAttributeContainer = this
+
+    override var attributeOwnerId: BirAttributeContainer
+        get() = _attributeOwnerId
+        set(value) {
+            if (_attributeOwnerId != value) {
+                _attributeOwnerId = value
+                invalidate()
+            }
+        }
+
+    private var _kind: ClassKind = kind
+
+    override var kind: ClassKind
+        get() = _kind
+        set(value) {
+            if (_kind != value) {
+                _kind = value
+                invalidate()
+            }
+        }
+
+    private var _modality: Modality = modality
+
+    override var modality: Modality
+        get() = _modality
+        set(value) {
+            if (_modality != value) {
+                _modality = value
+                invalidate()
+            }
+        }
+
+    private var _isCompanion: Boolean = isCompanion
+
+    override var isCompanion: Boolean
+        get() = _isCompanion
+        set(value) {
+            if (_isCompanion != value) {
+                _isCompanion = value
+                invalidate()
+            }
+        }
+
+    private var _isInner: Boolean = isInner
+
+    override var isInner: Boolean
+        get() = _isInner
+        set(value) {
+            if (_isInner != value) {
+                _isInner = value
+                invalidate()
+            }
+        }
+
+    private var _isData: Boolean = isData
+
+    override var isData: Boolean
+        get() = _isData
+        set(value) {
+            if (_isData != value) {
+                _isData = value
+                invalidate()
+            }
+        }
+
+    private var _isValue: Boolean = isValue
+
+    override var isValue: Boolean
+        get() = _isValue
+        set(value) {
+            if (_isValue != value) {
+                _isValue = value
+                invalidate()
+            }
+        }
+
+    private var _isExpect: Boolean = isExpect
+
+    override var isExpect: Boolean
+        get() = _isExpect
+        set(value) {
+            if (_isExpect != value) {
+                _isExpect = value
+                invalidate()
+            }
+        }
+
+    private var _isFun: Boolean = isFun
+
+    override var isFun: Boolean
+        get() = _isFun
+        set(value) {
+            if (_isFun != value) {
+                _isFun = value
+                invalidate()
+            }
+        }
+
+    private var _hasEnumEntries: Boolean = hasEnumEntries
+
+    override var hasEnumEntries: Boolean
+        get() = _hasEnumEntries
+        set(value) {
+            if (_hasEnumEntries != value) {
+                _hasEnumEntries = value
+                invalidate()
+            }
+        }
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
 
@@ -61,6 +235,19 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_thisReceiver != value) {
                 replaceChild(_thisReceiver, value)
                 _thisReceiver = value
+                invalidate()
+            }
+        }
+
+    private var _valueClassRepresentation: ValueClassRepresentation<BirSimpleType>? =
+            valueClassRepresentation
+
+    override var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?
+        get() = _valueClassRepresentation
+        set(value) {
+            if (_valueClassRepresentation != value) {
+                _valueClassRepresentation = value
+                invalidate()
             }
         }
     init {

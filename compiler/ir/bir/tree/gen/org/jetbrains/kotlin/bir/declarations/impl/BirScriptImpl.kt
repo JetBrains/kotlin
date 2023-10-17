@@ -28,23 +28,67 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 
 class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: DeclarationDescriptor,
-    override var signature: IdSignature,
+    signature: IdSignature,
     override var annotations: List<BirConstructorCall>,
-    override var origin: IrDeclarationOrigin,
-    override var name: Name,
+    origin: IrDeclarationOrigin,
+    name: Name,
     thisReceiver: BirValueParameter?,
-    override var baseClass: BirType?,
+    baseClass: BirType?,
     override var providedProperties: List<BirPropertySymbol>,
-    override var resultProperty: BirPropertySymbol?,
+    resultProperty: BirPropertySymbol?,
     earlierScriptsParameter: BirValueParameter?,
     override var importedScripts: List<BirScriptSymbol>?,
     override var earlierScripts: List<BirScriptSymbol>?,
-    override var targetClass: BirClassSymbol?,
-    override var constructor: BirConstructor?,
+    targetClass: BirClassSymbol?,
+    constructor: BirConstructor?,
 ) : BirScript() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
+    private var _signature: IdSignature = signature
+
+    override var signature: IdSignature
+        get() = _signature
+        set(value) {
+            if (_signature != value) {
+                _signature = value
+                invalidate()
+            }
+        }
+
+    private var _origin: IrDeclarationOrigin = origin
+
+    override var origin: IrDeclarationOrigin
+        get() = _origin
+        set(value) {
+            if (_origin != value) {
+                _origin = value
+                invalidate()
+            }
+        }
+
+    private var _name: Name = name
+
+    override var name: Name
+        get() = _name
+        set(value) {
+            if (_name != value) {
+                _name = value
+                invalidate()
+            }
+        }
+
     override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 0)
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
@@ -55,6 +99,18 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_thisReceiver != value) {
                 replaceChild(_thisReceiver, value)
                 _thisReceiver = value
+                invalidate()
+            }
+        }
+
+    private var _baseClass: BirType? = baseClass
+
+    override var baseClass: BirType?
+        get() = _baseClass
+        set(value) {
+            if (_baseClass != value) {
+                _baseClass = value
+                invalidate()
             }
         }
 
@@ -67,6 +123,17 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     override var providedPropertiesParameters: BirChildElementList<BirValueParameter> =
             BirChildElementList(this, 3)
 
+    private var _resultProperty: BirPropertySymbol? = resultProperty
+
+    override var resultProperty: BirPropertySymbol?
+        get() = _resultProperty
+        set(value) {
+            if (_resultProperty != value) {
+                _resultProperty = value
+                invalidate()
+            }
+        }
+
     private var _earlierScriptsParameter: BirValueParameter? = earlierScriptsParameter
 
     override var earlierScriptsParameter: BirValueParameter?
@@ -75,6 +142,29 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             if (_earlierScriptsParameter != value) {
                 replaceChild(_earlierScriptsParameter, value)
                 _earlierScriptsParameter = value
+                invalidate()
+            }
+        }
+
+    private var _targetClass: BirClassSymbol? = targetClass
+
+    override var targetClass: BirClassSymbol?
+        get() = _targetClass
+        set(value) {
+            if (_targetClass != value) {
+                _targetClass = value
+                invalidate()
+            }
+        }
+
+    private var _constructor: BirConstructor? = constructor
+
+    override var constructor: BirConstructor?
+        get() = _constructor
+        set(value) {
+            if (_constructor != value) {
+                _constructor = value
+                invalidate()
             }
         }
     init {

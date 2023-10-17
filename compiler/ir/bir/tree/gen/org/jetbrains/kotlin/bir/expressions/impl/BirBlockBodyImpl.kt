@@ -15,8 +15,19 @@ import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 
 class BirBlockBodyImpl(
-    override var sourceSpan: SourceSpan,
+    sourceSpan: SourceSpan,
 ) : BirBlockBody() {
+    private var _sourceSpan: SourceSpan = sourceSpan
+
+    override var sourceSpan: SourceSpan
+        get() = _sourceSpan
+        set(value) {
+            if (_sourceSpan != value) {
+                _sourceSpan = value
+                invalidate()
+            }
+        }
+
     override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 0)
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

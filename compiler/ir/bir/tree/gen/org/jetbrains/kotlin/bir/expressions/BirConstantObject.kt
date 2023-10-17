@@ -24,7 +24,7 @@ abstract class BirConstantObject : BirConstantValue() {
 
     abstract val valueArguments: BirChildElementList<BirConstantValue>
 
-    abstract val typeArguments: MutableList<BirType>
+    abstract var typeArguments: List<BirType>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         valueArguments.forEach { it.accept(data, visitor) }
