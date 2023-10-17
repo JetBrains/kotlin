@@ -2,7 +2,7 @@
 // EXPECTED_REACHABLE_NODES: 1292
 // KT-60785
 // Ignored until the rr/vgrechko/accidental-reification-2 will be merged
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JS_IR
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

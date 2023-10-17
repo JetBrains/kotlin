@@ -69,20 +69,16 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
                 }
 
                 val mainFunctionCall = JsIrBuilder.buildCall(functionSymbolToCall).apply {
-                    var startIndex = 0
                     if (shouldCallMainFunctionAsCoroutine) {
-                        putValueArgument(
-                            startIndex++,
-                            IrRawFunctionReferenceImpl(
-                                UNDEFINED_OFFSET,
-                                UNDEFINED_OFFSET,
-                                context.irBuiltIns.anyType,
-                                originalFunctionSymbol
-                            )
+                        extensionReceiver = IrRawFunctionReferenceImpl(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            context.irBuiltIns.anyType,
+                            originalFunctionSymbol
                         )
                     }
                     generateMainArguments().forEachIndexed { index, arg ->
-                        putValueArgument(startIndex + index, arg)
+                        putValueArgument(index, arg)
                     }
                 }
 
