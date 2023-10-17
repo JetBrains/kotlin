@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
 import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.CustomizeKotlinDependenciesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.AndroidPluginWithoutAndroidTargetChecker
@@ -57,6 +58,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinToolingDiagnosticsSetupAction)
         register(project, SyncLanguageSettingsWithKotlinExtensionSetupAction)
         register(project, UserDefinedAttributesSetupAction)
+        register(project, CustomizeKotlinDependenciesSetupAction)
 
 
         if (isJvm || isMultiplatform) {

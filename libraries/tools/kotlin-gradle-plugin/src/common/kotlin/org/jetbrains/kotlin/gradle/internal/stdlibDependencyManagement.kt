@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurati
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
+import org.jetbrains.kotlin.gradle.utils.forAllTargets
 import org.jetbrains.kotlin.gradle.utils.withType
 
 internal const val KOTLIN_STDLIB_COMMON_MODULE_NAME = "kotlin-stdlib-common"
@@ -37,33 +38,16 @@ internal const val KOTLIN_STDLIB_JS_MODULE_NAME = "kotlin-stdlib-js"
 internal const val KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME = KOTLIN_STDLIB_MODULE_NAME
 
 internal fun Project.configureStdlibDefaultDependency(
-    topLevelExtension: KotlinTopLevelExtension,
+    kotlinExtension: KotlinProjectExtension,
     coreLibrariesVersion: Provider<String>,
 ) {
-    when (topLevelExtension) {
-        is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
-            target?.addStdlibDependency(
-                configurations,
-                dependencies,
-                coreLibrariesVersion,
-                false,
-            )
-        }
-
-        is KotlinSingleTargetExtension<*> -> topLevelExtension
-            .target
-            .addStdlibDependency(
-                configurations,
-                dependencies,
-                coreLibrariesVersion,
-                false
-            )
-
-        is KotlinMultiplatformExtension -> topLevelExtension
-            .targets
-            .configureEach { target ->
-                target.addStdlibDependency(configurations, dependencies, coreLibrariesVersion, true)
-            }
+    kotlinExtension.forAllTargets { target ->
+        target.addStdlibDependency(
+            configurations,
+            dependencies,
+            coreLibrariesVersion,
+            isMppProject = kotlinExtension is KotlinMultiplatformExtension,
+        )
     }
 }
 

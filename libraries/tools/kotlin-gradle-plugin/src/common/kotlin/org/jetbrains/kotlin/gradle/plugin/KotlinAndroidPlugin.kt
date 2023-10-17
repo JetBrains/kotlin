@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCompilerOptionsForTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
@@ -54,7 +53,6 @@ internal open class KotlinAndroidPlugin(
                 }
             }
         ) { androidTarget ->
-            customizeKotlinDependencies(project)
             registry.register(KotlinModelBuilder(project.getKotlinPluginVersion(), androidTarget))
             project.whenEvaluated { project.components.addAll(androidTarget.components) }
         }

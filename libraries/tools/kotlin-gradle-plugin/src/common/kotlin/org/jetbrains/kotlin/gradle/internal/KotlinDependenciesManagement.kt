@@ -12,9 +12,10 @@ import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
@@ -27,25 +28,25 @@ internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
 internal const val KOTLIN_BUILD_TOOLS_API_IMPL = "kotlin-build-tools-impl"
 internal const val PLATFORM_INTEGERS_SUPPORT_LIBRARY = "platform-integers"
 
-internal fun customizeKotlinDependencies(project: Project) {
-    val topLevelExtension = project.topLevelExtension
+internal val CustomizeKotlinDependenciesSetupAction = KotlinProjectSetupAction {
+    val kotlinExtension = project.kotlinExtension
     val propertiesProvider = PropertiesProvider(project)
     val coreLibrariesVersion = project.objects.providerWithLazyConvention {
-        topLevelExtension.coreLibrariesVersion
+        kotlinExtension.coreLibrariesVersion
     }
 
     if (propertiesProvider.stdlibDefaultDependency)
-        project.configureStdlibDefaultDependency(topLevelExtension, coreLibrariesVersion)
+        project.configureStdlibDefaultDependency(kotlinExtension, coreLibrariesVersion)
 
     if (propertiesProvider.kotlinTestInferJvmVariant) { // TODO: extend this logic to PM20
         project.configureKotlinTestDependency(
-            topLevelExtension,
+            kotlinExtension,
             coreLibrariesVersion,
         )
     }
 
     if (propertiesProvider.stdlibDomApiIncluded) {
-        project.configureKotlinDomApiDefaultDependency(topLevelExtension, coreLibrariesVersion)
+        project.configureKotlinDomApiDefaultDependency(kotlinExtension, coreLibrariesVersion)
     }
 
     project.configurations.configureDefaultVersionsResolutionStrategy(coreLibrariesVersion)

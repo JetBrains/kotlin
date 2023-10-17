@@ -9,7 +9,6 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
@@ -28,7 +27,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.plugins.apply(JavaBasePlugin::class.java)
 
         setupDefaultPresets(project)
-        customizeKotlinDependencies(project)
     }
 
     fun setupDefaultPresets(project: Project) {

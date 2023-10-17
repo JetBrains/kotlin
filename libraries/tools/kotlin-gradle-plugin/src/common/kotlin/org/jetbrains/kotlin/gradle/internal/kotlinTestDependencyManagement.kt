@@ -22,10 +22,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.junit.JUnitOptions
 import org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions
 import org.gradle.api.tasks.testing.testng.TestNGOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.execution.KotlinAggregateExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -36,6 +33,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.targets.jvm.JvmCompilationsTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
+import org.jetbrains.kotlin.gradle.utils.forAllTargets
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 private val Dependency.isKotlinTestRootDependency: Boolean
@@ -48,34 +46,16 @@ private fun isAtLeast1_5(version: String) = SemVer.fromGradleRichVersion(version
 private val jvmPlatforms = setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm)
 
 internal fun Project.configureKotlinTestDependency(
-    topLevelExtension: KotlinTopLevelExtension,
+    kotlinExtension: KotlinProjectExtension,
     coreLibrariesVersion: Provider<String>,
 ) {
-    when (topLevelExtension) {
-        is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
-            target?.configureKotlinTestDependency(
-                configurations,
-                coreLibrariesVersion,
-                dependencies,
-                tasks
-            )
-        }
-
-        is KotlinSingleTargetExtension<*> -> topLevelExtension.target.configureKotlinTestDependency(
+    kotlinExtension.forAllTargets { target ->
+        target.configureKotlinTestDependency(
             configurations,
             coreLibrariesVersion,
             dependencies,
             tasks
         )
-
-        is KotlinMultiplatformExtension -> topLevelExtension.targets.configureEach { target ->
-            target.configureKotlinTestDependency(
-                configurations,
-                coreLibrariesVersion,
-                dependencies,
-                tasks
-            )
-        }
     }
 }
 
@@ -83,7 +63,7 @@ private fun KotlinTarget.configureKotlinTestDependency(
     configurations: ConfigurationContainer,
     coreLibrariesVersion: Provider<String>,
     dependencyHandler: DependencyHandler,
-    tasks: TaskContainer
+    tasks: TaskContainer,
 ) {
     compilations.configureEach { compilation ->
         val platformType = compilation.platformType
@@ -121,7 +101,7 @@ private fun Configuration.maybeAddTestDependencyCapability(
     compilation: KotlinCompilation<*>,
     coreLibrariesVersion: Provider<String>,
     dependencyHandler: DependencyHandler,
-    tasks: TaskContainer
+    tasks: TaskContainer,
 ) {
     withDependencies { dependencies ->
         val testRootDependency = allNonProjectDependencies()
@@ -202,7 +182,7 @@ private fun testFrameworkOf(testTask: Test): KotlinTestJvmFramework = when (test
 }
 
 private fun KotlinTargetWithTests<*, *>.findTestRunsByCompilation(
-    byCompilation: KotlinCompilation<*>
+    byCompilation: KotlinCompilation<*>,
 ): NamedDomainObjectSet<out KotlinTargetTestRun<*>> {
     fun KotlinExecution.ExecutionSource.isProducedFromTheCompilation(): Boolean = when (this) {
         is CompilationExecutionSource<*> -> compilation == byCompilation
