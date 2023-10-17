@@ -35,13 +35,14 @@ object BirTree : AbstractTreeBuilder() {
     private fun symbol(type: TypeRef, mutable: Boolean = false): SimpleFieldConfig =
         field("symbol", type, mutable = mutable)
 
-    private fun descriptor(typeName: String, nullable: Boolean = false, initializer: SimpleFieldConfig.() -> Unit = {}): SimpleFieldConfig = field(
-        "descriptor",
-        ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
-        mutable = false,
-        nullable = nullable,
-        initializer = initializer
-    )
+    private fun descriptor(typeName: String, nullable: Boolean = false, initializer: SimpleFieldConfig.() -> Unit = {}): SimpleFieldConfig =
+        field(
+            "descriptor",
+            ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
+            mutable = false,
+            nullable = nullable,
+            initializer = initializer
+        )
 
     override val rootElement: ElementConfig by element(Other, name = "element") {
         +field("sourceSpan", type(Packages.tree, "SourceSpan")) {
@@ -194,6 +195,14 @@ object BirTree : AbstractTreeBuilder() {
         +field("isValue", boolean)
         +field("isExpect", boolean)
         +field("isFun", boolean)
+        +field("hasEnumEntries", boolean) {
+            kdoc = """
+            Returns true iff this is a class loaded from dependencies which has the `HAS_ENUM_ENTRIES` metadata flag set.
+            This flag is useful for Kotlin/JVM to determine whether an enum class from dependency actually has the `entries` property
+            in its bytecode, as opposed to whether it has it in its member scope, which is true even for enum classes compiled by
+            old versions of Kotlin which did not support the EnumEntries language feature.
+            """.trimIndent()
+        }
         +field("source", type<SourceElement>(), mutable = false)
         +listField("superTypes", irTypeType, mutability = Var)
         +field("thisReceiver", valueParameter, nullable = true, isChild = true)
