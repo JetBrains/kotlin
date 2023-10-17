@@ -429,6 +429,12 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("typealiasWithAnnotatedDynamicInAbstractClass.kt")
+        public void testTypealiasWithAnnotatedDynamicInAbstractClass() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/typealiasWithAnnotatedDynamicInAbstractClass.kt");
+        }
+
+        @Test
         @TestMetadata("typealiasWithDynamic.kt")
         public void testTypealiasWithDynamic() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/typealiasWithDynamic.kt");

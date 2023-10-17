@@ -417,7 +417,14 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 FirTypeResolutionResult(resolvedType, (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic)
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef, scopeClassDeclaration.containerDeclaration)
-            is FirDynamicTypeRef -> FirTypeResolutionResult(ConeDynamicType.create(session), diagnostic = null)
+            is FirDynamicTypeRef -> {
+                val attributes = typeRef.annotations.computeTypeAttributes(
+                    session,
+                    containerDeclaration = scopeClassDeclaration.containerDeclaration,
+                    shouldExpandTypeAliases = true
+                )
+                FirTypeResolutionResult(ConeDynamicType.create(session, attributes), diagnostic = null)
+            }
             is FirIntersectionTypeRef -> {
                 val leftType = typeRef.leftType.coneType
                 if (leftType is ConeTypeParameterType) {

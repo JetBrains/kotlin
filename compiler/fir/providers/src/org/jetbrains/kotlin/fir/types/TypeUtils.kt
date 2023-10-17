@@ -98,8 +98,13 @@ fun ConeDefinitelyNotNullType.Companion.create(
 }
 
 @OptIn(DynamicTypeConstructor::class)
-fun ConeDynamicType.Companion.create(session: FirSession): ConeDynamicType =
-    ConeDynamicType(session.builtinTypes.nothingType.type, session.builtinTypes.nullableAnyType.type)
+fun ConeDynamicType.Companion.create(
+    session: FirSession,
+    attributes: ConeAttributes = ConeAttributes.Empty,
+) = ConeDynamicType(
+    session.builtinTypes.nothingType.type.withAttributes(attributes),
+    session.builtinTypes.nullableAnyType.type.withAttributes(attributes),
+)
 
 /**
  * This call is required if you want to use a type with annotations that are linked to a declaration from this declaration inside another

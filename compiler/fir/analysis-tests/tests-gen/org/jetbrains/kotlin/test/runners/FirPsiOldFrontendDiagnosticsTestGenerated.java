@@ -2143,6 +2143,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("typealiasWithAnnotatedAbstractClass.kt")
+            public void testTypealiasWithAnnotatedAbstractClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/typealiasWithAnnotatedAbstractClass.kt");
+            }
+
+            @Test
             @TestMetadata("UnresolvedAnnotationOnObject.kt")
             public void testUnresolvedAnnotationOnObject() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/UnresolvedAnnotationOnObject.kt");
