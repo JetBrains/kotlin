@@ -22,6 +22,7 @@ object JsExpressionCheckers : ExpressionCheckers() {
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = setOf(
+            FirJsCodeConstantArgumentChecker,
             FirJsReifiedExternalChecker
         )
 

@@ -31,6 +31,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun ConeKotlinType.canBeUsedForConstVal(): Boolean = with(lowerBoundIfFlexible()) { isPrimitive || isString || isUnsignedType }
 
+fun canBeEvaluatedAtCompileTime(expression: FirExpression?, session: FirSession): Boolean {
+    return checkConstantArguments(expression, session) == null
+}
+
 internal fun checkConstantArguments(
     expression: FirExpression?,
     session: FirSession,

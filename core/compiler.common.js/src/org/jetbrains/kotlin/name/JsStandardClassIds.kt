@@ -59,6 +59,9 @@ object JsStandardClassIds {
 
     object Callables {
         @JvmField
+        val JsCode = "js".callableId(BASE_JS_PACKAGE)
+
+        @JvmField
         val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
 
         @JvmField

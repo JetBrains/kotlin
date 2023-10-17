@@ -67,7 +67,7 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
                         reporter.reportOn(source, FirErrors.VAR_ANNOTATION_PARAMETER, context)
                     }
                     val defaultValue = parameter.defaultValue
-                    if (defaultValue != null && checkConstantArguments(defaultValue, context.session) != null) {
+                    if (defaultValue != null && !canBeEvaluatedAtCompileTime(defaultValue, context.session)) {
                         reporter.reportOn(defaultValue.source, FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, context)
                     }
 
