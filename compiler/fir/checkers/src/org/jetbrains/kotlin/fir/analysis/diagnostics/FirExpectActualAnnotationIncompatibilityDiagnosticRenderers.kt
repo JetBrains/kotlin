@@ -52,6 +52,8 @@ internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
             typeRenderer = ConeTypeRenderer(),
             idRenderer = ConeIdShortRenderer(),
             referencedSymbolRenderer = FirIdRendererBasedSymbolRenderer(),
+            resolvedNamedReferenceRenderer = FirResolvedNamedReferenceRenderer(),
+            resolvedQualifierRenderer = FirResolvedQualifierRenderer(),
         ).renderElementAsString(ann, trim = true)
     }
 }
