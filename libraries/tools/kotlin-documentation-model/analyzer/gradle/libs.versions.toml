@@ -22,7 +22,7 @@ intellij-platform = "213.7172.25"
 ## HTML
 jsoup = "1.15.3"
 freemarker = "2.3.31"
-soywiz-korte = "2.7.0"
+korlibs-template = "4.0.10"
 kotlinx-html = "0.9.1"
 
 ## Markdown
@@ -94,7 +94,10 @@ intellij-platform-util-rt = { module = "com.jetbrains.intellij.platform:util-rt"
 jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
 kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
-soywiz-korte = { module = "com.soywiz.korlibs.korte:korte-jvm", version.ref = "soywiz-korte" }
+
+# for korlibs-template: the package was renamed and the library's source was moved, but the artifact name is still old,
+# so there's a mismatch. might change in the future, follow https://github.com/korlibs/korge/issues/1836 for updates
+korlibs-template = { module = "com.soywiz.korlibs.korte:korte-jvm", version.ref = "korlibs-template" }
 
 #### Markdown ####
 jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrains-markdown" }
