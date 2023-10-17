@@ -16420,6 +16420,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("nestedLambdaWithLastLambdaContainingCall.kt")
+                public void testNestedLambdaWithLastLambdaContainingCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithLastLambdaContainingCall.kt");
+                }
+
+                @Test
                 @TestMetadata("nestedLambdaWithNonLastYieldStatement.kt")
                 public void testNestedLambdaWithNonLastYieldStatement() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/nestedLambdaWithNonLastYieldStatement.kt");
