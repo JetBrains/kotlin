@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.buildtools.internal
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
+import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
@@ -139,9 +139,13 @@ internal object CompilationServiceImpl : CompilationService {
                 @Suppress("UNCHECKED_CAST")
                 val classpathChanges =
                     (aggregatedIcConfiguration as AggregatedIcConfiguration<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>).classpathChanges
+                val buildReporter = BuildReporter(
+                    icReporter = BuildToolsApiBuildICReporter(loggerAdapter.kotlinLogger, options.rootProjectDir),
+                    buildMetricsReporter = DoNothingBuildMetricsReporter
+                )
                 val incrementalCompiler = IncrementalJvmCompilerRunner(
                     aggregatedIcConfiguration.workingDir,
-                    DoNothingBuildReporter,
+                    buildReporter,
                     buildHistoryFile = null,
                     modulesApiHistory = EmptyModulesApiHistory,
                     usePreciseJavaTracking = options.preciseJavaTrackingEnabled,
@@ -208,7 +212,10 @@ internal object CompilationServiceImpl : CompilationService {
             arguments.toTypedArray() + sources.map { it.absolutePath }, // TODO: pass the sources explicitly KT-62759
             daemonCompileOptions,
             BasicCompilerServicesWithResultsFacadeServer(loggerAdapter),
-            DaemonCompilationResults()
+            DaemonCompilationResults(
+                loggerAdapter.kotlinLogger,
+                compilationConfiguration.aggregatedIcConfiguration?.options?.rootProjectDir
+            )
         ).get()
 
         return (ExitCode.entries.find { it.code == exitCode } ?: if (exitCode == 0) {

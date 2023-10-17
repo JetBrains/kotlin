@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 
-internal class KotlinLoggerMessageCollectorAdapter(private val kotlinLogger: KotlinLogger) : MessageCollector {
+internal class KotlinLoggerMessageCollectorAdapter(internal val kotlinLogger: KotlinLogger) : MessageCollector {
     private val messageRenderer = MessageRenderer.GRADLE_STYLE
 
     override fun clear() {}

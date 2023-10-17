@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.incremental.ClasspathChanges
-import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
+import java.io.File
 import java.io.Serializable
 import java.rmi.server.UnicastRemoteObject
 
@@ -19,12 +19,18 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
     get() {
         val ktsExtensionsAsArray = if (kotlinScriptFilenameExtensions.isEmpty()) null else kotlinScriptFilenameExtensions.toTypedArray()
         val reportCategories = arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code) // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
-        val reportSeverity = ReportSeverity.INFO.code // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
-        val requestedCompilationResults = emptyArray<Int>() // TODO: automagically compute the value, related to DaemonCompilationResults
+        val reportSeverity = if (logger.isDebugEnabled) {
+            ReportSeverity.DEBUG.code
+        } else {
+            ReportSeverity.INFO.code
+        }
         val aggregatedIcConfiguration = aggregatedIcConfiguration
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
+                val requestedCompilationResults = arrayOf(
+                    CompilationResultCategory.IC_COMPILE_ITERATION.code,
+                )
 
                 @Suppress("UNCHECKED_CAST")
                 val classpathChanges =
@@ -57,13 +63,13 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                 targetPlatform = CompileService.TargetPlatform.JVM,
                 reportCategories = reportCategories,
                 reportSeverity = reportSeverity,
-                requestedCompilationResults = requestedCompilationResults,
+                requestedCompilationResults = emptyArray(),
                 kotlinScriptExtensions = ktsExtensionsAsArray,
             )
         }
     }
 
-internal class DaemonCompilationResults : CompilationResults,
+internal class DaemonCompilationResults(private val kotlinLogger: KotlinLogger, private val rootProjectDir: File?) : CompilationResults,
     UnicastRemoteObject(
         SOCKET_ANY_FREE_PORT,
         LoopbackNetworkInterface.clientLoopbackSocketFactory,
@@ -78,12 +84,31 @@ internal class DaemonCompilationResults : CompilationResults,
      **/
     override fun add(compilationResultCategory: Int, value: Serializable) {
         // TODO propagate the values to the caller via callbacks, requires to make metrics a part of the API
-        println("Result category=$compilationResultCategory value=$value")
+        when (compilationResultCategory) {
+            CompilationResultCategory.IC_COMPILE_ITERATION.code -> kotlinLogger.debug(value as? CompileIterationResult, rootProjectDir)
+            else -> kotlinLogger.debug("Result category=$compilationResultCategory value=$value")
+        }
     }
 }
 
 internal val clientIsAliveFile by lazy {
     makeAutodeletingFlagFile()
+}
+
+internal fun KotlinLogger.debug(compileIterationResult: CompileIterationResult?, rootProjectDir: File?) {
+    if (compileIterationResult != null && isDebugEnabled) {
+        if (compileIterationResult.sourceFiles.any()) {
+            val sourceFiles = compileIterationResult.sourceFiles
+                .let { files ->
+                    files.map {
+                        val relativePath = if (rootProjectDir != null) it.relativeToOrNull(rootProjectDir)?.path else null
+                        return@map relativePath ?: it.normalize().absolutePath
+                    }
+                }
+            debug("compile iteration: ${sourceFiles.joinToString()}")
+        }
+        debug("compiler exit code: ${compileIterationResult.exitCode}")
+    }
 }
 
 internal fun createSessionIsAliveFlagFile() = makeAutodeletingFlagFile(keyword = "compilation-session")

@@ -37,6 +37,8 @@ import java.io.File
 import java.rmi.RemoteException
 import javax.inject.Inject
 
+private const val LOGGER_PREFIX = "[KOTLIN] "
+
 internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private val fileSystemOperations: FileSystemOperations,
 ) :
@@ -59,12 +61,12 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         get() = workArguments.taskPath
 
     private val log: KotlinLogger by lazy(LazyThreadSafetyMode.NONE) {
-        TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
+        TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it, LOGGER_PREFIX).apply { debug("Using '$taskPath' logger") } }
             ?: run {
                 val logger = LoggerFactory.getLogger("GradleKotlinCompilerWork")
                 val kotlinLogger = if (logger is org.gradle.api.logging.Logger) {
-                    GradleKotlinLogger(logger)
-                } else SL4JKotlinLogger(logger)
+                    GradleKotlinLogger(logger, LOGGER_PREFIX)
+                } else SL4JKotlinLogger(logger, LOGGER_PREFIX)
 
                 kotlinLogger.apply {
                     debug("Could not get logger for '$taskPath'. Falling back to sl4j logger")
