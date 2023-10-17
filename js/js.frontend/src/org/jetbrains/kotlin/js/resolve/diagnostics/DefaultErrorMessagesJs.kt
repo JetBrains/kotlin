@@ -24,6 +24,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.JSCODE_ERROR, "JavaScript: {0}", JsCallDataTextRenderer)
         put(ErrorsJs.JSCODE_WARNING, "JavaScript: {0}", JsCallDataTextRenderer)
         put(ErrorsJs.JSCODE_ARGUMENT_SHOULD_BE_CONSTANT, "Argument must be string constant")
+        put(ErrorsJs.JSCODE_ARGUMENT_NON_CONST_EXPRESSION, "Using not constant variables in js() argument expression becomes deprecated and will be an error in future releases")
         put(ErrorsJs.NOT_SUPPORTED, "Cannot translate (not supported yet): ''{0}''", RenderFirstLineOfElementText)
         put(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED, "Argument must be non-empty JavaScript code")
         put(ErrorsJs.NESTED_EXTERNAL_DECLARATION, "Non top-level `external` declaration")
