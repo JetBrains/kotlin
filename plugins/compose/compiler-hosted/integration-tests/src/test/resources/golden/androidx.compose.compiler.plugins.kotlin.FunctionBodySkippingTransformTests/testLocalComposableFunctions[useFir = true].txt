@@ -34,7 +34,7 @@ fun Example(a: Int, %composer: Composer?, %changed: Int) {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      A(a, %composer, 0b1110 and %dirty)
+      A(a, %composer, 0)
       if (isTraceInProgress()) {
         traceEventEnd()
       }

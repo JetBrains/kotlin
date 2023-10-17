@@ -58,7 +58,7 @@ fun test(foo: Foo, %composer: Composer?, %changed: Int) {
         if (isTraceInProgress()) {
           traceEventStart(<>, %changed, -1, <>)
         }
-        val tmp0 = delegated%delegate.getValue(null, ::delegated%delegate, %composer, 0b00110000 or 0b1110 and %dirty)
+        val tmp0 = delegated%delegate.getValue(null, ::delegated%delegate, %composer, 0b00110000)
         if (isTraceInProgress()) {
           traceEventEnd()
         }
