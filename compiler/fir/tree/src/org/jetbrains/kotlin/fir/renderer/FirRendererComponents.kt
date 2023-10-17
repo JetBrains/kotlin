@@ -27,4 +27,5 @@ internal interface FirRendererComponents {
     val errorExpressionRenderer: FirErrorExpressionRenderer?
     val fileAnnotationsContainerRenderer: FirFileAnnotationsContainerRenderer?
     val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer
+    val resolvedQualifierRenderer: FirResolvedQualifierRenderer
 }

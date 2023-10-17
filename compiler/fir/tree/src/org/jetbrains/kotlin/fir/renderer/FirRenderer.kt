@@ -46,7 +46,8 @@ class FirRenderer(
     override val valueParameterRenderer: FirValueParameterRenderer? = FirValueParameterRenderer(),
     override val errorExpressionRenderer: FirErrorExpressionRenderer? = FirErrorExpressionOnlyErrorRenderer(),
     override val fileAnnotationsContainerRenderer: FirFileAnnotationsContainerRenderer? = null,
-    override val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer = FirResolvedNamedReferenceRendererWithLabel()
+    override val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer = FirResolvedNamedReferenceRendererWithLabel(),
+    override val resolvedQualifierRenderer: FirResolvedQualifierRenderer = FirResolvedQualifierRendererWithLabel(),
 ) : FirRendererComponents {
 
     override val visitor = Visitor()
@@ -100,6 +101,7 @@ class FirRenderer(
         errorExpressionRenderer?.components = this
         fileAnnotationsContainerRenderer?.components = this
         resolvedNamedReferenceRenderer.components = this
+        resolvedQualifierRenderer.components = this
     }
 
     fun renderElementAsString(element: FirElement, trim: Boolean = false): String {
@@ -1137,18 +1139,7 @@ class FirRenderer(
         }
 
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
-            annotationRenderer?.render(resolvedQualifier)
-            print("Q|")
-            val classId = resolvedQualifier.classId
-            if (classId != null) {
-                idRenderer.renderClassId(classId)
-            } else {
-                print(resolvedQualifier.packageFqName.asString().replace(".", "/"))
-            }
-            if (resolvedQualifier.isNullableLHSForCallableReference) {
-                print("?")
-            }
-            print("|")
+            resolvedQualifierRenderer.render(resolvedQualifier)
         }
 
         override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
