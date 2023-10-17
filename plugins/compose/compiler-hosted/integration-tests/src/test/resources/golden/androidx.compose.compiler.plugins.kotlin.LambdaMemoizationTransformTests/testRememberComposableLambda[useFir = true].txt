@@ -30,7 +30,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }
-          Text(s, %composer, 0b1110 and %dirty)
+          Text(s, %composer, 0)
           if (isTraceInProgress()) {
             traceEventEnd()
           }
@@ -46,7 +46,7 @@ fun Test(s: String, %composer: Composer?, %changed: Int) {
           if (isTraceInProgress()) {
             traceEventStart(<>, %changed, -1, <>)
           }
-          Text(s, %composer, 0b1110 and %dirty)
+          Text(s, %composer, 0)
           if (isTraceInProgress()) {
             traceEventEnd()
           }
