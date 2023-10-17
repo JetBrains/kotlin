@@ -1038,11 +1038,12 @@ class Collections {
 
         @Sample
         fun unionOfGeneric() {
-            val unionOfArrayAndIterable = arrayOf("Apple", "Banana", "Orange", "Apple").union(
+            val unionOfArrayAndIterable : Set<String> = arrayOf("Apple", "Banana", "Orange", "Apple").union(
                 listOf("Orange", "Lime")
             )
             assertPrints(unionOfArrayAndIterable, "[Apple, Banana, Orange, Lime]")
-            val unionOfTwoIterables = listOf("Apple", "Banana", "Orange", "Apple").union(
+
+            val unionOfTwoIterables : Set<String> = listOf("Apple", "Banana", "Orange", "Apple").union(
                 listOf("Orange", "Lime")
             )
             assertPrints(unionOfTwoIterables, "[Apple, Banana, Orange, Lime]")
