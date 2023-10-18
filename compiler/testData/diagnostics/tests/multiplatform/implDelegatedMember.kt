@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -15,4 +16,4 @@ interface Bar {
 val bar: Bar
     get() = null!!
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>class Foo<!> : Bar by bar
+actual open class Foo : Bar by bar

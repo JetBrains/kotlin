@@ -34,30 +34,7 @@ object ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker : 
         @Suppress("USELESS_CAST") // K2 warning suppression, TODO: KT-62472
         descriptor as ClassifierDescriptorWithTypeParameters
 
-        checkSupertypes(expect, actual, context, declaration, descriptor)
         checkExpectActualScopeDiff(expect, actual, context, declaration, descriptor)
-    }
-}
-
-private fun checkSupertypes(
-    expect: ClassDescriptor,
-    actual: ClassDescriptor,
-    context: DeclarationCheckerContext,
-    declaration: KtClassLikeDeclaration,
-    descriptor: ClassifierDescriptorWithTypeParameters,
-) {
-    val addedSupertypes = (actual.getSuperInterfaces() + listOfNotNull(actual.getSuperClassNotAny())).map(ClassDescriptor::fqNameSafe) -
-            (expect.getSuperInterfaces() + listOfNotNull(expect.getSuperClassNotAny())).map(ClassDescriptor::fqNameSafe).toSet()
-
-    if (addedSupertypes.isNotEmpty()) {
-        context.trace.report(
-            Errors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING.on(
-                declaration,
-                descriptor,
-                addedSupertypes.map(FqName::shortName),
-                expect,
-            )
-        )
     }
 }
 
