@@ -10,7 +10,10 @@ package kotlin.reflect
  *
  * @param R return type of the callable.
  */
-@AllowDifferentMembersInActual // New 'KAnnotatedElement` supertype is added compared to the expect declaration
+@Suppress(
+        "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING",
+        "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING"
+) // Can be dropped after bootstrap update
 public actual interface KCallable<out R> : KAnnotatedElement {
     /**
      * The name of this callable as it was declared in the source code.
@@ -26,5 +29,6 @@ public actual interface KCallable<out R> : KAnnotatedElement {
     /**
      * The type of values returned by this callable.
      */
+    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public val returnType: KType
 }
