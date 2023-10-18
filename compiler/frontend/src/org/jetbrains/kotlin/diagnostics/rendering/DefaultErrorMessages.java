@@ -437,16 +437,6 @@ public class DefaultErrorMessages {
                 "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
                 ExpectActualScopeDiffRenderer.INSTANCE);
 
-        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING,
-                "{0}: actual class and its non-final expect class must declare exactly the same supertypes. " +
-                "Actual class declares the following supertypes that are not presented in expect class: {1}.\n" +
-                "This error happens because the expect class ''{2}'' is non-final. " +
-                "This warning will become an error in future releases.\n" +
-                "Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
-                CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
-                new ListRenderer<>(TO_STRING, (elem) -> "'" + elem + "'"),
-                NAME);
-
         MAP.put(EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING,
                 "'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. " +
                 "You can use -Xexpect-actual-classes flag to suppress this warning. " +

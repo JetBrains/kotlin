@@ -12,4 +12,4 @@ public expect abstract class AbstractMutableMap<K, V> : MutableMap<K, V> {
 
 import java.util.AbstractMap
 
-public actual abstract <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>class AbstractMutableMap<!><K, V>() : MutableMap<K, V>, AbstractMap<K, V>()
+public actual abstract class AbstractMutableMap<K, V>() : MutableMap<K, V>, AbstractMap<K, V>()
