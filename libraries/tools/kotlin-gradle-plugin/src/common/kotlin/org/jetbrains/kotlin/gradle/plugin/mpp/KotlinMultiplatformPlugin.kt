@@ -7,13 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaBasePlugin
 
 class KotlinMultiplatformPlugin : Plugin<Project> {
-
-    override fun apply(project: Project) {
-        project.plugins.apply(JavaBasePlugin::class.java)
-    }
+    override fun apply(project: Project) = Unit
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
