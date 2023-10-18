@@ -56,8 +56,4 @@ open class KotlinJvmTargetConfigurator :
         target.project.kotlinTestRegistry.registerTestTask(testTaskOrProvider)
     }
 
-    override fun buildCompilationProcessor(compilation: KotlinJvmCompilation): KotlinSourceSetProcessor<*> {
-        val tasksProvider = KotlinTasksProvider()
-        return Kotlin2JvmSourceSetProcessor(tasksProvider, KotlinCompilationInfo(compilation))
-    }
 }

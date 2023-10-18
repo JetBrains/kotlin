@@ -39,11 +39,18 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MultiplatformPublishingSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.SyncLanguageSettingsWithKotlinExtensionSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.UserDefinedAttributesSetupAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AddBuildListenerForXCodeSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationProcessorSideEffect
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCreateResourcesTaskSideEffect
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCreateSourcesJarTaskSideEffect
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DeprecatedMppGradlePropertiesMigrationSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSetupAction
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
+import org.jetbrains.kotlin.gradle.targets.CreateDefaultCompilationsSideEffect
+import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
@@ -85,6 +92,17 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, AddBuildListenerForXCodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
         }
+    }
+
+    KotlinTargetSideEffect.extensionPoint.apply {
+        register(project, CreateDefaultCompilationsSideEffect)
+    }
+
+    KotlinCompilationSideEffect.extensionPoint.apply {
+        register(project, KotlinCreateSourcesJarTaskSideEffect)
+        register(project, KotlinCreateResourcesTaskSideEffect)
+        register(project, KotlinCreateLifecycleTasksSideEffect)
+        register(project, KotlinCompilationProcessorSideEffect)
     }
 
     KotlinGradleProjectChecker.extensionPoint.apply {
