@@ -12,6 +12,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(project: Project) = Unit
 
     companion object {
-        const val METADATA_TARGET_NAME = "metadata"
+        const val METADATA_TARGET_NAME = KotlinMetadataTarget.METADATA_TARGET_NAME
     }
 }

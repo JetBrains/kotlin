@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.targetFromPresetInternal
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 
 internal val KotlinMetadataTargetSetupAction = KotlinProjectSetupAction {
     /* Create metadata target */
     multiplatformExtension.targetFromPresetInternal(
         KotlinMetadataTargetPreset(project),
-        KotlinMultiplatformPlugin.METADATA_TARGET_NAME
+        KotlinMetadataTarget.METADATA_TARGET_NAME
     )
 }

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.testbase.MPPNativeTargets
@@ -825,7 +824,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             build("printMetadataFiles") {
                 assertSuccessful()
 
-                val expectedFileName = "sample-lib-${KotlinMultiplatformPlugin.METADATA_TARGET_NAME}-1.0.jar"
+                val expectedFileName = "sample-lib-metadata-1.0.jar"
 
                 val paths = metadataDependencyRegex
                     .findAll(output).map { it.groupValues[1] to it.groupValues[2] }

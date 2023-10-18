@@ -52,5 +52,9 @@ abstract class KotlinMetadataTarget @Inject constructor(
     internal fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
         configure.execute(compilerOptions)
     }
+
+    companion object {
+        const val METADATA_TARGET_NAME = "metadata"
+    }
 }
 
