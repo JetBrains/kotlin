@@ -436,7 +436,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             annotationMappingRequired(container, elementToReplace) -> FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING
             else -> {
                 /** Currently it is a minimal phase there we can collect [FirResolveContextCollector] */
-                FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS
+                FirResolvePhase.CONTRACTS
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 class FirContractResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
-    outerBodyResolveContext: BodyResolveContext? = null
+    outerBodyResolveContext: BodyResolveContext? = null,
+    firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirAbstractContractResolveTransformerDispatcher(
     session,
     scopeSession,
     outerBodyResolveContext,
+    firResolveContextCollector,
 ) {
     override val contractDeclarationsTransformer: FirDeclarationsContractResolveTransformer
         get() = FirDeclarationsContractResolveTransformer()

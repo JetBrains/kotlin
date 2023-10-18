@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveCon
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -40,14 +41,16 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 abstract class FirAbstractContractResolveTransformerDispatcher(
     session: FirSession,
     scopeSession: ScopeSession,
-    outerBodyResolveContext: BodyResolveContext? = null
+    outerBodyResolveContext: BodyResolveContext? = null,
+    firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirAbstractBodyResolveTransformerDispatcher(
     session,
     FirResolvePhase.CONTRACTS,
     implicitTypeOnly = false,
     scopeSession,
     returnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Contract,
-    outerBodyResolveContext = outerBodyResolveContext
+    outerBodyResolveContext = outerBodyResolveContext,
+    firResolveContextCollector = firResolveContextCollector,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer =
         FirExpressionsResolveTransformer(this)
