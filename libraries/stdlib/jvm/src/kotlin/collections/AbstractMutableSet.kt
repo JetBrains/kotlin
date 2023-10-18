@@ -13,7 +13,7 @@ import java.util.AbstractSet
  * @param E the type of elements contained in the set. The set is invariant in its element type.
  */
 @SinceKotlin("1.1")
-@AllowDifferentMembersInActual // New 'AbstractSet` supertype is added compared to the expect declaration
+@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual abstract class AbstractMutableSet<E> protected actual constructor() : MutableSet<E>, AbstractSet<E>() {
     /**
      * Adds the specified element to the set.
