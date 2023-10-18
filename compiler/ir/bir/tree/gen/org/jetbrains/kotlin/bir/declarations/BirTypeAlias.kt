@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirTypeAliasSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
@@ -31,7 +30,7 @@ abstract class BirTypeAlias : BirElementBase(), BirDeclaration, BirDeclarationWi
     abstract var expandedType: BirType
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        typeParameters.forEach { it.accept(data, visitor) }
+        typeParameters.acceptChildren(visitor, data)
     }
 
     companion object

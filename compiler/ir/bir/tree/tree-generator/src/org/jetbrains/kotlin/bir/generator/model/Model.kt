@@ -32,6 +32,7 @@ class Element(
     val allParents: List<ClassOrElementRef>
         get() = elementParents + otherParents
     var isLeaf = config.isForcedLeaf
+    var ownerSymbolType: TypeRef? = null
     val childrenOrderOverride: List<String>? = config.childrenOrderOverride
     var allFields: List<Field> = emptyList()
     val allChildren get() = allFields.filter { it.isChild }

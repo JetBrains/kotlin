@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
 
 /**
  * A leaf IR tree element.
@@ -21,7 +20,7 @@ abstract class BirConstantArray : BirConstantValue() {
     abstract val elements: BirChildElementList<BirConstantValue>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        elements.forEach { it.accept(data, visitor) }
+        elements.acceptChildren(visitor, data)
     }
 
     companion object

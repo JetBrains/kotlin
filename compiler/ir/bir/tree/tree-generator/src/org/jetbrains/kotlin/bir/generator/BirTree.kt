@@ -313,6 +313,8 @@ object BirTree : AbstractTreeBuilder() {
     }
     val errorDeclaration: ElementConfig by element(Declaration) {
         parent(declaration)
+
+        +symbol(symbolType)
     }
     val field: ElementConfig by element(Declaration) {
         parent(declaration)

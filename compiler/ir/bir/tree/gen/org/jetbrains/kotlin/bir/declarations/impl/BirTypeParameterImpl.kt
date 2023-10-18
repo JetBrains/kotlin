@@ -33,6 +33,9 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     isReified: Boolean,
     override var superTypes: List<BirType>,
 ) : BirTypeParameter() {
+    override val owner: BirTypeParameterImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

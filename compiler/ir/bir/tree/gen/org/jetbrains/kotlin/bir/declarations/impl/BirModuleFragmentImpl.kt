@@ -40,8 +40,8 @@ class BirModuleFragmentImpl(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.files
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.files
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

@@ -28,6 +28,9 @@ class BirReturnableBlockImpl @ObsoleteDescriptorBasedAPI constructor(
     override val descriptor: FunctionDescriptor,
     signature: IdSignature?,
 ) : BirReturnableBlock() {
+    override val owner: BirReturnableBlockImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
@@ -91,8 +94,8 @@ class BirReturnableBlockImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.statements
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.statements
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

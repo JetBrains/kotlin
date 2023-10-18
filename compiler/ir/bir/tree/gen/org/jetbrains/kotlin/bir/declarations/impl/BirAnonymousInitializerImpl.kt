@@ -28,6 +28,9 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     isStatic: Boolean,
     body: BirBlockBody,
 ) : BirAnonymousInitializer() {
+    override val owner: BirAnonymousInitializerImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

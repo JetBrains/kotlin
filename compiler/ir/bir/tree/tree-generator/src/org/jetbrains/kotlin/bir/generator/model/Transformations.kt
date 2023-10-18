@@ -164,6 +164,7 @@ private fun adjustSymbolOwners(elements: List<Element>) {
                     is TypeVariable -> type.bounds.single() as ClassRef<*>
                     else -> error(type)
                 }
+                el.ownerSymbolType = symbolType
                 el.otherParents += symbolType
             }
         }
