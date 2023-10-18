@@ -100,7 +100,7 @@ fun incompatibleIdentityRegardlessNullabilityWithValueClassesSmartCast(c: Any?, 
 enum class F
 
 fun <T: E, K: F> incompatibleEnumComparisonWithTypeParameters(e: T, f: K) {
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e == f<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>e == f<!>
 }
 
 interface A
