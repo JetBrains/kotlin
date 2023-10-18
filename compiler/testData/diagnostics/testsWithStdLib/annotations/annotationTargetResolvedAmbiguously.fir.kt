@@ -8,7 +8,7 @@ object Some {
         CLASS
     }
 
-    @Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT!>FIELD<!>)
+    @Target(<!AMBIGUOUS_ANNOTATION_ARGUMENT, ARGUMENT_TYPE_MISMATCH!>FIELD<!>)
     annotation class Ann2
 
     const val FIELD = ""

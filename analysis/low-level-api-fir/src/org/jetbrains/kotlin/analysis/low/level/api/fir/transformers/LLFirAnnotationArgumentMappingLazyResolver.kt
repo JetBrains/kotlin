@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -131,7 +132,7 @@ internal object AnnotationArgumentMappingStateKeepers {
                     source = oldList.source
                     for ((index, argument) in oldList.arguments.withIndex()) {
                         val replacement = when {
-                            argument is FirPropertyAccessExpression && argument.calleeReference.isError() -> argument
+                            argument is FirPropertyAccessExpression && argument.calleeReference.let { it.isError() || it is FirResolvedNamedReference } -> argument
                             else -> newArguments[index]
                         }
 

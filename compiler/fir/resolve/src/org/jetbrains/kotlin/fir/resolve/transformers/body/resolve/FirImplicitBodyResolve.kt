@@ -125,6 +125,18 @@ open class FirImplicitAwareBodyResolveTransformer(
     outerBodyResolveContext,
     firResolveContextCollector
 ) {
+    /**
+     * This is required to avoid transformations of class annotations
+     */
+    override fun transformDeclarationContent(
+        declaration: FirDeclaration,
+        data: ResolutionMode,
+    ): FirDeclaration = if (implicitTypeOnly && declaration is FirRegularClass && !declaration.isLocal) {
+        declaration.transformDeclarations(this, data)
+    } else {
+        super.transformDeclarationContent(declaration, data)
+    }
+
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode

@@ -630,18 +630,21 @@ open class FirDeclarationsResolveTransformer(
 
     override fun transformRegularClass(
         regularClass: FirRegularClass,
-        data: ResolutionMode
-    ): FirRegularClass =
-        whileAnalysing(session, regularClass) {
-            return context.withContainingClass(regularClass) {
-                if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
-                    return regularClass.runAllPhasesForLocalClass(transformer, components, data, transformer.firResolveContextCollector)
-                }
-
-                doTransformTypeParameters(regularClass)
-                doTransformRegularClass(regularClass, data)
+        data: ResolutionMode,
+    ): FirRegularClass = whileAnalysing(session, regularClass) {
+        context.withContainingClass(regularClass) {
+            val isLocal = regularClass.isLocal
+            if (isLocal && regularClass !in context.targetedLocalClasses) {
+                return regularClass.runAllPhasesForLocalClass(transformer, components, data, transformer.firResolveContextCollector)
             }
+
+            if (isLocal || !implicitTypeOnly) {
+                doTransformTypeParameters(regularClass)
+            }
+
+            doTransformRegularClass(regularClass, data)
         }
+    }
 
     fun withScript(script: FirScript, action: () -> FirScript): FirScript {
         dataFlowAnalyzer.enterScript(script)
