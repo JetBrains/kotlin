@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
 
 /**
  * A leaf IR tree element.
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.bir.accept
  */
 abstract class BirComposite : BirContainerExpression() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        statements.forEach { it.accept(data, visitor) }
+        statements.acceptChildren(visitor, data)
     }
 
     companion object

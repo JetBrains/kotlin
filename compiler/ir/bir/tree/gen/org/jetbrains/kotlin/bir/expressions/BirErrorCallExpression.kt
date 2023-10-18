@@ -24,7 +24,7 @@ abstract class BirErrorCallExpression : BirErrorExpression() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         explicitReceiver?.accept(data, visitor)
-        arguments.forEach { it.accept(data, visitor) }
+        arguments.acceptChildren(visitor, data)
     }
 
     companion object

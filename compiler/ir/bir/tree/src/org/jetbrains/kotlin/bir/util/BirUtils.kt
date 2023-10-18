@@ -43,10 +43,10 @@ fun BirClass.companionObject(): BirClass? =
     this.declarations.singleOrNull { it is BirClass && it.isCompanion } as BirClass?
 
 val BirDeclaration.isGetter
-    get() = this is BirSimpleFunction && this == this.correspondingPropertySymbol?.maybeAsElement?.getter
+    get() = this is BirSimpleFunction && this == this.correspondingPropertySymbol?.ownerIfBound?.getter
 
 val BirDeclaration.isSetter
-    get() = this is BirSimpleFunction && this == this.correspondingPropertySymbol?.maybeAsElement?.setter
+    get() = this is BirSimpleFunction && this == this.correspondingPropertySymbol?.ownerIfBound?.setter
 
 val BirDeclaration.isAccessor
     get() = this.isGetter || this.isSetter
@@ -104,11 +104,11 @@ fun BirClass.getSimpleFunction(name: String): BirSimpleFunction? =
 
 fun BirClass.getPropertyGetter(name: String): BirSimpleFunction? =
     getProperty(name)?.getter
-        ?: getSimpleFunction("<get-$name>").also { assert(it?.maybeAsElement?.correspondingPropertySymbol?.maybeAsElement?.name?.asString() == name) }
+        ?: getSimpleFunction("<get-$name>").also { assert(it?.ownerIfBound?.correspondingPropertySymbol?.ownerIfBound?.name?.asString() == name) }
 
 fun BirClass.getPropertySetter(name: String): BirSimpleFunction? =
     getProperty(name)?.setter
-        ?: getSimpleFunction("<set-$name>").also { assert(it?.maybeAsElement?.correspondingPropertySymbol?.maybeAsElement?.name?.asString() == name) }
+        ?: getSimpleFunction("<set-$name>").also { assert(it?.ownerIfBound?.correspondingPropertySymbol?.ownerIfBound?.name?.asString() == name) }
 
 
 inline fun <reified T : BirDeclaration> BirDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
@@ -122,7 +122,7 @@ val BirConstructor.constructedClass
     get() = this.parent as BirClass
 
 private val BirConstructorCall.annotationClass
-    get() = this.symbol.asElement.constructedClass
+    get() = this.symbol.owner.constructedClass
 
 fun BirConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
     annotationClass.hasEqualFqName(fqName)
@@ -175,19 +175,19 @@ val BirClass.classId: ClassId?
     }
 
 
-fun BirConstructorCall.isAnnotation(name: FqName) = symbol.asElement.parentAsClass.fqNameWhenAvailable == name
+fun BirConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
 
 fun BirAnnotationContainer.getAnnotation(name: FqName): BirConstructorCall? =
     annotations.find { it.isAnnotation(name) }
 
 fun BirAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
-        it.symbol.asElement.parentAsClass.hasEqualFqName(name)
+        it.symbol.owner.parentAsClass.hasEqualFqName(name)
     }
 
 fun BirAnnotationContainer.hasAnnotation(symbol: BirClassSymbol) =
     annotations.any {
-        it.symbol.asElement.parentAsClass == symbol
+        it.symbol.owner.parentAsClass == symbol
     }
 
 fun BirValueParameter.getIndex(): Int {
@@ -362,10 +362,10 @@ fun BirType.remapTypeParameters(
                         symbol.typeParameters.elementAt(classifier.getIndex())
                     else
                         classifier
-                BirSimpleTypeImpl(newClassifier.asElement, nullability, arguments, annotations)
+                BirSimpleTypeImpl(newClassifier.owner, nullability, arguments, annotations)
             }
             is BirClass -> BirSimpleTypeImpl(
-                classifier.asElement,
+                classifier.owner,
                 nullability,
                 arguments.memoryOptimizedMap {
                     when (it) {
@@ -529,7 +529,7 @@ fun BirMemberAccessExpression<*>.getAllArgumentsWithBir(): List<Pair<BirValuePar
         is BirFunctionReference -> this.symbol as BirFunction
         is BirPropertyReference -> {
             assert(this.field == null) { "Field should be null to use `getArgumentsWithBir` on BirPropertyReference: ${this.dump()}}" }
-            this.getter!!.asElement
+            this.getter!!.owner
         }
         else -> error(this)
     }

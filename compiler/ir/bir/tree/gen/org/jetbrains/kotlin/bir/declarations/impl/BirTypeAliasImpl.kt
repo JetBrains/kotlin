@@ -34,6 +34,9 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     isActual: Boolean,
     expandedType: BirType,
 ) : BirTypeAlias() {
+    override val owner: BirTypeAliasImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
@@ -120,8 +123,8 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.typeParameters
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.typeParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

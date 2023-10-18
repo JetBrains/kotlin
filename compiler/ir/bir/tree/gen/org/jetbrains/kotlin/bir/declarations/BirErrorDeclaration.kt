@@ -9,12 +9,13 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.symbols.BirSymbol
 
 /**
  * A leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.errorDeclaration]
  */
-abstract class BirErrorDeclaration : BirElementBase(), BirDeclaration {
+abstract class BirErrorDeclaration : BirElementBase(), BirDeclaration, BirSymbol {
     companion object
 }

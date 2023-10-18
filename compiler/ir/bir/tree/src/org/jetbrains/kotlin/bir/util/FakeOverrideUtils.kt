@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.declarations.*
-import org.jetbrains.kotlin.bir.symbols.BirPossiblyElementSymbol
+import org.jetbrains.kotlin.bir.symbols.BirTypedSymbol
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 
-fun <S : BirPossiblyElementSymbol<E>, E : BirOverridableDeclaration<S>> E.collectRealOverrides(
+fun <S : BirTypedSymbol<E>, E : BirOverridableDeclaration<S>> E.collectRealOverrides(
     toSkip: (E) -> Boolean = { false },
     filter: (E) -> Boolean = { false }
 ): Set<E> {
@@ -22,7 +22,7 @@ fun <S : BirPossiblyElementSymbol<E>, E : BirOverridableDeclaration<S>> E.collec
         .collectAndFilterRealOverrides(toSkip, filter)
 }
 
-fun <S : BirPossiblyElementSymbol<E>, E : BirOverridableDeclaration<S>> Collection<E>.collectAndFilterRealOverrides(
+fun <S : BirTypedSymbol<E>, E : BirOverridableDeclaration<S>> Collection<E>.collectAndFilterRealOverrides(
     toSkip: (E) -> Boolean = { false },
     filter: (E) -> Boolean = { false }
 ): Set<E> {
@@ -72,7 +72,7 @@ fun Collection<BirOverridableMember>.collectAndFilterRealOverrides(): Set<BirOve
     else -> error("all members should be of the same kind, got ${map { it.render() }}")
 }
 
-fun <S : BirPossiblyElementSymbol<E>, E : BirOverridableDeclaration<S>> E.resolveFakeOverride(
+fun <S : BirTypedSymbol<E>, E : BirOverridableDeclaration<S>> E.resolveFakeOverride(
     allowAbstract: Boolean = false,
     toSkip: (E) -> Boolean = { false }
 ): E? =
@@ -83,7 +83,7 @@ fun <S : BirPossiblyElementSymbol<E>, E : BirOverridableDeclaration<S>> E.resolv
     }
 
 // TODO: use this implementation instead of any other
-fun <S : BirPossiblyElementSymbol<E>, E : BirOverridableDeclaration<S>> E.resolveFakeOverrideOrNull(
+fun <S : BirTypedSymbol<E>, E : BirOverridableDeclaration<S>> E.resolveFakeOverrideOrNull(
     allowAbstract: Boolean = false,
     toSkip: (E) -> Boolean = { false }
 ): E? {

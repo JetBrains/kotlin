@@ -1,45 +1,62 @@
-/*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.bir.symbols
 
+import org.jetbrains.kotlin.bir.declarations.*
+import org.jetbrains.kotlin.bir.expressions.BirReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-abstract class ExternalBirSymbol(
+abstract class ExternalBirSymbol<out E : BirSymbolOwner>(
     override val signature: IdSignature?,
-) : BirSymbol {
-    class FileSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirFileSymbol
+) : BirTypedSymbol<E> {
+    override val owner: E
+        get() = error("The symbol is not bound")
+    override val isBound: Boolean
+        get() = false
+
+    class FileSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirFile>(signature), BirFileSymbol
+
     class ExternalPackageFragmentSymbol(signature: IdSignature?) :
-        ExternalBirSymbol(signature), BirExternalPackageFragmentSymbol
+        ExternalBirSymbol<BirExternalPackageFragment>(signature), BirExternalPackageFragmentSymbol
 
-    class AnonymousInitializerSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirAnonymousInitializerSymbol
+    class AnonymousInitializerSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirAnonymousInitializer>(signature), BirAnonymousInitializerSymbol
 
-    class EnumEntrySymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirEnumEntrySymbol
-    class FieldSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirFieldSymbol
-    class ClassSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirClassSymbol
-    class ScriptSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirScriptSymbol
-    class TypeParameterSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirTypeParameterSymbol
+    class EnumEntrySymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirEnumEntry>(signature), BirEnumEntrySymbol
 
-    class ValueParameterSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirValueParameterSymbol
+    class FieldSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirField>(signature), BirFieldSymbol
 
-    class VariableSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirVariableSymbol
-    class ConstructorSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirConstructorSymbol
+    class ClassSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirClass>(signature), BirClassSymbol
 
-    class SimpleFunctionSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirSimpleFunctionSymbol
+    class ScriptSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirScript>(signature), BirScriptSymbol
 
-    class ReturnableBlockSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirReturnableBlockSymbol
+    class TypeParameterSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirTypeParameter>(signature), BirTypeParameterSymbol
 
-    class PropertySymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirPropertySymbol
+    class ValueParameterSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirValueParameter>(signature), BirValueParameterSymbol
+
+    class VariableSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirVariable>(signature), BirVariableSymbol
+
+    class ConstructorSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirConstructor>(signature), BirConstructorSymbol
+
+    class SimpleFunctionSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirSimpleFunction>(signature), BirSimpleFunctionSymbol
+
+    class ReturnableBlockSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirReturnableBlock>(signature), BirReturnableBlockSymbol
+
+    class PropertySymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirProperty>(signature), BirPropertySymbol
+
     class LocalDelegatedPropertySymbol(signature: IdSignature?) :
-        ExternalBirSymbol(signature), BirLocalDelegatedPropertySymbol
+        ExternalBirSymbol<BirLocalDelegatedProperty>(signature), BirLocalDelegatedPropertySymbol
 
-    class TypeAliasSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirTypeAliasSymbol
+    class TypeAliasSymbol(signature: IdSignature?) :
+        ExternalBirSymbol<BirTypeAlias>(signature), BirTypeAliasSymbol
 }

@@ -45,6 +45,9 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     thisReceiver: BirValueParameter?,
     valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
 ) : BirClass() {
+    override val owner: BirClassImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
@@ -261,9 +264,9 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.typeParameters
-        id == 1 -> this.declarations
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.typeParameters
+        1 -> this.declarations
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

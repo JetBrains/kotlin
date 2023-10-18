@@ -90,8 +90,8 @@ class BirErrorCallExpressionImpl(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.arguments
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.arguments
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

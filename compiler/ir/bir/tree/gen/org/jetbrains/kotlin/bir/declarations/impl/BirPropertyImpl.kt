@@ -46,6 +46,9 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     getter: BirSimpleFunction?,
     setter: BirSimpleFunction?,
 ) : BirProperty() {
+    override val owner: BirPropertyImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

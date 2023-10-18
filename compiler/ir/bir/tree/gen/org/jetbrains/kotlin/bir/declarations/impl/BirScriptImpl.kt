@@ -45,6 +45,9 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     targetClass: BirClassSymbol?,
     constructor: BirConstructor?,
 ) : BirScript() {
+    override val owner: BirScriptImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
@@ -181,11 +184,11 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.statements
-        id == 1 -> this.explicitCallParameters
-        id == 2 -> this.implicitReceiversParameters
-        id == 3 -> this.providedPropertiesParameters
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.statements
+        1 -> this.explicitCallParameters
+        2 -> this.implicitReceiversParameters
+        3 -> this.providedPropertiesParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

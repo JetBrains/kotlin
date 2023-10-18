@@ -23,6 +23,7 @@ class BirChildElementList<E : BirElement?>(
 
     override fun get(index: Int): E {
         checkElementIndex(index, size)
+        @Suppress("UNCHECKED_CAST")
         return elementArray[index] as E
     }
 
@@ -132,6 +133,7 @@ class BirChildElementList<E : BirElement?>(
         replaceChild(element, null)
         elementArray.copyInto(elementArray, index, index + 1, size)
         invalidate()
+        @Suppress("UNCHECKED_CAST")
         return element as E
     }
 

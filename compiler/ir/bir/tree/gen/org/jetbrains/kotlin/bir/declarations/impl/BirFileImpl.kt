@@ -29,6 +29,9 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     override var annotations: List<BirConstructorCall>,
     fileEntry: IrFileEntry,
 ) : BirFile() {
+    override val owner: BirFileImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
@@ -82,8 +85,8 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.declarations
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.declarations
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

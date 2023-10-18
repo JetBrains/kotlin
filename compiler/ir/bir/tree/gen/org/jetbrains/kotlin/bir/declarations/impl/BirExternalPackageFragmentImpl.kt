@@ -27,6 +27,9 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
     packageFqName: FqName,
     override val containerSource: DeserializedContainerSource?,
 ) : BirExternalPackageFragment() {
+    override val owner: BirExternalPackageFragmentImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
@@ -69,8 +72,8 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.declarations
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.declarations
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

@@ -35,6 +35,9 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     isLateinit: Boolean,
     initializer: BirExpression?,
 ) : BirVariable() {
+    override val owner: BirVariableImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

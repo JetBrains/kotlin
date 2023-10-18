@@ -50,11 +50,11 @@ abstract class BirScript : BirElementBase(), BirDeclaration, BirDeclarationWithN
     abstract var constructor: BirConstructor?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        statements.forEach { it.accept(data, visitor) }
+        statements.acceptChildren(visitor, data)
         thisReceiver?.accept(data, visitor)
-        explicitCallParameters.forEach { it.accept(data, visitor) }
-        implicitReceiversParameters.forEach { it.accept(data, visitor) }
-        providedPropertiesParameters.forEach { it.accept(data, visitor) }
+        explicitCallParameters.acceptChildren(visitor, data)
+        implicitReceiversParameters.acceptChildren(visitor, data)
+        providedPropertiesParameters.acceptChildren(visitor, data)
         earlierScriptsParameter?.accept(data, visitor)
     }
 

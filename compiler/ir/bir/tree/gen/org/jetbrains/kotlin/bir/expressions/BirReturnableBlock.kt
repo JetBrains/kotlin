@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.declarations.BirReturnTarget
 import org.jetbrains.kotlin.bir.declarations.BirSymbolOwner
 import org.jetbrains.kotlin.bir.symbols.BirReturnableBlockSymbol
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.bir.symbols.BirReturnableBlockSymbol
 abstract class BirReturnableBlock : BirBlock(), BirSymbolOwner, BirReturnTarget,
         BirReturnableBlockSymbol {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        statements.forEach { it.accept(data, visitor) }
+        statements.acceptChildren(visitor, data)
     }
 
     companion object

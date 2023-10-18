@@ -30,6 +30,15 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                 superclass(element.toPoetSelfParameterized())
             }
 
+            if (element.ownerSymbolType != null) {
+                addProperty(
+                    PropertySpec
+                        .builder("owner", element.elementImplName, KModifier.OVERRIDE)
+                        .getter(FunSpec.getterBuilder().addCode("return this\n").build())
+                        .build()
+                )
+            }
+
             val ctor = FunSpec.constructorBuilder()
 
             val allFields = element.allFields
@@ -137,9 +146,9 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         .addParameter("id", INT)
                         .returns(childElementList.toPoet().tryParameterizedBy(STAR))
                         .apply {
-                            addCode("return when {\n")
+                            addCode("return when(id) {\n")
                             childrenLists.forEachIndexed { id, field ->
-                                addCode("    id == %L -> this.%N\n", id, field.name)
+                                addCode("    %L -> this.%N\n", id, field.name)
                             }
                             addCode("    else -> throwChildrenListWithIdNotFound(id)\n")
                             addCode("}\n")

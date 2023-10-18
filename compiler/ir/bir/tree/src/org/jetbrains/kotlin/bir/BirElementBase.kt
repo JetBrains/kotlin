@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.bir
 
 abstract class BirElementBase : BirElement {
-    internal var owner: BirForest? = null
+    internal var root: BirForest? = null
     final override var parent: BirElementBase? = null
         private set
     private var dynamicProperties: Array<Any?>? = null
@@ -26,7 +26,7 @@ abstract class BirElementBase : BirElement {
     internal var indexSlot: UByte = 0u
 
     val attachedToTree
-        get() = owner != null
+        get() = root != null
 
     internal fun getContainingList(): BirChildElementList<*>? {
         val containingListId = containingListId.toInt()
@@ -44,7 +44,7 @@ abstract class BirElementBase : BirElement {
 
     fun isAncestorOf(other: BirElementBase): Boolean {
         // fixme: ensure level is tracked for of-the-tree cases
-        if (attachedToTree != other.attachedToTree) {
+        if (root !== other.root) {
             return false
         }
 
@@ -92,11 +92,11 @@ abstract class BirElementBase : BirElement {
     }
 
     private fun childDetached(childElement: BirElementBase) {
-        owner?.elementDetached(childElement)
+        root?.elementDetached(childElement)
     }
 
     private fun childAttached(childElement: BirElementBase) {
-        owner?.elementAttached(childElement)
+        root?.elementAttached(childElement)
     }
 
     internal fun checkCanBeAttachedAsChild(newParent: BirElement) {
@@ -172,7 +172,7 @@ abstract class BirElementBase : BirElement {
 
 
     internal fun invalidate() {
-        owner?.elementIndexInvalidated(this)
+        root?.elementIndexInvalidated(this)
     }
 }
 

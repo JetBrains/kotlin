@@ -38,6 +38,9 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
     initializer: BirExpressionBody?,
     correspondingPropertySymbol: BirPropertySymbol?,
 ) : BirField() {
+    override val owner: BirFieldImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

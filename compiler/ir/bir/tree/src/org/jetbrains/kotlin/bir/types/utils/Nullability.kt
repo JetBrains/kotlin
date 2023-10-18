@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.bir.types.utils
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirScriptSymbol
 import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
-import org.jetbrains.kotlin.bir.symbols.asElement
 import org.jetbrains.kotlin.bir.types.BirDynamicType
 import org.jetbrains.kotlin.bir.types.BirErrorType
 import org.jetbrains.kotlin.bir.types.BirSimpleType
@@ -61,7 +60,7 @@ fun BirType.isNullable(): Boolean =
                 SimpleTypeNullability.MARKED_NULLABLE -> true
                 // here is a bug, there should be .all check (not .any),
                 // but fixing it is a breaking change, see KT-31545 for details
-                SimpleTypeNullability.NOT_SPECIFIED -> classifier.asElement.superTypes.any(BirType::isNullable)
+                SimpleTypeNullability.NOT_SPECIFIED -> classifier.owner.superTypes.any(BirType::isNullable)
                 SimpleTypeNullability.DEFINITELY_NOT_NULL -> false
             }
             is BirScriptSymbol -> nullability == SimpleTypeNullability.MARKED_NULLABLE

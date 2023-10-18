@@ -27,7 +27,7 @@ class BirForest {
     }
 
     private fun attachElement(element: BirElementBase) {
-        element.owner = this
+        element.root = this
         element.updateLevel()
     }
 
@@ -44,7 +44,7 @@ class BirForest {
     }
 
     private fun detachElement(element: BirElementBase) {
-        element.owner = null
+        element.root = null
         element.updateLevel()
     }
 
@@ -107,7 +107,7 @@ class BirForest {
     }
 
     fun reindexAllElements() {
-        possiblyRootElements.retainAll { it.owner == this && it.parent == null }
+        possiblyRootElements.retainAll { it.root == this && it.parent == null }
         for (root in possiblyRootElements) {
             root.accept { element ->
                 addElementToIndex(element as BirElementBase)

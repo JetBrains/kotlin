@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.bir.symbols
 
-import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -13,58 +12,63 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
 interface BirSymbol {
+    val owner: BirSymbolOwner
+    val isBound: Boolean
     val signature: IdSignature?
 }
 
+interface BirTypedSymbol<out E : BirSymbolOwner> : BirSymbol {
+    override val owner: E
+}
 
-interface BirUntypedPossiblyElementSymbol : BirSymbol
-interface BirPossiblyElementSymbol<out E : BirElement> : BirUntypedPossiblyElementSymbol
+val BirSymbol.ownerIfBound: BirSymbolOwner?
+    get() = if (isBound) owner else null
 
-inline val <reified E : BirElement> BirPossiblyElementSymbol<E>.maybeAsElement: E?
-    get() = this as? E
-
-inline val <reified E : BirElement> BirPossiblyElementSymbol<E>.asElement: E
-    get() = this as E
-
+val <E : BirSymbolOwner> BirTypedSymbol<E>.ownerIfBound: E?
+    get() = if (isBound) owner else null
 
 interface BirPackageFragmentSymbol : BirSymbol
 
-interface BirFileSymbol : BirPackageFragmentSymbol, BirPossiblyElementSymbol<BirFile>
+interface BirFileSymbol : BirPackageFragmentSymbol, BirTypedSymbol<BirFile>
 
-interface BirExternalPackageFragmentSymbol : BirPackageFragmentSymbol, BirPossiblyElementSymbol<BirExternalPackageFragment>
+interface BirExternalPackageFragmentSymbol : BirPackageFragmentSymbol, BirTypedSymbol<BirExternalPackageFragment>
 
-interface BirAnonymousInitializerSymbol : BirPossiblyElementSymbol<BirAnonymousInitializer>
+interface BirAnonymousInitializerSymbol : BirTypedSymbol<BirAnonymousInitializer>
 
-interface BirEnumEntrySymbol : BirPossiblyElementSymbol<BirEnumEntry>
+interface BirEnumEntrySymbol : BirTypedSymbol<BirEnumEntry>
 
-interface BirFieldSymbol : BirPossiblyElementSymbol<BirField>
+interface BirFieldSymbol : BirTypedSymbol<BirField>
 
 interface BirClassifierSymbol : BirSymbol, TypeConstructorMarker
 
-interface BirClassSymbol : BirClassifierSymbol, BirPossiblyElementSymbol<BirClass>
+interface BirClassSymbol : BirClassifierSymbol, BirTypedSymbol<BirClass>
 
-interface BirScriptSymbol : BirClassifierSymbol, BirPossiblyElementSymbol<BirScript>
+interface BirScriptSymbol : BirClassifierSymbol, BirTypedSymbol<BirScript>
 
-interface BirTypeParameterSymbol : BirClassifierSymbol, BirPossiblyElementSymbol<BirTypeParameter>, TypeParameterMarker
+interface BirTypeParameterSymbol : BirClassifierSymbol, BirTypedSymbol<BirTypeParameter>, TypeParameterMarker
 
-interface BirValueSymbol : BirSymbol
+interface BirValueSymbol : BirSymbol {
+    override val owner: BirValueDeclaration
+}
 
-interface BirValueParameterSymbol : BirValueSymbol, BirPossiblyElementSymbol<BirValueParameter>
+interface BirValueParameterSymbol : BirValueSymbol, BirTypedSymbol<BirValueParameter>
 
-interface BirVariableSymbol : BirValueSymbol, BirPossiblyElementSymbol<BirVariable>
+interface BirVariableSymbol : BirValueSymbol, BirTypedSymbol<BirVariable>
 
 interface BirReturnTargetSymbol : BirSymbol
 
-interface BirFunctionSymbol : BirReturnTargetSymbol //todo: , BirPossiblyElementSymbol<BirFunction>
+interface BirFunctionSymbol : BirReturnTargetSymbol {
+    override val owner: BirFunction
+}
 
-interface BirConstructorSymbol : BirFunctionSymbol, BirPossiblyElementSymbol<BirConstructor>
+interface BirConstructorSymbol : BirFunctionSymbol, BirTypedSymbol<BirConstructor>
 
-interface BirSimpleFunctionSymbol : BirFunctionSymbol, BirPossiblyElementSymbol<BirSimpleFunction>
+interface BirSimpleFunctionSymbol : BirFunctionSymbol, BirTypedSymbol<BirSimpleFunction>
 
-interface BirReturnableBlockSymbol : BirReturnTargetSymbol, BirPossiblyElementSymbol<BirReturnableBlock>
+interface BirReturnableBlockSymbol : BirReturnTargetSymbol, BirTypedSymbol<BirReturnableBlock>
 
-interface BirPropertySymbol : BirPossiblyElementSymbol<BirProperty>
+interface BirPropertySymbol : BirTypedSymbol<BirProperty>
 
-interface BirLocalDelegatedPropertySymbol : BirPossiblyElementSymbol<BirLocalDelegatedProperty>
+interface BirLocalDelegatedPropertySymbol : BirTypedSymbol<BirLocalDelegatedProperty>
 
-interface BirTypeAliasSymbol : BirPossiblyElementSymbol<BirTypeAlias>
+interface BirTypeAliasSymbol : BirTypedSymbol<BirTypeAlias>

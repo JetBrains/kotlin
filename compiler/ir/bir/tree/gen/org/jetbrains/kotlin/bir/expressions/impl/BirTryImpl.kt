@@ -94,8 +94,8 @@ class BirTryImpl(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.catches
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.catches
         else -> throwChildrenListWithIdNotFound(id)
     }
 }
