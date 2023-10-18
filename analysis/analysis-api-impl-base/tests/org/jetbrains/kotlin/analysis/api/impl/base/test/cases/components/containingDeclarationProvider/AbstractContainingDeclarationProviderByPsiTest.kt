@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScriptInitializer
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -28,8 +30,13 @@ abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysis
                     val currentDeclarationSymbol = dcl.getSymbol()
                     val expectedParentDeclarationSymbol = parentDeclaration?.getSymbol()
                     val actualParentDeclarationSymbol = currentDeclarationSymbol.getContainingSymbol()
-                    testServices.assertions.assertEquals(expectedParentDeclarationSymbol, actualParentDeclarationSymbol) {
-                        "Invalid parent declaration for $currentDeclarationSymbol, expected $expectedParentDeclarationSymbol but $actualParentDeclarationSymbol found"
+
+                    if (dcl is KtScriptInitializer) {
+                        testServices.assertions.assertTrue(currentDeclarationSymbol is KtScriptSymbol)
+                    } else {
+                        testServices.assertions.assertEquals(expectedParentDeclarationSymbol, actualParentDeclarationSymbol) {
+                            "Invalid parent declaration for $currentDeclarationSymbol, expected $expectedParentDeclarationSymbol but $actualParentDeclarationSymbol found"
+                        }
                     }
 
                     currentPath.add(dcl)

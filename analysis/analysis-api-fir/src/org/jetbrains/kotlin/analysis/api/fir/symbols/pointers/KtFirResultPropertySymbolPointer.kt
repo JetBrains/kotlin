@@ -7,24 +7,24 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
+import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtScriptSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirScript
 
-internal class KtFirResultPropertySymbolPointer(private val filePointer: KtSymbolPointer<KtFirFileSymbol>) :
+internal class KtFirResultPropertySymbolPointer(private val scriptPointer: KtSymbolPointer<KtScriptSymbol>) :
     KtSymbolPointer<KtKotlinPropertySymbol>() {
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtKotlinPropertySymbol? {
         require(analysisSession is KtFirAnalysisSession)
-        val file = with(analysisSession) {
-            filePointer.restoreSymbol()?.firSymbol
+        val script = with(analysisSession) {
+            scriptPointer.restoreSymbol()?.firSymbol?.fir as? FirScript
         } ?: return null
 
-        val script = file.fir.declarations.singleOrNull() as? FirScript ?: return null
         val lastProperty = script.statements.lastOrNull() as? FirProperty ?: return null
         if (lastProperty.origin !is FirDeclarationOrigin.ScriptCustomization.ResultProperty) return null
         return analysisSession.firSymbolBuilder.variableLikeBuilder.buildPropertySymbol(lastProperty.symbol) as? KtKotlinPropertySymbol
@@ -32,5 +32,5 @@ internal class KtFirResultPropertySymbolPointer(private val filePointer: KtSymbo
 
     override fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other ||
             other is KtFirResultPropertySymbolPointer &&
-            other.filePointer.pointsToTheSameSymbolAs(filePointer)
+            other.scriptPointer.pointsToTheSameSymbolAs(scriptPointer)
 }

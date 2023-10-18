@@ -32,6 +32,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         is KtClassInitializer -> getClassInitializerSymbol(psi)
         is KtDestructuringDeclarationEntry -> getDestructuringDeclarationEntrySymbol(psi)
         is KtScript -> getScriptSymbol(psi)
+        is KtScriptInitializer -> getScriptSymbol(psi.containingDeclaration)
         is KtDestructuringDeclaration -> getDestructuringDeclarationSymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }

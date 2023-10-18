@@ -18,11 +18,15 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
@@ -31,7 +35,7 @@ import org.jetbrains.kotlin.psi.*
 
 internal class KtFirSymbolContainingDeclarationProvider(
     override val analysisSession: KtFirAnalysisSession,
-    override val token: KtLifetimeToken
+    override val token: KtLifetimeToken,
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
     override fun getContainingDeclaration(symbol: KtSymbol): KtDeclarationSymbol? {
         if (symbol is KtReceiverParameterSymbol) {
@@ -39,7 +43,12 @@ internal class KtFirSymbolContainingDeclarationProvider(
         }
 
         if (symbol !is KtDeclarationSymbol) return null
-        if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) return null
+        if (symbol is KtSymbolWithKind &&
+            symbol.symbolKind == KtSymbolKind.TOP_LEVEL &&
+            // Should be replaced with proper check after KT-61451 and KT-61887
+            (symbol.firSymbol.fir as? FirElementWithResolveState)?.getContainingFile()?.declarations?.firstOrNull() !is FirScript
+        ) return null
+
         val firSymbol = symbol.firSymbol
         if (firSymbol is FirErrorPropertySymbol && firSymbol.diagnostic is ConeDestructuringDeclarationsOnTopLevel) return null
         fun getParentSymbolByPsi() = getContainingPsi(symbol).let { with(analysisSession) { it.getSymbol() } }
@@ -73,7 +82,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
             is KtClassLikeSymbol -> {
                 val classId = symbol.classIdIfNonLocal ?: return getParentSymbolByPsi() // local
-                val outerClassId = classId.outerClassId ?: return null // toplevel
+                val outerClassId = classId.outerClassId ?: return getParentSymbolByPsi() // top-level or inside script
                 val outerFirClassifier = symbol.firSymbol.llFirSession.firProvider.getFirClassifierByFqName(outerClassId) ?: return null
                 firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
             }
@@ -102,13 +111,14 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 }
         }
 
-        return when (symbol.origin) {
-            KtSymbolOrigin.SOURCE -> thisSource.getContainingKtDeclaration()
+        val origin = symbol.origin
+        return when {
+            origin == KtSymbolOrigin.SOURCE || symbol.firSymbol.fir.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> thisSource.getContainingKtDeclaration()
                 ?: errorWithAttachment("Containing declaration should present for non-toplevel declaration ${thisSource::class}") {
                     withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
                 }
 
-            KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> thisSource as KtDeclaration
+            origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED -> thisSource as KtDeclaration
             else -> errorWithAttachment("Unsupported declaration origin ${symbol.origin} ${thisSource::class}") {
                 withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }

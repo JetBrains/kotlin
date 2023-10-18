@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
@@ -136,16 +137,7 @@ internal class KtFirKotlinPropertySymbol(
         return when (val kind = symbolKind) {
             KtSymbolKind.TOP_LEVEL -> {
                 if (firSymbol.fir.origin is FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
-                    val file = psi?.containingFile as? KtFile
-                    if (file == null) {
-                        errorWithFirSpecificEntries(
-                            "ResultProperty restoring supported only for psi-based symbols yet",
-                            fir = firSymbol.fir,
-                            psi = psi,
-                        )
-                    }
-
-                    KtFirResultPropertySymbolPointer(file.symbolPointerOfType<KtFirFileSymbol>())
+                    KtFirResultPropertySymbolPointer(requireOwnerPointer())
                 } else {
                     KtFirTopLevelPropertySymbolPointer(
                         firSymbol.callableId,

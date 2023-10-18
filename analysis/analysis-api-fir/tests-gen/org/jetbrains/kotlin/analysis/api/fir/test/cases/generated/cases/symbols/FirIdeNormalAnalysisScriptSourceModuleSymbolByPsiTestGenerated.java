@@ -46,6 +46,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByPsiTestGenerated exte
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByPsi"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
 
+    @Test
+    @TestMetadata("script.kts")
+    public void testScript() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/script.kts");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers")
     @TestDataPath("$PROJECT_ROOT")

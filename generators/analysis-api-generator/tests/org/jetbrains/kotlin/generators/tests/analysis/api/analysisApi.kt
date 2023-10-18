@@ -67,7 +67,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     test(
         AbstractReferenceResolveTest::class,
-        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource) and
+        filter = testModuleKindIs(TestModuleKind.Source, TestModuleKind.ScriptSource, TestModuleKind.LibrarySource) and
                 analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone),
     ) { data ->
         when (data.moduleKind) {
@@ -78,6 +78,8 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                     excludeDirsRecursively = listOf("withErrors")
                 )
             }
+
+            TestModuleKind.ScriptSource -> model(data, "referenceResolve")
 
             else -> {
                 model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
