@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.createDirectories
@@ -20,6 +21,7 @@ import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Disabled("Causes OOM on Windows")
 @DisplayName("Kapt incremental tests with aggregating apt")
 open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
 
@@ -389,6 +391,7 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         }
     }
 }
+
 
 @DisplayName("Kapt incremental tests with aggregating apt with precise compilation outputs backup")
 class KaptIncrementalWithAggregatingAptAndPreciseBackup : KaptIncrementalWithAggregatingApt() {

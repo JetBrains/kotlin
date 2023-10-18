@@ -16,6 +16,7 @@ import kotlin.io.path.walk
 
 @OsCondition(enabledOnCI = [OS.LINUX])
 @DisplayName("Kapt 4 base checks")
+@Disabled("Causes OOM on Windows")
 class Kapt4IT : Kapt3IT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
