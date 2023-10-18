@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
-import org.jetbrains.kotlin.bir.declarations.BirLocalDelegatedProperty
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
-import org.jetbrains.kotlin.bir.declarations.BirVariable
+import org.jetbrains.kotlin.bir.symbols.BirLocalDelegatedPropertySymbol
+import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
 
 /**
  * A leaf IR tree element.
@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.bir.declarations.BirVariable
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.localDelegatedPropertyReference]
  */
 abstract class BirLocalDelegatedPropertyReference :
-        BirCallableReference<BirLocalDelegatedProperty>() {
-    abstract override var symbol: BirLocalDelegatedProperty
+        BirCallableReference<BirLocalDelegatedPropertySymbol>() {
+    abstract override var symbol: BirLocalDelegatedPropertySymbol
 
-    abstract var delegate: BirVariable
+    abstract var delegate: BirVariableSymbol
 
     abstract var getter: BirSimpleFunction
 
