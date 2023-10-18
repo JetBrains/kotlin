@@ -822,6 +822,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("typeArgumentInAnnotation.kt")
+        public void testTypeArgumentInAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/typeArgumentInAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("unresolvedAnnotationOnFunctionType.kt")
         public void testUnresolvedAnnotationOnFunctionType() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/unresolvedAnnotationOnFunctionType.kt");

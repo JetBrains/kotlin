@@ -355,6 +355,7 @@ open class FirTypeResolveTransformer(
                         else -> shouldNotBeCalled()
                     }
                     FirAnnotationResolvePhase.CompilerRequiredAnnotations -> {
+                        annotationCall.transformTypeArguments(this, data)
                         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
                         val alternativeResolvedTypeRef =
                             originalTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: return annotationCall
@@ -378,6 +379,7 @@ open class FirTypeResolveTransformer(
             }
             else -> {
                 val transformedTypeRef = originalTypeRef.transformSingle(this, data)
+                annotationCall.transformTypeArguments(this, data)
                 annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
                 annotationCall.replaceAnnotationTypeRef(transformedTypeRef)
             }

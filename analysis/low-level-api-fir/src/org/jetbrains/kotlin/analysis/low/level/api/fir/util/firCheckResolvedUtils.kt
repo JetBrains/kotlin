@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 
@@ -77,6 +78,14 @@ internal fun <T> checkAnnotationTypeIsResolved(annotationContainer: T) where T :
     annotationContainer.annotations.forEach { annotation ->
         checkTypeRefIsResolved(annotation.annotationTypeRef, "annotation type", owner = annotationContainer) {
             withFirEntry("firAnnotation", annotation)
+        }
+
+        annotation.typeArguments.forEach {
+            if (it is FirTypeProjectionWithVariance) {
+                checkTypeRefIsResolved(it.typeRef, "annotation type argument", owner = annotationContainer) {
+                    withFirEntry("typeProjection", it)
+                }
+            }
         }
     }
 }
