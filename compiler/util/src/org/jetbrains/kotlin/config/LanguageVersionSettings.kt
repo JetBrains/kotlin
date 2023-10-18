@@ -393,6 +393,13 @@ enum class LanguageFeature(
     }
 
     /**
+     * If 'true', then this feature will be automatically enabled under '-progressive' mode.
+     *
+     * Please, see `canBeEnabledInProgressiveMode` in [Kind] for more details.
+     */
+    val enabledInProgressiveMode: Boolean get() = kind.canBeEnabledInProgressiveMode && sinceVersion != null
+
+    /**
      * # [forcesPreReleaseBinaries]
      * If 'true', then enabling this feature (e.g. by '-XXLanguage:', or dedicated '-X'-flag)
      * will force generation of pre-release binaries (given that [sinceVersion] > [LanguageVersion.LATEST_STABLE]).
@@ -404,8 +411,8 @@ enum class LanguageFeature(
      * generate 'kotlin-compiler' as pre-release.
      *
      *
-     * # [enabledInProgressiveMode]
-     * If 'true', then this feature will be automatically enabled under '-progressive' mode.
+     * # [canBeEnabledInProgressiveMode]
+     * If 'true', then this feature will be automatically enabled under '-progressive' mode if `sinceKotlin` is set.
      *
      * Restrictions for using this flag for particular feature follow from restrictions of the progressive mode:
      * - enabling it *must not* break compatibility with non-progressive compiler, i.e. code written under progressive
@@ -418,9 +425,9 @@ enum class LanguageFeature(
      *   Example: silently changing semantics of generated low-level code is not fine, but deprecating some language
      *   construction immediately instead of a going through complete deprecation cycle is fine.
      *
-     * NB: Currently, [enabledInProgressiveMode] makes sense only for features with [sinceVersion] > [LanguageVersion.LATEST_STABLE]
+     * NB: Currently, [canBeEnabledInProgressiveMode] makes sense only for features with [sinceVersion] > [LanguageVersion.LATEST_STABLE]
      */
-    enum class Kind(val enabledInProgressiveMode: Boolean, val forcesPreReleaseBinaries: Boolean) {
+    enum class Kind(val canBeEnabledInProgressiveMode: Boolean, val forcesPreReleaseBinaries: Boolean) {
         /**
          * Simple bug fix which just forbids some language constructions.
          * Rule of thumb: it turns "green code" into "red".
