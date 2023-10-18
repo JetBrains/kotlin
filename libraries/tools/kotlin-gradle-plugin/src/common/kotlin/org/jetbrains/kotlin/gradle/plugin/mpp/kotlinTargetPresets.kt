@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
+import org.jetbrains.kotlin.gradle.targets.runKotlinTargetSideEffects
 
 @DeprecatedTargetPresetApi
 abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<*>>(
@@ -42,7 +43,7 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
         }
 
         createKotlinTargetConfigurator().configureTarget(result)
-
+        result.runKotlinTargetSideEffects()
         return result
     }
 
