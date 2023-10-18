@@ -96,3 +96,17 @@ fun incompatibleIdentityRegardlessNullabilityWithValueClassesSmartCast(c: Any?, 
         <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>c === d<!>
     }
 }
+
+enum class F
+
+fun <T: E, K: F> incompatibleEnumComparisonWithTypeParameters(e: T, f: K) {
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e == f<!>
+}
+
+interface A
+enum class G : B
+
+fun <I : A> incompatibleEnumAndUnrelatedInterfaceThroughTypeParameter(x: G?, i: I?) {
+    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>x == i<!>
+}
+
