@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -164,7 +165,7 @@ internal class FirElementBuilder(
         declarationProvider = {
             when (val parent = it.parent) {
                 is KtDeclaration -> parent
-                is KtSuperTypeListEntry, is KtConstructorCalleeExpression -> parent.parentOfType<KtClassOrObject>()
+                is KtSuperTypeListEntry, is KtConstructorCalleeExpression, is KtTypeConstraint -> parent.parentOfType<KtDeclaration>()
                 else -> null
             }
         },
@@ -199,14 +200,14 @@ internal class FirElementBuilder(
         if (this is FirCallableDeclaration) {
             returnTypeRef.takeIf { it.psi == typeReference }?.let { return it }
             receiverParameter?.takeIf { it.typeRef.psi == typeReference }?.let { return it }
+
+            for (typeParameterRef in typeParameters) {
+                typeParameterRef.findTypeRefAnchor(typeReference)?.let { return it }
+            }
         }
 
         if (this is FirTypeParameter) {
-            for (typeRef in bounds) {
-                if (typeRef.psi == typeReference) {
-                    return typeRef
-                }
-            }
+            findTypeRefAnchor(typeReference)?.let { return it }
         }
 
         if (this is FirClass) {
@@ -214,6 +215,18 @@ internal class FirElementBuilder(
                 if (typeRef.psi == typeReference) {
                     return typeRef
                 }
+            }
+        }
+
+        return null
+    }
+
+    private fun FirTypeParameterRef.findTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
+        if (this !is FirTypeParameter) return null
+
+        for (typeRef in bounds) {
+            if (typeRef.psi == typeReference) {
+                return typeRef
             }
         }
 

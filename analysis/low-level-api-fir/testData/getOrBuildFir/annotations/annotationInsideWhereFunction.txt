@@ -20,6 +20,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereFunction.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
     }
-    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> foo([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|T| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> foo([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|T| {
         ^foo R|<local>/t|
     }
