@@ -16680,6 +16680,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("invokeExtensionReceiverWithNotFixedVariables.kt")
+                public void testInvokeExtensionReceiverWithNotFixedVariables() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/invokeExtensionReceiverWithNotFixedVariables.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeExtensionReceiverWithNotFixedVariablesInitial.kt")
+                public void testInvokeExtensionReceiverWithNotFixedVariablesInitial() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/invokeExtensionReceiverWithNotFixedVariablesInitial.kt");
+                }
+
+                @Test
                 @TestMetadata("kt47744.kt")
                 public void testKt47744() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt47744.kt");
