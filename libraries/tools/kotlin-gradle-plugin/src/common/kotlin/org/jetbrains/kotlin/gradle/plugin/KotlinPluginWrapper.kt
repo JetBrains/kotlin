@@ -62,8 +62,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
     override fun apply(project: Project) {
-        checkGradleCompatibility()
-
         project.registerDefaultVariantImplementations()
         KotlinBuildStatsService.getOrCreateInstance(project)?.apply {
             report(StringMetrics.KOTLIN_COMPILER_VERSION, pluginVersion)
@@ -220,8 +218,8 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
     override fun apply(project: Project) {
         super.apply(project)
-
         project.logger.info("Using Kotlin Gradle Plugin $pluginVariant variant")
+        checkGradleCompatibility()
 
         project.configurations.maybeCreate(NATIVE_COMPILER_PLUGIN_CLASSPATH_CONFIGURATION_NAME).apply {
             isVisible = false

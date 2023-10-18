@@ -18,17 +18,14 @@ import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCompilerOptionsForTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
-import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
+import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 internal open class KotlinAndroidPlugin(
     private val registry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
 
     override fun apply(project: Project) {
-        checkGradleCompatibility()
-
         project.dynamicallyApplyWhenAndroidPluginIsApplied(
             {
                 project.objects.newInstance(

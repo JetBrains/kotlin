@@ -25,8 +25,6 @@ open class KotlinJsPlugin: Plugin<Project> {
         // so investigation is needed
         project.plugins.apply(JavaBasePlugin::class.java)
 
-        checkGradleCompatibility()
-
         project.enableKgpDependencyResolution(isEnabled = false)
 
         val kotlinExtension = project.kotlinExtension as KotlinJsProjectExtension
