@@ -7,7 +7,7 @@
 
 package kotlin.text
 
-@AllowDifferentMembersInActual // New 'append' members are added compared to the expect declaration
+@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 @SinceKotlin("1.1") public actual typealias Appendable = java.lang.Appendable
 
 @Suppress("ACTUAL_WITHOUT_EXPECT") // TODO: some supertypes are missing

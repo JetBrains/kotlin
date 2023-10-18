@@ -1,6 +1,3 @@
-public abstract interface annotation class kotlin/AllowDifferentMembersInActual : java/lang/annotation/Annotation {
-}
-
 public abstract interface annotation class kotlin/BuilderInference : java/lang/annotation/Annotation {
 }
 
