@@ -10,7 +10,7 @@ import viper.silver.verifier.errors
 
 
 sealed interface VerificationError : VerifierError {
-    val result: viper.silver.verifier.AbstractVerificationError
+    val result: viper.silver.verifier.VerificationError
     override val id: String
         get() = result.id()
     override val msg: String
@@ -31,6 +31,10 @@ data class AssertFailed(
     override val result: errors.AssertFailed,
 ) : VerificationError
 
+data class UnknownError(
+    override val result: viper.silver.verifier.VerificationError
+) : VerificationError
+
 object ErrorAdapter {
     fun translate(result: viper.silicon.interfaces.VerificationResult): VerificationError {
         assert(result.isFatal)
@@ -38,7 +42,7 @@ object ErrorAdapter {
             is errors.PreconditionInCallFalse -> PreconditionInCallFalse(err)
             is errors.PostconditionViolated -> PostconditionViolated(err)
             is errors.AssertFailed -> AssertFailed(err)
-            else -> TODO("Unhandled verification error.")
+            else -> UnknownError(err)
         }
     }
 }
