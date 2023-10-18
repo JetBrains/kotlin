@@ -154,7 +154,13 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
             is ConeConstraintSystemHasContradiction -> {
                 val componentType = componentCall.resolvedType
                 if (componentType is ConeErrorType) {
-                    // There will be other errors on this error type.
+                    reporter.reportOn(
+                        source,
+                        FirErrors.COMPONENT_FUNCTION_MISSING,
+                        diagnostic.candidates.first().callInfo.name,
+                        destructuringDeclarationType,
+                        context
+                    )
                     return
                 }
                 val expectedType = property.returnTypeRef.coneType
