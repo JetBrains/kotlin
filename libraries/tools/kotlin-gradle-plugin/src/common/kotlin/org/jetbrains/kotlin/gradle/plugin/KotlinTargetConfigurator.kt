@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -15,146 +14,51 @@ import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
-import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.gradle.language.jvm.tasks.ProcessResources
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.runKotlinCompilationSideEffects
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.toAttribute
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.targets.runKotlinTargetSideEffects
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties
 
 interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     fun configureTarget(
-        target: KotlinTargetType
+        target: KotlinTargetType,
     ) {
-        configureCompilationDefaults(target)
-        configureCompilations(target)
+        target.runKotlinTargetSideEffects()
+        target.runKotlinCompilationSideEffects()
         defineConfigurationsForTarget(target)
         configureArchivesAndComponent(target)
-        configureSourceSet(target)
         configureBuild(target)
         configurePlatformSpecificModel(target)
     }
 
-    fun configureCompilationDefaults(target: KotlinTargetType)
-    fun configureCompilations(target: KotlinTargetType)
     fun defineConfigurationsForTarget(target: KotlinTargetType)
     fun configureArchivesAndComponent(target: KotlinTargetType)
     fun configureBuild(target: KotlinTargetType)
-    fun configureSourceSet(target: KotlinTargetType)
 
     fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
 }
 
 abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
-    internal val createTestCompilation: Boolean
+    internal val createTestCompilation: Boolean,
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
     protected open val runtimeIncludesCompilationOutputs = true
-
-    protected open fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
-        val project = compilation.target.project
-
-        compilation.compileDependencyFiles = project.configurations.maybeCreate(compilation.compileDependencyConfigurationName)
-        if (compilation is KotlinCompilationToRunnableFiles) {
-            compilation.runtimeDependencyFiles = project.configurations.maybeCreate(compilation.runtimeDependencyConfigurationName)
-        }
-    }
-
-    override fun configureCompilations(target: KotlinTargetType) {
-        val project = target.project
-        val main = target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
-
-        target.compilations.all {
-            setupCompilationDependencyFiles(it)
-        }
-
-        if (createTestCompilation) {
-            target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
-                associateWith(main)
-
-                if (runtimeIncludesCompilationOutputs && this is KotlinCompilationToRunnableFiles) {
-                    // TODO: fix inconsistency? KT-27272
-                    runtimeDependencyFiles += project.files(output.allOutputs)
-                }
-            }
-        }
-    }
-
-    override fun configureSourceSet(target: KotlinTargetType) {
-        target.compilations.all { compilation ->
-            @Suppress("DEPRECATION")
-            compilation.addSourceSet(compilation.defaultSourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
-        }
-    }
-
-    override fun configureCompilationDefaults(target: KotlinTargetType) {
-        val project = target.project
-
-        target.compilations.all { compilation ->
-            compilation.internal.processResourcesTaskName?.let { processResourcesTaskName ->
-                configureResourceProcessing(
-                    compilation, processResourcesTaskName, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } })
-                )
-            }
-
-            createLifecycleTask(compilation)
-        }
-    }
-
-    protected fun configureResourceProcessing(
-        compilation: KotlinCompilation<*>,
-        processResourcesTaskName: String,
-        resourceSet: FileCollection
-    ) {
-        val project = compilation.target.project
-
-        val resourcesDestinationDir = project.file(compilation.output.resourcesDir)
-        val resourcesTask = project.locateOrRegisterTask<ProcessResources>(processResourcesTaskName) { resourcesTask ->
-            resourcesTask.description = "Processes $resourceSet."
-            resourcesTask.from(resourceSet)
-            resourcesTask.into(resourcesDestinationDir)
-        }
-
-        compilation.output.resourcesDirProvider = resourcesTask.map { resourcesDestinationDir }
-    }
-
-    protected fun createLifecycleTask(compilation: KotlinCompilation<*>) {
-        val project = compilation.target.project
-
-        project.registerTask<DefaultTask>(compilation.compileAllTaskName) {
-            it.group = LifecycleBasePlugin.BUILD_GROUP
-            it.description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
-            it.inputs.files(Callable {
-                // the task may not be registered at this point, reference it lazily
-                compilation.compileKotlinTaskProvider.map { it.outputs.files }
-            })
-
-            if (compilation is KotlinJvmCompilation && (compilation.target as? KotlinJvmTarget)?.withJavaEnabled == true) {
-                it.inputs.files({ compilation.compileJavaTaskProvider?.map { it.outputs.files } })
-            }
-
-            it.inputs.files(compilation.output.resourcesDirProvider)
-        }
-        compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
-    }
 
     override fun defineConfigurationsForTarget(target: KotlinTargetType) {
         val project = target.project
@@ -265,7 +169,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         project: Project,
         taskProvider: TaskProvider<*>,
         useDependedOn: Boolean,
-        configurationName: String
+        configurationName: String,
     ) {
         val configuration = project.configurations.getByName(configurationName)
         taskProvider.configure { task ->
@@ -283,25 +187,12 @@ internal val KotlinTarget.testTaskName: String
     get() = lowerCamelCaseName(targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
 
 abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>, KotlinTargetType : KotlinOnlyTarget<KotlinCompilationType>>(
-    createTestCompilation: Boolean
+    createTestCompilation: Boolean,
 ) : AbstractKotlinTargetConfigurator<KotlinTargetType>(createTestCompilation) {
     open val archiveType: String = ArtifactTypeDefinition.JAR_TYPE
 
     open val archiveTaskType: Class<out Zip>
         get() = Jar::class.java
-
-    internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinCompilationProcessor<*>
-
-    override fun configureCompilations(target: KotlinTargetType) {
-        super.configureCompilations(target)
-
-        target.compilations.all { compilation ->
-            buildCompilationProcessor(compilation).run()
-            if (compilation.isMain()) {
-                sourcesJarTask(compilation, target.targetName, target.targetName.toLowerCaseAsciiOnly())
-            }
-        }
-    }
 
     /** The implementations are expected to create a [Zip] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
     protected open fun createArchiveTasks(target: KotlinTargetType): TaskProvider<out Zip> {
