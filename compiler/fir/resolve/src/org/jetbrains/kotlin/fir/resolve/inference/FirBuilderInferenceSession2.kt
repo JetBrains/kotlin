@@ -177,6 +177,13 @@ class FirBuilderInferenceSession2(
     }
 
     private fun Candidate.needsToBePostponed(): Boolean {
+        // For invokeExtension calls
+        if (callInfo.candidateForCommonInvokeReceiver != null) {
+            callInfo.arguments.getOrNull(0)
+                ?.takeIf { it is FirQualifiedAccessExpression && it !in qualifiedAccessesToProcess }
+                ?.let { handleQualifiedAccess(it, ResolutionMode.ContextDependent) }
+        }
+
         if (dispatchReceiver?.resolvedType?.containsNotFixedTypeVariables() == true) return true
         if (givenExtensionReceiverOptions.any { it.resolvedType.containsNotFixedTypeVariables() }) return true
         if (callInfo.arguments.any { it in qualifiedAccessesToProcess }) return true
