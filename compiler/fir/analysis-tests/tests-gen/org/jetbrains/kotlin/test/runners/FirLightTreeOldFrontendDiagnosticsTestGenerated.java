@@ -16890,6 +16890,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("whenWithPropertyHavingSomePCLACallsWithinInitializer.kt")
+                public void testWhenWithPropertyHavingSomePCLACallsWithinInitializer() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/whenWithPropertyHavingSomePCLACallsWithinInitializer.kt");
+                }
+
+                @Test
                 @TestMetadata("withoutAnnotationDisabledFeature.kt")
                 public void testWithoutAnnotationDisabledFeature() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/withoutAnnotationDisabledFeature.kt");
