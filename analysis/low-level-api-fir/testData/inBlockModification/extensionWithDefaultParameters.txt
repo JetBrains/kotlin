@@ -4,4 +4,4 @@ public final [ResolvedTo(BODY_RESOLVE)] fun R|MyProducer|.testFun([ResolvedTo(BO
 }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun R|MyProducer|.testFun([ResolvedTo(BODY_RESOLVE)] param1: R|kotlin/Int| = this@R|/testFun|.R|/MyProducer.produce|()): R|kotlin/Unit| { LAZY_BLOCK }
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|MyProducer|.testFun([ResolvedTo(BODY_RESOLVE)] param1: R|kotlin/Int| = this@R|/testFun|.R|/MyProducer.produce|()): R|kotlin/Unit| { LAZY_BLOCK }

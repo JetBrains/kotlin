@@ -102,11 +102,11 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
     public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
         local open [ResolvedTo(RAW_FIR)] class A : B {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {
                 super<B>()

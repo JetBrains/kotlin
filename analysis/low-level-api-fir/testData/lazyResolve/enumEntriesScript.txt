@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-enumEntriesScript.kts>
@@ -256,8 +256,8 @@ FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
             }
 
-            public final static [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
 
         }
 

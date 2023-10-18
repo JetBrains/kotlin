@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTypeArgumentScript.kts>
@@ -206,7 +206,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        @R|one/Anno<kotlin/Int>|[Types](value = <getClass>(Q|kotlin/Int|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 

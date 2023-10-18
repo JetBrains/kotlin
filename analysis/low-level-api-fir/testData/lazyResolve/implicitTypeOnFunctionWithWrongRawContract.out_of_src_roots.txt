@@ -78,9 +78,9 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithWrongRawContract.kt
         ^foo R|<local>/bool|
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] implicitTypeOnFunctionWithWrongRawContract.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] bool: R|kotlin/Boolean|): R|kotlin/Boolean|
         [Contract description] <
             abc#
         >

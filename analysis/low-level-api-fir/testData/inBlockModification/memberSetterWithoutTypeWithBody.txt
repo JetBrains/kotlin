@@ -8,8 +8,8 @@ public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
     }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var x: R|kotlin/Int|
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int| {
         ^ Int(1)
     }
-    public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }

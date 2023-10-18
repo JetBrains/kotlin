@@ -7,6 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] invalidTypeArgumentsCount.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): <ERROR TYPE REF: Wrong number of type arguments> {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): <ERROR TYPE REF: Wrong number of type arguments> {
         ^x IntegerLiteral(1)
     }

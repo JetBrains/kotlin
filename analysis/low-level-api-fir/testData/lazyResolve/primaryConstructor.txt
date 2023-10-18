@@ -108,10 +108,10 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructor.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructor.kt
     public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
             LAZY_super<R|kotlin/Any|>
         }
 

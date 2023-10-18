@@ -358,7 +358,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideScript.kts>
@@ -384,7 +384,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         }
 
-        public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class Usage : R|Foo2| {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
                 LAZY_super<<implicit>>
             }

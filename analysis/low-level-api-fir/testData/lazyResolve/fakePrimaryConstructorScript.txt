@@ -158,14 +158,14 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-fakePrimaryConstructorScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 LAZY_super<R|kotlin/Any|>
             }
 

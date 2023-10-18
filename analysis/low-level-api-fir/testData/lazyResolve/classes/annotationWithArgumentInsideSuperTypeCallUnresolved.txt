@@ -88,9 +88,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCallUnresolved.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : <ERROR TYPE REF: Symbol not found for Foo> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             LAZY_super<<implicit>>
         }

@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
     @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
     public final [ResolvedTo(STATUS)] annotation class Foo<[ResolvedTo(STATUS)] T> : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=/Foo.s] s: R|kotlin/String|): R|Foo<T>| {
@@ -141,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] get(): R|kotlin/String|
 
     }
-    @R|Foo<kotlin/Int>|[Types](s = String()) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo(): R|kotlin/Unit| {
+    @R|Foo<kotlin/Int>|[Types](s = String()) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:

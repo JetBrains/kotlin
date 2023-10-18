@@ -118,8 +118,8 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
+ANNOTATION_ARGUMENTS:
+TARGET: public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt

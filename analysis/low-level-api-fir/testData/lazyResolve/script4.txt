@@ -263,10 +263,10 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] script4.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] <script-script4.kts>
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-script4.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
@@ -290,8 +290,8 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
         )
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = @R|kotlin/Suppress|[Types](names = vararg(String(abc))) @R|kotlin/Deprecated|[Types](message = String(it is deprecated)) R|/builder|.<Unresolved name: execute>#()
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Unresolved name: execute>
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = @R|kotlin/Suppress|[Types](names = vararg(String(abc))) @R|kotlin/Deprecated|[Types](message = String(it is deprecated)) R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 BODY_RESOLVE:

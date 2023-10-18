@@ -42,9 +42,9 @@ FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
         IntegerLiteral(1).toInt#()
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
         IntegerLiteral(1).toInt#()
     }
 

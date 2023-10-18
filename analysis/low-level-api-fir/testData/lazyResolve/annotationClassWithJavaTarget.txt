@@ -88,9 +88,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }

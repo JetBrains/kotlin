@@ -488,7 +488,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         R|/builder|.R|/Builder.execute|()
         R|/builder|.R|/Builder.version| = String()
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-statement.kts>

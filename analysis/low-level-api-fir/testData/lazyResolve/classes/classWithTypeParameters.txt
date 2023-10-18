@@ -88,10 +88,10 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class ResolveMe<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K>(): R|ResolveMe<T, K>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ResolveMe<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
 

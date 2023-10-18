@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypes.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypes.kt
     public? open [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
@@ -222,7 +222,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypes.kt
         }
 
     }
-    public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class resolveMe : R|A| {
+    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class resolveMe : R|A| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<A>
         }

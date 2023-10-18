@@ -7,7 +7,7 @@ R|T|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] receiverType.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <@R|A|[Types]() [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T> R|T|.test(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|A|[Types]() [ResolvedTo(ANNOTATION_ARGUMENTS)] T> R|T|.test(): R|kotlin/Unit| {
     }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class A : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {

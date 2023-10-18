@@ -780,7 +780,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClassScript.kts>
@@ -842,7 +842,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
                     LAZY_super<<implicit>>
                 }
 
-                public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo(): R|kotlin/Unit| {
+                public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
                 }
 
             }

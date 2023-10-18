@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideLambdaCallInsideStringTemplateScr
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideLambdaCallInsideStringTemplateScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideLambdaCallInsideStringTemplateScript.kts>

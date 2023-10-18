@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeOnAnnotationOnReceiverFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun R|@R|Anno|(s = String(ab))  kotlin/Int|.check(): R|kotlin/Int| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun R|@R|Anno|(s = String(ab))  kotlin/Int|.check(): R|kotlin/Int| {
             ^check Int(1)
         }
 

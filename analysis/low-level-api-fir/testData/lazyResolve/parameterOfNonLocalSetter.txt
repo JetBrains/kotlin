@@ -132,16 +132,16 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var x: R|kotlin/Int| = IntegerLiteral(2)
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 

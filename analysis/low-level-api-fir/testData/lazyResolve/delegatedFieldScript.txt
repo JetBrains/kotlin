@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-delegatedFieldScript.kts>
@@ -321,7 +321,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
                 LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
+            private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
             public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 

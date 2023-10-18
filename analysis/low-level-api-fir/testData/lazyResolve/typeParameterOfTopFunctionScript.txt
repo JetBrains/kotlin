@@ -90,13 +90,13 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTopFunctionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] resolveMe> ddd(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 

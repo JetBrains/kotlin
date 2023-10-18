@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superType2.kt
     public? final? [ResolvedTo(SUPER_TYPES)] interface A : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class B : R|A| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|A| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<<implicit>>
         }

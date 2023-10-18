@@ -808,7 +808,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2Script.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClass2Script.kts>
@@ -872,8 +872,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2Script.kts
 
                 public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val isBoo: R|kotlin/Boolean| = Boolean(true)
-                    public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=NestedClass] get(): R|kotlin/Boolean|
+                public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] val isBoo: R|kotlin/Boolean| = Boolean(true)
+                    public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Boolean|
 
             }
 

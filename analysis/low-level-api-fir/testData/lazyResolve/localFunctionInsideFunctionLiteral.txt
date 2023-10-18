@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {

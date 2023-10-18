@@ -396,9 +396,9 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun expression([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] expression: R|IrConst<*>|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun expression([ResolvedTo(ANNOTATION_ARGUMENTS)] expression: R|IrConst<*>|): R|kotlin/Unit| {
         when ([ResolvedTo(RAW_FIR)] lval kind: <implicit> = expression#.kind#) {
             ($subj$ is Kind.Null) ->  {
                 kind#.valueOf#(expression#)

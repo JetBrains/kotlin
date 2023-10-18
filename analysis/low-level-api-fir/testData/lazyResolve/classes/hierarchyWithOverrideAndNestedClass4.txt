@@ -698,7 +698,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4.kt
     public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -757,7 +757,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4.kt
 
         }
 
-        public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class AnotherNestedClass : R|OuterClass.NestedClass| {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class AnotherNestedClass : R|OuterClass.NestedClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
                 LAZY_super<NestedClass>
             }

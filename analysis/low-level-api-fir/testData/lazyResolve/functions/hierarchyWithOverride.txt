@@ -290,7 +290,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo(): R|kotlin/Unit| {
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
         }
 
     }

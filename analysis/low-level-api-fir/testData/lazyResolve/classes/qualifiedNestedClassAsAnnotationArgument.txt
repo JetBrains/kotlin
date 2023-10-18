@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedNestedClassAsAnnotationArgument.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] qualifiedNestedClassAsAnnotationArgument.kt
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Special : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Special] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Special.why] why: R|kotlin/reflect/KClass<*>|): R|Special| {
@@ -286,8 +286,8 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedNestedClassAsAnnotationArgument.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class Nested<@R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T> : R|@R|Special|(why = <getClass>(Q|Outer.Nested|))  Interface| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T>(): R|Outer.Nested<T>| {
+        @R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Nested<@R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T> : R|@R|Special|(why = <getClass>(Q|Outer.Nested|))  Interface| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Nested] constructor<@R|Special|[Types](why = <getClass>(Q|Outer.Nested|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] T>(): R|Outer.Nested<T>| {
                 LAZY_super<<implicit>>
             }
 

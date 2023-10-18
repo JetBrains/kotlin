@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.util.PrivateForInline
 
-open class FirAnnotationArgumentsMappingTransformer(
+open class FirAnnotationArgumentsTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
@@ -49,11 +49,9 @@ open class FirAnnotationArgumentsMappingTransformer(
     returnTypeCalculator = returnTypeCalculator,
     firResolveContextCollector = firResolveContextCollector,
 ) {
-    final override val expressionsTransformer: FirExpressionsResolveTransformer =
-        FirExpressionTransformerForAnnotationArgumentsMapping(this)
+    final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionTransformerForAnnotationArguments(this)
 
-    private val declarationsResolveTransformerForAnnotationArgumentsMapping =
-        FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(this)
+    private val declarationsResolveTransformerForAnnotationArguments = FirDeclarationsResolveTransformerForAnnotationArguments(this)
 
     private val usualDeclarationTransformer = FirDeclarationsResolveTransformer(this)
 
@@ -75,7 +73,7 @@ open class FirAnnotationArgumentsMappingTransformer(
     final override val declarationsTransformer: FirDeclarationsResolveTransformer
         get() {
             return if (isInsideAnnotationArgument) usualDeclarationTransformer
-            else declarationsResolveTransformerForAnnotationArgumentsMapping
+            else declarationsResolveTransformerForAnnotationArguments
         }
 }
 
@@ -84,18 +82,18 @@ open class FirAnnotationArgumentsMappingTransformer(
  */
 private val classIdsToCheck: Set<ClassId> = setOf(StandardClassIds.DeprecationLevel, StandardClassIds.AnnotationTarget)
 
-private class FirExpressionTransformerForAnnotationArgumentsMapping(
-    private val annotationArgumentsMappingTransformer: FirAnnotationArgumentsMappingTransformer,
-) : FirExpressionsResolveTransformer(annotationArgumentsMappingTransformer) {
+private class FirExpressionTransformerForAnnotationArguments(
+    private val annotationArgumentsTransformer: FirAnnotationArgumentsTransformer,
+) : FirExpressionsResolveTransformer(annotationArgumentsTransformer) {
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
-        annotationArgumentsMappingTransformer.insideAnnotationArgument {
+        annotationArgumentsTransformer.insideAnnotationArgument {
             return super.transformAnnotationCall(annotationCall, data)
         }
     }
 
     override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
-        annotationArgumentsMappingTransformer.insideAnnotationArgument {
+        annotationArgumentsTransformer.insideAnnotationArgument {
             return super.transformErrorAnnotationCall(errorAnnotationCall, data)
         }
     }
@@ -177,7 +175,7 @@ private class FirExpressionTransformerForAnnotationArgumentsMapping(
     }
 }
 
-private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
+private class FirDeclarationsResolveTransformerForAnnotationArguments(
     transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirDeclarationsResolveTransformer(transformer) {
     override fun withFile(file: FirFile, action: () -> FirFile): FirFile {

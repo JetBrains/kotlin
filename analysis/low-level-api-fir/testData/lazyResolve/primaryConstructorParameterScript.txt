@@ -158,14 +158,14 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] a: R|kotlin/Boolean|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] param: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] c: R|kotlin/Long|): R|A| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] a: R|kotlin/Boolean|, [ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] c: R|kotlin/Long|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 

@@ -808,7 +808,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClass3Script.kts>
@@ -863,8 +863,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
                 public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val myProp: R|kotlin/Int| = Int(1)
-                    private [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=SimpleNestedClass] get(): R|kotlin/Int|
+                private final [ResolvedTo(ANNOTATION_ARGUMENTS)] val myProp: R|kotlin/Int| = Int(1)
+                    private [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=SimpleNestedClass] get(): R|kotlin/Int|
 
             }
 

@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
     public final [ResolvedTo(STATUS)] object Some : R|kotlin/Any| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=Some] constructor(): R|Some| {
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationConflict.kt
             Annotation symbol resolved differently on compiler annotation and symbols stages:
               - compiler annotations: FirEnumEntrySymbol kotlin/annotation/AnnotationTarget.CLASS
               - compiler arguments stage: FirEnumEntrySymbol /Some.AnnotationTarget.CLASS
-        >#) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class Ann : R|kotlin/Annotation| {
+        >#) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Some.Ann| {
                 LAZY_super<R|kotlin/Any|>
             }

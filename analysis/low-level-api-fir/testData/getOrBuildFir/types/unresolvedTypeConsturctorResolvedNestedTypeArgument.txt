@@ -7,6 +7,6 @@ R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] unresolvedTypeConsturctorResolvedNestedTypeArgument.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): <ERROR TYPE REF: Symbol not found for UNRESOLVED> {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): <ERROR TYPE REF: Symbol not found for UNRESOLVED> {
         ^x IntegerLiteral(1)
     }

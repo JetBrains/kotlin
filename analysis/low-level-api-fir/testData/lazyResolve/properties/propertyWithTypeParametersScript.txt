@@ -102,14 +102,14 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
             }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithTypeParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|K| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K> R|T|.resolveMe: R|K|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|K| {
                 ^ TODO#()
             }
 

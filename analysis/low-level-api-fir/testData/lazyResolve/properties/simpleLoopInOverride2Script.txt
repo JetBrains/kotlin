@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-simpleLoopInOverride2Script.kts>
@@ -317,8 +317,8 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2Script.kts
         public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-            public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val str: R|kotlin/String|
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] val str: R|kotlin/String|
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
         }
 

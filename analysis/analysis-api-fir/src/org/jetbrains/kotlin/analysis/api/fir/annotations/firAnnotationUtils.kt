@@ -47,12 +47,12 @@ internal fun annotationsByClassId(
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KtAnnotationApplicationWithArgumentsInfo> =
-    if (classId == StandardClassIds.Annotations.Target && firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
+    if (classId == StandardClassIds.Annotations.Target && firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
         annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
             .mapIndexedToAnnotationApplication(useSiteTargetFilter, useSiteSession, classId) { index, annotation ->
                 annotation.asKtAnnotationApplicationForTargetAnnotation(useSiteSession, index)
             }
-    } else if (classId == JvmStandardClassIds.Annotations.Java.Target && firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
+    } else if (classId == JvmStandardClassIds.Annotations.Java.Target && firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
         annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
             .mapIndexedToAnnotationApplication(useSiteTargetFilter, useSiteSession, classId) { index, annotation ->
                 annotation.asKtAnnotationApplicationForJavaTargetAnnotation(useSiteSession, index)

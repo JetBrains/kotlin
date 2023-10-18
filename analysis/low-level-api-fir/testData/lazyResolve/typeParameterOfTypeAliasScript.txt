@@ -158,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias Alias<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfTypeAliasScript.kts>
@@ -171,7 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] typealias Alias<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias Alias<[ResolvedTo(ANNOTATION_ARGUMENTS)] TypeParam> = R|X<TypeParam>|
 
 
 BODY_RESOLVE:

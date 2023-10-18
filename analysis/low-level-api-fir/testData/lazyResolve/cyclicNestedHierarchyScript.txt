@@ -278,13 +278,13 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchyScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicNestedHierarchyScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
                 LAZY_super<D>
             }

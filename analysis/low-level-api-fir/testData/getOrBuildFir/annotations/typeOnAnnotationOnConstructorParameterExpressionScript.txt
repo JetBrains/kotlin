@@ -12,7 +12,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorParameterExpressionScri
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class ResolveMe : R|kotlin/Any| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|(s = String(abc))  kotlin/Boolean| = LAZY_EXPRESSION): R|ResolveMe| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|(s = String(abc))  kotlin/Boolean| = LAZY_EXPRESSION): R|ResolveMe| {
                 LAZY_super<R|kotlin/Any|>
             }
 

@@ -4,4 +4,4 @@ public final [ResolvedTo(BODY_RESOLVE)] fun testFun([ResolvedTo(BODY_RESOLVE)] p
 }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun testFun([ResolvedTo(BODY_RESOLVE)] param1: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] param2: R|kotlin/String| = String(str), [ResolvedTo(BODY_RESOLVE)] param3: R|kotlin/collections/List<kotlin/Int>| = R|/myList|()): R|kotlin/Unit| { LAZY_BLOCK }
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun testFun([ResolvedTo(BODY_RESOLVE)] param1: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] param2: R|kotlin/String| = String(str), [ResolvedTo(BODY_RESOLVE)] param3: R|kotlin/collections/List<kotlin/Int>| = R|/myList|()): R|kotlin/Unit| { LAZY_BLOCK }

@@ -7,8 +7,8 @@ R|Anno|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnReceiverPropertyCall.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val R|@R|Anno|(s = String(a))  kotlin/Int|.i: R|kotlin/String|
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val R|@R|Anno|(s = String(a))  kotlin/Int|.i: R|kotlin/String|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
             ^ String()
         }
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

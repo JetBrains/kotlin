@@ -142,9 +142,9 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: public open override [<synthetic> ANNOTATIONS_ARGUMENTS_MAPPING] val something: R|kotlin/String|
-    public [<synthetic> ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
+ANNOTATION_ARGUMENTS:
+TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
         ^getSomething String(42)
     }
 
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun getSomething(): R|kotlin/String| {
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| {
             ^getSomething String(42)
         }
 

@@ -248,7 +248,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-secondaryConstructorParameterScript.kts>
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] str: R|kotlin/String|): R|A| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] str: R|kotlin/String|): R|A| {
                 this<R|A|>(str#.myToInt#(), str#)
             }
 

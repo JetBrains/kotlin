@@ -110,14 +110,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] resolveMe> ddd(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }

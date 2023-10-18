@@ -238,13 +238,13 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
             public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class ResolveMe : R|OV| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ResolveMe : R|OV| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                 LAZY_super<<implicit>>
             }

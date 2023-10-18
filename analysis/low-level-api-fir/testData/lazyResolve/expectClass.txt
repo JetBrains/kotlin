@@ -48,9 +48,9 @@ FILE: [ResolvedTo(IMPORTS)] expectClass.kt
     public final expect [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Foo : R|kotlin/Any| {
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] expectClass.kt
-    public final expect [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class Foo : R|kotlin/Any| {
+    public final expect [ResolvedTo(ANNOTATION_ARGUMENTS)] class Foo : R|kotlin/Any| {
     }
 
 BODY_RESOLVE:

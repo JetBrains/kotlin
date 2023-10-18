@@ -598,7 +598,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
     @R|kotlin/SinceKotlin|[Types](String(1.4)) public final [ResolvedTo(STATUS)] class TypeReference : R|kotlin/reflect/KType| {
         @R|kotlin/SinceKotlin|[Types](String(1.6)) public [ResolvedTo(STATUS)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(STATUS)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
@@ -651,8 +651,8 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
             internal final const [ResolvedTo(STATUS)] val IS_MUTABLE_COLLECTION_TYPE: <implicit> = LAZY_EXPRESSION
                 internal [ResolvedTo(STATUS)] [ContainingClassKey=Companion] get(): <implicit>
 
-            internal final const [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
-                internal [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
+            internal final const [ResolvedTo(ANNOTATION_ARGUMENTS)] val IS_NOTHING_TYPE: R|kotlin/Int| = Int(1).R|kotlin/Int.shl|(Int(2))
+                internal [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Companion] get(): R|kotlin/Int|
 
         }
 

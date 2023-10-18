@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionInValueClassScript.kts>
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }

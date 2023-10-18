@@ -530,7 +530,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationArgumentsMixScript.kts>
@@ -580,7 +580,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
         }
 
 

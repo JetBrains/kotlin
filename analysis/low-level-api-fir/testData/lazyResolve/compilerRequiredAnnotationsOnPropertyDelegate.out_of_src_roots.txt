@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
             ^ D|/memberProperty|.<Unresolved name: getValue>#(Null(null), ::R|/memberProperty|)
         }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
@@ -172,11 +172,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegate.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val memberProperty: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val memberProperty: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
         ^ String(42)
     }
     )
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: getValue> {
             ^ D|/memberProperty|.<Unresolved name: getValue>#(Null(null), ::R|/memberProperty|)
         }
 

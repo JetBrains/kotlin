@@ -158,15 +158,15 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final inner [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class Second<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type2>(): R|MyClass.Second<Type2, Type>| {
+        public final inner [ResolvedTo(ANNOTATION_ARGUMENTS)] class Second<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type2>(): R|MyClass.Second<Type2, Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 

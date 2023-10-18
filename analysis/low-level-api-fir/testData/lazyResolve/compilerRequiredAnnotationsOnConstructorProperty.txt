@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorProperty.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorProperty.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
@@ -224,8 +224,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] get(): R|kotlin/Int|
+        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
     }
 

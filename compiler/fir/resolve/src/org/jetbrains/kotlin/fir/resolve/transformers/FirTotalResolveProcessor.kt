@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -84,7 +84,7 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
-        ANNOTATIONS_ARGUMENTS_MAPPING -> FirAnnotationArgumentsMappingProcessor(session, scopeSession)
+        ANNOTATION_ARGUMENTS -> FirAnnotationArgumentsProcessor(session, scopeSession)
         BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
         EXPECT_ACTUAL_MATCHING -> FirExpectActualMatcherProcessor(session, scopeSession)
     }

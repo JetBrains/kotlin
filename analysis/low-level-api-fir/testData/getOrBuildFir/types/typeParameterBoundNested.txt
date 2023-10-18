@@ -7,5 +7,5 @@ R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundNested.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|> check([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] t: R|T|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/collections/List<kotlin/collections/List<kotlin/Int>>|> check([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|kotlin/Unit| {
     }

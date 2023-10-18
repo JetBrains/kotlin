@@ -268,13 +268,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTargetScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationWithTargetScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|Anno|[Types](s = String(string)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class ResolveMe : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|Anno|[Types](s = String(string)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class ResolveMe : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
                 LAZY_super<R|kotlin/Any|>
             }

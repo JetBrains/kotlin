@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnFunctionParameterScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-typeOnAnnotationOnFunctionParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun t([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun t([ResolvedTo(ANNOTATION_ARGUMENTS)] addCommaWarning: R|@R|Anno|()  kotlin/Boolean|): R|kotlin/Unit| {
         }
 
         public? open [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {

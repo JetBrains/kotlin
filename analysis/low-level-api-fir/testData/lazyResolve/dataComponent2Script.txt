@@ -258,7 +258,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-dataComponent2Script.kts>
@@ -277,7 +277,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
             public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-            public final operator [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun component2(): R|kotlin/Boolean|
+            public final operator [ResolvedTo(ANNOTATION_ARGUMENTS)] fun component2(): R|kotlin/Boolean|
 
             public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 

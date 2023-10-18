@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
             }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>
@@ -397,11 +397,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val fieldProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
-            @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+            @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
                 ^ field#.plus#(String(str))
             }
-            @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) value: R|kotlin/String|): R|kotlin/Unit| {
+            @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) value: R|kotlin/String|): R|kotlin/Unit| {
                 ^ Unit#
             }
 

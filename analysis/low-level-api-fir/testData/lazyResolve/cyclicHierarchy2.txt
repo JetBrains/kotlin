@@ -148,9 +148,9 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
     public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2.kt
-    public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {
     }

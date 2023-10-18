@@ -128,17 +128,17 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Unit|
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] <script-syntheticResultDeclarationWithBigBody.kts>
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-syntheticResultDeclarationWithBigBody.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
             ^foo action#()
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/io/println|(String(foo))
             R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Unit|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Unit|
 
 
 BODY_RESOLVE:

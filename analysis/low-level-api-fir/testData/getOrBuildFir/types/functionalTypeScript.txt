@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] functionalTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-functionalTypeScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|(kotlin/Int) -> kotlin/String| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|(kotlin/Int) -> kotlin/String| {
             ^x [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 String()
             }

@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localConstructorScript.kts>
@@ -216,9 +216,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] E, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] F> foo(): R|() -> <local>/C<F, E, F>| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] E, [ResolvedTo(ANNOTATION_ARGUMENTS)] F> foo(): R|() -> <local>/C<F, E, F>| {
                 ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
-                    local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Outer(E), [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Outer(F)> : R|kotlin/Any| {
+                    local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(ANNOTATION_ARGUMENTS)] Outer(E), [ResolvedTo(ANNOTATION_ARGUMENTS)] Outer(F)> : R|kotlin/Any| {
                         public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
                         }

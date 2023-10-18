@@ -398,10 +398,10 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] <script-script2.kts>
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-script2.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }

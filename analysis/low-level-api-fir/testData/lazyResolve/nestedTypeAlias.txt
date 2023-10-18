@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
     public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
 
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] typealias NestedType<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias NestedType<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> = R|OuterClass.NestedClass<T>|
 
     }
     public? open [ResolvedTo(SUPER_TYPES)] class Another : R|kotlin/Any| {

@@ -228,9 +228,9 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
-    public final actual [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
+    public final actual [ResolvedTo(ANNOTATION_ARGUMENTS)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }

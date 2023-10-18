@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias ON3<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T2> = R|OuterClass.NestedType<T2>|
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
     public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
@@ -205,7 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
         public? final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
 
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] typealias ON3<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T2> = R|OuterClass.NestedType<T2>|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias ON3<[ResolvedTo(ANNOTATION_ARGUMENTS)] T2> = R|OuterClass.NestedType<T2>|
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt

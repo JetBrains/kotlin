@@ -148,10 +148,10 @@ FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-        public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo(): R|kotlin/Unit|
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit|
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {

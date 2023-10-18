@@ -7,6 +7,6 @@ R|kotlin/Int?|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] nullableTypeWithooutQuestionMark.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/Int?| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|kotlin/Int?| {
         ^x IntegerLiteral(1)
     }

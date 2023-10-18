@@ -132,13 +132,13 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitTypeScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): <implicit> { LAZY_BLOCK }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-topLevelFunctionsWithImplicitTypeScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 

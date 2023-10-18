@@ -348,7 +348,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-statement2.kts>

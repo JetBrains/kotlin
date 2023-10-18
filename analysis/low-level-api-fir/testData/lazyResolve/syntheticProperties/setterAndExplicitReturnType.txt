@@ -180,12 +180,12 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: public open override [<synthetic> ANNOTATIONS_ARGUMENTS_MAPPING] var something: R|kotlin/String|
-    public [<synthetic> ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
+ANNOTATION_ARGUMENTS:
+TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] var something: R|kotlin/String|
+    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
         ^getSomething String(42)
     }
-    public [<synthetic> ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] s: R|kotlin/String|): R|kotlin/Unit| {
+    public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| {
     }
 
 FILE: [ResolvedTo(IMPORTS)] Derived.kt
@@ -194,11 +194,11 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun getSomething(): R|kotlin/String| {
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| {
             ^getSomething String(42)
         }
 
-        public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun setSomething([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] s: R|kotlin/String|): R|kotlin/Unit| {
+        public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|kotlin/String|): R|kotlin/Unit| {
         }
 
     }

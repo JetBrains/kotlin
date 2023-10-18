@@ -108,10 +108,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class MyClass<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type>(): R|MyClass<Type>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
         }
 

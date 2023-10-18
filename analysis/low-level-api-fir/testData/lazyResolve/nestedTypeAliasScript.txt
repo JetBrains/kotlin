@@ -368,7 +368,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAliasScript.kts>
@@ -386,7 +386,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
 
             }
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] typealias NestedType<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T> = R|OuterClass.NestedClass<T>|
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias NestedType<[ResolvedTo(ANNOTATION_ARGUMENTS)] T> = R|OuterClass.NestedClass<T>|
 
         }
 

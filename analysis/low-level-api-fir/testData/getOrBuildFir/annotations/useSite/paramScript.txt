@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] paramScript.kts
         }
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/X.x] @CONSTRUCTOR_PARAMETER:R|Ann|[Types]() x: R|kotlin/Int|): R|X| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/X.x] @CONSTRUCTOR_PARAMETER:R|Ann|[Types]() x: R|kotlin/Int|): R|X| {
                 LAZY_super<R|kotlin/Any|>
             }
 

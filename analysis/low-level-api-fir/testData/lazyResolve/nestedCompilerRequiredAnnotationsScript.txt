@@ -678,7 +678,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedCompilerRequiredAnnotationsScript.kts>
@@ -694,7 +694,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class FirstClass : R|kotlin/Any| {
+        @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class FirstClass : R|kotlin/Any| {
             @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FirstClass.a] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|FirstClass| {
                 LAZY_super<R|kotlin/Any|>
             }

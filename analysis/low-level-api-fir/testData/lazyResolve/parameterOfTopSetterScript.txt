@@ -112,15 +112,15 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
             }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterOfTopSetterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var x: R|kotlin/Int| = IntegerLiteral(2)
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int|
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 

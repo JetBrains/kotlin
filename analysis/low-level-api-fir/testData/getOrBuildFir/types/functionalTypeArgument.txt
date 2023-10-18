@@ -7,7 +7,7 @@ R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] functionalTypeArgument.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|(kotlin/Int) -> kotlin/String| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|(kotlin/Int) -> kotlin/String| {
         ^x [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             ^ Unit
         }

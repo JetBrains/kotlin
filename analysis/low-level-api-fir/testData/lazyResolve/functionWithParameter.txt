@@ -60,11 +60,11 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameter.kt
         ^resolveMe Q|kotlin/Unit|
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithParameter.kt
     public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] param: R|I|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|I|): R|kotlin/Unit| {
         ^resolveMe Q|kotlin/Unit|
     }
 

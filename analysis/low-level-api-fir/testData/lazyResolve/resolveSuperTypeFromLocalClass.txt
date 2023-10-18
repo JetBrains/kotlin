@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClass.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                 super<<implicit>>()

@@ -8,13 +8,13 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] jvmFieldAnnotationOnConstructorProperty.kt
     public final [ResolvedTo(STATUS)] class MyClass : R|A| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/MyClass.addCommaWarning] addCommaWarning: R|kotlin/Boolean| = LAZY_EXPRESSION): R|MyClass| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/MyClass.addCommaWarning] addCommaWarning: R|kotlin/Boolean| = LAZY_EXPRESSION): R|MyClass| {
             LAZY_super<R|A|>
         }
 
-        field:@R|kotlin/jvm/JvmField|[Types]() public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|kotlin/Boolean| = R|<local>/addCommaWarning|
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyClass] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] value: R|kotlin/Boolean|): R|kotlin/Unit|
+        field:@R|kotlin/jvm/JvmField|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var addCommaWarning: R|kotlin/Boolean| = R|<local>/addCommaWarning|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] get(): R|kotlin/Boolean|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyClass] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Boolean|): R|kotlin/Unit|
 
     }
     public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

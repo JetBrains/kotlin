@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
     public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=KotlinAnnotation] get(): AnotherAnnotation
 
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
         @KotlinAnnotation[Unresolved](AnotherAnnotation#()) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()

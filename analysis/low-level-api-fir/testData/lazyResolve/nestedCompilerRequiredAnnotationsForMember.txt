@@ -610,7 +610,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
@@ -642,7 +642,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             @R|kotlin/Deprecated|[Types](String(constructorProperty)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): R|kotlin/Int|
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun memberFunction(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun memberFunction(): R|kotlin/Unit| {
             }
 
             @R|kotlin/Deprecated|[Types](String(memberProperty)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val memberProperty: <implicit> = LAZY_EXPRESSION

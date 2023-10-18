@@ -4,5 +4,5 @@ public final [ResolvedTo(BODY_RESOLVE)] val i: R|kotlin/Int|
     }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val i: R|kotlin/Int|
-    public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| { LAZY_BLOCK }
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val i: R|kotlin/Int|
+    public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }

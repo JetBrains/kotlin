@@ -120,18 +120,18 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] <script-syntheticResultDeclaration.kts>
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-syntheticResultDeclaration.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
             ^foo Int(24)
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val $$result: R|kotlin/Int| = R|/foo|()
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/Int| = R|/foo|()
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
 
 
 BODY_RESOLVE:

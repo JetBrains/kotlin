@@ -168,7 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor(): R|Anno| {
@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
     }
     public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class MyClass : R|@R|Anno|()  Foo| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass : R|@R|Anno|()  Foo| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             LAZY_super<<implicit>>
         }

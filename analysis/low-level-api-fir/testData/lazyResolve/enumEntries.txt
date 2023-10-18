@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
     public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
@@ -202,8 +202,8 @@ FILE: [ResolvedTo(IMPORTS)] enumEntries.kt
         public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
         }
 
-        public final static [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+        public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
 
     }
 

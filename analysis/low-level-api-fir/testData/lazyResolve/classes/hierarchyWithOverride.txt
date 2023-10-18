@@ -288,7 +288,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
         public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
-    public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class Usage : R|Foo2| {
+    public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class Usage : R|Foo2| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }

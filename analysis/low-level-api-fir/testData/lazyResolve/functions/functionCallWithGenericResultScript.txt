@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionCallWithGenericResultScript.kts>
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] fun bar(): Foo<String>? { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: <implicit> = bar#()
         }
 

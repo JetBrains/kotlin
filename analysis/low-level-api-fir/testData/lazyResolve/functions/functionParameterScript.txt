@@ -90,13 +90,13 @@ FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-functionParameterScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] param: R|kotlin/Int|): R|kotlin/String| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] param: R|kotlin/Int|): R|kotlin/String| {
             ^foo String(boo)
         }
 

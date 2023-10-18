@@ -268,9 +268,9 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
-    public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class resolveMe : R|C| {
+    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class resolveMe : R|C| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
         }

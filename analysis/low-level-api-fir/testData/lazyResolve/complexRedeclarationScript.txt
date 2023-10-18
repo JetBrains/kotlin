@@ -1048,7 +1048,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-complexRedeclarationScript.kts>
@@ -1142,7 +1142,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
             }
 
             public final [ResolvedTo(STATUS)] class I : R|P| {
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=I] constructor(): R|B.I| {
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     LAZY_super<R|P|>
                 }
 

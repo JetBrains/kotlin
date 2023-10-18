@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     public? final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
@@ -299,8 +299,8 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Test] get(): R|kotlin/String| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Test] get(): R|kotlin/String| {
                 ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
             }
 

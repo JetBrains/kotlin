@@ -7,6 +7,6 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] incompletePropertyWithAnnotation.kt
-    @<ERROR TYPE REF: Symbol not found for Volatile>[Types]() private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var <no name provided>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-        private [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
-        private [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|
+    @<ERROR TYPE REF: Symbol not found for Volatile>[Types]() private final [ResolvedTo(ANNOTATION_ARGUMENTS)] var <no name provided>: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        private [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        private [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>): R|kotlin/Unit|

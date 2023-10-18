@@ -230,8 +230,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+ANNOTATION_ARGUMENTS:
+TARGET: public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

@@ -808,7 +808,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClassScript.kts>
@@ -856,8 +856,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
                 LAZY_super<<implicit>>
             }
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val st: R|kotlin/String| = IntegerLiteral(1)
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=OuterClass] get(): R|kotlin/String|
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val st: R|kotlin/String| = IntegerLiteral(1)
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=OuterClass] get(): R|kotlin/String|
 
             public? final? [ResolvedTo(RAW_FIR)] class SimpleNestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {

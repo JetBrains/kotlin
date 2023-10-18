@@ -18,11 +18,11 @@ FILE: [ResolvedTo(IMPORTS)] delegate.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        field:@PROPERTY_DELEGATE_FIELD:R|Ann|[Types]() public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val a: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        field:@PROPERTY_DELEGATE_FIELD:R|Ann|[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val a: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
             ^ Int(1)
         }
         )
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] get(): <ERROR TYPE REF: Unresolved name: getValue> {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] get(): <ERROR TYPE REF: Unresolved name: getValue> {
                 ^ this@R|/X|.D|/X.a|.<Unresolved name: getValue>#(this@R|/X|, ::R|/X.a|)
             }
 

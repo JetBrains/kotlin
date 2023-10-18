@@ -32,7 +32,7 @@ internal class KtFirAnnotationListForType private constructor(
 ) : KtAnnotationsList() {
     override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
-            coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexed { index, annotation ->
+            coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexed { index, annotation ->
                 annotation.toKtAnnotationApplication(useSiteSession, index)
             }
         }
@@ -54,7 +54,7 @@ internal class KtFirAnnotationListForType private constructor(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
-        coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexedNotNull { index, annotation ->
+        coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexedNotNull { index, annotation ->
             if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
                 return@mapIndexedNotNull null
             }
@@ -90,7 +90,7 @@ private fun ConeKotlinType.customAnnotationsWithLazyResolve(phase: FirResolvePha
     for (containerSymbol in custom.containerSymbols) {
         when (phase) {
             FirResolvePhase.TYPES -> resolveAnnotationsWithClassIds(containerSymbol)
-            FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING -> annotations.resolveAnnotationsWithArguments(containerSymbol)
+            FirResolvePhase.ANNOTATION_ARGUMENTS -> annotations.resolveAnnotationsWithArguments(containerSymbol)
             else -> {}
         }
     }

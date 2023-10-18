@@ -118,9 +118,9 @@ FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class Ann : R|kotlin/Annotation| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Ann : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Ann.a] vararg a: String = LAZY_EXPRESSION): R|Ann| {
             LAZY_super<R|kotlin/Any|>
         }

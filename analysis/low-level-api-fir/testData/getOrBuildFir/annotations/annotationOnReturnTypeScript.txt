@@ -11,6 +11,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnReturnTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationOnReturnTypeScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <reified [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Number|> R|kotlin/String|.collectOfType([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] i: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for Sequence> {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <reified [ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Number|> R|kotlin/String|.collectOfType([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for Sequence> {
             ^collectOfType IntegerLiteral(4)
         }

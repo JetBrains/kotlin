@@ -318,7 +318,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun test(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| {
             @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
                 @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|<local>/FirstClass| {
                     super<R|kotlin/Any|>()

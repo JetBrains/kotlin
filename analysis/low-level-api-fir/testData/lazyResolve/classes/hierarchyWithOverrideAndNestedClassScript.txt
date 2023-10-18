@@ -778,7 +778,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideAndNestedClassScript.kts>
@@ -821,7 +821,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] class OuterClass : R|Foo1| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }

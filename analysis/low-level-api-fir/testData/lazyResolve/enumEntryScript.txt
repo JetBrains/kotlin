@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-enumEntryScript.kts>
@@ -326,7 +326,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
                 LAZY_super<R|kotlin/Enum<Foo>|>
             }
 
-            @R|Anno|[Types]() public final static [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
+            @R|Anno|[Types]() public final static [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Foo] enum entry ResolveMe: R|Foo| = LAZY_EXPRESSION
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=Foo] fun values(): R|kotlin/Array<Foo>| {
             }
 

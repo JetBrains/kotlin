@@ -148,10 +148,10 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] getterWithDelegation.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val one: R|kotlin/Int|by LAZY_EXPRESSION
-        @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
+        @R|kotlin/Deprecated|[Types](message = String(reason)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
             ^ D|/one|.getValue#(Null(null), ::R|/one|)
         }
     public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {

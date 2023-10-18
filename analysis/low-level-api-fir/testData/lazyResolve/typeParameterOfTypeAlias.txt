@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias Alias<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
     public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] typealias Alias<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] TypeParam> = R|X<TypeParam>|
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias Alias<[ResolvedTo(ANNOTATION_ARGUMENTS)] TypeParam> = R|X<TypeParam>|
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt

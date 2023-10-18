@@ -11,5 +11,5 @@ FILE: [ResolvedTo(IMPORTS)] annotationApplicationCallExpressionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-annotationApplicationCallExpressionScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/Suppress|[Types](names = vararg(String())) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](names = vararg(String())) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|kotlin/Unit| {
         }

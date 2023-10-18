@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-superTypesScript.kts>
@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesScript.kts
 
         }
 
-        public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class resolveMe : R|A| {
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class resolveMe : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
                 LAZY_super<A>
             }

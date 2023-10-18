@@ -88,13 +88,13 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeAliasWithTypeParametersScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] typealias ResolveMe<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K> = R|kotlin/collections/Map<T, K>|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias ResolveMe<[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] K> = R|kotlin/collections/Map<T, K>|
 
 
 BODY_RESOLVE:

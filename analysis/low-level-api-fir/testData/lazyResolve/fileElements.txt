@@ -388,11 +388,11 @@ FILE: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fileElements.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-FILE: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fileElements.kt
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(ANNOTATION_ARGUMENTS)] fileElements.kt
     @FILE:R|kotlin/Deprecated|[Types](message = String(deprecated file))
     @FILE:R|one/Anno|[Types](i = Int(1))
-    [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotations container
+    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.i] i: R|kotlin/Int|): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>

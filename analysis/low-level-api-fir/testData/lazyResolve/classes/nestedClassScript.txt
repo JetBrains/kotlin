@@ -348,7 +348,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassScript.kts>
@@ -373,7 +373,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
                 LAZY_super<R|AnotherTopLevelClass|>
             }
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class NestedClass : R|kotlin/Any| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     LAZY_super<R|kotlin/Any|>
                 }

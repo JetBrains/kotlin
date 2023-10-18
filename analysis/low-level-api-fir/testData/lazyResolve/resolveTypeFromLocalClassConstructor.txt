@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructor.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructor.kt
     public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
@@ -216,7 +216,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructor.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|<local>/Local| {
                 super<R|kotlin/Any|>()

@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
     public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {

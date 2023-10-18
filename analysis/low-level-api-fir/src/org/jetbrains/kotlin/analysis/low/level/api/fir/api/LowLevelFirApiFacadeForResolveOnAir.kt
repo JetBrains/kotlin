@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
@@ -46,6 +45,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 object LowLevelFirApiFacadeForResolveOnAir {
@@ -433,7 +433,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         return when {
             container !is KtDeclaration -> FirResolvePhase.BODY_RESOLVE
             bodyResolveRequired(container, elementToReplace) -> FirResolvePhase.BODY_RESOLVE
-            annotationMappingRequired(container, elementToReplace) -> FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING
+            annotationMappingRequired(container, elementToReplace) -> FirResolvePhase.ANNOTATION_ARGUMENTS
             else -> {
                 /** Currently it is a minimal phase there we can collect [FirResolveContextCollector] */
                 FirResolvePhase.CONTRACTS

@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
     public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
             LAZY_super<R|AnotherTopLevelClass|>
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class NestedClass : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class NestedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                 LAZY_super<R|kotlin/Any|>
             }

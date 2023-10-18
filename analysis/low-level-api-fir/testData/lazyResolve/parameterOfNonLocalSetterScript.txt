@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-parameterOfNonLocalSetterScript.kts>
@@ -193,9 +193,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var x: R|kotlin/Int| = IntegerLiteral(2)
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] get(): R|kotlin/Int|
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                     ^ Unit#
                 }
 

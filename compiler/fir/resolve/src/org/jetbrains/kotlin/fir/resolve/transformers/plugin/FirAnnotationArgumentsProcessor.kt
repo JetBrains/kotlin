@@ -17,16 +17,16 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 @OptIn(AdapterForResolveProcessor::class)
-class FirAnnotationArgumentsMappingProcessor(
+class FirAnnotationArgumentsProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
-    override val transformer: FirTransformer<Any?> = FirAnnotationArgumentsMappingTransformerAdapter(session, scopeSession)
+) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.ANNOTATION_ARGUMENTS) {
+    override val transformer: FirTransformer<Any?> = FirAnnotationArgumentsTransformerAdapter(session, scopeSession)
 }
 
 @AdapterForResolveProcessor
-class FirAnnotationArgumentsMappingTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
-    private val transformer = FirAnnotationArgumentsMappingTransformer(session, scopeSession, FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+class FirAnnotationArgumentsTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
+    private val transformer = FirAnnotationArgumentsTransformer(session, scopeSession, FirResolvePhase.ANNOTATION_ARGUMENTS)
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         error("Should only be called via transformFile()")

@@ -248,13 +248,13 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-cyclicHierarchy2Script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
+        public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] interface ResolveMe : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /E> {
         }
 
         public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /ResolveMe> {

@@ -158,14 +158,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-typeParameterOfClassScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class MyClass<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type>(): R|MyClass<Type>| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class MyClass<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ANNOTATION_ARGUMENTS)] Type>(): R|MyClass<Type>| {
                 LAZY_super<R|kotlin/Any|>
             }
 

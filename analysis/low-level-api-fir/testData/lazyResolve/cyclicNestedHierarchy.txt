@@ -218,9 +218,9 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
+    public open [ResolvedTo(ANNOTATION_ARGUMENTS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<D>
         }

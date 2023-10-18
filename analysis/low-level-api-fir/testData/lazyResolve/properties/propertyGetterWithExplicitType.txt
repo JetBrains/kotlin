@@ -52,10 +52,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
             ^ IntegerLiteral(42)
         }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val prop: R|kotlin/Int|
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val prop: R|kotlin/Int|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
             ^ IntegerLiteral(42)
         }
 

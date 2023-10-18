@@ -92,9 +92,9 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] foo: R|Foo|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
     public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {

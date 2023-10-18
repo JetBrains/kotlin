@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnConstructorPropertyScript.kts>
@@ -289,8 +289,8 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorPropertyScri
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] get(): R|kotlin/Int|
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
         }
 

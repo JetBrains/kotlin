@@ -93,7 +93,7 @@ internal class KtFirMetadataCalculator(override val analysisSession: KtFirAnalys
         for (fir in declarations) {
             if (fir !is FirFunction && fir !is FirProperty && fir !is FirTypeAlias) continue
 
-            fir.symbol.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+            fir.symbol.lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
 
             val psiElements = mapping[fir.psi as KtElement]
             val methods = psiElements.filterIsInstance<PsiMethod>()

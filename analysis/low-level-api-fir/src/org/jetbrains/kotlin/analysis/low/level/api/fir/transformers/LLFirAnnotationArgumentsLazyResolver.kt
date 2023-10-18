@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsMappingTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsTransformer
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
-internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
+internal object LLFirAnnotationArgumentsLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATION_ARGUMENTS) {
     override fun resolve(
         target: LLFirResolveTarget,
         lockProvider: LLFirLockProvider,
@@ -34,7 +34,7 @@ internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(F
         scopeSession: ScopeSession,
         towerDataContextCollector: FirResolveContextCollector?,
     ) {
-        val resolver = LLFirAnnotationArgumentsMappingTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
+        val resolver = LLFirAnnotationArgumentsTargetResolver(target, lockProvider, session, scopeSession, towerDataContextCollector)
         resolver.resolveDesignation()
     }
 
@@ -44,7 +44,7 @@ internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(F
     }
 }
 
-private class LLFirAnnotationArgumentsMappingTargetResolver(
+private class LLFirAnnotationArgumentsTargetResolver(
     resolveTarget: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
     session: FirSession,
@@ -54,9 +54,9 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
     resolveTarget,
     lockProvider,
     scopeSession,
-    FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING,
+    FirResolvePhase.ANNOTATION_ARGUMENTS,
 ) {
-    override val transformer = FirAnnotationArgumentsMappingTransformer(
+    override val transformer = FirAnnotationArgumentsTransformer(
         session,
         scopeSession,
         resolverPhase,
@@ -68,7 +68,7 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
         resolveWithKeeper(
             target,
             target.llFirSession,
-            AnnotationArgumentMappingStateKeepers.DECLARATION,
+            AnnotationArgumentsStateKeepers.DECLARATION,
             prepareTarget = FirLazyBodiesCalculator::calculateAnnotations,
         ) {
             transformAnnotations(target)
@@ -113,7 +113,7 @@ internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Bool
         else -> false
     }
 
-internal object AnnotationArgumentMappingStateKeepers {
+internal object AnnotationArgumentsStateKeepers {
     private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { _, session ->
         add(ANNOTATION_BASE, session)
         add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)

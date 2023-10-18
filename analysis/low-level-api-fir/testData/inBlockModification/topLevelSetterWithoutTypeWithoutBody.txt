@@ -5,7 +5,7 @@ public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|
     }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val x: R|kotlin/Int|
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val x: R|kotlin/Int|
     public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
         ^ Int(1)
     }

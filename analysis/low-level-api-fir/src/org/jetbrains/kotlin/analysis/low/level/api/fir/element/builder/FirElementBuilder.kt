@@ -194,7 +194,7 @@ internal class FirElementBuilder(
     }
 
     private fun FirDeclaration.resolveAndFindTypeRefAnchor(typeReference: KtTypeReference): FirElement? {
-        lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
 
         if (this is FirCallableDeclaration) {
             returnTypeRef.takeIf { it.psi == typeReference }?.let { return it }
@@ -221,7 +221,7 @@ internal class FirElementBuilder(
     }
 
     private fun FirDeclaration.resolveAndFindAnnotation(annotationEntry: KtAnnotationEntry, goDeep: Boolean = false): FirAnnotation? {
-        lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        lazyResolveToPhase(FirResolvePhase.ANNOTATION_ARGUMENTS)
         findAnnotation(annotationEntry)?.let { return it }
 
         if (this is FirProperty) {

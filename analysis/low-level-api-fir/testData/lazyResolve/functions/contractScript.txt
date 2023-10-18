@@ -116,13 +116,13 @@ FILE: [ResolvedTo(IMPORTS)] contractScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] contractScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-contractScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final inline [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
             [R|Contract description]
              <
                 CallsInPlace(block, EXACTLY_ONCE)

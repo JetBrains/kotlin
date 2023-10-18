@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] superCallAnnotationScript.kts
 
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class B : R|@R|Anno|()  A| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|@R|Anno|()  A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 LAZY_super<@R|Anno|[Types]() A>
             }

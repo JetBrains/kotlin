@@ -96,7 +96,7 @@ fun List<FirAnnotation>.resolveAnnotationsWithArguments(anchorElement: FirBasedS
     }
 
     val phase = if (hasAnnotationCallWithArguments) {
-        FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING
+        FirResolvePhase.ANNOTATION_ARGUMENTS
     } else {
         FirResolvePhase.TYPES
     }

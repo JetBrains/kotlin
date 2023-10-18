@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] receiverTypeScript.kts
     SCRIPT: [ResolvedTo(TYPES)] <script-receiverTypeScript.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <@R|A|[Types]() [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T> R|T|.test(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <@R|A|[Types]() [ResolvedTo(ANNOTATION_ARGUMENTS)] T> R|T|.test(): R|kotlin/Unit| {
         }
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|) public final [ResolvedTo(STATUS)] annotation class A : R|kotlin/Annotation| {

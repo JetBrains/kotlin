@@ -918,7 +918,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
     public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
         protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
@@ -1001,7 +1001,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
         }
 
         public final [ResolvedTo(STATUS)] class I : R|P| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=I] constructor(): R|B.I| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=I] constructor(): R|B.I| {
                 LAZY_super<R|P|>
             }
 

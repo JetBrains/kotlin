@@ -40,9 +40,9 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
         ^resolveMe R|<local>/i|.R|/JavaInterface.id|
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] main.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] i: R|JavaInterface|): R|kotlin/Int| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe([ResolvedTo(ANNOTATION_ARGUMENTS)] i: R|JavaInterface|): R|kotlin/Int| {
         ^resolveMe R|<local>/i|.R|/JavaInterface.id|
     }
 

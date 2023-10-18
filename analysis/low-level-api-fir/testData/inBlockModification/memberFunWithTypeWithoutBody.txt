@@ -4,4 +4,4 @@ public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Int| {
 }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/Int| { LAZY_BLOCK }
+public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun x(): R|kotlin/Int| { LAZY_BLOCK }

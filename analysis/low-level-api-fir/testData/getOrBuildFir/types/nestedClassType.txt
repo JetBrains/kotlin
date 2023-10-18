@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassType.kt
             LAZY_super<R|Foo|>
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun create(): R|Foo.Nested| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun create(): R|Foo.Nested| {
         }
 
     }

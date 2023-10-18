@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnConstructorScript.kts>
@@ -285,7 +285,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
         }
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 

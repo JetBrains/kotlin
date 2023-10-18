@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
     public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
+        private final [ResolvedTo(ANNOTATION_ARGUMENTS)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 

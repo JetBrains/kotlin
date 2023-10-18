@@ -324,7 +324,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localNestedClassScript.kts>
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
 
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class LocalClass : AnotherTopLevelClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<AnotherTopLevelClass>()

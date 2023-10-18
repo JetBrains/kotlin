@@ -208,9 +208,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTarget.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTarget.kt
-    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|Anno|[Types](s = String(string)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|Anno|[Types](s = String(string)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }

@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
@@ -206,7 +206,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun fooo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun fooo([ResolvedTo(ANNOTATION_ARGUMENTS)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 

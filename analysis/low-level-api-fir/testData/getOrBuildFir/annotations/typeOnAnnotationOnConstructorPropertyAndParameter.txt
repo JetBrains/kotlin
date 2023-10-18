@@ -8,7 +8,7 @@ FIR element rendered:
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorPropertyAndParameter.kt
     public final [ResolvedTo(STATUS)] class ResolveMe : R|A| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/ResolveMe.addCommaWarning] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] second: R|@R|Anno|()  kotlin/Boolean| = LAZY_EXPRESSION): R|ResolveMe| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/ResolveMe.addCommaWarning] addCommaWarning: R|@R|Anno|()  kotlin/Boolean| = LAZY_EXPRESSION, [ResolvedTo(ANNOTATION_ARGUMENTS)] second: R|@R|Anno|()  kotlin/Boolean| = LAZY_EXPRESSION): R|ResolveMe| {
             LAZY_super<R|A|>
         }
 

@@ -272,9 +272,9 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyFromBody: R|kotlin/String| = String(str).R|kotlin/String.plus|(Int(1).R|kotlin/Int.toString|())
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: public open override [<synthetic> ANNOTATIONS_ARGUMENTS_MAPPING] val something: R|kotlin/String|
-    @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public [<synthetic> ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
+ANNOTATION_ARGUMENTS:
+TARGET: public open override [<synthetic> ANNOTATION_ARGUMENTS] val something: R|kotlin/String|
+    @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
         ^getSomething <strcat>(String(body: ), R|/propertyFromBody|)
     }
 
@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun getSomething(): R|kotlin/String| {
+        @R|Anno|[Types](s = <strcat>(String(number: ), R|/prop|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| {
             ^getSomething <strcat>(String(body: ), R|/propertyFromBody|)
         }
 

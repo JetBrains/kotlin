@@ -15,7 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] missedTypeArgumentsInAnnotationCall.kt
         }
 
     }
-    @<ERROR TYPE REF: Wrong number of type arguments>[Types]() public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class A : R|kotlin/Any| {
+    @<ERROR TYPE REF: Wrong number of type arguments>[Types]() public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class A : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|usage/A| {
             LAZY_super<R|kotlin/Any|>
         }

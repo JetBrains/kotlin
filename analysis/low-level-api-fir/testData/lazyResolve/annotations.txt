@@ -60,11 +60,11 @@ FILE: [ResolvedTo(IMPORTS)] annotations.kt
     @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotations container
-    @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
+    @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:

@@ -128,8 +128,8 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+ANNOTATION_ARGUMENTS:
+TARGET: public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {

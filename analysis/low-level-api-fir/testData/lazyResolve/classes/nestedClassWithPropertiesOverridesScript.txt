@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-nestedClassWithPropertiesOverridesScript.kts>
@@ -308,7 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
             public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
                 public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class ResolveMe : R|OV| {
+            public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     LAZY_super<<implicit>>
                 }

@@ -326,8 +326,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public? final? [ResolvedTo(RAW_FIR)] val propertyFromSetter: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public [<synthetic> ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
+ANNOTATION_ARGUMENTS:
+TARGET: @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
     <strcat>(String(body: ), propertyFromBody#)
 }
 
@@ -337,7 +337,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun getSomething(): R|kotlin/String| {
+        @R|Anno|[Types](s = <strcat>(String(getSomething: ), R|/getterProperty|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun getSomething(): R|kotlin/String| {
             <strcat>(String(body: ), propertyFromBody#)
         }
 

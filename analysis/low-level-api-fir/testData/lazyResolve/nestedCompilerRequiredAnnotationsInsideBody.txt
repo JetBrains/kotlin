@@ -248,7 +248,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBody.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBody.kt
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
@@ -259,7 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBody.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun test(): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| {
         @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
             @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|<local>/FirstClass| {
                 super<R|kotlin/Any|>()

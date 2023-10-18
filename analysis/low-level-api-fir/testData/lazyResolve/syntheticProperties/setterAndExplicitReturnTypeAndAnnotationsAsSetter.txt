@@ -322,8 +322,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public? final? [ResolvedTo(RAW_FIR)] val propertyFromSetter: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
-TARGET: @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public [<synthetic> ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| {
+ANNOTATION_ARGUMENTS:
+TARGET: @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public [<synthetic> ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| {
     ^setSomething R|kotlin/io/println|(R|<local>/s|)
 }
 
@@ -335,7 +335,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
         @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(STATUS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
 
-        @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun setSomething([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| {
+        @R|Anno|[Types](s = <strcat>(String(setSomething: ), R|/setterProperty|)) public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] fun setSomething([ResolvedTo(ANNOTATION_ARGUMENTS)] s: R|@R|Anno|(s = <strcat>(String(setter type ), R|/propertyFromSetter|))  kotlin/String|): R|kotlin/Unit| {
             ^setSomething R|kotlin/io/println|(R|<local>/s|)
         }
 

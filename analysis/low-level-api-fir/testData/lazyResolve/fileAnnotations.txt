@@ -148,11 +148,11 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
-    [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotations container
+    [ResolvedTo(ANNOTATION_ARGUMENTS)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             LAZY_super<R|kotlin/Any|>

@@ -66,9 +66,9 @@ FILE: [ResolvedTo(IMPORTS)] contract.kt
         block#()
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] contract.kt
-    public final inline [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    public final inline [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(block, EXACTLY_ONCE)

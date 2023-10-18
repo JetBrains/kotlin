@@ -7,7 +7,7 @@ R|kotlin/annotation/AnnotationRetention.SOURCE|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] retentionValue.kt
-    @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class Anno : R|kotlin/Annotation| {
+    @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }

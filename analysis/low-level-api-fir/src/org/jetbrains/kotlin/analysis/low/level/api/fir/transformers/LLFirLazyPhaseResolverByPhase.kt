@@ -17,7 +17,7 @@ internal object LLFirLazyPhaseResolverByPhase {
         this[FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS] = LLFirCompilerAnnotationsLazyResolver
         this[FirResolvePhase.CONTRACTS] = LLFirContractsLazyResolver
         this[FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE] = LLFirImplicitTypesLazyResolver
-        this[FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING] = LLFirAnnotationArgumentMappingLazyResolver
+        this[FirResolvePhase.ANNOTATION_ARGUMENTS] = LLFirAnnotationArgumentsLazyResolver
         this[FirResolvePhase.BODY_RESOLVE] = LLFirBodyLazyResolver
         this[FirResolvePhase.EXPECT_ACTUAL_MATCHING] = LLFirExpectActualMatcherLazyResolver
         this[FirResolvePhase.SEALED_CLASS_INHERITORS] = LLFirSealedClassInheritorsLazyResolver

@@ -258,7 +258,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteralScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-localFunctionInsideFunctionLiteralScript.kts>

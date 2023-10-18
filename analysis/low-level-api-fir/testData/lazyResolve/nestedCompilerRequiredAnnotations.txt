@@ -608,7 +608,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotations.kt
 
     }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotations.kt
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
@@ -619,7 +619,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotations.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
     }
-    @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class FirstClass : R|kotlin/Any| {
+    @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class FirstClass : R|kotlin/Any| {
         @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FirstClass.a] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|FirstClass| {
             LAZY_super<R|kotlin/Any|>
         }

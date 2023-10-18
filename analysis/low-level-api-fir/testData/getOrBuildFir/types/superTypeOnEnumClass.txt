@@ -7,7 +7,7 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] superTypeOnEnumClass.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] enum class MyClass : <ERROR TYPE REF: Symbol not found for UnresolvedInterface>, R|kotlin/Enum<MyClass>| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] enum class MyClass : <ERROR TYPE REF: Symbol not found for UnresolvedInterface>, R|kotlin/Enum<MyClass>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/MyClass.i] i: Int = LAZY_EXPRESSION): R|MyClass| {
             LAZY_super<R|kotlin/Enum<MyClass>|>
         }

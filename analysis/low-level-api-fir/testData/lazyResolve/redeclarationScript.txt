@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-redeclarationScript.kts>
@@ -222,7 +222,7 @@ FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
         }
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor(): R|A| {
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=A] constructor(): R|A| {
                 LAZY_super<R|kotlin/Any|>
             }
 

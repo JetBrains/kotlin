@@ -388,7 +388,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
         }
 
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(TYPES)] <script-hierarchyWithOverrideScript.kts>
@@ -421,8 +421,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
             public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val str: R|kotlin/String| = String()
-                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+            public open override [ResolvedTo(ANNOTATION_ARGUMENTS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
 
         }
 

@@ -60,11 +60,11 @@ FILE: [ResolvedTo(IMPORTS)] propertySetter.kt
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] propertySetter.kt
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int|
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] value: R|kotlin/Int|): R|kotlin/Unit| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var prop: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 BODY_RESOLVE:

@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeAndGeneratedProperty.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class B : R|A| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class B : R|A| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/B.prop] prop: String = LAZY_EXPRESSION): R|B| {
             LAZY_super<A>
         }

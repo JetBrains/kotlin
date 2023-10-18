@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypeInObject.kt
         }
 
     }
-    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] object B : R|A| {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] object B : R|A| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<A>
         }

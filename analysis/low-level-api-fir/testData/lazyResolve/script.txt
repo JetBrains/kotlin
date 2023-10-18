@@ -548,10 +548,10 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
         @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
         builder#.version# = String()
 
-ANNOTATIONS_ARGUMENTS_MAPPING:
+ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] <script-script.kts>
+    SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-script.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {

@@ -14,12 +14,12 @@ FILE: [ResolvedTo(IMPORTS)] setter.kt
 
     }
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [CorrespondingProperty=/X.x] x: R|kotlin/Int|): R|X| {
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=/X.x] x: R|kotlin/Int|): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
-            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            @PROPERTY_SETTER:R|Ann|[Types]() public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] value: R|kotlin/Int|): R|kotlin/Unit|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Ann|[Types]() public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATION_ARGUMENTS)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
