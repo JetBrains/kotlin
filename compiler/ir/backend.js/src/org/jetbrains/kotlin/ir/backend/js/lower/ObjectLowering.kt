@@ -20,11 +20,12 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -59,8 +60,7 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
 
         declaration.instanceField = instanceField
 
-        val primaryConstructor = declaration.primaryConstructor ?: declaration.syntheticPrimaryConstructor!!
-
+        val primaryConstructor = declaration.findOrGenerateConstructorForObjectInstantiating()
         val initEntryInstancesFun = declaration.parent.safeAs<IrClass>()?.initEntryInstancesFun
 
         getInstanceFun.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
@@ -77,6 +77,42 @@ class ObjectDeclarationLowering(val context: JsCommonBackendContext) : Declarati
         }
 
         return listOf(declaration, instanceField, getInstanceFun)
+    }
+
+    // We need to generate the new synthetic constructor for ES6 classes in case if a plugin didn't create it.
+    // The constructor defined as SyntheticPrimaryConstructor is used as a constructor with an init block.
+    // Because it doesn't contain any [IrDelegatingConstructorCallImpl], we can't use it in ES-classes as constructor
+    private fun IrClass.findOrGenerateConstructorForObjectInstantiating(): IrConstructor {
+        val oldSyntheticPrimaryConstructor = primaryConstructor ?: syntheticPrimaryConstructor!!
+        if (!context.es6mode || !oldSyntheticPrimaryConstructor.isSyntheticPrimaryConstructor) return oldSyntheticPrimaryConstructor
+
+        val declaration = addConstructor()
+        val superCtor = (superClass ?: context.irBuiltIns.anyClass.owner).constructors.first { it.isDefaultConstructor() }
+
+        declaration.body = factory.createBlockBody(
+            startOffset,
+            endOffset,
+            listOf(
+                IrDelegatingConstructorCallImpl(
+                    startOffset,
+                    endOffset,
+                    defaultType,
+                    superCtor.symbol,
+                    0,
+                    0
+                ),
+                IrDelegatingConstructorCallImpl(
+                    startOffset,
+                    endOffset,
+                    defaultType,
+                    oldSyntheticPrimaryConstructor.symbol,
+                    0,
+                    0
+                )
+            )
+        )
+
+        return declaration
     }
 
     private fun IrBuilderWithScope.irNullabilityCheck(instanceField: IrField): IrExpression {
