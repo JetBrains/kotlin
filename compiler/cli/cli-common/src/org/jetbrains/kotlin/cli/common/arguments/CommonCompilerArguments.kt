@@ -883,7 +883,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             }
 
             if (progressiveMode) {
-                LanguageFeature.values().filter { it.kind.enabledInProgressiveMode }.forEach {
+                LanguageFeature.entries.filter { it.enabledInProgressiveMode }.forEach {
                     // Don't overwrite other settings: users may want to turn off some particular
                     // breaking change manually instead of turning off whole progressive mode
                     if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
