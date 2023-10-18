@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -65,12 +66,124 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
      * trigger body resolve.
      */
     private inner class FirEnumAnnotationArgumentsTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
-        AbstractFirExpressionsResolveTransformerForAnnotations(transformer) {
+        FirExpressionsResolveTransformer(transformer) {
+        override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
+            dataFlowAnalyzer.enterAnnotation()
+            annotation.transformChildren(transformer, ResolutionMode.ContextDependent)
+            dataFlowAnalyzer.exitAnnotation()
+            return annotation
+        }
+
+        override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
+            return transformAnnotation(annotationCall, data)
+        }
+
+        override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
+            return transformAnnotation(errorAnnotationCall, data)
+        }
+
+        override fun transformExpression(expression: FirExpression, data: ResolutionMode): FirStatement {
+            return expression.transformChildren(transformer, data) as FirStatement
+        }
+
+        override fun FirQualifiedAccessExpression.isAcceptableResolvedQualifiedAccess(): Boolean {
+            return calleeReference !is FirErrorNamedReference
+        }
+
+        override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
+            return block
+        }
+
+        override fun transformThisReceiverExpression(
+            thisReceiverExpression: FirThisReceiverExpression,
+            data: ResolutionMode,
+        ): FirStatement {
+            return thisReceiverExpression
+        }
+
+        override fun transformComparisonExpression(
+            comparisonExpression: FirComparisonExpression,
+            data: ResolutionMode,
+        ): FirStatement {
+            return comparisonExpression
+        }
+
+        override fun transformTypeOperatorCall(
+            typeOperatorCall: FirTypeOperatorCall,
+            data: ResolutionMode,
+        ): FirStatement {
+            return typeOperatorCall
+        }
+
+        override fun transformCheckNotNullCall(
+            checkNotNullCall: FirCheckNotNullCall,
+            data: ResolutionMode,
+        ): FirStatement {
+            return checkNotNullCall
+        }
+
+        override fun transformBinaryLogicExpression(
+            binaryLogicExpression: FirBinaryLogicExpression,
+            data: ResolutionMode,
+        ): FirStatement {
+            return binaryLogicExpression
+        }
+
+        override fun transformVariableAssignment(
+            variableAssignment: FirVariableAssignment,
+            data: ResolutionMode,
+        ): FirStatement {
+            return variableAssignment
+        }
+
+        override fun transformCallableReferenceAccess(
+            callableReferenceAccess: FirCallableReferenceAccess,
+            data: ResolutionMode,
+        ): FirStatement {
+            return callableReferenceAccess
+        }
+
+        override fun transformDelegatedConstructorCall(
+            delegatedConstructorCall: FirDelegatedConstructorCall,
+            data: ResolutionMode,
+        ): FirStatement {
+            return delegatedConstructorCall
+        }
+
+        override fun transformAugmentedArraySetCall(
+            augmentedArraySetCall: FirAugmentedArraySetCall,
+            data: ResolutionMode,
+        ): FirStatement {
+            return augmentedArraySetCall
+        }
+
+        override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement {
+            arrayLiteral.transformChildren(transformer, data)
+            return arrayLiteral
+        }
+
+        override fun transformAnonymousObjectExpression(
+            anonymousObjectExpression: FirAnonymousObjectExpression,
+            data: ResolutionMode,
+        ): FirStatement {
+            return anonymousObjectExpression
+        }
+
+        override fun transformAnonymousFunctionExpression(
+            anonymousFunctionExpression: FirAnonymousFunctionExpression,
+            data: ResolutionMode,
+        ): FirStatement {
+            return anonymousFunctionExpression
+        }
+
+        override fun shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall: FirGetClassCall): Boolean {
+            return false
+        }
 
         override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
             // transform arrayOf arguments to handle `@Foo(bar = arrayOf(X))`
             functionCall.transformChildren(transformer, data)
-            return super.transformFunctionCall(functionCall, data)
+            return functionCall
         }
 
         override fun resolveQualifiedAccessAndSelectCandidate(
