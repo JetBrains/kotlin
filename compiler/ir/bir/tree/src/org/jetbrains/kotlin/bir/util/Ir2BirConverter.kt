@@ -719,7 +719,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
                 extensionReceiver = old.extensionReceiver?.let { copyElement(it) },
                 origin = old.origin,
                 typeArguments = old.typeArguments.memoryOptimizedMap { it?.let { remapType(it) } },
-                delegate = remapElement(old.delegate.owner),
+                delegate = remapSymbol(old.delegate),
                 getter = remapSymbol(old.getter),
                 setter = old.setter?.let { remapSymbol(it) },
             )
