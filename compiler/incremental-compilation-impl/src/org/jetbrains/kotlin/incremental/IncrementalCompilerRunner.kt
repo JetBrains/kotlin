@@ -75,6 +75,7 @@ abstract class IncrementalCompilerRunner<
     protected val withAbiSnapshot: Boolean = false,
     private val preciseCompilationResultsBackup: Boolean = false,
     private val keepIncrementalCompilationCachesInMemory: Boolean = false,
+    private val enableFallbackToRebuild: Boolean = false,
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -128,22 +129,25 @@ abstract class IncrementalCompilerRunner<
             }
             is ICResult.Failed -> {
                 messageCollector.reportException(result.cause, ExceptionLocation.INCREMENTAL_COMPILATION)
-                reporter.warn {
-                    // The indentation after the first line is intentional (so that this message is distinct from next message)
-                    """
+                if (enableFallbackToRebuild) {
+                    reporter.warn {
+                        // The indentation after the first line is intentional (so that this message is distinct from next message)
+                        """
                     |Incremental compilation was attempted but failed:
                     |    ${result.reason.readableString}: ${result.cause.stackTraceToString().removeSuffixIfPresent("\n")}
                     |    Falling back to non-incremental compilation (reason = ${result.reason})
-                    |    To help us fix this issue, please file a bug at https://youtrack.jetbrains.com/issues/KT with the above stack trace.
-                    |    (Be sure to search for the above exception in existing issues first to avoid filing duplicated bugs.)             
+                    |    To help us fix this issue, please file a bug at https://youtrack.jetbrains.com/issues/KT
+                    |    with the above stack trace and reproduction steps.
                     """.trimMargin()
-                }
-                // TODO: Collect the stack trace too
-                reporter.addAttribute(result.reason)
+                    }
+                    reporter.addAttribute(result.reason)
 
-                compileNonIncrementally(
-                    result.reason, allSourceFiles, args, fileLocations, trackChangedFiles = changedFiles == null, messageCollector
-                )
+                    compileNonIncrementally(
+                        result.reason, allSourceFiles, args, fileLocations, trackChangedFiles = changedFiles == null, messageCollector
+                    )
+                } else {
+                    ExitCode.COMPILATION_ERROR //TODO look at adding separate Failed states for COMP error and INTERNAL error?
+                }
             }
         }
     }
