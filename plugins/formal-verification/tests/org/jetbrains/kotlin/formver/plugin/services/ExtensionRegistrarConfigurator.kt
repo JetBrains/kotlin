@@ -18,11 +18,15 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
         val logLevel =
             if (module.files.any { it.name.contains("full_viper_dump") }) LogLevel.FULL_VIPER_DUMP
             else LogLevel.SHORT_VIPER_DUMP
+        val verificationSelection =
+            if (module.files.any { it.name.contains("always_validate") }) TargetsSelection.ALL_TARGETS
+            else if (module.files.any {it.name.contains("no_contracts") }) TargetsSelection.NO_TARGETS
+            else TargetsSelection.TARGETS_WITH_CONTRACT
         val config = PluginConfiguration(
             logLevel,
             UnsupportedFeatureBehaviour.THROW_EXCEPTION,
             conversionSelection = TargetsSelection.ALL_TARGETS,
-            verificationSelection = TargetsSelection.TARGETS_WITH_CONTRACT
+            verificationSelection = verificationSelection
         )
         FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(config))
     }

@@ -363,8 +363,27 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         val argument = data.convert(typeOperatorCall.arguments[0])
         val conversionType = data.embedType(typeOperatorCall.conversionTypeRef.coneType)
         return when (typeOperatorCall.operation) {
-            FirOperation.IS -> Is(argument, conversionType)
-            FirOperation.NOT_IS -> Not(Is(argument, conversionType))
+            FirOperation.IS -> Is(argument, conversionType, typeOperatorCall.source)
+            FirOperation.NOT_IS -> Not(Is(argument, conversionType), typeOperatorCall.source)
+            FirOperation.AS -> data.withResult(conversionType) {
+                // TODO: this may require special handling of access permissions; we should look into a more systematic solution.
+                resultCtx.resultVar.setValue(argument, this, typeOperatorCall.source)
+                for (invariant in resultCtx.resultVar.accessInvariants()) {
+                    addStatement(Stmt.Inhale(invariant))
+                }
+            }
+            FirOperation.SAFE_AS -> data.withResult(conversionType.getNullable()) {
+                val ifBlock = withNewScopeToBlock {
+                    resultCtx.resultVar.setValue(argument, this, null)
+                    for (invariant in resultCtx.resultVar.accessInvariants()) {
+                        addStatement(Stmt.Inhale(invariant))
+                    }
+                }
+                val elseBlock = withNewScopeToBlock {
+                    resultCtx.resultVar.setValue(NullLit(conversionType), this, null)
+                }
+                addStatement(Stmt.If(Is(argument, conversionType).toViper(), ifBlock, elseBlock, typeOperatorCall.source.asPosition))
+            }
             else -> handleUnimplementedElement("Can't embed type operator ${typeOperatorCall.operation}.", data)
         }
     }

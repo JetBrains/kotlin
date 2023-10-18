@@ -1,0 +1,57 @@
+/as_operator.kt:(38,44): info: Generated Viper text for testAs:
+method global$fun_testAs$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local$foo: Ref)
+  returns (ret: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Bar())
+{
+  var anonymous$0: Ref
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
+  anonymous$0 := (dom$Casting$cast(local$foo, dom$Type$global$class_Bar()): Ref)
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}
+
+/as_operator.kt:(78,92): info: Generated Viper text for testNullableAs:
+method global$fun_testNullableAs$fun_take$NT_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: dom$Nullable[Ref])
+  returns (ret: dom$Nullable[Ref])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Bar()))
+{
+  var anonymous$0: dom$Nullable[Ref]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
+  anonymous$0 := (dom$Casting$cast(local$foo, dom$Type$special$Nullable(dom$Type$global$class_Bar())): dom$Nullable[Ref])
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}
+
+/as_operator.kt:(129,139): info: Generated Viper text for testSafeAs:
+method global$fun_testSafeAs$fun_take$T_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: Ref)
+  returns (ret: dom$Nullable[Ref])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Bar()))
+{
+  var anonymous$0: dom$Nullable[Ref]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
+  if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Bar())) {
+    anonymous$0 := (dom$Casting$cast(local$foo, dom$Type$special$Nullable(dom$Type$global$class_Bar())): dom$Nullable[Ref])
+  } else {
+    anonymous$0 := (dom$Nullable$null(): dom$Nullable[Ref])}
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}
+
+/as_operator.kt:(175,193): info: Generated Viper text for testNullableSafeAs:
+method global$fun_testNullableSafeAs$fun_take$NT_class_global$class_Foo$return$NT_class_global$class_Bar(local$foo: dom$Nullable[Ref])
+  returns (ret: dom$Nullable[Ref])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Bar()))
+{
+  var anonymous$0: dom$Nullable[Ref]
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$special$Nullable(dom$Type$global$class_Foo()))
+  if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Bar())) {
+    anonymous$0 := (dom$Casting$cast(local$foo, dom$Type$special$Nullable(dom$Type$global$class_Bar())): dom$Nullable[Ref])
+  } else {
+    anonymous$0 := (dom$Nullable$null(): dom$Nullable[Ref])}
+  ret := anonymous$0
+  goto label$ret$0
+  label label$ret$0
+}

@@ -33,6 +33,14 @@ import org.jetbrains.kotlin.formver.viper.ast.*
  *       { (typeOf((cast(a, newType): B)): Type) }
  *       isSubtype((typeOf((cast(a, newType): B)): Type), newType))
  *   }
+ *
+ *   axiom type_of_cast_invariant {
+ *     (forall a: A, newType: Type ::
+ *       { ((cast(a, newType): B)) }
+ *       (typeOf((cast(a, newType: B)): Type)
+ *         ==
+ *       (typeOf(a): Type)
+ *   }
  * }
  * ```
  */
@@ -87,7 +95,20 @@ object CastingDomain : BuiltinDomain("Casting") {
             )
         )
 
-    override val axioms: List<DomainAxiom> = listOf(nullCast, typeOfCast)
+    private val typeOfCastInvariant =
+        createNamedDomainAxiom(
+            "type_of_cast_invariant",
+            Exp.Forall(
+                listOf(a.decl(), newType.decl()),
+                listOf(Exp.Trigger1(cast(a.use(), newType.use(), B))),
+                Exp.EqCmp(
+                    TypeOfDomain.typeOf(cast(a.use(), newType.use(), B)),
+                    TypeOfDomain.typeOf(a.use())
+                )
+            )
+        )
+
+    override val axioms: List<DomainAxiom> = listOf(nullCast, typeOfCast, typeOfCastInvariant)
 }
 
 fun Exp.convertType(currentType: TypeEmbedding, newType: TypeEmbedding, source: KtSourceElement?) =

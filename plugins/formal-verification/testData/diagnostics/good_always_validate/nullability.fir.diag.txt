@@ -1,0 +1,9 @@
+/nullability.kt:(4,15): info: Generated Viper text for return_null:
+method global$fun_return_null$fun_take$$return$NT_Int()
+  returns (ret: dom$Nullable[Int])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+{
+  ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  goto label$ret$0
+  label label$ret$0
+}

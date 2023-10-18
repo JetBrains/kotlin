@@ -22,6 +22,13 @@ domain dom$Casting[A, B]  {
       dom$Type$isSubtype((dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type),
       newType))
   }
+
+  axiom dom$Casting$type_of_cast_invariant {
+    (forall a: A, newType: dom$Type ::
+      { (dom$Casting$cast(a, newType): B) }
+      (dom$TypeOf$typeOf((dom$Casting$cast(a, newType): B)): dom$Type) ==
+      (dom$TypeOf$typeOf(a): dom$Type))
+  }
 }
 
 domain dom$Nullable[T]  {
@@ -34,6 +41,14 @@ domain dom$Nullable[T]  {
       !dom$Type$is_nullable_type(newType) ==>
       (dom$Casting$cast(x, dom$Type$special$Nullable(newType)): dom$Nullable[T]) !=
       (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$null_of_every_nullable_type {
+    (forall nx: dom$Nullable[T], newType: dom$Type ::
+      { dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType) }
+      dom$Type$is_nullable_type(newType) &&
+      nx == (dom$Nullable$null(): dom$Nullable[T]) ==>
+      dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType))
   }
 
   axiom dom$Nullable$val_of_nullable_of_val {
@@ -51,6 +66,15 @@ domain dom$Nullable[T]  {
       nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
       (dom$Casting$cast((dom$Casting$cast(nx, newType): T), (dom$TypeOf$typeOf(nx): dom$Type)): dom$Nullable[T]) ==
       nx)
+  }
+
+  axiom dom$Nullable$null_val_or_under_type {
+    (forall nx: dom$Nullable[T], newType: dom$Type ::
+      { dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), dom$Type$special$Nullable(newType)) }
+      !dom$Type$is_nullable_type(newType) &&
+      dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), dom$Type$special$Nullable(newType)) ==>
+      nx == (dom$Nullable$null(): dom$Nullable[T]) ||
+      dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType))
   }
 }
 

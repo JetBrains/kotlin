@@ -83,12 +83,34 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/good_always_validate")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Good_always_validate {
+        @Test
+        public void testAllFilesPresentInGood_always_validate() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/good_always_validate"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("nullability.kt")
+        public void testNullability() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_always_validate/nullability.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("plugins/formal-verification/testData/diagnostics/good_contracts")
     @TestDataPath("$PROJECT_ROOT")
     public class Good_contracts {
         @Test
         public void testAllFilesPresentInGood_contracts() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/good_contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("as_type_contract.kt")
+        public void testAs_type_contract() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/as_type_contract.kt");
         }
 
         @Test
@@ -159,6 +181,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("arithmetic.kt")
         public void testArithmetic() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/arithmetic.kt");
+        }
+
+        @Test
+        @TestMetadata("as_operator.kt")
+        public void testAs_operator() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/as_operator.kt");
         }
 
         @Test

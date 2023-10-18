@@ -93,6 +93,13 @@ interface TypeEmbedding {
      * This is exclusively necessary for CallsInPlace.
      */
     fun dynamicInvariants(v: Exp): List<Exp> = emptyList()
+
+    /**
+     * Get a nullable version of this type embedding.
+     *
+     * Note that nullability doesn't stack, hence nullable types must return themselves.
+     */
+    fun getNullable(): TypeEmbedding = NullableTypeEmbedding(this)
 }
 
 fun <R> TypeEmbedding.flatMapUniqueFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> {
@@ -168,6 +175,8 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
         return elementType.accessInvariants(CastingDomain.cast(v, elementType, null))
             .map { Exp.Implies(Exp.NeCmp(v, nullVal().toViper()), it) }
     }
+
+    override fun getNullable(): TypeEmbedding = this
 }
 
 abstract class UnspecifiedFunctionTypeEmbedding : TypeEmbedding {
