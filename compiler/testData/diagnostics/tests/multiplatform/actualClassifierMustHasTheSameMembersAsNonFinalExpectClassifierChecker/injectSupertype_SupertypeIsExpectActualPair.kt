@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
@@ -18,7 +19,7 @@ actual open class Base {
     actual fun injected() {}
 }
 
-actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>class Foo<!> : Base() {
+actual open class Foo : Base() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }
