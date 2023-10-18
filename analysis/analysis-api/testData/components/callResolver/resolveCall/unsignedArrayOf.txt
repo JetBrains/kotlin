@@ -1,0 +1,28 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.UIntArray
+        symbol = kotlin/uintArrayOf(vararg elements: kotlin.UInt): kotlin.UIntArray
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = elements
+            receiverType = null
+            returnType = kotlin.UInt
+            symbol = vararg elements: kotlin.UInt
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = kotlin/uintArrayOf
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      42u -> (KtVariableLikeSignature:
+        name = elements
+        receiverType = null
+        returnType = kotlin.UInt
+        symbol = vararg elements: kotlin.UInt
+        callableIdIfNonLocal = null)
+    }
