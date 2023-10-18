@@ -53,9 +53,8 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             // sees a non-empty intersection and none of the
             // types is an enum, but intersections in K1
             // work differently from intersections in K2.
-            val isCaseMissedByK1 = (l.originalTypeInfo.isLiterallyTypeParameter && r.originalTypeInfo.isLiterallyTypeParameter)
-                    || (l.originalTypeInfo.isLiterallyTypeParameter && r.originalTypeInfo.isEnumClass)
-                    || (l.originalTypeInfo.isEnumClass && r.originalTypeInfo.isLiterallyTypeParameter)
+            val isCaseMissedByK1 = areBothTypeParameters(l.originalTypeInfo, r.originalTypeInfo)
+                    || areTypeParameterAndEnumClass(l.originalTypeInfo, r.originalTypeInfo)
             val replicateK1Behavior = !context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
 
             return reporter.reportInapplicabilityDiagnostic(
@@ -173,9 +172,9 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     }
 
     private fun isIdentityComparedWithImplicitBoxing(l: TypeInfo, r: TypeInfo, session: FirSession) =
-        isPrimitiveWithNonPrimitiveSupertype(l, r, session) || isPrimitiveWithNonPrimitiveSupertype(r, l, session)
+        arePrimitiveAndNonPrimitiveSupertypeRespectively(l, r, session) || arePrimitiveAndNonPrimitiveSupertypeRespectively(r, l, session)
 
-    private fun isPrimitiveWithNonPrimitiveSupertype(l: TypeInfo, r: TypeInfo, session: FirSession) =
+    private fun arePrimitiveAndNonPrimitiveSupertypeRespectively(l: TypeInfo, r: TypeInfo, session: FirSession) =
         l.isNotNullPrimitive && !r.isNotNullPrimitive && l.type.isSubtypeOf(r.type, session)
 
     private fun getSourceLessInapplicabilityDiagnostic(forceWarning: Boolean) = when {
@@ -267,7 +266,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
                 else -> return
             }
         }
-        // We only report `SENSELESS_NULL_IN_WHEN` if `lType = type` because `lType` is the type of the when subject. This diagnostic is
+        // We only report `SENSELESS_NULL_IN_WHEN` if `lType = type` because `lType` is the type of the `when` subject. This diagnostic is
         // only intended for cases where the branch condition contains a null. Also, the error message for SENSELESS_NULL_IN_WHEN
         // says the value is *never* equal to null, so we can't report it if the value is *always* equal to null.
         if (expression.source?.elementType != KtNodeTypes.BINARY_EXPRESSION && type === lType && !compareResult) {
@@ -359,3 +358,9 @@ private fun FirExpression.toArgumentInfo(context: CheckerContext) =
     ArgumentInfo(
         this, resolvedType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
     )
+
+private fun areBothTypeParameters(a: TypeInfo, b: TypeInfo) =
+    a.isLiterallyTypeParameter && b.isLiterallyTypeParameter
+
+private fun areTypeParameterAndEnumClass(a: TypeInfo, b: TypeInfo) =
+    a.isLiterallyTypeParameter && b.isEnumClass || b.isLiterallyTypeParameter && a.isEnumClass
