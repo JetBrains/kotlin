@@ -23,7 +23,7 @@ FILE: unsafeAssignment_noReport.fir.kt
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/String?|>| = R|<local>/x|
             when () {
                 (R|<local>/arg| is R|kotlin/String|) ->  {
-                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|TypeVariable(T)?|>| = R|<local>/arg|
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/String?|>| = R|<local>/arg|
                 }
             }
 
