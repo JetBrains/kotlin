@@ -53,10 +53,10 @@ FILE: unsafeAssignmentExtra.fir.kt
 
             when (R|<local>/condition|) {
                 ==($subj$, Boolean(true)) ->  {
-                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|TypeVariable(T)|>| = Int(87)
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/Int|>| = Int(87)
                 }
                 ==($subj$, Boolean(false)) ->  {
-                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|TypeVariable(T)|>| = Int(65)
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/Int|>| = Int(65)
                 }
             }
 
@@ -72,10 +72,10 @@ FILE: unsafeAssignmentExtra.fir.kt
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/String|>| = Int(45)
             when (R|<local>/condition|) {
                 ==($subj$, Boolean(true)) ->  {
-                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|TypeVariable(T)|>| = Int(87)
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/String|>| = Int(87)
                 }
                 ==($subj$, Boolean(false)) ->  {
-                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|TypeVariable(T)|>| = Int(65)
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/String|>| = Int(65)
                 }
             }
 
@@ -85,7 +85,7 @@ FILE: unsafeAssignmentExtra.fir.kt
             )
             when () {
                 (this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/String|>| is R|kotlin/Int|) ->  {
-                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|TypeVariable(T)|>| = Int(67)
+                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|kotlin/String|>| = Int(67)
                 }
             }
 
