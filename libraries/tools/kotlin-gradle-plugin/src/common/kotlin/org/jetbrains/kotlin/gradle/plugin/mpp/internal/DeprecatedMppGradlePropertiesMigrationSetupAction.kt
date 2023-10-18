@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA
@@ -15,10 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 
-internal fun runDeprecationDiagnostics(project: Project) {
+internal val DeprecatedMppGradlePropertiesMigrationSetupAction = KotlinProjectSetupAction {
     checkAndReportDeprecatedMppProperties(project)
     handleHierarchicalStructureFlagsMigration(project)
- }
+}
 
 /**
  * Declared properties have to be captured during plugin application phase before the HMPP migration util sets them.
