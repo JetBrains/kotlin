@@ -999,7 +999,7 @@ open class BirTreeDeepCopier {
             extensionReceiver = null,
             origin = old.origin,
             typeArguments = old.typeArguments.memoryOptimizedMap { it?.let { remapType(it) } },
-            delegate = remapElementPossiblyUnfinished(old.delegate),
+            delegate = remapSymbol(old.delegate),
             getter = remapSymbol(old.getter),
             setter = old.setter?.let { remapSymbol(it) },
         )

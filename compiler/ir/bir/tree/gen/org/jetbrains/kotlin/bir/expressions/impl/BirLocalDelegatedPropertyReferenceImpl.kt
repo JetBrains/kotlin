@@ -12,23 +12,23 @@ import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
-import org.jetbrains.kotlin.bir.declarations.BirLocalDelegatedProperty
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
-import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirLocalDelegatedPropertyReference
+import org.jetbrains.kotlin.bir.symbols.BirLocalDelegatedPropertySymbol
+import org.jetbrains.kotlin.bir.symbols.BirVariableSymbol
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 class BirLocalDelegatedPropertyReferenceImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-    symbol: BirLocalDelegatedProperty,
+    symbol: BirLocalDelegatedPropertySymbol,
     dispatchReceiver: BirExpression?,
     extensionReceiver: BirExpression?,
     origin: IrStatementOrigin?,
     override var typeArguments: List<BirType?>,
-    delegate: BirVariable,
+    delegate: BirVariableSymbol,
     getter: BirSimpleFunction,
     setter: BirSimpleFunction?,
 ) : BirLocalDelegatedPropertyReference() {
@@ -65,9 +65,9 @@ class BirLocalDelegatedPropertyReferenceImpl(
             }
         }
 
-    private var _symbol: BirLocalDelegatedProperty = symbol
+    private var _symbol: BirLocalDelegatedPropertySymbol = symbol
 
-    override var symbol: BirLocalDelegatedProperty
+    override var symbol: BirLocalDelegatedPropertySymbol
         get() = _symbol
         set(value) {
             if (_symbol != value) {
@@ -114,9 +114,9 @@ class BirLocalDelegatedPropertyReferenceImpl(
     override val valueArguments: BirChildElementList<BirExpression?> =
             BirChildElementList(this, 0)
 
-    private var _delegate: BirVariable = delegate
+    private var _delegate: BirVariableSymbol = delegate
 
-    override var delegate: BirVariable
+    override var delegate: BirVariableSymbol
         get() = _delegate
         set(value) {
             if (_delegate != value) {
