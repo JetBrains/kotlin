@@ -1,0 +1,111 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T : One, Two> foo([ResolvedTo(RAW_FIR)] t: T): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T : One, Two> foo([ResolvedTo(RAW_FIR)] t: T): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : One, Two> foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] t: T): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] T : One, Two> foo([ResolvedTo(COMPANION_GENERATION)] t: T): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] T : One, Two> foo([ResolvedTo(SUPER_TYPES)] t: T): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] T : R|One|, R|Two|> foo([ResolvedTo(TYPES)] t: R|T|): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] T : R|One|, R|Two|> foo([ResolvedTo(STATUS)] t: R|T|): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|One|, R|Two|> foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] t: R|T|): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T : R|One|, R|Two|> foo([ResolvedTo(CONTRACTS)] t: R|T|): <implicit> { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|One|, R|Two|> foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] t: R|T|): R|T| {
+        ^foo R|<local>/t|
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|Two|> foo([ResolvedTo(ANNOTATION_ARGUMENTS)] t: R|T|): R|T| {
+        ^foo R|<local>/t|
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|Two|> foo([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|T| {
+        ^foo R|<local>/t|
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] functionWithWhere.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|Two|> foo([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|T| {
+        ^foo R|<local>/t|
+    }

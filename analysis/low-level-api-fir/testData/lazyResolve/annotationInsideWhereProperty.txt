@@ -1,0 +1,243 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] annotationInsideWhereProperty.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : One, @Anno[Unresolved](LAZY_EXPRESSION) Two> T.foo: <implicit>
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : One, @Anno[Unresolved](LAZY_EXPRESSION) Two> T.foo: <implicit>
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : One, @Anno[Unresolved](LAZY_EXPRESSION) Two> T.foo: <implicit>
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val <[ResolvedTo(COMPANION_GENERATION)] T : One, @Anno[Unresolved](LAZY_EXPRESSION) Two> T.foo: <implicit>
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] val <[ResolvedTo(SUPER_TYPES)] T : One, @Anno[Unresolved](LAZY_EXPRESSION) Two> T.foo: <implicit>
+        public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(TYPES)] val <[ResolvedTo(TYPES)] T : R|One|, R|@R|Anno|(String(str))  Two|> R|T|.foo: <implicit>
+        public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] val <[ResolvedTo(STATUS)] T : R|One|, R|@R|Anno|(String(str))  Two|> R|T|.foo: <implicit>
+        public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|One|, R|@R|Anno|(String(str))  Two|> R|T|.foo: <implicit>
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] T : R|One|, R|@R|Anno|(String(str))  Two|> R|T|.foo: <implicit>
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> {
+            ^ this#
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|One|, R|@R|Anno|(String(str))  Two|> R|T|.foo: R|T|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|T| {
+            ^ this@R|/foo|
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> R|T|.foo: R|T|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| {
+            ^ this@R|/foo|
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] annotationInsideWhereProperty.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> R|T|.foo: R|T|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|T| {
+            ^ this@R|/foo|
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationInsideWhereProperty.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|@R|Anno|(s = String(str))  Two|> R|T|.foo: R|T|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|T| {
+            ^ this@R|/foo|
+        }

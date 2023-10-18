@@ -76,6 +76,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("annotationInsideWhereFunction.kt")
+        public void testAnnotationInsideWhereFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationInsideWhereFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationInsideWhereProperty.kt")
+        public void testAnnotationInsideWhereProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationInsideWhereProperty.kt");
+        }
+
+        @Test
         @TestMetadata("annotationOnConstructorProperty.kt")
         public void testAnnotationOnConstructorProperty() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/annotations/annotationOnConstructorProperty.kt");
@@ -1187,6 +1199,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         @TestMetadata("unresolvedTypeConsturctorResolvedTypeArgument.kt")
         public void testUnresolvedTypeConsturctorResolvedTypeArgument() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/unresolvedTypeConsturctorResolvedTypeArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("whereFunction.kt")
+        public void testWhereFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/whereFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("whereProperty.kt")
+        public void testWhereProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/types/whereProperty.kt");
         }
 
         @Test

@@ -1,0 +1,126 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : One, Two> T.foo: <implicit>
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : One, Two> T.foo: <implicit>
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : One, Two> T.foo: <implicit>
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val <[ResolvedTo(COMPANION_GENERATION)] T : One, Two> T.foo: <implicit>
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] val <[ResolvedTo(SUPER_TYPES)] T : One, Two> T.foo: <implicit>
+        public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(TYPES)] val <[ResolvedTo(TYPES)] T : R|One|, R|Two|> R|T|.foo: <implicit>
+        public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] val <[ResolvedTo(STATUS)] T : R|One|, R|Two|> R|T|.foo: <implicit>
+        public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|One|, R|Two|> R|T|.foo: <implicit>
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public? final? [ResolvedTo(RAW_FIR)] interface One : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] T : R|One|, R|Two|> R|T|.foo: <implicit>
+        public [ResolvedTo(CONTRACTS)] get(): <implicit> {
+            ^ this#
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public abstract [ResolvedTo(STATUS)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|One|, R|Two|> R|T|.foo: R|T|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|T| {
+            ^ this@R|/foo|
+        }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public abstract [ResolvedTo(STATUS)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val <[ResolvedTo(ANNOTATION_ARGUMENTS)] T : R|One|, R|Two|> R|T|.foo: R|T|
+        public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|T| {
+            ^ this@R|/foo|
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyWithWhere.kt
+    public abstract [ResolvedTo(STATUS)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(STATUS)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|Two|> R|T|.foo: R|T|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|T| {
+            ^ this@R|/foo|
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithWhere.kt
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface One : R|kotlin/Any| {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Two : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|One|, R|Two|> R|T|.foo: R|T|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|T| {
+            ^ this@R|/foo|
+        }
