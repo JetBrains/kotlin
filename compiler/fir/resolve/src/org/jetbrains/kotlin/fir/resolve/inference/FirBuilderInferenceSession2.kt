@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.CallKind
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
@@ -180,6 +181,8 @@ class FirBuilderInferenceSession2(
         if (givenExtensionReceiverOptions.any { it.resolvedType.containsNotFixedTypeVariables() }) return true
         if (callInfo.arguments.any { it in qualifiedAccessesToProcess }) return true
         if (callInfo.isDelegateExpression) return true
+        // Synthetic calls with blocks work like lambdas
+        if (callInfo.callKind == CallKind.SyntheticSelect) return true
 
         return false
     }
