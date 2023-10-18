@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -16,11 +17,13 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.isError
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsMappingTransformer
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirAnnotationArgumentMappingLazyResolver : LLFirLazyResolver(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
     override fun resolve(
@@ -73,7 +76,36 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
             firClass
         }
     }
+
+    private fun transformAnnotations(target: FirElementWithResolveState) {
+        when {
+            target is FirRegularClass -> {
+                val declarationTransformer = transformer.declarationsTransformer
+                declarationTransformer.context.insideClassHeader {
+                    target.transformAnnotations(declarationTransformer, ResolutionMode.ContextIndependent)
+                    target.transformTypeParameters(declarationTransformer, ResolutionMode.ContextIndependent)
+                    target.transformSuperTypeRefs(declarationTransformer, ResolutionMode.ContextIndependent)
+                }
+            }
+
+            target is FirScript -> target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            target.isRegularDeclarationWithAnnotation -> target.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            target is FirCodeFragment || target is FirFile -> {}
+            else -> throwUnexpectedFirElementError(target)
+        }
+    }
 }
+
+internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Boolean
+    get() = when (this) {
+        is FirCallableDeclaration,
+        is FirAnonymousInitializer,
+        is FirDanglingModifierList,
+        is FirFileAnnotationsContainer,
+        is FirTypeAlias,
+        -> true
+        else -> false
+    }
 
 internal object AnnotationArgumentMappingStateKeepers {
     private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { _, session ->

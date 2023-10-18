@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -62,49 +61,26 @@ private class LLFirAnnotationArgumentsTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         FirLazyBodiesCalculator.calculateAnnotations(target)
-        transformAnnotations(target)
+
+        when {
+            target is FirRegularClass -> {
+                val declarationTransformer = transformer.declarationsTransformer
+                target.transformAnnotations(declarationTransformer, ResolutionMode.ContextIndependent)
+                target.transformTypeParameters(declarationTransformer, ResolutionMode.ContextIndependent)
+                target.transformSuperTypeRefs(declarationTransformer, ResolutionMode.ContextIndependent)
+            }
+
+            target is FirScript -> {
+                target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+            }
+
+            target.isRegularDeclarationWithAnnotation -> {
+                target.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            }
+
+            target is FirCodeFragment || target is FirFile -> {}
+
+            else -> throwUnexpectedFirElementError(target)
+        }
     }
 }
-
-internal fun LLFirAbstractBodyTargetResolver.transformAnnotations(target: FirElementWithResolveState) {
-    when {
-        target is FirRegularClass -> transformer.declarationsTransformer?.let { declarationsTransformer ->
-            if (this is LLFirAnnotationArgumentsTargetResolver) {
-                target.transformAnnotations(declarationsTransformer, ResolutionMode.ContextIndependent)
-                target.transformTypeParameters(declarationsTransformer, ResolutionMode.ContextIndependent)
-                target.transformSuperTypeRefs(declarationsTransformer, ResolutionMode.ContextIndependent)
-            } else {
-                declarationsTransformer.context.insideClassHeader {
-                    target.transformAnnotations(declarationsTransformer, ResolutionMode.ContextIndependent)
-                    target.transformTypeParameters(declarationsTransformer, ResolutionMode.ContextIndependent)
-                    target.transformSuperTypeRefs(declarationsTransformer, ResolutionMode.ContextIndependent)
-                }
-            }
-        }
-
-        target is FirScript -> {
-            transformer.declarationsTransformer?.let {
-                target.transformAnnotations(it, ResolutionMode.ContextIndependent)
-            }
-        }
-
-        target.isRegularDeclarationWithAnnotation -> {
-            target.transformSingle(transformer, ResolutionMode.ContextIndependent)
-        }
-
-        target is FirCodeFragment || target is FirFile -> {}
-
-        else -> throwUnexpectedFirElementError(target)
-    }
-}
-
-internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Boolean
-    get() = when (this) {
-        is FirCallableDeclaration,
-        is FirAnonymousInitializer,
-        is FirDanglingModifierList,
-        is FirFileAnnotationsContainer,
-        is FirTypeAlias,
-        -> true
-        else -> false
-    }
