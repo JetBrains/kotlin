@@ -77,8 +77,11 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT/*TODO*/)
             registerCommonComponentsAfterExtensionsAreConfigured()
-            registerJavaComponents(JavaModuleResolver.getInstance(project))
             registerModuleData(moduleData)
+
+            if (platform.isJvm()) {
+                registerJavaComponents(JavaModuleResolver.getInstance(project))
+            }
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
