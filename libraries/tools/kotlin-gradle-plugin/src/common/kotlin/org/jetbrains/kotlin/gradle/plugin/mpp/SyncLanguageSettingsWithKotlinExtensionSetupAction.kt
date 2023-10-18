@@ -32,7 +32,7 @@ internal val SyncLanguageSettingsWithKotlinExtensionSetupAction = KotlinProjectS
 
         languageSettings.freeCompilerArgsProvider = project.provider {
             val propertyValue = with(project.extensions.extraProperties) {
-                val sourceSetFreeCompilerArgsPropertyName = KotlinMultiplatformPlugin.sourceSetFreeCompilerArgsPropertyName(sourceSet.name)
+                val sourceSetFreeCompilerArgsPropertyName = "kotlin.mpp.freeCompilerArgsForSourceSet.${sourceSet.name}"
                 if (has(sourceSetFreeCompilerArgsPropertyName)) {
                     get(sourceSetFreeCompilerArgsPropertyName)
                 } else null

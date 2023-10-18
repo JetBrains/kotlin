@@ -29,8 +29,5 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
-
-        internal fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
-            "kotlin.mpp.freeCompilerArgsForSourceSet.$sourceSetName"
     }
 }
