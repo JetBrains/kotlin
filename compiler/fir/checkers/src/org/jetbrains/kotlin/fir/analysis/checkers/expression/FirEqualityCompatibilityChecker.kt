@@ -53,9 +53,9 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             // sees a non-empty intersection and none of the
             // types is an enum, but intersections in K1
             // work differently from intersections in K2.
-            val isCaseMissedByK1 = (l.originalTypeInfo.isEnumClass == r.originalTypeInfo.isEnumClass)
-                    && l.originalTypeInfo.isLiterallyTypeParameter
-                    && r.originalTypeInfo.isLiterallyTypeParameter
+            val isCaseMissedByK1 = (l.originalTypeInfo.isLiterallyTypeParameter && r.originalTypeInfo.isLiterallyTypeParameter)
+                    || (l.originalTypeInfo.isLiterallyTypeParameter && r.originalTypeInfo.isEnumClass)
+                    || (l.originalTypeInfo.isEnumClass && r.originalTypeInfo.isLiterallyTypeParameter)
             val replicateK1Behavior = !context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
 
             return reporter.reportInapplicabilityDiagnostic(
