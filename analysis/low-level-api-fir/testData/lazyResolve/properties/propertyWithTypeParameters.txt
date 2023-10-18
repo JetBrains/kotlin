@@ -38,11 +38,6 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> R|T|.resolveMe: R|K|
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|K| { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> R|T|.resolveMe: R|K|
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|K| { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     public final [ResolvedTo(CONTRACTS)] val <[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> R|T|.resolveMe: R|K|

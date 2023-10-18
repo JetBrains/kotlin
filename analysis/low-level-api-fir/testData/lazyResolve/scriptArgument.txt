@@ -54,13 +54,6 @@ FILE: [ResolvedTo(RAW_FIR)] scriptArgument.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(RAW_FIR)] scriptArgument.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] <script-scriptArgument.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-
 CONTRACTS:
 FILE: [ResolvedTo(RAW_FIR)] scriptArgument.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)

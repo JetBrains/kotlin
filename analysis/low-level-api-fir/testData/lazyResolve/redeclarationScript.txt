@@ -166,27 +166,6 @@ FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
         }
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-redeclarationScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-        }
-
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=A] constructor(): R|A| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-        }
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] redeclarationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -290,4 +269,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] redeclarationScript.kts
             }
 
         }
-

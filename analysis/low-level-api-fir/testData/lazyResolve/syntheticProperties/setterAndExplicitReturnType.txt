@@ -134,23 +134,6 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-TARGET: public open override [<synthetic> ARGUMENTS_OF_ANNOTATIONS] var something: R|kotlin/String|
-    public [<synthetic> ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|kotlin/String| { LAZY_BLOCK }
-    public [<synthetic> ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
-
-FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
-            LAZY_super<R|Base|>
-        }
-
-        public open override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun getSomething(): R|kotlin/String| { LAZY_BLOCK }
-
-        public open override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun setSomething([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
-
-    }
-
 CONTRACTS:
 TARGET: public open override [<synthetic> CONTRACTS] var something: R|kotlin/String|
     public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|kotlin/String| {

@@ -358,74 +358,29 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
     }
     @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            LAZY_super<R|kotlin/Enum<EnumClass>|>
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
-
-    }
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val str: String = R|<local>/str|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
-
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val ann: AnotherAnnotation = R|<local>/ann|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): AnotherAnnotation
-
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val c: KClass<*> = R|<local>/c|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): KClass<*>
-
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val entry: EnumClass = R|<local>/entry|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
-
-    }
-    @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](String(123), AnotherAnnotation#(), <getClass>(Q|AnotherAnnotation|), Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+    public? final? [ResolvedTo(RAW_FIR)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
             LAZY_super<R|kotlin/Enum<EnumClass>|>
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
     }
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -446,32 +401,32 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
 
     }
-    @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](String(123), AnotherAnnotation#(), <getClass>(Q|AnotherAnnotation|), Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
+    @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+    public? final? [ResolvedTo(RAW_FIR)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+    public? final? [ResolvedTo(RAW_FIR)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
             LAZY_super<R|kotlin/Enum<EnumClass>|>
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|EnumClass| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
     }
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -492,7 +447,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): EnumClass
 
     }
-    @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](String(123), AnotherAnnotation#(), <getClass>(Q|AnotherAnnotation|), Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:

@@ -46,12 +46,6 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
     public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): Int
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): Int
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
     public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {

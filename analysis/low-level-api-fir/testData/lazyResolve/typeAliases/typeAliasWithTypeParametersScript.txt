@@ -70,15 +70,6 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias ResolveMe<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> = R|kotlin/collections/Map<T, K>|
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-typeAliasWithTypeParametersScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] typealias ResolveMe<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> = R|kotlin/collections/Map<T, K>|
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

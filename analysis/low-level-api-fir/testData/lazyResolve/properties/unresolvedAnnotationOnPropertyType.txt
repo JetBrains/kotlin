@@ -38,11 +38,6 @@ FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <ERROR TYPE REF: Symbol not found for Foo>
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val prop: <ERROR TYPE REF: Symbol not found for Foo>
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <ERROR TYPE REF: Symbol not found for Foo>
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnPropertyType.kt
     public final [ResolvedTo(CONTRACTS)] val prop: <ERROR TYPE REF: Symbol not found for Foo>

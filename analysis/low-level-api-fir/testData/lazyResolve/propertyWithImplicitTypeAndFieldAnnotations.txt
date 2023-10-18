@@ -198,31 +198,6 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
         @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
-
-    }
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val propertyProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val getterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val fieldProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](propertyProperty#) field:@FIELD:R|myPack/Anno|[Types](fieldProperty#) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var variableToResolve: <implicit> = LAZY_EXPRESSION
-        @R|myPack/Anno|[Types](getterProperty#) public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
-        @R|myPack/Anno|[Types](setterProperty#) public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] @R|myPack/Anno|[Types](setterParameterProperty#) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
@@ -234,21 +209,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val propertyProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val getterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val fieldProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](propertyProperty#) field:@FIELD:R|myPack/Anno|[Types](fieldProperty#) public final [ResolvedTo(CONTRACTS)] var variableToResolve: <implicit> = <strcat>(IntegerLiteral(42))
-        @R|myPack/Anno|[Types](getterProperty#) public [ResolvedTo(CONTRACTS)] get(): <implicit> {
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] var variableToResolve: <implicit> = <strcat>(IntegerLiteral(42))
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] get(): <implicit> {
             ^ field#.plus#(String(str))
         }
-        @R|myPack/Anno|[Types](setterProperty#) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] @R|myPack/Anno|[Types](setterParameterProperty#) value: <implicit>): R|kotlin/Unit| {
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| {
             ^ Unit#
         }
 
@@ -263,21 +238,21 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
 
     }
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val propertyProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val getterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(STATUS)] val fieldProperty: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-    @R|myPack/Anno|[Types](propertyProperty#) field:@FIELD:R|myPack/Anno|[Types](fieldProperty#) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
-        @R|myPack/Anno|[Types](getterProperty#) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ field#.plus#(String(str))
         }
-        @R|myPack/Anno|[Types](setterProperty#) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|myPack/Anno|[Types](setterParameterProperty#) value: R|kotlin/String|): R|kotlin/Unit| {
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/String|): R|kotlin/Unit| {
             ^ Unit#
         }
 
@@ -292,15 +267,15 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|myPack/Anno|[Types](propertyProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](getterProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](setterProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](setterParameterProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterParameterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterParameterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](fieldProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val fieldProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val fieldProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
         @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
@@ -321,15 +296,15 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotations.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    @R|myPack/Anno|[Types](propertyProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](getterProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](setterProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](setterParameterProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterParameterProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterParameterProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
-    @R|myPack/Anno|[Types](fieldProperty#) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val fieldProperty: R|kotlin/Int| = Int(42)
+    @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val fieldProperty: R|kotlin/Int| = Int(42)
         public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
     @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
         @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {

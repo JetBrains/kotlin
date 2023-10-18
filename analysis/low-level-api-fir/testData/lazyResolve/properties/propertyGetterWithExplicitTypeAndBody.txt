@@ -38,11 +38,6 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: R|kotlin/Int|
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val prop: R|kotlin/Int|
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|kotlin/Int| { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
     public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/Int|

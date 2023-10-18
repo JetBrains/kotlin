@@ -150,25 +150,6 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
         @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun fooo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](LAZY_EXPRESSION) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-compilerRequiredAnnotationsOnFunctionScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
-
-        }
-
-        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun fooo([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -185,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(CONTRACTS)] fun fooo([ResolvedTo(CONTRACTS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun fooo([ResolvedTo(CONTRACTS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](LAZY_EXPRESSION) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
@@ -205,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun fooo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun fooo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](LAZY_EXPRESSION) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 

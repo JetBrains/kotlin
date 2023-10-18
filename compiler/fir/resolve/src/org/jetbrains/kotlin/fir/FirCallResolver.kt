@@ -247,16 +247,6 @@ class FirCallResolver(
 
         @Suppress("NAME_SHADOWING")
         val qualifiedAccess = qualifiedAccess.let(transformer::transformExplicitReceiver)
-
-        // In red code, annotations can call arbitrary non-const declarations.
-        // During annotation arguments phase, we exit out if the receiver has unresolved type so that we don't throw exceptions.
-        // During body resolve, we will report something like ANNOTATION_ARGUMENT_MUST_BE_CONST.
-        if (transformer.baseTransformerPhase == FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS &&
-            qualifiedAccess.explicitReceiver?.isResolved == false
-        ) {
-            return qualifiedAccess
-        }
-
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {

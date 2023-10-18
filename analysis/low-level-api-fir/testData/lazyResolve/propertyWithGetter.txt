@@ -54,13 +54,6 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
     public? final? [ResolvedTo(RAW_FIR)] val withGetter: Int
         public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [ResolvedTo(RAW_FIR)] val withGetter: Int
-        public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
     public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {

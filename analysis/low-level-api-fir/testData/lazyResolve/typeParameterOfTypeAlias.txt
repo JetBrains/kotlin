@@ -78,16 +78,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
     }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias Alias<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] TypeParam> = R|X<TypeParam>|
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] typealias Alias<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] TypeParam> = R|X<TypeParam>|
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
     public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {

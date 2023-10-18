@@ -65,7 +65,12 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        resolveWithKeeper(target, target.llFirSession, AnnotationArgumentMappingStateKeepers.DECLARATION) {
+        resolveWithKeeper(
+            target,
+            target.llFirSession,
+            AnnotationArgumentMappingStateKeepers.DECLARATION,
+            prepareTarget = FirLazyBodiesCalculator::calculateAnnotations,
+        ) {
             transformAnnotations(target)
         }
     }

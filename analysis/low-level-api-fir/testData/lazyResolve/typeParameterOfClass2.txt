@@ -126,22 +126,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
-    public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final inner [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class Second<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type2, [ResolvedTo(STATUS)] Outer(Type)> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type2>(): R|MyClass.Second<Type2, Type>| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-        }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2.kt
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {

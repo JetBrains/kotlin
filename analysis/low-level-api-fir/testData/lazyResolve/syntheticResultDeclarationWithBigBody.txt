@@ -94,18 +94,6 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] <script-syntheticResultDeclarationWithBigBody.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T { LAZY_BLOCK }
-
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val $$result: <implicit> = foo#(<L> = LAZY_EXPRESSION)
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit>
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

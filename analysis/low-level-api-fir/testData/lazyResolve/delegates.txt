@@ -230,35 +230,6 @@ FILE: [ResolvedTo(IMPORTS)] delegates.kt
             ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] delegates.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-            ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-        }
-    public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-            ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-        }
-    public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-            ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-        }
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-        }
-    public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-            ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-        }
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-        }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] delegates.kt
     public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {

@@ -318,46 +318,6 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
         }
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] <script-script2.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int { LAZY_BLOCK }
-
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| { LAZY_BLOCK }
-
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): Int?
-
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-
-        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
-
-        consume#(LAZY_EXPRESSION)
-        x#!!
-        consume#(LAZY_EXPRESSION)
-        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] val cz: <implicit> = LAZY_EXPRESSION
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): <implicit>
-
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
-
-        }
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

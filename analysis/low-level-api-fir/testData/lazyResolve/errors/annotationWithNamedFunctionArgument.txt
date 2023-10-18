@@ -70,22 +70,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): String {
-    }
-    .invoke#()) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class TopLevelClass : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): String {
-    }
-    .invoke#()) public final [ResolvedTo(CONTRACTS)] class TopLevelClass : R|kotlin/Any| {
+    @<ERROR TYPE REF: Symbol not found for Anno>[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -94,9 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
-    @<ERROR TYPE REF: Symbol not found for Anno>[Types](ERROR_EXPR(Incorrect invoke receiver)local final? [ResolvedTo(RAW_FIR)] fun a(): String {
-    }
-    .invoke#()) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
+    @<ERROR TYPE REF: Symbol not found for Anno>[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             LAZY_super<R|kotlin/Any|>
         }

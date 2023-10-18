@@ -86,17 +86,6 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=A] constructor([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] a: R|kotlin/Boolean|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] param: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] c: R|kotlin/Long|): R|A| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter.kt
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

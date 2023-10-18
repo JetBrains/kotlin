@@ -70,15 +70,6 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class ResolveMe<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K>(): R|ResolveMe<T, K>| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
     public final [ResolvedTo(CONTRACTS)] class ResolveMe<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> : R|kotlin/Any| {

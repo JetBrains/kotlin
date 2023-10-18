@@ -12,4 +12,4 @@ public final [ResolvedTo(BODY_RESOLVE)] fun passLambdaValue([ResolvedTo(BODY_RES
 }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun passLambdaValue([ResolvedTo(BODY_RESOLVE)] l: R|ERROR CLASS: Symbol not found for ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }
+public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun passLambdaValue([ResolvedTo(BODY_RESOLVE)] l: R|ERROR CLASS: Symbol not found for ContractBuilder.() -> kotlin/Unit|): R|kotlin/Unit| { LAZY_BLOCK }

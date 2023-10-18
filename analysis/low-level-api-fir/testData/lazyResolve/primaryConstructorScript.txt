@@ -126,22 +126,6 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
         }
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-
-        }
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -221,4 +205,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorScript.kts
             }
 
         }
-

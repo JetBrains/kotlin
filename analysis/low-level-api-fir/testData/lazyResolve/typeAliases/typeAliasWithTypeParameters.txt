@@ -30,10 +30,6 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias ResolveMe<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> = R|kotlin/collections/Map<T, K>|
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] typealias ResolveMe<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> = R|kotlin/collections/Map<T, K>|
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
     public final [ResolvedTo(CONTRACTS)] typealias ResolveMe<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> = R|kotlin/collections/Map<T, K>|

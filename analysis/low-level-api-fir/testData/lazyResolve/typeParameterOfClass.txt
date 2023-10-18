@@ -86,17 +86,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class MyClass<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type>(): R|MyClass<Type>| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     public final [ResolvedTo(CONTRACTS)] class MyClass<[ResolvedTo(CONTRACTS)] Type> : R|kotlin/Any| {

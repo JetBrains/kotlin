@@ -46,12 +46,6 @@ FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultVa
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun topLevelFunction([ResolvedTo(EXPECT_ACTUAL_MATCHING)] firstParam: R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] secondParam: R|kotlin/String| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt
-    public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun topLevelFunction([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] firstParam: R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] secondParam: R|kotlin/String| = LAZY_EXPRESSION): <implicit> { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithImplicitTypeAndStringTemplateAsDefaultValue.kt
     public? final? const [ResolvedTo(RAW_FIR)] val myNumber: <implicit> = LAZY_EXPRESSION

@@ -102,19 +102,6 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
     }
     @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Foo.s] s: String): R|Foo<T>| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): String
-
-    }
-    @R|Foo<kotlin/Int>|[Types](String()) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
     public? final? [ResolvedTo(RAW_FIR)] annotation class Foo<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
@@ -126,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): String
 
     }
-    @R|Foo<kotlin/Int>|[Types](String()) public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
+    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -140,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] typeArgumentInAnnotation.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): String
 
     }
-    @R|Foo<kotlin/Int>|[Types](String()) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    @R|Foo<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:

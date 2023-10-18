@@ -182,29 +182,6 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] actual.kt
-    public final actual [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public? final? [ResolvedTo(RAW_FIR)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
-
-        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
-
-        public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-            public? final? [ResolvedTo(RAW_FIR)] fun member2(): <implicit> { LAZY_BLOCK }
-
-        }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
     public final actual [ResolvedTo(CONTRACTS)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {

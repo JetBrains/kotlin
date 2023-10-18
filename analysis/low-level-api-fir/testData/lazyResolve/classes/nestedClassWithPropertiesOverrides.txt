@@ -190,30 +190,6 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
-    public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
-
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class ResolveMe : R|OV| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                LAZY_super<<implicit>>
-            }
-
-            public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): A
-
-        }
-
-    }
-    public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {

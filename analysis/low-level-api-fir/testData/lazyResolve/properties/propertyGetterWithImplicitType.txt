@@ -38,11 +38,6 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitType.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: <implicit>
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitType.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val prop: <implicit>
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitType.kt
     public final [ResolvedTo(CONTRACTS)] val prop: <implicit>

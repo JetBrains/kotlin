@@ -94,18 +94,6 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
-    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
-    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] E, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] F> foo(): <implicit> { LAZY_BLOCK }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
     public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }

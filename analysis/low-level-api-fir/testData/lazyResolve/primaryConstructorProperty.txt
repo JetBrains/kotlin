@@ -110,20 +110,6 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=A] constructor([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] a: R|kotlin/Boolean|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
-
-        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
     public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {

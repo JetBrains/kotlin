@@ -150,25 +150,6 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
         }
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-primaryConstructorPropertyScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=A] constructor([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] a: R|kotlin/Boolean|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION): R|A| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
-
-            public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
-
-        }
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
@@ -264,4 +245,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorPropertyScript.kts
             }
 
         }
-

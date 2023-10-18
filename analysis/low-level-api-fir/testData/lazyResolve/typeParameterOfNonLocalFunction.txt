@@ -86,17 +86,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {

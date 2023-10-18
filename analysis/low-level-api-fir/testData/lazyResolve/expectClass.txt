@@ -38,11 +38,6 @@ FILE: [ResolvedTo(IMPORTS)] expectClass.kt
     public final expect [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Foo : R|kotlin/Any| {
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] expectClass.kt
-    public final expect [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class Foo : R|kotlin/Any| {
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] expectClass.kt
     public final expect [ResolvedTo(CONTRACTS)] class Foo : R|kotlin/Any| {

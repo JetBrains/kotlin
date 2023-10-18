@@ -198,34 +198,9 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
     public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
         public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-ARGUMENTS_OF_ANNOTATIONS:
-TARGET: public open override [<synthetic> ARGUMENTS_OF_ANNOTATIONS] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](<strcat>(String(number: ), prop#)) public [<synthetic> ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
-
-FILE: [ResolvedTo(IMPORTS)] Derived.kt
-    public final [ResolvedTo(STATUS)] class Derived : R|Base| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Derived] constructor(): R|Derived| {
-            LAZY_super<R|Base|>
-        }
-
-        @R|Anno|[Types](<strcat>(String(number: ), prop#)) public open override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| { LAZY_BLOCK }
-
-    }
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
-
-    }
-    public final [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
-
 CONTRACTS:
 TARGET: public open override [<synthetic> CONTRACTS] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](<strcat>(String(number: ), prop#)) public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
         ^getSomething String(str).also#(::println#)
     }
 
@@ -235,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](<strcat>(String(number: ), prop#)) public open override [ResolvedTo(CONTRACTS)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(CONTRACTS)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
             ^getSomething String(str).also#(::println#)
         }
 
@@ -249,12 +224,12 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public open override [<synthetic> IMPLICIT_TYPES_BODY_RESOLVE] val something: R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String|
-    @R|Anno|[Types](<strcat>(String(number: ), prop#)) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+    @R|Anno|[Types](LAZY_EXPRESSION) public [<synthetic> ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
         ^getSomething String(str).also#(::println#)
     }
 
@@ -264,7 +239,7 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             LAZY_super<R|Base|>
         }
 
-        @R|Anno|[Types](<strcat>(String(number: ), prop#)) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getSomething(): R|@R|Anno|(<strcat>(String(type: ), prop#))  kotlin/String| {
             ^getSomething String(str).also#(::println#)
         }
 
@@ -278,8 +253,8 @@ FILE: [ResolvedTo(IMPORTS)] Derived.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
     }
-    public final [ResolvedTo(STATUS)] val prop: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(STATUS)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 TARGET: public open override [<synthetic> ANNOTATIONS_ARGUMENTS_MAPPING] val something: R|@R|Anno|(s = <strcat>(String(type: ), R|/prop|))  kotlin/String|

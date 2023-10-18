@@ -134,23 +134,6 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
     public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
-    public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            LAZY_super<<implicit>>
-        }
-
-    }
-    public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> { LAZY_BLOCK }
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
     public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {

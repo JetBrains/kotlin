@@ -102,19 +102,6 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=X] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
     public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {

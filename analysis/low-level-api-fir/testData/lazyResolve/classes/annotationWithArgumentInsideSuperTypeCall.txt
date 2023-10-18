@@ -134,23 +134,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
-    public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
-    }
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
-            LAZY_super<<implicit>>
-        }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -159,9 +142,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
         }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
     }
-    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
+    public final [ResolvedTo(CONTRACTS)] class MyClass : R|@R|Anno|(LAZY_EXPRESSION)  Foo| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             LAZY_super<<implicit>>
         }
@@ -176,9 +159,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithArgumentInsideSuperTypeCall.kt
         }
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|Anno|(Q|Foo|)  Foo| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass : R|@R|Anno|(LAZY_EXPRESSION)  Foo| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor(): R|MyClass| {
             LAZY_super<<implicit>>
         }

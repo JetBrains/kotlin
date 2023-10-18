@@ -46,24 +46,18 @@ FILE: [ResolvedTo(IMPORTS)] annotations.kt
     [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotations container
     @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:R|kotlin/Suppress|[Types](String(1))
-    [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] annotations container
-    @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:R|kotlin/Suppress|[Types](String(1))
+    @FILE:R|kotlin/Suppress|[Types](LAZY_EXPRESSION)
     [ResolvedTo(CONTRACTS)] annotations container
-    @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotations.kt
-    @FILE:R|kotlin/Suppress|[Types](String(1))
+    @FILE:R|kotlin/Suppress|[Types](LAZY_EXPRESSION)
     [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotations container
-    @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+    @R|kotlin/Suppress|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:

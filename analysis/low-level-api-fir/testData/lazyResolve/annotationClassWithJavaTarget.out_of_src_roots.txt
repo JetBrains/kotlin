@@ -70,15 +70,6 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
-    @<ERROR TYPE REF: Symbol not found for java>[Types](ElementType#.TYPE_USE#) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
     @<ERROR TYPE REF: Symbol not found for java>[Types](ElementType#.TYPE_USE#) public final [ResolvedTo(CONTRACTS)] annotation class ResolveMe : R|kotlin/Annotation| {

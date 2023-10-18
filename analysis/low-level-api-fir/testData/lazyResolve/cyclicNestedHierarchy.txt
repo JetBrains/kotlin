@@ -174,28 +174,6 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
-    public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor(): R|C| {
-            LAZY_super<D>
-        }
-
-        public? open [ResolvedTo(SUPER_TYPES)] class CC : <ERROR TYPE REF: Loop in supertype: /C.CC -> kotlin/Any> {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=CC] constructor(): R|C.CC| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-        }
-
-    }
-    public? open [ResolvedTo(SUPER_TYPES)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
-            LAZY_super<C.CC>
-        }
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy.kt
     public open [ResolvedTo(CONTRACTS)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {

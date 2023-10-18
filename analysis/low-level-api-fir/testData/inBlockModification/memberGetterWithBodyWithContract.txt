@@ -23,8 +23,8 @@ public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
     }
 
 AFTER MODIFICATION:
-public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int|
-    public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
+public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var x: R|kotlin/Int|
+    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
         ^ Q|kotlin/Unit|
     }

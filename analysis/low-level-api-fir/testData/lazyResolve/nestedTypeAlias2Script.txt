@@ -198,31 +198,6 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias ON3<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T2> = R|OuterClass.NestedType<T2>|
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-nestedTypeAlias2Script.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                LAZY_super<R|kotlin/Any|>
-            }
-
-            public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    LAZY_super<R|kotlin/Any|>
-                }
-
-            }
-
-            public? final [ResolvedTo(SUPER_TYPES)] typealias NestedType<[ResolvedTo(SUPER_TYPES)] T> = R|OuterClass.NestedClass<T>|
-
-        }
-
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] typealias ON3<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T2> = R|OuterClass.NestedType<T2>|
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

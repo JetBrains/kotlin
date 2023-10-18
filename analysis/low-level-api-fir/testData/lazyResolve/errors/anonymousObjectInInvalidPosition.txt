@@ -70,15 +70,6 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
-    private final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
-        private [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     private final [ResolvedTo(CONTRACTS)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {

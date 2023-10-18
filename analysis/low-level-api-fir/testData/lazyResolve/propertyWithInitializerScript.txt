@@ -94,18 +94,6 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] <script-propertyWithInitializerScript.kts>
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
-
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
-
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): Int
-
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)

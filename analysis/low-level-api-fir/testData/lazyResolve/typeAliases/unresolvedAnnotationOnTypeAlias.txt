@@ -38,11 +38,6 @@ FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnTypeAlias.kt
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val myAlias: <implicit> = LAZY_EXPRESSION
         public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnTypeAlias.kt
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val myAlias: <implicit> = LAZY_EXPRESSION
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit>
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnTypeAlias.kt
     public final [ResolvedTo(CONTRACTS)] val myAlias: <implicit> = @Anno[Unresolved](Foo#) Foo#

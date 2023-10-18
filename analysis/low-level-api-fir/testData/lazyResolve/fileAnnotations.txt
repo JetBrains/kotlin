@@ -118,25 +118,10 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
-    @FILE:R|kotlin/Deprecated|[Types](String())
-    @FILE:R|one/Anno|[Types](String(anno))
-    [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] annotations container
-    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
-
-    }
-
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](String())
-    @FILE:R|one/Anno|[Types](String(anno))
+    @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     [ResolvedTo(CONTRACTS)] annotations container
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {
@@ -151,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](String())
-    @FILE:R|one/Anno|[Types](String(anno))
+    @FILE:R|one/Anno|[Types](LAZY_EXPRESSION)
     [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FILE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.s] s: String): R|one/Anno| {

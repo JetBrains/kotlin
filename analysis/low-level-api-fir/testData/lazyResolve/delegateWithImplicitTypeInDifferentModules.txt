@@ -102,19 +102,6 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
     }
 
-ARGUMENTS_OF_ANNOTATIONS:
-TARGET: public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
-
-FILE: [ResolvedTo(IMPORTS)] usage.kt
-    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-            LAZY_super<<implicit>>
-        }
-
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
-
-    }
-
 CONTRACTS:
 TARGET: public open [ResolvedTo(CONTRACTS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
