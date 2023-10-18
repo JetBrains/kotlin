@@ -141,7 +141,7 @@ sealed class FieldConfig(
         useFieldInIrFactoryStrategy = UseFieldAsParameterInIrFactoryStrategy.No
     }
 
-    var kdoc: String? = null
+    var kDoc: String? = null
 
     var generationCallback: (PropertySpec.Builder.() -> Unit)? = null
 

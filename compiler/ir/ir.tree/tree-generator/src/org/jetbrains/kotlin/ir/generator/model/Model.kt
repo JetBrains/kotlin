@@ -129,7 +129,7 @@ sealed class Field(
 
     val useInIrFactoryStrategy = config.useFieldInIrFactoryStrategy
     init {
-        kDoc = config.kdoc
+        kDoc = config.kDoc
     }
 
     val printProperty = config.printProperty

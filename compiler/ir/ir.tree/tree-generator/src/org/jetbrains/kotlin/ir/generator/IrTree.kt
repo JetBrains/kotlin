@@ -79,7 +79,7 @@ object IrTree : AbstractTreeBuilder() {
         transformByChildren = true
 
         fun offsetField(prefix: String) = field(prefix + "Offset", int, mutable = false) {
-            kdoc = """
+            kDoc = """
             The $prefix offset of the syntax node from which this IR node was generated,
             in number of characters from the start of the source file. If there is no source information for this IR node,
             the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column number from this offset,
@@ -141,7 +141,7 @@ object IrTree : AbstractTreeBuilder() {
     val metadataSourceOwner: ElementConfig by element(Declaration) {
         val metadataField = +field("metadata", type(Packages.declarations, "MetadataSource"), nullable = true) {
             skipInIrFactory()
-            kdoc = """
+            kDoc = """
             The arbitrary metadata associated with this IR node.
             
             @see ${elementName2typeName(this@element.name)}
@@ -210,7 +210,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isNoinline", boolean)
         +field("isHidden", boolean) {
             additionalImports.add(Import("org.jetbrains.kotlin.ir.util", "IdSignature"))
-            kdoc = """
+            kDoc = """
             If `true`, the value parameter does not participate in [IdSignature] computation.
 
             This is a workaround that is needed for better support of compiler plugins.
@@ -275,7 +275,7 @@ object IrTree : AbstractTreeBuilder() {
         }
         +field("hasEnumEntries", boolean) {
             useFieldInIrFactory(defaultValue = false)
-            kdoc = """
+            kDoc = """
             Returns true iff this is a class loaded from dependencies which has the `HAS_ENUM_ENTRIES` metadata flag set.
             This flag is useful for Kotlin/JVM to determine whether an enum class from dependency actually has the `entries` property
             in its bytecode, as opposed to whether it has it in its member scope, which is true even for enum classes compiled by
@@ -298,7 +298,7 @@ object IrTree : AbstractTreeBuilder() {
         }
         +listField("sealedSubclasses", classSymbolType, mutability = Var) {
             skipInIrFactory()
-            kdoc = """
+            kDoc = """
             If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
             Otherwise, this is an empty list.
             
@@ -619,7 +619,7 @@ object IrTree : AbstractTreeBuilder() {
         +symbol(packageFragmentSymbolType)
         +field("packageFragmentDescriptor", type(Packages.descriptors, "PackageFragmentDescriptor"), mutable = false)
         +field("moduleDescriptor", type(Packages.descriptors, "ModuleDescriptor"), mutable = false) {
-            kdoc = """
+            kDoc = """
             This should be a link to [IrModuleFragment] instead. 
                
             Unfortunately, some package fragments (e.g. some synthetic ones and [IrExternalPackageFragment])
