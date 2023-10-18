@@ -25,6 +25,9 @@ class BirErrorDeclarationImpl @ObsoleteDescriptorBasedAPI constructor(
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
 ) : BirErrorDeclaration() {
+    override val owner: BirErrorDeclarationImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

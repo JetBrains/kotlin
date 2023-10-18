@@ -99,8 +99,8 @@ class BirInlinedFunctionBlockImpl(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.statements
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.statements
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

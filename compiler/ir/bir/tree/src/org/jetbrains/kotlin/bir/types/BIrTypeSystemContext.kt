@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.bir.BirForest
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConst
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
-import org.jetbrains.kotlin.bir.symbols.*
+import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
+import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
+import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
+import org.jetbrains.kotlin.bir.symbols.ownerIfBound
 import org.jetbrains.kotlin.bir.types.utils.*
 import org.jetbrains.kotlin.bir.util.*
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -147,22 +150,22 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
     private fun getTypeParameters(typeConstructor: TypeConstructorMarker): List<BirTypeParameter> {
         return when (typeConstructor) {
             is BirTypeParameterSymbol -> emptyList()
-            is BirClassSymbol -> with(birForest) { extractTypeParameters(typeConstructor.asElement) }
+            is BirClassSymbol -> with(birForest) { extractTypeParameters(typeConstructor.owner) }
             else -> error("unsupported type constructor")
         }
     }
 
     override fun TypeConstructorMarker.parametersCount() = getTypeParameters(this).size
 
-    override fun TypeConstructorMarker.getParameter(index: Int) = getTypeParameters(this)[index].asElement
+    override fun TypeConstructorMarker.getParameter(index: Int) = getTypeParameters(this)[index].owner
 
-    override fun TypeConstructorMarker.getParameters() = getTypeParameters(this).map { it.asElement }
+    override fun TypeConstructorMarker.getParameters() = getTypeParameters(this).map { it.owner }
 
     override fun TypeConstructorMarker.supertypes(): Collection<KotlinTypeMarker> {
         return when (this) {
             is BirCapturedType.Constructor -> superTypes
-            is BirClassSymbol -> asElement.superTypes
-            is BirTypeParameterSymbol -> asElement.superTypes
+            is BirClassSymbol -> owner.superTypes
+            is BirTypeParameterSymbol -> owner.superTypes
             else -> error("unsupported type constructor")
         }
     }
@@ -172,7 +175,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
     override fun TypeConstructorMarker.isClassTypeConstructor() = this is BirClassSymbol
 
     override fun TypeConstructorMarker.isInterface(): Boolean {
-        return (this as? BirClassSymbol)?.asElement?.kind == ClassKind.INTERFACE
+        return (this as? BirClassSymbol)?.owner?.kind == ClassKind.INTERFACE
     }
 
     override fun TypeConstructorMarker.isTypeParameterTypeConstructor(): Boolean = this is BirTypeParameterSymbol
@@ -220,7 +223,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
     override fun TypeConstructorMarker.isCommonFinalClassConstructor(): Boolean {
         val classSymbol = this as? BirClassSymbol ?: return false
-        return classSymbol.asElement.run { modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS && kind != ClassKind.ANNOTATION_CLASS }
+        return classSymbol.owner.run { modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS && kind != ClassKind.ANNOTATION_CLASS }
     }
 
     /*
@@ -243,7 +246,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
         val classifier = type.classifier as? BirClassSymbol ?: return null
         val typeArguments = type.arguments
 
-        val element = classifier.maybeAsElement ?: return null
+        val element = classifier.ownerIfBound ?: return null
 
         val typeParameters = with(birForest) { extractTypeParameters(element) }
 
@@ -271,7 +274,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
         val newArguments = ArrayList<BirTypeArgument>(typeArguments.size)
 
         val typeSubstitutor =
-            BirCapturedTypeSubstitutor(typeParameters.memoryOptimizedMap { it.asElement }, typeArguments, capturedTypes, birBuiltIns)
+            BirCapturedTypeSubstitutor(typeParameters.memoryOptimizedMap { it.owner }, typeArguments, capturedTypes, birBuiltIns)
 
         for (index in typeArguments.indices) {
             val oldArgument = typeArguments[index]
@@ -320,12 +323,12 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is BirClassSymbol) return false
-        return this.asElement.classId?.isLocal == true
+        return this.owner.classId?.isLocal == true
     }
 
     override fun TypeConstructorMarker.isAnonymous(): Boolean {
         if (this !is BirClassSymbol) return false
-        return this.asElement.classId?.shortClassName == SpecialNames.ANONYMOUS
+        return this.owner.classId?.shortClassName == SpecialNames.ANONYMOUS
     }
 
     override val TypeVariableTypeConstructorMarker.typeParameter: TypeParameterMarker?
@@ -448,7 +451,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val symbol = this as BirClassifierSymbol
-        return symbol is BirClassSymbol && symbol.asElement.let {
+        return symbol is BirClassSymbol && symbol.owner.let {
             it.modality == Modality.FINAL && it.kind != ClassKind.ENUM_CLASS
         }
     }
@@ -458,7 +461,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? BirType)?.annotations?.firstOrNull { annotation ->
-            annotation.symbol.asElement.parentAsClass.hasEqualFqName(fqName)
+            annotation.symbol.owner.parentAsClass.hasEqualFqName(fqName)
         }?.run {
             (valueArguments.firstOrNull() as? BirConst<*>)?.value
         }
@@ -467,31 +470,31 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
         this as? BirTypeParameterSymbol
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? BirClassSymbol)?.asElement?.isSingleFieldValueClass == true
+        (this as? BirClassSymbol)?.owner?.isSingleFieldValueClass == true
 
     override fun TypeConstructorMarker.isMultiFieldValueClass(): Boolean =
-        (this as? BirClassSymbol)?.asElement?.isMultiFieldValueClass == true
+        (this as? BirClassSymbol)?.owner?.isMultiFieldValueClass == true
 
     override fun TypeConstructorMarker.getValueClassProperties(): List<Pair<Name, SimpleTypeMarker>>? =
-        (this as? BirClassSymbol)?.asElement?.valueClassRepresentation?.underlyingPropertyNamesToTypes
+        (this as? BirClassSymbol)?.owner?.valueClassRepresentation?.underlyingPropertyNamesToTypes
 
     override fun TypeConstructorMarker.isInnerClass(): Boolean =
-        (this as? BirClassSymbol)?.asElement?.isInner == true
+        (this as? BirClassSymbol)?.owner?.isInner == true
 
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker =
-        (this as BirTypeParameterSymbol).asElement.superTypes.firstOrNull {
-            val irClass = it.classOrNull?.asElement ?: return@firstOrNull false
+        (this as BirTypeParameterSymbol).owner.superTypes.firstOrNull {
+            val irClass = it.classOrNull?.owner ?: return@firstOrNull false
             irClass.kind != ClassKind.INTERFACE && irClass.kind != ClassKind.ANNOTATION_CLASS
-        } ?: asElement.superTypes.first()
+        } ?: owner.superTypes.first()
 
     override fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker? =
-        (this as BirType).classOrNull?.asElement?.inlineClassRepresentation?.underlyingType
+        (this as BirType).classOrNull?.owner?.inlineClassRepresentation?.underlyingType
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? =
         getUnsubstitutedUnderlyingType()?.let { type ->
             // Taking only the type parameters of the class (and not its outer classes) is OK since inner classes are always top level
             BirTypeSubstitutor(
-                (this as BirType).getClass()!!.typeParameters.memoryOptimizedMap { it.asElement },
+                (this as BirType).getClass()!!.typeParameters.memoryOptimizedMap { it.owner },
                 (this as? BirSimpleType)?.arguments.orEmpty(),
                 birBuiltIns
             ).substitute(type as BirType)
@@ -512,9 +515,9 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
                 signature.declarationFqName
             else null
         } else {
-            val parent = asElement.parent
+            val parent = owner.parent
             if (parent is BirPackageFragment && parent.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
-                asElement.name.asString()
+                owner.name.asString()
             else null
         }
     }
@@ -527,16 +530,16 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
     }
 
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? =
-        (this as BirClassSymbol).asElement.fqNameWhenAvailable?.toUnsafe()
+        (this as BirClassSymbol).owner.fqNameWhenAvailable?.toUnsafe()
 
     override fun TypeParameterMarker.getName(): Name =
-        (this as BirTypeParameterSymbol).asElement.name
+        (this as BirTypeParameterSymbol).owner.name
 
     override fun TypeParameterMarker.isReified(): Boolean =
-        (this as BirTypeParameterSymbol).asElement.isReified
+        (this as BirTypeParameterSymbol).owner.isReified
 
     override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
-        val irClass = (this as BirType).classOrNull?.asElement
+        val irClass = (this as BirType).classOrNull?.owner
         return irClass != null && (irClass.kind == ClassKind.INTERFACE || irClass.kind == ClassKind.ANNOTATION_CLASS)
     }
 
@@ -571,7 +574,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
         require(type is BirSimpleType)
-        val parameters = with(birForest) { extractTypeParameters(type.classifier as BirClass).memoryOptimizedMap { it.asElement } }
+        val parameters = with(birForest) { extractTypeParameters(type.classifier as BirClass).memoryOptimizedMap { it.owner } }
         val typeSubstitutor = BirTypeSubstitutor(parameters, type.arguments, birBuiltIns)
 
         return object : TypeCheckerState.SupertypesPolicy.DoCustomTransform() {

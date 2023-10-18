@@ -62,8 +62,8 @@ class BirConstantArrayImpl(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.elements
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.elements
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

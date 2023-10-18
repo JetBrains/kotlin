@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.bir.types
 
 import org.jetbrains.kotlin.bir.BirBuiltIns
 import org.jetbrains.kotlin.bir.symbols.BirTypeParameterSymbol
-import org.jetbrains.kotlin.bir.symbols.asElement
 import org.jetbrains.kotlin.bir.types.utils.buildSimpleType
 import org.jetbrains.kotlin.bir.types.utils.makeNullable
 import org.jetbrains.kotlin.bir.types.utils.toBuilder
@@ -83,7 +82,7 @@ class BirTypeSubstitutor(
         assert(typeParameters.size == typeArguments.size) {
             "Unexpected number of type arguments: ${typeArguments.size}\n" +
                     "Type parameters are:\n" +
-                    typeParameters.joinToString(separator = "\n") { it.asElement.render() } +
+                    typeParameters.joinToString(separator = "\n") { it.owner.render() } +
                     "Type arguments are:\n" +
                     typeArguments.joinToString(separator = "\n") { it.render() }
         }
@@ -93,7 +92,7 @@ class BirTypeSubstitutor(
 
     override fun getSubstitutionArgument(typeParameter: BirTypeParameterSymbol): BirTypeArgument =
         substitution[typeParameter]
-            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.asElement.render()}")
+            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.owner.render()}")
 
     override fun isEmptySubstitution(): Boolean = substitution.isEmpty()
 }
@@ -116,7 +115,7 @@ class BirCapturedTypeSubstitutor(
     override fun getSubstitutionArgument(typeParameter: BirTypeParameterSymbol): BirTypeArgument {
         return capturedSubstitution[typeParameter]?.let { makeTypeProjection(it, Variance.INVARIANT) }
             ?: oldSubstitution[typeParameter]
-            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.asElement.render()}")
+            ?: throw AssertionError("Unsubstituted type parameter: ${typeParameter.owner.render()}")
     }
 
     override fun isEmptySubstitution(): Boolean = oldSubstitution.isEmpty()

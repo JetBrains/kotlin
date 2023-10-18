@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.bir.types.utils
 
 import org.jetbrains.kotlin.bir.BirBuiltIns
-import org.jetbrains.kotlin.bir.symbols.asElement
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirStarProjection
 import org.jetbrains.kotlin.bir.types.BirType
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.bir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.builtins.StandardNames
 
 val BirType.isBoxedArray: Boolean
-    get() = classOrNull?.asElement?.fqNameWhenAvailable == StandardNames.FqNames.array.toSafe()
+    get() = classOrNull?.owner?.fqNameWhenAvailable == StandardNames.FqNames.array.toSafe()
 
 fun BirType.getArrayElementType(irBuiltIns: BirBuiltIns): BirType =
     if (isBoxedArray) {

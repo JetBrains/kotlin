@@ -54,6 +54,9 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     isInfix: Boolean,
     correspondingPropertySymbol: BirPropertySymbol?,
 ) : BirSimpleFunction() {
+    override val owner: BirSimpleFunctionImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
@@ -310,9 +313,9 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.typeParameters
-        id == 1 -> this.valueParameters
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.typeParameters
+        1 -> this.valueParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

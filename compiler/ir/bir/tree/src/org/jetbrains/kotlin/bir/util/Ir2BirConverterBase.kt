@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirMemberAccessExpression
-import org.jetbrains.kotlin.bir.symbols.*
+import org.jetbrains.kotlin.bir.symbols.BirSymbol
+import org.jetbrains.kotlin.bir.symbols.ExternalBirSymbol
 import org.jetbrains.kotlin.bir.types.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.types.impl.IrDelegatedSimpleType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.util.*
 
@@ -278,41 +278,4 @@ abstract class Ir2BirConverterBase {
             return converter.copyIrTree(listOf(this)).single()
         }
     }
-}
-
-private abstract class ExternalBirSymbol(
-    override val signature: IdSignature?,
-) : BirSymbol {
-    class FileSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirFileSymbol
-    class ExternalPackageFragmentSymbol(signature: IdSignature?) :
-        ExternalBirSymbol(signature), BirExternalPackageFragmentSymbol
-
-    class AnonymousInitializerSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirAnonymousInitializerSymbol
-
-    class EnumEntrySymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirEnumEntrySymbol
-    class FieldSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirFieldSymbol
-    class ClassSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirClassSymbol
-    class ScriptSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirScriptSymbol
-    class TypeParameterSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirTypeParameterSymbol
-
-    class ValueParameterSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirValueParameterSymbol
-
-    class VariableSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirVariableSymbol
-    class ConstructorSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirConstructorSymbol
-
-    class SimpleFunctionSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirSimpleFunctionSymbol
-
-    class ReturnableBlockSymbol(signature: IdSignature?) : ExternalBirSymbol(signature),
-        BirReturnableBlockSymbol
-
-    class PropertySymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirPropertySymbol
-    class LocalDelegatedPropertySymbol(signature: IdSignature?) :
-        ExternalBirSymbol(signature), BirLocalDelegatedPropertySymbol
-
-    class TypeAliasSymbol(signature: IdSignature?) : ExternalBirSymbol(signature), BirTypeAliasSymbol
 }

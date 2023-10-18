@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirFileSymbol
 import org.jetbrains.kotlin.ir.IrFileEntry
 
@@ -23,7 +22,7 @@ abstract class BirFile : BirPackageFragment(), BirAnnotationContainerElement,
     abstract var fileEntry: IrFileEntry
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        declarations.forEach { it.accept(data, visitor) }
+        declarations.acceptChildren(visitor, data)
     }
 
     companion object
