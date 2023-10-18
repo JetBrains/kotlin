@@ -672,6 +672,11 @@ tasks {
             kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
         }
     }
+    val wasmWasiNodeTest by existing {
+        if (!kotlinBuildProperties.getBoolean("kotlin.stdlib.wasi.tests")) {
+            enabled = false
+        }
+    }
 
     /*
     We are using a custom 'kotlin-project-structure-metadata' to ensure 'nativeApiElements' lists 'commonMain' as source set
