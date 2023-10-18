@@ -14,7 +14,7 @@ fun escape(f : () -> Unit) {
 
 @Suppress("LEAKED_IN_PLACE_LAMBDA")
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>invalid_calls_in_place<!>(f : () -> Unit) {
+fun <!VIPER_TEXT!>invalid_calls_in_place<!>(f : () -> Unit) {
     contract {
         callsInPlace(f)
     }
@@ -23,7 +23,7 @@ fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>invalid_calls_in_place<!>(f
 
 @Suppress("LEAKED_IN_PLACE_LAMBDA")
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>function_object_call<!>(f: (() -> Unit) -> Unit, g: () -> Unit) {
+fun <!VIPER_TEXT!>function_object_call<!>(f: (() -> Unit) -> Unit, g: () -> Unit) {
     contract {
         callsInPlace(g)
     }

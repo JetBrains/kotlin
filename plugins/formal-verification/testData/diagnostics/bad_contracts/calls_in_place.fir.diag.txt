@@ -27,8 +27,6 @@ method global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(loca
   ensures true
 
 
-/calls_in_place.kt:(450,472): warning: Function incorrect_at_most_once may not satisfy its contract.
-
 /calls_in_place.kt:(521,550): warning: Viper verification error: Postcondition of global$fun_incorrect_at_most_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int might not hold. Assertion local$f.special$function_object_call_counter <= old(local$f.special$function_object_call_counter) + 1 might not hold.
 
 /calls_in_place.kt:(661,683): info: Generated Viper text for incorrect_exactly_once:
@@ -50,8 +48,6 @@ method global$fun_incorrect_exactly_once$fun_take$fun_take$T_Int$return$T_Int$re
   goto label$ret$0
   label label$ret$0
 }
-
-/calls_in_place.kt:(661,683): warning: Function incorrect_exactly_once may not satisfy its contract.
 
 /calls_in_place.kt:(732,761): warning: Viper verification error: Postcondition of global$fun_incorrect_exactly_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int might not hold. Assertion local$f.special$function_object_call_counter == old(local$f.special$function_object_call_counter) + 1 might not hold.
 
@@ -81,8 +77,6 @@ method global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(loca
     local$f.special$function_object_call_counter
   ensures true
 
-
-/calls_in_place.kt:(866,889): warning: Function incorrect_at_least_once may not satisfy its contract.
 
 /calls_in_place.kt:(938,968): warning: Viper verification error: Postcondition of global$fun_incorrect_at_least_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int might not hold. Assertion local$f.special$function_object_call_counter > old(local$f.special$function_object_call_counter) might not hold.
 
@@ -117,8 +111,6 @@ method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_
   label label$try_exit$0
   label label$ret$0
 }
-
-/calls_in_place.kt:(1150,1183): warning: Function incorrect_exactly_once_with_catch may not satisfy its contract.
 
 /calls_in_place.kt:(1232,1261): warning: Viper verification error: Postcondition of global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion local$f.special$function_object_call_counter == old(local$f.special$function_object_call_counter) + 1 might not hold.
 
@@ -155,7 +147,5 @@ method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$r
   label label$try_exit$0
   label label$ret$0
 }
-
-/calls_in_place.kt:(1478,1519): warning: Function incorrect_exactly_once_with_call_in_catch may not satisfy its contract.
 
 /calls_in_place.kt:(1568,1597): warning: Viper verification error: Postcondition of global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion local$f.special$function_object_call_counter == old(local$f.special$function_object_call_counter) + 1 might not hold.

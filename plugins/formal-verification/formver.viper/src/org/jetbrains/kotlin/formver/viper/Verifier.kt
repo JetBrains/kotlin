@@ -51,19 +51,16 @@ class Verifier {
     /**
      * Verify the program. Returns true on successful verification.
      */
-    fun verify(program: Program, onFailure: (VerificationError) -> Unit): Boolean {
+    fun verify(program: Program, onFailure: (VerificationError) -> Unit) {
         val viperProgram = program.toSilver()
 
         verifier.start()
         val results = verifier.verify(viperProgram, emptySeq<SilverCfg>(), null.toScalaOption<String?>())
 
-        var success = true
         for (result in results) {
             if (result.isFatal) {
                 onFailure(ErrorAdapter.translate(result))
-                success = false
             }
         }
-        return success
     }
 }

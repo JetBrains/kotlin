@@ -74,10 +74,7 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
             // If the Viper program is not consistent, that's our error; we shouldn't surface it to the user as an unverified contract.
             if (!consistent || !config.shouldVerify(declaration)) return
 
-            val success = verifier.verify(program, onFailure)
-            if (!success) {
-                reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, declaration.name.asString(), context)
-            }
+            verifier.verify(program, onFailure)
         } catch (e: Exception) {
             val error = errorCollector.formatErrorWithInfos(e.message ?: "No message provided")
             reporter.reportOn(declaration.source, PluginErrors.INTERNAL_ERROR, error, context)

@@ -15,7 +15,7 @@ fun unknown(f : (Int) -> Int) : Int{
 
 @Suppress("WRONG_INVOCATION_KIND")
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_at_most_once<!>(f : (Int) -> Int) : Int{
+fun <!VIPER_TEXT!>incorrect_at_most_once<!>(f : (Int) -> Int) : Int{
     contract {
         <!VIPER_VERIFICATION_ERROR!>callsInPlace(f, AT_MOST_ONCE)<!>
     }
@@ -24,7 +24,7 @@ fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_at_most_once<!>(f
 
 @Suppress("WRONG_INVOCATION_KIND")
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_exactly_once<!>(f : (Int) -> Int) : Int{
+fun <!VIPER_TEXT!>incorrect_exactly_once<!>(f : (Int) -> Int) : Int{
     contract {
         <!VIPER_VERIFICATION_ERROR!>callsInPlace(f, EXACTLY_ONCE)<!>
     }
@@ -33,7 +33,7 @@ fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_exactly_once<!>(f
 
 @Suppress("WRONG_INVOCATION_KIND")
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_at_least_once<!>(f : (Int) -> Int) : Int{
+fun <!VIPER_TEXT!>incorrect_at_least_once<!>(f : (Int) -> Int) : Int{
     contract {
         <!VIPER_VERIFICATION_ERROR!>callsInPlace(f, AT_LEAST_ONCE)<!>
     }
@@ -43,7 +43,7 @@ fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_at_least_once<!>(
 // Consistency check with current Kotlin contract verification mechanism.
 @Suppress("WRONG_INVOCATION_KIND")
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_exactly_once_with_catch<!>(f : () -> Unit) : Unit {
+fun <!VIPER_TEXT!>incorrect_exactly_once_with_catch<!>(f : () -> Unit) : Unit {
     contract {
         <!VIPER_VERIFICATION_ERROR!>callsInPlace(f, EXACTLY_ONCE)<!>
     }
@@ -56,7 +56,7 @@ fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_exactly_once_with
 // Consistency check with current Kotlin contract verification mechanism.
 @Suppress("WRONG_INVOCATION_KIND")
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT!>incorrect_exactly_once_with_call_in_catch<!>(f : () -> Unit) : Unit {
+fun <!VIPER_TEXT!>incorrect_exactly_once_with_call_in_catch<!>(f : () -> Unit) : Unit {
     contract {
         <!VIPER_VERIFICATION_ERROR!>callsInPlace(f, EXACTLY_ONCE)<!>
     }

@@ -22,8 +22,6 @@ method global$fun_invalid_calls_in_place$fun_take$fun_take$$return$T_Unit$return
   label label$ret$0
 }
 
-/calls_in_place_leak.kt:(607,629): warning: Function invalid_calls_in_place may not satisfy its contract.
-
 /calls_in_place_leak.kt:(697,706): warning: Viper verification error: The precondition of method global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion special$duplicable(local$f) might not hold.
 
 /calls_in_place_leak.kt:(787,807): info: Generated Viper text for function_object_call:
@@ -50,7 +48,5 @@ method global$fun_function_object_call$fun_take$fun_take$fun_take$$return$T_Unit
   goto label$ret$0
   label label$ret$0
 }
-
-/calls_in_place_leak.kt:(787,807): warning: Function function_object_call may not satisfy its contract.
 
 /calls_in_place_leak.kt:(906,910): warning: Viper verification error: Assert might fail. Assertion special$duplicable(local$g) might not hold.

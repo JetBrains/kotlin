@@ -32,8 +32,6 @@ method global$fun_nested_call$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
   label label$ret$0
 }
 
-/inlining_captured.kt:(354,365): warning: Function nested_call may not satisfy its contract.
-
 /inlining_captured.kt:(413,442): warning: Viper verification error: Postcondition of global$fun_nested_call$fun_take$fun_take$T_Int$return$T_Int$return$T_Int might not hold. Assertion local$g.special$function_object_call_counter == old(local$g.special$function_object_call_counter) + 1 might not hold.
 
 /inlining_captured.kt:(585,596): info: Generated Viper text for double_call:
@@ -69,7 +67,5 @@ method global$fun_double_call$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
   goto label$ret$0
   label label$ret$0
 }
-
-/inlining_captured.kt:(585,596): warning: Function double_call may not satisfy its contract.
 
 /inlining_captured.kt:(644,673): warning: Viper verification error: Postcondition of global$fun_double_call$fun_take$fun_take$T_Int$return$T_Int$return$T_Int might not hold. Assertion local$g.special$function_object_call_counter <= old(local$g.special$function_object_call_counter) + 1 might not hold.

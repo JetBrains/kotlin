@@ -36,8 +36,6 @@ method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$
   ensures ret.special$size == 0
 
 
-/list.kt:(91,105): warning: Function empty_list_get may not satisfy its contract.
-
 /list.kt:(162,171): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion local0$myList.special$size > 0 might not hold.
 
 /list.kt:(193,204): info: Generated Viper text for unsafe_last:
@@ -72,8 +70,6 @@ method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$col
   ensures this.special$size >= 0
   ensures this.special$size == old(this.special$size)
 
-
-/list.kt:(193,204): warning: Function unsafe_last may not satisfy its contract.
 
 /list.kt:(238,251): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int might not hold. Assertion anonymous$0 - 1 >= 0 might not hold.
 
@@ -120,7 +116,5 @@ method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kot
   ensures this.special$size >= 0
   ensures this.special$size == old(this.special$size)
 
-
-/list.kt:(273,280): warning: Function add_get may not satisfy its contract.
 
 /list.kt:(329,333): warning: Viper verification error: The precondition of method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int might not hold. Assertion local$l.special$size > 1 might not hold.

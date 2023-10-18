@@ -16,8 +16,6 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
   returns (ret: Int)
 
 
-/is_type_contract.kt:(121,142): warning: Function unverifiableTypeCheck may not satisfy its contract.
-
 /is_type_contract.kt:(186,215): warning: Viper verification error: Postcondition of global$fun_unverifiableTypeCheck$fun_take$NT_Int$return$T_Boolean might not hold. Assertion true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Unit()) might not hold.
 
 /is_type_contract.kt:(289,311): info: Generated Viper text for nullableNotNonNullable:
@@ -29,7 +27,5 @@ method global$fun_nullableNotNonNullable$fun_take$NT_Int$return$T_Unit(local$x: 
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   label label$ret$0
 }
-
-/is_type_contract.kt:(289,311): warning: Function nullableNotNonNullable may not satisfy its contract.
 
 /is_type_contract.kt:(346,374): warning: Viper verification error: Postcondition of global$fun_nullableNotNonNullable$fun_take$NT_Int$return$T_Unit might not hold. Assertion true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int()) might not hold.

@@ -28,11 +28,6 @@ object FormalVerificationPluginErrorMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
         )
         put(
-            PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT,
-            "Function {0} may not satisfy its contract.",
-            CommonRenderers.STRING,
-        )
-        put(
             PluginErrors.INTERNAL_ERROR,
             "Formal verification internal error: {0}",
             CommonRenderers.STRING,
