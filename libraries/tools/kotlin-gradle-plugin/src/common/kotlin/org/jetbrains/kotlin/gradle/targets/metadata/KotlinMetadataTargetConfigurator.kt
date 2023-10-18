@@ -115,26 +115,6 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    override fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
-        val project = compilation.target.project
-
-        /** See [configureMetadataDependenciesForCompilation] */
-        if (project.isKotlinGranularMetadataEnabled && compilation.name != KotlinCompilation.MAIN_COMPILATION_NAME)
-            compilation.compileDependencyFiles = project.files()
-        else
-            super.setupCompilationDependencyFiles(compilation)
-    }
-
-    override fun buildCompilationProcessor(compilation: KotlinCompilation<*>): KotlinCompilationProcessor<*> = when (compilation) {
-        is KotlinCommonCompilation -> {
-            val tasksProvider = KotlinTasksProvider()
-            KotlinCommonSourceSetProcessor(KotlinCompilationInfo(compilation), tasksProvider)
-        }
-
-        is KotlinSharedNativeCompilation -> NativeSharedCompilationProcessor(compilation)
-        else -> error("unsupported compilation type ${compilation::class.qualifiedName}")
-    }
-
     override fun createArchiveTasks(target: KotlinMetadataTarget): TaskProvider<out Zip> {
         if (!target.project.isKotlinGranularMetadataEnabled)
             return super.createArchiveTasks(target)
@@ -344,12 +324,13 @@ class KotlinMetadataTargetConfigurator :
 
         val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(sourceSet)
 
-        val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts.getResolvedArtifactsCompat(project)
+        compilation.compileDependencyFiles = project.files()
 
         // Metadata from visible source sets within dependsOn closure
         compilation.compileDependencyFiles += sourceSet.dependsOnClosureCompilePath
 
         // Requested dependencies that are not Multiplatform Libraries. for example stdlib-common
+        val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts.getResolvedArtifactsCompat(project)
         compilation.compileDependencyFiles += project.files(artifacts.map { it.filterNot { it.isMpp }.map { it.file } })
 
         // Transformed Multiplatform Libraries based on source set visibility

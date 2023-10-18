@@ -43,7 +43,6 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
         }
 
         createKotlinTargetConfigurator().configureTarget(result)
-        result.runKotlinTargetSideEffects()
         return result
     }
 
