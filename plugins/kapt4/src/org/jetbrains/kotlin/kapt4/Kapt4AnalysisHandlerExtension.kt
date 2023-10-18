@@ -101,7 +101,7 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                     configuration[CommonConfigurationKeys.METADATA_VERSION]
                 ).use { context ->
                     if (options.mode.generateStubs)
-                        generateStubs(context, messageCollector, configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES))
+                        generateStubs(context, messageCollector, false/*configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)*/)
 
                     if (options.mode.runAnnotationProcessing)
                         runProcessors(context, options)
