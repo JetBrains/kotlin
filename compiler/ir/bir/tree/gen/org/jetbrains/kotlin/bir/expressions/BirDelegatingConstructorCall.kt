@@ -23,7 +23,7 @@ abstract class BirDelegatingConstructorCall : BirFunctionAccessExpression() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         dispatchReceiver?.accept(data, visitor)
         extensionReceiver?.accept(data, visitor)
-        valueArguments.forEach { it?.accept(data, visitor) }
+        valueArguments.acceptChildren(visitor, data)
     }
 
     companion object

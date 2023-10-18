@@ -159,8 +159,8 @@ class BirPropertyReferenceImpl(
         }
     }
 
-    override fun getChildrenListById(id: Int): BirChildElementList<*> = when {
-        id == 0 -> this.valueArguments
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        0 -> this.valueArguments
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

@@ -31,6 +31,9 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     initializerExpression: BirExpressionBody?,
     correspondingClass: BirClass?,
 ) : BirEnumEntry() {
+    override val owner: BirEnumEntryImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

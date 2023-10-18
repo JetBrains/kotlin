@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.bir.generator.print
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import org.jetbrains.kotlin.bir.generator.BirTree
 import org.jetbrains.kotlin.bir.generator.Packages
 import org.jetbrains.kotlin.bir.generator.model.Element
 import org.jetbrains.kotlin.bir.generator.model.ListField
@@ -14,12 +15,11 @@ import org.jetbrains.kotlin.bir.generator.model.Model
 import org.jetbrains.kotlin.bir.generator.model.SingleField
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.TypeKind
-import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
 import java.io.File
 
 fun printElements(generationPath: File, model: Model) = sequence {
     for (element in model.elements) {
-        if (element == model.rootElement)
+        if (element == model.rootElement || element.name == BirTree.symbolOwner.name)
             continue
 
         val elementName = element.toPoet()
@@ -87,9 +87,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
                                         addCode(".%M(data, visitor)\n", elementAccept)
                                     }
                                     is ListField -> {
-                                        addCode(".forEach { it")
-                                        if ((child.elementType as? TypeRefWithNullability)?.nullable == true) addCode("?")
-                                        addCode(".%M(data, visitor) }\n", elementAccept)
+                                        addCode(".acceptChildren(visitor, data)\n")
                                     }
                                 }
                             }

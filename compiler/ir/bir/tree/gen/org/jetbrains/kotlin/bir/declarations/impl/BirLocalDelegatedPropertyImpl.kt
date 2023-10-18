@@ -35,6 +35,9 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     getter: BirSimpleFunction,
     setter: BirSimpleFunction?,
 ) : BirLocalDelegatedProperty() {
+    override val owner: BirLocalDelegatedPropertyImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

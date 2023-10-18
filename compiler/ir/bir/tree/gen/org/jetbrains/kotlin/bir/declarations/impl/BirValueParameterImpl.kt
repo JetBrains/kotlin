@@ -37,6 +37,9 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     isHidden: Boolean,
     defaultValue: BirExpressionBody?,
 ) : BirValueParameter() {
+    override val owner: BirValueParameterImpl
+        get() = this
+
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan

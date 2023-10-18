@@ -27,7 +27,7 @@ abstract class BirDynamicOperatorExpression : BirDynamicExpression() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         receiver.accept(data, visitor)
-        arguments.forEach { it.accept(data, visitor) }
+        arguments.acceptChildren(visitor, data)
     }
 
     companion object

@@ -26,7 +26,7 @@ abstract class BirTry : BirExpression() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         tryResult.accept(data, visitor)
-        catches.forEach { it.accept(data, visitor) }
+        catches.acceptChildren(visitor, data)
         finallyExpression?.accept(data, visitor)
     }
 
