@@ -686,6 +686,8 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(SymbolTypes.constructor, mutable = true)
     }
     val errorExpression: ElementConfig by element(Expression) {
+        isForcedLeaf = true
+
         parent(expression)
 
         +field("description", string)
