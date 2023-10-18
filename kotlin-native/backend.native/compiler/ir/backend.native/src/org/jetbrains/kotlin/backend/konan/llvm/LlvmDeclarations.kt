@@ -203,8 +203,8 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         var offset4 = -1L
         var offset8 = 0L
 
-        // Allocates a block of the given size. Sizes smaller than 8 will be rounded up to a power of 2 and
-        // aligned according to that size. Other sizes will rounded up to a multiple of 8 and will be 8 byte aligned.
+        // Allocates a block of the given size. Sizes smaller than 8 bytes will be rounded up to a power of 2 and
+        // aligned according to that size. Other sizes will be rounded up to a multiple of 8 and will be 8 byte aligned.
         fun nextOffset(size: Long): Long = when (size) {
             1L -> {
                 if (offset1 == -1L) nextOffset(2).also { offset1 = it + 1 }
@@ -226,6 +226,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val packedFields = mutableListOf<IndexedField>()
         for (field in fields) {
             val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
+            assert(size == 1L || size == 2L || size == 4L || size % 8 == 0L)
             val offset = nextOffset(size)
             packedFields.add(IndexedField(offset, field))
         }
