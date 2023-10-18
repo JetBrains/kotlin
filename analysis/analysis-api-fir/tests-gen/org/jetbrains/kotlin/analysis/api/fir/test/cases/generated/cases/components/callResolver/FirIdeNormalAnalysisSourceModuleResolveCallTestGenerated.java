@@ -863,6 +863,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("unsignedArrayOf.kt")
+    public void testUnsignedArrayOf() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unsignedArrayOf.kt");
+    }
+
+    @Test
     @TestMetadata("variableAsFunction.kt")
     public void testVariableAsFunction() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableAsFunction.kt");

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -548,12 +546,7 @@ internal class KtFe10CallResolver(
     private fun createSignature(symbol: KtSymbol, resultingDescriptor: CallableDescriptor): KtCallableSignature<*>? {
         val returnType = if (resultingDescriptor is ValueParameterDescriptor && resultingDescriptor.isVararg) {
             val arrayType = resultingDescriptor.returnType ?: return null
-            val primitiveArrayElementType = KotlinBuiltIns.getPrimitiveArrayElementType(arrayType)
-            if (primitiveArrayElementType == null) {
-                arrayType.arguments.singleOrNull()?.type
-            } else {
-                analysisContext.builtIns.getPrimitiveKotlinType(primitiveArrayElementType)
-            }
+            analysisContext.builtIns.getArrayElementType(arrayType)
         } else {
             resultingDescriptor.returnType
         }
