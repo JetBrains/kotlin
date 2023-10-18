@@ -74,8 +74,9 @@ class BirChildElementList<E : BirElement?>(
         element as BirElementBase?
 
         var elementArray = elementArray
-        if (elementArray.size == size) {
-            val newArray = arrayOfNulls<BirElementBase?>(if (elementArray.isEmpty()) 4 else elementArray.size * 2)
+        val newSize = size + 1
+        if (elementArray.size == newSize) {
+            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
             elementArray.copyInto(newArray, 0, 0, index)
             elementArray.copyInto(newArray, index + 1, index, size)
             elementArray = newArray
@@ -83,7 +84,7 @@ class BirChildElementList<E : BirElement?>(
         }
         addChild(element)
         elementArray[index] = element
-        size++
+        size = newSize
         invalidate()
     }
 
@@ -96,10 +97,7 @@ class BirChildElementList<E : BirElement?>(
         var elementArray = elementArray
         val newSize = size + elements.size
         if (elementArray.size <= newSize) {
-            val newArray = arrayOfNulls<BirElementBase?>(
-                if (elementArray.isEmpty()) newSize.coerceAtLeast(4)
-                else newSize.coerceAtLeast(size * 2)
-            )
+            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
             elementArray.copyInto(newArray, 0, 0, index)
             elementArray.copyInto(newArray, index + elements.size, index, size)
             elementArray = newArray
@@ -116,6 +114,16 @@ class BirChildElementList<E : BirElement?>(
 
         return true
     }
+
+    fun ensureCapacity(capacity: Int) {
+        if (elementArray.size <= capacity) {
+            val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
+            elementArray.copyInto(newArray, endIndex = size)
+            elementArray = newArray
+        }
+    }
+
+    private fun getNewCapacity(minimumCapacity: Int) = maxOf(minimumCapacity, elementArray.size * 2, 4)
 
     override fun removeAt(index: Int): E {
         checkElementIndex(index, size)
