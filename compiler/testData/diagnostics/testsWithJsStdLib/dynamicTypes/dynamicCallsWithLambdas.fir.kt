@@ -4,7 +4,7 @@
 fun test(d: dynamic) {
     d.foo {}
 
-    d.<!INAPPLICABLE_CANDIDATE!>foo<!> { <!UNRESOLVED_REFERENCE!>it<!> }
+    d.foo { <!UNRESOLVED_REFERENCE!>it<!> }
 
     d.foo { x -> x.bar() }
 
