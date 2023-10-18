@@ -14,6 +14,7 @@ import kotlin.io.path.name
 import kotlin.io.path.walk
 
 @DisplayName("Kapt 4 base checks")
+@Disabled("Causes OOM on Windows")
 class Kapt4IT : Kapt3IT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
