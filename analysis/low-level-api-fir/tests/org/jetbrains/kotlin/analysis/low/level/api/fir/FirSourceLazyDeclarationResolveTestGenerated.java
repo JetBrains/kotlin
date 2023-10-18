@@ -628,6 +628,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("compilerRequiredAnnotationConflict.kt")
+        public void testCompilerRequiredAnnotationConflict() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/compilerRequiredAnnotationConflict.kt");
+        }
+
+        @Test
+        @TestMetadata("compilerRequiredAnnotationConflict2.kt")
+        public void testCompilerRequiredAnnotationConflict2() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/compilerRequiredAnnotationConflict2.kt");
+        }
+
+        @Test
         @TestMetadata("functionInValueClass.kt")
         public void testFunctionInValueClass() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClass.kt");
