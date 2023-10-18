@@ -542,7 +542,12 @@ class BodyResolveContext(
         val forMembersResolution =
             statics
                 .addLocalScope(parameterScope)
-                .addContextReceiverGroup(towerElementsForScript.implicitReceivers)
+                // TODO: temporary solution for avoiding problem described in KT-62712, flatten back after fix
+                .let { baseCtx ->
+                    towerElementsForScript.implicitReceivers.fold(baseCtx) { ctx, it ->
+                        ctx.addContextReceiverGroup(listOf(it))
+                    }
+                }
 
         val newContexts = FirRegularTowerDataContexts(
             regular = forMembersResolution,

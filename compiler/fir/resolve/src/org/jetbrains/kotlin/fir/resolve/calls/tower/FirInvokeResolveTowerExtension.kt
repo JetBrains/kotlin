@@ -443,6 +443,22 @@ private class InvokeFunctionResolveTask(
                 ExplicitReceiverKind.DISPATCH_RECEIVER
             )
         }
+        for ((depth, contextReceiverGroup) in towerDataElementsForName.contextReceiverGroups) {
+            val towerGroup =
+                TowerGroup
+                    .ContextReceiverGroup(depth)
+                    .InvokeExtensionWithImplicitReceiver
+                    .withGivenInvokeReceiverGroup(InvokeResolvePriority.INVOKE_EXTENSION)
+            val towerLevel = invokeReceiverValue.toMemberScopeTowerLevel()
+            // TODO: resolve for all receivers in the group, but implement the ambiguity diagnostics first. See KT-62712 and KT-69709
+            contextReceiverGroup.singleOrNull()?.let { contextReceiverValue ->
+                processLevel(
+                    towerLevel,
+                    info.withReceiverAsArgument(contextReceiverValue.receiverExpression), towerGroup,
+                    ExplicitReceiverKind.EXTENSION_RECEIVER
+                )
+            }
+        }
     }
 
     private suspend fun processLevelForRegularInvoke(

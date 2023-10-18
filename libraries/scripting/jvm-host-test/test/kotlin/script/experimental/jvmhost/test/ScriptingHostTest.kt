@@ -292,6 +292,43 @@ class ScriptingHostTest : TestCase() {
         Assert.assertEquals(result, output)
     }
 
+    fun testScriptImplicitReceiversTransitiveVisibility() {
+        val result = listOf("42")
+        val script = """
+            import kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass
+
+            fun TestClass.foo() = 6
+            
+            fun test(body: TestClass.() -> Int): Int {
+                return foo() *
+                    body()
+            }
+
+            println(test { 7 })
+        """.trimIndent()
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass::class,
+                )
+            },
+            evaluation = {
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass(""),
+                )
+            }
+        )
+        val output = captureOut {
+            val evalRes = BasicJvmScriptingHost().eval(
+                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
+            )
+            val retVal = evalRes.valueOrThrow().returnValue
+            if (retVal is ResultValue.Error) throw retVal.error
+        }.lines()
+        Assert.assertEquals(result, output)
+    }
+
     @Test
     fun testProvidedPropertiesNullability() {
         val stringType = KotlinType(String::class)
