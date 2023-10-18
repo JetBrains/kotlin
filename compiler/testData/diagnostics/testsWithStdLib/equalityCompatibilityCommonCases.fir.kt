@@ -107,6 +107,6 @@ interface A
 enum class G : B
 
 fun <I : A> incompatibleEnumAndUnrelatedInterfaceThroughTypeParameter(x: G?, i: I?) {
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>x == i<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>x == i<!>
 }
 
