@@ -11,5 +11,5 @@ fun test() {}
 
 actual annotation class A(val x: Array<String>)
 
-@A("abc", <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
+@A(<!ARGUMENT_TYPE_MISMATCH!>"abc"<!>, <!TOO_MANY_ARGUMENTS!>"foo"<!>, <!TOO_MANY_ARGUMENTS!>"bar"<!>)
 fun test2() {}
