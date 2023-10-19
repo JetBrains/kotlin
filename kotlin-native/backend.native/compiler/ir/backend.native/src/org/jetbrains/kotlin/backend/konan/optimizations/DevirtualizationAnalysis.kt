@@ -1362,6 +1362,7 @@ internal object DevirtualizationAnalysis {
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val isSubtype = symbols.isSubtype
         val optimize = context.shouldOptimize()
+        val genericSafeCasts = context.config.genericSafeCasts
 
         fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
             if (this is DataFlowIR.Type.Declared) return this
@@ -1458,7 +1459,7 @@ internal object DevirtualizationAnalysis {
                                                    actualCallee: DataFlowIR.FunctionSymbol,
                                                    arguments: List<PossiblyCoercedValue>): IrExpression {
             return (actualCallee as? DataFlowIR.FunctionSymbol.Declared)?.bridgeTarget.let { bridgeTarget ->
-                if (bridgeTarget == null)
+                if (bridgeTarget == null || genericSafeCasts) // Can't easily inline bridges with casts.
                     irDevirtualizedCall(callSite, actualType,
                             actualCallee.irFunction as IrSimpleFunction,
                             arguments.map { it.getFullValue(this@irDevirtualizedCall) }

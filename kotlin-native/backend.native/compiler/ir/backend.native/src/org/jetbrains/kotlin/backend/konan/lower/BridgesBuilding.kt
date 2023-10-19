@@ -62,32 +62,35 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
     private fun BridgeDirection.type() =
             if (this.kind == BridgeDirectionKind.NONE)
                 null
-            else this.irClass?.defaultType ?: irBuiltIns.anyNType
+            else this.erasedType ?: irBuiltIns.anyNType
 
     private fun createBridge(key: NativeMapping.BridgeKey): IrSimpleFunction {
         val (function, bridgeDirections) = key
+        val target = function.target
 
+        // Note: bridgeDirection.type() = null only for BridgeDirectionKind.NONE (no conversion required),
+        // so in this case the type is taken from target - the function to be called.
         return irFactory.buildFun {
             startOffset = function.startOffset
             endOffset = function.endOffset
-            origin = DECLARATION_ORIGIN_BRIDGE_METHOD(function)
+            origin = DECLARATION_ORIGIN_BRIDGE_METHOD(target)
             name = "<bridge-$bridgeDirections>${function.computeFunctionName()}".synthesizedName
             visibility = function.visibility
             modality = function.modality
-            returnType = bridgeDirections.returnDirection.type() ?: function.returnType
+            returnType = bridgeDirections.returnDirection.type() ?: target.returnType
             isSuspend = function.isSuspend
         }.apply {
             attributeOwnerId = function.attributeOwnerId
             parent = function.parent
             val bridge = this
 
-            dispatchReceiverParameter = function.dispatchReceiverParameter?.let {
+            dispatchReceiverParameter = target.dispatchReceiverParameter?.let {
                 it.copyTo(bridge, type = bridgeDirections.dispatchReceiverDirection.type() ?: it.type)
             }
-            extensionReceiverParameter = function.extensionReceiverParameter?.let {
+            extensionReceiverParameter = target.extensionReceiverParameter?.let {
                 it.copyTo(bridge, type = bridgeDirections.extensionReceiverDirection.type() ?: it.type)
             }
-            valueParameters = function.valueParameters.map {
+            valueParameters = target.valueParameters.map {
                 it.copyTo(bridge, type = bridgeDirections.parameterDirectionAt(it.index).type() ?: it.type)
             }
 
@@ -297,7 +300,7 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
 private fun Context.buildBridge(startOffset: Int, endOffset: Int,
                                 overriddenFunction: OverriddenFunctionInfo, targetSymbol: IrSimpleFunctionSymbol,
                                 superQualifierSymbol: IrClassSymbol? = null): IrFunction {
-
+    val target = targetSymbol.owner.target
     val bridge = bridgesSupport.getBridge(overriddenFunction)
 
     if (bridge.modality == Modality.ABSTRACT) {
@@ -312,21 +315,15 @@ private fun Context.buildBridge(startOffset: Int, endOffset: Int,
         val delegatingCall = IrCallImpl.fromSymbolOwner(
                 startOffset,
                 endOffset,
-                targetSymbol.owner.returnType,
-                targetSymbol,
-                typeArgumentsCount = targetSymbol.owner.typeParameters.size,
-                valueArgumentsCount = targetSymbol.owner.valueParameters.size,
+                target.returnType,
+                target.symbol,
+                typeArgumentsCount = target.typeParameters.size,
+                valueArgumentsCount = target.valueParameters.size,
                 superQualifierSymbol = superQualifierSymbol /* Call non-virtually */
         ).apply {
-            bridge.dispatchReceiverParameter?.let {
-                dispatchReceiver = irGet(it)
-            }
-            bridge.extensionReceiverParameter?.let {
-                extensionReceiver = irGet(it)
-            }
-            bridge.valueParameters.forEachIndexed { index, parameter ->
-                this.putValueArgument(index, irGet(parameter))
-            }
+            bridge.dispatchReceiverParameter?.let { dispatchReceiver = irGet(it) }
+            bridge.extensionReceiverParameter?.let { extensionReceiver = irGet(it) }
+            bridge.valueParameters.forEachIndexed { index, parameter -> putValueArgument(index, irGet(parameter)) }
         }
 
         +irReturn(delegatingCall)
