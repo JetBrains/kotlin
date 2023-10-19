@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.cli.common.collectSources
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFirWithPsi
+import org.jetbrains.kotlin.cli.js.klib.compileModulesToAnalyzedFirWithLightTree
 import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -59,7 +60,7 @@ abstract class FirAbstractInvalidationTest(
 
         val libraries = dependencies.map { it.absolutePath }
         val friendLibraries = friends.map { it.absolutePath }
-        val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it) }
+        val sourceFiles = configuration.addSourcesFromDir(sourceDir)
         val moduleStructure = ModulesStructure(
             project = environment.project,
             mainModule = MainModule.SourceFiles(sourceFiles),
@@ -68,9 +69,11 @@ abstract class FirAbstractInvalidationTest(
             friendDependenciesPaths = friendLibraries
         )
 
-        val analyzedOutput = compileModuleToAnalyzedFirWithPsi(
+        val groupedSources = collectSources(configuration, environment.project, messageCollector)
+        val analyzedOutput = compileModulesToAnalyzedFirWithLightTree(
             moduleStructure = moduleStructure,
-            ktFiles = sourceFiles,
+            groupedSources = groupedSources,
+            ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
             libraries = libraries,
             friendLibraries = friendLibraries,
             diagnosticsReporter = diagnosticsReporter,

@@ -81,7 +81,7 @@ abstract class IrAbstractInvalidationTest(
     ) {
         val projectJs = environment.project
 
-        val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it) }
+        val sourceFiles = configuration.addSourcesFromDir(sourceDir)
 
         val sourceModule = prepareAnalyzedSourceModule(
             project = projectJs,
