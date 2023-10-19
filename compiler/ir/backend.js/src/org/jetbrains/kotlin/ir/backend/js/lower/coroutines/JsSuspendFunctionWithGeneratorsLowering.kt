@@ -5,78 +5,122 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.util.previousOffset
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
+private object SUSPEND_FUNCTION_AS_GENERATOR : IrDeclarationOriginImpl("SUSPEND_FUNCTION_AS_GENERATOR")
+
+class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val getContinuationSymbol = context.ir.symbols.getContinuation
     private val jsYieldFunctionSymbol = context.intrinsics.jsYieldFunctionSymbol
     private val suspendOrReturnFunctionSymbol = context.intrinsics.suspendOrReturnFunctionSymbol
     private val coroutineSuspendedGetterSymbol = context.coroutineSymbols.coroutineSuspendedGetter
 
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (container is IrSimpleFunction && container.isSuspend) {
-            transformSuspendFunction(container, irBody)
+    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (declaration is IrSimpleFunction && declaration.isSuspend) {
+            return transformSuspendFunction(declaration)
         }
+        return null
     }
 
-    private fun transformSuspendFunction(function: IrSimpleFunction, body: IrBody): IrFunction {
-        return function.apply {
-            when (val functionKind = getSuspendFunctionKind(context, this, body, includeSuspendLambda = false)) {
-                is SuspendFunctionKind.NO_SUSPEND_CALLS -> {}
-                is SuspendFunctionKind.DELEGATING -> {
-                    removeReturnIfSuspendedCallAndSimplifyDelegatingCall(this, functionKind.delegatingCall)
-                }
-                is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
-                    addJsGeneratorAnnotation(function)
-                    putYieldIntrinsicCallInAllSuspensionPoints(body)
-                }
+    private fun transformSuspendFunction(function: IrSimpleFunction): List<IrFunction>? {
+        val body = function.body ?: return null
+        return when (val functionKind = getSuspendFunctionKind(context, function, body, includeSuspendLambda = false)) {
+            is SuspendFunctionKind.NO_SUSPEND_CALLS -> null
+            is SuspendFunctionKind.DELEGATING -> {
+                removeReturnIfSuspendedCallAndSimplifyDelegatingCall(function, functionKind.delegatingCall)
+                null
+            }
+            is SuspendFunctionKind.NEEDS_STATE_MACHINE -> {
+                generateGeneratorAndItsWrapper(function, body)
             }
         }
     }
 
-    private fun addJsGeneratorAnnotation(function: IrSimpleFunction) {
-        function.annotations = function.annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
+    private fun IrSimpleFunction.addJsGeneratorAnnotation() {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
             context.intrinsics.jsGeneratorAnnotationSymbol.owner.primaryConstructor!!.symbol
         )
     }
 
-    private fun putYieldIntrinsicCallInAllSuspensionPoints(body: IrBody) {
-        body.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                val call = super.visitCall(expression)
-                return if (call !is IrCall || !call.symbol.owner.isSuspend) {
-                    call
-                } else {
-                    context.createIrBuilder(call.symbol).run {
-                        irBlock(resultType = call.type) {
-                            val suspendOrReturnCall = irCall(suspendOrReturnFunctionSymbol).apply {
-                                putValueArgument(0, call)
-                                putValueArgument(1, irCall(getContinuationSymbol))
+    private fun generateGeneratorAndItsWrapper(function: IrSimpleFunction, functionBody: IrBody): List<IrFunction> {
+        val generatorFunction = context.irFactory.createSimpleFunction(
+            function.startOffset,
+            function.endOffset,
+            SUSPEND_FUNCTION_AS_GENERATOR,
+            Name.special("<generator-${function.name.asString()}>"),
+            DescriptorVisibilities.PRIVATE,
+            function.isInline,
+            function.isExpect,
+            context.irBuiltIns.anyNType,
+            function.modality,
+            IrSimpleFunctionSymbolImpl(),
+            function.isTailrec,
+            function.isSuspend,
+            function.isOperator,
+            function.isInfix,
+            function.isExternal,
+        ).apply {
+            parent = function.parent
+            annotations = function.annotations
+            valueParameters = function.valueParameters
+            typeParameters = function.typeParameters
+            dispatchReceiverParameter = function.dispatchReceiverParameter
+            extensionReceiverParameter = function.extensionReceiverParameter
+            contextReceiverParametersCount = function.contextReceiverParametersCount
+            body = functionBody.apply {
+                transformChildrenVoid(object : IrElementTransformerVoid() {
+                    override fun visitCall(expression: IrCall): IrExpression {
+                        val call = super.visitCall(expression)
+                        return if (call !is IrCall || !call.symbol.owner.isSuspend) {
+                            call
+                        } else {
+                            context.createIrBuilder(call.symbol).run {
+                                irBlock(resultType = call.type) {
+                                    val tmp = createTmpVariable(call, irType = context.irBuiltIns.anyNType)
+                                    val coroutineSuspended = irCall(coroutineSuspendedGetterSymbol)
+                                    val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
+                                    val yield = irCall(jsYieldFunctionSymbol).apply { putValueArgument(0, irGet(tmp)) }
+                                    +irIfThen(context.irBuiltIns.unitType, condition, irSet(tmp, yield))
+                                    +irImplicitCast(irGet(tmp), call.type)
+                                }
                             }
-                            val tmp = createTmpVariable(suspendOrReturnCall, irType = suspendOrReturnCall.type)
-                            val coroutineSuspended = irCall(coroutineSuspendedGetterSymbol)
-                            val condition = irEqeqeq(irGet(tmp), coroutineSuspended)
-                            val yield = irCall(jsYieldFunctionSymbol).apply { putValueArgument(0, irGet(tmp)) }
-                            +irIfThen(context.irBuiltIns.unitType, condition, irSet(tmp, yield))
-                            +irImplicitCast(irGet(tmp), call.type)
                         }
                     }
-                }
+                })
             }
-        })
+            addJsGeneratorAnnotation()
+        }
+
+        function.returnType = context.irBuiltIns.anyNType
+        function.body = context.createIrBuilder(function.symbol).irBlockBody {
+            +irReturn(
+                irCall(suspendOrReturnFunctionSymbol).also {
+                    it.putValueArgument(0, irCall(generatorFunction.symbol).apply {
+                        dispatchReceiver = function.dispatchReceiverParameter?.let(::irGet)
+                        extensionReceiver = function.extensionReceiverParameter?.let(::irGet)
+                        contextReceiversCount = function.contextReceiverParametersCount
+                        function.valueParameters.forEachIndexed { i, v -> putValueArgument(i, irGet(v)) }
+                    })
+                    it.putValueArgument(1, irCall(getContinuationSymbol))
+                }
+            )
+        }
+
+        return listOf(generatorFunction, function)
     }
 
     private fun removeReturnIfSuspendedCallAndSimplifyDelegatingCall(irFunction: IrFunction, delegatingCall: IrCall) {

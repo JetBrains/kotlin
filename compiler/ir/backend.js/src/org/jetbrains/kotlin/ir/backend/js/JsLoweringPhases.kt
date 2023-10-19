@@ -528,7 +528,7 @@ private val innerClassConstructorCallsLoweringPhase = makeBodyLoweringPhase(
     description = "Replace inner class constructor invocation"
 )
 
-private val suspendFunctionsLoweringPhase = makeBodyLoweringPhase(
+private val suspendFunctionsLoweringPhase = makeJsModulePhase(
     { context ->
         if (context.compileSuspendAsJsGenerator) {
             JsSuspendFunctionWithGeneratorsLowering(context)
@@ -538,7 +538,7 @@ private val suspendFunctionsLoweringPhase = makeBodyLoweringPhase(
     },
     name = "SuspendFunctionsLowering",
     description = "Transform suspend functions into CoroutineImpl instance and build state machine"
-)
+).toModuleLowering()
 
 private val addContinuationToNonLocalSuspendFunctionsLoweringPhase = makeDeclarationTransformerPhase(
     ::AddContinuationToNonLocalSuspendFunctionsLowering,
