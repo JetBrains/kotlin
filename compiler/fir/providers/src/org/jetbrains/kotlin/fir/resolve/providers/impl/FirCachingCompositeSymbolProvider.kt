@@ -43,7 +43,7 @@ class FirCachingCompositeSymbolProvider(
         session,
         providers.map { it.symbolNamesProvider },
     ) {
-        override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<String>? =
+        override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<Name>? =
             super.computeTopLevelClassifierNames(packageFqName).also {
                 ensureNotNull(it) { "classifier names in package $packageFqName" }
             }

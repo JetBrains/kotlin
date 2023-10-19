@@ -32,7 +32,7 @@ abstract class FirSymbolNamesProvider {
      * All usages must take into account that the result might not include `kotlin.FunctionN` (and others for which a [FunctionTypeKind]
      * exists).
      */
-    abstract fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>?
+    abstract fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>?
 
     /**
      * Returns the set of fully qualified package names which contain a top-level callable declaration within the provider's scope.
@@ -96,16 +96,16 @@ abstract class FirSymbolNamesProvider {
     }
 }
 
-private fun Set<String>.mayContainTopLevelClassifier(shortClassName: Name): Boolean {
+private fun Set<Name>.mayContainTopLevelClassifier(shortClassName: Name): Boolean {
     // Symbol providers can potentially provide symbols for special names. Hence, special names have to be allowed.
-    return shortClassName.isSpecial || shortClassName.asString() in this
+    return shortClassName.isSpecial || shortClassName in this
 }
 
 /**
  * A [FirSymbolNamesProvider] for symbol providers which can't provide any symbol name sets.
  */
 object FirNullSymbolNamesProvider : FirSymbolNamesProvider() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? = null
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? = null
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
     override fun getPackageNamesWithTopLevelCallables(): Set<String>? = null
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
@@ -116,7 +116,7 @@ object FirNullSymbolNamesProvider : FirSymbolNamesProvider() {
  * A [FirSymbolNamesProvider] for symbol providers which don't contain *any* symbols.
  */
 object FirEmptySymbolNamesProvider : FirSymbolNamesProvider() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> = emptySet()
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
     override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = false
@@ -130,7 +130,7 @@ abstract class FirSymbolNamesProviderWithoutCallables : FirSymbolNamesProvider()
 }
 
 open class FirCompositeSymbolNamesProvider(val providers: List<FirSymbolNamesProvider>) : FirSymbolNamesProvider() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? {
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? {
         return providers.flatMapToNullableSet { it.getTopLevelClassifierNamesInPackage(packageFqName) }
     }
 

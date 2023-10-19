@@ -88,9 +88,9 @@ open class FirBuiltinSymbolProvider(
         override fun getPackageNamesWithTopLevelCallables(): Set<String> =
             allPackageFragments.keys.mapTo(mutableSetOf()) { it.asString() }
 
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) { fragment ->
-                fragment.classDataFinder.allClassIds.map { it.shortClassName.asString() }
+                fragment.classDataFinder.allClassIds.map { it.shortClassName }
             }.orEmpty()
 
         override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> =

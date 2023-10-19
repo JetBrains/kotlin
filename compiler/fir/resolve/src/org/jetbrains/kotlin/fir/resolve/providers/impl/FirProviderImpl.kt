@@ -85,8 +85,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             override fun getPackageNamesWithTopLevelCallables(): Set<String> =
                 state.allSubPackages.mapTo(mutableSetOf()) { it.asString() }
 
-            override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
-                state.classifierInPackage[packageFqName].orEmpty().mapTo(mutableSetOf()) { it.asString() }
+            override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
+                state.classifierInPackage[packageFqName].orEmpty()
 
             override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = buildSet {
                 for (key in state.functionMap.keys) {

@@ -64,12 +64,13 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             )
         }
 
-    private val classNamesInPackageCache: FirLazyValue<Map<FqName, Set<String>>> =
+    private val classNamesInPackageCache: FirLazyValue<Map<FqName, Set<Name>>> =
         cachesFactory.createLazyValue {
             computeNamesGroupedByPackage(
                 FirDeclarationGenerationExtension::getTopLevelClassIds,
-                ClassId::packageFqName
-            ) { it.shortClassName.asString() }
+                ClassId::packageFqName,
+                ClassId::shortClassName,
+            )
         }
 
     private fun <I, N> computeNamesGroupedByPackage(
@@ -148,7 +149,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     // ------------------------------------------ provider methods ------------------------------------------
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             classNamesInPackageCache.getValue()[packageFqName] ?: emptySet()
 
         override fun getPackageNamesWithTopLevelCallables(): Set<String> =

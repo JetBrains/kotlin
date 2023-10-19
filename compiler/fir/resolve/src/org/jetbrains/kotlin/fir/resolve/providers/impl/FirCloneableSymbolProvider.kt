@@ -79,9 +79,9 @@ class FirCloneableSymbolProvider(
     }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             if (packageFqName == StandardClassIds.Cloneable.packageFqName) {
-                setOf(StandardClassIds.Cloneable.shortClassName.asString())
+                setOf(StandardClassIds.Cloneable.shortClassName)
             } else emptySet()
     }
 

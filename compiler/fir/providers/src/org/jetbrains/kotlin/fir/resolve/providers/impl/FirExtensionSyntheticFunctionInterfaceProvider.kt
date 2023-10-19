@@ -92,7 +92,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
 
         override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = classId.getAcceptableFunctionTypeKind() != null
 
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             // Generated function type names aren't included in the top-level classifier names set.
             emptySet()
 

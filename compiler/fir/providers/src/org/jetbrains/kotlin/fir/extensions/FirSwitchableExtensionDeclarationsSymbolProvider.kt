@@ -38,7 +38,7 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
         override fun getPackageNamesWithTopLevelCallables(): Set<String>? =
             if (disabled) null else delegate.symbolNamesProvider.getPackageNamesWithTopLevelCallables()
 
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? =
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
             if (disabled) null else delegate.symbolNamesProvider.getTopLevelClassifierNamesInPackage(packageFqName)
 
         override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? =

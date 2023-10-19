@@ -51,7 +51,7 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
     private val classCache: NullableCaffeineCache<ClassId, FirRegularClassSymbol> = NullableCaffeineCache { it.maximumSize(2500) }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
-        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? = null
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? = null
         override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
     }
 

@@ -25,12 +25,10 @@ internal open class LLFirKotlinSymbolNamesProvider(
     private val declarationProvider: KotlinDeclarationProvider,
     private val allowKotlinPackage: Boolean? = null,
 ) : FirSymbolNamesProvider() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> {
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> {
         if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return emptySet()
 
-        return declarationProvider
-            .getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
-            .mapToSetOrEmpty { it.asString() }
+        return declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
     }
 
     override fun getPackageNamesWithTopLevelCallables(): Set<String>? {

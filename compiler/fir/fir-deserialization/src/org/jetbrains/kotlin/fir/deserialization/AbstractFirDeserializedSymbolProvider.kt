@@ -94,8 +94,11 @@ abstract class AbstractFirDeserializedSymbolProvider(
     }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirCachedSymbolNamesProvider(session) {
-        override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<String>? {
-            val classesInPackage = knownTopLevelClassesInPackage(packageFqName) ?: return null
+        override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<Name>? {
+            val classesInPackage = knownTopLevelClassesInPackage(packageFqName)
+                ?.mapTo(mutableSetOf()) { Name.identifier(it) }
+                ?.ifEmpty { emptySet() }
+                ?: return null
 
             if (packageFqName.asString() !in packageNamesForNonClassDeclarations) return classesInPackage
 
@@ -104,7 +107,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
             return buildSet {
                 addAll(classesInPackage)
-                typeAliasNames.mapTo(this) { it.asString() }
+                addAll(typeAliasNames)
             }
         }
 

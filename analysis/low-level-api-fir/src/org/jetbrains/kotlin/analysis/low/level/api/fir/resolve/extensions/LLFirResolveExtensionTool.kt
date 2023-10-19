@@ -75,11 +75,9 @@ private class LLFirResolveExtensionToolSymbolNamesProvider(
     private val packageFilter: LLFirResolveExtensionToolPackageFilter,
     private val fileProvider: LLFirResolveExtensionsFileProvider,
 ) : FirSymbolNamesProvider() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> = forbidAnalysis {
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return emptySet()
-        fileProvider.getFilesByPackage(packageFqName)
-            .flatMap { it.getTopLevelClassifierNames() }
-            .mapTo(mutableSetOf()) { it.asString() }
+        fileProvider.getFilesByPackage(packageFqName).flatMap { it.getTopLevelClassifierNames() }.toSet()
     }
 
     override fun getPackageNamesWithTopLevelCallables(): Set<String> = forbidAnalysis {
