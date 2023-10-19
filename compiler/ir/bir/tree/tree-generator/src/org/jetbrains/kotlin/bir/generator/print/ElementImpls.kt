@@ -46,14 +46,14 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
             val childrenLists = allChildren.filterIsInstance<ListField>()
 
             allFields.forEach { field ->
-                val poetType = field.type.toPoet().copy(nullable = field.nullable)
+                val poetType = field.typeRef.toPoet().copy(nullable = field.nullable)
 
                 if (field.passViaConstructorParameter) {
                     ctor.addParameter(field.name, poetType)
                 }
 
                 addProperty(PropertySpec.builder(field.name, poetType).apply {
-                    mutable(field.mutable)
+                    mutable(field.isMutable)
                     addModifiers(KModifier.OVERRIDE)
 
                     if (field.needsDescriptorApiAnnotation) {
@@ -67,7 +67,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
                         initializer("BirChildElementList(this, %L)", childrenLists.indexOf(field))
-                    } else if (field is SingleField && field.mutable) {
+                    } else if (field is SingleField && field.isMutable) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, poetType)
                                 .mutable(true)
@@ -86,7 +86,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         if (field.initializeToThis) initializer("this") else initializer("%N", field.name)
                     }
 
-                    if (field is SingleField && field.mutable) {
+                    if (field is SingleField && field.isMutable) {
                         setter(
                             FunSpec.setterBuilder()
                                 .addParameter(ParameterSpec("value", poetType))
@@ -128,7 +128,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                             if (field is SingleField) {
                                 addCode(
                                     "    this.%N === old -> this.%N = new as %T\n",
-                                    field.backingFieldName, field.name, field.type.toPoet()
+                                    field.backingFieldName, field.name, field.typeRef.toPoet()
                                 )
                             }
                         }

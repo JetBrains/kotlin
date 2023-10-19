@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.bir.generator.print
 
 import com.squareup.kotlinpoet.*
-import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.bir.generator.config.ElementConfigOrRef
 import org.jetbrains.kotlin.bir.generator.model.Element
 import org.jetbrains.kotlin.bir.generator.model.Element.Companion.elementName2typeName
 import org.jetbrains.kotlin.bir.generator.model.ElementRef
-import org.jetbrains.kotlin.bir.generator.util.*
+import org.jetbrains.kotlin.bir.generator.util.parameterizedByIfAny
+import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 fun Element.toPoet() = ClassName(packageName, typeName)
 fun Element.toPoetSelfParameterized() = toPoet().parameterizedByIfAny(poetTypeVariables)
@@ -21,7 +22,7 @@ val Element.poetTypeVariables get() = params.map { TypeVariableName(it.name) }
 
 fun TypeRef.toPoet(): TypeName {
     return when (this) {
-        is ElementRef -> ClassName(element.packageName, element.typeName).parameterizedByIfAny(typeArgsToPoet())
+        is GenericElementRef<*, *> -> ClassName(element.packageName!!, element.type).parameterizedByIfAny(typeArgsToPoet())
         is ClassRef<*> -> ClassName(packageName, simpleNames).parameterizedByIfAny(typeArgsToPoet())
         is NamedTypeParameterRef -> TypeVariableName(name)
         is ElementConfigOrRef -> ClassName(this.element.category.packageName, elementName2typeName(element.name)).parameterizedByIfAny(
@@ -65,10 +66,3 @@ fun TypeVariable.toPoet() = TypeVariableName(
         Variance.OUT_VARIANCE -> KModifier.OUT
     }
 )
-
-val ClassOrElementRef.typeKind: TypeKind
-    get() = when (this) {
-        is ElementRef -> element.kind!!.typeKind
-        is ClassRef<*> -> kind
-        else -> error("Unexpected type: $this")
-    }
