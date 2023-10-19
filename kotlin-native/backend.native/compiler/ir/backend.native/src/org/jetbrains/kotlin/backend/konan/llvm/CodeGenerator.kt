@@ -215,7 +215,7 @@ internal object VirtualTablesLookup {
         fun fastPath(): LLVMValueRef {
             // The fastest optimistic version.
             val interfaceTableIndex = and(interfaceTableSize, llvm.int32(interfaceId))
-            return gep(interfaceTable, interfaceTableIndex)
+            return gep(runtime.interfaceTableRecordType, interfaceTable, interfaceTableIndex)
         }
 
         // See details in ClassLayoutBuilder.
@@ -283,9 +283,9 @@ internal object VirtualTablesLookup {
         val llvmMethod = when {
             canCallViaVtable -> {
                 val index = layoutBuilder.vtableIndex(irFunction)
-                val vtablePlace = gep(typeInfoPtr, llvm.int32(1)) // typeInfoPtr + 1
+                val vtablePlace = gep(runtime.typeInfoType, typeInfoPtr, llvm.int32(1)) // typeInfoPtr + 1
                 val vtable = bitcast(llvm.int8PtrPtrType, vtablePlace)
-                val slot = gep(vtable, llvm.int32(index))
+                val slot = gep(llvm.int8PtrType, vtable, llvm.int32(index))
                 load(functionPtrType, bitcast(functionPtrPtrType, slot))
             }
 
@@ -294,7 +294,7 @@ internal object VirtualTablesLookup {
                 val itablePlace = layoutBuilder.itablePlace(irFunction)
                 val interfaceTableRecord = getInterfaceTableRecord(typeInfoPtr, itablePlace.interfaceId)
                 val vtable = load(llvm.int8PtrPtrType, structGep(interfaceTableRecord, 2 /* vtable */))
-                val slot = gep(vtable, llvm.int32(itablePlace.methodIndex))
+                val slot = gep(llvm.int8PtrType, vtable, llvm.int32(itablePlace.methodIndex))
                 load(functionPtrType, bitcast(functionPtrPtrType, slot))
             }
         }
@@ -515,7 +515,7 @@ internal class StackLocalsManagerImpl(
                 val fieldType = LLVMStructGetTypeAtIndex(type, fieldIndex)!!
 
                 if (isObjectType(fieldType)) {
-                    val fieldPtr = LLVMBuildStructGEP(builder, stackLocal.stackAllocationPtr, fieldIndex, "")!!
+                    val fieldPtr = structGep(stackLocal.stackAllocationPtr, fieldIndex, "")!!
                     if (refsOnly)
                         storeHeapRef(kNullObjHeaderPtr, fieldPtr)
                     else
@@ -681,7 +681,7 @@ internal abstract class FunctionGenerationContext(
     fun alloca(type: LLVMTypeRef?, name: String = "", variableLocation: VariableDebugLocation? = null): LLVMValueRef {
         if (isObjectType(type!!)) {
             appendingTo(localsInitBb) {
-                val slotAddress = gep(slotsPhi!!, llvm.int32(slotCount), name)
+                val slotAddress = gep(type, slotsPhi!!, llvm.int32(slotCount), name)
                 variableLocation?.let {
                     slotToVariableLocation[slotCount] = it
                 }
@@ -1036,11 +1036,15 @@ internal abstract class FunctionGenerationContext(
 
     fun intToPtr(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildIntToPtr(builder, value, DestTy, Name)!!
     fun ptrToInt(value: LLVMValueRef?, DestTy: LLVMTypeRef, Name: String = "") = LLVMBuildPtrToInt(builder, value, DestTy, Name)!!
-    fun gep(base: LLVMValueRef, index: LLVMValueRef, name: String = ""): LLVMValueRef {
-        return LLVMBuildGEP(builder, base, cValuesOf(index), 1, name)!!
+    fun gep(type: LLVMTypeRef, base: LLVMValueRef, index: LLVMValueRef, name: String = ""): LLVMValueRef {
+        return LLVMBuildGEP2(builder, type, base, cValuesOf(index), 1, name)!!
     }
+
     fun structGep(base: LLVMValueRef, index: Int, name: String = ""): LLVMValueRef =
             LLVMBuildStructGEP(builder, base, index, name)!!
+
+    fun structGep2(type: LLVMTypeRef, base: LLVMValueRef, index: Int, name: String = ""): LLVMValueRef =
+            LLVMBuildStructGEP2(builder, type, base, index, name)!!
 
     fun extractValue(aggregate: LLVMValueRef, index: Int, name: String = ""): LLVMValueRef =
             LLVMBuildExtractValue(builder, aggregate, index, name)!!

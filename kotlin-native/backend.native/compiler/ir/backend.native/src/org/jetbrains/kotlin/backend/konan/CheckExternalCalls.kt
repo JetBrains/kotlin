@@ -127,7 +127,8 @@ private class CallsChecker(generationState: NativeGenerationState, goodFunctions
                     callSiteDescription = "$functionName (over objc_msgSendSuper2)"
                     calledName = null
                     val superStruct = LLVMGetArgOperand(call, 0)
-                    val superClassPtrPtr = LLVMBuildGEP(builder, superStruct, listOf(llvm.int32(0), llvm.int32(1)).toCValues(), 2, "")
+                    val superStructType = llvm.structType(llvm.int8PtrType, llvm.int8PtrType)
+                    val superClassPtrPtr = LLVMBuildStructGEP2(builder, superStructType, superStruct, 1, "")
                     val superClassPtr = LLVMBuildLoad2(builder, llvm.int8PtrType, superClassPtrPtr, "")!!
                     val classPtr = getSuperClass.buildCall(builder, listOf(superClassPtr))
                     val calledPtrLlvmFunPtr = getMethodImpl.buildCall(builder, listOf(classPtr, LLVMGetArgOperand(call, 1)!!))
