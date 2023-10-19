@@ -175,9 +175,9 @@ private fun calculateExpectActualScopeDiff(
                         // If toMemberDiffKind returns null then some Kotlin invariants described in toMemberDiffKind no longer hold.
                         // We can't throw exception here because it would crash the compilation.
                         // Those broken invariants just needs to be reported by other checkers.
-                        // But it's better to report some error (ExpectActualMemberDiff.Kind.NonPrivateCallableAdded in our case) to
-                        // make sure that we don't have missed compilation errors if the invariants change
-                            ?: K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+                        // But it's better to report K1ExpectActualMemberDiff.Kind.Unknown to make sure that we don't have missed
+                        // compilation errors if the invariants change
+                            ?: K1ExpectActualMemberDiff.Kind.Unknown
                     }
                 }
         }
@@ -227,6 +227,8 @@ private fun BindingTrace.reportIfPossible(diff: K1ExpectActualMemberDiff<Callabl
             Errors.VARARG_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         K1ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride ->
             Errors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
+        K1ExpectActualMemberDiff.Kind.Unknown ->
+            Errors.UNKNOWN_PROBLEM_DURING_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
     }
     report(diagnostic)
 }
