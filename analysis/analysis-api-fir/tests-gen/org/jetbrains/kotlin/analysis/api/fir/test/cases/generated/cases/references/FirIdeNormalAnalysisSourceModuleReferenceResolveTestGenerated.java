@@ -1124,6 +1124,42 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         }
 
         @Test
+        @TestMetadata("lambdaWithExtensionParameter_extensionProperty_regularCall.kt")
+        public void testLambdaWithExtensionParameter_extensionProperty_regularCall() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaWithExtensionParameter_extensionProperty_regularCall.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithExtensionParameter_extensionProperty_safeCall.kt")
+        public void testLambdaWithExtensionParameter_extensionProperty_safeCall() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaWithExtensionParameter_extensionProperty_safeCall.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithExtensionParameter_parameter_regularCall.kt")
+        public void testLambdaWithExtensionParameter_parameter_regularCall() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaWithExtensionParameter_parameter_regularCall.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithExtensionParameter_parameter_safeCall.kt")
+        public void testLambdaWithExtensionParameter_parameter_safeCall() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaWithExtensionParameter_parameter_safeCall.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithExtensionParameter_property_regularCall.kt")
+        public void testLambdaWithExtensionParameter_property_regularCall() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaWithExtensionParameter_property_regularCall.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithExtensionParameter_property_safeCall.kt")
+        public void testLambdaWithExtensionParameter_property_safeCall() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaWithExtensionParameter_property_safeCall.kt");
+        }
+
+        @Test
         @TestMetadata("noParams.kt")
         public void testNoParams() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/invoke/noParams.kt");

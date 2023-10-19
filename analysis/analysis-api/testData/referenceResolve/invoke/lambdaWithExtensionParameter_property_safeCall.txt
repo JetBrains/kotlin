@@ -1,0 +1,2 @@
+Resolved to:
+0: (in test.Foo) val action: () -> kotlin.Unit
