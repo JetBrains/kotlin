@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 import org.jetbrains.kotlin.fir.tree.generator.declarationAttributesType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.StandardTypes
-import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
 import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
@@ -142,7 +140,7 @@ private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: B
         return true to false
     }
     val name = field.name
-    val type = field.typeRef.getTypeWithArguments(field.notNull)
+    val type = field.typeRef.typeWithArguments
     val defaultValue = if (fieldIsUseless)
         field.defaultValueInImplementation.also { requireNotNull(it) }
     else

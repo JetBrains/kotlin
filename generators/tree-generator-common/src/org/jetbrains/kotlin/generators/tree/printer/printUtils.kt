@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.tree.printer
 
 import org.jetbrains.kotlin.generators.tree.AbstractElement
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
 
 /**
  * The angle bracket-delimited list of type parameters to print, or empty string if the element has no type parameters.

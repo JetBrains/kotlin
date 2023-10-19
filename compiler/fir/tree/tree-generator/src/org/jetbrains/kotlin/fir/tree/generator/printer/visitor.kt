@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.multipleUpperBoundsList
 import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.generators.tree.printer.typeParameters
-import org.jetbrains.kotlin.generators.tree.typeWithArguments
-import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 

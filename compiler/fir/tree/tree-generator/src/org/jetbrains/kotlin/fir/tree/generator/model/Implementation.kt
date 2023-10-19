@@ -15,7 +15,8 @@ class ImplementationWithArg(
 ) : FieldContainer by implementation, ImplementationKindOwner by implementation {
     val element: Element get() = implementation.element
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
+    override val typeWithArguments: String
+        get() = type + generics
 }
 
 class Implementation(val element: Element, val name: String?) : FieldContainer, ImplementationKindOwner {
@@ -41,7 +42,8 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
             }
         }
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type + element.generics
+    override val typeWithArguments: String
+        get() = type + element.generics
 
     override val packageName = element.packageName + ".impl"
     val usedTypes = mutableListOf<Importable>()

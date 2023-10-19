@@ -36,7 +36,8 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
     override val allParents: List<Element>
         get() = elementParents.map { it.element }
 
-    final override fun getTypeWithArguments(notNull: Boolean): String = type + generics
+    final override val typeWithArguments: String
+        get() = type + generics
 
     abstract override val allFields: List<Field>
 

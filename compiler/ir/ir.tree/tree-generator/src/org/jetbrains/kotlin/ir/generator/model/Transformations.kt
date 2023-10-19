@@ -19,9 +19,8 @@ private object InferredOverriddenType : TypeRefWithNullability {
     override val packageName: String?
         get() = null
 
-    override fun getTypeWithArguments(notNull: Boolean): String {
-        error("not supported")
-    }
+    override val typeWithArguments: String
+        get() = error("not supported")
 
     override fun substitute(map: TypeParameterSubstitutionMap) = this
 

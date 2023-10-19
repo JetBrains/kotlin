@@ -25,7 +25,8 @@ interface TypeRef : Importable {
         override val packageName: String?
             get() = null
 
-        override fun getTypeWithArguments(notNull: Boolean): String = type
+        override val typeWithArguments: String
+            get() = type
 
         override fun substitute(map: TypeParameterSubstitutionMap) = this
 
@@ -110,7 +111,8 @@ data class TypeRefWithVariance<out T : TypeRef>(val variance: Variance, val type
     override val packageName: String?
         get() = null
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type
+    override val typeWithArguments: String
+        get() = type
 
     override fun substitute(map: TypeParameterSubstitutionMap): TypeRefWithVariance<*> =
         TypeRefWithVariance(variance, typeRef.substitute(map))
@@ -165,7 +167,8 @@ data class PositionTypeParameterRef(
     override val packageName: String?
         get() = null
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type
+    override val typeWithArguments: String
+        get() = type
 
     override fun copy(nullable: Boolean) = PositionTypeParameterRef(index, nullable)
 }
@@ -190,7 +193,7 @@ open class NamedTypeParameterRef(
     override val packageName: String?
         get() = null
 
-    override fun getTypeWithArguments(notNull: Boolean) = name
+    override val typeWithArguments get() = name
 
     final override fun copy(nullable: Boolean) = NamedTypeParameterRef(name, nullable)
 }
@@ -209,7 +212,8 @@ interface ParametrizedTypeRef<Self : ParametrizedTypeRef<Self, P>, P : TypeParam
     override fun substitute(map: TypeParameterSubstitutionMap): Self =
         copy(args.mapValues { it.value.substitute(map) })
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics + (if (nullable) "?" else "")
+    override val typeWithArguments: String
+        get() = type + generics + (if (nullable) "?" else "")
 }
 
 typealias TypeParameterSubstitutionMap = Map<out TypeParameterRef, TypeRef>

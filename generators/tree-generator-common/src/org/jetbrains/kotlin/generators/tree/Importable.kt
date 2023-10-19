@@ -10,7 +10,5 @@ interface Importable {
     val packageName: String?
     val fullQualifiedName: String? get() = packageName?.let { "$it.${type.replace(Regex("<.+>"), "")}" }
 
-    fun getTypeWithArguments(notNull: Boolean = false): String
+    val typeWithArguments: String
 }
-
-val Importable.typeWithArguments: String get() = getTypeWithArguments()
