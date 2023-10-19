@@ -50,6 +50,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.CreateDefaultCompilationsSideEffect
+import org.jetbrains.kotlin.gradle.targets.CreateTargetConfigurationsSideEffect
+import org.jetbrains.kotlin.gradle.targets.NativeForwardImplementationToApiElementsSideEffect
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
@@ -96,6 +98,8 @@ internal fun Project.registerKotlinPluginExtensions() {
 
     KotlinTargetSideEffect.extensionPoint.apply {
         register(project, CreateDefaultCompilationsSideEffect)
+        register(project, CreateTargetConfigurationsSideEffect)
+        register(project, NativeForwardImplementationToApiElementsSideEffect)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
