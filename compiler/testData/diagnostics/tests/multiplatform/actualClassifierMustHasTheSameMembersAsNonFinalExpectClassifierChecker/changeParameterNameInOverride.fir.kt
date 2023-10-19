@@ -2,10 +2,10 @@
 // FILE: common.kt
 
 open class Base {
-    <!INCOMPATIBLE_MATCHING{JVM}!>open fun foo(param: Int) {}<!>
+    open fun foo(param: Int) {}
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect open class Foo1 : Base<!>
+<!INCOMPATIBLE_MATCHING{JVM}, INCOMPATIBLE_MATCHING{JVM}!>expect open class Foo1 : Base<!>
 expect open class Foo2 : Base
 expect open class Foo3 {
     open fun foo(param: Int)

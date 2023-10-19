@@ -122,7 +122,7 @@ object FirFakeOverrideGenerator {
         checkStatusIsResolved(baseFunction)
 
         return buildSimpleFunction {
-            source = baseFunction.source ?: derivedClassLookupTag?.toSymbol(session)?.source
+            source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source
             moduleData = session.nullableModuleData ?: baseFunction.moduleData
             this.origin = origin
             name = baseFunction.name
@@ -162,7 +162,7 @@ object FirFakeOverrideGenerator {
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
             annotations += baseConstructor.annotations
-            source = baseConstructor.source ?: derivedClassLookupTag?.toSymbol(session)?.source
+            source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseConstructor.source
             moduleData = session.nullableModuleData ?: baseConstructor.moduleData
             this.origin = origin
             receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
@@ -302,7 +302,7 @@ object FirFakeOverrideGenerator {
         ) { valueParameter, newType ->
             buildValueParameterCopy(valueParameter) {
                 this.origin = origin
-                source = source ?: this@configureAnnotationsAndSignature.source
+                source = this@configureAnnotationsAndSignature.source ?: source
                 returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                 symbol = FirValueParameterSymbol(valueParameter.name)
                 containingFunctionSymbol = fakeFunctionSymbol
@@ -371,7 +371,7 @@ object FirFakeOverrideGenerator {
         checkStatusIsResolved(baseProperty)
 
         return buildProperty {
-            source = baseProperty.source ?: derivedClassLookupTag?.toSymbol(session)?.source
+            source = derivedClassLookupTag?.toSymbol(session)?.source ?: baseProperty.source
             moduleData = session.nullableModuleData ?: baseProperty.moduleData
             this.origin = origin
             name = baseProperty.name

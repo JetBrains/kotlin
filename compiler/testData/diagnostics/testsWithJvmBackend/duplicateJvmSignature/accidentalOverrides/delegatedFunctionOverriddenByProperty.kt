@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface B {
     fun getX() = 1
 }

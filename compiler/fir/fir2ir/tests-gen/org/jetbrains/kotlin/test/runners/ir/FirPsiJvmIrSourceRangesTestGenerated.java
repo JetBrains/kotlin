@@ -131,6 +131,12 @@ public class FirPsiJvmIrSourceRangesTestGenerated extends AbstractFirPsiJvmIrSou
         }
 
         @Test
+        @TestMetadata("fakeOverrides2.kt")
+        public void testFakeOverrides2() throws Exception {
+            runTest("compiler/testData/ir/sourceRanges/declarations/fakeOverrides2.kt");
+        }
+
+        @Test
         @TestMetadata("kt29862.kt")
         public void testKt29862() throws Exception {
             runTest("compiler/testData/ir/sourceRanges/declarations/kt29862.kt");

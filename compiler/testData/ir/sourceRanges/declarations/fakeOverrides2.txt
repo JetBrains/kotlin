@@ -1,0 +1,35 @@
+@0:0..7:0 FILE fqName:<root> fileName:/fakeOverrides2.kt
+  @0:0..2:1 CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    @0:17..18 TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    @0:9..2:1 CONSTRUCTOR visibility:public <> () returnType:<root>.A<T of <root>.A> [primary]
+      @0:0..2:1 BLOCK_BODY
+        @0:0..2:1 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        @0:0..2:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
+    @1:4..27 FUN name:foo visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>, x:T of <root>.A) returnType:kotlin.Unit
+      @1:4..27 VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
+      @1:12..16 VALUE_PARAMETER name:x index:0 type:T of <root>.A
+      @1:18..20 BLOCK_BODY
+    @0:9..2:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @0:0..2:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @0:9..2:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    @0:9..2:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @0:0..2:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @0:9..2:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      @0:0..2:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @0:0..2:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A<T of <root>.A>
+  @4:0..6:1 CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A<kotlin.String>]
+    @4:0..6:1 CONSTRUCTOR visibility:public <> () returnType:<root>.B [primary]
+      @4:0..6:1 BLOCK_BODY
+        @4:10..21 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A'
+        @4:0..6:1 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[<root>.A<kotlin.String>]'
+    @4:0..6:1 FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.A<kotlin.String>, x:kotlin.String) returnType:kotlin.Unit [fake_override]
+      @4:0..6:1 VALUE_PARAMETER name:<this> type:<root>.A<kotlin.String>
+      @4:0..6:1 VALUE_PARAMETER name:x index:0 type:kotlin.String
+    @4:0..6:1 FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      @4:0..6:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+      @4:0..6:1 VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    @4:0..6:1 FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      @4:0..6:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @4:0..6:1 FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      @4:0..6:1 VALUE_PARAMETER name:<this> type:kotlin.Any
+    @4:0..6:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
