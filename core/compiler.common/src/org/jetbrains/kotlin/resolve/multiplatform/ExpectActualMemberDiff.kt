@@ -13,10 +13,6 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
      * Also see: [toMemberDiffKind]
      */
     enum class Kind(val rawMessage: String) {
-        NonPrivateCallableAdded(
-            "{0}: non-private member must be declared in both the actual class and the expect class. " +
-                    "This error happens because the expect class ''{1}'' is non-final"
-        ),
         ReturnTypeChangedInOverride(
             "{0}: the return type of this member must be the same in the expect class and the actual class. " +
                     "This error happens because the expect class ''{1}'' is non-final"
@@ -61,14 +57,17 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
 }
 
 fun ExpectActualCompatibility.Incompatible<*>.toMemberDiffKind(): ExpectActualMemberDiff.Kind? = when (this) {
-    ExpectActualCompatibility.Incompatible.CallableKind -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ParameterCount -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ParameterShape -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    ExpectActualCompatibility.Incompatible.ParameterTypes -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    ExpectActualCompatibility.Incompatible.CallableKind,
+    ExpectActualCompatibility.Incompatible.ParameterCount,
+    ExpectActualCompatibility.Incompatible.ParameterShape,
+    ExpectActualCompatibility.Incompatible.ParameterTypes,
+    ExpectActualCompatibility.Incompatible.FunctionTypeParameterCount,
+    ExpectActualCompatibility.Incompatible.FunctionTypeParameterUpperBounds,
+        // It's an awful API. It will be fixed in KT-62752
+    -> error("It's not allowed to call this function with receiver: $this")
+
     ExpectActualCompatibility.Incompatible.ReturnType -> ExpectActualMemberDiff.Kind.ReturnTypeChangedInOverride
-    ExpectActualCompatibility.Incompatible.FunctionTypeParameterCount -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
     ExpectActualCompatibility.Incompatible.ClassTypeParameterCount -> error("Not applicable because ExpectActualMemberDiff is about members")
-    ExpectActualCompatibility.Incompatible.FunctionTypeParameterUpperBounds -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
     ExpectActualCompatibility.Incompatible.ClassTypeParameterUpperBounds -> error("Not applicable because ExpectActualMemberDiff is about members")
     ExpectActualCompatibility.Incompatible.ActualFunctionWithDefaultParameters -> null // It's not possible to add default parameters in override
     ExpectActualCompatibility.Incompatible.ClassKind -> error("Not applicable because ExpectActualMemberDiff is about members")
