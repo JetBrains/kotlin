@@ -327,12 +327,12 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
         val attributesCopier = LlvmFunctionAttributeProvider.copyFromExternal(externalFunction)
 
-        val functionType = getFunctionType(externalFunction)
+        val functionType = getGlobalFunctionType(externalFunction)
         val function = LLVMAddFunction(module, name, functionType)!!
 
         attributesCopier.addFunctionAttributes(function)
 
-        return LlvmCallable(function, attributesCopier)
+        return LlvmCallable(functionType, function, attributesCopier)
     }
 
     private fun importGlobal(name: String, otherModule: LLVMModuleRef): LLVMValueRef {
@@ -358,7 +358,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             val kindId = getLlvmAttributeKindId(it)
             addLlvmFunctionEnumAttribute(result, kindId)
         }
-        return LlvmCallable(result, LlvmFunctionAttributeProvider.copyFromExternal(result))
+        return LlvmCallable(type, result, LlvmFunctionAttributeProvider.copyFromExternal(result))
     }
 
     internal fun externalFunction(llvmFunctionProto: LlvmFunctionProto): LlvmCallable {
@@ -367,12 +367,13 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
         }
         val found = LLVMGetNamedFunction(module, llvmFunctionProto.name)
         if (found != null) {
-            require(getFunctionType(found) == llvmFunctionProto.signature.llvmFunctionType) {
+            require(getGlobalFunctionType(found) == llvmFunctionProto.signature.llvmFunctionType) {
                 "Expected: ${LLVMPrintTypeToString(llvmFunctionProto.signature.llvmFunctionType)!!.toKString()} " +
-                        "found: ${LLVMPrintTypeToString(getFunctionType(found))!!.toKString()}"
+                        "found: ${LLVMPrintTypeToString(getGlobalFunctionType(found))!!.toKString()}"
             }
             require(LLVMGetLinkage(found) == llvmFunctionProto.linkage)
-            return LlvmCallable(found, llvmFunctionProto.signature)
+            val functionType = getGlobalFunctionType(found)
+            return LlvmCallable(functionType, found, llvmFunctionProto.signature)
         } else {
             return llvmFunctionProto.createLlvmFunction(context, module)
         }

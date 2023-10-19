@@ -305,7 +305,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                 typeInfoGlobal.setLinkage(LLVMLinkage.LLVMExternalLinkage)
             }
 
-            typeInfoPtr = typeInfoGlobal.pointer.getElementPtr(llvm, 0)
+            typeInfoPtr = typeInfoGlobal.pointer.getElementPtr(llvm, typeInfoWithVtableType, 0)
 
         } else {
             typeInfoGlobal = staticData.createGlobal(runtime.typeInfoType,

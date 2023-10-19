@@ -14,7 +14,7 @@ import llvm.*
  *  @todo This class mixes "something that can be called" and function abstractions.
  *        Some of it's methods make sense only for functions. Probably, LlvmFunction sub-class should be extracted.
  */
-class LlvmCallable(private val llvmValue: LLVMValueRef, private val attributeProvider: LlvmFunctionAttributeProvider) {
+class LlvmCallable(val functionType: LLVMTypeRef, private val llvmValue: LLVMValueRef, private val attributeProvider: LlvmFunctionAttributeProvider) {
     val returnType: LLVMTypeRef by lazy {
         LLVMGetReturnType(functionType)!!
     }
@@ -23,12 +23,8 @@ class LlvmCallable(private val llvmValue: LLVMValueRef, private val attributePro
         llvmValue.name
     }
 
-    val functionType: LLVMTypeRef by lazy {
-        getFunctionType(llvmValue)
-    }
-
     val numParams by lazy {
-        LLVMCountParams(llvmValue)
+        LLVMCountParamTypes(functionType)
     }
 
     val pgoFunctionNameVar by lazy {
@@ -40,12 +36,12 @@ class LlvmCallable(private val llvmValue: LLVMValueRef, private val attributePro
     }
 
     fun buildCall(builder: LLVMBuilderRef, args: List<LLVMValueRef>, name: String = "") =
-        LLVMBuildCall(builder, llvmValue, args.toCValues(), args.size, name)!!.also {
-            attributeProvider.addCallSiteAttributes(it)
-        }
+            LLVMBuildCall2(builder, functionType, llvmValue, args.toCValues(), args.size, name)!!.also {
+                attributeProvider.addCallSiteAttributes(it)
+            }
 
     fun buildInvoke(builder: LLVMBuilderRef, args: List<LLVMValueRef>, success: LLVMBasicBlockRef, catch: LLVMBasicBlockRef, name: String = "") =
-            LLVMBuildInvoke(builder, llvmValue, args.toCValues(), args.size, success, catch, name)!!.also {
+            LLVMBuildInvoke2(builder, functionType, llvmValue, args.toCValues(), args.size, success, catch, name)!!.also {
                 attributeProvider.addCallSiteAttributes(it)
             }
 

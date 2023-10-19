@@ -23,7 +23,8 @@ internal val ConstValue.llvmType: LLVMTypeRef
     get() = this.llvm.type
 
 internal interface ConstPointer : ConstValue {
-    fun getElementPtr(llvm: CodegenLlvmHelpers, index: Int): ConstPointer = ConstGetElementPtr(llvm, this, index)
+    fun getElementPtr(llvm: CodegenLlvmHelpers, pointeeType: LLVMTypeRef, index: Int): ConstPointer =
+            ConstGetElementPtr(llvm, pointeeType, this, index)
 }
 
 internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
@@ -34,8 +35,8 @@ internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
     override val llvm = value
 }
 
-private class ConstGetElementPtr(llvm: CodegenLlvmHelpers, pointer: ConstPointer, index: Int) : ConstPointer {
-    override val llvm = LLVMConstInBoundsGEP(pointer.llvm, cValuesOf(llvm.int32(0), llvm.int32(index)), 2)!!
+private class ConstGetElementPtr(llvm: CodegenLlvmHelpers, pointeeType: LLVMTypeRef, pointer: ConstPointer, index: Int) : ConstPointer {
+    override val llvm = LLVMConstInBoundsGEP2(pointeeType, pointer.llvm, cValuesOf(llvm.int32(0), llvm.int32(index)), 2)!!
     // TODO: squash multiple GEPs
 }
 
@@ -116,11 +117,6 @@ internal val RuntimeAware.kNothingFakeValue: LLVMValueRef
 
 internal fun pointerType(pointeeType: LLVMTypeRef) = LLVMPointerType(pointeeType, 0)!!
 
-internal fun ContextUtils.numParameters(functionType: LLVMTypeRef) : Int {
-    // Note that type is usually function pointer, so we have to dereference it.
-    return LLVMCountParamTypes(LLVMGetElementType(functionType))
-}
-
 fun extractConstUnsignedInt(value: LLVMValueRef): Long {
     assert(LLVMIsConstant(value) != 0)
     return LLVMConstIntGetZExtValue(value)
@@ -150,12 +146,12 @@ internal fun LLVMValueRef.getAsCString() : String {
 }
 
 
-internal fun getFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
+internal fun getGlobalFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
     return getGlobalType(ptrToFunction)
 }
 
 internal fun getGlobalType(ptrToGlobal: LLVMValueRef): LLVMTypeRef {
-    return LLVMGetElementType(ptrToGlobal.type)!!
+    return LLVMGlobalGetValueType(ptrToGlobal)!!
 }
 
 internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): LLVMValueRef {

@@ -203,7 +203,7 @@ private fun patchLiteral(
 ) {
     val module = LLVMGetGlobalParent(global)!!
 
-    val newFirstCharPtr = generator.generate(module, llvm, newValue).getElementPtr(llvm, 0).llvm
+    val newFirstCharPtr = generator.generate(module, llvm, newValue).bitcast(llvm.int8PtrType).llvm
 
     generateSequence(LLVMGetFirstUse(global), { LLVMGetNextUse(it) }).forEach { use ->
         val firstCharPtr = LLVMGetUser(use)!!.also {

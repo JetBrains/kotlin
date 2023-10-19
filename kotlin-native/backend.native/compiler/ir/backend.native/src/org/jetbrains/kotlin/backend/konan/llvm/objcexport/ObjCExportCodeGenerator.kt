@@ -177,13 +177,13 @@ internal fun ObjCExportFunctionGenerationContext.callAndMaybeRetainAutoreleased(
         forbidRuntime = true // Don't emit safe points, frame management etc.
 
         val actualArgs = signature.parameterTypes.indices.map { param(it) }
-        val actualCallable = if (functionIsPassedAsLastParameter) LlvmCallable(param(signature.parameterTypes.size), signature) else function
+        val actualCallable = if (functionIsPassedAsLastParameter) LlvmCallable(signature.llvmFunctionType, param(signature.parameterTypes.size), signature) else function
 
         // Use LLVMBuildCall instead of call, because the latter enforces using exception handler, which is exactly what we have to avoid.
         val result = actualCallable.buildCall(builder, actualArgs).let { callResult ->
             // Simplified version of emitAutoreleasedReturnValueMarker in Clang:
             objCExportCodegen.objcRetainAutoreleasedReturnValueMarker?.let {
-                LLVMBuildCall(arg0 = builder, Fn = it, Args = null, NumArgs = 0, Name = "")
+                LLVMBuildCall2(arg0 = builder, functionType(llvm.voidType), Fn = it, Args = null, NumArgs = 0, Name = "")
             }
 
             call(objCExportCodegen.objcRetainAutoreleasedReturnValue, listOf(callResult)).also {
@@ -217,8 +217,9 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
             resultLifetime: Lifetime = Lifetime.IRRELEVANT
     ): LLVMValueRef {
         val llvmDeclarations = LlvmCallable(
-                llvmFunction,
+                getGlobalFunctionType(llvmFunction),
                 // llvmFunction could be a function pointer here, and we can't infer attributes from it.
+                llvmFunction,
                 LlvmFunctionAttributeProvider.makeEmpty()
         )
         return callFromBridge(llvmDeclarations, args, resultLifetime)
@@ -831,11 +832,12 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
         } ?: NullPointer(objCToKotlinFunctionType)
     }
 
+    val type = pointerType(objCToKotlinFunctionType)
     val ptr = staticData.placeGlobalArray(
             "",
-            pointerType(objCToKotlinFunctionType),
+            type,
             converters
-    ).pointer.getElementPtr(llvm, 0)
+    ).pointer.getElementPtr(llvm, LLVMArrayType(type, converters.size)!!, 0)
 
     // Note: defining globals declared in runtime.
     staticData.placeGlobal("Kotlin_ObjCExport_blockToFunctionConverters", ptr, isExported = true)
@@ -1628,9 +1630,10 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
     }
 
     val vtable = if (!irClass.isInterface && !irClass.typeInfoHasVtableAttached) {
-        staticData.placeGlobal("", rttiGenerator.vtable(irClass)).also {
+        val table = rttiGenerator.vtable(irClass)
+        staticData.placeGlobal("", table).also {
             it.setConstant(true)
-        }.pointer.getElementPtr(llvm, 0)
+        }.pointer.getElementPtr(llvm, LLVMArrayType(llvm.int8PtrType, table.elements.size)!!, 0)
     } else {
         null
     }

@@ -142,7 +142,7 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Code
         if (elements.isNotEmpty() || isExported) {
             val global = placeGlobalArray(name, elemType, elements, isExported)
             global.setConstant(true)
-            return global.pointer.getElementPtr(llvm, 0)
+            return global.pointer.getElementPtr(llvm, LLVMArrayType(elemType, elements.size)!!, 0)
         } else {
             return NullPointer(elemType)
         }

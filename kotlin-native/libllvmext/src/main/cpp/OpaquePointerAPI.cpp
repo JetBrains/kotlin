@@ -35,3 +35,8 @@ LLVMValueRef LLVMConstInBoundsGEP2(LLVMTypeRef Ty, LLVMValueRef ConstantVal,
   Constant *Val = unwrap<Constant>(ConstantVal);
   return wrap(ConstantExpr::getInBoundsGetElementPtr(unwrap(Ty), Val, IdxList));
 }
+
+unsigned LLVMGetProgramAddressSpace(LLVMModuleRef moduleRef) {
+    auto module = unwrap(moduleRef);
+    return module ? module->getDataLayout().getProgramAddressSpace() : 0;
+}

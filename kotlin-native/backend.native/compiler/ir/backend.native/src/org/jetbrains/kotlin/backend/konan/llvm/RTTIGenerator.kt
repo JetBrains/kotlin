@@ -404,7 +404,7 @@ internal class RTTIGenerator(
     private val debugOperations: ConstValue by lazy {
         if (debugRuntimeOrNull != null) {
             val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
-            val local = LLVMAddGlobal(llvm.module, LLVMGetElementType(LLVMTypeOf(external)),"Konan_debugOperationsList")!!
+            val local = LLVMAddGlobal(llvm.module, LLVMGlobalGetValueType(external),"Konan_debugOperationsList")!!
             constPointer(LLVMConstBitCast(local, llvm.int8PtrPtrType)!!)
         } else {
             Zero(llvm.int8PtrPtrType)
@@ -414,7 +414,7 @@ internal class RTTIGenerator(
     val debugOperationsSize: ConstValue by lazy {
         if (debugRuntimeOrNull != null) {
             val external = LLVMGetNamedGlobal(debugRuntimeOrNull, "Konan_debugOperationsList")!!
-            llvm.constInt32(LLVMGetArrayLength(LLVMGetElementType(LLVMTypeOf(external))))
+            llvm.constInt32(LLVMGetArrayLength(LLVMGlobalGetValueType(external)))
         } else
             llvm.constInt32(0)
     }
@@ -531,7 +531,7 @@ internal class RTTIGenerator(
         val vtable = vtable(superClass)
         val typeInfoWithVtableType = llvm.structType(runtime.typeInfoType, vtable.llvmType)
         val typeInfoWithVtableGlobal = staticData.createGlobal(typeInfoWithVtableType, "", isExported = false)
-        val result = typeInfoWithVtableGlobal.pointer.getElementPtr(llvm, 0)
+        val result = typeInfoWithVtableGlobal.pointer.getElementPtr(llvm, typeInfoWithVtableType, 0)
         val typeHierarchyInfo = if (!context.ghaEnabled())
             ClassGlobalHierarchyInfo.DUMMY
         else
@@ -546,10 +546,11 @@ internal class RTTIGenerator(
             } else {
                 val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.bitcast(llvm.int8PtrType) }
                 val interfaceVTable = staticData.placeGlobalArray("", llvm.int8PtrType, vtableEntries)
+                val interfaceVTableType = LLVMArrayType(llvm.int8PtrType, vtableEntries.size)!!
                 InterfaceTableRecord(
                         llvm.constInt32(layoutBuilder.classId),
                         llvm.constInt32(layoutBuilder.interfaceVTableEntries.size),
-                        interfaceVTable.pointer.getElementPtr(llvm, 0)
+                        interfaceVTable.pointer.getElementPtr(llvm, interfaceVTableType, 0)
                 )
             }
         }
