@@ -1,23 +1,26 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            inline fun Wrapper(content: @Composable () -> Unit) = content()
+@Composable
+inline fun Wrapper(content: @Composable () -> Unit) = content()
 
-            @Composable
-            fun Test(condition: Boolean) {
-                A()
-                Wrapper {
-                    A()
-                    if (!condition) return
-                    A()
-                }
-                A()
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test(condition: Boolean) {
+    A()
+    Wrapper {
+        A()
+        if (!condition) return
+        A()
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")

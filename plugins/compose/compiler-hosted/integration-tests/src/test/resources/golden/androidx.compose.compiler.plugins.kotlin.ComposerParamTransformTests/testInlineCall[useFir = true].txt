@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 @file:OptIn(
   InternalComposeApi::class,
 )
@@ -18,9 +22,9 @@ import androidx.compose.runtime.NonRestartableComposable
     Example {}
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")

@@ -1,23 +1,25 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
-            
-            @Composable
-            fun Test(condition: Boolean) {
-                A()
-                M3 {
-                    A()
-                    if (condition) {
-                        return@M3
-                    }
-                    A()
-                }
-                A()
-            }
-        
-        
-/********
- * TRANSFORMED
- ********/
+import androidx.compose.runtime.Composable
+
+@Composable
+fun Test(condition: Boolean) {
+    A()
+    M3 {
+        A()
+        if (condition) {
+            return@M3
+        }
+        A()
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {

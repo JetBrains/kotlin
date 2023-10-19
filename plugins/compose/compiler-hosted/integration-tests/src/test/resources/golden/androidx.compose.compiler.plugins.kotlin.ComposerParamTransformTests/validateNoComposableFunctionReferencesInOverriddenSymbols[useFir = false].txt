@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 package test
 
 import androidx.compose.runtime.Composable
@@ -6,9 +10,10 @@ import dependency.Content
 class ContentImpl : Content {
     override fun setContent(c: @Composable () -> Unit) {}
 }
-/********
- * TRANSFORMED
- ********/
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class ContentImpl : Content {

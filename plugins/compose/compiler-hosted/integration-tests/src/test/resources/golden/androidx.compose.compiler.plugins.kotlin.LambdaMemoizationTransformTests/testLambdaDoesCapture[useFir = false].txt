@@ -1,21 +1,24 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable
-            fun TestLambda(content: () -> Unit) {
-              content()
-            }
+@Composable
+fun TestLambda(content: () -> Unit) {
+  content()
+}
 
-            @Composable
-            fun Test(a: String) {
-              TestLambda {
-                println("Captures a" + a)
-              }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test(a: String) {
+  TestLambda {
+    println("Captures a" + a)
+  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {

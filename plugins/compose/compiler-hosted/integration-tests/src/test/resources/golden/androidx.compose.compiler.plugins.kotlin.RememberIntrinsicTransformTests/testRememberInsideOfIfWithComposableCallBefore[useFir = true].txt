@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
@@ -10,9 +14,9 @@ fun Test(condition: Boolean) {
     }
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {

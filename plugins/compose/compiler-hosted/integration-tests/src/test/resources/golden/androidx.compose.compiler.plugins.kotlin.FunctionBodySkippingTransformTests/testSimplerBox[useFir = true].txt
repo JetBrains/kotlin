@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -8,9 +12,9 @@ fun SimpleBox(modifier: Modifier = Modifier) {
    used(modifier)
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun SimpleBox(modifier: Modifier?, %composer: Composer?, %changed: Int, %default: Int) {

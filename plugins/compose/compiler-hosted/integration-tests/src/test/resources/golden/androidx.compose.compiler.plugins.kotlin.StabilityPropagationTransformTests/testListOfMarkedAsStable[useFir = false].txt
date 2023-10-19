@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 
 
@@ -6,9 +10,9 @@ fun Example() {
     A(listOf("a"))
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Example(%composer: Composer?, %changed: Int) {

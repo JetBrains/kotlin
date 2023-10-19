@@ -1,12 +1,15 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            fun InferN() { N() }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun InferN() { N() }
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableTarget(applier = "NComposable")

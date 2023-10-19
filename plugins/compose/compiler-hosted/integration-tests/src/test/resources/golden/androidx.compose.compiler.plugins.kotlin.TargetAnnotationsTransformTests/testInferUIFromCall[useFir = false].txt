@@ -1,14 +1,17 @@
+//
+// Source
+// ------------------------------------------
 
-        import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Test() {
-            Text("Hello")
-        }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test() {
+    Text("Hello")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableTarget(applier = "UI")

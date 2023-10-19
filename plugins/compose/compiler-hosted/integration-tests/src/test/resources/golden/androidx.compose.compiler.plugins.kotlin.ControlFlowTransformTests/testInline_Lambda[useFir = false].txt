@@ -1,17 +1,20 @@
+//
+// Source
+// ------------------------------------------
 
-            fun Test(condition: Boolean) {
-                T {
-                    compose {
-                        M1 {
-                            if (condition) return@compose
-                        }
-                    }
-                }
+fun Test(condition: Boolean) {
+    T {
+        compose {
+            M1 {
+                if (condition) return@compose
             }
-        
-/********
- * TRANSFORMED
- ********/
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 fun Test(condition: Boolean) {
   T {

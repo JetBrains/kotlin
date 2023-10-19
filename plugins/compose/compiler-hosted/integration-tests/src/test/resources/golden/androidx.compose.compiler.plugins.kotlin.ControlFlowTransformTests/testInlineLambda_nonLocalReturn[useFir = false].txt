@@ -1,18 +1,21 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            private fun Test(param: String?) {
-                Inline1 {
-                    Inline2 {
-                        if (true) return@Inline1
-                    }
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+private fun Test(param: String?) {
+    Inline1 {
+        Inline2 {
+            if (true) return@Inline1
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 private fun Test(param: String?, %composer: Composer?, %changed: Int) {

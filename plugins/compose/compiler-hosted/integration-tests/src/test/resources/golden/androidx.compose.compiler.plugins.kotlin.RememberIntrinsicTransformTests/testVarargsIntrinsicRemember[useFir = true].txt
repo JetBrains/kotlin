@@ -1,17 +1,20 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            fun Test(vararg strings: String) {
-                val show = remember { mutableStateOf(false) }
-                if (show.value) {
-                    Text("Showing")
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test(vararg strings: String) {
+    val show = remember { mutableStateOf(false) }
+    if (show.value) {
+        Text("Showing")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {

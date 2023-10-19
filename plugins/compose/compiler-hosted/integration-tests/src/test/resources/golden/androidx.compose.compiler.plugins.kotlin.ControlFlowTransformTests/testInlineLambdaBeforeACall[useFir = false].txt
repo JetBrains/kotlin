@@ -1,19 +1,22 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            private fun Test(param: String?): String? {
-                InlineNonComposable {
-                    repeat(10) {
-                        Test("InsideInline")
-                    }
-                }
-                return Test("AfterInline")
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+private fun Test(param: String?): String? {
+    InlineNonComposable {
+        repeat(10) {
+            Test("InsideInline")
+        }
+    }
+    return Test("AfterInline")
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {

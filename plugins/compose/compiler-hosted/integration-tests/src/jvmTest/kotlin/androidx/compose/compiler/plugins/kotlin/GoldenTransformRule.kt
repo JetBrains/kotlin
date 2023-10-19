@@ -114,20 +114,40 @@ data class GoldenTransformTestInfo(
     val source: String,
     val transformed: String
 ) {
-    fun encodeToString(): String {
-        return "$source$DELIMITER$transformed"
-    }
+    fun encodeToString(): String =
+        buildString {
+            append(SOURCE_HEADER)
+            appendLine()
+            appendLine()
+            append(source)
+            appendLine()
+            appendLine()
+            append(TRANSFORM_HEADER)
+            appendLine()
+            appendLine()
+            append(transformed)
+            appendLine()
+        }
 
     companion object {
-        const val DELIMITER = "\n/********\n * TRANSFORMED\n ********/\n\n"
+        val SOURCE_HEADER = """
+            //
+            // Source
+            // ------------------------------------------
+        """.trimIndent()
+        val TRANSFORM_HEADER = """
+            //
+            // Transformed IR
+            // ------------------------------------------
+        """.trimIndent()
 
         fun fromEncodedString(encoded: String): GoldenTransformTestInfo {
-            val split = encoded.split(DELIMITER)
+            val split = encoded.removePrefix(SOURCE_HEADER).split(TRANSFORM_HEADER)
             if (split.size != 2) {
                 error("Could not parse encoded golden string. " +
                     "Expected 2 sections but was ${split.size}.")
             }
-            return GoldenTransformTestInfo(split[0], split[1])
+            return GoldenTransformTestInfo(split[0].trim(), split[1].trim())
         }
     }
 }

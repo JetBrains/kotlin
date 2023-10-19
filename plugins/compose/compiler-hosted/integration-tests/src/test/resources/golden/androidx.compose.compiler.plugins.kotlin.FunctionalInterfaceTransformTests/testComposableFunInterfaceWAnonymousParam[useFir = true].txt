@@ -1,21 +1,24 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            fun interface Consumer {
-                @Composable operator fun invoke(t: Int)
-            }
+fun interface Consumer {
+    @Composable operator fun invoke(t: Int)
+}
 
-            @Composable fun Test(int: Int) {
-                Example { _ ->
-                }
-            }
+@Composable fun Test(int: Int) {
+    Example { _ ->
+    }
+}
 
-            @Composable fun Example(consumer: Consumer) {
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable fun Example(consumer: Consumer) {
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 interface Consumer {
   @Composable
