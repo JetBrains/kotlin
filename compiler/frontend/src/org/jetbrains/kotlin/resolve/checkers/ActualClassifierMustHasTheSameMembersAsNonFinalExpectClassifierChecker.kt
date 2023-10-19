@@ -223,6 +223,8 @@ private fun BindingTrace.reportIfPossible(diff: K1ExpectActualMemberDiff<Callabl
             Errors.PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         K1ExpectActualMemberDiff.Kind.LateinitChangedInOverride ->
             Errors.LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
+        K1ExpectActualMemberDiff.Kind.VarargChangedInOverride ->
+            Errors.VARARG_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         K1ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride ->
             Errors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
     }
