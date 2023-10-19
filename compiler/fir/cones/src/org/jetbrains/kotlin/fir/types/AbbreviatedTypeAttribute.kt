@@ -18,6 +18,8 @@ class AbbreviatedTypeAttribute(
 
     override val key: KClass<out AbbreviatedTypeAttribute>
         get() = AbbreviatedTypeAttribute::class
+    override val keepInInferredDeclarationType: Boolean
+        get() = true
 }
 
 val ConeAttributes.abbreviatedType: AbbreviatedTypeAttribute? by ConeAttributes.attributeAccessor<AbbreviatedTypeAttribute>()

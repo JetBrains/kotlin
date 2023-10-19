@@ -68,6 +68,8 @@ class ConeNumberSignAttribute private constructor(val sign: Sign) : ConeAttribut
 
     override val key: KClass<out ConeNumberSignAttribute>
         get() = ConeNumberSignAttribute::class
+    override val keepInInferredDeclarationType: Boolean
+        get() = true
 }
 
 val ConeAttributes.numberSign: ConeNumberSignAttribute? by ConeAttributes.attributeAccessor<ConeNumberSignAttribute>()

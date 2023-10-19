@@ -143,6 +143,8 @@ private class OriginalProjectionTypeAttribute(val data: ConeTypeProjection) : Co
 
     override val key: KClass<out OriginalProjectionTypeAttribute>
         get() = OriginalProjectionTypeAttribute::class
+    override val keepInInferredDeclarationType: Boolean
+        get() = false
 }
 
 private val ConeAttributes.originalProjection: OriginalProjectionTypeAttribute? by ConeAttributes.attributeAccessor()
@@ -246,6 +248,8 @@ private class SourceAttribute(private val data: FirTypeRefSource) : ConeAttribut
 
     override val key: KClass<out SourceAttribute>
         get() = SourceAttribute::class
+    override val keepInInferredDeclarationType: Boolean
+        get() = false
 }
 
 private val ConeAttributes.sourceAttribute: SourceAttribute? by ConeAttributes.attributeAccessor()

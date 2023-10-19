@@ -61,6 +61,8 @@ class CustomAnnotationTypeAttribute(
 
     override val key: KClass<out CustomAnnotationTypeAttribute>
         get() = CustomAnnotationTypeAttribute::class
+    override val keepInInferredDeclarationType: Boolean
+        get() = true
 
     /**
      * Return an instance of the attribute that is not linked to any [containerSymbols].

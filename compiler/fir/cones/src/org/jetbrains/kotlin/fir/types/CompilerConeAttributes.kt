@@ -23,6 +23,7 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: Exact?): Boolean = true
 
         override val key: KClass<out Exact> = Exact::class
+        override val keepInInferredDeclarationType: Boolean get() = false
 
         override fun toString(): String = "@Exact"
     }
@@ -36,6 +37,7 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: NoInfer?): Boolean = true
 
         override val key: KClass<out NoInfer> = NoInfer::class
+        override val keepInInferredDeclarationType: Boolean get() = false
 
         override fun toString(): String = "@NoInfer"
     }
@@ -50,6 +52,7 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: EnhancedNullability?): Boolean = true
 
         override val key: KClass<out EnhancedNullability> = EnhancedNullability::class
+        override val keepInInferredDeclarationType: Boolean get() = true
 
         override fun toString(): String = "@EnhancedNullability"
     }
@@ -64,6 +67,7 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: ExtensionFunctionType?): Boolean = true
 
         override val key: KClass<out ExtensionFunctionType> = ExtensionFunctionType::class
+        override val keepInInferredDeclarationType: Boolean get() = true
 
         override fun toString(): String = "@ExtensionFunctionType"
     }
@@ -75,6 +79,8 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: RawType?): Boolean = true
 
         override val key: KClass<out RawType> = RawType::class
+        override val keepInInferredDeclarationType: Boolean get() = true
+
         override fun toString(): String = "Raw type"
     }
 
@@ -86,6 +92,7 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: ContextFunctionTypeParams?): Boolean = true
 
         override val key: KClass<out ContextFunctionTypeParams> = ContextFunctionTypeParams::class
+        override val keepInInferredDeclarationType: Boolean get() = true
 
         override fun toString(): String = "@${StandardNames.FqNames.contextFunctionTypeParams.shortName().asString()}"
 
@@ -104,6 +111,7 @@ object CompilerConeAttributes {
         override fun isSubtypeOf(other: UnsafeVariance?): Boolean = true
 
         override val key: KClass<out UnsafeVariance> = UnsafeVariance::class
+        override val keepInInferredDeclarationType: Boolean get() = false
 
         override fun toString(): String = "@UnsafeVariance"
     }
