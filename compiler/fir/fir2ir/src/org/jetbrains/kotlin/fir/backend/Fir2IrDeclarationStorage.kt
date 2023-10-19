@@ -107,36 +107,37 @@ class Fir2IrDeclarationStorage(
     //
     // Note: reusing is necessary here, because sometimes (see testFakeOverridesInPlatformModule)
     // we have to match fake override in platform class with overridden fake overrides in common class
-    private val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FakeOverrideKey, FirCallableDeclaration>> =
+    private val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FirOverrideKey, FirCallableDeclaration>> =
         commonMemberStorage.fakeOverridesInClass
 
     /*
-     * FIR declarations for substitution and intersection overrides are session dependent, which means that in MPP project
-     *   we can have two different functions for the same substitution overrides (in common and platform modules)
+     * FIR declarations for substitution and intersection overrides, and also for delegated members are session dependent,
+     *   which means that in an MPP project we can have two different functions for the same substitution overrides
+     *  (in common and platform modules)
      *
      * So this cache is needed to have only one IR declaration for both overrides
      *
      * The key here is a pair of the original function (first not f/o) and lookup tag of class for which this fake override was created
      * THe value is IR function, build for this fake override during fir2ir translation of the module that contains parent class of this function
      */
-    private val irFakeOverridesForFirFakeOverrideMap: MutableMap<FakeOverrideIdentifier, IrDeclaration> =
-        commonMemberStorage.irFakeOverridesForFirFakeOverrideMap
+    private val irForFirSessionDependantDeclarationMap: MutableMap<FakeOverrideIdentifier, IrDeclaration> =
+        commonMemberStorage.irForFirSessionDependantDeclarationMap
 
     data class FakeOverrideIdentifier(val originalSymbol: FirCallableSymbol<*>, val dispatchReceiverLookupTag: ConeClassLikeLookupTag)
 
-    sealed class FakeOverrideKey {
-        data class Signature(val signature: IdSignature) : FakeOverrideKey()
+    sealed class FirOverrideKey {
+        data class Signature(val signature: IdSignature) : FirOverrideKey()
 
         /*
          * Used for declarations which don't have id signature (e.g. members of local classes)
          */
-        data class Declaration(val declaration: FirCallableDeclaration) : FakeOverrideKey()
+        data class Declaration(val declaration: FirCallableDeclaration) : FirOverrideKey()
     }
 
-    private fun FirCallableDeclaration.asFakeOverrideKey(): FakeOverrideKey {
+    private fun FirCallableDeclaration.asFakeOverrideKey(): FirOverrideKey {
         return when (val signature = signatureComposer.composeSignature(this)) {
-            null -> FakeOverrideKey.Declaration(this)
-            else -> FakeOverrideKey.Signature(signature)
+            null -> FirOverrideKey.Declaration(this)
+            else -> FirOverrideKey.Signature(signature)
         }
     }
 
@@ -320,13 +321,13 @@ class Fir2IrDeclarationStorage(
                 localStorage.putLocalFunction(function, irFunction)
             }
 
-            function.isFakeOverride(fakeOverrideOwnerLookupTag) -> {
+            function.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag) -> {
                 val originalFunction = function.unwrapFakeOverridesOrDelegated()
                 val key = FakeOverrideIdentifier(
                     originalFunction.symbol,
                     fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!
                 )
-                irFakeOverridesForFirFakeOverrideMap[key] = irFunction
+                irForFirSessionDependantDeclarationMap[key] = irFunction
             }
 
             else -> {
@@ -515,13 +516,13 @@ class Fir2IrDeclarationStorage(
         irProperty.setter?.let {
             setterForPropertyCache[irPropertySymbol] = it.symbol
         }
-        if (property.isFakeOverride(fakeOverrideOwnerLookupTag)) {
+        if (property.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag)) {
             val originalProperty = property.unwrapFakeOverridesOrDelegated()
             val key = FakeOverrideIdentifier(
                 originalProperty.symbol,
                 fakeOverrideOwnerLookupTag ?: property.containingClassLookupTag()!!
             )
-            irFakeOverridesForFirFakeOverrideMap[key] = irProperty
+            irForFirSessionDependantDeclarationMap[key] = irProperty
         } else {
             propertyCache[property] = irProperty
         }
@@ -902,13 +903,13 @@ class Fir2IrDeclarationStorage(
          *
          * To workaround this, we look up such declarations in both caches.
          */
-        val isFakeOverride = declaration.isFakeOverride(fakeOverrideOwnerLookupTag)
+        val isFakeOverride = declaration.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag)
         if (isFakeOverride) {
             val key = FakeOverrideIdentifier(
-                declaration.unwrapFakeOverrides().symbol,
+                declaration.unwrapFakeOverridesOrDelegated().symbol,
                 fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!
             )
-            irFakeOverridesForFirFakeOverrideMap[key]?.let { return it as IC }
+            irForFirSessionDependantDeclarationMap[key]?.let { return it as IC }
         } else {
             cache[declaration]?.let { return it }
         }
@@ -956,7 +957,7 @@ class Fir2IrDeclarationStorage(
                         declaration.symbol.unwrapFakeOverrides(),
                         fakeOverrideOwnerLookupTag ?: declaration.containingClassLookupTag()!!
                     )
-                    irFakeOverridesForFirFakeOverrideMap[key] = cachedInSymbolTable
+                    irForFirSessionDependantDeclarationMap[key] = cachedInSymbolTable
                 }
                 configuration.useIrFakeOverrideBuilder -> {
                     /*
@@ -1154,14 +1155,13 @@ class Fir2IrDeclarationStorage(
     }
 }
 
-internal fun FirCallableDeclaration.isFakeOverride(fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?): Boolean {
+private fun FirCallableDeclaration.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?): Boolean {
     if (isCopyCreatedInScope) return true
     if (fakeOverrideOwnerLookupTag == null) return false
     // this condition is true for all places when we are trying to create "fake" fake overrides in IR
     // "fake" fake overrides are f/o which are presented in IR but have no corresponding FIR f/o
     return fakeOverrideOwnerLookupTag != containingClassLookupTag()
 }
-
 
 private object IsStubPropertyForPureFieldKey : FirDeclarationDataKey()
 
