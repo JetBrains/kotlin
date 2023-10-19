@@ -11,15 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsIrSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCommonCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
-import org.jetbrains.kotlin.gradle.targets.metadata.NativeSharedCompilationProcessor
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 internal val KotlinCompilationProcessorSideEffect = KotlinCompilationSideEffect { compilation ->
     val processor = when (compilation) {
         is KotlinCommonCompilation -> KotlinCommonSourceSetProcessor(KotlinCompilationInfo(compilation), KotlinTasksProvider())
-        is KotlinSharedNativeCompilation -> NativeSharedCompilationProcessor(compilation)
         is KotlinJvmCompilation -> Kotlin2JvmSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationInfo(compilation))
         is KotlinJsIrCompilation -> KotlinJsIrSourceSetProcessor(KotlinTasksProvider(), KotlinCompilationInfo(compilation))
         else -> null

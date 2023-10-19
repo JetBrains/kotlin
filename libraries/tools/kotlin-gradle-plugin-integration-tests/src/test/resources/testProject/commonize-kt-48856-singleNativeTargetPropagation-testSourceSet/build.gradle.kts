@@ -11,6 +11,12 @@ repositories {
 }
 
 kotlin {
+    sourceSets.all {
+        languageSettings {
+            optIn("kotlinx.cinterop.ExperimentalForeignApi")
+        }
+    }
+
     val platformTarget = when {
         HostManager.hostIsMac -> macosX64("platform")
         HostManager.hostIsMingw -> mingwX64("platform")
