@@ -26,7 +26,10 @@ class BirDynamicOperatorExpressionImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -37,7 +40,10 @@ class BirDynamicOperatorExpressionImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -48,7 +54,10 @@ class BirDynamicOperatorExpressionImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -59,7 +68,10 @@ class BirDynamicOperatorExpressionImpl(
     private var _operator: IrDynamicOperator = operator
 
     override var operator: IrDynamicOperator
-        get() = _operator
+        get() {
+            recordPropertyRead()
+            return _operator
+        }
         set(value) {
             if (_operator != value) {
                 _operator = value
@@ -70,7 +82,10 @@ class BirDynamicOperatorExpressionImpl(
     private var _receiver: BirExpression = receiver
 
     override var receiver: BirExpression
-        get() = _receiver
+        get() {
+            recordPropertyRead()
+            return _receiver
+        }
         set(value) {
             if (_receiver != value) {
                 replaceChild(_receiver, value)
@@ -79,7 +94,7 @@ class BirDynamicOperatorExpressionImpl(
             }
         }
 
-    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 0)
+    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1)
     init {
         initChild(_receiver)
     }
@@ -92,7 +107,7 @@ class BirDynamicOperatorExpressionImpl(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.arguments
+        1 -> this.arguments
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

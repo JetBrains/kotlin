@@ -23,7 +23,10 @@ class BirGetObjectValueImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -34,7 +37,10 @@ class BirGetObjectValueImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -45,7 +51,10 @@ class BirGetObjectValueImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -56,7 +65,10 @@ class BirGetObjectValueImpl(
     private var _symbol: BirClassSymbol = symbol
 
     override var symbol: BirClassSymbol
-        get() = _symbol
+        get() {
+            recordPropertyRead()
+            return _symbol
+        }
         set(value) {
             if (_symbol != value) {
                 _symbol = value

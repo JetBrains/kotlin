@@ -23,7 +23,7 @@ abstract class BirProperty : BirOverridableDeclaration<BirPropertySymbol>(), Bir
         BirPossiblyExternalDeclaration, BirMetadataSourceOwner, BirAttributeContainer,
         BirMemberWithContainerSource, BirPropertySymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: PropertyDescriptor
+    abstract override val descriptor: PropertyDescriptor?
 
     abstract var isVar: Boolean
 

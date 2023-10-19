@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeAliasDescriptor,
+    override val descriptor: TypeAliasDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -40,7 +40,10 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -51,7 +54,10 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -62,7 +68,10 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -73,7 +82,10 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -84,7 +96,10 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _visibility: DescriptorVisibility = visibility
 
     override var visibility: DescriptorVisibility
-        get() = _visibility
+        get() {
+            recordPropertyRead()
+            return _visibility
+        }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
@@ -93,12 +108,15 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 0)
+            BirChildElementList(this, 1)
 
     private var _isActual: Boolean = isActual
 
     override var isActual: Boolean
-        get() = _isActual
+        get() {
+            recordPropertyRead()
+            return _isActual
+        }
         set(value) {
             if (_isActual != value) {
                 _isActual = value
@@ -109,7 +127,10 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _expandedType: BirType = expandedType
 
     override var expandedType: BirType
-        get() = _expandedType
+        get() {
+            recordPropertyRead()
+            return _expandedType
+        }
         set(value) {
             if (_expandedType != value) {
                 _expandedType = value
@@ -124,7 +145,7 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.typeParameters
+        1 -> this.typeParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

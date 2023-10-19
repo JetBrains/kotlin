@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 abstract class BirAnonymousInitializer : BirElementBase(), BirDeclaration,
         BirAnonymousInitializerSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassDescriptor
+    abstract override val descriptor: ClassDescriptor?
 
     abstract var isStatic: Boolean
 

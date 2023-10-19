@@ -20,7 +20,10 @@ class BirBlockBodyImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -28,7 +31,7 @@ class BirBlockBodyImpl(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 0)
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 1)
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
@@ -37,7 +40,7 @@ class BirBlockBodyImpl(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.statements
+        1 -> this.statements
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

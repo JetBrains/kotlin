@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 abstract class BirPackageFragment : BirElementBase(), BirDeclarationContainer,
         BirSymbolOwner, BirPackageFragmentSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: PackageFragmentDescriptor
+    abstract override val descriptor: PackageFragmentDescriptor?
 
     abstract var packageFqName: FqName
 
