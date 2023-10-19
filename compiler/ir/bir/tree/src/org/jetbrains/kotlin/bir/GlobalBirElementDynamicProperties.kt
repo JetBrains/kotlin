@@ -35,13 +35,3 @@ object GlobalBirElementDynamicProperties {
 
     val CapturedConstructor = BirElementDynamicPropertyKey<BirConstructor, BirConstructor>()
 }
-
-object GlobalBirElementDynamicPropertyTokens {
-    val manager = BirElementDynamicPropertyManager()
-
-    val Metadata = manager.registerToken(GlobalBirElementDynamicProperties.Metadata)
-    val ContainerSource = manager.registerToken(GlobalBirElementDynamicProperties.ContainerSource)
-    val SealedSubclasses = manager.registerToken(GlobalBirElementDynamicProperties.SealedSubclasses)
-    val OriginalBeforeInline = manager.registerToken(GlobalBirElementDynamicProperties.OriginalBeforeInline)
-    val CapturedConstructor = manager.registerToken(GlobalBirElementDynamicProperties.CapturedConstructor)
-}

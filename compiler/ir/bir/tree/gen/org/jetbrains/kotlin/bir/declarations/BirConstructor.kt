@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  */
 abstract class BirConstructor : BirElementBase(), BirFunction, BirConstructorSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassConstructorDescriptor
+    abstract override val descriptor: ClassConstructorDescriptor?
 
     abstract var isPrimary: Boolean
 

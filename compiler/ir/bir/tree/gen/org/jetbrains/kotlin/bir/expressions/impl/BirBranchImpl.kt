@@ -21,7 +21,10 @@ class BirBranchImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -32,7 +35,10 @@ class BirBranchImpl(
     private var _condition: BirExpression = condition
 
     override var condition: BirExpression
-        get() = _condition
+        get() {
+            recordPropertyRead()
+            return _condition
+        }
         set(value) {
             if (_condition != value) {
                 replaceChild(_condition, value)
@@ -44,7 +50,10 @@ class BirBranchImpl(
     private var _result: BirExpression = result
 
     override var result: BirExpression
-        get() = _result
+        get() {
+            recordPropertyRead()
+            return _result
+        }
         set(value) {
             if (_result != value) {
                 replaceChild(_result, value)

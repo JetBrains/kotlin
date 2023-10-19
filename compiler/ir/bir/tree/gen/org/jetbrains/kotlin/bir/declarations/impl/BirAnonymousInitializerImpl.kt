@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor,
+    override val descriptor: ClassDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -34,7 +34,10 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -45,7 +48,10 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -56,7 +62,10 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -67,7 +76,10 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isStatic: Boolean = isStatic
 
     override var isStatic: Boolean
-        get() = _isStatic
+        get() {
+            recordPropertyRead()
+            return _isStatic
+        }
         set(value) {
             if (_isStatic != value) {
                 _isStatic = value
@@ -78,7 +90,10 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _body: BirBlockBody = body
 
     override var body: BirBlockBody
-        get() = _body
+        get() {
+            recordPropertyRead()
+            return _body
+        }
         set(value) {
             if (_body != value) {
                 replaceChild(_body, value)

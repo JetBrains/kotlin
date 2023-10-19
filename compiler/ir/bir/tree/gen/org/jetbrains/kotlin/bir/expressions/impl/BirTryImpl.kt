@@ -26,7 +26,10 @@ class BirTryImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -37,7 +40,10 @@ class BirTryImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -48,7 +54,10 @@ class BirTryImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -59,7 +68,10 @@ class BirTryImpl(
     private var _tryResult: BirExpression = tryResult
 
     override var tryResult: BirExpression
-        get() = _tryResult
+        get() {
+            recordPropertyRead()
+            return _tryResult
+        }
         set(value) {
             if (_tryResult != value) {
                 replaceChild(_tryResult, value)
@@ -68,12 +80,15 @@ class BirTryImpl(
             }
         }
 
-    override val catches: BirChildElementList<BirCatch> = BirChildElementList(this, 0)
+    override val catches: BirChildElementList<BirCatch> = BirChildElementList(this, 1)
 
     private var _finallyExpression: BirExpression? = finallyExpression
 
     override var finallyExpression: BirExpression?
-        get() = _finallyExpression
+        get() {
+            recordPropertyRead()
+            return _finallyExpression
+        }
         set(value) {
             if (_finallyExpression != value) {
                 replaceChild(_finallyExpression, value)
@@ -95,7 +110,7 @@ class BirTryImpl(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.catches
+        1 -> this.catches
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

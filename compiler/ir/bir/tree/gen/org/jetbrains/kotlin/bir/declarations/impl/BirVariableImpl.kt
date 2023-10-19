@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: VariableDescriptor,
+    override val descriptor: VariableDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -41,7 +41,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -52,7 +55,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -63,7 +69,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -74,7 +83,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -85,7 +97,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -96,7 +111,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isVar: Boolean = isVar
 
     override var isVar: Boolean
-        get() = _isVar
+        get() {
+            recordPropertyRead()
+            return _isVar
+        }
         set(value) {
             if (_isVar != value) {
                 _isVar = value
@@ -107,7 +125,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isConst: Boolean = isConst
 
     override var isConst: Boolean
-        get() = _isConst
+        get() {
+            recordPropertyRead()
+            return _isConst
+        }
         set(value) {
             if (_isConst != value) {
                 _isConst = value
@@ -118,7 +139,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isLateinit: Boolean = isLateinit
 
     override var isLateinit: Boolean
-        get() = _isLateinit
+        get() {
+            recordPropertyRead()
+            return _isLateinit
+        }
         set(value) {
             if (_isLateinit != value) {
                 _isLateinit = value
@@ -129,7 +153,10 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _initializer: BirExpression? = initializer
 
     override var initializer: BirExpression?
-        get() = _initializer
+        get() {
+            recordPropertyRead()
+            return _initializer
+        }
         set(value) {
             if (_initializer != value) {
                 replaceChild(_initializer, value)

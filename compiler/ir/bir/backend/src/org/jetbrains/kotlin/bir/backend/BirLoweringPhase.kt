@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.bir.backend/*
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementIndexMatcher
-import org.jetbrains.kotlin.bir.BirElementsIndexKey
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 
 /*
@@ -22,16 +20,16 @@ context(BirBackendContext)
 abstract class BirLoweringPhase {
     abstract operator fun invoke(module: BirModuleFragment)
 
-    protected inline fun <reified E : BirElement> registerElementsWithFeatureCacheKey(
+    protected inline fun <reified E : BirElement> registerIndexKey(
         includeOtherModules: Boolean,
         crossinline condition: (E) -> Boolean,
     ): BirElementsIndexKey<E> =
-        registerElementsWithFeatureCacheKey<E>(includeOtherModules, { element -> condition(element as E) }, E::class.java)
+        registerIndexKey<E>(includeOtherModules, { element -> condition(element as E) }, E::class.java)
 
-    protected inline fun <reified E : BirElement> registerElementsWithFeatureCacheKey(includeOtherModules: Boolean): BirElementsIndexKey<E> =
-        registerElementsWithFeatureCacheKey<E>(includeOtherModules) { true }
+    protected inline fun <reified E : BirElement> registerIndexKey(includeOtherModules: Boolean): BirElementsIndexKey<E> =
+        registerIndexKey<E>(includeOtherModules) { true }
 
-    protected fun <E : BirElement> registerElementsWithFeatureCacheKey(
+    protected fun <E : BirElement> registerIndexKey(
         includeOtherModules: Boolean,
         condition: BirElementIndexMatcher,
         elementClass: Class<*>,
@@ -39,5 +37,10 @@ abstract class BirLoweringPhase {
         val key = BirElementsIndexKey<E>(condition, elementClass, includeOtherModules)
         compiledBir.registerElementIndexingKey(key)
         return key
+    }
+
+
+    protected fun <E : BirElement, T> acquireProperty(property: BirElementDynamicPropertyKey<E, T>): BirElementDynamicPropertyToken<E, T> {
+        return dynamicPropertyManager.acquireProperty(property)
     }
 }

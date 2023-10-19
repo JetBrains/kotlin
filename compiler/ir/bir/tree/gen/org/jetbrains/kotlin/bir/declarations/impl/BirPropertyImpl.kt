@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: PropertyDescriptor,
+    override val descriptor: PropertyDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -52,7 +52,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -63,7 +66,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -74,7 +80,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -85,7 +94,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -96,7 +108,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isExternal: Boolean = isExternal
 
     override var isExternal: Boolean
-        get() = _isExternal
+        get() {
+            recordPropertyRead()
+            return _isExternal
+        }
         set(value) {
             if (_isExternal != value) {
                 _isExternal = value
@@ -107,7 +122,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _visibility: DescriptorVisibility = visibility
 
     override var visibility: DescriptorVisibility
-        get() = _visibility
+        get() {
+            recordPropertyRead()
+            return _visibility
+        }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
@@ -118,7 +136,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _modality: Modality = modality
 
     override var modality: Modality
-        get() = _modality
+        get() {
+            recordPropertyRead()
+            return _modality
+        }
         set(value) {
             if (_modality != value) {
                 _modality = value
@@ -129,7 +150,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isFakeOverride: Boolean = isFakeOverride
 
     override var isFakeOverride: Boolean
-        get() = _isFakeOverride
+        get() {
+            recordPropertyRead()
+            return _isFakeOverride
+        }
         set(value) {
             if (_isFakeOverride != value) {
                 _isFakeOverride = value
@@ -140,7 +164,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -151,7 +178,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isVar: Boolean = isVar
 
     override var isVar: Boolean
-        get() = _isVar
+        get() {
+            recordPropertyRead()
+            return _isVar
+        }
         set(value) {
             if (_isVar != value) {
                 _isVar = value
@@ -162,7 +192,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isConst: Boolean = isConst
 
     override var isConst: Boolean
-        get() = _isConst
+        get() {
+            recordPropertyRead()
+            return _isConst
+        }
         set(value) {
             if (_isConst != value) {
                 _isConst = value
@@ -173,7 +206,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isLateinit: Boolean = isLateinit
 
     override var isLateinit: Boolean
-        get() = _isLateinit
+        get() {
+            recordPropertyRead()
+            return _isLateinit
+        }
         set(value) {
             if (_isLateinit != value) {
                 _isLateinit = value
@@ -184,7 +220,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isDelegated: Boolean = isDelegated
 
     override var isDelegated: Boolean
-        get() = _isDelegated
+        get() {
+            recordPropertyRead()
+            return _isDelegated
+        }
         set(value) {
             if (_isDelegated != value) {
                 _isDelegated = value
@@ -195,7 +234,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isExpect: Boolean = isExpect
 
     override var isExpect: Boolean
-        get() = _isExpect
+        get() {
+            recordPropertyRead()
+            return _isExpect
+        }
         set(value) {
             if (_isExpect != value) {
                 _isExpect = value
@@ -206,7 +248,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _backingField: BirField? = backingField
 
     override var backingField: BirField?
-        get() = _backingField
+        get() {
+            recordPropertyRead()
+            return _backingField
+        }
         set(value) {
             if (_backingField != value) {
                 replaceChild(_backingField, value)
@@ -218,7 +263,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _getter: BirSimpleFunction? = getter
 
     override var getter: BirSimpleFunction?
-        get() = _getter
+        get() {
+            recordPropertyRead()
+            return _getter
+        }
         set(value) {
             if (_getter != value) {
                 replaceChild(_getter, value)
@@ -230,7 +278,10 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _setter: BirSimpleFunction? = setter
 
     override var setter: BirSimpleFunction?
-        get() = _setter
+        get() {
+            recordPropertyRead()
+            return _setter
+        }
         set(value) {
             if (_setter != value) {
                 replaceChild(_setter, value)

@@ -27,7 +27,7 @@ interface BirFunction : BirDeclaration, BirPossiblyExternalDeclaration,
         BirDeclarationParent, BirReturnTarget, BirMemberWithContainerSource, BirMetadataSourceOwner,
         BirFunctionSymbol {
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
+    override val descriptor: FunctionDescriptor?
 
     var isInline: Boolean
 

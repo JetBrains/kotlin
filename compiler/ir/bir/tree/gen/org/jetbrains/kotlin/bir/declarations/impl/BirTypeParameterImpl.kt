@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.Variance
 class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeParameterDescriptor,
+    override val descriptor: TypeParameterDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -39,7 +39,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -50,7 +53,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -61,7 +67,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -72,7 +81,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -83,7 +95,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _variance: Variance = variance
 
     override var variance: Variance
-        get() = _variance
+        get() {
+            recordPropertyRead()
+            return _variance
+        }
         set(value) {
             if (_variance != value) {
                 _variance = value
@@ -94,7 +109,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _index: Int = index
 
     override var index: Int
-        get() = _index
+        get() {
+            recordPropertyRead()
+            return _index
+        }
         set(value) {
             if (_index != value) {
                 _index = value
@@ -105,7 +123,10 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isReified: Boolean = isReified
 
     override var isReified: Boolean
-        get() = _isReified
+        get() {
+            recordPropertyRead()
+            return _isReified
+        }
         set(value) {
             if (_isReified != value) {
                 _isReified = value
