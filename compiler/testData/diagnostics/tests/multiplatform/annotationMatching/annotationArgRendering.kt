@@ -16,7 +16,7 @@ expect fun onType(): @Ann2("") Any?
 // FILE: jvm.kt
 actual annotation class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("annotation class Ann : Annotation defined in root package in file common.kt; annotation class Ann : Annotation defined in root package in file jvm.kt; Annotation `@Target(allowedTargets = {AnnotationTarget.FUNCTION, AnnotationTarget.CLASS})` is missing on actual declaration")!>Ann<!>
 
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun stringConcat(): Unit defined in root package in file common.kt; fun stringConcat(): Unit defined in root package in file jvm.kt; Annotation `@Ann2(s = "12")` is missing on actual declaration")!>stringConcat<!>() {}
+actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("fun stringConcat(): Unit defined in root package in file common.kt; fun stringConcat(): Unit defined in root package in file jvm.kt; Annotation `@Ann2(s = \"12\")` is missing on actual declaration")!>stringConcat<!>() {}
 
 // Not reported in K1, because supported starting from K2
 actual fun onType(): Any? = null
