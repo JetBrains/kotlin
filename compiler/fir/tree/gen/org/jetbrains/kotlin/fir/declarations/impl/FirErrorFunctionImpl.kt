@@ -58,7 +58,7 @@ internal class FirErrorFunctionImpl(
     override val typeParameters: List<FirTypeParameterRef>
         get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
-    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic)
+    override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, MutableOrEmptyList.empty(), null, null, diagnostic)
     override val receiverParameter: FirReceiverParameter?
         get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null

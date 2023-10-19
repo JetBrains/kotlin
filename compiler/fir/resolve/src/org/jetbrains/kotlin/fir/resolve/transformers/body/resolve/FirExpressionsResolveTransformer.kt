@@ -293,6 +293,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 val actualSuperTypeRef = actualSuperType?.toFirResolvedTypeRef(superTypeRef.source, superTypeRef) ?: buildErrorTypeRef {
                     source = superTypeRef.source
                     diagnostic = ConeSimpleDiagnostic("Not a super type", DiagnosticKind.NotASupertype)
+                    annotations = superTypeRef.annotations.toMutableList()
                 }
                 superReferenceContainer.resultType = actualSuperTypeRef.type
                 superReference.replaceSuperTypeRef(actualSuperTypeRef)

@@ -365,6 +365,7 @@ open class FirTypeResolveTransformer(
                             val errorTypeRef = buildErrorTypeRef {
                                 source = originalTypeRef.source
                                 type = coneTypeFromCompilerRequiredPhase
+                                annotations += originalTypeRef.annotations
                                 delegatedTypeRef = originalTypeRef.delegatedTypeRef
                                 diagnostic = ConeAmbiguouslyResolvedAnnotationFromPlugin(
                                     coneTypeFromCompilerRequiredPhase,

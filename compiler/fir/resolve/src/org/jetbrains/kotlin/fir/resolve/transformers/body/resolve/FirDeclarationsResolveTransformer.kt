@@ -1236,12 +1236,14 @@ open class FirDeclarationsResolveTransformer(
         return when (this) {
             is FirImplicitTypeRef -> buildErrorTypeRef {
                 diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
+                annotations.addAll(this@toExpectedTypeRef.annotations)
             }
             is FirErrorTypeRef -> buildErrorTypeRef {
                 diagnostic = this@toExpectedTypeRef.diagnostic
                 this@toExpectedTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)?.let {
                     source = it
                 }
+                annotations.addAll(this@toExpectedTypeRef.annotations)
             }
             else -> {
                 buildResolvedTypeRef {

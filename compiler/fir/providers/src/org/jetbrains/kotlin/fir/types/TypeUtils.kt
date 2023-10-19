@@ -412,6 +412,7 @@ fun FirTypeRef.withReplacedConeType(
         buildErrorTypeRef {
             source = newSource
             type = newType
+            annotations += this@withReplacedConeType.annotations
             diagnostic = newType.diagnostic
         }
     } else {

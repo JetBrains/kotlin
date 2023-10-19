@@ -120,6 +120,7 @@ class FirSpecificTypeResolverTransformer(
                 if (resolvedType != null) {
                     type = resolvedType
                 }
+                annotations += functionTypeRef.annotations
                 this.diagnostic = diagnostic ?: (resolvedType as? ConeErrorType)?.diagnostic
                         ?: ConeSimpleDiagnostic("Unresolved function type: ${functionTypeRef.render()}")
             }
@@ -188,6 +189,7 @@ class FirSpecificTypeResolverTransformer(
 
             delegatedTypeRef = typeRef
             type = resolvedType
+            annotations += typeRef.annotations
 
             val partiallyResolvedTypeRef = tryCalculatingPartiallyResolvedTypeRef(typeRef, scopeClassDeclaration)
             this.partiallyResolvedTypeRef = partiallyResolvedTypeRef

@@ -307,7 +307,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 "getter", "setter",
                 withGetter = true
             )
-            default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic)")
+            default("returnTypeRef", "FirErrorTypeRefImpl(null, MutableOrEmptyList.empty(), null, null, diagnostic)")
             useTypes(errorTypeRefImplType)
         }
 
@@ -536,7 +536,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorFunction) {
             defaultNull("receiverParameter", "body", withGetter = true)
-            default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic)")
+            default("returnTypeRef", "FirErrorTypeRefImpl(null, MutableOrEmptyList.empty(), null, null, diagnostic)")
             useTypes(errorTypeRefImplType)
         }
 

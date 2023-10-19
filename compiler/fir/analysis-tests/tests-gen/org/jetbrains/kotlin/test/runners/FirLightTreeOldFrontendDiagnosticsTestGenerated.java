@@ -1555,6 +1555,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("AnnotatedErrorTypeRef.kt")
+            public void testAnnotatedErrorTypeRef() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/AnnotatedErrorTypeRef.kt");
+            }
+
+            @Test
             @TestMetadata("annotatedExpressionInsideAnnotation.kt")
             public void testAnnotatedExpressionInsideAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/annotatedExpressionInsideAnnotation.kt");

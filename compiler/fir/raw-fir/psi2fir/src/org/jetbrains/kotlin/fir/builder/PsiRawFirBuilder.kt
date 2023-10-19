@@ -282,6 +282,7 @@ open class PsiRawFirBuilder(
                 diagnostic = ConeSyntaxDiagnostic(
                     if (this@toFirOrErrorType == null) "Incomplete code" else "Conversion failed"
                 )
+                this@toFirOrErrorType?.extractAnnotationsTo(this)
             }
 
         // Here we accept lambda as receiver to prevent expression calculation in stub mode

@@ -20,37 +20,37 @@ FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] a: <ERROR TYPE REF: Symbol not found for Foo>): <ERROR TYPE REF: Symbol not found for Foo> { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo> { LAZY_BLOCK }
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: <ERROR TYPE REF: Symbol not found for Foo>): <ERROR TYPE REF: Symbol not found for Foo> { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo> { LAZY_BLOCK }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: <ERROR TYPE REF: Symbol not found for Foo>): <ERROR TYPE REF: Symbol not found for Foo> { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo> { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] a: <ERROR TYPE REF: Symbol not found for Foo>): <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo> {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: <ERROR TYPE REF: Symbol not found for Foo>): <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Unresolved](Foo#) <ERROR TYPE REF: Symbol not found for Foo> {
     }
 
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: <ERROR TYPE REF: Symbol not found for Foo>): <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo([ResolvedTo(ANNOTATION_ARGUMENTS)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {
     }
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: <ERROR TYPE REF: Symbol not found for Foo>): <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {
     }
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] unresolvedAnnotationOnFunctionType.kt
-    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: <ERROR TYPE REF: Symbol not found for Foo>): <ERROR TYPE REF: Symbol not found for Foo> {
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] a: @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo>): @<ERROR TYPE REF: Symbol not found for Anno>[Types]() <ERROR TYPE REF: Symbol not found for Foo> {
     }

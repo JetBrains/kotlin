@@ -49,6 +49,7 @@ fun FirTypeRef.resolvedTypeFromPrototype(
             source = this@resolvedTypeFromPrototype.source ?: fallbackSource
             this.type = type
             diagnostic = type.diagnostic
+            annotations += this@resolvedTypeFromPrototype.annotations
         }
     } else {
         buildResolvedTypeRef {
