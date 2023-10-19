@@ -31,10 +31,10 @@ prior to the build target such as:
 To enable metrics for a gradle module, include:
 
 ```
-compileKotlin {
-    freeCompilerArgs += listOf(
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+    compilerOptions.freeCompilerArgs.addAll(
         "-P",
-        "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=<directory>"
+        "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=<directory>",
     )
 }
 ```
@@ -44,10 +44,10 @@ where `<directory>` is replaced with the location you wish the report written.
 To enabled reports for a gradle module, include:
 
 ```
-compileKotlin {
-    freeCompilerArgs += listOf(
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
+    compilerOptions.freeCompilerArgs.addAll(
         "-P",
-        "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=<directory>"
+        "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=<directory>",
     )
 }
 ```
