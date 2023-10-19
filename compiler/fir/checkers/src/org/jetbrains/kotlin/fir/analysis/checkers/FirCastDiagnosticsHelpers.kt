@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.platformClassMapper
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -254,46 +252,7 @@ fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
     return this is ConeTypeParameterType && !this.lookupTag.typeParameterSymbol.isReified
 }
 
-@Suppress("UNUSED_PARAMETER")
-fun shouldCheckForExactType(expression: FirTypeOperatorCall, context: CheckerContext): Boolean {
-    return when (expression.operation) {
-        FirOperation.IS, FirOperation.NOT_IS -> false
-        // TODO, KT-59820: differentiate if this expression defines the enclosing thing's type
-        //   e.g.,
-        //   val c1 get() = 1 as Number
-        //   val c2: Number get() = 1 <!USELESS_CAST!>as Number<!>
-        FirOperation.AS, FirOperation.SAFE_AS -> true
-        else -> throw AssertionError("Should not be here: ${expression.operation}")
-    }
-}
-
-fun isRefinementUseless(
-    context: CheckerContext,
-    candidateType: ConeSimpleKotlinType,
-    targetType: ConeKotlinType,
-    shouldCheckForExactType: Boolean,
-    arg: FirExpression,
-): Boolean {
-    return if (shouldCheckForExactType) {
-        if (arg is FirFunctionCall) {
-            val functionSymbol = arg.toResolvedCallableSymbol() as? FirFunctionSymbol<*>
-            if (functionSymbol != null && functionSymbol.isFunctionForExpectTypeFromCastFeature()) return false
-        }
-
-        isExactTypeCast(context, candidateType, targetType)
-    } else {
-        isUpcast(context, candidateType, targetType)
-    }
-}
-
-private fun isExactTypeCast(context: CheckerContext, candidateType: ConeSimpleKotlinType, targetType: ConeKotlinType): Boolean {
-    if (!AbstractTypeChecker.equalTypes(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false))
-        return false
-    // See comments at [isUpcast] why we need to check the existence of @ExtensionFunctionType
-    return candidateType.isExtensionFunctionType == targetType.isExtensionFunctionType
-}
-
-private fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean {
+fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean {
     if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false))
         return false
 

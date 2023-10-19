@@ -15,7 +15,7 @@ fun test(x: Int?) {
     foo(x as? Number)
 
     if (x is Int) {
-        val b = x as? Int
+        val b = x <!USELESS_CAST!>as? Int<!>
     }
 }
 

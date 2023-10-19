@@ -33,7 +33,7 @@ fun test() {
     if (x != null) {
         takeNotNull(dependOn(x) <!USELESS_ELVIS!>?: ""<!>)
         takeNotNull(dependOn(dependOn(x)) <!USELESS_ELVIS!>?: ""<!>)
-        takeNotNull(dependOn(dependOn(x) as? String) ?: "")
+        takeNotNull(dependOn(dependOn(x) <!USELESS_CAST!>as? String<!>) ?: "")
     }
 
     takeNotNull(bar()!!)

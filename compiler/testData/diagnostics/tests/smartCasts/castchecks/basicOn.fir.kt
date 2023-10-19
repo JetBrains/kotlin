@@ -13,7 +13,7 @@ fun g(a: SomeClass?) {
         // 'a' can be cast to SomeSubClass
         a.hashCode()
         a.foo
-        (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
+        (a <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
         (a <!USELESS_CAST!>as SomeSubClass<!>).foo
     }
     val b = (a as? SomeSubClass)?.foo
@@ -21,7 +21,7 @@ fun g(a: SomeClass?) {
         // 'a' can be cast to SomeSubClass
         a.hashCode()
         a.foo
-        (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
+        (a <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
         (a <!USELESS_CAST!>as SomeSubClass<!>).foo
     }
     val c = a as? SomeSubClass
@@ -29,7 +29,7 @@ fun g(a: SomeClass?) {
         // 'a' and 'c' can be cast to SomeSubClass
         a.hashCode()
         a.foo
-        (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
+        (a <!USELESS_CAST!>as? SomeSubClass<!>)<!UNSAFE_CALL!>.<!>foo
         c.hashCode()
         c.foo
     }
