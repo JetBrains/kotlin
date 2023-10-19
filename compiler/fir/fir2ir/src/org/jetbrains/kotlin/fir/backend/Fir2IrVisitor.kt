@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
+import org.jetbrains.kotlin.ir.util.coerceToUnit
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -1295,7 +1296,10 @@ class Fir2IrVisitor(
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
                 body = runUnless(doWhileLoop.block is FirEmptyExpressionBlock) {
-                    doWhileLoop.block.convertToIrExpressionOrBlock(origin)
+                    Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(
+                        doWhileLoop.block.convertToIrExpressionOrBlock(origin),
+                        irBuiltIns
+                    )
                 }
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
@@ -1360,7 +1364,10 @@ class Fir2IrVisitor(
                             )
                         }
                     } else {
-                        firLoopBody.convertToIrExpressionOrBlock(origin)
+                        Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(
+                            firLoopBody.convertToIrExpressionOrBlock(origin),
+                            irBuiltIns
+                        )
                     }
                 }
                 loopMap.remove(whileLoop)

@@ -10,7 +10,7 @@ fun box(): String {
       val tmp_0: Int = i
       i = tmp_0.inc()
       tmp_0
-    }
+    } /*~> Unit */
   }
   return "OK"
 }

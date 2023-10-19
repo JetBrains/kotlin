@@ -545,15 +545,16 @@ FILE fqName:<root> fileName:/ArrayMap.kt
                   BLOCK type=kotlin.Unit origin=null
                     DO_WHILE label=null origin=DO_WHILE_LOOP
                       body: COMPOSITE type=kotlin.Unit origin=null
-                        BLOCK type=kotlin.Int origin=POSTFIX_INCR
-                          VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
-                            CALL 'private final fun <get-index> (): kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Int origin=GET_PROPERTY
+                        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                          BLOCK type=kotlin.Int origin=POSTFIX_INCR
+                            VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.Int [val]
+                              CALL 'private final fun <get-index> (): kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Int origin=GET_PROPERTY
+                                $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
+                            CALL 'private final fun <set-index> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=POSTFIX_INCR
                               $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
-                          CALL 'private final fun <set-index> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.ArrayMapImpl.iterator.<no name provided>' type=kotlin.Unit origin=POSTFIX_INCR
-                            $this: GET_VAR '<this>: <root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=<root>.ArrayMapImpl.iterator.<no name provided><T of <root>.ArrayMapImpl> origin=null
-                            <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                              $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
-                          GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
+                              <set-?>: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                                $this: GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
+                            GET_VAR 'val tmp_1: kotlin.Int declared in <root>.ArrayMapImpl.iterator.<no name provided>.computeNext' type=kotlin.Int origin=null
                       condition: WHEN type=kotlin.Boolean origin=ANDAND
                         BRANCH
                           if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT

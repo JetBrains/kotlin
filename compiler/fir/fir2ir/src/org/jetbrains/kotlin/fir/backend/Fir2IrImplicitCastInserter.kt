@@ -157,7 +157,7 @@ class Fir2IrImplicitCastInserter(
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: IrElement): IrElement {
         val loop = data as IrDoWhileLoop
         (loop.body as? IrContainerExpression)?.let {
-            loop.body = it.insertImplicitCasts()
+            loop.body = it.insertImplicitCasts(coerceLastExpressionToUnit = true)
         }
         return data
     }
@@ -165,7 +165,7 @@ class Fir2IrImplicitCastInserter(
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: IrElement): IrElement {
         val loop = data as IrWhileLoop
         (loop.body as? IrContainerExpression)?.let {
-            loop.body = it.insertImplicitCasts()
+            loop.body = it.insertImplicitCasts(coerceLastExpressionToUnit = true)
         }
         return data
     }
@@ -339,7 +339,7 @@ class Fir2IrImplicitCastInserter(
             )
         }
 
-        private fun coerceToUnitIfNeeded(original: IrExpression, irBuiltIns: IrBuiltIns): IrExpression {
+        internal fun coerceToUnitIfNeeded(original: IrExpression, irBuiltIns: IrBuiltIns): IrExpression {
             val valueType = original.type
             return if (valueType.isUnit() || valueType.isNothing())
                 original

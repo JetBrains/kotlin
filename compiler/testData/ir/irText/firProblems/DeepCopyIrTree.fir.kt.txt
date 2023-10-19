@@ -64,7 +64,7 @@ class DeepCopyIrTreeWithSymbols {
               return <this>.<get-typeRemapper>().remapType(type = it)
             }
 )
-          }
+          } /*~> Unit */
         }
       }
     }

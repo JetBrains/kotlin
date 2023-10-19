@@ -235,7 +235,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
               val tmp_1: Int = <this>.<get-index>()
               <this>.<set-index>(<set-?> = tmp_1.inc())
               tmp_1
-            }
+            } /*~> Unit */
             // }            while (when {
               less(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> EQEQ(arg0 = <this>.<get-data>().get(index = <this>.<get-index>()), arg1 = null)
               else -> false

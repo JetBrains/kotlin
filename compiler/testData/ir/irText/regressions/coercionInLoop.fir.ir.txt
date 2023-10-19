@@ -26,12 +26,13 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
                 STRING_CONCATENATION type=kotlin.String
                   CONST String type=kotlin.String value="Fail "
                   GET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
-          BLOCK type=kotlin.Int origin=POSTFIX_INCR
-            VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
-              GET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
-            SET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
-              CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
-            GET_VAR 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            BLOCK type=kotlin.Int origin=POSTFIX_INCR
+              VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
+                GET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+              SET_VAR 'var i: kotlin.Int declared in <root>.box' type=kotlin.Unit origin=POSTFIX_INCR
+                CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+                  $this: GET_VAR 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
+              GET_VAR 'val tmp_0: kotlin.Int declared in <root>.box' type=kotlin.Int origin=null
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="OK"
