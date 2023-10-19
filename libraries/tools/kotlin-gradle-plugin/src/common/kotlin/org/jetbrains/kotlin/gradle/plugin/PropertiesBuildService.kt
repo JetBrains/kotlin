@@ -65,22 +65,24 @@ private class PropertiesManager(private val project: Project, private val localP
     fun property(propertyName: String): Provider<String> {
         // Note: The same property may be read many times (KT-62496). Therefore,
         //   - Use a map to create only one Provider per property.
-        //   - Use MemoizedCallable to resolve the Provider only once
+        //   - Use MemoizedCallable to resolve the Provider only once.
         return properties.computeIfAbsent(propertyName) {
-            project.provider { computeValue(propertyName) }
-        }
-    }
-
-    private fun computeValue(propertyName: String): String? {
-        return project.extraProperties.getOrNull(propertyName) as String? // We don't memoize extraProperties as they can still change
-            ?: MemoizedCallable {
+            // We need to create the MemoizedCallable instance up front so that each time the Provider is resolved, it will reuse the same
+            // MemoizedCallable.
+            val valueFromGradleAndLocalProperties = MemoizedCallable {
                 project.providers.gradleProperty(propertyName).usedAtConfigurationTime(configurationTimePropertiesAccessor).orNull
                     ?: localProperties[propertyName]
-            }.call()
+            }
+            project.provider {
+                // FIXME(KT-62684): We currently don't memoize extraProperties as they may still change, we'll fix this later.
+                project.extraProperties.getOrNull(propertyName) as String?
+                    ?: valueFromGradleAndLocalProperties.call()
+            }
+        }
     }
 }
 
 private class MemoizedCallable<T>(valueResolver: Callable<T>) : Callable<T> {
-    private val value by lazy { valueResolver.call() }
-    override fun call(): T = value
+    private val value: T? by lazy { valueResolver.call() }
+    override fun call(): T? = value
 }
