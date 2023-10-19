@@ -27759,6 +27759,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                     }
 
                     @Test
+                    @TestMetadata("defaultArgumentInDelegatedFunction.kt")
+                    public void testDefaultArgumentInDelegatedFunction() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/defaultArgumentInDelegatedFunction.kt");
+                    }
+
+                    @Test
                     @TestMetadata("delegatedExpectedInterface.kt")
                     public void testDelegatedExpectedInterface() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/delegatedExpectedInterface.kt");
