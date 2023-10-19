@@ -94,9 +94,10 @@ class KotlinCompilationNpmResolver(
             if (compilation.isMain()) {
                 project.tasks
                     .withType(Zip::class.java)
-                    .named(npmProject.target.artifactsTaskName)
-                    .configure {
-                        it.dependsOn(packageJsonTask)
+                    .configureEach {
+                        if (it.name == npmProject.target.artifactsTaskName) {
+                            it.dependsOn(packageJsonTask)
+                        }
                     }
 
                 val publicPackageJsonConfiguration = createPublicPackageJsonConfiguration()

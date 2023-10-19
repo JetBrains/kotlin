@@ -9,20 +9,15 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.Dependency
-import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
-import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.runKotlinCompilationSideEffects
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
@@ -39,14 +34,12 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     fun configureTarget(
         target: KotlinTargetType,
     ) {
-        target.runKotlinTargetSideEffects()
         target.runKotlinCompilationSideEffects()
-        configureArchivesAndComponent(target)
+        target.runKotlinTargetSideEffects()
         configureBuild(target)
         configurePlatformSpecificModel(target)
     }
 
-    fun configureArchivesAndComponent(target: KotlinTargetType)
     fun configureBuild(target: KotlinTargetType)
     fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
 }
@@ -95,68 +88,7 @@ internal val KotlinTarget.testTaskName: String
 
 abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>, KotlinTargetType : KotlinOnlyTarget<KotlinCompilationType>>(
     createTestCompilation: Boolean,
-) : AbstractKotlinTargetConfigurator<KotlinTargetType>(createTestCompilation) {
-    open val archiveType: String = ArtifactTypeDefinition.JAR_TYPE
-
-    open val archiveTaskType: Class<out Zip>
-        get() = Jar::class.java
-
-    /** The implementations are expected to create a [Zip] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
-    protected open fun createArchiveTasks(target: KotlinTargetType): TaskProvider<out Zip> {
-        return target.project.registerTask(
-            target.artifactsTaskName,
-            archiveTaskType
-        ) {
-            it.description = "Assembles an archive containing the main classes."
-            it.group = BasePlugin.BUILD_GROUP
-            it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
-            it.isPreserveFileTimestamps = false
-            it.isReproducibleFileOrder = true
-
-            target.disambiguationClassifier?.let { classifier ->
-                it.archiveAppendix.set(classifier.toLowerCaseAsciiOnly())
-            }
-        }
-    }
-
-    override fun configureArchivesAndComponent(target: KotlinTargetType) {
-        val project = target.project
-
-        val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-
-        val task = createArchiveTasks(target)
-
-        // Workaround: adding the artifact during configuration seems to interfere with the Java plugin, which results into missing
-        // task dependency 'assemble -> jar' if the Java plugin is applied after this steps
-        project.afterEvaluate {
-            project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, task) { jarArtifact ->
-                jarArtifact.builtBy(task)
-                jarArtifact.type = archiveType
-
-                val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
-                // If the target adds its own artifact to this configuration until this happens, don't add another one:
-                addJarIfNoArtifactsPresent(project, apiElementsConfiguration, jarArtifact)
-
-                if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
-                    val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
-                    val runtimeElementsConfiguration = project.configurations.getByName(target.runtimeElementsConfigurationName)
-                    runtimeConfiguration?.let { addJarIfNoArtifactsPresent(project, runtimeConfiguration, jarArtifact) }
-                    addJarIfNoArtifactsPresent(project, runtimeElementsConfiguration, jarArtifact)
-                }
-            }
-        }
-    }
-
-    private fun addJarIfNoArtifactsPresent(project: Project, configuration: Configuration, jarArtifact: PublishArtifact) {
-        if (configuration.artifacts.isEmpty()) {
-            val publications = configuration.outgoing
-
-            // Configure an implicit variant
-            publications.artifacts.add(jarArtifact)
-            publications.attributes.attribute(project.artifactTypeAttribute, archiveType)
-        }
-    }
-}
+) : AbstractKotlinTargetConfigurator<KotlinTargetType>(createTestCompilation)
 
 internal interface KotlinTargetWithTestsConfigurator<R : KotlinTargetTestRun<*>, T : KotlinTargetWithTests<*, R>>
     : KotlinTargetConfigurator<T> {

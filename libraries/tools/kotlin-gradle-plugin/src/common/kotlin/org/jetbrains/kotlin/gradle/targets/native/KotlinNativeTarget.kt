@@ -36,7 +36,7 @@ import javax.inject.Inject
 
 abstract class KotlinNativeTarget @Inject constructor(
     project: Project,
-    val konanTarget: KonanTarget
+    val konanTarget: KonanTarget,
 ) : KotlinTargetWithBinaries<KotlinNativeCompilation, KotlinNativeBinaryContainer>(
     project,
     KotlinPlatformType.native
@@ -64,44 +64,11 @@ abstract class KotlinNativeTarget @Inject constructor(
                 .intersect(mainCompilation.allKotlinSourceSets)
 
             if (hostSpecificSourceSets.isNotEmpty()) {
-                val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) { metadataJar ->
-                    metadataJar.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCaseAsciiOnly() })
-                    metadataJar.archiveClassifier.set("metadata")
-                    metadataJar.group = BasePlugin.BUILD_GROUP
-                    metadataJar.description = "Assembles Kotlin metadata of target '${name}'."
-
-                    val publishable = this@KotlinNativeTarget.publishable
-                    metadataJar.onlyIf { publishable }
-
-                    launch {
-                        val metadataCompilations = hostSpecificSourceSets.mapNotNull {
-                            project.findMetadataCompilation(it)
-                        }
-
-                        metadataCompilations.forEach { compilation ->
-                            metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
-                                spec.into(compilation.name)
-                            }
-                            metadataJar.dependsOn(compilation.output.classesDirs)
-
-                            if (compilation is KotlinSharedNativeCompilation) {
-                                project.includeCommonizedCInteropMetadata(metadataJar, compilation)
-                            }
-                        }
-                    }
-                }
-                project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
-
-                val metadataConfiguration = project.configurations.getByName(hostSpecificMetadataElementsConfigurationName)
-                project.artifacts.add(metadataConfiguration.name, hostSpecificMetadataJar) { artifact ->
-                    artifact.classifier = "metadata"
-                }
-
                 mutableUsageContexts.add(
                     DefaultKotlinUsageContext(
                         mainCompilation,
                         KotlinUsageContext.MavenScope.COMPILE,
-                        metadataConfiguration.name,
+                        hostSpecificMetadataElementsConfigurationName,
                         includeIntoProjectStructureMetadata = false
                     )
                 )
@@ -196,7 +163,7 @@ internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>):
 private suspend fun <T> getHostSpecificElements(
     fragments: Iterable<T>,
     isNativeShared: suspend (T) -> Boolean,
-    getKonanTargets: suspend (T) -> Set<KonanTarget>
+    getKonanTargets: suspend (T) -> Set<KonanTarget>,
 ): Set<T> = fragments.filterTo(mutableSetOf()) { isNativeShared(it) && isHostSpecificKonanTargetsSet(getKonanTargets(it)) }
 
 internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
@@ -234,7 +201,7 @@ internal suspend fun getHostSpecificMainSharedSourceSets(project: Project): Set<
 
 abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(
     project: Project,
-    konanTarget: KonanTarget
+    konanTarget: KonanTarget,
 ) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, T> {
 
     override lateinit var testRuns: NamedDomainObjectContainer<T>

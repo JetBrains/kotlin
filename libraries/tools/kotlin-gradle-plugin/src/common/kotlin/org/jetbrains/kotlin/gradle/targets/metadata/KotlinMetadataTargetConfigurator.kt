@@ -12,12 +12,9 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.metadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -28,14 +25,10 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspath
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 import org.jetbrains.kotlin.gradle.targets.native.internal.sharedCommonizerTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 
@@ -90,70 +83,13 @@ class KotlinMetadataTargetConfigurator :
                 compileKotlinTaskProvider.configure { it.onlyIf { isCompatibilityMetadataVariantEnabled } }
             }
 
-            val allMetadataJar = target.project.tasks.named<Jar>(ALL_METADATA_JAR_NAME)
-            createMetadataCompilationsForCommonSourceSets(target, allMetadataJar)
-
-            configureProjectStructureMetadataGeneration(target.project, allMetadataJar)
+            createMetadataCompilationsForCommonSourceSets(target)
 
             configureMetadataDependenciesConfigurationsForCommonSourceSets(target)
-
-            target.project.configurations.getByName(target.apiElementsConfigurationName).run {
-                attributes.attribute(USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                attributes.attribute(CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
-                /** Note: to add this artifact here is enough to avoid duplicate artifacts in this configuration: the default artifact
-                 * won't be added (later) if there's already an artifact in the configuration, see
-                 * [KotlinOnlyTargetConfigurator.configureArchivesAndComponent] */
-                target.project.artifacts.add(target.apiElementsConfigurationName, allMetadataJar)
-            }
-
-            if (target.project.isCompatibilityMetadataVariantEnabled) {
-                createCommonMainElementsConfiguration(target)
-            }
         } else {
             /* We had nothing to do: Still mark this job as complete */
             target.metadataCompilationsCreated.complete()
         }
-    }
-
-    override fun createArchiveTasks(target: KotlinMetadataTarget): TaskProvider<out Zip> {
-        if (!target.project.isKotlinGranularMetadataEnabled)
-            return super.createArchiveTasks(target)
-
-        val result = target.project.registerTask<Jar>(target.artifactsTaskName) {
-            it.group = BasePlugin.BUILD_GROUP
-            it.isReproducibleFileOrder = true
-            it.isPreserveFileTimestamps = false
-            /** The content is added to this JAR in [KotlinMetadataTargetConfigurator.configureTarget]. */
-        }
-
-        result.configure { allMetadataJar ->
-            allMetadataJar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
-            allMetadataJar.group = BasePlugin.BUILD_GROUP
-
-            if (target.project.isCompatibilityMetadataVariantEnabled) {
-                allMetadataJar.archiveClassifier.set("all")
-            }
-
-            target.disambiguationClassifier?.let { classifier ->
-                allMetadataJar.archiveAppendix.set(classifier.toLowerCaseAsciiOnly())
-            }
-        }
-
-        if (target.project.isCompatibilityMetadataVariantEnabled) {
-            val legacyJar = target.project.registerTask<Jar>(target.legacyArtifactsTaskName)
-            legacyJar.configure {
-                // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
-                val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
-                it.description = "Assembles an archive containing the Kotlin metadata of the commonMain source set."
-                if (!isCompatibilityMetadataVariantEnabled) {
-                    it.archiveClassifier.set("commonMain")
-                }
-                it.onlyIf { isCompatibilityMetadataVariantEnabled }
-                it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
-            }
-        }
-
-        return result
     }
 
     private fun configureMetadataDependenciesConfigurationsForCommonSourceSets(target: KotlinMetadataTarget) {
@@ -169,7 +105,6 @@ class KotlinMetadataTargetConfigurator :
 
     private fun createMetadataCompilationsForCommonSourceSets(
         target: KotlinMetadataTarget,
-        allMetadataJar: TaskProvider<out Jar>,
     ) = target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
         withRestrictedStages(KotlinPluginLifecycle.Stage.upTo(KotlinPluginLifecycle.Stage.FinaliseCompilations)) {
             // Do this after all targets are configured by the user build script
@@ -179,7 +114,7 @@ class KotlinMetadataTargetConfigurator :
 
             val sourceSetsWithMetadataCompilations: Map<KotlinSourceSet, KotlinCompilation<*>> = publishedCommonSourceSets
                 .associateWith { sourceSet ->
-                    createMetadataCompilation(target, sourceSet, allMetadataJar, sourceSet in hostSpecificSourceSets)
+                    createMetadataCompilation(target, sourceSet, sourceSet in hostSpecificSourceSets)
                 }
                 .onEach { (sourceSet, compilation) ->
                     if (!isMetadataCompilationSupported(sourceSet)) {
@@ -224,16 +159,6 @@ class KotlinMetadataTargetConfigurator :
         return true
     }
 
-    private fun configureProjectStructureMetadataGeneration(project: Project, allMetadataJar: TaskProvider<out Jar>) {
-        val generateMetadata = project.createGenerateProjectStructureMetadataTask()
-
-        allMetadataJar.configure {
-            it.from(generateMetadata.map { it.resultFile }) { spec ->
-                spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME }
-            }
-        }
-    }
-
     private fun exportDependenciesForPublishing(
         compilation: KotlinCompilation<*>,
     ) {
@@ -274,7 +199,6 @@ class KotlinMetadataTargetConfigurator :
     private suspend fun createMetadataCompilation(
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
-        allMetadataJar: TaskProvider<out Jar>,
         isHostSpecific: Boolean,
     ): KotlinCompilation<*> {
         val project = target.project
@@ -300,13 +224,7 @@ class KotlinMetadataTargetConfigurator :
 
             configureMetadataDependenciesForCompilation(this@apply)
 
-            if (!isHostSpecific) {
-                val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
-                allMetadataJar.configure { it.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) } }
-                if (this is KotlinSharedNativeCompilation) {
-                    project.includeCommonizedCInteropMetadata(allMetadataJar, this)
-                }
-            } else {
+            if (isHostSpecific) {
                 if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
                     compileKotlinTaskProvider.configure { it.enabled = false }
@@ -344,36 +262,9 @@ class KotlinMetadataTargetConfigurator :
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
 
 
-    private fun createCommonMainElementsConfiguration(target: KotlinMetadataTarget) {
-        val project = target.project
-        project.configurations.create(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME).apply {
-            isCanBeConsumed = true
-            isCanBeResolved = false
-            usesPlatformOf(target)
 
-            attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
-            attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-
-            val commonMainApiConfiguration = project.configurations.sourceSetDependencyConfigurationByScope(
-                project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME),
-                KotlinDependencyScope.API_SCOPE
-            )
-            extendsFrom(commonMainApiConfiguration)
-
-            project.artifacts.add(name, project.tasks.getByName(target.legacyArtifactsTaskName))
-        }
-    }
 }
 
-internal class NativeSharedCompilationProcessor(
-    private val compilation: KotlinSharedNativeCompilation,
-) : KotlinCompilationProcessor<KotlinNativeCompile>(KotlinCompilationInfo(compilation)) {
-
-    override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
-        KotlinNativeTargetConfigurator.createKlibCompilationTask(compilationInfo, compilation.konanTarget)
-
-    override fun run() = Unit
-}
 
 internal fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
     project.registerTask(lowerCamelCaseName("generateProjectStructureMetadata")) { task ->
