@@ -101,9 +101,9 @@ include(
     ":docs-developer",
 )
 
+includeBuild("dokka-runners/dokkatoo")
+
 val isCiBuild = System.getenv("GITHUB_ACTIONS") != null || System.getenv("TEAMCITY_VERSION") != null
-
-
 
 gradleEnterprise {
     buildScan {
