@@ -42,9 +42,6 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 
@@ -244,9 +241,7 @@ abstract class FirJavaFacade(
         return buildJavaClass {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             javaAnnotations += javaClass.annotations
-            if (javaClass.isDeprecatedInJavaDoc && javaAnnotations.none { it.isJavaDeprecatedAnnotation() }) {
-                javaAnnotations += DeprecatedInJavaDocAnnotation
-            }
+            isDeprecatedInJavaDoc = javaClass.isDeprecatedInJavaDoc
             source = javaClass.toSourceElement()
             this.moduleData = moduleData
             symbol = classSymbol

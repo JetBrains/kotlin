@@ -1891,6 +1891,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("DeprecatedInJavaDoc.kt")
+            public void testDeprecatedInJavaDoc() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/DeprecatedInJavaDoc.kt");
+            }
+
+            @Test
             @TestMetadata("DeprecationOnAny.kt")
             public void testDeprecationOnAny() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/DeprecationOnAny.kt");

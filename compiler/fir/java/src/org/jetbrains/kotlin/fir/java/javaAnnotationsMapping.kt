@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.fir.java
 
-import com.intellij.patterns.PsiJavaPatterns.psiAnnotation
-import org.jetbrains.kotlin.KtFakeSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -46,19 +43,19 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import java.util.*
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
 ): List<FirAnnotation> = map { it.toFirAnnotationCall(session) }
 
-internal fun JavaAnnotationOwner.convertAnnotationsToFir(
+internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
     session: FirSession,
+    isDeprecatedInJavaDoc: Boolean,
 ): List<FirAnnotation> = buildList {
     var isDeprecated = false
 
-    annotations.mapTo(this) {
+    this@convertAnnotationsToFir.mapTo(this) {
         if (it.isJavaDeprecatedAnnotation()) isDeprecated = true
         it.toFirAnnotationCall(session)
     }
@@ -67,6 +64,10 @@ internal fun JavaAnnotationOwner.convertAnnotationsToFir(
         add(DeprecatedInJavaDocAnnotation.toFirAnnotationCall(session))
     }
 }
+
+internal fun JavaAnnotationOwner.convertAnnotationsToFir(
+    session: FirSession,
+): List<FirAnnotation> = annotations.convertAnnotationsToFir(session, isDeprecatedInJavaDoc)
 
 internal object DeprecatedInJavaDocAnnotation : JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument> get() = emptyList()
