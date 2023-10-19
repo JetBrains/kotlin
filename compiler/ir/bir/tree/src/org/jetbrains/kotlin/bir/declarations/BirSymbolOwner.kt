@@ -16,7 +16,7 @@ interface BirSymbolOwner : BirElement, BirSymbol {
         get() = true
 
     @ObsoleteDescriptorBasedAPI
-    val descriptor: DeclarationDescriptor
+    val descriptor: DeclarationDescriptor?
 
     override var signature: IdSignature?
 

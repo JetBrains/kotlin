@@ -32,6 +32,7 @@ object BirElementIndexClassifierFunctionGenerator {
     private val nextClassifierFunctionClassIdx = AtomicInteger(0)
     private val classifierFunctionClassCache = ConcurrentHashMap<Set<MatcherCacheKey>, Class<*>>()
     private val staticConditionLambdasInitializationBuffers = ConcurrentHashMap<String, Array<BirElementIndexMatcher?>>()
+    private val generatedFunctionClassLoader by lazy { ByteArrayFunctionClassLoader(BirElement::class.java.classLoader) }
 
     private val BirElementIndexClassifierMatchFunctionName by lazy {
         // in case of using some kotlin features, like inline classes, compiler might obfuscate the name,
@@ -66,7 +67,7 @@ object BirElementIndexClassifierFunctionGenerator {
             val binaryName = clazzNode.name.replace('/', '.')
 
             staticConditionLambdasInitializationBuffers[clazzNode.name] = conditionsArray
-            ByteArrayFunctionClassLoader.defineClass(binaryName, binary)
+            generatedFunctionClassLoader.defineClass(binaryName, binary)
         }
     }
 
@@ -279,7 +280,7 @@ object BirElementIndexClassifierFunctionGenerator {
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,
                 Type.getInternalName(BirElementIndexClassifierFunctionGenerator::class.java),
-                "retrieveStaticConditionLambdasInitializationBuffer\$tree",
+                "retrieveStaticConditionLambdasInitializationBuffer\$bir_tree",
                 Type.getMethodDescriptor(Type.getType(Array<BirElementIndexMatcher>::class.java), Type.getType(String::class.java))
             )
         )
@@ -309,7 +310,7 @@ object BirElementIndexClassifierFunctionGenerator {
 
     private data class MatcherCacheKey(val conditionClass: Class<*>, val elementClass: Class<*>, val index: Int)
 
-    private object ByteArrayFunctionClassLoader : ClassLoader() {
+    private class ByteArrayFunctionClassLoader(parent: ClassLoader) : ClassLoader(parent) {
         fun defineClass(name: String, binary: ByteArray): Class<*> {
             return defineClass(name, binary, 0, binary.size)
         }

@@ -35,7 +35,7 @@ object BirTree : AbstractTreeBuilder() {
     private fun symbol(type: TypeRef, mutable: Boolean = false): SimpleFieldConfig =
         field("symbol", type, mutable = mutable)
 
-    private fun descriptor(typeName: String, nullable: Boolean = false, initializer: SimpleFieldConfig.() -> Unit = {}): SimpleFieldConfig =
+    private fun descriptor(typeName: String, nullable: Boolean = true, initializer: SimpleFieldConfig.() -> Unit = {}): SimpleFieldConfig =
         field(
             "descriptor",
             ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
