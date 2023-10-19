@@ -1,19 +1,22 @@
+//
+// Source
+// ------------------------------------------
 
-        import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-        @Composable
-        fun Test(content: @Composable () -> Unit) {
-            val updatedContent by rememberUpdatedState(content)
-            Defer {
-                UiContent {
-                    updatedContent()
-                }
-            }
+@Composable
+fun Test(content: @Composable () -> Unit) {
+    val updatedContent by rememberUpdatedState(content)
+    Defer {
+        UiContent {
+            updatedContent()
         }
-        
-/********
- * TRANSFORMED
- ********/
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableInferredTarget(scheme = "[UI[UI]]")

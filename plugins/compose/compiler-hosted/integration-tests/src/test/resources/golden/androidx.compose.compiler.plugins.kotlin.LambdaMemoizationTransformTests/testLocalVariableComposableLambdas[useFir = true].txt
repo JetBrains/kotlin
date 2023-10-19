@@ -1,16 +1,19 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable fun A() {
-                val foo = @Composable {}
-                val bar: @Composable () -> Unit = {}
-                B(foo)
-                B(bar)
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable fun A() {
+    val foo = @Composable {}
+    val bar: @Composable () -> Unit = {}
+    B(foo)
+    B(bar)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun A(%composer: Composer?, %changed: Int) {

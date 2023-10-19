@@ -1,12 +1,15 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            val foo = @Composable {}
-            val bar: @Composable () -> Unit = {}
-        
-/********
- * TRANSFORMED
- ********/
+val foo = @Composable {}
+val bar: @Composable () -> Unit = {}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 val foo: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
 val bar: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-2

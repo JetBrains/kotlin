@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 
 
@@ -6,9 +10,9 @@ context(A, B, C, D, E, F, G, H, I, J, K, L)
 fun Test() {
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(%context_receiver_0: A, %context_receiver_1: B, %context_receiver_2: C, %context_receiver_3: D, %context_receiver_4: E, %context_receiver_5: F, %context_receiver_6: G, %context_receiver_7: H, %context_receiver_8: I, %context_receiver_9: J, %context_receiver_10: K, %context_receiver_11: L, %composer: Composer?, %changed: Int, %changed1: Int) {

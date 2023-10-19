@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 @file:OptIn(
   InternalComposeApi::class,
 )
@@ -19,9 +23,9 @@ fun VarArgsCaller() {
     VarArgsFirst()
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun VarArgsFirst(foo: Array<out Any?>, %composer: Composer?, %changed: Int) {

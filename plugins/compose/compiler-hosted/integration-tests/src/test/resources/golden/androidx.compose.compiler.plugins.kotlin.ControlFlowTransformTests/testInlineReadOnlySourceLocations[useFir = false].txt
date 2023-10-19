@@ -1,30 +1,33 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
-            import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 
-            val current
-                @Composable
-                @ReadOnlyComposable
-                get() = 0
+val current
+    @Composable
+    @ReadOnlyComposable
+    get() = 0
 
-            @Composable
-            @ReadOnlyComposable
-            fun calculateSometing(): Int {
-                return 0;
-            }
+@Composable
+@ReadOnlyComposable
+fun calculateSometing(): Int {
+    return 0;
+}
 
-            @Composable
-            fun Test() {
-                val c = current
-                val cl = calculateSometing()
-                Layout {
-                    Text("$c $cl")
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test() {
+    val c = current
+    val cl = calculateSometing()
+    Layout {
+        Text("$c $cl")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 val current: Int
   @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")

@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 
 
@@ -9,9 +13,9 @@ context(Foo, Bar, FooBar)
 @Composable
 fun B() { }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun A(%context_receiver_0: Foo, %context_receiver_1: Bar, %composer: Composer?, %changed: Int) {

@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 @file:OptIn(
   InternalComposeApi::class,
 )
@@ -20,9 +24,9 @@ fun Test() {
     B(0, 1, 2, 3)
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun B(values: IntArray, %composer: Composer?, %changed: Int) {

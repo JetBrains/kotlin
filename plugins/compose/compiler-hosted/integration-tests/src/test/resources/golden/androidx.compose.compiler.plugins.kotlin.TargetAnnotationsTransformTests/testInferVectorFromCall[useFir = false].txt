@@ -1,14 +1,17 @@
+//
+// Source
+// ------------------------------------------
 
-        import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-        @Composable
-        fun Test() {
-            Circle()
-        }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test() {
+    Circle()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableTarget(applier = "Vector")

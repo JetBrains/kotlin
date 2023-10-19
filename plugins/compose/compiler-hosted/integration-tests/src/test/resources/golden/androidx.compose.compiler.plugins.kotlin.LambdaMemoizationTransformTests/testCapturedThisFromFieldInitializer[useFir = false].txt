@@ -1,16 +1,19 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            class A {
-                val b = ""
-                val c = @Composable {
-                    print(b)
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+class A {
+    val b = ""
+    val c = @Composable {
+        print(b)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class A {

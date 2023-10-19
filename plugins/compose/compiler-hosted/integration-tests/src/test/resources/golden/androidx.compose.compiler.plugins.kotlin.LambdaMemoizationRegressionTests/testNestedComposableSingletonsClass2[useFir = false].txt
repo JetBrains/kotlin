@@ -1,15 +1,18 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            class A {
-                class B {
-                    val x = @Composable {}
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+class A {
+    class B {
+        val x = @Composable {}
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class A {

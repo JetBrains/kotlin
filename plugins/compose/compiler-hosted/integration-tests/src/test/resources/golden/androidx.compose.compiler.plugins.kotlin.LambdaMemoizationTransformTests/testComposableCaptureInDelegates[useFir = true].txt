@@ -1,13 +1,16 @@
+//
+// Source
+// ------------------------------------------
 
-                import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-                class Test(val value: Int) : Delegate by Impl({
-                    value
-                })
-            
-/********
- * TRANSFORMED
- ********/
+class Test(val value: Int) : Delegate by Impl({
+    value
+})
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class Test(val value: Int) : Delegate {

@@ -1,43 +1,46 @@
+//
+// Source
+// ------------------------------------------
 
-        import androidx.compose.runtime.*
-        import androidx.compose.ui.layout.*
-        import androidx.compose.foundation.text.*
-        import androidx.compose.ui.text.*
-        import androidx.compose.ui.text.style.*
-        import androidx.compose.ui.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.layout.*
+import androidx.compose.foundation.text.*
+import androidx.compose.ui.text.*
+import androidx.compose.ui.text.style.*
+import androidx.compose.ui.*
 
-        @Immutable
-        interface LocalBoxScope {
-            @Stable
-            fun Modifier.align(alignment: Alignment): Modifier
-        }
+@Immutable
+interface LocalBoxScope {
+    @Stable
+    fun Modifier.align(alignment: Alignment): Modifier
+}
 
-        object LocalBoxScopeInstance : LocalBoxScope {
-            override fun Modifier.align(alignment: Alignment): Modifier = Modifier
-        }
+object LocalBoxScopeInstance : LocalBoxScope {
+    override fun Modifier.align(alignment: Alignment): Modifier = Modifier
+}
 
-        val localBoxMeasurePolicy = MeasurePolicy { _, constraints ->
-            layout(
-                constraints.minWidth,
-                constraints.minHeight
-            ) {}
-        }
+val localBoxMeasurePolicy = MeasurePolicy { _, constraints ->
+    layout(
+        constraints.minWidth,
+        constraints.minHeight
+    ) {}
+}
 
-        @Composable
-        inline fun LocalBox(
-            modifier: Modifier = Modifier,
-            content: @Composable LocalBoxScope.() -> Unit
-        ) {
-            Layout(
-                modifier = modifier,
-                measurePolicy = localBoxMeasurePolicy,
-                content = { LocalBoxScopeInstance.content() }
-            )
-        }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+inline fun LocalBox(
+    modifier: Modifier = Modifier,
+    content: @Composable LocalBoxScope.() -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        measurePolicy = localBoxMeasurePolicy,
+        content = { LocalBoxScopeInstance.content() }
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Immutable
 interface LocalBoxScope {

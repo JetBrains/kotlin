@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
@@ -8,9 +12,9 @@ fun Test(a: Int) {
     val foo = remember(a, b) { Foo(a, b) }
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(a: Int, %composer: Composer?, %changed: Int) {

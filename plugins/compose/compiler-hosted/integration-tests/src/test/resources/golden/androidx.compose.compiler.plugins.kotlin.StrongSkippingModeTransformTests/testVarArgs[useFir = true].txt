@@ -1,4 +1,8 @@
-            import androidx.compose.runtime.Composable
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
             import androidx.compose.runtime.NonRestartableComposable
             import androidx.compose.runtime.ReadOnlyComposable
 
@@ -7,9 +11,10 @@
 @Composable fun Test() {
     Varargs(1, 2, 3)
 }
-/********
- * TRANSFORMED
- ********/
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {

@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 package test
 
 import androidx.compose.runtime.Composable
@@ -9,9 +13,10 @@ import dependency.ContentImpl
 fun Foo() {
     ContentImpl().setContent()
 }
-/********
- * TRANSFORMED
- ********/
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @NonRestartableComposable

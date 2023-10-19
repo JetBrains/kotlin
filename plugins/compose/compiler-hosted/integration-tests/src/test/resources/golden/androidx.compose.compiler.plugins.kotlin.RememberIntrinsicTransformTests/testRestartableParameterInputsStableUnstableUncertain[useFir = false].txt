@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
@@ -15,9 +19,9 @@ fun test3(x: Uncertain) {
     remember(x) { 1 }
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {

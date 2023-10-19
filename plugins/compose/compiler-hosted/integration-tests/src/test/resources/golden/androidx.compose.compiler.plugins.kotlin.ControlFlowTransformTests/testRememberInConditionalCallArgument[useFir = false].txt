@@ -1,20 +1,23 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            private fun Test(param: String?) {
-                Test(
-                    if (param == null) {
-                       remember { "" }
-                    } else {
-                        null
-                    },
-                )
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+private fun Test(param: String?) {
+    Test(
+        if (param == null) {
+           remember { "" }
+        } else {
+            null
+        },
+    )
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 private fun Test(param: String?, %composer: Composer?, %changed: Int) {

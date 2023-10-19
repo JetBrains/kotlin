@@ -1,18 +1,21 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable
-            fun SimpleAnimatedContentSample() {
-                @Composable fun Foo() {}
+@Composable
+fun SimpleAnimatedContentSample() {
+    @Composable fun Foo() {}
 
-                AnimatedContent(1f) {
-                    Foo()
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+    AnimatedContent(1f) {
+        Foo()
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun SimpleAnimatedContentSample(%composer: Composer?, %changed: Int) {

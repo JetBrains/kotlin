@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 
 interface Foo { fun bar(): Int }
@@ -7,9 +11,9 @@ fun a(): Foo {
     }
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 interface Foo {
   abstract fun bar(): Int

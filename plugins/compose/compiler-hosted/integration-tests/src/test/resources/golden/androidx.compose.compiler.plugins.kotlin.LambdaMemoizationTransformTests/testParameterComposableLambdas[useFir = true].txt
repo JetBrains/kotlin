@@ -1,13 +1,16 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable fun A() {
-                B {}
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable fun A() {
+    B {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun A(%composer: Composer?, %changed: Int) {
