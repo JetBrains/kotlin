@@ -5,17 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.decamelize
@@ -80,22 +79,6 @@ open class KotlinJsIrTargetConfigurator :
         }
     }
 
-    override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
-        super.defineConfigurationsForTarget(target)
-
-        if (target.isMpp!!) return
-
-        target.project.configurations.maybeCreate(
-            target.commonFakeApiElementsConfigurationName
-        ).apply {
-            description = "Common Fake API elements for main."
-            isVisible = false
-            isCanBeResolved = false
-            isCanBeConsumed = true
-            attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
-            attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
-        }
-    }
 
     internal companion object {
         internal fun KotlinJsCompilerOptions.configureJsDefaultOptions(

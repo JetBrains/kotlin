@@ -303,11 +303,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         }
     }
 
-    override fun defineConfigurationsForTarget(target: T) {
-        super.defineConfigurationsForTarget(target)
-        implementationToApiElements(target)
-    }
-
     private fun warnAboutIncorrectDependencies(target: KotlinNativeTarget) = target.project.launchInStage(ReadyForExecution) {
 
         val compileOnlyDependencies = target.compilations.mapNotNull {
