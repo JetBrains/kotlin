@@ -18,15 +18,20 @@ val INTRODUCED_DIAGNOSTICS_UMBRELLA = IssueInfo("25-4612482", 59871)
 
 private const val INSERTION_MARKER = "//<::>"
 
+class TargetVersion(val id: String, val possiblyOutdatedName: String)
+
 const val NEW_ISSUE_STATE = "Open"
 const val NEW_ISSUE_PRIORITY = "Minor"
-val NEW_ISSUE_TARGET_VERSIONS = listOf("2.0-Beta1")
 val NEW_ISSUE_SUBSYSTEMS = listOf("Frontend. Checkers")
+
+val NEW_ISSUE_TARGET_VERSIONS = listOf(
+    TargetVersion("129-40407", "2.0.0-Beta1"),
+)
 
 fun buildIssueCustomFields(
     state: String = NEW_ISSUE_STATE,
     priority: String = NEW_ISSUE_PRIORITY,
-    targetVersions: List<String> = NEW_ISSUE_TARGET_VERSIONS,
+    targetVersions: List<String> = NEW_ISSUE_TARGET_VERSIONS.map { it.id },
     subsystems: List<String> = NEW_ISSUE_SUBSYSTEMS,
 ) = "customFields" to listOf(
     mapOf(
@@ -47,7 +52,7 @@ fun buildIssueCustomFields(
         "name" to "Target versions",
         "\$type" to "MultiVersionIssueCustomField",
         "value" to targetVersions.map {
-            mapOf("name" to it)
+            mapOf("id" to it)
         },
     ),
     mapOf(
@@ -314,6 +319,20 @@ private val mutableKnownMissingDiagnostics = mutableMapOf(
     "TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION" to IssueInfo("25-4763778", 61481),
     "PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION" to IssueInfo("25-4763779", 61482),
     "ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE" to IssueInfo("25-4821616", 62149),
+    "WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE" to IssueInfo("25-4874926", 62715),
+    "WASM_IMPORT_EXPORT_VARARG_PARAMETER" to IssueInfo("25-4874930", 62716),
+    "WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE" to IssueInfo("25-4874931", 62717),
+    "WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE" to IssueInfo("25-4874933", 62718),
+    "NESTED_WASM_EXPORT" to IssueInfo("25-4874935", 62719),
+    "JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION" to IssueInfo("25-4874936", 62720),
+    "WASM_EXPORT_ON_EXTERNAL_DECLARATION" to IssueInfo("25-4874937", 62721),
+    "NESTED_WASM_IMPORT" to IssueInfo("25-4874938", 62722),
+    "WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION" to IssueInfo("25-4874940", 62723),
+    "WRONG_JS_FUN_TARGET" to IssueInfo("25-4874942", 62724),
+    "JSCODE_INVALID_PARAMETER_NAME" to IssueInfo("25-4874943", 62725),
+    "JSCODE_WRONG_CONTEXT" to IssueInfo("25-4874944", 62726),
+    "JSCODE_UNSUPPORTED_FUNCTION_KIND" to IssueInfo("25-4874945", 62727),
+    "WRONG_JS_INTEROP_TYPE" to IssueInfo("25-4874946", 62728),
     //<::>knownMissingDiagnostics
 )
 
@@ -470,6 +489,14 @@ private val mutableKnownDisappearedDiagnostics = mutableMapOf(
     "NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS" to IssueInfo("25-4807758", 61964),
     "JS_NAME_CLASH" to IssueInfo("25-4807759", 61965),
     "JS_FAKE_NAME_CLASH" to IssueInfo("25-4807760", 61966),
+    "MISSING_DEPENDENCY_SUPERCLASS" to IssueInfo("25-4874947", 62729),
+    "RETURN_TYPE_MISMATCH_ON_OVERRIDE" to IssueInfo("25-4874948", 62730),
+    "CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION" to IssueInfo("25-4874950", 62731),
+    "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE" to IssueInfo("25-4874951", 62732),
+    "WRONG_EXTERNAL_DECLARATION" to IssueInfo("25-4874952", 62733),
+    "INLINE_EXTERNAL_DECLARATION" to IssueInfo("25-4874953", 62734),
+    "EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER" to IssueInfo("25-4874955", 62735),
+    "NESTED_JS_EXPORT" to IssueInfo("25-4874957", 62736),
     //<::>knownDisappearedDiagnostics
 )
 
@@ -591,6 +618,8 @@ private val mutableKnownIntroducedDiagnostics = mutableMapOf(
     "DELEGATE_SPECIAL_FUNCTION_MISSING" to IssueInfo("25-4807761", 61967),
     "TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED" to IssueInfo("25-4850866", 62429),
     "DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE" to IssueInfo("25-4850867", 62430),
+    "CYCLIC_INHERITANCE_HIERARCHY" to IssueInfo("25-4874959", 62737),
+    "EXPOSED_SUPER_INTERFACE" to IssueInfo("25-4874960", 62738),
     //<::>knownIntroducedDiagnostics
 )
 

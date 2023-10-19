@@ -414,7 +414,7 @@ fun updateMissingDiagnosticsTags(diagnosticsStatistics: DiagnosticsStatistics) {
 
 fun IssueInfo.setDefaultMetadata() {
     val response = getJson(
-        "https://youtrack.jetbrains.com/api/issues/$id?fields=customFields(name,value(name))",
+        "https://youtrack.jetbrains.com/api/issues/$id?fields=customFields(name,value(name,id))",
         API_HEADERS,
     )
 
@@ -428,9 +428,9 @@ fun IssueInfo.setDefaultMetadata() {
 
     val oldState = fields["State"]?.cast<JsonObject?>()?.getChildAs<JsonPrimitive>("name")?.content
     val oldPriority = fields["Priority"]?.cast<JsonObject?>()?.getChildAs<JsonPrimitive>("name")?.content
-    val oldTargetVersions = fields["Target versions"]?.cast<JsonArray?>()
+    val oldTargetVersionsIds = fields["Target versions"]?.cast<JsonArray?>()
         ?.takeIf { it.isNotEmpty() }
-        ?.mapChildrenAs<JsonObject, _> { it.getChildAs<JsonPrimitive>("name").content }
+        ?.mapChildrenAs<JsonObject, _> { it.getChildAs<JsonPrimitive>("id").content }
     val oldSubsystems = fields["Subsystems"]?.cast<JsonArray?>()
         ?.takeIf { it.isNotEmpty() }
         ?.mapChildrenAs<JsonObject, _> { it.getChildAs<JsonPrimitive>("name").content }
@@ -438,7 +438,7 @@ fun IssueInfo.setDefaultMetadata() {
     if (
         oldState != "Submitted" &&
         oldPriority != null &&
-        oldTargetVersions != null &&
+        oldTargetVersionsIds != null &&
         oldSubsystems != null
     ) {
         return
@@ -450,7 +450,7 @@ fun IssueInfo.setDefaultMetadata() {
 
     val newState = oldState?.takeIf { it != "Submitted" } ?: NEW_ISSUE_STATE
     val newPriority = oldPriority ?: NEW_ISSUE_PRIORITY
-    val newTargetVersions = oldTargetVersions ?: NEW_ISSUE_TARGET_VERSIONS
+    val newTargetVersionsIds = oldTargetVersionsIds ?: NEW_ISSUE_TARGET_VERSIONS.map { it.id }
     val newSubsystems = oldSubsystems ?: NEW_ISSUE_SUBSYSTEMS
 
     try {
@@ -458,7 +458,7 @@ fun IssueInfo.setDefaultMetadata() {
             "https://youtrack.jetbrains.com/api/issues/KT-$numberInProject?fields=customFields(name,value(name))",
             API_HEADERS,
             mapOf(
-                buildIssueCustomFields(newState, newPriority, newTargetVersions, newSubsystems),
+                buildIssueCustomFields(newState, newPriority, newTargetVersionsIds, newSubsystems),
             ),
         ).also(::println)
     } catch (e: IOException) {

@@ -725,6 +725,8 @@ fun fixStupidEmptyLines(
 
 typealias DiagnosticsStatistics = MutableMap<String, MutableMap<File, EquivalenceTestResult>>
 
+private val IDENTIFIER_REGEX = """[a-zA-Z_][a-zA-Z_0-9]*""".toRegex()
+
 fun DiagnosticsStatistics.recordDiagnosticsStatistics(
     test: File,
     result: EquivalenceTestResultRaw,
@@ -734,12 +736,20 @@ fun DiagnosticsStatistics.recordDiagnosticsStatistics(
     visualK2LineStartOffsets: IntArray,
 ) {
     for (it in result.significantK1MetaInfo) {
+        require(IDENTIFIER_REGEX.matches(it.tag)) {
+            "${it.tag} is not a valid identifier"
+        }
+
         getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) {
             EquivalenceTestResult(isK1PureGreen, isK2PureGreen, visualK1LineStartOffsets, visualK2LineStartOffsets)
         }.significantK1MetaInfo.add(it)
     }
 
     for (it in result.significantK2MetaInfo) {
+        require(IDENTIFIER_REGEX.matches(it.tag)) {
+            "${it.tag} is not a valid identifier"
+        }
+
         getOrPut(it.tag) { mutableMapOf() }.getOrPut(test) {
             EquivalenceTestResult(isK1PureGreen, isK2PureGreen, visualK1LineStartOffsets, visualK2LineStartOffsets)
         }.significantK2MetaInfo.add(it)
@@ -1224,6 +1234,12 @@ fun printDiagnosticsGroupsStatistics() {
 }
 
 fun main() {
+    val tokenCheck = getJson("https://youtrack.jetbrains.com/api/users/me?fields=name", API_HEADERS)
+
+    require("guest" !in tokenCheck) {
+        "Most probably the environment variable YT_TOKEN doesn't contain a proper token. Currently: $YT_TOKEN"
+    }
+
     val tests = deserializeIfSameHashOrGenerate(build.child("testsStats.json")) {
         collectTestsStats(projectDirectory)
     }
