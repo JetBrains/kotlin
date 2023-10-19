@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor,
+    override val descriptor: ClassDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -37,7 +37,10 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -48,7 +51,10 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -59,7 +65,10 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -70,7 +79,10 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -81,7 +93,10 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _initializerExpression: BirExpressionBody? = initializerExpression
 
     override var initializerExpression: BirExpressionBody?
-        get() = _initializerExpression
+        get() {
+            recordPropertyRead()
+            return _initializerExpression
+        }
         set(value) {
             if (_initializerExpression != value) {
                 replaceChild(_initializerExpression, value)
@@ -93,7 +108,10 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _correspondingClass: BirClass? = correspondingClass
 
     override var correspondingClass: BirClass?
-        get() = _correspondingClass
+        get() {
+            recordPropertyRead()
+            return _correspondingClass
+        }
         set(value) {
             if (_correspondingClass != value) {
                 replaceChild(_correspondingClass, value)

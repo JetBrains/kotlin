@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.bir.util
 
-import org.jetbrains.kotlin.bir.*
-import org.jetbrains.kotlin.bir.declarations.*
+import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementDynamicPropertyManager
+import org.jetbrains.kotlin.bir.BirForest
+import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
+import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
+import org.jetbrains.kotlin.bir.declarations.BirSymbolOwner
+import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirMemberAccessExpression
@@ -25,11 +31,23 @@ import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.types.impl.IrDelegatedSimpleType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.util.*
+import kotlin.collections.List
+import kotlin.collections.MutableMap
+import kotlin.collections.contains
+import kotlin.collections.isNotEmpty
+import kotlin.collections.lastIndex
+import kotlin.collections.listOf
+import kotlin.collections.map
+import kotlin.collections.mutableListOf
+import kotlin.collections.plusAssign
+import kotlin.collections.removeLast
+import kotlin.collections.removeLastOrNull
+import kotlin.collections.set
+import kotlin.collections.single
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class Ir2BirConverterBase {
+abstract class Ir2BirConverterBase() {
     var birForest: BirForest? = null
     var copyAncestorsForOrphanedElements = false
 
@@ -214,27 +232,6 @@ abstract class Ir2BirConverterBase {
         else remapElement(owner) as BirAttributeContainer
     }
 
-    protected fun BirElement.copyAuxData(from: IrElement) {
-        this as BirElementBase
-        if (from is IrMetadataSourceOwner) {
-            (this as BirMetadataSourceOwner)[GlobalBirElementDynamicPropertyTokens.Metadata] = from.metadata
-        }
-
-        if (from is IrMemberWithContainerSource) {
-            (this as BirMemberWithContainerSource)[GlobalBirElementDynamicPropertyTokens.ContainerSource] = from.containerSource
-        }
-
-        if (from is IrAttributeContainer) {
-            (this as BirAttributeContainer)[GlobalBirElementDynamicPropertyTokens.OriginalBeforeInline] =
-                from.originalBeforeInline?.let { remapElement(it) as BirAttributeContainer }
-        }
-
-        if (from is IrClass) {
-            (this as BirClass)[GlobalBirElementDynamicPropertyTokens.SealedSubclasses] =
-                from.sealedSubclasses.memoryOptimizedMap { remapSymbol(it) }
-        }
-    }
-
     protected fun <Ir : IrElement, Bir : BirElement> BirChildElementList<Bir>.copyElements(from: List<Ir>) {
         ensureCapacity(from.size)
         for (ir in from) {
@@ -323,7 +320,7 @@ abstract class Ir2BirConverterBase {
 
     companion object {
         fun IrElement.convertToBir(birForest: BirForest): BirElement {
-            val converter = Ir2BirConverter()
+            val converter = Ir2BirConverter(BirElementDynamicPropertyManager())
             converter.birForest = birForest
             return converter.copyIrTree(listOf(this)).single()
         }

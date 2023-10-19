@@ -17,9 +17,13 @@ class BirForest {
     private var currentElementsIndexSlotIterator: ElementsIndexSlotIterator<*>? = null
     private var currentIndexSlot = 0
     private var bufferedElementWithInvalidatedIndex: BirElementBase? = null
+    private var elementCurrentlyBeingClassified: BirElementBase? = null
 
 
     internal fun elementAttached(element: BirElementBase) {
+        // element's parent has changed
+        elementIndexInvalidated(element)
+
         element.accept {
             attachElement(it as BirElementBase)
             it.walkIntoChildren()
@@ -37,6 +41,9 @@ class BirForest {
     }
 
     internal fun elementDetached(element: BirElementBase) {
+        // element's parent has changed
+        elementIndexInvalidated(element)
+
         element.accept {
             detachElement(it as BirElementBase)
             it.walkIntoChildren()
@@ -51,7 +58,11 @@ class BirForest {
 
     private fun addElementToIndex(element: BirElementBase) {
         val classifier = elementClassifier ?: return
+
+        elementCurrentlyBeingClassified = element
         val i = classifier.classify(element, currentIndexSlot + 1)
+        elementCurrentlyBeingClassified = null
+
         if (i != 0) {
             if (element.indexSlot.toInt() != i) {
                 removeElementFromIndex(element)
@@ -84,8 +95,16 @@ class BirForest {
     private fun flushElementsWithInvalidatedIndexBuffer() {
         bufferedElementWithInvalidatedIndex?.let {
             addElementToIndex(it)
+            it.invalidateDependentElements()
         }
     }
+
+    internal fun recordElementPropertyRead(element: BirElementBase) {
+        if (elementCurrentlyBeingClassified != null) {
+            element.registerDependentElement(elementCurrentlyBeingClassified!!)
+        }
+    }
+
 
     fun registerElementIndexingKey(key: BirElementsIndexKey<*>) {
         val i = ++registeredElementIndexSlotCount

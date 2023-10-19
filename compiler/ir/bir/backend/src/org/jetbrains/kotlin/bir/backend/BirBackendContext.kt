@@ -7,15 +7,20 @@ package org.jetbrains.kotlin.bir.backend
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.bir.BirBuiltIns
+import org.jetbrains.kotlin.bir.BirElementDynamicPropertyManager
 import org.jetbrains.kotlin.bir.BirForest
 import org.jetbrains.kotlin.bir.expressions.BirCall
 import org.jetbrains.kotlin.bir.types.BirTypeSystemContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 
-abstract class BirBackendContext {
-    val compiledBir = BirForest()
+abstract class BirBackendContext(
+    val compiledBir: BirForest,
+    val dynamicPropertyManager: BirElementDynamicPropertyManager
+) {
     abstract val builtIns: KotlinBuiltIns
     abstract val birBuiltIns: BirBuiltIns
     abstract val typeSystem: BirTypeSystemContext
@@ -24,6 +29,8 @@ abstract class BirBackendContext {
     abstract val builtInSymbols: BirBuiltInSymbols
 
     abstract val configuration: CompilerConfiguration
+    val languageVersionSettings: LanguageVersionSettings
+        get() = configuration.languageVersionSettings
 
     open fun isSideEffectFree(call: BirCall): Boolean {
         return false

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: VariableDescriptorWithAccessors,
+    override val descriptor: VariableDescriptorWithAccessors?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -41,7 +41,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -52,7 +55,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -63,7 +69,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -74,7 +83,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -85,7 +97,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -96,7 +111,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isVar: Boolean = isVar
 
     override var isVar: Boolean
-        get() = _isVar
+        get() {
+            recordPropertyRead()
+            return _isVar
+        }
         set(value) {
             if (_isVar != value) {
                 _isVar = value
@@ -107,7 +125,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _delegate: BirVariable = delegate
 
     override var delegate: BirVariable
-        get() = _delegate
+        get() {
+            recordPropertyRead()
+            return _delegate
+        }
         set(value) {
             if (_delegate != value) {
                 replaceChild(_delegate, value)
@@ -119,7 +140,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _getter: BirSimpleFunction = getter
 
     override var getter: BirSimpleFunction
-        get() = _getter
+        get() {
+            recordPropertyRead()
+            return _getter
+        }
         set(value) {
             if (_getter != value) {
                 replaceChild(_getter, value)
@@ -131,7 +155,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _setter: BirSimpleFunction? = setter
 
     override var setter: BirSimpleFunction?
-        get() = _setter
+        get() {
+            recordPropertyRead()
+            return _setter
+        }
         set(value) {
             if (_setter != value) {
                 replaceChild(_setter, value)

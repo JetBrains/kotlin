@@ -9,7 +9,7 @@ class BirElementDynamicPropertyManager {
     private val elementClasses = ElementClassDataMap()
     private var totalTokenRegistrations = 0
 
-    fun <E : BirElement, T> registerToken(key: BirElementDynamicPropertyKey<E, T>): BirElementDynamicPropertyToken<E, T> {
+    fun <E : BirElement, T> acquireProperty(key: BirElementDynamicPropertyKey<E, T>): BirElementDynamicPropertyToken<E, T> {
         val classData = getElementClassData(key.elementClass)
 
         refreshKeysFromAncestors(classData)

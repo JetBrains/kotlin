@@ -24,7 +24,10 @@ class BirBreakImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -35,7 +38,10 @@ class BirBreakImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -46,7 +52,10 @@ class BirBreakImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -57,7 +66,10 @@ class BirBreakImpl(
     private var _loop: BirLoop = loop
 
     override var loop: BirLoop
-        get() = _loop
+        get() {
+            recordPropertyRead()
+            return _loop
+        }
         set(value) {
             if (_loop != value) {
                 _loop = value
@@ -68,7 +80,10 @@ class BirBreakImpl(
     private var _label: String? = label
 
     override var label: String?
-        get() = _label
+        get() {
+            recordPropertyRead()
+            return _label
+        }
         set(value) {
             if (_label != value) {
                 _label = value

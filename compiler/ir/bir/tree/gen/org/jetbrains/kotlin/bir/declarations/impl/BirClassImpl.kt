@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.name.Name
 class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: ClassDescriptor,
+    override val descriptor: ClassDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -51,7 +51,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -62,7 +65,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -73,7 +79,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -84,7 +93,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -95,7 +107,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isExternal: Boolean = isExternal
 
     override var isExternal: Boolean
-        get() = _isExternal
+        get() {
+            recordPropertyRead()
+            return _isExternal
+        }
         set(value) {
             if (_isExternal != value) {
                 _isExternal = value
@@ -106,7 +121,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _visibility: DescriptorVisibility = visibility
 
     override var visibility: DescriptorVisibility
-        get() = _visibility
+        get() {
+            recordPropertyRead()
+            return _visibility
+        }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
@@ -115,15 +133,18 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 0)
+            BirChildElementList(this, 1)
 
     override val declarations: BirChildElementList<BirDeclaration> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 2)
 
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -134,7 +155,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _kind: ClassKind = kind
 
     override var kind: ClassKind
-        get() = _kind
+        get() {
+            recordPropertyRead()
+            return _kind
+        }
         set(value) {
             if (_kind != value) {
                 _kind = value
@@ -145,7 +169,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _modality: Modality = modality
 
     override var modality: Modality
-        get() = _modality
+        get() {
+            recordPropertyRead()
+            return _modality
+        }
         set(value) {
             if (_modality != value) {
                 _modality = value
@@ -156,7 +183,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isCompanion: Boolean = isCompanion
 
     override var isCompanion: Boolean
-        get() = _isCompanion
+        get() {
+            recordPropertyRead()
+            return _isCompanion
+        }
         set(value) {
             if (_isCompanion != value) {
                 _isCompanion = value
@@ -167,7 +197,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isInner: Boolean = isInner
 
     override var isInner: Boolean
-        get() = _isInner
+        get() {
+            recordPropertyRead()
+            return _isInner
+        }
         set(value) {
             if (_isInner != value) {
                 _isInner = value
@@ -178,7 +211,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isData: Boolean = isData
 
     override var isData: Boolean
-        get() = _isData
+        get() {
+            recordPropertyRead()
+            return _isData
+        }
         set(value) {
             if (_isData != value) {
                 _isData = value
@@ -189,7 +225,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isValue: Boolean = isValue
 
     override var isValue: Boolean
-        get() = _isValue
+        get() {
+            recordPropertyRead()
+            return _isValue
+        }
         set(value) {
             if (_isValue != value) {
                 _isValue = value
@@ -200,7 +239,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isExpect: Boolean = isExpect
 
     override var isExpect: Boolean
-        get() = _isExpect
+        get() {
+            recordPropertyRead()
+            return _isExpect
+        }
         set(value) {
             if (_isExpect != value) {
                 _isExpect = value
@@ -211,7 +253,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isFun: Boolean = isFun
 
     override var isFun: Boolean
-        get() = _isFun
+        get() {
+            recordPropertyRead()
+            return _isFun
+        }
         set(value) {
             if (_isFun != value) {
                 _isFun = value
@@ -222,7 +267,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _hasEnumEntries: Boolean = hasEnumEntries
 
     override var hasEnumEntries: Boolean
-        get() = _hasEnumEntries
+        get() {
+            recordPropertyRead()
+            return _hasEnumEntries
+        }
         set(value) {
             if (_hasEnumEntries != value) {
                 _hasEnumEntries = value
@@ -233,7 +281,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _thisReceiver: BirValueParameter? = thisReceiver
 
     override var thisReceiver: BirValueParameter?
-        get() = _thisReceiver
+        get() {
+            recordPropertyRead()
+            return _thisReceiver
+        }
         set(value) {
             if (_thisReceiver != value) {
                 replaceChild(_thisReceiver, value)
@@ -246,7 +297,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
             valueClassRepresentation
 
     override var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?
-        get() = _valueClassRepresentation
+        get() {
+            recordPropertyRead()
+            return _valueClassRepresentation
+        }
         set(value) {
             if (_valueClassRepresentation != value) {
                 _valueClassRepresentation = value
@@ -265,8 +319,8 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.typeParameters
-        1 -> this.declarations
+        1 -> this.typeParameters
+        2 -> this.declarations
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

@@ -26,7 +26,10 @@ class BirTypeOperatorCallImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -37,7 +40,10 @@ class BirTypeOperatorCallImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -48,7 +54,10 @@ class BirTypeOperatorCallImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -59,7 +68,10 @@ class BirTypeOperatorCallImpl(
     private var _operator: IrTypeOperator = operator
 
     override var operator: IrTypeOperator
-        get() = _operator
+        get() {
+            recordPropertyRead()
+            return _operator
+        }
         set(value) {
             if (_operator != value) {
                 _operator = value
@@ -70,7 +82,10 @@ class BirTypeOperatorCallImpl(
     private var _argument: BirExpression = argument
 
     override var argument: BirExpression
-        get() = _argument
+        get() {
+            recordPropertyRead()
+            return _argument
+        }
         set(value) {
             if (_argument != value) {
                 replaceChild(_argument, value)
@@ -82,7 +97,10 @@ class BirTypeOperatorCallImpl(
     private var _typeOperand: BirType = typeOperand
 
     override var typeOperand: BirType
-        get() = _typeOperand
+        get() {
+            recordPropertyRead()
+            return _typeOperand
+        }
         set(value) {
             if (_typeOperand != value) {
                 _typeOperand = value

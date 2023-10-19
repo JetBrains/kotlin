@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 abstract class BirEnumEntry : BirElementBase(), BirDeclaration, BirDeclarationWithName,
         BirEnumEntrySymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassDescriptor
+    abstract override val descriptor: ClassDescriptor?
 
     abstract var initializerExpression: BirExpressionBody?
 

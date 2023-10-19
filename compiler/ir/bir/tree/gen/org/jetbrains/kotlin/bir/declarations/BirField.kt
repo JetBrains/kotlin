@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 abstract class BirField : BirElementBase(), BirDeclaration, BirPossiblyExternalDeclaration,
         BirDeclarationWithVisibility, BirDeclarationParent, BirMetadataSourceOwner, BirFieldSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: PropertyDescriptor
+    abstract override val descriptor: PropertyDescriptor?
 
     abstract var type: BirType
 

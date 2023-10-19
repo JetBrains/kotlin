@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: ParameterDescriptor,
+    override val descriptor: ParameterDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -43,7 +43,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -54,7 +57,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -65,7 +71,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -76,7 +85,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -87,7 +99,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -98,7 +113,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _index: Int = index
 
     override var index: Int
-        get() = _index
+        get() {
+            recordPropertyRead()
+            return _index
+        }
         set(value) {
             if (_index != value) {
                 _index = value
@@ -109,7 +127,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _varargElementType: BirType? = varargElementType
 
     override var varargElementType: BirType?
-        get() = _varargElementType
+        get() {
+            recordPropertyRead()
+            return _varargElementType
+        }
         set(value) {
             if (_varargElementType != value) {
                 _varargElementType = value
@@ -120,7 +141,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isCrossinline: Boolean = isCrossinline
 
     override var isCrossinline: Boolean
-        get() = _isCrossinline
+        get() {
+            recordPropertyRead()
+            return _isCrossinline
+        }
         set(value) {
             if (_isCrossinline != value) {
                 _isCrossinline = value
@@ -131,7 +155,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isNoinline: Boolean = isNoinline
 
     override var isNoinline: Boolean
-        get() = _isNoinline
+        get() {
+            recordPropertyRead()
+            return _isNoinline
+        }
         set(value) {
             if (_isNoinline != value) {
                 _isNoinline = value
@@ -142,7 +169,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isHidden: Boolean = isHidden
 
     override var isHidden: Boolean
-        get() = _isHidden
+        get() {
+            recordPropertyRead()
+            return _isHidden
+        }
         set(value) {
             if (_isHidden != value) {
                 _isHidden = value
@@ -153,7 +183,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _defaultValue: BirExpressionBody? = defaultValue
 
     override var defaultValue: BirExpressionBody?
-        get() = _defaultValue
+        get() {
+            recordPropertyRead()
+            return _defaultValue
+        }
         set(value) {
             if (_defaultValue != value) {
                 replaceChild(_defaultValue, value)

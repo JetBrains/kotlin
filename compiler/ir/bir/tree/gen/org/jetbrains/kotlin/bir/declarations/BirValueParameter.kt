@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 abstract class BirValueParameter : BirValueDeclaration(), BirDeclaration,
         BirValueParameterSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ParameterDescriptor
+    abstract override val descriptor: ParameterDescriptor?
 
     abstract var index: Int
 

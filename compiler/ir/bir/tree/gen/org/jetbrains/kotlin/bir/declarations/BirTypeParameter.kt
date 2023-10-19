@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.types.Variance
 abstract class BirTypeParameter : BirElementBase(), BirDeclaration, BirDeclarationWithName,
         BirTypeParameterSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: TypeParameterDescriptor
+    abstract override val descriptor: TypeParameterDescriptor?
 
     abstract var variance: Variance
 

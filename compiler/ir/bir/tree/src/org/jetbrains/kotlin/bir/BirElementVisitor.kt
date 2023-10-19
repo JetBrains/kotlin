@@ -45,3 +45,17 @@ inline fun BirElement.accept(noinline visitor: BirElementVisitorVoid) {
     val scope = BirElementVisitorScopeVoid(visitor)
     visitor(scope, this)
 }
+
+inline fun <D> BirElement.acceptChildren(data: D, noinline visitor: BirElementVisitor<D>) {
+    val scope = BirElementVisitorScope(visitor)
+    with(scope) {
+        walkIntoChildren(data)
+    }
+}
+
+inline fun BirElement.acceptChildren(noinline visitor: BirElementVisitorVoid) {
+    val scope = BirElementVisitorScopeVoid(visitor)
+    with(scope) {
+        walkIntoChildren()
+    }
+}

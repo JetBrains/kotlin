@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.Name
 class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor,
+    override val descriptor: FunctionDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -60,7 +60,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -71,7 +74,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -82,7 +88,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -93,7 +102,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -104,7 +116,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isExternal: Boolean = isExternal
 
     override var isExternal: Boolean
-        get() = _isExternal
+        get() {
+            recordPropertyRead()
+            return _isExternal
+        }
         set(value) {
             if (_isExternal != value) {
                 _isExternal = value
@@ -115,7 +130,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _visibility: DescriptorVisibility = visibility
 
     override var visibility: DescriptorVisibility
-        get() = _visibility
+        get() {
+            recordPropertyRead()
+            return _visibility
+        }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
@@ -124,12 +142,15 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 0)
+            BirChildElementList(this, 1)
 
     private var _isInline: Boolean = isInline
 
     override var isInline: Boolean
-        get() = _isInline
+        get() {
+            recordPropertyRead()
+            return _isInline
+        }
         set(value) {
             if (_isInline != value) {
                 _isInline = value
@@ -140,7 +161,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isExpect: Boolean = isExpect
 
     override var isExpect: Boolean
-        get() = _isExpect
+        get() {
+            recordPropertyRead()
+            return _isExpect
+        }
         set(value) {
             if (_isExpect != value) {
                 _isExpect = value
@@ -151,7 +175,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _returnType: BirType = returnType
 
     override var returnType: BirType
-        get() = _returnType
+        get() {
+            recordPropertyRead()
+            return _returnType
+        }
         set(value) {
             if (_returnType != value) {
                 _returnType = value
@@ -162,7 +189,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _dispatchReceiverParameter: BirValueParameter? = dispatchReceiverParameter
 
     override var dispatchReceiverParameter: BirValueParameter?
-        get() = _dispatchReceiverParameter
+        get() {
+            recordPropertyRead()
+            return _dispatchReceiverParameter
+        }
         set(value) {
             if (_dispatchReceiverParameter != value) {
                 replaceChild(_dispatchReceiverParameter, value)
@@ -174,7 +204,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _extensionReceiverParameter: BirValueParameter? = extensionReceiverParameter
 
     override var extensionReceiverParameter: BirValueParameter?
-        get() = _extensionReceiverParameter
+        get() {
+            recordPropertyRead()
+            return _extensionReceiverParameter
+        }
         set(value) {
             if (_extensionReceiverParameter != value) {
                 replaceChild(_extensionReceiverParameter, value)
@@ -184,12 +217,15 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var valueParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 2)
 
     private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
 
     override var contextReceiverParametersCount: Int
-        get() = _contextReceiverParametersCount
+        get() {
+            recordPropertyRead()
+            return _contextReceiverParametersCount
+        }
         set(value) {
             if (_contextReceiverParametersCount != value) {
                 _contextReceiverParametersCount = value
@@ -200,7 +236,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _body: BirBody? = body
 
     override var body: BirBody?
-        get() = _body
+        get() {
+            recordPropertyRead()
+            return _body
+        }
         set(value) {
             if (_body != value) {
                 replaceChild(_body, value)
@@ -212,7 +251,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _modality: Modality = modality
 
     override var modality: Modality
-        get() = _modality
+        get() {
+            recordPropertyRead()
+            return _modality
+        }
         set(value) {
             if (_modality != value) {
                 _modality = value
@@ -223,7 +265,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isFakeOverride: Boolean = isFakeOverride
 
     override var isFakeOverride: Boolean
-        get() = _isFakeOverride
+        get() {
+            recordPropertyRead()
+            return _isFakeOverride
+        }
         set(value) {
             if (_isFakeOverride != value) {
                 _isFakeOverride = value
@@ -234,7 +279,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -245,7 +293,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isTailrec: Boolean = isTailrec
 
     override var isTailrec: Boolean
-        get() = _isTailrec
+        get() {
+            recordPropertyRead()
+            return _isTailrec
+        }
         set(value) {
             if (_isTailrec != value) {
                 _isTailrec = value
@@ -256,7 +307,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isSuspend: Boolean = isSuspend
 
     override var isSuspend: Boolean
-        get() = _isSuspend
+        get() {
+            recordPropertyRead()
+            return _isSuspend
+        }
         set(value) {
             if (_isSuspend != value) {
                 _isSuspend = value
@@ -267,7 +321,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isOperator: Boolean = isOperator
 
     override var isOperator: Boolean
-        get() = _isOperator
+        get() {
+            recordPropertyRead()
+            return _isOperator
+        }
         set(value) {
             if (_isOperator != value) {
                 _isOperator = value
@@ -278,7 +335,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _isInfix: Boolean = isInfix
 
     override var isInfix: Boolean
-        get() = _isInfix
+        get() {
+            recordPropertyRead()
+            return _isInfix
+        }
         set(value) {
             if (_isInfix != value) {
                 _isInfix = value
@@ -289,7 +349,10 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _correspondingPropertySymbol: BirPropertySymbol? = correspondingPropertySymbol
 
     override var correspondingPropertySymbol: BirPropertySymbol?
-        get() = _correspondingPropertySymbol
+        get() {
+            recordPropertyRead()
+            return _correspondingPropertySymbol
+        }
         set(value) {
             if (_correspondingPropertySymbol != value) {
                 _correspondingPropertySymbol = value
@@ -314,8 +377,8 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.typeParameters
-        1 -> this.valueParameters
+        1 -> this.typeParameters
+        2 -> this.valueParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

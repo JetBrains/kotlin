@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
 class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: DeclarationDescriptor,
+    override val descriptor: DeclarationDescriptor?,
     signature: IdSignature?,
     override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
@@ -51,7 +51,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -62,7 +65,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -73,7 +79,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -84,7 +93,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _name: Name = name
 
     override var name: Name
-        get() = _name
+        get() {
+            recordPropertyRead()
+            return _name
+        }
         set(value) {
             if (_name != value) {
                 _name = value
@@ -92,12 +104,15 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 0)
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 1)
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
 
     override var thisReceiver: BirValueParameter?
-        get() = _thisReceiver
+        get() {
+            recordPropertyRead()
+            return _thisReceiver
+        }
         set(value) {
             if (_thisReceiver != value) {
                 replaceChild(_thisReceiver, value)
@@ -109,7 +124,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _baseClass: BirType? = baseClass
 
     override var baseClass: BirType?
-        get() = _baseClass
+        get() {
+            recordPropertyRead()
+            return _baseClass
+        }
         set(value) {
             if (_baseClass != value) {
                 _baseClass = value
@@ -118,18 +136,21 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var explicitCallParameters: BirChildElementList<BirVariable> =
-            BirChildElementList(this, 1)
-
-    override var implicitReceiversParameters: BirChildElementList<BirValueParameter> =
             BirChildElementList(this, 2)
 
-    override var providedPropertiesParameters: BirChildElementList<BirValueParameter> =
+    override var implicitReceiversParameters: BirChildElementList<BirValueParameter> =
             BirChildElementList(this, 3)
+
+    override var providedPropertiesParameters: BirChildElementList<BirValueParameter> =
+            BirChildElementList(this, 4)
 
     private var _resultProperty: BirPropertySymbol? = resultProperty
 
     override var resultProperty: BirPropertySymbol?
-        get() = _resultProperty
+        get() {
+            recordPropertyRead()
+            return _resultProperty
+        }
         set(value) {
             if (_resultProperty != value) {
                 _resultProperty = value
@@ -140,7 +161,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _earlierScriptsParameter: BirValueParameter? = earlierScriptsParameter
 
     override var earlierScriptsParameter: BirValueParameter?
-        get() = _earlierScriptsParameter
+        get() {
+            recordPropertyRead()
+            return _earlierScriptsParameter
+        }
         set(value) {
             if (_earlierScriptsParameter != value) {
                 replaceChild(_earlierScriptsParameter, value)
@@ -152,7 +176,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _targetClass: BirClassSymbol? = targetClass
 
     override var targetClass: BirClassSymbol?
-        get() = _targetClass
+        get() {
+            recordPropertyRead()
+            return _targetClass
+        }
         set(value) {
             if (_targetClass != value) {
                 _targetClass = value
@@ -163,7 +190,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _constructor: BirConstructor? = constructor
 
     override var constructor: BirConstructor?
-        get() = _constructor
+        get() {
+            recordPropertyRead()
+            return _constructor
+        }
         set(value) {
             if (_constructor != value) {
                 _constructor = value
@@ -185,10 +215,10 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.statements
-        1 -> this.explicitCallParameters
-        2 -> this.implicitReceiversParameters
-        3 -> this.providedPropertiesParameters
+        1 -> this.statements
+        2 -> this.explicitCallParameters
+        3 -> this.implicitReceiversParameters
+        4 -> this.providedPropertiesParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

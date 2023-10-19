@@ -12,31 +12,40 @@ class BirChildElementList<E : BirElement?>(
     private var elementArray: Array<BirElementBase?> = EMPTY_ELEMENT_ARRAY
     private var sizeAndId: Int = id shl (32 - ID_BITS)
 
-    override var size: Int
+    private var _size: Int
         get() = sizeAndId and SIZE_MASK
         private set(value) {
             sizeAndId = value or (sizeAndId and ID_MASK)
+        }
+
+    override val size: Int
+        get() {
+            parent.recordPropertyRead()
+            return _size
         }
 
     internal val id: Int
         get() = sizeAndId.toInt() shr (32 - ID_BITS)
 
     override fun get(index: Int): E {
-        checkElementIndex(index, size)
+        checkElementIndex(index, _size)
+        parent.recordPropertyRead()
         @Suppress("UNCHECKED_CAST")
         return elementArray[index] as E
     }
 
     override fun contains(element: E): Boolean {
+        parent.recordPropertyRead()
         return element != null && element.parent === parent && (element as BirElementBase).containingListId.toInt() == id
     }
 
     override fun indexOf(element: E): Int {
+        parent.recordPropertyRead()
         if (element != null && element !in this) {
             return -1
         }
 
-        for (index in 0..<size) {
+        for (index in 0..<_size) {
             if (this[index] === element) {
                 return index
             }
@@ -45,11 +54,12 @@ class BirChildElementList<E : BirElement?>(
     }
 
     override fun lastIndexOf(element: E): Int {
+        parent.recordPropertyRead()
         if (element != null && element !in this) {
             return -1
         }
 
-        for (index in size - 1 downTo 0) {
+        for (index in _size - 1 downTo 0) {
             if (this[index] === element) {
                 return index
             }
@@ -58,7 +68,7 @@ class BirChildElementList<E : BirElement?>(
     }
 
     override fun set(index: Int, element: E): E {
-        checkElementIndex(index, size)
+        checkElementIndex(index, _size)
         element as BirElementBase?
         val old = elementArray[index]
         if (element !== old) {
@@ -71,21 +81,21 @@ class BirChildElementList<E : BirElement?>(
     }
 
     override fun add(index: Int, element: E) {
-        checkElementIndex(index, size + 1)
+        checkElementIndex(index, _size + 1)
         element as BirElementBase?
 
         var elementArray = elementArray
-        val newSize = size + 1
-        if (elementArray.size == newSize) {
+        val newSize = _size + 1
+        if (elementArray.size <= newSize) {
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
             elementArray.copyInto(newArray, 0, 0, index)
-            elementArray.copyInto(newArray, index + 1, index, size)
+            elementArray.copyInto(newArray, index + 1, index, _size)
             elementArray = newArray
             this.elementArray = elementArray
         }
         addChild(element)
         elementArray[index] = element
-        size = newSize
+        _size = newSize
         invalidate()
     }
 
@@ -94,13 +104,13 @@ class BirChildElementList<E : BirElement?>(
             return false
         }
 
-        checkElementIndex(index, size + 1)
+        checkElementIndex(index, _size + 1)
         var elementArray = elementArray
-        val newSize = size + elements.size
+        val newSize = _size + elements.size
         if (elementArray.size <= newSize) {
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
             elementArray.copyInto(newArray, 0, 0, index)
-            elementArray.copyInto(newArray, index + elements.size, index, size)
+            elementArray.copyInto(newArray, index + elements.size, index, _size)
             elementArray = newArray
             this.elementArray = elementArray
         }
@@ -110,7 +120,7 @@ class BirChildElementList<E : BirElement?>(
             elementArray[i++] = element as BirElementBase?
             addChild(element)
         }
-        size = newSize
+        _size = newSize
         invalidate()
 
         return true
@@ -119,7 +129,7 @@ class BirChildElementList<E : BirElement?>(
     fun ensureCapacity(capacity: Int) {
         if (elementArray.size <= capacity) {
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
-            elementArray.copyInto(newArray, endIndex = size)
+            elementArray.copyInto(newArray, endIndex = _size)
             elementArray = newArray
         }
     }
@@ -127,11 +137,11 @@ class BirChildElementList<E : BirElement?>(
     private fun getNewCapacity(minimumCapacity: Int) = maxOf(minimumCapacity, elementArray.size * 2, 4)
 
     override fun removeAt(index: Int): E {
-        checkElementIndex(index, size)
+        checkElementIndex(index, _size)
         val elementArray = elementArray
         val element = elementArray[index]
         replaceChild(element, null)
-        elementArray.copyInto(elementArray, index, index + 1, size)
+        elementArray.copyInto(elementArray, index, index + 1, _size)
         invalidate()
         @Suppress("UNCHECKED_CAST")
         return element as E
@@ -160,17 +170,17 @@ class BirChildElementList<E : BirElement?>(
     }
 
     override fun clear() {
-        if (size == 0) {
+        if (_size == 0) {
             return
         }
 
         val elementArray = elementArray
-        for (i in 0..<size) {
+        for (i in 0..<_size) {
             val element = elementArray[i]
             elementArray[i] = null
             replaceChild(element, null)
         }
-        size = 0
+        _size = 0
         invalidate()
     }
 
@@ -190,7 +200,7 @@ class BirChildElementList<E : BirElement?>(
     }
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        for (i in 0..<size) {
+        for (i in 0..<_size) {
             val element = elementArray[i]
             element?.accept(data, visitor)
         }
@@ -204,7 +214,7 @@ class BirChildElementList<E : BirElement?>(
 
         private fun checkElementIndex(index: Int, size: Int) {
             if (index < 0 || index >= size) {
-                throw IndexOutOfBoundsException("index: $index, size: $size")
+                throw IndexOutOfBoundsException("index: $index, _size: $size")
             }
         }
     }

@@ -8,8 +8,7 @@
 
 package org.jetbrains.kotlin.bir.util
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.*
 import org.jetbrains.kotlin.bir.expressions.*
@@ -24,7 +23,10 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBase() {
+class Ir2BirConverter(
+    dynamicPropertyManager: BirElementDynamicPropertyManager,
+    expectedTreeSize: Int = 0,
+) : Ir2BirConverterBase() {
     private val modules = createElementMap<BirModuleFragment, IrModuleFragment>(1)
     private val classes = createElementMap<BirClass, IrClass>((expectedTreeSize * 0.004).toInt())
     private val scripts = createElementMap<BirScript, IrScript>()
@@ -42,6 +44,12 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
     private val localDelegatedProperties = createElementMap<BirLocalDelegatedProperty, IrLocalDelegatedProperty>()
     private val typeAliases = createElementMap<BirTypeAlias, IrTypeAlias>()
     private val loops = createElementMap<BirLoop, IrLoop>()
+
+    private val Metadata = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.Metadata)
+    private val ContainerSource = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.ContainerSource)
+    private val SealedSubclasses = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.SealedSubclasses)
+    private val OriginalBeforeInline = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.OriginalBeforeInline)
+    private val CapturedConstructor = dynamicPropertyManager.acquireProperty(GlobalBirElementDynamicProperties.CapturedConstructor)
 
     @Suppress("UNCHECKED_CAST")
     override fun <Bir : BirElement> copyElement(old: IrElement): Bir = when (old) {
@@ -137,7 +145,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.type = remapType(old.type)
         new.varargElementType = old.varargElementType?.let { remapType(it) }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyClass(old: IrClass): BirClass = copyReferencedElement(old, classes, {
@@ -172,7 +180,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
         new.valueClassRepresentation = old.valueClassRepresentation?.mapUnderlyingType { remapType(it) as BirSimpleType }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyAnonymousInitializer(old: IrAnonymousInitializer): BirAnonymousInitializer = copyNotReferencedElement(old) {
@@ -185,7 +193,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             body = copyElement(old.body),
             signature = old.symbol.signature,
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -205,7 +213,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
     }) { new ->
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyConstructor(old: IrConstructor): BirConstructor = copyReferencedElement(old, constructors, {
@@ -235,7 +243,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.typeParameters.copyElements(old.typeParameters)
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.returnType = remapType(old.returnType)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyEnumEntry(old: IrEnumEntry): BirEnumEntry = copyReferencedElement(old, enumEntries, {
@@ -253,7 +261,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.initializerExpression = old.initializerExpression?.let { copyElement(it) }
         new.correspondingClass = old.correspondingClass?.let { copyElement(it) }
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyErrorDeclaration(old: IrErrorDeclaration): BirErrorDeclaration = copyNotReferencedElement(old) {
@@ -264,7 +272,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             origin = old.origin,
             signature = old.symbol.signature,
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -289,7 +297,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.correspondingPropertySymbol = old.correspondingPropertySymbol?.let { remapSymbol(it) }
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.type = remapType(old.type)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyLocalDelegatedProperty(old: IrLocalDelegatedProperty): BirLocalDelegatedProperty =
@@ -311,7 +319,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             new.setter = old.setter?.let { copyElement(it) }
             new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
             new.type = remapType(old.type)
-            new.copyAuxData(old)
+            new.copyDynamicProperties(old)
         }
 
     private fun copyModuleFragment(old: IrModuleFragment): BirModuleFragment = copyReferencedElement(old, modules, {
@@ -323,7 +331,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
     }) { new ->
         birForest?.rootElementAttached(new)
         new.files.copyElements(old.files)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyProperty(old: IrProperty): BirProperty = copyReferencedElement(old, properties, {
@@ -355,7 +363,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.setter = old.setter?.let { copyElement(it) }
         new.overriddenSymbols = old.overriddenSymbols.memoryOptimizedMap { remapSymbol(it) }
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyScript(old: IrScript): BirScript = copyReferencedElement(old, scripts, {
@@ -386,7 +394,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.statements.copyElements(old.statements)
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.baseClass = old.baseClass?.let { remapType(it) }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copySimpleFunction(old: IrSimpleFunction): BirSimpleFunction = copyReferencedElement(old, functions, {
@@ -426,7 +434,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.correspondingPropertySymbol = old.correspondingPropertySymbol?.let { remapSymbol(it) }
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.returnType = remapType(old.returnType)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyTypeAlias(old: IrTypeAlias): BirTypeAlias = copyReferencedElement(old, typeAliases, {
@@ -445,7 +453,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.typeParameters.copyElements(old.typeParameters)
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.expandedType = remapType(old.expandedType)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyVariable(old: IrVariable): BirVariable = copyReferencedElement(old, variables, {
@@ -467,7 +475,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         new.initializer = old.initializer?.let { copyElement(it) }
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
         new.type = remapType(old.type)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyExternalPackageFragment(old: IrExternalPackageFragment): BirExternalPackageFragment =
@@ -482,7 +490,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         }) { new ->
             birForest?.rootElementAttached(new)
             new.declarations.copyElements(old.declarations)
-            new.copyAuxData(old)
+            new.copyDynamicProperties(old)
         }
 
     private fun copyFile(old: IrFile): BirFile = copyReferencedElement(old, files, {
@@ -497,7 +505,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
     }) { new ->
         new.declarations.copyElements(old.declarations)
         new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyExpressionBody(old: IrExpressionBody): BirExpressionBody = copyNotReferencedElement(old) {
@@ -505,7 +513,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
             expression = copyElement(old.expression),
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -514,7 +522,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
         )
         new.statements.copyElements(old.statements)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -533,7 +541,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.copyIrMemberAccessExpressionValueArguments(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -544,7 +552,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             symbol = remapSymbol(old.symbol),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -555,7 +563,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             symbol = remapSymbol(old.symbol),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -566,7 +574,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             symbol = remapSymbol(old.symbol),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -578,7 +586,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.statements.copyElements(old.statements)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -590,7 +598,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.statements.copyElements(old.statements)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -605,7 +613,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
     }) { new ->
         new.copyAttributes(old)
         new.statements.copyElements(old.statements)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyInlinedFunctionBlock(old: IrInlinedFunctionBlock): BirInlinedFunctionBlock = copyNotReferencedElement(old) {
@@ -618,7 +626,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.statements.copyElements(old.statements)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -627,7 +635,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
             kind = old.kind,
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -639,7 +647,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             label = old.label,
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -651,7 +659,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             label = old.label,
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -669,7 +677,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.copyIrMemberAccessExpressionValueArguments(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -686,7 +694,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.copyIrMemberAccessExpressionValueArguments(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -705,7 +713,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.copyIrMemberAccessExpressionValueArguments(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -725,7 +733,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             )
             new.copyAttributes(old)
             new.copyIrMemberAccessExpressionValueArguments(old)
-            new.copyAuxData(old)
+            new.copyDynamicProperties(old)
             new
         }
 
@@ -737,7 +745,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             classType = remapType(old.type),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -749,7 +757,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             value = old.value,
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -760,7 +768,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             value = copyElement(old.value),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -773,7 +781,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.valueArguments.copyElements(old.valueArguments)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -784,7 +792,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.elements.copyElements(old.elements)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -802,7 +810,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             )
             new.copyAttributes(old)
             new.copyIrMemberAccessExpressionValueArguments(old)
-            new.copyAuxData(old)
+            new.copyDynamicProperties(old)
             new
         }
 
@@ -816,7 +824,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             )
             new.copyAttributes(old)
             new.arguments.copyElements(old.arguments)
-            new.copyAuxData(old)
+            new.copyDynamicProperties(old)
             new
         }
 
@@ -828,7 +836,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             receiver = copyElement(old.receiver),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -845,7 +853,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.copyIrMemberAccessExpressionValueArguments(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -858,7 +866,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.arguments.copyElements(old.arguments)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -872,7 +880,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             origin = old.origin,
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -887,7 +895,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             value = copyElement(old.value),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -899,7 +907,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             function = copyElement(old.function),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -910,7 +918,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             argument = copyElement(old.argument),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -921,7 +929,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             classSymbol = remapSymbol(old.classSymbol),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -939,7 +947,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
     }) { new ->
         new.copyAttributes(old)
         new.body = old.body?.let { copyElement(it) }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyDoWhileLoop(old: IrDoWhileLoop): BirDoWhileLoop = copyReferencedElement(old, loops, {
@@ -954,7 +962,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
     }) { new ->
         new.copyAttributes(old)
         new.body = old.body?.let { copyElement(it) }
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
     }
 
     private fun copyReturn(old: IrReturn): BirReturn = copyNotReferencedElement(old) {
@@ -965,7 +973,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             returnTargetSymbol = remapSymbol(old.returnTargetSymbol),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -976,7 +984,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.arguments.copyElements(old.arguments)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -989,7 +997,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             resumeResult = copyElement(old.resumeResult),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1001,7 +1009,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             result = copyElement(old.result),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1012,7 +1020,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             value = copyElement(old.value),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1025,7 +1033,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.catches.copyElements(old.catches)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1035,7 +1043,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             catchParameter = copyElement(old.catchParameter),
             result = copyElement(old.result),
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1048,7 +1056,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             typeOperand = remapType(old.typeOperand),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1060,7 +1068,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             origin = old.origin,
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1073,7 +1081,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             value = copyElement(old.value),
         )
         new.copyAttributes(old)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1085,7 +1093,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.elements.copyElements(old.elements)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1094,7 +1102,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
             expression = copyElement(old.expression),
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1106,7 +1114,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
         )
         new.copyAttributes(old)
         new.branches.copyElements(old.branches)
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1116,7 +1124,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             condition = copyElement(old.condition),
             result = copyElement(old.result),
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1126,7 +1134,7 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             condition = copyElement(old.condition),
             result = copyElement(old.result),
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
     }
 
@@ -1136,7 +1144,28 @@ class Ir2BirConverter(private val expectedTreeSize: Int = 0) : Ir2BirConverterBa
             type = remapType(old.type),
             description = old.description,
         )
-        new.copyAuxData(old)
+        new.copyDynamicProperties(old)
         new
+    }
+
+
+    private fun BirElement.copyDynamicProperties(from: IrElement) {
+        this as BirElementBase
+        if (from is IrMetadataSourceOwner) {
+            (this as BirMetadataSourceOwner)[Metadata] = from.metadata
+        }
+
+        if (from is IrMemberWithContainerSource) {
+            (this as BirMemberWithContainerSource)[ContainerSource] = from.containerSource
+        }
+
+        if (from is IrAttributeContainer) {
+            (this as BirAttributeContainer)[OriginalBeforeInline] =
+                from.originalBeforeInline?.let { remapElement(it) as BirAttributeContainer }
+        }
+
+        if (from is IrClass) {
+            (this as BirClass)[SealedSubclasses] = from.sealedSubclasses.memoryOptimizedMap { remapSymbol(it) }
+        }
     }
 }

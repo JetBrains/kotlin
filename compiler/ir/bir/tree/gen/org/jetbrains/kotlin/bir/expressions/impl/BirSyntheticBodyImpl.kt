@@ -20,7 +20,10 @@ class BirSyntheticBodyImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -31,7 +34,10 @@ class BirSyntheticBodyImpl(
     private var _kind: IrSyntheticBodyKind = kind
 
     override var kind: IrSyntheticBodyKind
-        get() = _kind
+        get() {
+            recordPropertyRead()
+            return _kind
+        }
         set(value) {
             if (_kind != value) {
                 _kind = value

@@ -26,7 +26,7 @@ abstract class BirClass : BirElementBase(), BirDeclaration, BirPossiblyExternalD
         BirDeclarationWithVisibility, BirTypeParametersContainer, BirDeclarationContainer,
         BirAttributeContainer, BirMetadataSourceOwner, BirClassSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassDescriptor
+    abstract override val descriptor: ClassDescriptor?
 
     abstract var kind: ClassKind
 

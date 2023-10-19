@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.bir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.bir.BirBuiltIns
+import org.jetbrains.kotlin.bir.BirElementDynamicPropertyManager
+import org.jetbrains.kotlin.bir.BirForest
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.backend.BirBuiltInSymbols
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
@@ -28,13 +30,11 @@ class JvmBirBackendContext @OptIn(ObsoleteDescriptorBasedAPI::class) constructor
     symbolTable: SymbolTable,
     module: ModuleDescriptor,
     override val configuration: CompilerConfiguration,
+    compiledBir: BirForest,
     converter: Ir2BirConverter,
+    dynamicPropertyManager: BirElementDynamicPropertyManager,
     phaseConfig: List<(JvmBirBackendContext) -> BirLoweringPhase>,
-) : BirBackendContext() {
-    init {
-        converter.birForest = compiledBir
-    }
-
+) : BirBackendContext(compiledBir, dynamicPropertyManager) {
     override val birBuiltIns: BirBuiltIns = BirBuiltIns(irBuiltIns, converter)
     override val typeSystem: BirTypeSystemContext = BirTypeSystemContextImpl(birBuiltIns, compiledBir)
 

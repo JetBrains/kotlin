@@ -24,7 +24,10 @@ class BirDynamicMemberExpressionImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -35,7 +38,10 @@ class BirDynamicMemberExpressionImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -46,7 +52,10 @@ class BirDynamicMemberExpressionImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -57,7 +66,10 @@ class BirDynamicMemberExpressionImpl(
     private var _memberName: String = memberName
 
     override var memberName: String
-        get() = _memberName
+        get() {
+            recordPropertyRead()
+            return _memberName
+        }
         set(value) {
             if (_memberName != value) {
                 _memberName = value
@@ -68,7 +80,10 @@ class BirDynamicMemberExpressionImpl(
     private var _receiver: BirExpression = receiver
 
     override var receiver: BirExpression
-        get() = _receiver
+        get() {
+            recordPropertyRead()
+            return _receiver
+        }
         set(value) {
             if (_receiver != value) {
                 replaceChild(_receiver, value)

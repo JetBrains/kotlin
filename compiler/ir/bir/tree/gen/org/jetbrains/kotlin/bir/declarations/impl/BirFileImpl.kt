@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     sourceSpan: SourceSpan,
     @property:ObsoleteDescriptorBasedAPI
-    override val descriptor: PackageFragmentDescriptor,
+    override val descriptor: PackageFragmentDescriptor?,
     signature: IdSignature?,
     packageFqName: FqName,
     override var annotations: List<BirConstructorCall>,
@@ -35,7 +35,10 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -44,12 +47,15 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override val declarations: BirChildElementList<BirDeclaration> =
-            BirChildElementList(this, 0)
+            BirChildElementList(this, 1)
 
     private var _signature: IdSignature? = signature
 
     override var signature: IdSignature?
-        get() = _signature
+        get() {
+            recordPropertyRead()
+            return _signature
+        }
         set(value) {
             if (_signature != value) {
                 _signature = value
@@ -60,7 +66,10 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _packageFqName: FqName = packageFqName
 
     override var packageFqName: FqName
-        get() = _packageFqName
+        get() {
+            recordPropertyRead()
+            return _packageFqName
+        }
         set(value) {
             if (_packageFqName != value) {
                 _packageFqName = value
@@ -71,7 +80,10 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     private var _fileEntry: IrFileEntry = fileEntry
 
     override var fileEntry: IrFileEntry
-        get() = _fileEntry
+        get() {
+            recordPropertyRead()
+            return _fileEntry
+        }
         set(value) {
             if (_fileEntry != value) {
                 _fileEntry = value
@@ -86,7 +98,7 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.declarations
+        1 -> this.declarations
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

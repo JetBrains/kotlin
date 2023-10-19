@@ -27,7 +27,7 @@ operator fun <E : BirElement, T> E.set(token: BirElementDynamicPropertyToken<E, 
     (this as BirElementBase).setDynamicProperty(token, value)
 }
 
-fun <E : BirElement, T> E.computeIfAbsentDynamicProperty(token: BirElementDynamicPropertyToken<E, T>, compute: () -> T): T {
+fun <E : BirElement, T> E.getOrPutDynamicProperty(token: BirElementDynamicPropertyToken<E, T>, compute: () -> T): T {
     this as BirElementBase
     return getDynamicProperty(token) ?: compute().also {
         setDynamicProperty(token, it)

@@ -26,7 +26,10 @@ class BirConstantObjectImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -37,7 +40,10 @@ class BirConstantObjectImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -48,7 +54,10 @@ class BirConstantObjectImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -59,7 +68,10 @@ class BirConstantObjectImpl(
     private var _constructor: BirConstructorSymbol = constructor
 
     override var constructor: BirConstructorSymbol
-        get() = _constructor
+        get() {
+            recordPropertyRead()
+            return _constructor
+        }
         set(value) {
             if (_constructor != value) {
                 _constructor = value
@@ -68,7 +80,7 @@ class BirConstantObjectImpl(
         }
 
     override val valueArguments: BirChildElementList<BirConstantValue> =
-            BirChildElementList(this, 0)
+            BirChildElementList(this, 1)
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
@@ -77,7 +89,7 @@ class BirConstantObjectImpl(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.valueArguments
+        1 -> this.valueArguments
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

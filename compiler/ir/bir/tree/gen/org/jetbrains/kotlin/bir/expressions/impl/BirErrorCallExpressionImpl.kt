@@ -25,7 +25,10 @@ class BirErrorCallExpressionImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -36,7 +39,10 @@ class BirErrorCallExpressionImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -47,7 +53,10 @@ class BirErrorCallExpressionImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -58,7 +67,10 @@ class BirErrorCallExpressionImpl(
     private var _description: String = description
 
     override var description: String
-        get() = _description
+        get() {
+            recordPropertyRead()
+            return _description
+        }
         set(value) {
             if (_description != value) {
                 _description = value
@@ -69,7 +81,10 @@ class BirErrorCallExpressionImpl(
     private var _explicitReceiver: BirExpression? = explicitReceiver
 
     override var explicitReceiver: BirExpression?
-        get() = _explicitReceiver
+        get() {
+            recordPropertyRead()
+            return _explicitReceiver
+        }
         set(value) {
             if (_explicitReceiver != value) {
                 replaceChild(_explicitReceiver, value)
@@ -78,7 +93,7 @@ class BirErrorCallExpressionImpl(
             }
         }
 
-    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 0)
+    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1)
     init {
         initChild(_explicitReceiver)
     }
@@ -91,7 +106,7 @@ class BirErrorCallExpressionImpl(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.arguments
+        1 -> this.arguments
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

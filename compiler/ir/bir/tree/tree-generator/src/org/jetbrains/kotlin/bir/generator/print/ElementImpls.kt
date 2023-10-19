@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.bir.generator.print
 
 import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.bir.generator.BirTree.rootElement
-import org.jetbrains.kotlin.bir.generator.Packages
 import org.jetbrains.kotlin.bir.generator.childElementList
 import org.jetbrains.kotlin.bir.generator.elementBaseType
 import org.jetbrains.kotlin.bir.generator.model.ListField
@@ -66,7 +65,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        initializer("BirChildElementList(this, %L)", childrenLists.indexOf(field))
+                        initializer("BirChildElementList(this, %L)", childrenLists.indexOf(field) + 1)
                     } else if (field is SingleField && field.isMutable) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, poetType)
@@ -87,6 +86,13 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is SingleField && field.isMutable) {
+                        getter(
+                            FunSpec.getterBuilder()
+                                .apply {
+                                    addCode("recordPropertyRead()\n")
+                                    addCode("return ${field.backingFieldName}")
+                                }.build()
+                        )
                         setter(
                             FunSpec.setterBuilder()
                                 .addParameter(ParameterSpec("value", poetType))
@@ -115,6 +121,33 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
             }
 
             primaryConstructor(ctor.build())
+
+            /*if (element.allChildren.isNotEmpty()) {
+                addFunction(
+                    FunSpec
+                        .builder("acceptChildren")
+                        .addModifiers(KModifier.OVERRIDE)
+                        .addTypeVariable(TypeVariableName("D"))
+                        .addParameter("visitor", elementVisitor.parameterizedBy(TypeVariableName("D")))
+                        .addParameter("data", TypeVariableName("D"))
+                        .apply {
+                            element.allChildren.forEach { child ->
+                                when (child) {
+                                    is SingleField -> {
+                                        addCode(child.backingFieldName)
+                                        if (child.nullable) addCode("?")
+                                        addCode(".%M(data, visitor)\n", elementAccept)
+                                    }
+                                    is ListField -> {
+                                        addCode(child.name)
+                                        addCode(".acceptChildren(visitor, data)\n")
+                                    }
+                                }
+                            }
+                        }
+                        .build()
+                )
+            }*/
 
             addFunction(
                 FunSpec
@@ -147,8 +180,8 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         .returns(childElementList.toPoet().tryParameterizedBy(STAR))
                         .apply {
                             addCode("return when(id) {\n")
-                            childrenLists.forEachIndexed { id, field ->
-                                addCode("    %L -> this.%N\n", id, field.name)
+                            childrenLists.forEachIndexed { index, field ->
+                                addCode("    %L -> this.%N\n", index + 1, field.name)
                             }
                             addCode("    else -> throwChildrenListWithIdNotFound(id)\n")
                             addCode("}\n")
@@ -163,4 +196,6 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 }
 
 private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")
-private val elementAccept = MemberName(Packages.tree + ".traversal", "accept", true)
+/*
+private val elementVisitor = ClassName(Packages.tree, "BirElementVisitor")
+private val elementAccept = MemberName(Packages.tree, "accept", true)*/
