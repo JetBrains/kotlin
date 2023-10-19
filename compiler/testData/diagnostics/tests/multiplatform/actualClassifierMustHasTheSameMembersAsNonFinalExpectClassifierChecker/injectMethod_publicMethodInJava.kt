@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MODULE: m1-common
 // FILE: common.kt
 
@@ -8,7 +9,7 @@ expect open class Foo {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual typealias <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>Foo<!> = FooImpl
+actual typealias Foo = FooImpl
 
 // FILE: Foo.java
 
