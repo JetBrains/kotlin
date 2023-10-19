@@ -9,13 +9,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.multiplatform.K1AbstractExpectActualCompatibilityChecker
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.*
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -130,7 +125,7 @@ private fun calculateExpectActualScopeDiff(
     return actualClassCallables.flatMap { actualMember ->
         val potentialExpects = nameAndKindToExpectCallables[actualMember.name to actualMember.functionVsPropertyKind]
         if (potentialExpects.isNullOrEmpty()) {
-            listOf(K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded)
+            emptyList<K1ExpectActualMemberDiff.Kind>()
         } else {
             potentialExpects
                 .map { expectMember ->
@@ -145,9 +140,19 @@ private fun calculateExpectActualScopeDiff(
                 }
                 .takeIf { kinds -> kinds.all { it != K1ExpectActualCompatibility.Compatible } }
                 .orEmpty()
-                .map {
+                .mapNotNull {
                     when (it) {
                         is K1ExpectActualCompatibility.Compatible -> error("Compatible was filtered out by takeIf")
+                        K1ExpectActualCompatibility.Incompatible.CallableKind,
+                        K1ExpectActualCompatibility.Incompatible.ParameterCount,
+                        K1ExpectActualCompatibility.Incompatible.ParameterShape,
+                        K1ExpectActualCompatibility.Incompatible.ParameterTypes,
+                        K1ExpectActualCompatibility.Incompatible.FunctionTypeParameterCount,
+                        K1ExpectActualCompatibility.Incompatible.FunctionTypeParameterUpperBounds,
+                            // Don't report "matching" (aka "strong") incompatibilities, because it's
+                            // incompatibilities that happen only when a new member added
+                        -> null
+
                         is K1ExpectActualCompatibility.Incompatible -> it.toMemberDiffKind()
                         // If toMemberDiffKind returns null then some Kotlin invariants described in toMemberDiffKind no longer hold.
                         // We can't throw exception here because it would crash the compilation.
@@ -184,8 +189,6 @@ private val CallableMemberDescriptor.psiIfReal: KtCallableDeclaration?
 private fun BindingTrace.reportIfPossible(diff: K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>) {
     val psi = diff.actualMember.psiIfReal ?: return
     val diagnostic = when (diff.kind) {
-        K1ExpectActualMemberDiff.Kind.NonPrivateCallableAdded ->
-            Errors.NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         K1ExpectActualMemberDiff.Kind.ReturnTypeChangedInOverride ->
             Errors.RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         K1ExpectActualMemberDiff.Kind.ModalityChangedInOverride ->

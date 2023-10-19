@@ -403,9 +403,6 @@ public class DefaultErrorMessages {
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 ExpectActualScopeDiffsRenderer.TEXT,
                 NAME);
-        MAP.put(NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING,
-                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
-                ExpectActualScopeDiffRenderer.INSTANCE);
         MAP.put(UNKNOWN_PROBLEM_DURING_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING,
                 "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
                 ExpectActualScopeDiffRenderer.INSTANCE);
