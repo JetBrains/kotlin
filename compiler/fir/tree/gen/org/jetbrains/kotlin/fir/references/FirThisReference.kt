@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.thisReference]
+ */
 abstract class FirThisReference : FirReference() {
     abstract override val source: KtSourceElement?
     abstract val labelName: String?

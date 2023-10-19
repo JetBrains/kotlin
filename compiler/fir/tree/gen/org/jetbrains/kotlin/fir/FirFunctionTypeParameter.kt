@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.functionTypeParameter]
+ */
 abstract class FirFunctionTypeParameter : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val name: Name?

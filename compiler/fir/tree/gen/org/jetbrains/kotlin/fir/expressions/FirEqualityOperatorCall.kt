@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.equalityOperatorCall]
+ */
 abstract class FirEqualityOperatorCall : FirExpression(), FirCall {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess

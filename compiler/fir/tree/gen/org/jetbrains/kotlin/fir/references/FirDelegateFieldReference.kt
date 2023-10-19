@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.delegateFieldReference]
+ */
 abstract class FirDelegateFieldReference : FirResolvedNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name

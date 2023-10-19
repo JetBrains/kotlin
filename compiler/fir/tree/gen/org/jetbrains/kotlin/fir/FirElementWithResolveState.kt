@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.elementWithResolveState]
+ */
 abstract class FirElementWithResolveState : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     @Volatile

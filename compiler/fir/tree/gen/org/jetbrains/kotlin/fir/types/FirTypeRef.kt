@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeRef]
+ */
 sealed class FirTypeRef : FirPureAbstractElement(), FirAnnotationContainer {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>

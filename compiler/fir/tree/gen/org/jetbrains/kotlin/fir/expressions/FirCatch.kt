@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.catchClause]
+ */
 abstract class FirCatch : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val parameter: FirProperty

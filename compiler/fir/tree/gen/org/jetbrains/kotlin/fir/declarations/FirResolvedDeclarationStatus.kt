@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.resolvedDeclarationStatus]
+ */
 interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val source: KtSourceElement?
     override val visibility: Visibility

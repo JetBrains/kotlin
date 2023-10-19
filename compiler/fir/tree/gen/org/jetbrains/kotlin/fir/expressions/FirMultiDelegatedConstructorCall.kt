@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.multiDelegatedConstructorCall]
+ */
 abstract class FirMultiDelegatedConstructorCall : FirDelegatedConstructorCall() {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>

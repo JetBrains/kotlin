@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.contractElementDeclaration]
+ */
 abstract class FirContractElementDeclaration : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val effect: ConeContractDescriptionElement

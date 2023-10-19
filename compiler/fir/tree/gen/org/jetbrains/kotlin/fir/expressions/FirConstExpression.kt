@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.constExpression]
+ */
 abstract class FirConstExpression<T> : FirExpression() {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess

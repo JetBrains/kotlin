@@ -76,7 +76,7 @@ class Element(
     val fieldsToSkipInIrFactoryMethod = config.fieldsToSkipInIrFactoryMethod
 
     val generationCallback = config.generationCallback
-    val propertyName = config.propertyName
+    override val propertyName = config.propertyName
 
     override val kDoc = config.kDoc
 

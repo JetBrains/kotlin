@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.stringConcatenationCall]
+ */
 abstract class FirStringConcatenationCall : FirExpression(), FirCall {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>

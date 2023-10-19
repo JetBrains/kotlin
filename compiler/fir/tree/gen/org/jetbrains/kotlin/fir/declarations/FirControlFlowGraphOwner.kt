@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.controlFlowGraphOwner]
+ */
 interface FirControlFlowGraphOwner : FirElement {
     override val source: KtSourceElement?
     val controlFlowGraphReference: FirControlFlowGraphReference?

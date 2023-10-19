@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.errorFunction]
+ */
 abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>

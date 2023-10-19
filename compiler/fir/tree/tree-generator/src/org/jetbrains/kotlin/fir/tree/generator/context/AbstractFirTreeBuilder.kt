@@ -18,9 +18,10 @@ import kotlin.reflect.KProperty
 
 abstract class AbstractFirTreeBuilder {
     companion object {
-        val baseFirElement = Element(
-            "Element",
-            Element.Kind.Other
+        val baseFirElement: Element = Element(
+            name = "Element",
+            propertyName = this::class.qualifiedName + "." + Companion::baseFirElement.name,
+            kind = Element.Kind.Other
         )
     }
 
@@ -43,8 +44,8 @@ abstract class AbstractFirTreeBuilder {
         return ElementDelegateProvider(kind, dependencies, isSealed = true, predefinedName = name)
     }
 
-    private fun createElement(name: String, kind: Element.Kind, vararg dependencies: Element): Element =
-        Element(name, kind).also {
+    private fun createElement(name: String, propertyName: String, kind: Element.Kind, vararg dependencies: Element): Element =
+        Element(name, propertyName, kind).also {
             if (dependencies.isEmpty()) {
                 it.elementParents.add(ElementRef(baseFirElement))
             }
@@ -56,10 +57,11 @@ abstract class AbstractFirTreeBuilder {
 
     private fun createSealedElement(
         name: String,
+        propertyName: String,
         kind: Element.Kind,
         vararg dependencies: Element,
     ): Element {
-        return createElement(name, kind, *dependencies).apply {
+        return createElement(name, propertyName, kind, *dependencies).apply {
             isSealed = true
         }
     }
@@ -82,11 +84,12 @@ abstract class AbstractFirTreeBuilder {
             thisRef: AbstractFirTreeBuilder,
             prop: KProperty<*>
         ): ReadOnlyProperty<Any?, Element> {
+            val path = thisRef::class.qualifiedName + "." + prop.name
             val name = predefinedName ?: prop.name.replaceFirstChar { it.uppercaseChar() }
             val element = if (isSealed) {
-                createSealedElement(name, kind, *dependencies)
+                createSealedElement(name, path, kind, *dependencies)
             } else {
-                createElement(name, kind, *dependencies)
+                createElement(name, path, kind, *dependencies)
             }
             return DummyDelegate(element)
         }

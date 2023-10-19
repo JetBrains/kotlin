@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
 import org.jetbrains.kotlin.generators.tree.typeKind
+import org.jetbrains.kotlin.generators.tree.printer.extendedKDoc
 import org.jetbrains.kotlin.ir.generator.util.tryParameterizedBy
 import java.io.File
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
@@ -273,17 +274,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
 }
 
 private fun TypeSpec.Builder.generateElementKDoc(element: Element) {
-    addKdoc(buildString {
-        if (element.kDoc != null) {
-            appendLine(element.kDoc)
-        } else {
-            append("A ")
-            append(if (element.isLeaf) "leaf" else "non-leaf")
-            appendLine(" IR tree element.")
-        }
-
-        append("\nGenerated from: [${element.propertyName}]")
-    })
+    addKdoc(element.extendedKDoc("A ${if (element.isLeaf) "leaf" else "non-leaf"} IR tree element."))
 }
 
 private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")

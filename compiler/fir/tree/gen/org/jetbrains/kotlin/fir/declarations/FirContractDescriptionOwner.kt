@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.contractDescriptionOwner]
+ */
 sealed interface FirContractDescriptionOwner : FirElement {
     override val source: KtSourceElement?
     val contractDescription: FirContractDescription

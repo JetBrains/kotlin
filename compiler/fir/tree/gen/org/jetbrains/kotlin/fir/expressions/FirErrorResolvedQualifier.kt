@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.errorResolvedQualifier]
+ */
 abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?
     @UnresolvedExpressionTypeAccess

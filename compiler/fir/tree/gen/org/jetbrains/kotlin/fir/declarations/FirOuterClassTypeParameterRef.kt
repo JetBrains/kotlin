@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.outerClassTypeParameterRef]
+ */
 abstract class FirOuterClassTypeParameterRef : FirPureAbstractElement(), FirTypeParameterRef {
     abstract override val source: KtSourceElement?
     abstract override val symbol: FirTypeParameterSymbol

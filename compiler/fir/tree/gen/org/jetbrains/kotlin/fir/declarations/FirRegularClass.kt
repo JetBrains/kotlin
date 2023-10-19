@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.regularClass]
+ */
 abstract class FirRegularClass : FirClass() {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData

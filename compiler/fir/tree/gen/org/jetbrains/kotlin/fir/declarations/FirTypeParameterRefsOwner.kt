@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameterRefsOwner]
+ */
 sealed interface FirTypeParameterRefsOwner : FirElement {
     override val source: KtSourceElement?
     val typeParameters: List<FirTypeParameterRef>

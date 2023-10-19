@@ -67,3 +67,12 @@ fun SmartPrinter.printKDoc(kDoc: String?) {
     }
     println(" */")
 }
+
+fun AbstractElement<*, *>.extendedKDoc(defaultKDoc: String? = null): String = buildString {
+    val doc = kDoc ?: defaultKDoc
+    if (doc != null) {
+        appendLine(doc)
+        appendLine()
+    }
+    append("Generated from: [${element.propertyName}]")
+}

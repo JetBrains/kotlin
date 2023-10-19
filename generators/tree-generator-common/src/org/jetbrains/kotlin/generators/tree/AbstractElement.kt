@@ -16,6 +16,11 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
 
     abstract val name: String
 
+    /**
+     * The fully-qualified name of the property in the tree generator that is used to configure this element.
+     */
+    abstract val propertyName: String
+
     abstract val kDoc: String?
 
     abstract val fields: Set<Field>

@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.whileLoop]
+ */
 abstract class FirWhileLoop : FirLoop() {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>

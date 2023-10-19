@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.mpp.TypeRefMarker
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.resolvedTypeRef]
+ */
 abstract class FirResolvedTypeRef : FirTypeRef(), TypeRefMarker {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>

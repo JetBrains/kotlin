@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.typeParameter]
+ */
 abstract class FirTypeParameter : FirDeclaration(), FirTypeParameterRef {
     abstract override val source: KtSourceElement?
     abstract override val moduleData: FirModuleData

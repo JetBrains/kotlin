@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.annotationArgumentMapping]
+ */
 abstract class FirAnnotationArgumentMapping : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val mapping: Map<Name, FirExpression>

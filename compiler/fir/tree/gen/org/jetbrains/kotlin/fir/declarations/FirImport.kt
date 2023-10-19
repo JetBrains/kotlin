@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
 
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTreeBuilder.import]
+ */
 abstract class FirImport : FirPureAbstractElement(), FirElement {
     abstract override val source: KtSourceElement?
     abstract val importedFqName: FqName?
