@@ -62,7 +62,17 @@ internal class ValueClassAwareCaller<out M : Member?>(
     private class BoxUnboxData(val argumentRange: IntRange, val unboxParameters: Array<List<Method>?>, val box: Method?)
 
     private val data: BoxUnboxData = run {
-        val box = descriptor.returnType!!.toInlineClass()?.getBoxMethod(descriptor)
+        val returnType = descriptor.returnType!!
+        val box = if (
+            descriptor is FunctionDescriptor && descriptor.isSuspend &&
+            returnType.substitutedUnderlyingType()?.let { KotlinBuiltIns.isPrimitiveType(it) } == true
+        ) {
+            // Suspend functions always return java.lang.Object, and value classes over primitives are already boxed there.
+            null
+        } else {
+            returnType.toInlineClass()?.getBoxMethod(descriptor)
+        }
+
         if (descriptor.isGetterOfUnderlyingPropertyOfValueClass()) {
             // Getter of the underlying val of a value class is always called on a boxed receiver,
             // no argument unboxing is required.
