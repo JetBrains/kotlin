@@ -1,0 +1,2 @@
+Resolved to:
+0: (in <local>: <script-ScriptArgument.kts>) val args: kotlin.Array<kotlin.String>

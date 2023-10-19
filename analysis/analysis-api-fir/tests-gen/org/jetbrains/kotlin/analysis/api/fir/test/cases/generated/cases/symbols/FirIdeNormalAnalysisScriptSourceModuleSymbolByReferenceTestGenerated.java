@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByReferenceTestGenerate
     }
 
     @Test
+    @TestMetadata("scriptArgument.kts")
+    public void testScriptArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/scriptArgument.kts");
+    }
+
+    @Test
     @TestMetadata("scriptResult.kts")
     public void testScriptResult() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/scriptResult.kts");

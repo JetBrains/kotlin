@@ -47,6 +47,12 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     }
 
     @Test
+    @TestMetadata("ScriptArgument.kts")
+    public void testScriptArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/ScriptArgument.kts");
+    }
+
+    @Test
     @TestMetadata("ScriptResult.kts")
     public void testScriptResult() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ScriptResult.kts");
