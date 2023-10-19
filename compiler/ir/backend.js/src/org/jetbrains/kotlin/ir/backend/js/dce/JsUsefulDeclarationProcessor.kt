@@ -71,7 +71,7 @@ internal class JsUsefulDeclarationProcessor(
                 }
 
                 context.reflectionSymbols.getKClass -> {
-                    addConstructedClass(expression.getTypeArgument(0)!!.classifierOrFail.owner as IrClass)
+                    expression.getTypeArgument(0)?.classOrNull?.owner?.let(::addConstructedClass)
                 }
 
                 context.intrinsics.jsObjectCreateSymbol -> {
