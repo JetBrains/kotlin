@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.LLVMLinkage
+import llvm.LLVMSetLinkage
 import llvm.LLVMStoreSizeOfType
 import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.llvm.*
@@ -125,9 +126,8 @@ private fun FunctionGenerationContext.loadBlockInvoke(
 ): LlvmCallable {
     val invokePtr = structGep(bitcast(pointerType(codegen.runtime.blockLiteralType), blockPtr), 3)
     val signature = bridge.blockType.toBlockInvokeLlvmType(llvm)
-    val functionPointerType = pointerType(signature.llvmFunctionType)
-    val functionPointer = load(functionPointerType, bitcast(pointerType(functionPointerType), invokePtr))
-    return LlvmCallable(functionPointer, signature)
+
+    return LlvmCallable(bitcast(pointerType(signature.llvmFunctionType), load(invokePtr)), signature)
 }
 
 private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(

@@ -480,7 +480,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val pointerType = pointerType(callSite.llvmReturnType)
         val rawPointer = args.last()
         val pointer = bitcast(pointerType, rawPointer)
-        return load(callSite.llvmReturnType, pointer)
+        return load(pointer)
     }
 
     private fun FunctionGenerationContext.emitWritePrimitive(callSite: IrCall, args: List<LLVMValueRef>): LLVMValueRef {
@@ -509,7 +509,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val bitsWithPaddingType = LLVMIntTypeInContext(llvm.llvmContext, bitsWithPaddingNum)!!
 
         val bitsWithPaddingPtr = bitcast(pointerType(bitsWithPaddingType), gep(ptr, llvm.int64(offset / 8)))
-        val bitsWithPadding = load(bitsWithPaddingType, bitsWithPaddingPtr).setUnaligned()
+        val bitsWithPadding = load(bitsWithPaddingPtr).setUnaligned()
 
         val bits = shr(
                 shl(bitsWithPadding, suffixBitsNum),
@@ -558,7 +558,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val bitsToStore = if (prefixBitsNum == 0 && suffixBitsNum == 0) {
             bits
         } else {
-            val previousValue = load(bitsWithPaddingType, bitsWithPaddingPtr).setUnaligned()
+            val previousValue = load(bitsWithPaddingPtr).setUnaligned()
             val preservedBits = and(previousValue, preservedBitsMask)
             val bitsWithPadding = shl(zext(bits, bitsWithPaddingType), prefixBitsNum)
 
