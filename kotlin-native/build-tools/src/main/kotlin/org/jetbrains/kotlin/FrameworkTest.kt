@@ -203,6 +203,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         val timeoutMessage = if (exitCode == -1) {
             "WARNING: probably a timeout\n"
         } else ""
-        check(exitCode == (expectedExitStatus ?: 0)) { "${timeoutMessage}Execution of $testExecName failed with exit code: $exitCode " }
+        val expectedExitCode = expectedExitStatus?.takeUnless { project.compileOnlyTests } ?: 0
+        check(exitCode == expectedExitCode) { "${timeoutMessage}Execution of $testExecName failed with exit code: $exitCode (expected exit code: $expectedExitCode)" }
     }
 }
