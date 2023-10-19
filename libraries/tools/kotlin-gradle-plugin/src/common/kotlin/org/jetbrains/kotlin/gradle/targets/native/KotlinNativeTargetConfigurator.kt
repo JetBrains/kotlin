@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
+import org.jetbrains.kotlin.gradle.targets.createKlibArtifact
+import org.jetbrains.kotlin.gradle.targets.klibOutputDirectory
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -150,8 +152,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
                     // Add the interop library in publication.
                     createKlibArtifact(
-                        compilationInfo = compilationInfo,
-                        konanTarget = konanTarget,
+                        compilation,
                         artifactFile = interopTask.map { it.outputFile },
                         classifier = "cinterop-${interop.name}",
                         producingTask = interopTask,
@@ -184,30 +185,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         if (PropertiesProvider(target.project).ignoreIncorrectNativeDependencies != true) {
             warnAboutIncorrectDependencies(target)
-        }
-    }
-
-    override fun configureArchivesAndComponent(target: T): Unit = with(target.project) {
-        registerTask<DefaultTask>(target.artifactsTaskName) {
-            it.group = BasePlugin.BUILD_GROUP
-            it.description = "Assembles outputs for target '${target.name}'."
-        }
-        target.compilations.all { createKlibCompilationTask(KotlinCompilationInfo(it), it.konanTarget) }
-
-        val apiElements = configurations.getByName(target.apiElementsConfigurationName)
-
-        apiElements.outgoing.attributes.attribute(artifactTypeAttribute, NativeArtifactFormat.KLIB)
-
-        if (project.isKotlinGranularMetadataEnabled) {
-            project.configurations.create(target.hostSpecificMetadataElementsConfigurationName) { configuration ->
-                configuration.isCanBeConsumed = true
-                configuration.isCanBeResolved = false
-
-                configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
-
-                copyAttributes(from = apiElements.attributes, to = configuration.attributes)
-                configuration.attributes.attribute(USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_METADATA))
-            }
         }
     }
 
@@ -352,130 +329,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         const val INTEROP_GROUP = "interop"
         const val RUN_GROUP = "run"
 
-        internal fun createKlibCompilationTask(
-            compilationInfo: KotlinCompilationInfo,
-            konanTarget: KonanTarget,
-        ): TaskProvider<KotlinNativeCompile> {
-            val project = compilationInfo.project
-            val ext = project.topLevelExtension
-            val compileTaskProvider = project.registerTask<KotlinNativeCompile>(
-                compilationInfo.compileKotlinTaskName,
-                listOf(
-                    compilationInfo,
-                    compilationInfo.compilerOptions.options as KotlinNativeCompilerOptions
-                )
-            ) {
-                it.group = BasePlugin.BUILD_GROUP
-                it.description = "Compiles a klibrary from the '${compilationInfo.compilationName}' " +
-                        "compilation in target '${compilationInfo.targetDisambiguationClassifier}'."
-                it.enabled = konanTarget.enabledOnCurrentHost
 
-                it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).dir("klib"))
-                val propertiesProvider = PropertiesProvider(project)
-                if (propertiesProvider.useK2 == true) {
-                    it.compilerOptions.useK2.set(true)
-                }
-                it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
-
-                it.explicitApiMode
-                    .value(
-                        project.providers.provider {
-                            // Plugin explicitly does not configures 'explicitApi' mode for test sources
-                            // compilation, as test sources are not published
-                            if (compilationInfo.isMain) {
-                                ext.explicitApi
-                            } else {
-                                ExplicitApiMode.Disabled
-                            }
-                        }
-                    )
-                    .finalizeValueOnRead()
-
-            }
-
-            compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })
-
-            project.project.tasks.named(compilationInfo.compileAllTaskName).dependsOn(compileTaskProvider)
-
-            if (compilationInfo.isMain) {
-                if (compilationInfo is KotlinCompilationInfo.TCS && compilationInfo.compilation is KotlinNativeCompilation) {
-                    project.project.tasks.named(compilationInfo.compilation.target.artifactsTaskName).dependsOn(compileTaskProvider)
-                }
-
-                project.project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(compileTaskProvider)
-            }
-
-            val shouldAddCompileOutputsToElements = compilationInfo.isMain
-            if (shouldAddCompileOutputsToElements) {
-                createRegularKlibArtifact(compilationInfo, konanTarget, compileTaskProvider)
-            }
-
-            if (compilationInfo is KotlinCompilationInfo.TCS && compilationInfo.compilation is AbstractKotlinNativeCompilation) {
-                // FIXME: support compiler plugins for PM20
-                addCompilerPlugins(compilationInfo.compilation)
-            }
-
-            return compileTaskProvider
-        }
-
-        private fun Project.klibOutputDirectory(
-            compilation: KotlinCompilationInfo,
-        ): DirectoryProperty {
-            val targetSubDirectory = compilation.targetDisambiguationClassifier?.let { "$it/" }.orEmpty()
-            return project.objects.directoryProperty().value(
-                layout.buildDirectory.dir("classes/kotlin/$targetSubDirectory${compilation.compilationName}")
-            )
-        }
-
-        private fun addCompilerPlugins(compilation: AbstractKotlinNativeCompilation) {
-            val project = compilation.target.project
-
-            project.whenEvaluated {
-                SubpluginEnvironment
-                    .loadSubplugins(project)
-                    .addSubpluginOptions(project, compilation)
-
-                compilation.compileKotlinTaskProvider.configure {
-                    it.compilerPluginClasspath = compilation.configurations.pluginConfiguration
-                }
-            }
-        }
-
-        internal fun createRegularKlibArtifact(
-            compilation: KotlinCompilationInfo,
-            konanTarget: KonanTarget,
-            compileTask: TaskProvider<out KotlinNativeCompile>,
-        ) = createKlibArtifact(compilation, konanTarget, compileTask.map { it.outputFile.get() }, null, compileTask)
-
-        private fun createKlibArtifact(
-            compilationInfo: KotlinCompilationInfo,
-            konanTarget: KonanTarget,
-            artifactFile: Provider<File>,
-            classifier: String?,
-            producingTask: TaskProvider<*>,
-        ) {
-            val project = compilationInfo.project
-            if (!konanTarget.enabledOnCurrentHost) {
-                return
-            }
-
-            val apiElementsName = when (compilationInfo) {
-                is KotlinCompilationInfo.TCS -> compilationInfo.compilation.target.apiElementsConfigurationName
-            }
-
-            with(project.configurations.getByName(apiElementsName)) {
-                val klibArtifact = project.project.artifacts.add(name, artifactFile) { artifact ->
-                    artifact.name = compilationInfo.compilationName
-                    artifact.extension = "klib"
-                    artifact.type = "klib"
-                    artifact.classifier = classifier
-                    artifact.builtBy(producingTask)
-                }
-                project.project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
-                artifacts.add(klibArtifact)
-                attributes.attribute(project.artifactTypeAttribute, NativeArtifactFormat.KLIB)
-            }
-        }
     }
 }
 

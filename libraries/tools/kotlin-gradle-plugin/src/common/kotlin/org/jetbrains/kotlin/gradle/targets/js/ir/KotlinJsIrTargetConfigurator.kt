@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
@@ -17,8 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTestsConfigurator
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.decamelize
-import org.jetbrains.kotlin.gradle.utils.libsDirectory
 
 open class KotlinJsIrTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true),
@@ -27,12 +22,6 @@ open class KotlinJsIrTargetConfigurator :
     override val runtimeIncludesCompilationOutputs: Boolean = false
 
     override val testRunClass: Class<KotlinJsReportAggregatingTestRun> get() = KotlinJsReportAggregatingTestRun::class.java
-
-    override val archiveType: String
-        get() = KLIB_TYPE
-
-    override val archiveTaskType: Class<out Zip>
-        get() = Jar::class.java
 
     override fun createTestRun(
         name: String,
@@ -59,24 +48,6 @@ open class KotlinJsIrTargetConfigurator :
         result.executionTask = testTask
 
         return result
-    }
-
-    override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {
-        val libsDirectory = target.project.libsDirectory
-        return super.createArchiveTasks(target).apply {
-            configure {
-                it.archiveExtension.set(KLIB_TYPE)
-                it.destinationDirectory.set(libsDirectory)
-
-                if (target.platformType == KotlinPlatformType.wasm) {
-                    if (target.wasmDecamelizedDefaultNameOrNull() != null) {
-                        target.disambiguationClassifier?.let { classifier ->
-                            it.archiveAppendix.set(classifier.decamelize())
-                        }
-                    }
-                }
-            }
-        }
     }
 
 

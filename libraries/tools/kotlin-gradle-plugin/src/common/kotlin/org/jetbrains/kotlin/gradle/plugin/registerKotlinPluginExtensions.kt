@@ -49,10 +49,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinMultiplatformSourceSetSe
 import org.jetbrains.kotlin.gradle.plugin.sources.LanguageSettingsSetupAction
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
+import org.jetbrains.kotlin.gradle.targets.*
+import org.jetbrains.kotlin.gradle.targets.CreateArtifactsSideEffect
 import org.jetbrains.kotlin.gradle.targets.CreateDefaultCompilationsSideEffect
 import org.jetbrains.kotlin.gradle.targets.CreateTargetConfigurationsSideEffect
-import org.jetbrains.kotlin.gradle.targets.NativeForwardImplementationToApiElementsSideEffect
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
+import org.jetbrains.kotlin.gradle.targets.NativeForwardImplementationToApiElementsSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
@@ -100,13 +102,24 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, CreateDefaultCompilationsSideEffect)
         register(project, CreateTargetConfigurationsSideEffect)
         register(project, NativeForwardImplementationToApiElementsSideEffect)
+        register(project, CreateArtifactsSideEffect)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
         register(project, KotlinCreateSourcesJarTaskSideEffect)
         register(project, KotlinCreateResourcesTaskSideEffect)
         register(project, KotlinCreateLifecycleTasksSideEffect)
+        register(project, KotlinCreateNativeCompileTasksSideEffect)
         register(project, KotlinCompilationProcessorSideEffect)
+    }
+
+    KotlinTargetArtifact.extensionPoint.apply {
+        register(project, KotlinTargetMetadataArtifact)
+        register(project, KotlinLegacyCompatibilityMetadataArtifact)
+        register(project, KotlinJvmJarTargetArtifact)
+        register(project, KotlinJsKlibTargetArtifact)
+        register(project, KotlinNativeKlibTargetArtifact)
+        register(project, KotlinNativeHostSpecificMetadataArtifact)
     }
 
     KotlinGradleProjectChecker.extensionPoint.apply {

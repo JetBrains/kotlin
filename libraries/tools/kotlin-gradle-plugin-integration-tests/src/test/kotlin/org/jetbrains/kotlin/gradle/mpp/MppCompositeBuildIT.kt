@@ -176,6 +176,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
             buildGradleKts.replaceText("<kgp_version>", KOTLIN_VERSION)
             projectPath.resolve("included-build/build.gradle.kts").replaceText("<kgp_version>", KOTLIN_VERSION)
 
+            makeSnapshotTo("/Users/sebastiansellmair/tmp")
+
             build("assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":compileKotlinJvm")
