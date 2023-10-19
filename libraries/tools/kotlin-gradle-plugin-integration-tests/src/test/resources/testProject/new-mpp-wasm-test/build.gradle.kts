@@ -9,7 +9,7 @@ repositories {
 
 with(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.apply(rootProject)) {
     // canary nodejs that supports recent Wasm GC changes
-    nodeVersion = "21.0.0-v8-canary202309167e82ab1fa2"
+    nodeVersion = "21.0.0-v8-canary20231019bd785be450"
     nodeDownloadBaseUrl = "https://nodejs.org/download/v8-canary"
 }
 
