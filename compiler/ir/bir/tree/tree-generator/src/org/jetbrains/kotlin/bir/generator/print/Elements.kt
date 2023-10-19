@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.bir.generator.model.Model
 import org.jetbrains.kotlin.bir.generator.model.SingleField
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
 import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.typeKind
 import java.io.File
 
 fun printElements(generationPath: File, model: Model) = sequence {
@@ -42,7 +43,7 @@ fun printElements(generationPath: File, model: Model) = sequence {
             )
             addTypeVariables(element.params.map { it.toPoet() })
 
-            val (classes, interfaces) = element.allParents.partition { it.typeKind == TypeKind.Class }
+            val (classes, interfaces) = element.parentRefs.partition { it.typeKind == TypeKind.Class }
             classes.singleOrNull()?.let {
                 superclass(it.toPoet())
             }
@@ -50,9 +51,9 @@ fun printElements(generationPath: File, model: Model) = sequence {
 
             for (field in element.fields) {
                 if (!field.printProperty) continue
-                val poetType = field.type.toPoet().copy(nullable = field.nullable)
+                val poetType = field.typeRef.toPoet().copy(nullable = field.nullable)
                 addProperty(PropertySpec.builder(field.name, poetType).apply {
-                    mutable(field.mutable)
+                    mutable(field.isMutable)
                     if (field.isOverride) {
                         addModifiers(KModifier.OVERRIDE)
                     }
