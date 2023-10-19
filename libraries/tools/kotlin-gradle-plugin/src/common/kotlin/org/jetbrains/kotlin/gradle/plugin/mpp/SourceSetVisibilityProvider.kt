@@ -87,44 +87,55 @@ internal class SourceSetVisibilityProvider(
 
         val platformCompilationsByResolvedVariantName = mutableMapOf<String, PlatformCompilationData>()
 
-        val visiblePlatformVariantNames: Set<String?> = platformCompilations
+        val visiblePlatformVariantNames: List<Set<String>> = platformCompilations
             .filter { visibleFromSourceSet in it.allSourceSets }
-            .map { platformCompilationData ->
-                val resolvedPlatformDependency = platformCompilationData
+            .mapNotNull { platformCompilationData ->
+                val resolvedPlatformDependencies = platformCompilationData
                     .resolvedDependenciesConfiguration
                     .allResolvedDependencies
-                    .find { it.selected.id == resolvedRootMppDependencyId }
-                /*
-                Returning null if we can't find the given dependency in a certain platform compilations dependencies.
-                This is not expected, since this means the dependency does not support the given targets which will
-                lead to a dependency resolution error.
+                    .filter { it.selected.id == resolvedRootMppDependencyId }
+                    /*
+                    Returning null if we can't find the given dependency in a certain platform compilations dependencies.
+                    This is not expected, since this means the dependency does not support the given targets which will
+                    lead to a dependency resolution error.
 
-                Esoteric cases can still get into this branch: e.g. broken publications (or broken .m2 and mavenLocal()).
-                In this case we just return null, effectively ignoring this situation for this algorithm.
+                    Esoteric cases can still get into this branch: e.g. broken publications (or broken .m2 and mavenLocal()).
+                    In this case we just return null, effectively ignoring this situation for this algorithm.
 
-                Ignoring this will still lead to a more graceful behaviour in the IDE.
-                A broken publication will potentially lead to 'too many' source sets being visible, which is
-                more desirable than having none.
-                 */ ?: return@map null
+                    Ignoring this will still lead to a more graceful behaviour in the IDE.
+                    A broken publication will potentially lead to 'too many' source sets being visible, which is
+                    more desirable than having none.
+                    */
+                    .ifEmpty { return@mapNotNull null }
 
-                val resolvedVariant = kotlinVariantNameFromPublishedVariantName(
-                    resolvedPlatformDependency.resolvedVariant.displayName
-                )
+                resolvedPlatformDependencies.map { resolvedPlatformDependency ->
+                    val resolvedVariant = kotlinVariantNameFromPublishedVariantName(
+                        resolvedPlatformDependency.resolvedVariant.displayName
+                    )
 
-                if (resolvedVariant !in platformCompilationsByResolvedVariantName) {
-                    platformCompilationsByResolvedVariantName[resolvedVariant] = platformCompilationData
-                }
+                    if (resolvedVariant !in platformCompilationsByResolvedVariantName) {
+                        platformCompilationsByResolvedVariantName[resolvedVariant] = platformCompilationData
+                    }
 
-                resolvedVariant
-            }.toSet()
+                    resolvedVariant
+                }.toSet()
+            }
 
         if (visiblePlatformVariantNames.isEmpty()) {
             return SourceSetVisibilityResult(emptySet(), emptyMap())
         }
 
-        val visibleSourceSetNames = dependencyProjectStructureMetadata.sourceSetNamesByVariantName
-            .filterKeys { it in visiblePlatformVariantNames }
-            .values.let { if (it.isEmpty()) emptySet() else it.reduce { acc, item -> acc intersect item } }
+        val visibleSourceSetNames = visiblePlatformVariantNames
+            .mapNotNull { platformVariants ->
+                platformVariants
+                    .map { dependencyProjectStructureMetadata.sourceSetNamesByVariantName[it].orEmpty() }
+                    // join together visible source sets from multiple variants of the same platform
+                    .fold(emptySet<String>()) { acc, item -> acc union item }
+                    .ifEmpty { null }
+            }
+            // intersect visible variants from different platforms
+            .ifEmpty { listOf(emptySet()) } // to avoid calling reduce on an empty list
+            .reduce { acc, item -> acc intersect item }
 
         val hostSpecificArtifactBySourceSet: Map<String, File> =
             if (resolvedToOtherProject) {
