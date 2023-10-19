@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -16,9 +20,9 @@ import androidx.compose.runtime.ReadOnlyComposable
     print("Hello World")
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun CanSkip(a: Int, b: Foo?, %composer: Composer?, %changed: Int, %default: Int) {

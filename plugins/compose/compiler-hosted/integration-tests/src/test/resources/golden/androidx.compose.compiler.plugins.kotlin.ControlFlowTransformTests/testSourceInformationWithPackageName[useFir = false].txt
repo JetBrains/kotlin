@@ -1,16 +1,19 @@
+//
+// Source
+// ------------------------------------------
 
-            package androidx.compose.runtime.tests
+package androidx.compose.runtime.tests
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable
-            fun Test(value: LocalInlineClass) {
-                used(value)
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test(value: LocalInlineClass) {
+    used(value)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(value: LocalInlineClass, %composer: Composer?, %changed: Int) {

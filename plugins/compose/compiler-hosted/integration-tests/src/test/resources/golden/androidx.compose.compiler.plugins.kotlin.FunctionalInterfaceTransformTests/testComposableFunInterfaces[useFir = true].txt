@@ -1,16 +1,19 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            fun interface A {
-                @Composable fun compute(value: Int): Unit
-            }
-            fun Example(a: A) {
-                Example { it -> a.compute(it) }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+fun interface A {
+    @Composable fun compute(value: Int): Unit
+}
+fun Example(a: A) {
+    Example { it -> a.compute(it) }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 interface A {
   @Composable

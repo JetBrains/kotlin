@@ -1,22 +1,25 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable
-            fun Test() {
-              W {
-                IW {
-                    T(2)
-                    repeat(3) {
-                        T(3)
-                    }
-                    T(4)
-                }
-              }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test() {
+  W {
+    IW {
+        T(2)
+        repeat(3) {
+            T(3)
+        }
+        T(4)
+    }
+  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {

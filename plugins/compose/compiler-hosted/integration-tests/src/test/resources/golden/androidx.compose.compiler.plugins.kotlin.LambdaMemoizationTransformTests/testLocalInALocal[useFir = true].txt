@@ -1,17 +1,20 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable fun Example() {
-                @Composable fun A() { }
-                @Composable fun B(content: @Composable () -> Unit) { content() }
-                @Composable fun C() {
-                    B { A() }
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable fun Example() {
+    @Composable fun A() { }
+    @Composable fun B(content: @Composable () -> Unit) { content() }
+    @Composable fun C() {
+        B { A() }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Example(%composer: Composer?, %changed: Int) {

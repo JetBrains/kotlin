@@ -1,16 +1,19 @@
+//
+// Source
+// ------------------------------------------
 
-        import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-        class Scope {
-            private val list = IntervalList<Scope.(Int) -> (@Composable () -> Unit)>()
-            fun item(content: @Composable Scope.() -> Unit) {
-                list.add(1) { @Composable { content() } }
-            }
-        }
-        
-/********
- * TRANSFORMED
- ********/
+class Scope {
+    private val list = IntervalList<Scope.(Int) -> (@Composable () -> Unit)>()
+    fun item(content: @Composable Scope.() -> Unit) {
+        list.add(1) { @Composable { content() } }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class Scope {

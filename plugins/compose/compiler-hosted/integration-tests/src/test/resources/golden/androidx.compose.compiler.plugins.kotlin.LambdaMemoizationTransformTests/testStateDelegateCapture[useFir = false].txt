@@ -1,18 +1,21 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
-            import androidx.compose.runtime.mutableStateOf
-            import androidx.compose.runtime.getValue
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 
-            @Composable fun A() {
-                val x by mutableStateOf("abc")
-                B {
-                    print(x)
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable fun A() {
+    val x by mutableStateOf("abc")
+    B {
+        print(x)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun A(%composer: Composer?, %changed: Int) {

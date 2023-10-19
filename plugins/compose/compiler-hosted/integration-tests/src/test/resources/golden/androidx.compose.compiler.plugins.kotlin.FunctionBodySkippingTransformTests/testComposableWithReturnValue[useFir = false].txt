@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -9,9 +13,9 @@ fun Test(x: Int = 0, y: Int = 0): Int {
     return x + y
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int): Int {

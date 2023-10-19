@@ -1,18 +1,21 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            class Foo
-            @Composable fun A(y: Int, x: Any) {
-                used(y)
-                B(x)
-            }
-            @Composable fun B(x: Any) {
-                used(x)
-            }
-        
-/********
- * TRANSFORMED
- ********/
+class Foo
+@Composable fun A(y: Int, x: Any) {
+    used(y)
+    B(x)
+}
+@Composable fun B(x: Any) {
+    used(x)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class Foo {

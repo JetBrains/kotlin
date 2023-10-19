@@ -1,14 +1,17 @@
+//
+// Source
+// ------------------------------------------
 
-        import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-        @Composable
-        fun Test(content: (@Composable () -> Unit?)) {
-            content?.let { it() }
-        }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test(content: (@Composable () -> Unit?)) {
+    content?.let { it() }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")

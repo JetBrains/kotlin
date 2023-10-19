@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 
@@ -5,9 +9,9 @@ import androidx.compose.runtime.NonRestartableComposable
 inline fun Bar(unused: @Composable () -> Unit = { }) {}
 fun Foo() { Bar() }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 fun Bar(unused: Function2<Composer, Int, Unit> = { %composer: Composer?, %changed: Int ->
   sourceInformationMarkerStart(%composer, <>, "C:Test.kt")

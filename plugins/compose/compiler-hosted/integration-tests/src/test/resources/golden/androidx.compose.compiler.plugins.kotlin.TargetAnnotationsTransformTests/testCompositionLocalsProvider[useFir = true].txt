@@ -1,17 +1,20 @@
+//
+// Source
+// ------------------------------------------
 
-        import androidx.compose.runtime.Composable
-        import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 
-        @Composable
-        fun Test() {
-          CompositionLocalProvider {
-            Text("test")
-          }
-        }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test() {
+  CompositionLocalProvider {
+    Text("test")
+  }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableTarget(applier = "UI")

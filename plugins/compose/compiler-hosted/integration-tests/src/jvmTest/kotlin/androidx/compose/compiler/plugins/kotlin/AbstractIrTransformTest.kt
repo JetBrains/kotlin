@@ -248,7 +248,12 @@ abstract class AbstractIrTransformTest(useFir: Boolean) : AbstractCodegenTest(us
     ) {
         val actualTransformed =
             transform(source, extra, validator, dumpTree, truncateTracingInfoMode, additionalPaths)
-        goldenTransformRule.verifyGolden(GoldenTransformTestInfo(source, actualTransformed))
+        goldenTransformRule.verifyGolden(
+            GoldenTransformTestInfo(
+                source.trimIndent().trim(),
+                actualTransformed.trimIndent().trim()
+            )
+        )
     }
 
     private fun MatchResult.isNumber() = groupValues[1].isNotEmpty()

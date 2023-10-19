@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -12,9 +16,9 @@ val example: @Composable MaybeStable.(Int) -> Unit = {
     used(it)
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun MaybeStable.example(x: Int, %composer: Composer?, %changed: Int) {

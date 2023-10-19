@@ -1,15 +1,18 @@
+//
+// Source
+// ------------------------------------------
 
-            import a.*
-            import androidx.compose.runtime.Composable
+import a.*
+import androidx.compose.runtime.Composable
 
-            @Composable fun A(y: Any) {
-                used(y)
-                A(Wrapper(Foo()))
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable fun A(y: Any) {
+    used(y)
+    A(Wrapper(Foo()))
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun A(y: Any, %composer: Composer?, %changed: Int) {

@@ -1,21 +1,24 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable
-            fun AttemptedToRealizeGroupTwice() {
-                Wrapper {
-                    repeat(1) {
-                        repeat(1) {
-                            Leaf(0)
-                        }
-                        Leaf(0)
-                    }
-                }
+@Composable
+fun AttemptedToRealizeGroupTwice() {
+    Wrapper {
+        repeat(1) {
+            repeat(1) {
+                Leaf(0)
             }
-        
-/********
- * TRANSFORMED
- ********/
+            Leaf(0)
+        }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun AttemptedToRealizeGroupTwice(%composer: Composer?, %changed: Int) {

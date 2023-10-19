@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.runtime.*
 import androidx.compose.foundation.layout.*
@@ -18,9 +22,10 @@ fun Ui.UiTextField(
         Text("$keyboardActions2")
     }
 }
-/********
- * TRANSFORMED
- ********/
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 object Ui {

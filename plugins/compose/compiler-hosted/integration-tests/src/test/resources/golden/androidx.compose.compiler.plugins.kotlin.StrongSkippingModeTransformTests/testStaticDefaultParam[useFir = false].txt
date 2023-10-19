@@ -1,4 +1,8 @@
-            import androidx.compose.runtime.Composable
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
             import androidx.compose.runtime.NonRestartableComposable
             import androidx.compose.runtime.ReadOnlyComposable
 
@@ -6,9 +10,10 @@
 fun Test(i: Int) {
     A(i)
 }
-/********
- * TRANSFORMED
- ********/
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(i: Int, %composer: Composer?, %changed: Int) {

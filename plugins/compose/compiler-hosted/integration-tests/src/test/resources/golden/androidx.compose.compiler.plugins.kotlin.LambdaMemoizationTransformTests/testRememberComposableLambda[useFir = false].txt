@@ -1,15 +1,18 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            fun Test(s: String) {
-              remember<@Composable () -> Unit> { { Text(s) } }()
-              currentComposer.cache<@Composable () -> Unit>(false) { { Text(s) } }()
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test(s: String) {
+  remember<@Composable () -> Unit> { { Text(s) } }()
+  currentComposer.cache<@Composable () -> Unit>(false) { { Text(s) } }()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(s: String, %composer: Composer?, %changed: Int) {

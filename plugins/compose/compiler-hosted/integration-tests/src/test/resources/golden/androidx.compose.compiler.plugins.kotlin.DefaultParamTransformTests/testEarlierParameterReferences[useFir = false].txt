@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 
@@ -8,9 +12,9 @@ fun A(a: Int = 0, b: Int = a + 1) {
     print(b)
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun A(a: Int, b: Int, %composer: Composer?, %changed: Int, %default: Int) {

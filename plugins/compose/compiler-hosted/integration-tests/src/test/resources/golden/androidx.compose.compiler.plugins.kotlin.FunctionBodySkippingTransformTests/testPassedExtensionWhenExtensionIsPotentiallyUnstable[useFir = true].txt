@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -9,9 +13,9 @@ import androidx.compose.runtime.ReadOnlyComposable
 
 @Composable fun doSomething(x: Unstable) {}
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Unstable.Test(%composer: Composer?, %changed: Int) {

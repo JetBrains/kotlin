@@ -1,19 +1,22 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable
-            fun Test() {
-                Wrap {
-                    repeat(number) {
-                        effects[it] = effect { 0 }
-                    }
-                    outside = effect { "0" }
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test() {
+    Wrap {
+        repeat(number) {
+            effects[it] = effect { 0 }
+        }
+        outside = effect { "0" }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {

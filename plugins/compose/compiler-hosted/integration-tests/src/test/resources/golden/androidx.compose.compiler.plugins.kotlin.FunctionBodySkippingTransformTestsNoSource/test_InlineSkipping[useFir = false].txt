@@ -1,16 +1,19 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            fun Test() {
-                InlineWrapperParam {
-                    Text("Function $it")
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test() {
+    InlineWrapperParam {
+        Text("Function $it")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {

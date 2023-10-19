@@ -1,13 +1,16 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
-            @Composable fun Example(x: Int) {
-                fun foo() { use(x) }
-                val shouldMemoize: ()->(()->Unit) = { ::foo }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+import androidx.compose.runtime.Composable
+@Composable fun Example(x: Int) {
+    fun foo() { use(x) }
+    val shouldMemoize: ()->(()->Unit) = { ::foo }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Example(x: Int, %composer: Composer?, %changed: Int) {

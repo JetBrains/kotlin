@@ -1,16 +1,19 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            fun Problem() {
-                fun foo() { }
-                val lambda: @Composable ()->Unit = {
-                    ::foo
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+fun Problem() {
+    fun foo() { }
+    val lambda: @Composable ()->Unit = {
+        ::foo
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 fun Problem() {
   fun foo() { }
