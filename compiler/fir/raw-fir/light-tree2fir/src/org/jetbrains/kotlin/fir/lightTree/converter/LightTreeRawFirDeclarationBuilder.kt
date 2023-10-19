@@ -164,7 +164,7 @@ class LightTreeRawFirDeclarationBuilder(
         packageNode.forEachChildren {
             when (it.tokenType) {
                 //TODO separate logic for both expression types
-                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> packageName = FqName(it.getAsStringWithoutBacktick())
+                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> packageName = FqName(it.toString())//(it.getAsStringWithoutBacktick())
             }
         }
         return buildPackageDirective {
@@ -221,7 +221,7 @@ class LightTreeRawFirDeclarationBuilder(
 
     private fun MutableList<String>.collectSegments(expression: LighterASTNode) {
         when (expression.tokenType) {
-            REFERENCE_EXPRESSION -> add(expression.getAsStringWithoutBacktick())
+            REFERENCE_EXPRESSION -> add(expression.toString())//getAsStringWithoutBacktick())
             DOT_QUALIFIED_EXPRESSION -> {
                 expression.forEachChildren {
                     collectSegments(it)

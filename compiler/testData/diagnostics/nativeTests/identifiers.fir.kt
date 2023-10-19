@@ -3,7 +3,10 @@
 // FIXME: rename identifiers.kt
 
 // FILE: 1.kt
-package `check.pkg`
+package <!INVALID_CHARACTERS_NATIVE_ERROR!>`check.pkg`<!>
+
+// FILE: 11.kt
+package first.<!INVALID_CHARACTERS_NATIVE_ERROR!>`check.pkg`<!>.last
 
 // FILE: 2.kt
 package totally.normal.pkg
