@@ -142,6 +142,7 @@ val equivalentDiagnostics = listOf(
         "VARIABLE_EXPECTED",
         "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING",
         "INITIALIZATION_BEFORE_DECLARATION",
+        "UNREACHABLE_CODE",
 //    ),
 //    listOf(
         "SMARTCAST_IMPOSSIBLE",
