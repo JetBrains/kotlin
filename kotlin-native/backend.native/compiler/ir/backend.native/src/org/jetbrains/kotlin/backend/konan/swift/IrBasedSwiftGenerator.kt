@@ -102,8 +102,13 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
                     else -> {
                         swiftName = declaration.name.identifier
                         path = declaration.kotlinFqName.pathSegments().map { it.identifier }
-                        val pathString = path.joinToString(separator = "_")
-                        cName = "__kn_$pathString"
+                        val argumentTypes = declaration.valueParameters.map {
+                            it.type.classFqName
+                                    .toString()
+                        }
+                        val pathString = (path + listOf("_WithArgTypes_") + argumentTypes)
+                                .joinToString(separator = "_") { it.replace(".", "") }
+                        cName = "__kn_${pathString}"
                     }
                 }
 

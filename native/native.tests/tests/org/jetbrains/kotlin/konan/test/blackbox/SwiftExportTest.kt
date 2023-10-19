@@ -55,4 +55,10 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
         val testDir = File("native/native.tests/testData/SwiftExport/unknown_swift_type")
         runTest(testDir.absolutePath)
     }
+
+    @Test
+    fun overloading() {
+        val testDir = File("native/native.tests/testData/SwiftExport/overloading")
+        runTest(testDir.absolutePath)
+    }
 }
