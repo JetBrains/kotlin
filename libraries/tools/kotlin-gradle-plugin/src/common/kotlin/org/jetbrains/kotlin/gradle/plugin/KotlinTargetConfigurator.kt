@@ -41,16 +41,13 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     ) {
         target.runKotlinTargetSideEffects()
         target.runKotlinCompilationSideEffects()
-        defineConfigurationsForTarget(target)
         configureArchivesAndComponent(target)
         configureBuild(target)
         configurePlatformSpecificModel(target)
     }
 
-    fun defineConfigurationsForTarget(target: KotlinTargetType)
     fun configureArchivesAndComponent(target: KotlinTargetType)
     fun configureBuild(target: KotlinTargetType)
-
     fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
 }
 
@@ -59,96 +56,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
     protected open val runtimeIncludesCompilationOutputs = true
-
-    override fun defineConfigurationsForTarget(target: KotlinTargetType) {
-        val project = target.project
-
-        val configurations = project.configurations
-
-        val mainCompilation = target.compilations.maybeCreate(KotlinCompilation.MAIN_COMPILATION_NAME)
-
-        val compileConfiguration = mainCompilation.internal.configurations.deprecatedCompileConfiguration
-        val implementationConfiguration = configurations.maybeCreate(mainCompilation.implementationConfigurationName)
-
-        val runtimeOnlyConfiguration = when (mainCompilation) {
-            is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreate(mainCompilation.runtimeOnlyConfigurationName)
-            else -> null
-        }
-
-        configurations.maybeCreate(target.apiElementsConfigurationName).apply {
-            description = "API elements for main."
-            isVisible = false
-            isCanBeResolved = false
-            isCanBeConsumed = true
-            attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            extendsFrom(configurations.maybeCreate(mainCompilation.apiConfigurationName))
-            if (mainCompilation is KotlinCompilationToRunnableFiles) {
-                val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
-                runtimeConfiguration?.let { extendsFrom(it) }
-            }
-            usesPlatformOf(target)
-        }
-
-        if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
-            configurations.maybeCreate(target.runtimeElementsConfigurationName).apply {
-                description = "Elements of runtime for main."
-                isVisible = false
-                isCanBeConsumed = true
-                isCanBeResolved = false
-                attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
-                extendsFrom(implementationConfiguration)
-                if (runtimeOnlyConfiguration != null)
-                    extendsFrom(runtimeOnlyConfiguration)
-                runtimeConfiguration?.let { extendsFrom(it) }
-                usesPlatformOf(target)
-            }
-        }
-
-        configurations.maybeCreate(target.sourcesElementsConfigurationName).apply {
-            description = "Source files of main compilation of ${target.name}."
-            isVisible = false
-            isCanBeResolved = false
-            isCanBeConsumed = true
-            configureSourcesPublicationAttributes(target)
-            project.launch { isCanBeConsumed = target.internal.isSourcesPublishableFuture.await() }
-        }
-
-        if (createTestCompilation) {
-            val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
-            val compileTestsConfiguration = testCompilation.internal.configurations.deprecatedCompileConfiguration
-            val testImplementationConfiguration = configurations.maybeCreate(testCompilation.implementationConfigurationName)
-            val testRuntimeOnlyConfiguration = when (testCompilation) {
-                is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreate(testCompilation.runtimeOnlyConfigurationName)
-                else -> null
-            }
-
-            compileConfiguration?.let { compileTestsConfiguration?.extendsFrom(it) }
-            testImplementationConfiguration.extendsFrom(implementationConfiguration)
-            testRuntimeOnlyConfiguration?.extendsFrom(runtimeOnlyConfiguration)
-
-            if (mainCompilation is KotlinCompilationToRunnableFiles && testCompilation is KotlinCompilationToRunnableFiles) {
-                val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
-                val testRuntimeConfiguration = testCompilation.internal.configurations.deprecatedRuntimeConfiguration
-                runtimeConfiguration?.let { testRuntimeConfiguration?.extendsFrom(it) }
-            }
-        }
-    }
-
-    @Deprecated("Remove when IR compiler to klib will not need transitive implementation dependencies")
-    protected fun implementationToApiElements(target: KotlinTargetType) {
-        val configurations = target.project.configurations
-
-        // The configuration and the main compilation are created by the base class.
-        val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-        configurations.getByName(target.apiElementsConfigurationName).apply {
-            //  K/N and K/JS IR compiler doesn't divide libraries into implementation and api ones. So we need to add implementation
-            // dependencies into the outgoing configuration.
-            extendsFrom(configurations.getByName(mainCompilation.implementationConfigurationName))
-        }
-    }
 
     override fun configureBuild(target: KotlinTargetType) {
         val project = target.project
