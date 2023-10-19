@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 
+// This class is written manually because is has custom traversal logic that allows to avoid visiting the same nodes twice or more.
+// Particularly, it prevents reporting duplicated diagnostics.
+// It doesn't touch `delegatedTypeRef` in `acceptChildren` and `transformChildren` functions.
+// It doesn't call `transformPartiallyResolvedTypeRef` in `transformChildren` function.
 internal class FirErrorTypeRefImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
