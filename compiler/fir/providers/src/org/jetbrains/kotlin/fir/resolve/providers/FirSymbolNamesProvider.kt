@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.flatMapToNullableSet
 
 /**
  * [FirSymbolNamesProvider] provides information about which symbols may be provided by a [FirSymbolProvider] given the symbol's name. This

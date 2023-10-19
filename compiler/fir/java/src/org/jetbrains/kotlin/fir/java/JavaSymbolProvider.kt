@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 // This symbol provider only loads JVM classes *not* annotated with Kotlin `@Metadata` annotation.
 // Use it in application sessions for loading classes from Java files listed on the command line.
@@ -72,9 +73,7 @@ open class JavaSymbolProvider(
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
-            javaFacade.knownClassNamesInPackage(packageFqName)
-                ?.mapTo(mutableSetOf()) { Name.identifier(it) }
-                ?.ifEmpty { emptySet() }
+            javaFacade.knownClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
     }
 }
 

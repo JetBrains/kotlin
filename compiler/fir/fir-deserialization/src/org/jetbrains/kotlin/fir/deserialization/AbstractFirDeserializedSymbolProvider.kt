@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.nio.file.Path
 
 class PackagePartsCacheData(
@@ -95,10 +96,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirCachedSymbolNamesProvider(session) {
         override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<Name>? {
-            val classesInPackage = knownTopLevelClassesInPackage(packageFqName)
-                ?.mapTo(mutableSetOf()) { Name.identifier(it) }
-                ?.ifEmpty { emptySet() }
-                ?: return null
+            val classesInPackage = knownTopLevelClassesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) } ?: return null
 
             if (packageFqName.asString() !in packageNamesForNonClassDeclarations) return classesInPackage
 

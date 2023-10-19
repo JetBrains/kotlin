@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.utils.collections.filterToSetOrEmpty
-import org.jetbrains.kotlin.analysis.utils.collections.mapToSetOrEmpty
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -15,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirDelegatingCachedSymbolNames
 import org.jetbrains.kotlin.fir.resolve.providers.FirCachedSymbolNamesProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.filterToSetOrEmpty
 
 /**
  * A [FirSymbolNamesProvider] that fetches top-level names from a Kotlin [declarationProvider].
