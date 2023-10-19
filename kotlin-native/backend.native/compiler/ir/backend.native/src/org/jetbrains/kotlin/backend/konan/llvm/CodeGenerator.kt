@@ -725,20 +725,13 @@ internal abstract class FunctionGenerationContext(
         return applyMemoryOrderAndAlignment(LLVMBuildLoad2(builder, type, address, name)!!, memoryOrder, alignment)
     }
 
-    fun loadSlot(
-            type: LLVMTypeRef,
-            address: LLVMValueRef,
-            isVar: Boolean,
-            resultSlot: LLVMValueRef? = null,
-            name: String = "",
-            memoryOrder: LLVMAtomicOrdering? = null,
-            alignment: Int? = null
-    ): LLVMValueRef {
-        val value = LLVMBuildLoad2(builder, type, address, name)!!
+    fun loadSlot(address: LLVMValueRef, isVar: Boolean, resultSlot: LLVMValueRef? = null, name: String = "",
+                 memoryOrder: LLVMAtomicOrdering? = null, alignment: Int? = null): LLVMValueRef {
+        val value = LLVMBuildLoad(builder, address, name)!!
         memoryOrder?.let { LLVMSetOrdering(value, it) }
         alignment?.let { LLVMSetAlignment(value, it) }
-        if (isObjectType(type) && isVar) {
-            val slot = resultSlot ?: alloca(type, variableLocation = null)
+        if (isObjectRef(value) && isVar) {
+            val slot = resultSlot ?: alloca(LLVMTypeOf(value), variableLocation = null)
             storeStackRef(value, slot)
         }
         return value

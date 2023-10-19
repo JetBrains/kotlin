@@ -1785,10 +1785,7 @@ internal class CodeGeneratorVisitor(
             }
         }
         return functionGenerationContext.loadSlot(
-                value.type.toLLVMType(llvm),
-                fieldAddress,
-                !value.symbol.owner.isFinal,
-                resultSlot,
+                fieldAddress, !value.symbol.owner.isFinal, resultSlot,
                 memoryOrder = order,
                 alignment = alignment
         )
@@ -2941,7 +2938,7 @@ internal class CodeGeneratorVisitor(
             val bbNeedInit = basicBlock("need_init", null)
 
 
-            val value = LLVMBuildLoad2(builder, llvm.int32Type, initGuard, "")!!
+            val value = LLVMBuildLoad(builder, initGuard, "")!!
             condBr(icmpEq(value, llvm.kImmInt32Zero), bbNeedInit, bbInited)
 
             appendingTo(bbInited) {
