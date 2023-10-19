@@ -53,6 +53,10 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
             "{0}: the type parameter names of this member must be the same in the expect class and the actual class. " +
                     "This error happens because the expect class ''{1}'' is non-final"
         ),
+        Unknown(
+            "{0}: normally, this error should never happen. Please report to https://kotl.in/issue. " +
+                    "This error happens because the expect class ''{1}'' is non-final"
+        )
     }
 }
 

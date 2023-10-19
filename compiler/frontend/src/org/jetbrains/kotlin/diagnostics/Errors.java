@@ -843,6 +843,8 @@ public interface Errors {
     DiagnosticFactory1<KtCallableDeclaration, K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
             NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
     DiagnosticFactory1<KtCallableDeclaration, K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
+            UNKNOWN_PROBLEM_DURING_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
+    DiagnosticFactory1<KtCallableDeclaration, K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
             RETURN_TYPE_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING = DiagnosticFactory1.create(WARNING, DECLARATION_RETURN_TYPE);
     DiagnosticFactory1<KtCallableDeclaration, K1ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
             MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING = DiagnosticFactory1.create(WARNING, MODALITY_MODIFIER);
