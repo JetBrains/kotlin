@@ -768,6 +768,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("kindaCompilerRequiredNestedAnnotation.kt")
+            public void testKindaCompilerRequiredNestedAnnotation() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kindaCompilerRequiredNestedAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("kt43936.kt")
             public void testKt43936() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/annotations/kt43936.kt");

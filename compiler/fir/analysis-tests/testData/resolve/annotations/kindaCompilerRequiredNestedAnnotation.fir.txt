@@ -1,0 +1,28 @@
+FILE: a.kt
+    @R|SinceKotlin|() public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: b.kt
+    @R|SinceKotlin.SinceKotlin|() public final class Other : R|kotlin/Any| {
+        public constructor(): R|Other| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: SinceKotlin.kt
+    public final annotation class SinceKotlin : R|kotlin/Annotation| {
+        public constructor(): R|SinceKotlin| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final annotation class SinceKotlin : R|kotlin/Annotation| {
+            public constructor(): R|SinceKotlin.SinceKotlin| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
