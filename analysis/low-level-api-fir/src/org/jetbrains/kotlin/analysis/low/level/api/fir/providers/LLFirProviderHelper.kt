@@ -119,11 +119,6 @@ internal class LLFirProviderHelper(
         return classifierByClassId.getNotNullValueForNotNullContext(classId, classLikeDeclaration)
     }
 
-    fun getTopLevelClassNamesInPackage(packageFqName: FqName): Set<Name> {
-        if (!allowKotlinPackage && packageFqName.isKotlinPackage()) return emptySet()
-        return declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
-    }
-
     fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         if (!allowKotlinPackage && packageFqName.isKotlinPackage()) return emptyList()
         val callableId = CallableId(packageFqName, name)

@@ -101,7 +101,11 @@ internal class LLFirProvider(
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")
 
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> = providerHelper.getTopLevelClassNamesInPackage(fqName)
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
+        providerHelper.symbolNameCache.getTopLevelClassifierNamesInPackage(fqName)
+            ?: errorWithAttachment("Cannot compute the set of class names in the given package") {
+                withEntry("packageFqName", fqName.asString())
+            }
 
     @NoMutableState
     internal inner class SymbolProvider : LLFirKotlinSymbolProvider(session) {
