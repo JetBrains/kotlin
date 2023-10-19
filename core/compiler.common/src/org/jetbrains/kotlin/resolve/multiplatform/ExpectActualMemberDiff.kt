@@ -45,6 +45,10 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
             "{0}: the property modifiers (lateinit) of this member must be the same in the expect class and the actual class. " +
                     "This error happens because the expect class ''{1}'' is non-final"
         ),
+        VarargChangedInOverride(
+            "{0}: the parameter modifiers (vararg) of this member must be the same in the expect class and the actual class. " +
+                    "This error happens because the expect class ''{1}'' is non-final"
+        ),
         TypeParameterNamesChangedInOverride(
             "{0}: the type parameter names of this member must be the same in the expect class and the actual class. " +
                     "This error happens because the expect class ''{1}'' is non-final"
@@ -83,6 +87,6 @@ fun ExpectActualCompatibility.Incompatible<*>.toMemberDiffKind(): ExpectActualMe
     ExpectActualCompatibility.Incompatible.Unknown -> null // Unknown incompatibility is never reported
     ExpectActualCompatibility.Incompatible.ValueParameterCrossinline -> null // inline fun can't be overridden
     ExpectActualCompatibility.Incompatible.ValueParameterNoinline -> null // inline fun can't be overridden
-    ExpectActualCompatibility.Incompatible.ValueParameterVararg -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+    ExpectActualCompatibility.Incompatible.ValueParameterVararg -> ExpectActualMemberDiff.Kind.VarargChangedInOverride
     ExpectActualCompatibility.Incompatible.Visibility -> ExpectActualMemberDiff.Kind.VisibilityChangedInOverride
 }

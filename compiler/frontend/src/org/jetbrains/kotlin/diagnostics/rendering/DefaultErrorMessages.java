@@ -424,6 +424,9 @@ public class DefaultErrorMessages {
         MAP.put(LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
                 "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
                 ExpectActualScopeDiffRenderer.INSTANCE);
+        MAP.put(VARARG_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
+                "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
+                ExpectActualScopeDiffRenderer.INSTANCE);
         MAP.put(SETTER_VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING,
                 "{0}. This warning will become an error in future releases. Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details",
                 ExpectActualScopeDiffRenderer.INSTANCE);

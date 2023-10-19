@@ -219,6 +219,8 @@ private fun BindingTrace.reportIfPossible(diff: ExpectActualMemberDiff<CallableM
             Errors.PROPERTY_KIND_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.LateinitChangedInOverride ->
             Errors.LATEINIT_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
+        ExpectActualMemberDiff.Kind.VarargChangedInOverride ->
+            Errors.VARARG_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
         ExpectActualMemberDiff.Kind.TypeParameterNamesChangedInOverride ->
             Errors.TYPE_PARAMETER_NAMES_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION_WARNING.on(psi, diff)
     }

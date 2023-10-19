@@ -431,6 +431,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("changeVarargModifierInOverride.kt")
+        public void testChangeVarargModifierInOverride() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeVarargModifierInOverride.kt");
+        }
+
+        @Test
         @TestMetadata("changeVisibilityInOverride.kt")
         public void testChangeVisibilityInOverride() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeVisibilityInOverride.kt");
