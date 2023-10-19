@@ -1,4 +1,8 @@
-            @file:OptIn(
+//
+// Source
+// ------------------------------------------
+
+@file:OptIn(
               InternalComposeApi::class,
             )
             package test
@@ -22,9 +26,10 @@ fun abc3(
 ) {
     val hc = l.hashCode()
 }
-/********
- * TRANSFORMED
- ********/
+
+//
+// Transformed IR
+// ------------------------------------------
 
 fun abc0(l: Function2<Composer, Int, Unit>) {
   val hc = l.hashCode()

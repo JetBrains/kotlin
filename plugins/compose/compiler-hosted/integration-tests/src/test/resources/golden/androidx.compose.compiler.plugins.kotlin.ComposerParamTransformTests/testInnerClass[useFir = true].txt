@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 @file:OptIn(
   InternalComposeApi::class,
 )
@@ -21,9 +25,9 @@ class C {
     }
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 interface A {
   open fun b() { }

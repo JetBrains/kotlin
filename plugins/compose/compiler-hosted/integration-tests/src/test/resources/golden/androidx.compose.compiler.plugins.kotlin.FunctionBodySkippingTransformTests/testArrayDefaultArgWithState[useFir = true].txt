@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -10,9 +14,9 @@ fun VarargComposable(state: MutableState<Int>, vararg values: String = Array(1) 
     state.value
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %composer: Composer?, %changed: Int, %default: Int) {

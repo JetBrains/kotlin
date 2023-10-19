@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 @file:OptIn(
   InternalComposeApi::class,
 )
@@ -13,9 +17,9 @@ val myProperty: () -> Unit @Composable get() {
     return {  }
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 val myProperty: Function0<Unit>
   @Composable @JvmName(name = "getMyProperty")

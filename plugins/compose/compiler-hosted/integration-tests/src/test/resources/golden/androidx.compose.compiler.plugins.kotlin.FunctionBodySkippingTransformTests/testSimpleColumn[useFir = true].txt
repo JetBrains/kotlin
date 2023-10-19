@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -37,9 +41,9 @@ fun Column(
   )
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")

@@ -1,17 +1,20 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable
-            fun Test(enabled: Boolean, content: @Composable () -> Unit = {
-                    Display("$enabled")
-                }
-            ) {
-                Wrap(content)
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test(enabled: Boolean, content: @Composable () -> Unit = {
+        Display("$enabled")
+    }
+) {
+    Wrap(content)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {

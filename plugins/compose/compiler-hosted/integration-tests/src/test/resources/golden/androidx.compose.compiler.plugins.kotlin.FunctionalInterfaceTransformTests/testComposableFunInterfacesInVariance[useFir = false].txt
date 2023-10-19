@@ -1,23 +1,26 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            fun interface Consumer<T> {
-                @Composable fun consume(t: T)
-            }
+fun interface Consumer<T> {
+    @Composable fun consume(t: T)
+}
 
-            class Repro<T : Any> {
-                fun test(consumer: Consumer<in T>) {}
-            }
+class Repro<T : Any> {
+    fun test(consumer: Consumer<in T>) {}
+}
 
-            fun test() {
-                Repro<String>().test { string ->
-                    println(string)
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+fun test() {
+    Repro<String>().test { string ->
+        println(string)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 interface Consumer<T>  {
   @Composable

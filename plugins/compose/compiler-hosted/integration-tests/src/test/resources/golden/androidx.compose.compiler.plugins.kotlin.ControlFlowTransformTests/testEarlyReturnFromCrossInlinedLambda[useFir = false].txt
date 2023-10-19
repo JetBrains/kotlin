@@ -1,16 +1,19 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            private fun Test(param: String?) {
-                Dialog {
-                    if (false) Test(param)
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+private fun Test(param: String?) {
+    Dialog {
+        if (false) Test(param)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 private fun Test(param: String?, %composer: Composer?, %changed: Int) {

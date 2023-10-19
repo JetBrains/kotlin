@@ -1,9 +1,12 @@
+//
+// Source
+// ------------------------------------------
 
-            class Foo
-        
-/********
- * TRANSFORMED
- ********/
+class Foo
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class Foo {

@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 
@@ -11,9 +15,9 @@ fun Test() {
     Example()
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Example(foo: Foo, %composer: Composer?, %changed: Int, %default: Int) {

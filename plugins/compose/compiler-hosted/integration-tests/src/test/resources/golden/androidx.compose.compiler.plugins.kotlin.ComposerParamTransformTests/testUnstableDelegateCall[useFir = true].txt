@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 @file:OptIn(
   InternalComposeApi::class,
 )
@@ -24,9 +28,9 @@ import androidx.compose.runtime.NonRestartableComposable
         println(foo)
     }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class Foo {

@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.key
@@ -22,9 +26,9 @@ fun Example(items: Iterator<Int>) {
     }
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {

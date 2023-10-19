@@ -1,27 +1,30 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            class SomeClass {
-                var a = "Test"
-                fun onCreate() {
-                    setContent {
-                        B(a)
-                        B(a)
-                    }
-                }
-            }
+class SomeClass {
+    var a = "Test"
+    fun onCreate() {
+        setContent {
+            B(a)
+            B(a)
+        }
+    }
+}
 
-            fun Test() {
-                var a = "Test"
-                setContent {
-                    B(a)
-                    B(a)
-                }
-            }
-        
-/********
- * TRANSFORMED
- ********/
+fun Test() {
+    var a = "Test"
+    setContent {
+        B(a)
+        B(a)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class SomeClass {

@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -29,9 +33,9 @@ import androidx.compose.runtime.ReadOnlyComposable
     C(Math.random() / 100f)
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun A(%composer: Composer?, %changed: Int) {

@@ -1,15 +1,18 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Composable
 
-            @Composable
-            fun Test() {
-                A(b(), c(), d())
-                B()
-            }
-        
-/********
- * TRANSFORMED
- ********/
+@Composable
+fun Test() {
+    A(b(), c(), d())
+    B()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {

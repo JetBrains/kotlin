@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.key
@@ -11,9 +15,9 @@ fun Example(a: Int, b: Int, c: Int, d: Int) {
     }
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @NonRestartableComposable
 @Composable

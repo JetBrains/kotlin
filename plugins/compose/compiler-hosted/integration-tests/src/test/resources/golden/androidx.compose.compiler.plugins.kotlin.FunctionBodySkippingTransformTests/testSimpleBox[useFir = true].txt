@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -9,9 +13,9 @@ fun SimpleBox(modifier: Modifier = Modifier, content: @Composable() () -> Unit =
     content()
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")

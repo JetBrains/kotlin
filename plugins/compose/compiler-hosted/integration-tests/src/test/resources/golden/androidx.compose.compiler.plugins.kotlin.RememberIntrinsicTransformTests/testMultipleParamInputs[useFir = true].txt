@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
@@ -14,9 +18,9 @@ fun <T> loadResourceInternal(
     return deferred > 10
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun <T> loadResourceInternal(key: String, pendingResource: T?, failedResource: T?, %composer: Composer?, %changed: Int, %default: Int): Boolean {

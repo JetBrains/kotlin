@@ -1,22 +1,24 @@
+//
+// Source
+// ------------------------------------------
 
-            @file:NComposable
+@file:NComposable
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            @Composable
-            fun NFromFile() {
-                Open()
-            }
+@Composable
+fun NFromFile() {
+    Open()
+}
 
-            @Composable
-            fun NFromInference() {
-                N()
-            }
+@Composable
+fun NFromInference() {
+    N()
+}
 
-        
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun NFromFile(%composer: Composer?, %changed: Int) {

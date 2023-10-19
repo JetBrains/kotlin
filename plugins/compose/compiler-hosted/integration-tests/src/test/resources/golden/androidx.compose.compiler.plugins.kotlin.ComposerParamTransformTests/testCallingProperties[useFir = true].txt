@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 @file:OptIn(
   InternalComposeApi::class,
 )
@@ -15,9 +19,9 @@ val bar: Int @Composable get() { return 123 }
     bar
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 val bar: Int
   @Composable @JvmName(name = "getBar")

@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 @file:OptIn(
   InternalComposeApi::class,
 )
@@ -22,9 +26,9 @@ fun test(foo: Foo) {
     used(delegated)
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @StabilityInferred(parameters = 0)
 class Foo {

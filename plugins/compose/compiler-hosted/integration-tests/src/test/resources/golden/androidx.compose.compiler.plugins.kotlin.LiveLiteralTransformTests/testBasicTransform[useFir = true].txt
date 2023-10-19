@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 
     fun A() {
@@ -12,9 +16,9 @@ import androidx.compose.runtime.Composable
       print(3)
     }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 fun A() {
   print(LiveLiterals%TestKt.Int%arg-0%call-print%fun-A())

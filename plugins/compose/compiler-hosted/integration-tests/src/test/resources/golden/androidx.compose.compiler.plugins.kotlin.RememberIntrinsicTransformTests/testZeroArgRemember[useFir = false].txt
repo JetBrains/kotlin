@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
@@ -8,9 +12,9 @@ fun Test(items: List<Int>) {
     used(items)
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun Test(items: List<Int>, %composer: Composer?, %changed: Int) {

@@ -1,27 +1,29 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.Composable
-            
-            @Composable
-            fun testInline_M1_W_Return_Func(condition: Boolean) {
-                A()
-                M1 {
-                    A()
-                    while(true) {
-                        A()
-                        if (condition) {
-                            return
-                        }
-                        A()
-                    }
-                    A()
-                }
-                A()
+import androidx.compose.runtime.Composable
+
+@Composable
+fun testInline_M1_W_Return_Func(condition: Boolean) {
+    A()
+    M1 {
+        A()
+        while(true) {
+            A()
+            if (condition) {
+                return
             }
-        
-        
-/********
- * TRANSFORMED
- ********/
+            A()
+        }
+        A()
+    }
+    A()
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 @Composable
 fun testInline_M1_W_Return_Func(condition: Boolean, %composer: Composer?, %changed: Int) {

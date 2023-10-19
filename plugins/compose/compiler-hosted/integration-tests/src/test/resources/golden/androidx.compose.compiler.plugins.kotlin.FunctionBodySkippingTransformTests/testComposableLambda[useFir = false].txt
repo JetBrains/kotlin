@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.ReadOnlyComposable
@@ -7,9 +11,9 @@ val test = @Composable { x: Int ->
     A(x)
 }
 
-/********
- * TRANSFORMED
- ********/
+//
+// Transformed IR
+// ------------------------------------------
 
 val test: Function3<Int, Composer, Int, Unit> = ComposableSingletons%TestKt.lambda-1
 internal object ComposableSingletons%TestKt {

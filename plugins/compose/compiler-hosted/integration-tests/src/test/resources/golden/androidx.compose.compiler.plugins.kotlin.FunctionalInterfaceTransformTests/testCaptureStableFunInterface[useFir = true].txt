@@ -1,22 +1,25 @@
+//
+// Source
+// ------------------------------------------
 
-            import androidx.compose.runtime.*
+import androidx.compose.runtime.*
 
-            fun interface Consumer {
-                fun consume(t: Int)
-            }
+fun interface Consumer {
+    fun consume(t: Int)
+}
 
-            @Composable fun Test(int: Int) {
-                Example {
-                    println(int)
-                }
-            }
+@Composable fun Test(int: Int) {
+    Example {
+        println(int)
+    }
+}
 
-            @Composable inline fun Example(consumer: Consumer) {
-            }
-            
-/********
- * TRANSFORMED
- ********/
+@Composable inline fun Example(consumer: Consumer) {
+}
+
+//
+// Transformed IR
+// ------------------------------------------
 
 interface Consumer {
   abstract fun consume(t: Int)

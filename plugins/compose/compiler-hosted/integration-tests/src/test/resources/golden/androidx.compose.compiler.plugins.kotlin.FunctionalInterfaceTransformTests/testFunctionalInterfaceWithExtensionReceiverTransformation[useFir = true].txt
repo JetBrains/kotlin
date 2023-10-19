@@ -1,3 +1,7 @@
+//
+// Source
+// ------------------------------------------
+
 import androidx.compose.runtime.*
 fun interface TestContent {
     @Composable
@@ -14,9 +18,10 @@ fun Test(content: TestContent) {
 fun CallTest() {
     Test { this.length }
 }
-/********
- * TRANSFORMED
- ********/
+
+//
+// Transformed IR
+// ------------------------------------------
 
 interface TestContent {
   @Composable
