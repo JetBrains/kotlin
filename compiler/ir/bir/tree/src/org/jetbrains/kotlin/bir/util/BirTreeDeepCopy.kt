@@ -6,7 +6,9 @@
 
 package org.jetbrains.kotlin.bir.util
 
-import org.jetbrains.kotlin.bir.*
+import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.*
 import org.jetbrains.kotlin.bir.expressions.*
@@ -18,6 +20,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.utils.mapOrTakeThisIfIdentity
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.util.*
+import kotlin.collections.MutableMap
+import kotlin.collections.emptyList
+import kotlin.collections.plusAssign
+import kotlin.collections.set
 
 fun <E : BirElement> E.deepCopy(
     copier: BirTreeDeepCopier = BirTreeDeepCopier(),
@@ -118,7 +124,7 @@ open class BirTreeDeepCopier {
     protected open fun BirAttributeContainer.copyAttributes(other: BirAttributeContainer) {
         attributeOwnerId = other.attributeOwnerId
         if (other.attributeOwnerId != other) {
-            this[GlobalBirElementDynamicPropertyTokens.OriginalBeforeInline] = other.attributeOwnerId
+            TODO("this[GlobalBirElementDynamicPropertyTokens.OriginalBeforeInline] = other.attributeOwnerId")
         }
     }
 

@@ -18,13 +18,16 @@ import org.jetbrains.kotlin.name.Name
 
 class BirModuleFragmentImpl(
     sourceSpan: SourceSpan,
-    override val descriptor: ModuleDescriptor,
+    override val descriptor: ModuleDescriptor?,
     override val name: Name,
 ) : BirModuleFragment() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -32,7 +35,7 @@ class BirModuleFragmentImpl(
             }
         }
 
-    override val files: BirChildElementList<BirFile> = BirChildElementList(this, 0)
+    override val files: BirChildElementList<BirFile> = BirChildElementList(this, 1)
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
@@ -41,7 +44,7 @@ class BirModuleFragmentImpl(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.files
+        1 -> this.files
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

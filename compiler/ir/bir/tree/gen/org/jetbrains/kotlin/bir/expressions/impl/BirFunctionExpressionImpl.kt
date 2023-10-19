@@ -25,7 +25,10 @@ class BirFunctionExpressionImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -36,7 +39,10 @@ class BirFunctionExpressionImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -47,7 +53,10 @@ class BirFunctionExpressionImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -58,7 +67,10 @@ class BirFunctionExpressionImpl(
     private var _origin: IrStatementOrigin = origin
 
     override var origin: IrStatementOrigin
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -69,7 +81,10 @@ class BirFunctionExpressionImpl(
     private var _function: BirSimpleFunction = function
 
     override var function: BirSimpleFunction
-        get() = _function
+        get() {
+            recordPropertyRead()
+            return _function
+        }
         set(value) {
             if (_function != value) {
                 replaceChild(_function, value)

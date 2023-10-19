@@ -20,7 +20,10 @@ class BirExpressionBodyImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -31,7 +34,10 @@ class BirExpressionBodyImpl(
     private var _expression: BirExpression = expression
 
     override var expression: BirExpression
-        get() = _expression
+        get() {
+            recordPropertyRead()
+            return _expression
+        }
         set(value) {
             if (_expression != value) {
                 replaceChild(_expression, value)

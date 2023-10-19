@@ -18,24 +18,24 @@ package org.jetbrains.kotlin.bir
 
 abstract class BirElementBase : BirElement {
     internal var root: BirForest? = null
-    final override var parent: BirElementBase? = null
-        private set
+    private var _parent: BirElementBase? = null
     private var dynamicProperties: Array<Any?>? = null
     private var level: UByte = 0u
     internal var containingListId: Byte = 0
     internal var indexSlot: UByte = 0u
+    private var dependentIndexedElements: Any? = null // null | BirElementBase | Array<BirElementBase?>
+
+    final override val parent: BirElementBase?
+        get() {
+            recordPropertyRead()
+            return _parent
+        }
 
     val attachedToTree
         get() = root != null
 
-    internal fun getContainingList(): BirChildElementList<*>? {
-        val containingListId = containingListId.toInt()
-        return if (containingListId == 0) null
-        else parent?.getChildrenListById(containingListId)
-    }
-
     internal fun updateLevel() {
-        val parent = parent
+        val parent = _parent
         level = if (parent != null) {
             val parentLevel = parent.level
             if (parentLevel == UByte.MAX_VALUE) UByte.MAX_VALUE else (parentLevel + 1u).toUByte()
@@ -55,12 +55,13 @@ abstract class BirElementBase : BirElement {
 
         var n = other
         repeat(distance.toInt()) {
-            n = n.parent ?: return false
+            n = n._parent ?: return false
             if (n === this) return true
         }
 
         return false
     }
+
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
 
@@ -70,7 +71,7 @@ abstract class BirElementBase : BirElement {
         new?.checkCanBeAttachedAsChild(this)
 
         if (new != null) {
-            new.parent = this
+            new._parent = this
             childAttached(new)
         }
     }
@@ -82,11 +83,11 @@ abstract class BirElementBase : BirElement {
         new?.checkCanBeAttachedAsChild(this)
 
         if (old != null) {
-            old.parent = null
+            old._parent = null
             childDetached(old)
         }
         if (new != null) {
-            new.parent = this
+            new._parent = this
             childAttached(new)
         }
     }
@@ -100,7 +101,7 @@ abstract class BirElementBase : BirElement {
     }
 
     internal fun checkCanBeAttachedAsChild(newParent: BirElement) {
-        require(parent == null) { "Cannot attach element $this as a child of $newParent as it is already a child of $parent." }
+        require(_parent == null) { "Cannot attach element $this as a child of $newParent as it is already a child of $_parent." }
     }
 
 
@@ -120,18 +121,19 @@ abstract class BirElementBase : BirElement {
         throw IllegalStateException("The element $this does not have a children list with id $id")
     }
 
-    internal fun removeFromList(
-        list: BirChildElementList<BirElement?>,
-    ) {
+    internal fun getContainingList(): BirChildElementList<*>? {
+        val containingListId = containingListId.toInt()
+        return if (containingListId == 0) null
+        else _parent?.getChildrenListById(containingListId)
+    }
+
+    internal fun removeFromList(list: BirChildElementList<BirElement?>) {
         if (!list.remove(this)) {
             list.parent.throwChildForReplacementNotFound(this)
         }
     }
 
-    internal fun replaceInsideList(
-        list: BirChildElementList<BirElement?>,
-        new: BirElement?,
-    ) {
+    internal fun replaceInsideList(list: BirChildElementList<BirElement?>, new: BirElement?) {
         if (!list.replace(this, new)) {
             list.parent.throwChildForReplacementNotFound(this)
         }
@@ -173,6 +175,86 @@ abstract class BirElementBase : BirElement {
 
     internal fun invalidate() {
         root?.elementIndexInvalidated(this)
+    }
+
+    internal fun recordPropertyRead() {
+        root?.recordElementPropertyRead(this)
+    }
+
+    internal fun registerDependentElement(dependentElement: BirElementBase) {
+        if (dependentElement === this) {
+            return
+        }
+
+        val RESIZE_GRADUALITY = 4
+        var elementsOrSingle = dependentIndexedElements
+        when (elementsOrSingle) {
+            null -> {
+                dependentIndexedElements = dependentElement
+            }
+            is BirElementBase -> {
+                if (elementsOrSingle === dependentElement) {
+                    return
+                }
+
+                val elements = arrayOfNulls<BirElementBase>(RESIZE_GRADUALITY)
+                elements[0] = elementsOrSingle
+                elements[1] = dependentElement
+                dependentIndexedElements = elements
+            }
+            else -> {
+                @Suppress("UNCHECKED_CAST")
+                elementsOrSingle as Array<BirElementBase?>
+
+                var newIndex = 0
+                while (newIndex < elementsOrSingle.size) {
+                    val e = elementsOrSingle[newIndex]
+                    if (e == null) {
+                        break
+                    } else if (e === dependentElement) {
+                        return
+                    }
+                    newIndex++
+                }
+
+                if (newIndex == elementsOrSingle.size) {
+                    elementsOrSingle = elementsOrSingle.copyOf(elementsOrSingle.size + RESIZE_GRADUALITY)
+                    dependentIndexedElements = elementsOrSingle
+                }
+                elementsOrSingle[newIndex] = dependentElement
+            }
+        }
+    }
+
+    internal fun invalidateDependentElements() {
+        when (val elementsOrSingle = dependentIndexedElements) {
+            null -> {}
+            is BirElementBase -> {
+                dependentIndexedElements = null
+                elementsOrSingle.invalidate()
+            }
+            else -> {
+                @Suppress("UNCHECKED_CAST")
+                var array = elementsOrSingle as Array<BirElementBase?>
+                var arraySize = array.size
+                var i = 0
+                while (i < arraySize) {
+                    val e = array[i] ?: break
+                    val arrayIsFull = array[arraySize - 1] != null
+
+                    array[i] = null
+                    e.invalidate()
+
+                    if (arrayIsFull && array !== dependentIndexedElements) {
+                        @Suppress("UNCHECKED_CAST")
+                        array = dependentIndexedElements as Array<BirElementBase?>
+                        arraySize = array.size
+                    }
+
+                    i++
+                }
+            }
+        }
     }
 }
 

@@ -27,7 +27,10 @@ class BirWhileLoopImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -38,7 +41,10 @@ class BirWhileLoopImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -49,7 +55,10 @@ class BirWhileLoopImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -60,7 +69,10 @@ class BirWhileLoopImpl(
     private var _origin: IrStatementOrigin? = origin
 
     override var origin: IrStatementOrigin?
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -71,7 +83,10 @@ class BirWhileLoopImpl(
     private var _body: BirExpression? = body
 
     override var body: BirExpression?
-        get() = _body
+        get() {
+            recordPropertyRead()
+            return _body
+        }
         set(value) {
             if (_body != value) {
                 replaceChild(_body, value)
@@ -83,7 +98,10 @@ class BirWhileLoopImpl(
     private var _condition: BirExpression = condition
 
     override var condition: BirExpression
-        get() = _condition
+        get() {
+            recordPropertyRead()
+            return _condition
+        }
         set(value) {
             if (_condition != value) {
                 replaceChild(_condition, value)
@@ -95,7 +113,10 @@ class BirWhileLoopImpl(
     private var _label: String? = label
 
     override var label: String?
-        get() = _label
+        get() {
+            recordPropertyRead()
+            return _label
+        }
         set(value) {
             if (_label != value) {
                 _label = value

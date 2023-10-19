@@ -33,7 +33,10 @@ class BirCallImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -44,7 +47,10 @@ class BirCallImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -55,7 +61,10 @@ class BirCallImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -66,7 +75,10 @@ class BirCallImpl(
     private var _symbol: BirSimpleFunctionSymbol = symbol
 
     override var symbol: BirSimpleFunctionSymbol
-        get() = _symbol
+        get() {
+            recordPropertyRead()
+            return _symbol
+        }
         set(value) {
             if (_symbol != value) {
                 _symbol = value
@@ -77,7 +89,10 @@ class BirCallImpl(
     private var _dispatchReceiver: BirExpression? = dispatchReceiver
 
     override var dispatchReceiver: BirExpression?
-        get() = _dispatchReceiver
+        get() {
+            recordPropertyRead()
+            return _dispatchReceiver
+        }
         set(value) {
             if (_dispatchReceiver != value) {
                 replaceChild(_dispatchReceiver, value)
@@ -89,7 +104,10 @@ class BirCallImpl(
     private var _extensionReceiver: BirExpression? = extensionReceiver
 
     override var extensionReceiver: BirExpression?
-        get() = _extensionReceiver
+        get() {
+            recordPropertyRead()
+            return _extensionReceiver
+        }
         set(value) {
             if (_extensionReceiver != value) {
                 replaceChild(_extensionReceiver, value)
@@ -101,7 +119,10 @@ class BirCallImpl(
     private var _origin: IrStatementOrigin? = origin
 
     override var origin: IrStatementOrigin?
-        get() = _origin
+        get() {
+            recordPropertyRead()
+            return _origin
+        }
         set(value) {
             if (_origin != value) {
                 _origin = value
@@ -110,12 +131,15 @@ class BirCallImpl(
         }
 
     override val valueArguments: BirChildElementList<BirExpression?> =
-            BirChildElementList(this, 0)
+            BirChildElementList(this, 1)
 
     private var _contextReceiversCount: Int = contextReceiversCount
 
     override var contextReceiversCount: Int
-        get() = _contextReceiversCount
+        get() {
+            recordPropertyRead()
+            return _contextReceiversCount
+        }
         set(value) {
             if (_contextReceiversCount != value) {
                 _contextReceiversCount = value
@@ -126,7 +150,10 @@ class BirCallImpl(
     private var _superQualifierSymbol: BirClassSymbol? = superQualifierSymbol
 
     override var superQualifierSymbol: BirClassSymbol?
-        get() = _superQualifierSymbol
+        get() {
+            recordPropertyRead()
+            return _superQualifierSymbol
+        }
         set(value) {
             if (_superQualifierSymbol != value) {
                 _superQualifierSymbol = value
@@ -147,7 +174,7 @@ class BirCallImpl(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        0 -> this.valueArguments
+        1 -> this.valueArguments
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

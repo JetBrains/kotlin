@@ -26,7 +26,10 @@ class BirSuspensionPointImpl(
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
-        get() = _sourceSpan
+        get() {
+            recordPropertyRead()
+            return _sourceSpan
+        }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
@@ -37,7 +40,10 @@ class BirSuspensionPointImpl(
     private var _attributeOwnerId: BirAttributeContainer = this
 
     override var attributeOwnerId: BirAttributeContainer
-        get() = _attributeOwnerId
+        get() {
+            recordPropertyRead()
+            return _attributeOwnerId
+        }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
@@ -48,7 +54,10 @@ class BirSuspensionPointImpl(
     private var _type: BirType = type
 
     override var type: BirType
-        get() = _type
+        get() {
+            recordPropertyRead()
+            return _type
+        }
         set(value) {
             if (_type != value) {
                 _type = value
@@ -59,7 +68,10 @@ class BirSuspensionPointImpl(
     private var _suspensionPointIdParameter: BirVariable = suspensionPointIdParameter
 
     override var suspensionPointIdParameter: BirVariable
-        get() = _suspensionPointIdParameter
+        get() {
+            recordPropertyRead()
+            return _suspensionPointIdParameter
+        }
         set(value) {
             if (_suspensionPointIdParameter != value) {
                 replaceChild(_suspensionPointIdParameter, value)
@@ -71,7 +83,10 @@ class BirSuspensionPointImpl(
     private var _result: BirExpression = result
 
     override var result: BirExpression
-        get() = _result
+        get() {
+            recordPropertyRead()
+            return _result
+        }
         set(value) {
             if (_result != value) {
                 replaceChild(_result, value)
@@ -83,7 +98,10 @@ class BirSuspensionPointImpl(
     private var _resumeResult: BirExpression = resumeResult
 
     override var resumeResult: BirExpression
-        get() = _resumeResult
+        get() {
+            recordPropertyRead()
+            return _resumeResult
+        }
         set(value) {
             if (_resumeResult != value) {
                 replaceChild(_resumeResult, value)

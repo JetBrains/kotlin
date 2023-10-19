@@ -557,3 +557,11 @@ val BirValueParameter.isVararg get() = this.varargElementType != null
 
 fun BirFunctionAccessExpression.usesDefaultArguments(): Boolean =
     ((symbol as BirFunction).valueParameters zip valueArguments).any { (param, arg) -> arg == null && (!param.isVararg || param.defaultValue != null) }
+
+
+fun BirExpression.isTrivial() =
+    this is BirConst<*> ||
+            this is BirGetValue ||
+            this is BirGetObjectValue ||
+            this is BirErrorExpression
+
