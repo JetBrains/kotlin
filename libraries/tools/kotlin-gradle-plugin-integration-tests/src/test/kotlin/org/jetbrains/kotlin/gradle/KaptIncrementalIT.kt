@@ -4,8 +4,8 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.nio.file.Path
 import java.util.*
@@ -15,8 +15,8 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
-@Disabled("Causes OOM on Windows")
 @DisplayName("Kapt incremental compilation")
+@OsCondition(enabledOnCI = [OS.LINUX])
 @OtherGradlePluginTests
 open class KaptIncrementalIT : KGPBaseTest() {
     companion object {

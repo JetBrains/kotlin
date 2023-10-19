@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessorReferencingClasspath
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -24,8 +23,8 @@ import java.util.zip.ZipOutputStream
 import kotlin.io.path.*
 import kotlin.test.assertEquals
 
-@Disabled("Causes OOM on Windows")
 @DisplayName("Kapt incremental tests with isolating apt")
+@OsCondition(enabledOnCI = [OS.LINUX])
 open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
