@@ -12,6 +12,8 @@ dependencies {
     api(project(":compiler:frontend.java"))
 }
 
+optInToIrSymbolInternals()
+
 sourceSets {
     "main" {
         projectDefault()
