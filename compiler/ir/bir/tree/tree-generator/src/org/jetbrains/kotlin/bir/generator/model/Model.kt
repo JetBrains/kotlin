@@ -13,28 +13,28 @@ import org.jetbrains.kotlin.bir.generator.config.SimpleFieldConfig
 import org.jetbrains.kotlin.bir.generator.util.Import
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.utils.topologicalSort
+import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
+import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 class Element(
     config: ElementConfig,
-    val name: String,
-    val packageName: String,
-    val params: List<TypeVariable>,
-    val fields: MutableList<Field>,
-) {
-    var elementParents: List<ElementRef> = emptyList()
-    var otherParents: List<ClassRef<*>> = emptyList()
+    override val name: String,
+    override val packageName: String,
+    override val params: List<TypeVariable>,
+    override val fields: MutableSet<Field>,
+) : AbstractElement<Element, Field>() {
+    override var elementParents: List<ElementRef> = emptyList()
+    override var otherParents: MutableList<ClassRef<*>> = mutableListOf()
     var visitorParent: ElementRef? = null
     var transformerReturnType: Element? = null
     val targetKind = config.typeKind
-    var kind: ImplementationKind? = null
+    override var kind: ImplementationKind? = null
     val typeName
         get() = elementName2typeName(name)
-    val allParents: List<ClassOrElementRef>
-        get() = elementParents + otherParents
     var isLeaf = config.isForcedLeaf
     var ownerSymbolType: TypeRef? = null
     val childrenOrderOverride: List<String>? = config.childrenOrderOverride
-    var allFields: List<Field> = emptyList()
+    override var allFields: List<Field> = emptyList()
     val allChildren get() = allFields.filter { it.isChild }
 
     val generationCallback = config.generationCallback
@@ -43,6 +43,17 @@ class Element(
     val additionalImports: List<Import> = config.additionalImports
 
     val elementImplName = ClassName(packageName + ".impl", typeName + "Impl")
+    override val type: String
+        get() = typeName
+
+    override val element: Element
+        get() = this
+
+    override val nullable: Boolean
+        get() = false
+
+    override val args: Map<NamedTypeParameterRef, TypeRef>
+        get() = emptyMap()
 
     override fun toString() = name
 
@@ -74,52 +85,53 @@ class Element(
     }
 }
 
-// FIXME: Replace this class with `typealias ElementRef = org.jetbrains.kotlin.generators.tree.ElementRef<Element, Field>`
-// FIXME: as soon as Element implements the org.jetbrains.kotlin.generators.tree.AbstractElement interface.
-data class ElementRef(
-    val element: Element,
-    override val args: Map<NamedTypeParameterRef, TypeRef> = emptyMap(),
-    override val nullable: Boolean = false,
-) : ParametrizedTypeRef<ElementRef, NamedTypeParameterRef>, ClassOrElementRef {
-    override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementRef(element, args, nullable)
-    override fun copy(nullable: Boolean) = ElementRef(element, args, nullable)
-    override fun toString() = "${element.name}<${args}>"
-
-    override val type: String
-        get() = element.typeName
-
-    override val packageName: String
-        get() = element.packageName
-
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
-}
+typealias ElementRef = GenericElementRef<Element, Field>
+typealias ElementOrRef = GenericElementOrRef<Element, Field>
 
 sealed class Field(
     config: FieldConfig,
-    val name: String,
-    val nullable: Boolean,
-    val mutable: Boolean,
+    override val name: String,
+    override val nullable: Boolean,
+    override val isMutable: Boolean,
     val isChild: Boolean,
-) {
-    abstract val type: TypeRef
+) : AbstractField() {
     abstract val baseDefaultValue: CodeBlock?
     var isOverride = false
     var needsDescriptorApiAnnotation = false
+
     var passViaConstructorParameter = false
     val initializeToThis = (config as? SimpleFieldConfig)?.initializeToThis ?: false
 
     val kdoc = config.kdoc
-
     val printProperty = config.printProperty
     val generationCallback = config.generationCallback
 
-    override fun toString() = "$name: $type"
+    override fun toString() = "$name: $typeRef"
+
+    override val isVolatile: Boolean
+        get() = false
+
+    override val isFinal: Boolean
+        get() = false
+
+    override val isLateinit: Boolean
+        get() = false
+
+    override val isParameter: Boolean
+        get() = false
+
+    override val type: String
+        get() = typeRef.type
+    override val packageName: String?
+        get() = typeRef.packageName
+
+    override fun getTypeWithArguments(notNull: Boolean): String = typeRef.getTypeWithArguments(notNull)
 }
 
 class SingleField(
     config: FieldConfig,
     name: String,
-    override var type: TypeRef,
+    override var typeRef: TypeRef,
     nullable: Boolean,
     mutable: Boolean,
     isChild: Boolean,
@@ -139,6 +151,6 @@ class ListField(
     isChild: Boolean,
     override val baseDefaultValue: CodeBlock?,
 ) : Field(config, name, nullable, mutable, isChild) {
-    override val type: TypeRef
+    override val typeRef: TypeRef
         get() = listType.withArgs(elementType)
 }
