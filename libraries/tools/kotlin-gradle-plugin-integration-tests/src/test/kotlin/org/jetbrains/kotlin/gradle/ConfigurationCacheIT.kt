@@ -86,21 +86,22 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         additionalVersions = [TestVersions.Gradle.G_7_6],
     )
     @GradleTest
-    fun testCommonizer(gradleVersion: GradleVersion, @TempDir konanHome: Path) {
+    fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(konanDataDir = konanHome)
-            build(":lib:compileCommonMainKotlinMetadata", buildOptions = buildOptions) {
+            build(":cleanNativeDistributionCommonization")
+
+            build(":lib:compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheStored()
             }
 
-            build("clean", ":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+            build("clean", ":cleanNativeDistributionCommonization") {
                 assertTasksExecuted(":cleanNativeDistributionCommonization")
                 assertConfigurationCacheStored()
             }
 
-            build(":lib:compileCommonMainKotlinMetadata", buildOptions = buildOptions) {
+            build(":lib:compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":commonizeNativeDistribution")
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertConfigurationCacheReused()
