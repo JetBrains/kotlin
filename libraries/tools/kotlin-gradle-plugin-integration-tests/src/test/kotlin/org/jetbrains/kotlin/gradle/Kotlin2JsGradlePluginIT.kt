@@ -1298,6 +1298,17 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             )
             buildAndFail("nodeTest") {
                 assertTasksFailed(":nodeTest")
+                assertOutputContains("Cannot find module 'foo'")
+            }
+        }
+    }
+
+    @DisplayName("mocha has no output during dry run")
+    @GradleTest
+    fun testMochaHasNoDryRunOutput(gradleVersion: GradleVersion) {
+        project("kotlin-js-nodejs-project", gradleVersion) {
+            build("nodeTest") {
+                assertOutputDoesNotContain("0 passing")
             }
         }
     }

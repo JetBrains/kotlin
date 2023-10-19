@@ -59,6 +59,12 @@ class TCServiceMessagesTestExecutor(
             if (spec.dryRunArgs != null) {
                 val exec = execHandleFactory.newExec()
                 spec.forkOptions.copyTo(exec)
+                // get rid of redundant output during dry-run
+                exec.standardOutput = object : OutputStream() {
+                    override fun write(b: Int) {
+                         // do nothing
+                    }
+                }
                 exec.args = spec.dryRunArgs
                 execHandle = exec.build()
 
