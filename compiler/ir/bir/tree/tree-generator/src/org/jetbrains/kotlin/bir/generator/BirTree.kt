@@ -132,7 +132,7 @@ object BirTree : AbstractTreeBuilder() {
         +descriptor("ValueDescriptor")
         +symbol(SymbolTypes.value)
         +field("type", irTypeType)
-        +field("isAssignable", boolean, mutable = false)
+        +field("isAssignable", boolean)
     }
     val valueParameter: ElementConfig by element(Declaration) {
         parent(declaration)
