@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.lower.BirJvmStaticInObjectLowering
+import org.jetbrains.kotlin.bir.backend.lower.BirRepeatedAnnotationLowering
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -50,7 +51,8 @@ private val invokeBirLoweringsPhase = SameTypeNamedCompilerPhase<JvmBackendConte
 )
 
 private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
-    ::BirJvmStaticInObjectLowering
+    ::BirJvmStaticInObjectLowering,
+    ::BirRepeatedAnnotationLowering,
 )
 
 private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, IrModuleFragment> {

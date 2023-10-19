@@ -144,3 +144,19 @@ val BirClass.typeConstructorParameters: Sequence<BirTypeParameter>
                 parent
         }
     }.flatMap { it.typeParameters }
+
+fun BirClassifierSymbol.typeWithParameters(parameters: List<BirTypeParameter>): BirSimpleType =
+    typeWith(parameters.map { it.defaultType })
+
+fun BirClassifierSymbol.typeWith(vararg arguments: BirType): BirSimpleType = typeWith(arguments.toList())
+
+fun BirClassifierSymbol.typeWith(arguments: List<BirType>): BirSimpleType =
+    BirSimpleTypeImpl(
+        this,
+        SimpleTypeNullability.NOT_SPECIFIED,
+        arguments.memoryOptimizedMap { makeTypeProjection(it, Variance.INVARIANT) },
+        emptyList()
+    )
+
+fun BirClassifierSymbol.typeWithArguments(arguments: List<BirTypeArgument>): BirSimpleType =
+    BirSimpleTypeImpl(this, SimpleTypeNullability.NOT_SPECIFIED, arguments, emptyList())

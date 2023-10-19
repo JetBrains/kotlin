@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.bir.util.hasAnnotation
 import org.jetbrains.kotlin.bir.util.isTrivial
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 
 context(JvmBirBackendContext)
 class BirJvmStaticInObjectLowering : BirLoweringPhase() {
-    private val JvmStaticAnnotation = birBuiltIns.findClass(Name.identifier("JvmStatic"), "kotlin", "jvm")!!
+    private val JvmStaticAnnotation = birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME)!!
 
     private val functionsWithStaticAnnotationKey = registerIndexKey<BirSimpleFunction>(false) {
         it.isJvmStaticDeclaration()

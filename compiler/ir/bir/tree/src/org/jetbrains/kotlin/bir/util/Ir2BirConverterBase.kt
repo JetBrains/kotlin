@@ -32,19 +32,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrDelegatedSimpleType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeProjectionImpl
 import java.util.*
-import kotlin.collections.List
-import kotlin.collections.MutableMap
-import kotlin.collections.contains
-import kotlin.collections.isNotEmpty
-import kotlin.collections.lastIndex
-import kotlin.collections.listOf
-import kotlin.collections.map
-import kotlin.collections.mutableListOf
-import kotlin.collections.plusAssign
-import kotlin.collections.removeLast
-import kotlin.collections.removeLastOrNull
 import kotlin.collections.set
-import kotlin.collections.single
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Ir2BirConverterBase() {
@@ -264,7 +252,7 @@ abstract class Ir2BirConverterBase() {
         else -> TODO(irType.toString())
     }
 
-    private fun remapSimpleType(irType: IrSimpleType): BirSimpleType {
+    fun remapSimpleType(irType: IrSimpleType): BirSimpleType {
         return BirSimpleTypeImpl(
             irType.kotlinType,
             remapSymbol(irType.classifier),

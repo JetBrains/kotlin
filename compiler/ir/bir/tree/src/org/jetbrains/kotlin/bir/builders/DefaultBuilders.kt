@@ -233,14 +233,12 @@ fun BirVariable.Companion.build(init: BirVariableImpl.() -> Unit): BirVariableIm
     ).apply(init)
 
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun BirBlockBody.Companion.build(init: BirBlockBodyImpl.() -> Unit): BirBlockBodyImpl =
     BirBlockBodyImpl(
         SourceSpan.UNDEFINED
     ).apply(init)
 
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun BirBlock.Companion.build(init: BirBlockImpl.() -> Unit): BirBlockImpl =
     BirBlockImpl(
         SourceSpan.UNDEFINED,
@@ -249,7 +247,6 @@ fun BirBlock.Companion.build(init: BirBlockImpl.() -> Unit): BirBlockImpl =
     ).apply(init)
 
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun BirCall.Companion.build(init: BirCallImpl.() -> Unit) =
     BirCallImpl(
         SourceSpan.UNDEFINED,
@@ -263,7 +260,6 @@ fun BirCall.Companion.build(init: BirCallImpl.() -> Unit) =
         superQualifierSymbol = null,
     ).apply(init)
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun BirConstructorCall.Companion.build(init: BirConstructorCallImpl.() -> Unit) =
     BirConstructorCallImpl(
         SourceSpan.UNDEFINED,
@@ -278,7 +274,6 @@ fun BirConstructorCall.Companion.build(init: BirConstructorCallImpl.() -> Unit) 
         contextReceiversCount = 0,
     ).apply(init)
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun BirConst.Companion.build(init: BirConstImpl<Any?>.() -> Unit) =
     BirConstImpl<Any?>(
         SourceSpan.UNDEFINED,
