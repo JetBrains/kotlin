@@ -26,7 +26,7 @@ abstract class BirValueDeclaration : BirElementBase(), BirDeclarationWithName,
 
     abstract var type: BirType
 
-    abstract val isAssignable: Boolean
+    abstract var isAssignable: Boolean
 
     companion object
 }

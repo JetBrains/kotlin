@@ -59,6 +59,7 @@ class BirForest {
     private fun addElementToIndex(element: BirElementBase) {
         val classifier = elementClassifier ?: return
 
+        assert(elementCurrentlyBeingClassified == null)
         elementCurrentlyBeingClassified = element
         val i = classifier.classify(element, currentIndexSlot + 1)
         elementCurrentlyBeingClassified = null
@@ -100,7 +101,7 @@ class BirForest {
     }
 
     internal fun recordElementPropertyRead(element: BirElementBase) {
-        if (elementCurrentlyBeingClassified != null) {
+        if (elementCurrentlyBeingClassified != null && element.root === this) {
             element.registerDependentElement(elementCurrentlyBeingClassified!!)
         }
     }
