@@ -19,7 +19,7 @@ class Kapt4AndroidIncrementalIT : Kapt3AndroidIncrementalIT() {
 }
 
 @DisplayName("android with kapt4 incremental build tests with precise compilation outputs backup")
-class Kapt4AndroidIncrementalWithPreciseBackupIT : Kapt3AndroidIncrementalWithPreciseBackupIT() {
+class Kapt4AndroidIncrementalWithoutPreciseBackupIT : Kapt3AndroidIncrementalWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     override fun TestProject.customizeProject() {

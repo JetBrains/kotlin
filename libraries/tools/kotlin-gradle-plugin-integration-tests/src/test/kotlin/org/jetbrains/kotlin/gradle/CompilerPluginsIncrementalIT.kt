@@ -83,17 +83,17 @@ class CompilerPluginsK2IncrementalIT : CompilerPluginsIncrementalIT() {
     }
 }
 
-@DisplayName("Compiler plugin incremental compilation with precise compilation outputs backup")
-abstract class CompilerPluginsIncrementalWithPreciseBackupIT : CompilerPluginsIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+@DisplayName("Compiler plugin incremental compilation with disabled precise compilation outputs backup")
+abstract class CompilerPluginsIncrementalWithoutPreciseBackupIT : CompilerPluginsIncrementalIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
 @DisplayName("Compiler plugin incremental compilation with precise compilation outputs backup")
-class CompilerPluginsK1IncrementalWithPreciseBackupIT : CompilerPluginsIncrementalWithPreciseBackupIT() {
+class CompilerPluginsK1IncrementalWithoutPreciseBackupIT : CompilerPluginsIncrementalWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
 
-class CompilerPluginsK2IncrementalWithPreciseBackupIT : CompilerPluginsIncrementalWithPreciseBackupIT() {
+class CompilerPluginsK2IncrementalWithoutPreciseBackupIT : CompilerPluginsIncrementalWithoutPreciseBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-61171")

@@ -173,18 +173,18 @@ class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChangeDef
     }
 }
 
-@DisplayName("Default incremental compilation with precise compilation outputs backup")
-abstract class IncrementalJavaChangePreciseCompilationBackupIT : IncrementalJavaChangeDefaultIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
+@DisplayName("Default incremental compilation with disabled precise compilation outputs backup")
+abstract class IncrementalJavaChangeWithoutPreciseCompilationBackupIT : IncrementalJavaChangeDefaultIT() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = false, keepIncrementalCompilationCachesInMemory = false)
 }
 
 @DisplayName("Default incremental compilation with precise compilation outputs backup on K1")
-class IncrementalK1JavaChangePreciseCompilationBackupIT : IncrementalJavaChangePreciseCompilationBackupIT() {
+class IncrementalK1JavaChangeWithoutPreciseCompilationBackupIT : IncrementalJavaChangeWithoutPreciseCompilationBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK1()
 }
 
 @DisplayName("Default incremental compilation with precise compilation outputs backup on K2")
-class IncrementalK2JavaChangePreciseCompilationBackupIT : IncrementalJavaChangePreciseCompilationBackupIT() {
+class IncrementalK2JavaChangeWithoutPreciseCompilationBackupIT : IncrementalJavaChangeWithoutPreciseCompilationBackupIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("KT-57147")
