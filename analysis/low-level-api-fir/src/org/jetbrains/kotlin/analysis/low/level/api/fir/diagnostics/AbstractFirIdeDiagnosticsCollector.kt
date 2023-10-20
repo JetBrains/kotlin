@@ -80,6 +80,7 @@ private object CheckersFactory {
         } else {
             createDeclarationCheckers {
                 add(CommonDeclarationCheckers)
+                add(CommonIdeOnlyDeclarationCheckers)
                 when {
                     platform.isJvm() -> add(JvmDeclarationCheckers)
                     platform.isJs() -> add(JsDeclarationCheckers)

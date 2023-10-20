@@ -20,6 +20,6 @@ class SourceAvailableImpl {
     fun foo() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>SourceAvailable<!> = SourceAvailableImpl<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias SourceAvailable = SourceAvailableImpl<!>
 
 actual typealias FromLib = kotlin.SinceKotlin

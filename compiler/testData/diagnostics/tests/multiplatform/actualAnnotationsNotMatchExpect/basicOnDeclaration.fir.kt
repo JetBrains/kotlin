@@ -25,7 +25,7 @@ expect class AnnotationInside {
 @Ann
 actual class AnnotationMatching
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>AnnotationOnExpectOnly<!><!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class AnnotationOnExpectOnly<!>
 
 @Ann
 actual class AnnotationOnActualOnly
@@ -34,7 +34,7 @@ actual class AnnotationInside {
     @Ann
     actual fun matches() {}
 
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onlyOnExpect<!>() {}<!>
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun onlyOnExpect() {}<!>
 
     @Ann
     actual fun onlyOnActual() {}

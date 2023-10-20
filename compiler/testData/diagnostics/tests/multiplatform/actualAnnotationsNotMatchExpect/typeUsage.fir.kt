@@ -61,46 +61,46 @@ expect fun funcTypeArgType(arg: (arg: @Ann Any) -> Unit)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>valueParameterType<!>(arg: String) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun valueParameterType(arg: String) {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>returnType<!>(): String = ""<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun returnType(): String = ""<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T : Any> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>methodTypeParamBound<!>() {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T : Any> methodTypeParamBound() {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClassTypeParamBound<!><T : Any><!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClassTypeParamBound<T : Any><!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>typeParamBoundInWhere<!>() where T : Any {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> typeParamBoundInWhere() where T : Any {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>severalBounds<!>() where T : I1, T : I2 {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> severalBounds() where T : I1, T : I2 {}<!>
 
 actual fun <T> <!ACTUAL_WITHOUT_EXPECT!>severalBoundsDifferentOrder<!>() where T : @Ann I1, T : I2 {}
 
 actual fun <T> <!ACTUAL_WITHOUT_EXPECT!>lessTypeParamBoundsOnActual<!>() where T : @Ann I2 {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun Any.<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onReceiver<!>() {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun Any.onReceiver() {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClassSuper<!> : I1<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClassSuper : I1<!>
 
 actual class OnClassSuperDifferentOrder : @Ann I2, I1
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClassSuperMoreOnActual<!> : I1, I2<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClassSuperMoreOnActual : I1, I2<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClassSuperTypeParams<!><T> : I3<T><!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClassSuperTypeParams<T> : I3<T><!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>deepInParamsTypes<!>(arg: I3<I3<Any>>) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun deepInParamsTypes(arg: I3<I3<Any>>) {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>starProjection<!>(arg: I4<*, Any>) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun starProjection(arg: I4<*, Any>) {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>typeArgWithVariance<!>(t: I3<out T>) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> typeArgWithVariance(t: I3<out T>) {}<!>
 
 actual fun qualifierPartsMatching(arg: WithNested<String>.Nested<@Ann String>) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>qualifierPartsNonMatching<!>(arg: WithNested<@Ann String>.Nested<String>) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun qualifierPartsNonMatching(arg: WithNested<@Ann String>.Nested<String>) {}<!>
 
 actual fun <!ACTUAL_WITHOUT_EXPECT!>funTypeVsUserType<!>(arg: kotlin.jvm.functions.Function0<String>) {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeReturnType<!>(arg: () -> Any) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun funcTypeReturnType(arg: () -> Any) {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeReceiverType<!>(arg: Any.() -> Unit) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun funcTypeReceiverType(arg: Any.() -> Unit) {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>funcTypeArgType<!>(arg: (arg: Any) -> Unit) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun funcTypeArgType(arg: (arg: Any) -> Unit) {}<!>

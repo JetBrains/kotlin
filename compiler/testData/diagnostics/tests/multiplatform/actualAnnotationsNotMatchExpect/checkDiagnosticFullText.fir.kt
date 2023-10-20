@@ -44,28 +44,28 @@ expect fun onType(param: @Ann Any)
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClass<!><!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class OnClass<!>
 
 actual class OnMember {
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onMember<!>() {}<!>
+    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun onMember() {}<!>
 }
 
 class ViaTypealiasImpl
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ViaTypealias<!> = ViaTypealiasImpl<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias ViaTypealias = ViaTypealiasImpl<!>
 
 class MemberScopeViaTypealiasImpl {
     fun foo() {}
 }
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MemberScopeViaTypealias<!> = MemberScopeViaTypealiasImpl<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias MemberScopeViaTypealias = MemberScopeViaTypealiasImpl<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@WithArg("other str")
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withDifferentArg<!>() {}<!>
+actual fun withDifferentArg() {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inValueParam<!>(arg: String) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun inValueParam(arg: String) {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inTypeParam<!>() {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> inTypeParam() {}<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetter<!>: String = ""<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val onGetter: String = ""<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onType<!>(param: Any) {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun onType(param: Any) {}<!>

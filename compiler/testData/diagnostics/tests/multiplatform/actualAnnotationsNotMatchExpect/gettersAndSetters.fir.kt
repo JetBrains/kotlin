@@ -23,20 +23,20 @@ expect var onSetter: String
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetter<!>: String
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val onGetter: String
     <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>get() = ""<!><!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetterImplicit<!>: String = ""<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val onGetterImplicit: String = ""<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetterWithExplicitTarget<!>: String
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual val onGetterWithExplicitTarget: String
     <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>get() = ""<!><!>
 
 actual val explicitTargetMatchesWithoutTarget: String
     @Ann get() = ""
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann
-actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>setOnPropertyWithoutTargetNotMatch<!>: String = ""<!>
+actual val setOnPropertyWithoutTargetNotMatch: String = ""<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual var <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onSetter<!>: String
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual var onSetter: String
     get() = ""
     <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>set(_) {}<!><!>

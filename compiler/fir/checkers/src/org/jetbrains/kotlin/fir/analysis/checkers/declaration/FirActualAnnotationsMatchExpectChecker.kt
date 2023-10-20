@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
 
-// TODO(Roman.Efremov): KT-62559 prevent reporting ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT twice in CLI mode in K2
+/**
+ * This checker runs only in IDE mode. In CLI IR checker runs instead of it.
+ */
 internal object FirActualAnnotationsMatchExpectChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirMemberDeclaration) return

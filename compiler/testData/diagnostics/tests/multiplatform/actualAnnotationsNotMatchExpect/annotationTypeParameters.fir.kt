@@ -63,25 +63,25 @@ expect fun explicitVsInfered()
 actual fun sameTypeParam() {}
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann<A>
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>differentTypeParam<!>() {}<!>
+actual fun differentTypeParam() {}<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann<A>
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>differentWithSameName<!>() {}<!>
+actual fun differentWithSameName() {}<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann<A>
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>nonNullvsNull<!>() {}<!>
+actual fun nonNullvsNull() {}<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann<Ann<out A>>
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>differentVariance<!>() {}<!>
+actual fun differentVariance() {}<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann<Ann<A>>
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>varianceVsNoVariance<!>() {}<!>
+actual fun varianceVsNoVariance() {}<!>
 
 @Ann<Ann<in A>>
 actual fun sameVariance() {}
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann<Ann<Any>>
-actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>startProjection<!>() {}<!>
+actual fun startProjection() {}<!>
 
 @ComplexNested<A>(
     ComplexNested<A>(),
