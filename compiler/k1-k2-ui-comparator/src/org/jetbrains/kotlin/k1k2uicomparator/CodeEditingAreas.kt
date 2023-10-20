@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.k1k2uicomparator
 
+import java.awt.Color
 import java.awt.Font
 import java.awt.Rectangle
 import javax.swing.JTextArea
+import javax.swing.border.LineBorder
 import javax.swing.text.DefaultCaret
 
 // Without it the read-only text areas
@@ -20,6 +22,7 @@ class CaretWithoutVisibilityAdjustment : DefaultCaret() {
 fun JTextArea.styleAsCodeEditor() {
     font = Font(Font.MONOSPACED, Font.PLAIN, 14)
     tabSize = 4
+    border = LineBorder(Color(0, 0, 0, 0), UIComparatorFrame.PANES_GAP, false)
 }
 
 fun codeEditorArea(text: String? = null) = JTextArea(text).apply { styleAsCodeEditor() }
