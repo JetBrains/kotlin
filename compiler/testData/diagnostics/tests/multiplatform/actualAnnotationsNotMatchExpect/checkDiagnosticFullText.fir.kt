@@ -1,4 +1,5 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
+// RENDER_IR_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1-common
 // FILE: common.kt
 @Target(

@@ -14,9 +14,9 @@ expect fun onType(): @Ann2("") Any?
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual annotation class Ann<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("Ann; Ann; Annotation `kotlin.annotation.Target` is missing on actual declaration")!>actual annotation class Ann<!>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun stringConcat() {}<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("stringConcat; stringConcat; Annotation `Ann2` is missing on actual declaration")!>actual fun stringConcat() {}<!>
 
 // Not reported in K1, because supported starting from K2
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun onType(): Any? = null<!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("onType; onType; Annotation `Ann2` is missing on actual declaration")!>actual fun onType(): Any? = null<!>
