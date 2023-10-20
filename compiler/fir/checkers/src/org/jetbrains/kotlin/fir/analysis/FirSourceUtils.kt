@@ -6,41 +6,91 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.fir.declarations.FirImport
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.util.getChildren
 
-fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
-    return getChild(setOf(type), index, depth, reverse)
-}
+fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
+    getChild(setOf(type), index, depth, reverse)
 
-fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
-    return getChild(types.types.toSet(), index, depth, reverse)
-}
+fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
+    getChild(types.types.toSet(), index, depth, reverse)
 
 fun KtSourceElement.getChild(types: Set<IElementType>, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? {
-    return when (this) {
-        is KtPsiSourceElement -> {
-            getChild(types, index, depth, reverse)
-        }
-        is KtLightSourceElement -> {
-            getChild(types, index, depth, reverse)
-        }
-        else -> null
+    var idx = index
+    return forEachChildOfType(types, depth, reverse) {
+        idx-- == 0
     }
 }
 
-private fun KtPsiSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int, reverse: Boolean): KtSourceElement? {
-    val visitor = PsiElementFinderByType(types, index, depth, reverse)
-    return visitor.find(psi)?.toKtPsiSourceElement()
+/**
+ * Iterates recursively over all children up to given depth.
+ * `stopPredicate` is invoked for each child having type in `types` set.
+ * As soon `stopPredicate` returns `true`, iterations stopped and current element is returned.
+ * To iterate unconditionally, `stopPredicate` should always return false, so its side-effect might perform useful actions.
+ */
+fun KtSourceElement.forEachChildOfType(
+    types: Set<IElementType>,
+    depth: Int = -1,
+    reverse: Boolean = false,
+    stopPredicate: (KtSourceElement) -> Boolean
+): KtSourceElement? = when (this) {
+    is KtPsiSourceElement -> psiForEachChildOfType(types, depth, reverse, stopPredicate)
+    is KtLightSourceElement -> ltForEachChildOfType(types, depth, reverse, stopPredicate)
+    else -> null
 }
 
-private fun KtLightSourceElement.getChild(types: Set<IElementType>, index: Int, depth: Int, reverse: Boolean): KtSourceElement? {
-    val visitor = LighterTreeElementFinderByType(treeStructure, types, index, depth, reverse)
-    val childNode = visitor.find(lighterASTNode) ?: return null
-    return buildChildSourceElement(childNode)
+fun KtPsiSourceElement.psiForEachChildOfType(
+    types: Set<IElementType>,
+    depth: Int = -1,
+    reverse: Boolean = false,
+    stopPredicate: (KtPsiSourceElement) -> Boolean
+): KtPsiSourceElement? {
+    fun visitElement(element: PsiElement, currentDepth: Int): KtPsiSourceElement? {
+        if (currentDepth != 0 && element.node.elementType in types) {
+            val psiSourceElement = element.toKtPsiSourceElement()
+            if (stopPredicate(psiSourceElement)) {
+                return psiSourceElement
+            }
+        }
+        if (currentDepth == depth) return null
+
+        val children = if (reverse) element.allChildren.toList().asReversed().iterator() else element.allChildren.iterator()
+        for (child in children) {
+            val result = visitElement(child, currentDepth + 1)
+            if (result != null) return result
+        }
+        return null
+    }
+    return visitElement(psi, 0)
+}
+
+fun KtLightSourceElement.ltForEachChildOfType(
+    types: Set<IElementType>,
+    depth: Int = -1,
+    reverse: Boolean = false,
+    stopPredicate: (KtLightSourceElement) -> Boolean
+): KtLightSourceElement? {
+    fun visitElement(node: LighterASTNode, currentDepth: Int): KtLightSourceElement? {
+        if (currentDepth != 0 && node.tokenType in types) {
+            val lightSourceElement = node.toKtLightSourceElement(treeStructure)
+            if (stopPredicate(lightSourceElement))
+                return lightSourceElement
+        }
+        if (currentDepth == depth) return null
+
+        val children = if (reverse) node.getChildren(treeStructure).asReversed() else node.getChildren(treeStructure)
+        for (child in children) {
+            val result = visitElement(child, currentDepth + 1)
+            if (result != null) return result
+        }
+        return null
+    }
+    return visitElement(lighterASTNode, 0)
 }
 
 /**
