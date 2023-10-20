@@ -47,6 +47,7 @@ class FirRenderer(
     override val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer = FirResolvedNamedReferenceRendererWithLabel(),
     override val resolvedQualifierRenderer: FirResolvedQualifierRenderer = FirResolvedQualifierRendererWithLabel(),
     private val lineBreakAfterContextReceivers: Boolean = true,
+    override val getClassCallRenderer: FirGetClassCallRenderer = FirGetClassCallRendererForDebugging(),
 ) : FirRendererComponents {
 
     override val visitor = Visitor()
@@ -101,6 +102,7 @@ class FirRenderer(
         fileAnnotationsContainerRenderer?.components = this
         resolvedNamedReferenceRenderer.components = this
         resolvedQualifierRenderer.components = this
+        getClassCallRenderer.components = this
     }
 
     fun renderElementAsString(element: FirElement, trim: Boolean = false): String {
@@ -1114,9 +1116,7 @@ class FirRenderer(
         }
 
         override fun visitGetClassCall(getClassCall: FirGetClassCall) {
-            annotationRenderer?.render(getClassCall)
-            print("<getClass>")
-            visitCall(getClassCall)
+            getClassCallRenderer.render(getClassCall)
         }
 
         override fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression) {
