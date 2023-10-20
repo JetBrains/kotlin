@@ -34,6 +34,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("binary_search.kt")
+        public void testBinary_search() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/binary_search.kt");
+        }
+
+        @Test
         @TestMetadata("calls_in_place.kt")
         public void testCalls_in_place() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/calls_in_place.kt");
@@ -111,6 +117,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         @TestMetadata("as_type_contract.kt")
         public void testAs_type_contract() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/good_contracts/as_type_contract.kt");
+        }
+
+        @Test
+        @TestMetadata("binary_search.kt")
+        public void testBinary_search() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/binary_search.kt");
         }
 
         @Test

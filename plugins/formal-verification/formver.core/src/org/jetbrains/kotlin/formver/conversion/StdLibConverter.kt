@@ -26,6 +26,16 @@ fun NamedFunctionSignature.stdLibPreConditions(): List<Exp> =
                     GtCmp(receiver.fieldAccess(ListSizeFieldEmbedding.toViper()), indexArg),
                 )
             }
+            ifFunctionName("subList") {
+                val receiver = receiver!!.toViper()
+                val fromIndexArg = formalArgs[1].toViper()
+                val toIndexArg = formalArgs[2].toViper()
+                return listOf(
+                    LeCmp(fromIndexArg, toIndexArg),
+                    GeCmp(fromIndexArg, IntLit(0)),
+                    LeCmp(toIndexArg, receiver.fieldAccess(ListSizeFieldEmbedding.toViper()))
+                )
+            }
         }
         return listOf()
     }
@@ -51,6 +61,14 @@ fun NamedFunctionSignature.stdLibPostConditions(): List<Exp> =
                     receiver!!.sameSize(),
                     Implies(retVar, EqCmp(receiver.fieldAccess(ListSizeFieldEmbedding.toViper()), IntLit(0))),
                     Implies(Not(retVar), GtCmp(receiver.fieldAccess(ListSizeFieldEmbedding.toViper()), IntLit(0)))
+                )
+            }
+            ifFunctionName("subList") {
+                val fromIndexArg = formalArgs[1].toViper()
+                val toIndexArg = formalArgs[2].toViper()
+                return listOf(
+                    receiver!!.sameSize(),
+                    EqCmp(retVar.fieldAccess(ListSizeFieldEmbedding.toViper()), Sub(toIndexArg, fromIndexArg))
                 )
             }
         }

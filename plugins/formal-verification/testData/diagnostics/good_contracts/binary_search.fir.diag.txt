@@ -1,0 +1,176 @@
+/binary_search.kt:(90,108): info: Generated Viper text for safe_binary_search:
+field special$size: Int
+
+method global$fun_safe_binary_search$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(local$arr: Ref,
+  local$target: Int)
+  returns (ret: Bool)
+  requires acc(local$arr.special$size, write)
+  requires local$arr.special$size >= 0
+  ensures acc(local$arr.special$size, write)
+  ensures local$arr.special$size >= 0
+{
+  var anonymous$0: Int
+  var local0$size: Int
+  var anonymous$1: Int
+  var local0$mid: Int
+  var anonymous$2: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$arr): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  anonymous$0 := local$arr.special$size
+  local0$size := anonymous$0
+  anonymous$1 := local$arr.special$size
+  inhale 2 != 0
+  local0$mid := anonymous$1 / 2
+  if (true) {
+    var anonymous$3: Bool
+    anonymous$3 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$arr)
+    if (anonymous$3) {
+      anonymous$2 := false
+    } else {
+      var anonymous$4: Int
+      anonymous$4 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+        local0$mid)
+      if (anonymous$4 == local$target) {
+        anonymous$2 := true
+      } else {
+        var anonymous$5: Int
+        anonymous$5 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+          local0$mid)
+        if (anonymous$5 < local$target) {
+          var anonymous$6: Ref
+          var anonymous$7: Bool
+          anonymous$6 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
+            local0$mid + 1, local0$size)
+          anonymous$7 := global$fun_safe_binary_search$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$6,
+            local$target)
+          anonymous$2 := anonymous$7
+        } else {
+          var anonymous$8: Ref
+          var anonymous$9: Bool
+          anonymous$8 := pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(local$arr,
+            0, local0$mid)
+          anonymous$9 := global$fun_safe_binary_search$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(anonymous$8,
+            local$target)
+          anonymous$2 := anonymous$9
+        }
+      }
+    }
+  }
+  ret := anonymous$2
+  goto label$ret$0
+  label label$ret$0
+}
+
+method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
+  local$index: Int)
+  returns (ret: Int)
+  requires acc(this.special$size, write)
+  requires this.special$size >= 0
+  requires local$index >= 0
+  requires this.special$size > local$index
+  ensures acc(this.special$size, write)
+  ensures this.special$size >= 0
+  ensures this.special$size == old(this.special$size)
+
+
+method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(this: Ref)
+  returns (ret: Bool)
+  requires acc(this.special$size, write)
+  requires this.special$size >= 0
+  ensures acc(this.special$size, write)
+  ensures this.special$size >= 0
+  ensures this.special$size == old(this.special$size)
+  ensures ret ==> this.special$size == 0
+  ensures !ret ==> this.special$size > 0
+
+
+method pkg$kotlin$collections$class_List$fun_subList$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$return$T_class_pkg$kotlin$collections$global$class_List(this: Ref,
+  local$fromIndex: Int, local$toIndex: Int)
+  returns (ret: Ref)
+  requires acc(this.special$size, write)
+  requires this.special$size >= 0
+  requires local$fromIndex <= local$toIndex
+  requires local$fromIndex >= 0
+  requires local$toIndex <= this.special$size
+  ensures acc(this.special$size, write)
+  ensures this.special$size >= 0
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  ensures acc(ret.special$size, write)
+  ensures ret.special$size >= 0
+  ensures this.special$size == old(this.special$size)
+  ensures ret.special$size == local$toIndex - local$fromIndex
+
+
+/binary_search.kt:(537,563): info: Generated Viper text for unsafe_binary_search_fixed:
+field special$size: Int
+
+method global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$T_Int$return$T_Boolean(local$arr: Ref,
+  local$target: Int, local$left: Int, local$right: Int)
+  returns (ret: Bool)
+  requires acc(local$arr.special$size, write)
+  requires local$arr.special$size >= 0
+  ensures acc(local$arr.special$size, write)
+  ensures local$arr.special$size >= 0
+{
+  var local0$mid: Int
+  var anonymous$3: Bool
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$arr): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  if (true) {
+    var anonymous$0: Bool
+    var anonymous$1: Bool
+    if (local$left > local$right) {
+      anonymous$0 := true
+    } else {
+      anonymous$0 := local$left < 0}
+    if (anonymous$0) {
+      anonymous$1 := true
+    } else {
+      var anonymous$2: Int
+      anonymous$2 := local$arr.special$size
+      anonymous$1 := local$right >= anonymous$2
+    }
+    if (anonymous$1) {
+      ret := false
+      goto label$ret$0
+    }
+  }
+  inhale 2 != 0
+  local0$mid := local$left + (local$right - local$left) / 2
+  if (true) {
+    var anonymous$4: Int
+    anonymous$4 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+      local0$mid)
+    if (anonymous$4 == local$target) {
+      anonymous$3 := true
+    } else {
+      var anonymous$5: Int
+      anonymous$5 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$arr,
+        local0$mid)
+      if (anonymous$5 < local$target) {
+        var anonymous$6: Bool
+        anonymous$6 := global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$T_Int$return$T_Boolean(local$arr,
+          local$target, local0$mid + 1, local$right)
+        anonymous$3 := anonymous$6
+      } else {
+        var anonymous$7: Bool
+        anonymous$7 := global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$T_Int$return$T_Boolean(local$arr,
+          local$target, local$left, local0$mid - 1)
+        anonymous$3 := anonymous$7
+      }
+    }
+  }
+  ret := anonymous$3
+  goto label$ret$0
+  label label$ret$0
+}
+
+method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(this: Ref,
+  local$index: Int)
+  returns (ret: Int)
+  requires acc(this.special$size, write)
+  requires this.special$size >= 0
+  requires local$index >= 0
+  requires this.special$size > local$index
+  ensures acc(this.special$size, write)
+  ensures this.special$size >= 0
+  ensures this.special$size == old(this.special$size)
+
