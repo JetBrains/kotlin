@@ -147,8 +147,16 @@ class KotlinBuildStatHandler {
                                 configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_COUNT, 1)
                                 reportLibrariesVersions(configurationTimeMetrics, dependencies)
                             }
+                            COMPILE_ONLY -> {
+                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_COMPILE_ONLY_COUNT, 1)
+                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                            }
                             RUNTIME -> {
                                 configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_COUNT, 1)
+                                reportLibrariesVersions(configurationTimeMetrics, dependencies)
+                            }
+                            RUNTIME_ONLY -> {
+                                configurationTimeMetrics.put(NumericalMetrics.CONFIGURATION_RUNTIME_ONLY_COUNT, 1)
                                 reportLibrariesVersions(configurationTimeMetrics, dependencies)
                             }
                         }

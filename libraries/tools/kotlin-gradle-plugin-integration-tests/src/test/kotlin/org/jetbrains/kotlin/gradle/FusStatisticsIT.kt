@@ -193,6 +193,28 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @DisplayName("configuration type metrics")
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+    )
+    fun testConfigurationTypeFusMetrics(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build(
+                "compileKotlin",
+                "-Pkotlin.session.logger.root.path=$projectPath",
+            ) {
+                assertFileContains(
+                    fusStatisticsPath,
+                    "CONFIGURATION_COMPILE_ONLY_COUNT=1",
+                    "CONFIGURATION_API_COUNT=1",
+                    "CONFIGURATION_IMPLEMENTATION_COUNT=1",
+                    "CONFIGURATION_RUNTIME_ONLY_COUNT=1",
+                )
+            }
+        }
+    }
+
     private fun TestProject.applyDokka() {
         buildGradle.replaceText(
             "plugins {",
