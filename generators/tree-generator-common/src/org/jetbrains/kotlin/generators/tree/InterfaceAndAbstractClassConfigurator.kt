@@ -18,15 +18,12 @@ abstract class InterfaceAndAbstractClassConfigurator {
             get() = element.allParents.map(::NodeImpl)
 
         override val origin: NodeImpl
-            get() = if (element.origin == element) this else NodeImpl(element.origin)
+            get() = this
 
         override fun equals(other: Any?): Boolean = other is NodeImpl && element == other.element
 
         override fun hashCode(): Int = element.hashCode()
     }
-
-    protected open val ImplementationKindOwner.origin: ImplementationKindOwner
-        get() = this
 
     /**
      * The list of elements of the tree to infer their [ImplementationKind].

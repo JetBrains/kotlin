@@ -27,7 +27,6 @@ abstract class AbstractFirTreeImplementationConfigurator {
         } ?: Implementation(element, name)
         val context = ImplementationContext(implementation)
         context.apply(config)
-        implementation.updateMutabilityAccordingParents()
         elementsWithImpl += element
         return implementation
     }
@@ -76,19 +75,6 @@ abstract class AbstractFirTreeImplementationConfigurator {
         private fun getField(name: String): FieldWithDefault {
             return implementation.getField(name)
         }
-
-        inner class ParentsHolder {
-            operator fun plusAssign(parent: Implementation) {
-                implementation.addParent(parent)
-            }
-
-            operator fun plusAssign(parent: ImplementationWithArg) {
-                implementation.addParent(parent.implementation, parent.argument)
-                parent.argument?.let { useTypes(it) }
-            }
-        }
-
-        val parents = ParentsHolder()
 
         fun optInToInternals() {
             implementation.requiresOptIn = true
