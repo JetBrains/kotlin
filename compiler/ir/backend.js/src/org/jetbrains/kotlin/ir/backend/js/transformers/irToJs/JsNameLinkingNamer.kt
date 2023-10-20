@@ -90,6 +90,7 @@ class JsNameLinkingNamer(
                 else -> JsImport.Target.Default(nameRef)
             }
             imports[this] = JsImport(jsModule, importSubject)
+            nameMap[this] = name
         } else {
             importedModules += JsImportedModule(jsModule, name, nameRef)
         }
