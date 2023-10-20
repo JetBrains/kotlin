@@ -97,7 +97,7 @@ private class JsIrAstSerializer {
     }
 
     fun append(fragment: JsIrProgramFragment): JsIrAstSerializer {
-        importedNames += fragment.imports.map { fragment.nameBindings[it.key]!! }
+        importedNames += fragment.imports.map { fragment.nameBindings[it.key] ?: error("No binding for tag ${it.key}") }
         fragmentSerializer.writeFragment(fragment)
         return this
     }
