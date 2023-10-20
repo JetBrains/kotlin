@@ -308,6 +308,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     }
 
     @Test
+    @TestMetadata("importsWithUnresolvedAnnotations.kt")
+    public void testImportsWithUnresolvedAnnotations() throws Exception {
+        runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/importsWithUnresolvedAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("incorrectDelegate.kt")
     public void testIncorrectDelegate() throws Exception {
         runTest("plugins/kapt4/../kapt3/kapt3-compiler/testData/converter/incorrectDelegate.kt");

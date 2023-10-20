@@ -308,6 +308,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("importsWithUnresolvedAnnotations.kt")
+    public void testImportsWithUnresolvedAnnotations() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/importsWithUnresolvedAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("incorrectDelegate.kt")
     public void testIncorrectDelegate() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/incorrectDelegate.kt");
