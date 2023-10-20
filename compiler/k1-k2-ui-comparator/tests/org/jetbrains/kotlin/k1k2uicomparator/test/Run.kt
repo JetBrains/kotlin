@@ -15,14 +15,8 @@ import org.jetbrains.kotlin.test.initIdeaConfiguration
 import org.jetbrains.kotlin.test.runners.DiagnosticTestGenerated
 import org.jetbrains.kotlin.test.runners.FirLightTreeOldFrontendDiagnosticsTestGenerated
 import org.jetbrains.kotlin.test.services.KotlinTestInfo
-import org.junit.jupiter.api.Test
 import java.awt.EventQueue
 import java.util.concurrent.atomic.AtomicBoolean
-
-class TestRunner {
-    @Test
-    fun runMain() = main()
-}
 
 private val k1Runner = DiagnosticTestGenerated()
 private val k2Runner = FirLightTreeOldFrontendDiagnosticsTestGenerated()
