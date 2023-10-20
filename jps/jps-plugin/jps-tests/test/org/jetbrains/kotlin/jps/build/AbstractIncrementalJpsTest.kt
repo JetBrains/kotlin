@@ -616,10 +616,11 @@ abstract class AbstractIncrementalJpsTest(
 private fun createMappingsDump(
     project: ProjectDescriptor,
     kotlinContext: KotlinCompileContext,
-    lookupsDuringTest: Set<LookupSymbol>
-) = createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
-        createCommonMappingsDump(project) + "\n\n\n" +
-        createJavaMappingsDump(project)
+    lookupsDuringTest: Set<LookupSymbol>,
+) = if (System.getProperty("jps.use.dependency.graph", "false").toBoolean()) "" else
+    createKotlinCachesDump(project, kotlinContext, lookupsDuringTest) + "\n\n\n" +
+            createCommonMappingsDump(project) + "\n\n\n" +
+            createJavaMappingsDump(project)
 
 internal fun createKotlinCachesDump(
     project: ProjectDescriptor,
