@@ -20,10 +20,12 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
@@ -179,7 +181,12 @@ object FirJsNameClashClassMembersChecker : FirClassChecker() {
 
             val nonFakeOverrideClashes = stableNames.collectNonFakeOverrideClashes { it in fakeOverrideStableNames }
             for ((symbol, clashedWith) in nonFakeOverrideClashes) {
-                reporter.reportOn(symbol.source ?: declaration.source, FirJsErrors.JS_NAME_CLASH, name, clashedWith, context)
+                @OptIn(SymbolInternals::class)
+                val source = when (symbol) {
+                    is FirCallableSymbol<*> -> symbol.fir.unwrapFakeOverridesOrDelegated().source
+                    else -> symbol.source
+                } ?: declaration.source
+                reporter.reportOn(source, FirJsErrors.JS_NAME_CLASH, name, clashedWith, context)
             }
 
             fakeOverrideStableNames.findFirstFakeOverrideClash(stableNameCollector)?.let { (fakeOverrideSymbol, clashedWith) ->
