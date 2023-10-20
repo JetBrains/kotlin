@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:ir.tree"))
+    compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 

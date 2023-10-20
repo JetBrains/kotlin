@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
@@ -176,7 +177,9 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
 
         fun getStaticGetter(field: IrField): MethodHandle {
             val jvmClass = field.parentAsClass.defaultType.getClass(true)
-            val returnType = field.type.let { it.getClass(it.isNullable()) }
+            val getAsObjectType = field.type.isNullable() ||
+                    field.type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
+            val returnType = field.type.getClass(getAsObjectType)
             return MethodHandles.lookup().findStaticGetter(jvmClass, field.name.asString(), returnType)
         }
 
