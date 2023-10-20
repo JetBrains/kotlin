@@ -194,7 +194,6 @@ object FirErrors {
     val AMBIGUOUS_ALTERED_ASSIGN by error1<PsiElement, List<String?>>()
     val FORBIDDEN_BINARY_MOD by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.OPERATOR_MODIFIER)
     val DEPRECATED_BINARY_MOD by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.OPERATOR_MODIFIER)
-    val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error1<PsiElement, FirClassLikeSymbol<*>>()
 
     // Super
     val SUPER_IS_NOT_AN_EXPRESSION by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
@@ -403,6 +402,7 @@ object FirErrors {
     val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION by warning0<KtExpression>()
     val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION by warning0<KtExpression>()
     val INFERENCE_UNSUCCESSFUL_FORK by error1<PsiElement, String>()
+    val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error1<PsiElement, FirClassLikeSymbol<*>>()
 
     // Ambiguity
     val OVERLOAD_RESOLUTION_AMBIGUITY by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

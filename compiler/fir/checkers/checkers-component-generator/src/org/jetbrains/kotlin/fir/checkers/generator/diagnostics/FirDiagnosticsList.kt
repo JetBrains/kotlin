@@ -225,9 +225,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirBasedSymbol<*>>("forbiddenFunction")
             parameter<String>("suggestedFunction")
         }
-        val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error<PsiElement> {
-            parameter<FirClassLikeSymbol<*>>("symbol")
-        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
@@ -644,6 +641,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val INFERENCE_UNSUCCESSFUL_FORK by error<PsiElement> {
             parameter<String>("message")
+        }
+        val NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE by error<PsiElement> {
+            parameter<FirClassLikeSymbol<*>>("symbol")
         }
     }
 
