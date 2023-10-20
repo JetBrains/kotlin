@@ -67,7 +67,11 @@ fun main() = EventQueue.invokeLater {
             return
         }
 
-        val result = processSource(sourceInitially)
+        val result = try {
+            processSource(sourceInitially)
+        } catch (e: Exception) {
+            e.message ?: "<error>"
+        }
 
         if (sourceInitially != mainFrame.mainCode) {
             isRecalculating.compareAndSet(true, false)
