@@ -92,6 +92,24 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("annotationArgArrayVsOutArray.kt")
+    public void testAnnotationArgArrayVsOutArray() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/annotationArgArrayVsOutArray.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationArgArrayVsVararg.kt")
+    public void testAnnotationArgArrayVsVararg() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/annotationArgArrayVsVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationArgTypeAliasWithArray.kt")
+    public void testAnnotationArgTypeAliasWithArray() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/annotationArgTypeAliasWithArray.kt");
+    }
+
+    @Test
     @TestMetadata("arraySort.kt")
     public void testArraySort() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/arraySort.kt");
@@ -401,6 +419,256 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     @TestMetadata("widerVisibility_expectSetterIsEffectivelyFinal_fakeOverride.kt")
     public void testWiderVisibility_expectSetterIsEffectivelyFinal_fakeOverride() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/widerVisibility_expectSetterIsEffectivelyFinal_fakeOverride.kt");
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ActualAnnotationsNotMatchExpect {
+        @Test
+        @TestMetadata("actualInnerClassMissingMember.kt")
+        public void testActualInnerClassMissingMember() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/actualInnerClassMissingMember.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInActualAnnotationsNotMatchExpect() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("annotationArgRendering.kt")
+        public void testAnnotationArgRendering() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgRendering.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationArgumentsConstExpressions.kt")
+        public void testAnnotationArgumentsConstExpressions() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgumentsConstExpressions.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationArgumentsDefaults.kt")
+        public void testAnnotationArgumentsDefaults() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgumentsDefaults.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationMatching_oldLanguageVersion.kt")
+        public void testAnnotationMatching_oldLanguageVersion() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationMatching_oldLanguageVersion.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationTarget.kt")
+        public void testAnnotationTarget() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationTarget.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationTypeParameters.kt")
+        public void testAnnotationTypeParameters() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationTypeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("basicOnDeclaration.kt")
+        public void testBasicOnDeclaration() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/basicOnDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("checkDiagnosticFullText.kt")
+        public void testCheckDiagnosticFullText() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/checkDiagnosticFullText.kt");
+        }
+
+        @Test
+        @TestMetadata("classScopeInnerClasses.kt")
+        public void testClassScopeInnerClasses() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/classScopeInnerClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("classScopeViaTypealiasIncompatible.kt")
+        public void testClassScopeViaTypealiasIncompatible() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/classScopeViaTypealiasIncompatible.kt");
+        }
+
+        @Test
+        @TestMetadata("compatibleOverrides.kt")
+        public void testCompatibleOverrides() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/compatibleOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("defaultValueParametersRendering.kt")
+        public void testDefaultValueParametersRendering() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/defaultValueParametersRendering.kt");
+        }
+
+        @Test
+        @TestMetadata("deprecatedAnnotationOnlyOnActual_useInPlatform.kt")
+        public void testDeprecatedAnnotationOnlyOnActual_useInPlatform() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/deprecatedAnnotationOnlyOnActual_useInPlatform.kt");
+        }
+
+        @Test
+        @TestMetadata("differentOrder.kt")
+        public void testDifferentOrder() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/differentOrder.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/enumEntries.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrides.kt")
+        public void testFakeOverrides() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/fakeOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("floatNumbersComparison.kt")
+        public void testFloatNumbersComparison() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/floatNumbersComparison.kt");
+        }
+
+        @Test
+        @TestMetadata("gettersAndSetters.kt")
+        public void testGettersAndSetters() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/gettersAndSetters.kt");
+        }
+
+        @Test
+        @TestMetadata("intrinsicConstEvaluation.kt")
+        public void testIntrinsicConstEvaluation() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/intrinsicConstEvaluation.kt");
+        }
+
+        @Test
+        @TestMetadata("kclassArgWithExpectClass.kt")
+        public void testKclassArgWithExpectClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/kclassArgWithExpectClass.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinAnaloguesForJavaAnnotations.kt")
+        public void testKotlinAnaloguesForJavaAnnotations() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/kotlinAnaloguesForJavaAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("repeatableNoArg.kt")
+        public void testRepeatableNoArg() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/repeatableNoArg.kt");
+        }
+
+        @Test
+        @TestMetadata("repeatableWithArg.kt")
+        public void testRepeatableWithArg() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/repeatableWithArg.kt");
+        }
+
+        @Test
+        @TestMetadata("skippedAnnotations.kt")
+        public void testSkippedAnnotations() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/skippedAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("sourceRetentionAnnotationsWhenTypealias.kt")
+        public void testSourceRetentionAnnotationsWhenTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/sourceRetentionAnnotationsWhenTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("substitutionOverrideInTwoClasses.kt")
+        public void testSubstitutionOverrideInTwoClasses() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/substitutionOverrideInTwoClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("twoActualTypealiasesToSameClass.kt")
+        public void testTwoActualTypealiasesToSameClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/twoActualTypealiasesToSameClass.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameters.kt")
+        public void testTypeParameters() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("typeUsage.kt")
+        public void testTypeUsage() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typeUsage.kt");
+        }
+
+        @Test
+        @TestMetadata("typeUsageTypealiasInSuper.kt")
+        public void testTypeUsageTypealiasInSuper() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typeUsageTypealiasInSuper.kt");
+        }
+
+        @Test
+        @TestMetadata("typeUsageWithImplicitType.kt")
+        public void testTypeUsageWithImplicitType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typeUsageWithImplicitType.kt");
+        }
+
+        @Test
+        @TestMetadata("typeUsageWithUnresolvedReference.kt")
+        public void testTypeUsageWithUnresolvedReference() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typeUsageWithUnresolvedReference.kt");
+        }
+
+        @Test
+        @TestMetadata("typealias.kt")
+        public void testTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typealias.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasToJavaLibrary.kt")
+        public void testTypealiasToJavaLibrary() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typealiasToJavaLibrary.kt");
+        }
+
+        @Test
+        @TestMetadata("typealiasToKtLibrary.kt")
+        public void testTypealiasToKtLibrary() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typealiasToKtLibrary.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedReference.kt")
+        public void testUnresolvedReference() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/unresolvedReference.kt");
+        }
+
+        @Test
+        @TestMetadata("valueParameters.kt")
+        public void testValueParameters() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/valueParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("withAnnotationActualTypealias.kt")
+        public void testWithAnnotationActualTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/withAnnotationActualTypealias.kt");
+        }
+
+        @Test
+        @TestMetadata("withOtherIncomatibilities.kt")
+        public void testWithOtherIncomatibilities() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/withOtherIncomatibilities.kt");
+        }
     }
 
     @Nested
@@ -806,274 +1074,6 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         @TestMetadata("supertypeIsExpectActual_supertypeIsActualTypealias_injectMethod_transitiveSubstitutionFakeOverride.kt")
         public void testSupertypeIsExpectActual_supertypeIsActualTypealias_injectMethod_transitiveSubstitutionFakeOverride() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/supertypeIsExpectActual_supertypeIsActualTypealias_injectMethod_transitiveSubstitutionFakeOverride.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/annotationMatching")
-    @TestDataPath("$PROJECT_ROOT")
-    public class AnnotationMatching {
-        @Test
-        @TestMetadata("actualInnerClassMissingMember.kt")
-        public void testActualInnerClassMissingMember() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/actualInnerClassMissingMember.kt");
-        }
-
-        @Test
-        public void testAllFilesPresentInAnnotationMatching() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/annotationMatching"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
-        }
-
-        @Test
-        @TestMetadata("annotationArgRendering.kt")
-        public void testAnnotationArgRendering() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationArgRendering.kt");
-        }
-
-        @Test
-        @TestMetadata("annotationArgumentsConstExpressions.kt")
-        public void testAnnotationArgumentsConstExpressions() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationArgumentsConstExpressions.kt");
-        }
-
-        @Test
-        @TestMetadata("annotationArgumentsDefaults.kt")
-        public void testAnnotationArgumentsDefaults() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationArgumentsDefaults.kt");
-        }
-
-        @Test
-        @TestMetadata("annotationMatching_oldLanguageVersion.kt")
-        public void testAnnotationMatching_oldLanguageVersion() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationMatching_oldLanguageVersion.kt");
-        }
-
-        @Test
-        @TestMetadata("annotationTarget.kt")
-        public void testAnnotationTarget() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationTarget.kt");
-        }
-
-        @Test
-        @TestMetadata("annotationTypeParameters.kt")
-        public void testAnnotationTypeParameters() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/annotationTypeParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("arrayVsOutArray.kt")
-        public void testArrayVsOutArray() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/arrayVsOutArray.kt");
-        }
-
-        @Test
-        @TestMetadata("arrayVsVararg.kt")
-        public void testArrayVsVararg() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/arrayVsVararg.kt");
-        }
-
-        @Test
-        @TestMetadata("basicOnDeclaration.kt")
-        public void testBasicOnDeclaration() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/basicOnDeclaration.kt");
-        }
-
-        @Test
-        @TestMetadata("checkDiagnosticFullText.kt")
-        public void testCheckDiagnosticFullText() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/checkDiagnosticFullText.kt");
-        }
-
-        @Test
-        @TestMetadata("classScopeInnerClasses.kt")
-        public void testClassScopeInnerClasses() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/classScopeInnerClasses.kt");
-        }
-
-        @Test
-        @TestMetadata("classScopeViaTypealiasIncompatible.kt")
-        public void testClassScopeViaTypealiasIncompatible() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/classScopeViaTypealiasIncompatible.kt");
-        }
-
-        @Test
-        @TestMetadata("compatibleOverrides.kt")
-        public void testCompatibleOverrides() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/compatibleOverrides.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultValueParametersRendering.kt")
-        public void testDefaultValueParametersRendering() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/defaultValueParametersRendering.kt");
-        }
-
-        @Test
-        @TestMetadata("deprecatedAnnotationOnlyOnActual_useInPlatform.kt")
-        public void testDeprecatedAnnotationOnlyOnActual_useInPlatform() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/deprecatedAnnotationOnlyOnActual_useInPlatform.kt");
-        }
-
-        @Test
-        @TestMetadata("differentOrder.kt")
-        public void testDifferentOrder() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/differentOrder.kt");
-        }
-
-        @Test
-        @TestMetadata("enumEntries.kt")
-        public void testEnumEntries() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/enumEntries.kt");
-        }
-
-        @Test
-        @TestMetadata("fakeOverrides.kt")
-        public void testFakeOverrides() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/fakeOverrides.kt");
-        }
-
-        @Test
-        @TestMetadata("floatNumbersComparison.kt")
-        public void testFloatNumbersComparison() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/floatNumbersComparison.kt");
-        }
-
-        @Test
-        @TestMetadata("gettersAndSetters.kt")
-        public void testGettersAndSetters() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/gettersAndSetters.kt");
-        }
-
-        @Test
-        @TestMetadata("intrinsicConstEvaluation.kt")
-        public void testIntrinsicConstEvaluation() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/intrinsicConstEvaluation.kt");
-        }
-
-        @Test
-        @TestMetadata("kclassArgWithExpectClass.kt")
-        public void testKclassArgWithExpectClass() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/kclassArgWithExpectClass.kt");
-        }
-
-        @Test
-        @TestMetadata("kotlinAnaloguesForJavaAnnotations.kt")
-        public void testKotlinAnaloguesForJavaAnnotations() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/kotlinAnaloguesForJavaAnnotations.kt");
-        }
-
-        @Test
-        @TestMetadata("repeatableNoArg.kt")
-        public void testRepeatableNoArg() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/repeatableNoArg.kt");
-        }
-
-        @Test
-        @TestMetadata("repeatableWithArg.kt")
-        public void testRepeatableWithArg() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/repeatableWithArg.kt");
-        }
-
-        @Test
-        @TestMetadata("skippedAnnotations.kt")
-        public void testSkippedAnnotations() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/skippedAnnotations.kt");
-        }
-
-        @Test
-        @TestMetadata("sourceRetentionAnnotationsWhenTypealias.kt")
-        public void testSourceRetentionAnnotationsWhenTypealias() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/sourceRetentionAnnotationsWhenTypealias.kt");
-        }
-
-        @Test
-        @TestMetadata("substitutionOverrideInTwoClasses.kt")
-        public void testSubstitutionOverrideInTwoClasses() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/substitutionOverrideInTwoClasses.kt");
-        }
-
-        @Test
-        @TestMetadata("twoActualTypealiasesToSameClass.kt")
-        public void testTwoActualTypealiasesToSameClass() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/twoActualTypealiasesToSameClass.kt");
-        }
-
-        @Test
-        @TestMetadata("typeAliasWithArray.kt")
-        public void testTypeAliasWithArray() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeAliasWithArray.kt");
-        }
-
-        @Test
-        @TestMetadata("typeParameters.kt")
-        public void testTypeParameters() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("typeUsage.kt")
-        public void testTypeUsage() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsage.kt");
-        }
-
-        @Test
-        @TestMetadata("typeUsageTypealiasInSuper.kt")
-        public void testTypeUsageTypealiasInSuper() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsageTypealiasInSuper.kt");
-        }
-
-        @Test
-        @TestMetadata("typeUsageWithImplicitType.kt")
-        public void testTypeUsageWithImplicitType() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsageWithImplicitType.kt");
-        }
-
-        @Test
-        @TestMetadata("typeUsageWithUnresolvedReference.kt")
-        public void testTypeUsageWithUnresolvedReference() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeUsageWithUnresolvedReference.kt");
-        }
-
-        @Test
-        @TestMetadata("typealias.kt")
-        public void testTypealias() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealias.kt");
-        }
-
-        @Test
-        @TestMetadata("typealiasToJavaLibrary.kt")
-        public void testTypealiasToJavaLibrary() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealiasToJavaLibrary.kt");
-        }
-
-        @Test
-        @TestMetadata("typealiasToKtLibrary.kt")
-        public void testTypealiasToKtLibrary() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealiasToKtLibrary.kt");
-        }
-
-        @Test
-        @TestMetadata("unresolvedReference.kt")
-        public void testUnresolvedReference() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/unresolvedReference.kt");
-        }
-
-        @Test
-        @TestMetadata("valueParameters.kt")
-        public void testValueParameters() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/valueParameters.kt");
-        }
-
-        @Test
-        @TestMetadata("withAnnotationActualTypealias.kt")
-        public void testWithAnnotationActualTypealias() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/withAnnotationActualTypealias.kt");
-        }
-
-        @Test
-        @TestMetadata("withOtherIncomatibilities.kt")
-        public void testWithOtherIncomatibilities() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/withOtherIncomatibilities.kt");
         }
     }
 
