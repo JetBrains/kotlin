@@ -75,7 +75,7 @@ private class PropertiesManager(private val project: Project, private val localP
             }
             project.provider {
                 // FIXME(KT-62684): We currently don't memoize extraProperties as they may still change, we'll fix this later.
-                project.extraProperties.getOrNull(propertyName) as String?
+                project.extraProperties.getOrNull(propertyName) as? String
                     ?: valueFromGradleAndLocalProperties.call()
             }
         }
