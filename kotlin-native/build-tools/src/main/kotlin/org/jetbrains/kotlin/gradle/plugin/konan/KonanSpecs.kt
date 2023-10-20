@@ -103,4 +103,6 @@ interface KonanInteropSpec: KonanBuildingSpec {
 
     fun link(vararg files: Any)
     fun link(files: FileCollection)
+
+    fun noPack(flag: Boolean)
 }

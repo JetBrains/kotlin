@@ -70,4 +70,6 @@ open class KonanInteropLibrary(name: String,
     override fun link(vararg files: Any) = tasks().forEach { it.configure { link(*files) } }
     override fun link(files: FileCollection) = tasks().forEach { it.configure { link(files) } }
     override fun dependencies(closure: Closure<Unit>) = tasks().forEach { it.configure { dependencies(closure) }}
+
+    override fun noPack(flag: Boolean) = tasks().forEach { it.configure { noPack(flag) } }
 }

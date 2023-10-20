@@ -40,9 +40,17 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
     }
 
     // Output directories -----------------------------------------------------
+    override val artifact: File
+        @Internal get() = destinationDir.resolve(artifactFullName)
+
+    val artifactFile: File?
+        @Optional @OutputFile get() = if (!noPack) artifact else null
+
+    val artifactDirectory: File?
+        @Optional @OutputDirectory get() = if (noPack) artifact else null
 
     override val artifactSuffix: String
-        @Internal get() = ".klib"
+        @Internal get() = ".klib".takeUnless { noPack } ?: ""
 
     override val artifactPrefix: String
         @Internal get() = ""
@@ -62,6 +70,9 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
 
     @InputFiles val headers   = mutableSetOf<FileCollection>()
     @InputFiles val linkFiles = mutableSetOf<FileCollection>()
+
+    @Input
+    var noPack: Boolean = false
 
     fun buildArgs() = mutableListOf<String>().apply {
         addArg("-o", artifact.canonicalPath)
@@ -95,6 +106,8 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
 
         addKey("-no-default-libs", noDefaultLibs)
         addKey("-no-endorsed-libs", noEndorsedLibs)
+
+        addKey("-nopack", noPack)
 
         addAll(extraOpts)
     }
@@ -150,8 +163,13 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
     override fun link(vararg files: Any) {
         linkFiles.add(project.files(files))
     }
+
     override fun link(files: FileCollection) {
         linkFiles.add(files)
+    }
+
+    override fun noPack(flag: Boolean) {
+        noPack = flag
     }
 
     // endregion

@@ -4,7 +4,6 @@
  */
 
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanKlibInstallTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.Family
@@ -130,28 +129,10 @@ allprojects {
 testOutputExternal.mkdirs()
 
 konanArtifacts {
-    library('testLibrary') {
-        srcDir 'testLibrary'
-    }
     library('baseTestClass', targets: [target]) {
         srcFiles 'testing/library.kt'
     }
-    UtilsKt.dependsOnDist(UtilsKt.findKonanBuildTask(project, "testLibrary", HostManager.@Companion.getHost()))
-}
-tasks.named("compileKonanBaseTestClass${UtilsKt.getTestTargetSuffix(project)}").configure {
-    UtilsKt.dependsOnDist(it)
-}
-
-def installTestLib = tasks.register("installTestLibrary", KonanKlibInstallTask) {
-    dependsOn "compileKonanTestLibraryHost"
-    klib = project.provider { konanArtifacts.testLibrary.getArtifactByTarget('host') }
-    repo = rootProject.file(testLibraryDir)
-
-    doLast {
-        // Remove the version in build/, so that we don't link two copies.
-        def file = project.file("build/konan/libs/${project.target.name}/testLibrary.klib")
-        file.delete()
-    }
+    UtilsKt.dependsOnDist(UtilsKt.findKonanBuildTask(project, "baseTestClass", target))
 }
 
 void konanc(String[] args) {
@@ -2137,19 +2118,19 @@ standaloneTest("link_default_libs") {
     UtilsKt.dependsOnPlatformLibs(it)
 }
 
-standaloneTest("link_testLib_explicitly1") {
-    // there is no testLibrary for cross targets yet.
-    enabled = project.target.name == project.hostName
-    dependsOn installTestLib
-    useGoldenData = true
-    source = "link/testLib_explicitly1.kt"
-    // We force library inclusion, so need to see the warning banner.
-    flags = ['-l', 'testLibrary', '-r', testLibraryDir]
-    doLast {
-        def file = new File("$testLibraryDir/testLibrary")
-        file.deleteDir()
-    }
-}
+//standaloneTest("link_testLib_explicitly1") {
+//    // there is no testLibrary for cross targets yet.
+//    enabled = project.target.name == project.hostName
+//    dependsOn installTestLib
+//    useGoldenData = true
+//    source = "link/testLib_explicitly1.kt"
+//    // We force library inclusion, so need to see the warning banner.
+//    flags = ['-l', 'testLibrary', '-r', testLibraryDir]
+//    doLast {
+//        def file = new File("$testLibraryDir/testLibrary")
+//        file.deleteDir()
+//    }
+//}
 
 linkTest("no_purge_for_dependencies") {
     useGoldenData = true

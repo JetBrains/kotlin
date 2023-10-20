@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanKlibInstallTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import org.jetbrains.kotlin.konan.target.*
@@ -61,14 +60,12 @@ konanTargetList.forEach { target ->
         val artifactName = "${fileNamePrefix}${df.name}"
 
         konanArtifacts {
-            interop(
-                    args = mapOf("targets" to listOf(targetName)),
-                    name = libName
-            ) {
+            interop(args = mapOf("targets" to listOf(targetName)), name = libName) {
                 df.file?.let { defFile(it) }
                 artifactName(artifactName)
                 noDefaultLibs(true)
                 noEndorsedLibs(true)
+                noPack(true)
                 libraries {
                     klibs(df.config.depends.map { "${fileNamePrefix}${it}" })
                 }
@@ -77,7 +74,7 @@ konanTargetList.forEach { target ->
             }
         }
 
-        @kotlin.Suppress("UNCHECKED_CAST")
+        @Suppress("UNCHECKED_CAST")
         val libTask = konanArtifacts.getByName(libName).getByTarget(targetName) as TaskProvider<KonanInteropTask>
         libTask.configure {
             dependsOn(df.config.depends.map { defFileToLibName(targetName, it) })
@@ -86,27 +83,30 @@ konanTargetList.forEach { target ->
             enableParallel = project.findProperty("kotlin.native.platformLibs.parallel")?.toString()?.toBoolean() ?: true
         }
 
-        val klibInstallTask = tasks.register(libName, KonanKlibInstallTask::class.java) {
-            klib = libTask.map { it.artifact }
-            repo = file("$konanHome/klib/platform/$targetName")
-            this.target = targetName
-            dependsOn(libTask)
+        val klibInstallTask = tasks.register(libName, Sync::class.java) {
+            from(libTask.map { it.artifact })
+            into("$konanHome/klib/platform/$targetName/$artifactName")
         }
         installTasks.add(klibInstallTask)
 
         if (target in cacheableTargets) {
             val cacheTask = tasks.register("${libName}Cache", KonanCacheTask::class.java) {
                 this.target = targetName
-                originalKlib.fileProvider(klibInstallTask.flatMap { it.installDir })
+                originalKlib.fileProvider(libTask.map {
+                    it.artifactDirectory ?: error("Artifact wasn't set for ${it.name}")
+                })
                 klibUniqName = artifactName
                 cacheRoot = file("$konanHome/klib/cache").absolutePath
 
                 dependsOn(":kotlin-native:${targetName}StdlibCache")
-                dependsOn(tasks.named(libName))
-                dependsOn(df.config.depends.map {
-                    val depName = defFileToLibName(targetName, it)
-                    "${depName}Cache"
-                })
+
+                // Make it depend on platform libraries defined in def files and their caches
+                df.config.depends.map {
+                    defFileToLibName(targetName, it)
+                }.forEach {
+                    dependsOn(it)
+                    dependsOn("${it}Cache")
+                }
             }
             cacheTasks.add(cacheTask)
         }
