@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -49,12 +50,15 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         }
 
         checkApplicability(l.originalTypeInfo, r.originalTypeInfo, context).ifInapplicable {
-            // Ideally this should match cases when K1
-            // sees a non-empty intersection and none of the
-            // types is an enum, but intersections in K1
-            // work differently from intersections in K2.
-            val isCaseMissedByK1 = areBothTypeParameters(l.originalTypeInfo, r.originalTypeInfo)
-                    || areTypeParameterAndEnumClass(l.originalTypeInfo, r.originalTypeInfo)
+            // K1 checks consist of 2 parts: reporting a
+            // diagnostic if the intersection is empty,
+            // and otherwise reporting a diagnostic if
+            // `isIncompatibleEnums` returns true.
+            // In either case K1 may not report a diagnostic
+            // due to some reasons, and we need to
+            // account for them.
+            val isCaseMissedByK1 = isCaseMissedByK1Intersector(l.originalType, r.originalType, context.session)
+                    && isCaseMissedByAdditionalK1IncompatibleEnumsCheck(l.originalType, r.originalType, context.session)
             val replicateK1Behavior = !context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
 
             return reporter.reportInapplicabilityDiagnostic(
@@ -285,7 +289,6 @@ private class TypeInfo(
     val isPrimitive: Boolean,
     val isBuiltin: Boolean,
     val isValueClass: Boolean,
-    val isLiterallyTypeParameter: Boolean,
 ) {
     override fun toString() = "$type"
 }
@@ -293,8 +296,21 @@ private class TypeInfo(
 private val FirClassSymbol<*>.isBuiltin get() = isPrimitiveType() || classId == StandardClassIds.String || isEnumClass
 
 // This property is used to replicate K1 behavior, and it
+// tries to match the `TypeUtils.canHaveSubtypes(typeChecker, type)`
+// check in the K1 intersector.
+// In K2 enum classes are final, though enum entries are their subclasses.
+private fun ConeKotlinType.canHaveSubtypesAccordingToK1(session: FirSession): Boolean {
+    val symbol = toSymbol(session)
+
+    return when {
+        symbol is FirRegularClassSymbol && symbol.isEnumClass -> true
+        symbol is FirClassSymbol<*> && symbol.isFinalClass -> false
+        else -> true
+    }
+}
+
+// This property is used to replicate K1 behavior, and it
 // tries to predict empty intersections from the K1 point-of-view.
-// Enum classes are final, but enum entries are their subclasses.
 private val TypeInfo.enforcesEmptyIntersection get() = isFinalClass && !isEnumClass
 
 private val TypeInfo.isNullableEnum get() = isEnumClass && type.isNullable
@@ -308,6 +324,10 @@ private val FirClassSymbol<*>.isFinalClass get() = isClass && isFinal
 // NB: This is what RULES1 means then it says "class".
 private val FirClassSymbol<*>.isClass get() = !isInterface
 
+private fun ConeKotlinType.isEnum(session: FirSession) = toRegularClassSymbol(session)?.isEnumClass == true
+
+private fun ConeKotlinType.isClass(session: FirSession) = toRegularClassSymbol(session) != null
+
 private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     val bounds = collectUpperBounds().map { type -> toKotlinType(type).replaceArgumentsWithStarProjections() }
     val type = bounds.ifNotEmpty { ConeTypeIntersector.intersectTypes(session.typeContext, this) }
@@ -317,11 +337,10 @@ private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
     return TypeInfo(
         type, notNullType,
         isFinalClass = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
-        isEnumClass = bounds.any { it.toClassSymbol(session)?.isEnumClass == true },
+        isEnumClass = bounds.any { it.isEnum(session) },
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = bounds.any { it.toClassSymbol(session)?.isBuiltin == true },
         isValueClass = bounds.any { it.toClassSymbol(session)?.isInline == true },
-        isLiterallyTypeParameter = this.lowerBoundIfFlexible() is ConeTypeParameterType,
     )
 }
 
@@ -359,8 +378,14 @@ private fun FirExpression.toArgumentInfo(context: CheckerContext) =
         this, resolvedType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
     )
 
-private fun areBothTypeParameters(a: TypeInfo, b: TypeInfo) =
-    a.isLiterallyTypeParameter && b.isLiterallyTypeParameter
+private fun isCaseMissedByK1Intersector(a: ConeKotlinType, b: ConeKotlinType, session: FirSession) =
+    a.canHaveSubtypesAccordingToK1(session) && b.canHaveSubtypesAccordingToK1(session)
 
-private fun areTypeParameterAndEnumClass(a: TypeInfo, b: TypeInfo) =
-    a.isLiterallyTypeParameter && b.isEnumClass || b.isLiterallyTypeParameter && a.isEnumClass
+private fun isCaseMissedByAdditionalK1IncompatibleEnumsCheck(a: ConeKotlinType, b: ConeKotlinType, session: FirSession): Boolean {
+    return when {
+        !a.isEnum(session) && !b.isEnum(session) -> true
+        a.isNullable && b.isNullable -> true
+        a.isNothingOrNullableNothing || b.isNothingOrNullableNothing -> true
+        else -> !a.isClass(session) || !b.isClass(session)
+    }
+}
