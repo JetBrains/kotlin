@@ -384,9 +384,28 @@ private fun FirExpression.toArgumentInfo(context: CheckerContext) =
         this, resolvedType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
     )
 
+/**
+ * Unfortunately, intersections in K1 are not
+ * smart enough: K1 doesn't say that the
+ * intersection is empty if all the input
+ * types "can have subtypes". For example,
+ * K1 thinks that type parameters always
+ * allow subtypes, so it won't report
+ * empty intersections for them regardless
+ * the bounds.
+ *
+ * See: [org.jetbrains.kotlin.types.TypeIntersector.intersectTypes]
+ */
 private fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo) =
     a.canHaveSubtypesAccordingToK1 && b.canHaveSubtypesAccordingToK1
 
+/**
+ * This function simply replicates `if` with
+ * early returns from the corresponding function
+ * in K1.
+ *
+ * See: [org.jetbrains.kotlin.types.isIncompatibleEnums]
+ */
 private fun isCaseMissedByAdditionalK1IncompatibleEnumsCheck(a: ConeKotlinType, b: ConeKotlinType, session: FirSession): Boolean {
     return when {
         !a.isEnum(session) && !b.isEnum(session) -> true
