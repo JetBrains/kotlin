@@ -248,6 +248,16 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject")
+        @TestDataPath("$PROJECT_ROOT")
+        public class CompanionObject {
+            @Test
+            public void testAllFilesPresentInCompanionObject() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/companionObject"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/imports")
         @TestDataPath("$PROJECT_ROOT")
         public class Imports {
@@ -294,6 +304,26 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
             @Test
             public void testAllFilesPresentInQualified() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+
+            @Nested
+            @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Callables {
+                @Test
+                public void testAllFilesPresentInCallables() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables"), Pattern.compile("^(.+)\\.kts$"), null, true);
+                }
+
+                @Nested
+                @TestMetadata("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported")
+                @TestDataPath("$PROJECT_ROOT")
+                public class NotImported {
+                    @Test
+                    public void testAllFilesPresentInNotImported() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kDoc/qualified/callables/notImported"), Pattern.compile("^(.+)\\.kts$"), null, true);
+                    }
+                }
             }
 
             @Nested
