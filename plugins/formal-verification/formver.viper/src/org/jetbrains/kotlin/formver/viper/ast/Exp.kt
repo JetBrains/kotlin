@@ -370,6 +370,36 @@ sealed interface Exp : IntoSilver<viper.silver.ast.Exp> {
         override fun toSilver(): viper.silver.ast.Old = Old(exp.toSilver(), pos.toSilver(), info.toSilver(), trafos.toSilver())
     }
 
+    data class PredicateAccess(
+        val predicateName: MangledName,
+        val formalArgs: List<Exp>,
+        val pos: Position = Position.NoPosition,
+        val info: Info = Info.NoInfo,
+        val trafos: Trafos = Trafos.NoTrafos,
+    ) : Exp {
+        // The type is set to Bool just to be consistent with Silver type. Probably it will never be used
+        override val type: Type = Type.Bool
+
+        // Note: since the simple syntax P(...) has the same meaning as acc(P(...)), which in turn has the same meaning as acc(P(...), write)
+        // It is always better to deal with PredicateAccessPredicate because PredicateAccess seems not working well with Silver
+        override fun toSilver(): PredicateAccessPredicate {
+            val predicateAccess = PredicateAccess(
+                formalArgs.toSilver().toScalaSeq(),
+                predicateName.mangled,
+                pos.toSilver(),
+                info.toSilver(),
+                trafos.toSilver()
+            )
+            return PredicateAccessPredicate(
+                predicateAccess,
+                PermExp.FullPerm().toSilver(),
+                pos.toSilver(),
+                info.toSilver(),
+                trafos.toSilver()
+            )
+        }
+    }
+
     // We can't pass all the available position, info, and trafos information here.
     // Living with that seems fine for the moment.
     fun fieldAccess(

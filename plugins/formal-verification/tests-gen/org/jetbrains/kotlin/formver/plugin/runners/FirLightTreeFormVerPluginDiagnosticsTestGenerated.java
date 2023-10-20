@@ -370,6 +370,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("predicates.kt")
+        public void testPredicates() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/predicates.kt");
+        }
+
+        @Test
         @TestMetadata("recursion.kt")
         public void testRecursion() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/no_contracts/recursion.kt");

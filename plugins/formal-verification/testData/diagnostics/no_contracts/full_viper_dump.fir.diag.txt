@@ -295,6 +295,10 @@ field special$function_object_call_counter: Int
 function special$duplicable(anonymous$0: Ref): Bool
 
 
+predicate T_class_global$class_Foo(class$predicate$subject: Ref) {
+  acc(class$predicate$subject.class_Foo$member_x, wildcard)
+}
+
 method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)
   returns (ret: Ref)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
@@ -315,3 +319,4 @@ method special$invoke_function_object(anonymous$0: Ref)
   ensures acc(anonymous$0.special$function_object_call_counter, write)
   ensures old(anonymous$0.special$function_object_call_counter) + 1 ==
     anonymous$0.special$function_object_call_counter
+

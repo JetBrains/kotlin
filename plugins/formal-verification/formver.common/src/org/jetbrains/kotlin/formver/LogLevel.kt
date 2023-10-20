@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.formver
 enum class LogLevel {
     ONLY_WARNINGS,
     SHORT_VIPER_DUMP,
+    SHORT_VIPER_DUMP_WITH_PREDICATES,
     FULL_VIPER_DUMP;
 
     companion object {

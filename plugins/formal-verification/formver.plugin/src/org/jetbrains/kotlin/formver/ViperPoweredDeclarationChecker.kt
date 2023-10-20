@@ -90,7 +90,8 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
 
     private fun getProgramForLogging(program: Program): Program? = when (config.logLevel) {
         LogLevel.ONLY_WARNINGS -> null
-        LogLevel.SHORT_VIPER_DUMP -> program.toShort()
+        LogLevel.SHORT_VIPER_DUMP -> program.toShort().withoutPredicates()
+        LogLevel.SHORT_VIPER_DUMP_WITH_PREDICATES -> program.toShort()
         LogLevel.FULL_VIPER_DUMP -> program
     }
 

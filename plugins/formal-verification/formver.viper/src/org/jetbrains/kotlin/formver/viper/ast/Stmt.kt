@@ -191,4 +191,32 @@ sealed interface Stmt : IntoSilver<viper.silver.ast.Stmt> {
             trafos.toSilver()
         )
     }
+
+    data class Fold(
+        val acc: Exp.PredicateAccess,
+        val position: Position = Position.NoPosition,
+        val info: Info = Info.NoInfo,
+        val trafos: Trafos = Trafos.NoTrafos,
+    ) : Stmt {
+        override fun toSilver(): viper.silver.ast.Fold = viper.silver.ast.Fold(
+            acc.toSilver(),
+            position.toSilver(),
+            info.toSilver(),
+            trafos.toSilver()
+        )
+    }
+
+    data class Unfold(
+        val acc: Exp.PredicateAccess,
+        val position: Position = Position.NoPosition,
+        val info: Info = Info.NoInfo,
+        val trafos: Trafos = Trafos.NoTrafos,
+    ) : Stmt {
+        override fun toSilver(): viper.silver.ast.Unfold = viper.silver.ast.Unfold(
+            acc.toSilver(),
+            position.toSilver(),
+            info.toSilver(),
+            trafos.toSilver()
+        )
+    }
 }

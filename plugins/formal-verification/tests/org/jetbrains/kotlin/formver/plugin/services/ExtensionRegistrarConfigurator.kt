@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
-        val logLevel =
-            if (module.files.any { it.name.contains("full_viper_dump") }) LogLevel.FULL_VIPER_DUMP
-            else LogLevel.SHORT_VIPER_DUMP
+        val logLevel = when {
+            module.files.any { it.name.contains("full_viper_dump") } -> LogLevel.FULL_VIPER_DUMP
+            module.files.any { it.name.contains("predicates") } -> LogLevel.SHORT_VIPER_DUMP_WITH_PREDICATES
+            else -> LogLevel.SHORT_VIPER_DUMP
+        }
         val verificationSelection =
             if (module.files.any { it.name.contains("always_validate") }) TargetsSelection.ALL_TARGETS
             else if (module.files.any {it.name.contains("no_contracts") }) TargetsSelection.NO_TARGETS

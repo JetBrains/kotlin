@@ -1,0 +1,64 @@
+/predicates.kt:(117,123): info: Generated Viper text for useFoo:
+field class_Bar$member_foo: Ref
+
+field class_Foo$member_x: Int
+
+field class_Foo$member_y: Int
+
+field class_Rec$member_next: dom$Nullable[Ref]
+
+field special$size: Int
+
+predicate T_class_global$class_Bar(class$predicate$subject: Ref) {
+  acc(class$predicate$subject.class_Bar$member_foo, wildcard) &&
+  acc(T_class_global$class_Foo(class$predicate$subject.class_Bar$member_foo), write) &&
+  acc(T_class_global$class_Baz(class$predicate$subject), write)
+}
+
+predicate T_class_global$class_Baz(class$predicate$subject: Ref) {
+  true
+}
+
+predicate T_class_global$class_Foo(class$predicate$subject: Ref) {
+  acc(class$predicate$subject.class_Foo$member_x, wildcard)
+}
+
+predicate T_class_global$class_Rec(class$predicate$subject: Ref) {
+  acc(class$predicate$subject.class_Rec$member_next, wildcard) &&
+  (class$predicate$subject.class_Rec$member_next !=
+  (dom$Nullable$null(): dom$Nullable[Ref]) ==>
+  acc(T_class_global$class_Rec((dom$Casting$cast(class$predicate$subject.class_Rec$member_next,
+  dom$Type$global$class_Rec()): Ref)), write))
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_Collection(class$predicate$subject: Ref) {
+  acc(class$predicate$subject.special$size, write) &&
+  class$predicate$subject.special$size >= 0 &&
+  acc(T_class_pkg$kotlin$collections$global$class_Iterable(class$predicate$subject), write)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_Iterable(class$predicate$subject: Ref) {
+  true
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_List(class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_Collection(class$predicate$subject), write)
+}
+
+method global$fun_useFoo$fun_take$T_class_global$class_Bar$T_class_global$class_Rec$T_class_pkg$kotlin$collections$global$class_List$return$T_Unit(local$bar: Ref,
+  local$rec: Ref, local$l: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$bar.class_Bar$member_foo, wildcard)
+  requires acc(local$rec.class_Rec$member_next, wildcard)
+  requires acc(local$l.special$size, write)
+  requires local$l.special$size >= 0
+  ensures acc(local$bar.class_Bar$member_foo, wildcard)
+  ensures acc(local$rec.class_Rec$member_next, wildcard)
+  ensures acc(local$l.special$size, write)
+  ensures local$l.special$size >= 0
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Bar())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$rec): dom$Type), dom$Type$global$class_Rec())
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  label label$ret$0
+}

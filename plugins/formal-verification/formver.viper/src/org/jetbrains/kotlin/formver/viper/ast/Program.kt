@@ -14,7 +14,7 @@ data class Program(
     val domains: List<Domain>,
     val fields: List<Field>,
     val functions: List<Function>,
-    /* no predicates */
+    val predicates: List<Predicate>,
     val methods: List<Method>,
     /* no extensions */
     val pos: Position = Position.NoPosition,
@@ -25,7 +25,7 @@ data class Program(
         domains.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
         fields.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
         functions.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
-        emptySeq(), /* predicates */
+        predicates.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
         methods.sortedBy { it.name.mangled }.toSilver().toScalaSeq(),
         emptySeq(), /* extensions */
         pos.toSilver(),
@@ -37,11 +37,14 @@ data class Program(
         domains.filter { it.includeInShortDump },
         fields.filter { it.includeInShortDump },
         functions.filter { it.includeInShortDump },
+        predicates,
         methods.filter { it.includeInShortDump },
         pos,
         info,
         trafos,
     )
+
+    fun withoutPredicates(): Program = copy(predicates = emptyList())
 
     fun toDebugOutput(): String = toSilver().toString()
 }

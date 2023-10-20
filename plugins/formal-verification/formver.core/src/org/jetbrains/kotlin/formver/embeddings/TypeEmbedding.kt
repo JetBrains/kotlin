@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.formver.conversion.AccessPolicy
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.conversion.SpecialFields
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableSignatureData
-import org.jetbrains.kotlin.formver.names.ScopedKotlinName
-import org.jetbrains.kotlin.formver.names.SimpleKotlinName
-import org.jetbrains.kotlin.formver.names.SpecialName
+import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.Exp.Companion.toConjunction
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
+import org.jetbrains.kotlin.formver.viper.ast.Predicate
 import org.jetbrains.kotlin.formver.viper.ast.Type
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
@@ -69,6 +70,9 @@ interface TypeEmbedding {
      */
     fun accessInvariants(v: Exp): List<Exp> = emptyList()
 
+    // Note: this function will replace accessInvariants when nested unfold will be implemented
+    fun predicateAccessInvariants(v: Exp): List<Exp> = emptyList()
+
     /**
      * A list of invariants that are already known to be true based on the Kotlin code being well-formed.
      *
@@ -76,6 +80,7 @@ interface TypeEmbedding {
      * An example of this is when other systems (e.g. the type checker) have already proven these.
      *
      * TODO: This should probably always include the `subtypeInvariant`, but primitive types make that harder.
+     * TODO: Can be included in the class predicate when unfolding works
      */
     fun provenInvariants(v: Exp): List<Exp> = emptyList()
 
@@ -179,6 +184,12 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
             .map { Exp.Implies(Exp.NeCmp(v, nullVal().toViper()), it) }
     }
 
+    // Note: this function will replace accessInvariants when nested unfold will be implemented
+    override fun predicateAccessInvariants(v: Exp): List<Exp> {
+        return elementType.predicateAccessInvariants(CastingDomain.cast(v, elementType, null))
+            .map { Exp.Implies(Exp.NeCmp(v, nullVal().toViper()), it) }
+    }
+
     override fun getNullable(): TypeEmbedding = this
 
     override val isNullable = true
@@ -228,12 +239,35 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
     }
 
     private var _fields: Map<SimpleKotlinName, FieldEmbedding>? = null
+    private var _predicate: Predicate? = null
     val fields: Map<SimpleKotlinName, FieldEmbedding>
         get() = _fields ?: throw IllegalStateException("Fields of $className have not been initialised yet.")
+    val predicate: Predicate
+        get() = _predicate ?: throw IllegalStateException("Predicate of $className has not been initialised yet.")
 
     fun initFields(newFields: Map<SimpleKotlinName, FieldEmbedding>) {
         if (_fields != null) throw IllegalStateException("Fields of $className are already initialised.")
         _fields = newFields
+        _predicate = initPredicate()
+    }
+
+    private fun initPredicate(): Predicate {
+        val subjectEmbedding = VariableEmbedding(ClassPredicateSubjectName, this)
+        val accessFields = fields.values
+            .flatMap { it.accessInvariantsForParameter(subjectEmbedding.toViper()) }
+
+        // For the moment ALWAYS_WRITEABLE fields with some class type do not exist.
+        // Whether to include them here will need to be considered in the future.
+        val accessFieldPredicates = fields.values
+            .filter { it.accessPolicy == AccessPolicy.ALWAYS_READABLE }
+            .flatMap { it.type.predicateAccessInvariants(Exp.FieldAccess(subjectEmbedding.toViper(), it.toViper())) }
+
+        val accessSuperTypesPredicates = superTypes
+            .filterIsInstance<ClassTypeEmbedding>()
+            .map { Exp.PredicateAccess(it.name, listOf(subjectEmbedding.toViper())) }
+
+        val body = (accessFields + accessFieldPredicates + accessSuperTypesPredicates).toConjunction()
+        return Predicate(name, listOf(subjectEmbedding.toLocalVarDecl()), body)
     }
 
     override val runtimeType = TypeDomain.classType(className)
@@ -255,6 +289,9 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
     // TODO: figure out a nicer way to handle this.
     override fun accessInvariants(v: Exp): List<Exp> =
         flatMapUniqueFields { _, field -> field.accessInvariantsForParameter(v) }
+
+    // Note: this function will replace accessInvariants when nested unfold will be implemented
+    override fun predicateAccessInvariants(v: Exp): List<Exp> = listOf(Exp.PredicateAccess(name, listOf(v)))
 
     override fun provenInvariants(v: Exp) = listOf(subtypeInvariant(v))
 }
