@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.statistics.MetricValueValidationFailed
-import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
-import org.jetbrains.kotlin.statistics.fileloggers.NonSynchronizedMetricsContainer
 import java.io.File
 import java.lang.management.ManagementFactory
 import javax.management.MBeanServer
@@ -146,6 +144,9 @@ class KotlinBuildStatHandler {
                     // log?
                 }
             }
+
+            configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
+
             val taskNames = project.tasks.names.toList()
 
             configurationTimeMetrics.put(

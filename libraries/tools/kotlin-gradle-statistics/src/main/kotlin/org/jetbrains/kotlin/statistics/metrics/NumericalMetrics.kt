@@ -54,7 +54,7 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     ANALYSIS_LINES_PER_SECOND(AVERAGE, SAFE),
     CODE_GENERATION_LINES_PER_SECOND(AVERAGE, SAFE),
 
-    //KT-58768: unable to collect subprojects with project isolation
+    //only Kotlin subprojects are counted
     NUMBER_OF_SUBPROJECTS(SUM, RANDOM_10_PERCENT),
 
     STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD(SUM, RANDOM_10_PERCENT),
