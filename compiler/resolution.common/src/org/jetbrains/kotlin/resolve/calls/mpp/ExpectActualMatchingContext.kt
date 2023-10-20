@@ -204,6 +204,18 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val checkClassScopesForAnnotationCompatibility: Boolean
 
     /**
+     * Whether it is needed to check getters and setters in [AbstractExpectActualAnnotationMatchChecker].
+     */
+    val checkPropertyAccessorsForAnnotationsCompatibility: Boolean
+        get() = true
+
+    /**
+     * Whether it is needed to check enum entries in [AbstractExpectActualAnnotationMatchChecker].
+     */
+    val checkEnumEntriesForAnnotationsCompatibility: Boolean
+        get() = true
+
+    /**
      * Determines whether it is needed to skip checking annotations on class member in [AbstractExpectActualAnnotationMatchChecker].
      *
      * This is needed to prevent checking member twice if it is real `actual` member (not fake override or member of

@@ -559,6 +559,19 @@ internal abstract class IrExpectActualMatchingContext(
     // IR checker traverses member scope itself and collects mappings
     override val checkClassScopesForAnnotationCompatibility = false
 
+    /**
+     * From IR checker point of view geter and seter are usual methods, so they don't need
+     * special handling inside checker.
+     * This is to prevent duplicated reports of diagnostic.
+     */
+    override val checkPropertyAccessorsForAnnotationsCompatibility = false
+
+    /**
+     * Same as [checkPropertyAccessorsForAnnotationsCompatibility], enum entries are usual
+     * callables for IR checker, so they don't need special handling.
+     */
+    override val checkEnumEntriesForAnnotationsCompatibility = false
+
     override fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean = error("Should not be called")
 
     override fun findPotentialExpectClassMembersForActual(

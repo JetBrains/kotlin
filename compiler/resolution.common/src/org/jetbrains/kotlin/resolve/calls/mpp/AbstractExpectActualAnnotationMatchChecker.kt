@@ -87,7 +87,9 @@ object AbstractExpectActualAnnotationMatchChecker {
         commonForClassAndCallableChecks(expectSymbol, actualSymbol)?.let { return it }
         areAnnotationsOnValueParametersCompatible(expectSymbol, actualSymbol)?.let { return it }
 
-        if (expectSymbol is PropertySymbolMarker && actualSymbol is PropertySymbolMarker) {
+        if (checkPropertyAccessorsForAnnotationsCompatibility
+            && expectSymbol is PropertySymbolMarker && actualSymbol is PropertySymbolMarker
+        ) {
             arePropertyGetterAndSetterAnnotationsCompatible(expectSymbol, actualSymbol)?.let { return it }
         }
 
@@ -136,7 +138,9 @@ object AbstractExpectActualAnnotationMatchChecker {
         if (checkClassScopesForAnnotationCompatibility) {
             checkAnnotationsInClassMemberScope(expectSymbol, actualSymbol)?.let { return it }
         }
-        if (expectSymbol.classKind == ClassKind.ENUM_CLASS && actualSymbol.classKind == ClassKind.ENUM_CLASS) {
+        if (checkEnumEntriesForAnnotationsCompatibility && expectSymbol.classKind == ClassKind.ENUM_CLASS &&
+            actualSymbol.classKind == ClassKind.ENUM_CLASS
+        ) {
             checkAnnotationsOnEnumEntries(expectSymbol, actualSymbol)?.let { return it }
         }
 

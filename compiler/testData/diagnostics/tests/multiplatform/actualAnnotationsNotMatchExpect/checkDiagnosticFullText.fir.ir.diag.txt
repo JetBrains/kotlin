@@ -20,9 +20,6 @@ All annotations from expect `inValueParam` must be present with the same argumen
 All annotations from expect `inTypeParam` must be present with the same arguments on actual `inTypeParam`, otherwise they might behave incorrectly.
 
 /jvm.kt:(503,535): warning: Annotation `Ann` is missing on actual declaration.
-All annotations from expect `onGetter` must be present with the same arguments on actual `onGetter`, otherwise they might behave incorrectly.
-
-/jvm.kt:(503,535): warning: Annotation `Ann` is missing on actual declaration.
 All annotations from expect `<get-onGetter>` must be present with the same arguments on actual `<get-onGetter>`, otherwise they might behave incorrectly.
 
 /jvm.kt:(537,569): warning: Annotation `Ann` is missing on actual declaration.
