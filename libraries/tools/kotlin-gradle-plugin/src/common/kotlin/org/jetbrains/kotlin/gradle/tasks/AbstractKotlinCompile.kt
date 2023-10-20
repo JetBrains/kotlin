@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING
 import org.jetbrains.kotlin.gradle.plugin.UsesBuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -219,37 +218,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     internal abstract val keepIncrementalCompilationCachesInMemory: Property<Boolean>
 
-    @get:Internal
-    internal abstract val suppressExperimentalIcOptimizationsWarning: Property<Boolean>
-
     /** Task outputs that we don't want to include in [TaskOutputsBackup] (see [TaskOutputsBackup.outputsToRestore] for more info). */
     @get:Internal
     internal abstract val taskOutputsBackupExcludes: SetProperty<File>
 
-    private fun notifyUserAboutExperimentalICOptimizations() {
-        if (suppressExperimentalIcOptimizationsWarning.get()) {
-            return
-        }
-        if (!preciseCompilationResultsBackup.get() && !keepIncrementalCompilationCachesInMemory.get()) {
-            return
-        }
-        val key = "experimental-ic-optimizations"
-        buildFinishedListenerService.get().onCloseOnceByKey(key) {
-            Logging.getLogger(key).warn(
-                """
-                
-                The build has experimental Kotlin incremental compilation optimizations enabled.
-                If you notice incorrect compilation results after enabling it, please file a bug report at https://kotl.in/issue/experimental-ic-optimizations
-                
-                You can suppress this warning by adding `${KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING}=true` to the gradle.properties
-                """.trimIndent()
-            )
-        }
-    }
-
     @TaskAction
     fun execute(inputChanges: InputChanges) {
-        notifyUserAboutExperimentalICOptimizations()
         val buildMetrics = metrics.get()
         buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
         buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
