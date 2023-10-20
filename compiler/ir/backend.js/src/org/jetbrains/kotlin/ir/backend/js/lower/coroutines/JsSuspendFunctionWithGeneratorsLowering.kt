@@ -65,7 +65,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
             DescriptorVisibilities.PRIVATE,
             function.isInline,
             function.isExpect,
-            context.irBuiltIns.anyNType,
+            function.returnType,
             function.modality,
             IrSimpleFunctionSymbolImpl(),
             function.isTailrec,
