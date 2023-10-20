@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.k1k2uicomparator.test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.jetbrains.kotlin.k1k2uicomparator.UIComparatorFrame
-import org.jetbrains.kotlin.k1k2uicomparator.spawn
+import org.jetbrains.kotlin.k1k2uicomparator.components.UIComparatorFrame
+import org.jetbrains.kotlin.k1k2uicomparator.components.UIComparatorStyle
+import org.jetbrains.kotlin.k1k2uicomparator.support.spawn
 import org.jetbrains.kotlin.test.builders.testRunner
 import org.jetbrains.kotlin.test.initIdeaConfiguration
 import org.jetbrains.kotlin.test.runners.DiagnosticTestGenerated
@@ -34,8 +35,20 @@ private val emptyKotlinTestInfo = KotlinTestInfo(
     tags = emptySet()
 )
 
+val uiComparatorStyleForCompiler = UIComparatorStyle(
+    title = "K1/K2 UI Comparator",
+    initialSource = """
+        fun main() {
+            println("Done")
+        }
+    """.trimIndent(),
+    leftViewerTitle = "K1",
+    mainViewerTitle = "Clear Source",
+    rightViewerTitle = "K2",
+)
+
 fun main() = EventQueue.invokeLater {
-    val mainFrame = spawn(::UIComparatorFrame)
+    val mainFrame = spawn { UIComparatorFrame(uiComparatorStyleForCompiler) }
     val coroutineScope = CoroutineScope(Dispatchers.Default)
     val isRecalculatingK1 = AtomicBoolean(false)
     val isRecalculatingK2 = AtomicBoolean(false)
@@ -60,7 +73,7 @@ fun main() = EventQueue.invokeLater {
     ) {
         if (sourceInitially != mainFrame.mainCode) {
             isRecalculating.compareAndSet(true, false)
-            return
+            return recalculate(mainFrame.mainCode, isRecalculating, processSource, setCode)
         }
 
         if (!isRecalculating.compareAndSet(false, true)) {
@@ -75,7 +88,7 @@ fun main() = EventQueue.invokeLater {
 
         if (sourceInitially != mainFrame.mainCode) {
             isRecalculating.compareAndSet(true, false)
-            return
+            return recalculate(mainFrame.mainCode, isRecalculating, processSource, setCode)
         }
 
         EventQueue.invokeLater {

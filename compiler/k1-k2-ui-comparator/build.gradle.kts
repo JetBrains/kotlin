@@ -83,4 +83,8 @@ kotlin {
     javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(17))
     }
+
+    compilerOptions {
+        freeCompilerArgs.add("-Xcontext-receivers")
+    }
 }
