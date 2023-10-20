@@ -1,0 +1,209 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] classDelegatedInCommonCode.kt
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : Map<String, Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<String, Int> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : Map<String, Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<String, Int> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : Map<String, Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<String, Int> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final? [ResolvedTo(COMPANION_GENERATION)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : Map<String, Int> {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<String, Int> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<R|kotlin/String|, R|kotlin/Int|> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<R|kotlin/String|, R|kotlin/Int|> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<R|kotlin/String|, R|kotlin/Int|> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<R|kotlin/String|, R|kotlin/Int|> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final [ResolvedTo(CONTRACTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<R|kotlin/String|, R|kotlin/Int|> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<R|kotlin/String|, R|kotlin/Int|> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/AA.content] content: Map<String, Int>): R|AA| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Map<R|kotlin/String|, R|kotlin/Int|> = LAZY_EXPRESSION
+
+        private final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val content: Map<String, Int> = R|<local>/content|
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=AA] get(): Map<String, Int>
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun toString(): String { LAZY_BLOCK }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] classDelegatedInCommonCode.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AA] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AA.content] content: R|kotlin/collections/Map<kotlin/String, kotlin/Int>|): R|AA| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|kotlin/collections/Map<kotlin/String, kotlin/Int>| = R|<local>/content|
+
+        private final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val content: R|kotlin/collections/Map<kotlin/String, kotlin/Int>| = R|<local>/content|
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AA] get(): R|kotlin/collections/Map<kotlin/String, kotlin/Int>|
+
+        public open override [ResolvedTo(STATUS)] fun toString(): R|kotlin/String| { LAZY_BLOCK }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] classDelegatedInCommonCode.kt
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /AA.$$delegate_0}] class AA : R|kotlin/collections/Map<kotlin/String, kotlin/Int>| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AA] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/AA.content] content: R|kotlin/collections/Map<kotlin/String, kotlin/Int>|): R|AA| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|kotlin/collections/Map<kotlin/String, kotlin/Int>| = R|<local>/content|
+
+        private final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val content: R|kotlin/collections/Map<kotlin/String, kotlin/Int>| = R|<local>/content|
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AA] get(): R|kotlin/collections/Map<kotlin/String, kotlin/Int>|
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun toString(): R|kotlin/String| {
+            ^toString this@R|/AA|.R|/AA.content|.R|SubstitutionOverride<kotlin/collections/Map.entries: R|kotlin/collections/Set<kotlin/collections/Map.Entry<kotlin/String, kotlin/Int>>|>|.R|kotlin/Any.toString|()
+        }
+
+    }

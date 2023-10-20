@@ -646,6 +646,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("classDelegatedInCommonCode.kt")
+        public void testClassDelegatedInCommonCode() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/classDelegatedInCommonCode.kt");
+        }
+
+        @Test
         @TestMetadata("classWithTypeParameters.kt")
         public void testClassWithTypeParameters() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/classWithTypeParameters.kt");

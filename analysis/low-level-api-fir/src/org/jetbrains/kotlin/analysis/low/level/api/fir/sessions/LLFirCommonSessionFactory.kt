@@ -32,12 +32,13 @@ import org.jetbrains.kotlin.fir.session.DefaultCallConflictResolverFactory
 import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper.registerDefaultComponents
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
     override fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession {
         return doCreateSourcesSession(module) { context ->
-            registerModuleIndependentCommonComponents()
+            registerDefaultComponents()
 
             register(
                 FirSymbolProvider::class,
@@ -56,7 +57,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
 
     override fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession {
         return doCreateLibrarySession(module) { context ->
-            registerModuleIndependentCommonComponents()
+            registerDefaultComponents()
 
             register(
                 FirSymbolProvider::class,
@@ -75,7 +76,7 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
 
     override fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession {
         return doCreateBinaryLibrarySession(module) {
-            registerModuleIndependentCommonComponents()
+            registerDefaultComponents()
             registerPlatformSpecificComponentsIfAny(module)
         }
     }
@@ -106,13 +107,6 @@ internal class LLFirCommonSessionFactory(project: Project) : LLFirAbstractSessio
                 )
             )
         }
-    }
-
-    private fun LLFirSession.registerModuleIndependentCommonComponents() {
-        register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
-        register(ConeCallConflictResolverFactory::class, DefaultCallConflictResolverFactory)
-        register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
     }
 
     private fun LLFirSession.registerPlatformSpecificComponentsIfAny(module: KtModule) {
