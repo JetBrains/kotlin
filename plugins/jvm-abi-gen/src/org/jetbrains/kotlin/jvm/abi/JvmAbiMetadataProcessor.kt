@@ -28,7 +28,7 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
         } ?: intArrayOf(1, 4)
 
         val newHeader = runCatching {
-            when (val metadata = KotlinClassMetadata.read(header)) {
+            when (val metadata = KotlinClassMetadata.readStrict(header)) {
                 is KotlinClassMetadata.Class -> {
                     val klass = metadata.kmClass
                     klass.removePrivateDeclarations()

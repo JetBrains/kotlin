@@ -189,8 +189,8 @@ public class KotlinModuleMetadata private constructor(
         private fun dataFromBytes(bytes: ByteArray): ModuleMapping {
             return ModuleMapping.loadModuleMapping(
                 bytes, "KotlinModuleMetadata", skipMetadataVersionCheck = false,
-                isJvmPackageNameSupported = true, reportIncompatibleVersionError = ::throwIfNotCompatible
-            )
+                isJvmPackageNameSupported = true
+            ) { throwIfNotCompatible(it, lenient = false /* TODO */) }
         }
     }
 }

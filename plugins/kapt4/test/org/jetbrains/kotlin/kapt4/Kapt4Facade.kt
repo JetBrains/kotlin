@@ -105,7 +105,7 @@ internal data class Kapt4ContextBinaryArtifact(
 }
 
 private fun Printer.renderMetadata(metadata: Metadata) {
-    val text = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true)).renderClassFile(KotlinClassMetadata.read(metadata))
+    val text = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true)).renderClassFile(KotlinClassMetadata.readLenient(metadata))
     // "/*" and "*/" delimiters are used in kotlinp, for example to render type parameter names. Replace them with something else
     // to avoid them being interpreted as Java comments.
     val sanitized = text.split('\n')

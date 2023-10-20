@@ -49,7 +49,7 @@ fun renderMetadata(pretty: Pretty, tree: JCAnnotation): String {
         extraString = args[JvmAnnotationNames.METADATA_EXTRA_STRING_FIELD_NAME].stringValue() ?: "",
         packageName = args[JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME].stringValue() ?: "",
     )
-    val text = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true)).renderClassFile(KotlinClassMetadata.read(metadata))
+    val text = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true)).renderClassFile(KotlinClassMetadata.readStrict(metadata))
     // "/*" and "*/" delimiters are used in kotlinp, for example to render type parameter names. Replace them with something else
     // to avoid them being interpreted as Java comments.
     val sanitized = text.split('\n').dropLast(1).map { it.replace("/*", "(*").replace("*/", "*)") }

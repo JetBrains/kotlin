@@ -1442,6 +1442,8 @@ public abstract class kotlinx/metadata/jvm/KotlinClassMetadata {
 	public static final field SYNTHETIC_CLASS_KIND I
 	public synthetic fun <init> (Lkotlin/Metadata;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public static final fun read (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+	public static final fun readLenient (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+	public static final fun readStrict (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
 	public static final fun writeClass (Lkotlinx/metadata/KmClass;)Lkotlin/Metadata;
 	public static final fun writeClass (Lkotlinx/metadata/KmClass;[I)Lkotlin/Metadata;
 	public static final fun writeClass (Lkotlinx/metadata/KmClass;[II)Lkotlin/Metadata;
@@ -1478,6 +1480,8 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class$Writer : kotli
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$Companion {
 	public final fun read (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+	public final fun readLenient (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
+	public final fun readStrict (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
 	public final fun writeClass (Lkotlinx/metadata/KmClass;)Lkotlin/Metadata;
 	public final fun writeClass (Lkotlinx/metadata/KmClass;[I)Lkotlin/Metadata;
 	public final fun writeClass (Lkotlinx/metadata/KmClass;[II)Lkotlin/Metadata;
