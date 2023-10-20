@@ -41,8 +41,3 @@ actual class C3<D, E : MutableList<in D>>
 compiler/testData/multiplatform/genericDeclarations/jvm.kt:15:1: warning: 'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta. You can use -Xexpect-actual-classes flag to suppress this warning. Also see: https://youtrack.jetbrains.com/issue/KT-61573
 actual abstract class AbstractList<F> : MutableList<F>, java.io.Serializable
 ^
-compiler/testData/multiplatform/genericDeclarations/jvm.kt:15:17: warning: actual class 'AbstractList': actual class and its non-final expect class must declare exactly the same supertypes. Actual class declares the following supertypes that are not presented in expect class: 'Serializable'.
-This error happens because the expect class 'AbstractList' is non-final. This warning will become an error in future releases.
-Also see https://youtrack.jetbrains.com/issue/KT-22841 for more details
-actual abstract class AbstractList<F> : MutableList<F>, java.io.Serializable
-                ^

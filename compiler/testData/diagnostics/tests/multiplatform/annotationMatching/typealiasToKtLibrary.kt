@@ -40,4 +40,4 @@ actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MyDeprecatedNotMatch<!> 
 
 actual typealias MyDeprecatedMatch = kotlin.Deprecated
 
-actual typealias <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING, ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING!>MyAbstractIterator<!><T> = AbstractIterator<T>
+actual typealias MyAbstractIterator<T> = AbstractIterator<T>
