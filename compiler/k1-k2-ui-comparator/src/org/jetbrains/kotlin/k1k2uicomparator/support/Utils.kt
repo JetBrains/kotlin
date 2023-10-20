@@ -30,3 +30,7 @@ operator fun ComponentWithConstraints.unaryPlus(): Unit = add(component, constra
 
 val JViewport.scrollableHeight get() = viewSize.height - extentSize.height
 val JViewport.scrollableWidth get() = viewSize.width - extentSize.width
+
+fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length else it }
+
+fun Int.alignByMultiplesOf(alignment: Int) = this / alignment * alignment
