@@ -47,6 +47,7 @@ application {
 }
 
 tasks.register<JavaExec>("runTest") {
+    workingDir = rootDir
     group = ApplicationPlugin.APPLICATION_GROUP
     classpath(sourceSets.test.get().runtimeClasspath)
     mainClass.set("org.jetbrains.kotlin.k1k2uicomparator.test.RunKt")
