@@ -61,17 +61,12 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
 
     // If this test fails, then bootstrap compiler most likely should be advanced
     fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
-        try {
-            val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
-            val classFromBootstrapCompiler = bootstrapCompiler.getEntry(LanguageFeature::class.java.name.replace(".", "/") + ".class")
-            checkPreReleaseness(
-                bootstrapCompiler.getInputStream(classFromBootstrapCompiler).readBytes(),
-                KotlinCompilerVersion.isPreRelease()
-            )
-        } catch (e: Throwable) {
-            return
-        }
-        error("Looks like test can be unmuted")
+        val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
+        val classFromBootstrapCompiler = bootstrapCompiler.getEntry(LanguageFeature::class.java.name.replace(".", "/") + ".class")
+        checkPreReleaseness(
+            bootstrapCompiler.getInputStream(classFromBootstrapCompiler).readBytes(),
+            KotlinCompilerVersion.isPreRelease()
+        )
     }
 
     fun testPreReleaseFlagIsConsistentBetweenStdlibAndCurrentCompiler() {
