@@ -78,7 +78,7 @@ internal object FirLazyBodiesCalculator {
 
 private inline fun <reified T : FirDeclaration> revive(
     designation: FirDesignation,
-    psiFactory: (FirDesignation) -> PsiElement? = { it.target.psi }
+    psi: PsiElement? = designation.target.psi
 ): T {
     val session = designation.target.moduleData.session
 
@@ -86,7 +86,7 @@ private inline fun <reified T : FirDeclaration> revive(
         session = session,
         scopeProvider = session.kotlinScopeProvider,
         designation = designation,
-        rootNonLocalDeclaration = psiFactory(designation) as KtAnnotated,
+        rootNonLocalDeclaration = psi as KtAnnotated,
     ) as T
 }
 
@@ -157,7 +157,7 @@ private fun calculateLazyBodiesForFunction(designation: FirDesignation) {
     val simpleFunction = designation.target as FirSimpleFunction
     require(needCalculatingLazyBodyForFunction(simpleFunction))
 
-    val newSimpleFunction = revive<FirSimpleFunction>(designation)
+    val newSimpleFunction = revive<FirSimpleFunction>(designation, simpleFunction.unwrapFakeOverridesOrDelegated().psi)
 
     replaceLazyContractDescription(simpleFunction, newSimpleFunction)
     replaceLazyBody(simpleFunction, newSimpleFunction)
@@ -180,7 +180,7 @@ private fun calculateLazyBodyForProperty(designation: FirDesignation) {
     val firProperty = designation.target as FirProperty
     if (!needCalculatingLazyBodyForProperty(firProperty)) return
 
-    val newProperty = revive<FirProperty>(designation)
+    val newProperty = revive<FirProperty>(designation, firProperty.unwrapFakeOverridesOrDelegated().psi)
 
     firProperty.getter?.let { getter ->
         val newGetter = newProperty.getter!!
@@ -238,7 +238,7 @@ private fun calculateLazyBodiesForField(designation: FirDesignation) {
     val field = designation.target as FirField
     require(field.initializer is FirLazyExpression)
 
-    val newField = revive<FirField>(designation) { it.path.last().psi }
+    val newField = revive<FirField>(designation, designation.path.last().psi)
     field.replaceInitializer(newField.initializer)
 }
 
