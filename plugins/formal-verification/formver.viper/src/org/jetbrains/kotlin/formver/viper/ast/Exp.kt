@@ -250,43 +250,6 @@ sealed interface Exp : IntoSilver<viper.silver.ast.Exp> {
             )
     }
 
-    companion object {
-        fun Trigger1(
-            exp: Exp,
-            pos: Position = Position.NoPosition,
-            info: Info = Info.NoInfo,
-            trafos: Trafos = Trafos.NoTrafos,
-        ): Trigger = Trigger(listOf(exp), pos, info, trafos)
-
-        fun Forall1(
-            variable: Declaration.LocalVarDecl,
-            trigger: Trigger,
-            exp: Exp,
-            pos: Position = Position.NoPosition,
-            info: Info = Info.NoInfo,
-            trafos: Trafos = Trafos.NoTrafos,
-        ): Forall = Forall(listOf(variable), listOf(trigger), exp, pos, info, trafos)
-
-        fun Forall1(
-            variable: Declaration.LocalVarDecl,
-            exp: Exp,
-            pos: Position = Position.NoPosition,
-            info: Info = Info.NoInfo,
-            trafos: Trafos = Trafos.NoTrafos,
-        ): Forall = Forall(listOf(variable), emptyList(), exp, pos, info, trafos)
-
-
-        fun Exists1(
-            variable: Declaration.LocalVarDecl,
-            trigger: Trigger,
-            exp: Exp,
-            pos: Position = Position.NoPosition,
-            info: Info = Info.NoInfo,
-            trafos: Trafos = Trafos.NoTrafos,
-        ): Exists = Exists(listOf(variable), listOf(trigger), exp, pos, info, trafos)
-    }
-    //endregion
-
     //region Literals
     data class IntLit(
         val value: Int,
@@ -427,4 +390,107 @@ sealed interface Exp : IntoSilver<viper.silver.ast.Exp> {
         trafos: Trafos = Trafos.NoTrafos,
     ): AccessPredicate.FieldAccessPredicate =
         AccessPredicate.FieldAccessPredicate(fieldAccess(field, pos), permission, pos, info, trafos)
+
+    companion object {
+        private fun forallImpl(vars: List<Declaration.LocalVarDecl>, action: ForallBuilder.() -> Exp): Exp {
+            val builder = ForallBuilder(vars)
+            val body = builder.action()
+            return builder.toForallExp(body)
+        }
+
+        /**
+         * Create an Exp.Forall node, passing the local variables as local variable access expressions into the action.
+         */
+        fun forall(v1: Var, action: ForallBuilder.(LocalVar) -> Exp): Exp = forallImpl(listOf(v1.decl())) { action(v1.use()) }
+
+        fun forall(v1: Var, v2: Var, action: ForallBuilder.(LocalVar, LocalVar) -> Exp): Exp =
+            forallImpl(listOf(v1.decl(), v2.decl())) { action(v1.use(), v2.use()) }
+
+        fun forall(v1: Var, v2: Var, v3: Var, action: ForallBuilder.(LocalVar, LocalVar, LocalVar) -> Exp): Exp =
+            forallImpl(listOf(v1.decl(), v2.decl(), v3.decl())) { action(v1.use(), v2.use(), v3.use()) }
+
+        /**
+         * Take the conjunction of the given expressions.
+         */
+        fun List<Exp>.toConjunction(): Exp =
+            if (isEmpty()) BoolLit(true)
+            else reduce { l, r -> And(l, r) }
+
+    }
+
+    /**
+     * Builder for statements of the form
+     * ```
+     * forall vars :: { triggers } assumptions ==> conclusion
+     * ```
+     *
+     * The assumptions and conclusion together are the body of the forall.
+     *
+     * This class is intended to be used via the `Exp.forall` functions, not directly.
+     */
+    class ForallBuilder(private val vars: List<Declaration.LocalVarDecl>) {
+        private val triggers = mutableListOf<Trigger>()
+        private val assumptions = mutableListOf<Exp>()
+
+        fun toForallExp(conclusion: Exp): Exp {
+            val body =
+                if (assumptions.isNotEmpty()) {
+                    Implies(assumptions.toConjunction(), conclusion)
+                } else {
+                    conclusion
+                }
+            return Forall(vars, triggers, body)
+        }
+
+        /**
+         * Add an assumption to this forall statement.
+         */
+        fun assumption(action: () -> Exp): Exp {
+            val exp = action()
+            assumptions.add(exp)
+            return exp
+        }
+
+        /**
+         * Create a trigger consisting of a single expression.
+         */
+        fun simpleTrigger(action: () -> Exp): Exp {
+            val exp = action()
+            triggers.add(Trigger(listOf(exp)))
+            return exp
+        }
+
+        /**
+         * Create a trigger consisting of multiple expressions, and return them as a conjunction.
+         *
+         * Note that a compound trigger must contain at least one expression; an empty list does
+         * not make sense here.
+         */
+        fun compoundTrigger(action: TriggerBuilder.() -> Unit): Exp {
+            val builder = TriggerBuilder()
+            builder.action()
+            triggers.add(builder.toTrigger())
+            return builder.toConjunction()
+        }
+
+        class TriggerBuilder {
+            private val exps = mutableListOf<Exp>()
+
+            /**
+             * Add an expression to the trigger.
+             */
+            fun subTrigger(action: () -> Exp): Exp {
+                val exp = action()
+                exps.add(exp)
+                return exp
+            }
+
+            fun toTrigger(): Trigger {
+                assert(exps.isNotEmpty()) { "There is no point to having an empty trigger expression. " }
+                return Trigger(exps)
+            }
+
+            fun toConjunction(): Exp = exps.toConjunction()
+        }
+    }
 }

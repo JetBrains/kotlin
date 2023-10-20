@@ -49,8 +49,8 @@ object CastingDomain : BuiltinDomain("Casting") {
     private val B = Type.TypeVar("B")
     override val typeVars: List<Type.TypeVar> = listOf(A, B)
 
-    val a = Var("a", A)
-    val newType = Var("newType", TypeDomain.Type)
+    private val a = Var("a", A)
+    private val newType = Var("newType", TypeDomain.Type)
 
     private val castFunc = createDomainFunc("cast", listOf(a.decl(), newType.decl()), B)
 
@@ -64,51 +64,27 @@ object CastingDomain : BuiltinDomain("Casting") {
 
     override val functions: List<DomainFunc> = listOf(castFunc)
 
-    private val nullCast =
-        createNamedDomainAxiom(
-            "null_cast",
-            Exp.Forall1(
-                newType.decl(),
-                Exp.Trigger1(
-                    cast(NullableDomain.nullVal(A), newType.use(), NullableDomain.nullableType(B))
-                ),
-                Exp.Implies(
-                    TypeDomain.isNullableType(newType.use()),
-                    Exp.EqCmp(
-                        cast(NullableDomain.nullVal(A), newType.use(), NullableDomain.nullableType(B)),
-                        NullableDomain.nullVal(B)
-                    )
-                )
-            )
-        )
-
-    private val typeOfCast =
-        createNamedDomainAxiom(
-            "type_of_cast",
-            Exp.Forall(
-                listOf(a.decl(), newType.decl()),
-                listOf(Exp.Trigger1(TypeOfDomain.typeOf(cast(a.use(), newType.use(), B)))),
-                TypeDomain.isSubtype(
-                    TypeOfDomain.typeOf(cast(a.use(), newType.use(), B)),
-                    newType.use()
-                )
-            )
-        )
-
-    private val typeOfCastInvariant =
-        createNamedDomainAxiom(
-            "type_of_cast_invariant",
-            Exp.Forall(
-                listOf(a.decl(), newType.decl()),
-                listOf(Exp.Trigger1(cast(a.use(), newType.use(), B))),
-                Exp.EqCmp(
-                    TypeOfDomain.typeOf(cast(a.use(), newType.use(), B)),
-                    TypeOfDomain.typeOf(a.use())
-                )
-            )
-        )
-
-    override val axioms: List<DomainAxiom> = listOf(nullCast, typeOfCast, typeOfCastInvariant)
+    override val axioms = AxiomListBuilder.build(this) {
+        axiom("null_cast") {
+            Exp.forall(newType) { newType ->
+                val castExp = simpleTrigger { cast(NullableDomain.nullVal(A), newType, NullableDomain.nullableType(B)) }
+                assumption { TypeDomain.isNullableType(newType) }
+                Exp.EqCmp(castExp, NullableDomain.nullVal(B))
+            }
+        }
+        axiom("type_of_cast") {
+            Exp.forall(a, newType) { a, newType ->
+                val typeOfExp = simpleTrigger { TypeOfDomain.typeOf(cast(a, newType, B)) }
+                TypeDomain.isSubtype(typeOfExp, newType)
+            }
+        }
+        axiom("type_of_cast_invariant") {
+            Exp.forall(a, newType) { a, newType ->
+                val castExp = simpleTrigger { cast(a, newType, B) }
+                Exp.EqCmp(TypeOfDomain.typeOf(castExp), TypeOfDomain.typeOf(a))
+            }
+        }
+    }
 }
 
 fun Exp.convertType(currentType: TypeEmbedding, newType: TypeEmbedding, source: KtSourceElement?) =

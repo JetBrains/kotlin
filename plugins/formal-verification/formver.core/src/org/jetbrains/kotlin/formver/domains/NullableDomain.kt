@@ -78,121 +78,63 @@ object NullableDomain : BuiltinDomain("Nullable") {
     fun nullVal(elemType: Type, source: KtSourceElement? = null): Exp.DomainFuncApp =
         funcApp(nullFunc, emptyList(), mapOf(T to elemType), source.asPosition)
 
-    val someNotNull =
-        createNamedDomainAxiom(
-            "some_not_null",
-            Exp.Forall(
-                listOf(xVar.decl(), newType.decl()),
-                listOf(
-                    Exp.Trigger1(CastingDomain.cast(xVar.use(), TypeDomain.nullableType(newType.use()), nullableType(T)))
-                ),
-                Exp.Implies(
-                    Exp.Not(TypeDomain.isNullableType(newType.use())),
-                    Exp.NeCmp(
-                        CastingDomain.cast(xVar.use(), TypeDomain.nullableType(newType.use()), nullableType(T)),
-                        nullVal(T)
-                    )
-                )
-            )
-        )
-    val nullOfEveryNullableType =
-        createNamedDomainAxiom(
-            "null_of_every_nullable_type",
-            Exp.Forall(
-                listOf(nxVar.decl(), newType.decl()),
-                listOf(Exp.Trigger1(TypeDomain.isSubtype(TypeOfDomain.typeOf(nxVar.use()), newType.use()))),
-                Exp.Implies(
-                    Exp.And(TypeDomain.isNullableType(newType.use()), Exp.EqCmp(nxVar.use(), nullVal(T))),
-                    TypeDomain.isSubtype(TypeOfDomain.typeOf(nxVar.use()), newType.use())
-                )
-            )
-        )
-    val valOfNullableOfVal =
-        createNamedDomainAxiom(
-            "val_of_nullable_of_val",
-            Exp.Forall(
-                listOf(xVar.decl(), newType.decl()),
-                listOf(
-                    Exp.Trigger1(
-                        CastingDomain.cast(
-                            CastingDomain.cast(
-                                xVar.use(),
-                                TypeDomain.nullableType(newType.use()),
-                                nullableType(T)
-                            ),
-                            TypeOfDomain.typeOf(xVar.use()),
-                            T
-                        )
-                    )
-                ),
-                Exp.EqCmp(
+    override val axioms = AxiomListBuilder.build(this) {
+        axiom("some_not_null") {
+            Exp.forall(xVar, newType) { x, newType ->
+                val castExp = simpleTrigger {
+                    CastingDomain.cast(x, TypeDomain.nullableType(newType), nullableType(T))
+                }
+                assumption { Exp.Not(TypeDomain.isNullableType(newType)) }
+                Exp.NeCmp(castExp, nullVal(T))
+            }
+        }
+        axiom("null_of_every_nullable_type") {
+            Exp.forall(nxVar, newType) { nx, newType ->
+                val isSubtypeExp = simpleTrigger {
+                    TypeDomain.isSubtype(TypeOfDomain.typeOf(nx), newType)
+                }
+                assumption { TypeDomain.isNullableType(newType) }
+                assumption { Exp.EqCmp(nx, nullVal(T)) }
+                isSubtypeExp
+            }
+        }
+        axiom("val_of_nullable_of_val") {
+            Exp.forall(xVar, newType) { x, newType ->
+                val castExp = simpleTrigger {
                     CastingDomain.cast(
-                        CastingDomain.cast(
-                            xVar.use(),
-                            TypeDomain.nullableType(newType.use()),
-                            nullableType(T)
-                        ),
-                        TypeOfDomain.typeOf(xVar.use()),
+                        CastingDomain.cast(x, TypeDomain.nullableType(newType), nullableType(T)),
+                        TypeOfDomain.typeOf(x),
                         T
-                    ),
-                    xVar.use()
-                )
-            )
-        )
-    val nullableOfValOfNullable =
-        createNamedDomainAxiom(
-            "nullable_of_val_of_nullable",
-            Exp.Forall(
-                listOf(nxVar.decl(), newType.decl()),
-                listOf(
-                    Exp.Trigger1(
-                        CastingDomain.cast(
-                            CastingDomain.cast(
-                                nxVar.use(),
-                                newType.use(),
-                                T
-                            ),
-                            TypeOfDomain.typeOf(nxVar.use()),
-                            nullableType(T)
-                        )
                     )
-                ),
-                Exp.Implies(
-                    Exp.NeCmp(nxVar.use(), nullVal(T)),
-                    Exp.EqCmp(
-                        CastingDomain.cast(
-                            CastingDomain.cast(
-                                nxVar.use(),
-                                newType.use(),
-                                T
-                            ),
-                            TypeOfDomain.typeOf(nxVar.use()),
-                            nullableType(T)
-                        ),
-                        nxVar.use()
+                }
+                Exp.EqCmp(castExp, x)
+            }
+        }
+        axiom("nullable_of_val_of_nullable") {
+            Exp.forall(nxVar, newType) { nx, newType ->
+                val castExp = simpleTrigger {
+                    CastingDomain.cast(
+                        CastingDomain.cast(nx, newType, T),
+                        TypeOfDomain.typeOf(nx),
+                        nullableType(T)
                     )
+                }
+                assumption { Exp.NeCmp(nx, nullVal(T)) }
+                Exp.EqCmp(castExp, nx)
+            }
+        }
+        axiom("null_val_or_under_type") {
+            Exp.forall(nxVar, newType) { nx, newType ->
+                val isSubtypeExp = simpleTrigger {
+                    TypeDomain.isSubtype(TypeOfDomain.typeOf(nx), TypeDomain.nullableType(newType))
+                }
+                assumption { Exp.Not(TypeDomain.isNullableType(newType)) }
+                assumption { isSubtypeExp }
+                Exp.Or(
+                    Exp.EqCmp(nx, nullVal(T)),
+                    TypeDomain.isSubtype(TypeOfDomain.typeOf(nx), newType)
                 )
-            )
-        )
-    val nullValOrUnderType =
-        createNamedDomainAxiom(
-            "null_val_or_under_type",
-            Exp.Forall(
-                listOf(nxVar.decl(), newType.decl()),
-                listOf(
-                    Exp.Trigger1(TypeDomain.isSubtype(TypeOfDomain.typeOf(nxVar.use()), TypeDomain.nullableType(newType.use())))
-                ),
-                Exp.Implies(
-                    Exp.And(
-                        Exp.Not(TypeDomain.isNullableType(newType.use())),
-                        TypeDomain.isSubtype(TypeOfDomain.typeOf(nxVar.use()), TypeDomain.nullableType(newType.use()))
-                    ),
-                    Exp.Or(
-                        Exp.EqCmp(nxVar.use(), nullVal(T)),
-                        TypeDomain.isSubtype(TypeOfDomain.typeOf(nxVar.use()), newType.use())
-                    )
-                )
-            )
-        )
-    override val axioms: List<DomainAxiom> = listOf(someNotNull, nullOfEveryNullableType, valOfNullableOfVal, nullableOfValOfNullable, nullValOrUnderType)
+            }
+        }
+    }
 }

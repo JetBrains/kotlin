@@ -107,9 +107,25 @@ domain dom$Type  {
   }
 
   axiom {
+    !dom$Type$is_nullable_type(dom$Type$Int())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Int(), dom$Type$Any())
+  }
+
+  axiom {
     (forall t: dom$Type ::
       { dom$Type$special$Nullable(t) }
       dom$Type$special$Nullable(t) != dom$Type$Boolean())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Boolean())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Boolean(), dom$Type$Any())
   }
 
   axiom {
@@ -119,9 +135,25 @@ domain dom$Type  {
   }
 
   axiom {
+    !dom$Type$is_nullable_type(dom$Type$Unit())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Unit(), dom$Type$Any())
+  }
+
+  axiom {
     (forall t: dom$Type ::
       { dom$Type$special$Nullable(t) }
       dom$Type$special$Nullable(t) != dom$Type$Nothing())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Nothing())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Nothing(), dom$Type$Any())
   }
 
   axiom {
@@ -131,9 +163,25 @@ domain dom$Type  {
   }
 
   axiom {
+    !dom$Type$is_nullable_type(dom$Type$Any())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Any(), dom$Type$Any())
+  }
+
+  axiom {
     (forall t: dom$Type ::
       { dom$Type$special$Nullable(t) }
       dom$Type$special$Nullable(t) != dom$Type$Function())
+  }
+
+  axiom {
+    !dom$Type$is_nullable_type(dom$Type$Function())
+  }
+
+  axiom {
+    dom$Type$isSubtype(dom$Type$Function(), dom$Type$Any())
   }
 
   axiom {
@@ -143,112 +191,60 @@ domain dom$Type  {
   }
 
   axiom {
-    !dom$Type$is_nullable_type(dom$Type$Int())
-  }
-
-  axiom {
-    !dom$Type$is_nullable_type(dom$Type$Boolean())
-  }
-
-  axiom {
-    !dom$Type$is_nullable_type(dom$Type$Unit())
-  }
-
-  axiom {
-    !dom$Type$is_nullable_type(dom$Type$Nothing())
-  }
-
-  axiom {
-    !dom$Type$is_nullable_type(dom$Type$Any())
-  }
-
-  axiom {
-    !dom$Type$is_nullable_type(dom$Type$Function())
-  }
-
-  axiom {
     !dom$Type$is_nullable_type(dom$Type$global$class_Foo())
-  }
-
-  axiom {
-    (forall t: dom$Type ::
-      { dom$Type$special$Nullable(t) }
-      dom$Type$is_nullable_type(dom$Type$special$Nullable(t)))
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$Int(), dom$Type$Any())
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$Boolean(), dom$Type$Any())
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$Unit(), dom$Type$Any())
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$Nothing(), dom$Type$Any())
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$Any(), dom$Type$Any())
-  }
-
-  axiom {
-    dom$Type$isSubtype(dom$Type$Function(), dom$Type$Any())
   }
 
   axiom {
     dom$Type$isSubtype(dom$Type$global$class_Foo(), dom$Type$Any())
   }
 
-  axiom {
-    (forall t: dom$Type ::
-      { dom$Type$isSubtype(t, dom$Type$special$Nullable(dom$Type$Any())) }
-      dom$Type$isSubtype(t, dom$Type$special$Nullable(dom$Type$Any())))
-  }
-
-  axiom {
+  axiom dom$Type$nullable_injective {
     (forall t: dom$Type, t2: dom$Type ::t != t2 ==>
       dom$Type$special$Nullable(t) != dom$Type$special$Nullable(t2))
   }
 
-  axiom {
+  axiom dom$Type$nullable_is_nullable {
+    (forall t: dom$Type ::
+      { dom$Type$special$Nullable(t) }
+      dom$Type$is_nullable_type(dom$Type$special$Nullable(t)))
+  }
+
+  axiom dom$Type$subtype_reflexive {
     (forall t: dom$Type ::dom$Type$isSubtype(t, t))
   }
 
-  axiom {
+  axiom dom$Type$subtype_transitive {
     (forall t: dom$Type, t2: dom$Type, t3: dom$Type ::
       { dom$Type$isSubtype(t, t2), dom$Type$isSubtype(t2, t3) }
       dom$Type$isSubtype(t, t2) && dom$Type$isSubtype(t2, t3) ==>
       dom$Type$isSubtype(t, t3))
   }
 
-  axiom {
+  axiom dom$Type$subtype_antisymmetric {
     (forall t: dom$Type, t2: dom$Type ::
       { dom$Type$isSubtype(t, t2), dom$Type$isSubtype(t2, t) }
       dom$Type$isSubtype(t, t2) && dom$Type$isSubtype(t2, t) ==> t == t2)
   }
 
-  axiom {
+  axiom dom$Type$nullable_supertype {
     (forall t: dom$Type ::
       { dom$Type$special$Nullable(t) }
       dom$Type$isSubtype(t, dom$Type$special$Nullable(t)))
   }
 
-  axiom {
+  axiom dom$Type$nullable_covariant {
     (forall t: dom$Type, t2: dom$Type ::
       { dom$Type$isSubtype(dom$Type$special$Nullable(t), dom$Type$special$Nullable(t2)) }
       dom$Type$isSubtype(t, t2) ==>
       dom$Type$isSubtype(dom$Type$special$Nullable(t), dom$Type$special$Nullable(t2)))
   }
 
-  axiom {
-    (forall t: dom$Type ::
-      { dom$Type$isSubtype(dom$Type$Nothing(), t) }
-      dom$Type$isSubtype(dom$Type$Nothing(), t))
+  axiom dom$Type$nothing_bottom {
+    (forall t: dom$Type ::dom$Type$isSubtype(dom$Type$Nothing(), t))
+  }
+
+  axiom dom$Type$nullable_any_top {
+    (forall t: dom$Type ::dom$Type$isSubtype(t, dom$Type$special$Nullable(dom$Type$Any())))
   }
 
   axiom {
@@ -260,13 +256,13 @@ domain dom$TypeOf[T]  {
 
   function dom$TypeOf$typeOf(x: T): dom$Type
 
-  axiom {
+  axiom dom$TypeOf$type_of_int {
     (forall i: Int ::
       { (dom$TypeOf$typeOf(i): dom$Type) }
       (dom$TypeOf$typeOf(i): dom$Type) == dom$Type$Int())
   }
 
-  axiom {
+  axiom dom$TypeOf$type_of_bool {
     (forall b: Bool ::
       { (dom$TypeOf$typeOf(b): dom$Type) }
       (dom$TypeOf$typeOf(b): dom$Type) == dom$Type$Boolean())
@@ -277,7 +273,7 @@ domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 
-  axiom {
+  axiom dom$Unit$type_of_unit {
     (forall u: dom$Unit ::
       { (dom$TypeOf$typeOf(u): dom$Type) }
       (dom$TypeOf$typeOf(u): dom$Type) == dom$Type$Unit())

@@ -81,12 +81,11 @@ const val TYPE_DOMAIN_NAME = "Type"
  *   // Axioms of the form isSubtype(ClassType(), AnyType())
  *
  *   axiom {
- *     forall t: Type :: { isSubtype(t, NullableType(AnyType())) }
- *       isSubtype(t, NullableType(AnyType()))
+ *     forall t: Type :: isSubtype(t, NullableType(AnyType()))
  *   }
  *
  *   axiom {
- *     (forall t: Type ::isSubtype(t, t))
+ *     (forall t: Type :: isSubtype(t, t))
  *   }
  *   axiom {
  *     (forall t: Type, t2: Type, t3: Type :: { isSubtype(t, t2), isSubtype(t2, t3) }
@@ -107,8 +106,7 @@ const val TYPE_DOMAIN_NAME = "Type"
  *   }
  *
  *   axiom {
- *     (forall t: Type :: { isSubtype(NothingType(), t) }
- *       isSubtype(NothingType(), t))
+ *     (forall t: Type :: isSubtype(NothingType(), t))
  *   }
  *
  *   // Axioms of the form isSubtype(ClassType(), superType)
@@ -138,6 +136,8 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
         fun classType(name: MangledName) = classTypeFunc(name)()
 
         private val t = Var("t", Type)
+        private val t2 = Var("t2", Type)
+        private val t3 = Var("t3", Type)
         private val isNullableTypeFunc = createDomainFunc("is_nullable_type", listOf(t.decl()), Bool)
         fun isNullableType(type: Exp) = isNullableTypeFunc(type)
 
@@ -151,142 +151,89 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
 
     override val functions: List<DomainFunc> = types + isSubtype + isNullableTypeFunc
 
-    private val nullableTypesNotNonNullable =
-        nonNullableTypes.map {
-            createAnonymousDomainAxiom(
-                Exp.Forall1(
-                    t.decl(),
-                    Exp.Trigger1(nullableTypeFunc(t.use())),
-                    Exp.NeCmp(nullableTypeFunc(t.use()), it())
-                )
-            )
-        }
-    private val t2 = Var("t2", Type)
-    private val nullableTypesDifferent =
-        createAnonymousDomainAxiom(
-            Exp.Forall(
-                listOf(t.decl(), t2.decl()),
-                emptyList(),
-                Exp.Implies(
-                    Exp.NeCmp(t.use(), t2.use()),
-                    Exp.NeCmp(nullableTypeFunc(t.use()), nullableTypeFunc(t2.use()))
-                )
-            )
-        )
-
-    private val isNullableNonNullable =
-        nonNullableTypes.map {
-            createAnonymousDomainAxiom(
-                Exp.Not(isNullableType(it()))
-            )
-        }
-    private val isNullableNullable =
-        createAnonymousDomainAxiom(
-            Exp.Companion.Forall1(
-                t.decl(),
-                Exp.Trigger1(
-                    nullableType(t.use())
-                ),
-                isNullableType(nullableType(t.use()))
-            )
-        )
-
-    private val subtypeReflexive =
-        createAnonymousDomainAxiom(
-            Exp.Forall1(
-                t.decl(),
-                isSubtype(t.use(), t.use())
-            )
-        )
-    private val t3 = Var("t3", Type)
-    private val subtypeTransitive =
-        createAnonymousDomainAxiom(
-            Exp.Forall(
-                listOf(t.decl(), t2.decl(), t3.decl()),
-                listOf(Exp.Trigger(listOf(isSubtype(t.use(), t2.use()), isSubtype(t2.use(), t3.use())))),
-                Exp.Implies(
-                    Exp.And(isSubtype(t.use(), t2.use()), isSubtype(t2.use(), t3.use())),
-                    isSubtype(t.use(), t3.use())
-                )
-            )
-        )
-    private val subtypeAntiSymmetric =
-        createAnonymousDomainAxiom(
-            Exp.Forall(
-                listOf(t.decl(), t2.decl()),
-                listOf(Exp.Trigger(listOf(isSubtype(t.use(), t2.use()), isSubtype(t2.use(), t.use())))),
-                Exp.Implies(
-                    Exp.And(
-                        isSubtype(t.use(), t2.use()),
-                        isSubtype(t2.use(), t.use())
-                    ),
-                    Exp.EqCmp(t.use(), t2.use())
-                )
-            )
-        )
-
-    private val nonNullableSubtypeNullable =
-        createAnonymousDomainAxiom(
-            Exp.Forall1(
-                t.decl(),
-                Exp.Trigger1(
-                    nullableType(t.use())
-                ),
-                isSubtype(t.use(), nullableType(t.use()))
-            )
-        )
-
-    private val nullableCovariant =
-        createAnonymousDomainAxiom(
-            Exp.Forall(
-                listOf(t.decl(), t2.decl()),
-                listOf(Exp.Trigger1(isSubtype(nullableTypeFunc(t.use()), nullableTypeFunc(t2.use())))),
-                Exp.Implies(
-                    isSubtype(t.use(), t2.use()),
-                    isSubtype(nullableTypeFunc(t.use()), nullableTypeFunc(t2.use()))
-                )
-            )
-        )
-
-    private val nothingBottom =
-        createAnonymousDomainAxiom(
-            Exp.Forall1(
-                t.decl(),
-                Exp.Trigger1(isSubtype(nothingType(), t.use())),
-                isSubtype(nothingType(), t.use())
-            )
-        )
-
-    private val nonNullableTypesSubtypeAny =
-        nonNullableTypes.map {
-            createAnonymousDomainAxiom(
-                isSubtype(it(), anyType())
-            )
-        }
-
-    private val nullableAnyTop =
-        createAnonymousDomainAxiom(
-            Exp.Forall1(
-                t.decl(),
-                Exp.Trigger1(
-                    isSubtype(t.use(), nullableType(anyType()))
-                ),
-                isSubtype(t.use(), nullableType(anyType()))
-            )
-        )
-
-    private val isSubtypeSuperType =
-        classes.flatMap { cls ->
-            cls.superTypes.map { superType ->
-                createAnonymousDomainAxiom(
-                    isSubtype(cls.runtimeType, superType.runtimeType)
-                )
+    override val axioms = AxiomListBuilder.build(this) {
+        nonNullableTypes.forEach { typeFunc ->
+            axiom {
+                Exp.forall(t) { t ->
+                    val exp = simpleTrigger { nullableType(t) }
+                    Exp.NeCmp(exp, typeFunc())
+                }
+            }
+            axiom {
+                Exp.Not(isNullableType(typeFunc()))
+            }
+            axiom {
+                isSubtype(typeFunc(), anyType())
             }
         }
-
-    override val axioms: List<DomainAxiom> =
-        nullableTypesNotNonNullable + isNullableNonNullable + isNullableNullable + nonNullableTypesSubtypeAny + nullableAnyTop + nullableTypesDifferent +
-                subtypeReflexive + subtypeTransitive + subtypeAntiSymmetric + nonNullableSubtypeNullable + nullableCovariant + nothingBottom + isSubtypeSuperType
+        axiom("nullable_injective") {
+            Exp.forall(t, t2) { t, t2 ->
+                assumption { Exp.NeCmp(t, t2) }
+                Exp.NeCmp(nullableType(t), nullableType(t2))
+            }
+        }
+        axiom("nullable_is_nullable") {
+            Exp.forall(t) { t ->
+                val exp = simpleTrigger { nullableType(t) }
+                isNullableType(exp)
+            }
+        }
+        axiom("subtype_reflexive") {
+            Exp.forall(t) { t -> isSubtype(t, t) }
+        }
+        axiom("subtype_transitive") {
+            Exp.forall(t, t2, t3) { t, t2, t3 ->
+                assumption {
+                    compoundTrigger {
+                        subTrigger { isSubtype(t, t2) }
+                        subTrigger { isSubtype(t2, t3) }
+                    }
+                }
+                isSubtype(t, t3)
+            }
+        }
+        axiom("subtype_antisymmetric") {
+            Exp.forall(t, t2) { t, t2 ->
+                assumption {
+                    compoundTrigger {
+                        subTrigger { isSubtype(t, t2) }
+                        subTrigger { isSubtype(t2, t) }
+                    }
+                }
+                Exp.EqCmp(t, t2)
+            }
+        }
+        axiom("nullable_supertype") {
+            Exp.forall(t) { t ->
+                val exp = simpleTrigger { nullableType(t) }
+                isSubtype(t, exp)
+            }
+        }
+        axiom("nullable_covariant") {
+            Exp.forall(t, t2) { t, t2 ->
+                val isSubtypeExp = simpleTrigger { isSubtype(nullableType(t), nullableType(t2)) }
+                assumption { isSubtype(t, t2) }
+                isSubtypeExp
+            }
+        }
+        axiom("nothing_bottom") {
+            Exp.forall(t) { t ->
+                isSubtype(nothingType(), t)
+            }
+        }
+        axiom("nullable_any_top") {
+            Exp.forall(t) { t ->
+                isSubtype(t, nullableType(anyType()))
+            }
+        }
+        classes.forEach { cls ->
+            cls.superTypes.forEach { superType ->
+                axiom {
+                    isSubtype(cls.runtimeType, superType.runtimeType)
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -295,12 +242,12 @@ class TypeDomain(classes: List<ClassTypeEmbedding>) : BuiltinDomain(TYPE_DOMAIN_
  * domain TypeOf[T]  {
  *   function typeOf(x: T): Type
  *
- *   axiom {
+ *   axiom type_of_int {
  *     forall x: Int :: { typeOf(x) }
  *       typeOf(x) == IntType()
  *   }
  *
- *   axiom {
+ *   axiom type_of_bool {
  *     forall x: Bool :: { typeOf(x) }
  *       typeOf(x) == BooleanType()
  *   }
@@ -321,33 +268,18 @@ object TypeOfDomain : BuiltinDomain("TypeOf") {
 
     override val functions: List<DomainFunc> = listOf(typeOfFunc)
 
-    private val intVar = Var("i", Type.Int)
-    private val typeOfInt = createAnonymousDomainAxiom(
-        Exp.Forall1(
-            intVar.decl(),
-            Exp.Trigger1(
-                typeOf(intVar.use())
-            ),
-            Exp.EqCmp(
-                typeOf(intVar.use()),
-                TypeDomain.intType()
-            )
-        )
-    )
-
-    private val boolVar = Var("b", Bool)
-    private val typeOfBoolean = createAnonymousDomainAxiom(
-        Exp.Forall1(
-            boolVar.decl(),
-            Exp.Trigger1(
-                typeOf(boolVar.use())
-            ),
-            Exp.EqCmp(
-                typeOf(boolVar.use()),
-                TypeDomain.booleanType()
-            )
-        )
-    )
-
-    override val axioms: List<DomainAxiom> = listOf(typeOfInt, typeOfBoolean)
+    override val axioms = AxiomListBuilder.build(this) {
+        axiom("type_of_int") {
+            Exp.forall(Var("i", Type.Int)) { i ->
+                val typeOfExp = simpleTrigger { typeOf(i) }
+                Exp.EqCmp(typeOfExp, TypeDomain.intType())
+            }
+        }
+        axiom("type_of_bool") {
+            Exp.forall(Var("b", Type.Bool)) { b ->
+                val typeOfExp = simpleTrigger { typeOf(b) }
+                Exp.EqCmp(typeOfExp, TypeDomain.booleanType())
+            }
+        }
+    }
 }

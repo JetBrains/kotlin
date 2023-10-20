@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.formver.viper.ast.*
  * domain Unit  {
  *   function element(): Unit
  *
- *   axiom {
+ *   axiom type_of_unit {
  *     forall u: Unit :: {typeOf(u)}
  *       typeOf(u) == UnitType()
  *   }
@@ -34,18 +34,12 @@ object UnitDomain : BuiltinDomain("Unit") {
 
     override val functions: List<DomainFunc> = listOf(elementFunc)
 
-    private val unitVar = Var("u", toType())
-    private val typeOfUnit = createAnonymousDomainAxiom(
-        Exp.Forall1(
-            unitVar.decl(),
-            Exp.Trigger1(
-                TypeOfDomain.typeOf(unitVar.use()),
-            ),
-            Exp.EqCmp(
-                TypeOfDomain.typeOf(unitVar.use()),
-                TypeDomain.unitType()
-            )
-        )
-    )
-    override val axioms: List<DomainAxiom> = listOf(typeOfUnit)
+    override val axioms = AxiomListBuilder.build(this) {
+        axiom("type_of_unit") {
+            Exp.forall(Var("u", toType())) { u ->
+                val exp = simpleTrigger { TypeOfDomain.typeOf(u) }
+                Exp.EqCmp(exp, TypeDomain.unitType())
+            }
+        }
+    }
 }
