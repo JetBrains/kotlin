@@ -1414,6 +1414,12 @@ internal class OperatorModifierRequiredImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OperatorModifierRequired
 
+internal class OperatorCallOnConstructorImpl(
+    override val name: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OperatorCallOnConstructor
+
 internal class InfixModifierRequiredImpl(
     override val functionSymbol: KtFunctionLikeSymbol,
     firDiagnostic: KtPsiDiagnostic,

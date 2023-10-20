@@ -673,14 +673,20 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
 internal object CheckCallModifiers : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (callInfo.callSite is FirFunctionCall) {
-            val functionSymbol = candidate.symbol as? FirNamedFunctionSymbol ?: return
-            when {
-                callInfo.callSite.origin == FirFunctionCallOrigin.Infix && !functionSymbol.fir.isInfix ->
-                    sink.reportDiagnostic(InfixCallOfNonInfixFunction(functionSymbol))
-                callInfo.callSite.origin == FirFunctionCallOrigin.Operator && !functionSymbol.fir.isOperator ->
-                    sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
-                callInfo.isImplicitInvoke && !functionSymbol.fir.isOperator ->
-                    sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
+            when (val functionSymbol = candidate.symbol) {
+                is FirNamedFunctionSymbol -> when {
+                    callInfo.callSite.origin == FirFunctionCallOrigin.Infix && !functionSymbol.fir.isInfix ->
+                        sink.reportDiagnostic(InfixCallOfNonInfixFunction(functionSymbol))
+                    callInfo.callSite.origin == FirFunctionCallOrigin.Operator && !functionSymbol.fir.isOperator ->
+                        sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
+                    callInfo.isImplicitInvoke && !functionSymbol.fir.isOperator ->
+                        sink.reportDiagnostic(OperatorCallOfNonOperatorFunction(functionSymbol))
+                }
+                is FirConstructorSymbol -> {
+                    if (callInfo.callSite.origin == FirFunctionCallOrigin.Operator) {
+                        sink.reportDiagnostic(OperatorCallOfConstructor(functionSymbol))
+                    }
+                }
             }
         }
     }

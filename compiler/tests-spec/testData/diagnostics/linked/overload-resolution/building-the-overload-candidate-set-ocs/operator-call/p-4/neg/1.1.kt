@@ -151,12 +151,12 @@ package testPackCase5
 class Case5() {
 
     fun f(c: Case5){
-        this <!OPERATOR_MODIFIER_REQUIRED!>+<!> 1 //OPERATOR_MODIFIER_REQUIRED for class plus, resolved to (1)
-        c <!OPERATOR_MODIFIER_REQUIRED!>+<!> 1 //OPERATOR_MODIFIER_REQUIRED for class plus, resolved to (1)
+        this <!OPERATOR_MODIFIER_REQUIRED!>+<!> 1 // OPERATOR_CALL_ON_CONSTRUCTOR/OPERATOR_MODIFIER_REQUIRED for class plus, resolved to (1)
+        c <!OPERATOR_MODIFIER_REQUIRED!>+<!> 1 // OPERATOR_CALL_ON_CONSTRUCTOR/OPERATOR_MODIFIER_REQUIRED for class plus, resolved to (1)
     }
 
-    inner class  plus constructor(val i:Int){
-        operator fun invoke(i:Int) {}  //(1)
+    inner class plus /* (1) */ constructor(val i:Int){
+        operator fun invoke(i:Int) {}
     }
 }
 

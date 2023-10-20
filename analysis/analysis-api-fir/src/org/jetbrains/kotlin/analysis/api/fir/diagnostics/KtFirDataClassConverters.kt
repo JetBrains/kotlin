@@ -1636,6 +1636,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.OPERATOR_CALL_ON_CONSTRUCTOR) { firDiagnostic ->
+        OperatorCallOnConstructorImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INFIX_MODIFIER_REQUIRED) { firDiagnostic ->
         InfixModifierRequiredImpl(
             firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firDiagnostic.a),

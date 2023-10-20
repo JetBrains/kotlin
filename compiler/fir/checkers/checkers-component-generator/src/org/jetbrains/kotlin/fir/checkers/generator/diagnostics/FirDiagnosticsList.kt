@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -42,7 +41,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Inco
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.PrivateForInline
-import java.util.Optional
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
 
@@ -496,6 +494,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val OPERATOR_MODIFIER_REQUIRED by error<PsiElement> {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
+            parameter<String>("name")
+        }
+        val OPERATOR_CALL_ON_CONSTRUCTOR by error<PsiElement> {
             parameter<String>("name")
         }
         val INFIX_MODIFIER_REQUIRED by error<PsiElement> {

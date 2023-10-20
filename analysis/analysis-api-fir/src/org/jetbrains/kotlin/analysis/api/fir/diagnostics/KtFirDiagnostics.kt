@@ -1182,6 +1182,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val name: String
     }
 
+    interface OperatorCallOnConstructor : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OperatorCallOnConstructor::class
+        val name: String
+    }
+
     interface InfixModifierRequired : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InfixModifierRequired::class
         val functionSymbol: KtFunctionLikeSymbol

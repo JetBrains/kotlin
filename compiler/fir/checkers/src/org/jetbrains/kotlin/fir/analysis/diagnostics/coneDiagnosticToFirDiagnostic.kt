@@ -330,6 +330,7 @@ private fun mapInapplicableCandidateError(
             is OperatorCallOfNonOperatorFunction ->
                 FirErrors.OPERATOR_MODIFIER_REQUIRED.createOn(source, rootCause.function, rootCause.function.name.asString())
 
+            is OperatorCallOfConstructor -> FirErrors.OPERATOR_CALL_ON_CONSTRUCTOR.createOn(source, rootCause.constructor.name.asString())
             is UnstableSmartCast -> FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
                 rootCause.argument.source,
                 rootCause.targetType,
