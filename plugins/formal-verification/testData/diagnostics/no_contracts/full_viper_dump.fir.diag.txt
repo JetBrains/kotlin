@@ -76,6 +76,14 @@ domain dom$Nullable[T]  {
       nx == (dom$Nullable$null(): dom$Nullable[T]) ||
       dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType))
   }
+
+  axiom dom$Nullable$null_not_any {
+    (forall nx: dom$Nullable[T], newType: dom$Type ::
+      { dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType) }
+      !dom$Type$is_nullable_type(newType) &&
+      nx == (dom$Nullable$null(): dom$Nullable[T]) ==>
+      !dom$Type$isSubtype((dom$TypeOf$typeOf(nx): dom$Type), newType))
+  }
 }
 
 domain dom$Type  {

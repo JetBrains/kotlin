@@ -54,6 +54,13 @@ import org.jetbrains.kotlin.formver.viper.ast.*
  *         (nx == (null_val(): Nullable[T])) ||
  *         isSubtype((typeOf(nx): Type), newType)
  *   }
+ *
+ *   axiom null_not_any {
+ *      (forall nx: Nullable[T], newType: Type ::
+ *        { isSubtype((typeOf(nx): Type), newType) }
+ *        !is_nullable_type(newType) && nx == (null_val(): Nullable[T]) ==>
+ *          !isSubtype((typeOf(nx): Type), newType))
+ *   }
  * }
  * ```
  */
@@ -134,6 +141,14 @@ object NullableDomain : BuiltinDomain("Nullable") {
                     Exp.EqCmp(nx, nullVal(T)),
                     TypeDomain.isSubtype(TypeOfDomain.typeOf(nx), newType)
                 )
+            }
+        }
+        axiom("null_not_any") {
+            Exp.forall(nxVar, newType) { nx, newType ->
+                val isSubsetExp = simpleTrigger { TypeDomain.isSubtype(TypeOfDomain.typeOf(nx), newType) }
+                assumption { Exp.Not(TypeDomain.isNullableType(newType)) }
+                assumption { Exp.EqCmp(nx, nullVal(T)) }
+                Exp.Not(isSubsetExp)
             }
         }
     }

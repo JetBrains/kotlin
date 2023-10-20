@@ -26,6 +26,7 @@ class IntHolder(val x: Int)
 fun <!VIPER_TEXT!>getX<!>(a: Any): Int? {
     contract {
         returnsNotNull() implies (a is IntHolder)
+        returns(null) implies (a !is IntHolder)
     }
     return (a as? IntHolder)?.x
 }

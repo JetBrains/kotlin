@@ -36,6 +36,8 @@ method global$fun_getX$fun_take$T_Any$return$NT_Int(local$a: dom$Any)
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   ensures ret != (dom$Nullable$null(): dom$Nullable[Int]) ==>
     dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$global$class_IntHolder())
+  ensures ret == (dom$Nullable$null(): dom$Nullable[Int]) ==>
+    !dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$global$class_IntHolder())
 {
   var anonymous$0: dom$Nullable[Ref]
   var anonymous$1: dom$Nullable[Int]

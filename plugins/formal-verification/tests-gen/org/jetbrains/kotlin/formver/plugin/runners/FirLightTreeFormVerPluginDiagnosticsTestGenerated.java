@@ -34,6 +34,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("as_type_contract.kt")
+        public void testAs_type_contract() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/as_type_contract.kt");
+        }
+
+        @Test
         @TestMetadata("binary_search.kt")
         public void testBinary_search() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/binary_search.kt");
