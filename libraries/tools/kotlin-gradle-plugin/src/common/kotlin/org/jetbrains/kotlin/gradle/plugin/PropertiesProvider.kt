@@ -456,13 +456,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
 
     val preciseCompilationResultsBackup: Boolean
-        get() = booleanProperty(KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP) ?: false
+        get() = booleanProperty(KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP) ?: true
 
     /**
      * This property should be enabled together with [preciseCompilationResultsBackup]
      */
     val keepIncrementalCompilationCachesInMemory: Boolean
-        get() = booleanProperty(KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY) ?: false
+        get() = booleanProperty(KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY) ?: true
 
     val createDefaultMultiplatformPublications: Boolean
         get() = booleanProperty(KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS) ?: true
