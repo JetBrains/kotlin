@@ -111,5 +111,5 @@ fun <I : A> incompatibleEnumAndUnrelatedInterfaceThroughTypeParameter(x: G?, i: 
 }
 
 fun incompatibleEnumAndUnrelatedInterface(x: G?, i: A?) {
-    <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>x == i<!>
+    <!INCOMPATIBLE_ENUM_COMPARISON!>x == i<!>
 }
