@@ -147,8 +147,10 @@ internal fun KtLightElement<*, *>.isOriginEquivalentTo(that: PsiElement?): Boole
     return kotlinOrigin?.isEquivalentTo(that) == true
 }
 
-internal fun KtAnalysisSession.getTypeNullability(ktType: KtType): NullabilityType {
-    if (ktType is KtClassErrorType) return NullabilityType.NotNull
+internal fun KtAnalysisSession.getTypeNullability(type: KtType): NullabilityType {
+    if (type is KtClassErrorType) return NullabilityType.NotNull
+
+    val ktType = type.fullyExpandedType
     if (ktType.nullabilityType != NullabilityType.NotNull) return ktType.nullabilityType
 
     if (ktType.isUnit) return NullabilityType.NotNull
