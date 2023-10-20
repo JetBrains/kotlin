@@ -20,60 +20,67 @@ class UIComparatorFrame : JFrame() {
         """.trimIndent()
     }
 
-    val mainCodeEditor = codeEditorArea(INITIAL_SOURCE)
-    val k1CodeViewer = codeEditorArea().apply {
+    private val mainCodeEditor = codeEditorArea(INITIAL_SOURCE)
+    private val leftCodeViewer = codeEditorArea().apply {
         isEditable = false
-//        document = mainCodeEditor.document
-        // TODO: slow
-        text = recalculateSourceForK1(INITIAL_SOURCE)
         caret = CaretWithoutVisibilityAdjustment()
     }
-    val k2CodeViewer = codeEditorArea().apply {
+    private val rightCodeViewer = codeEditorArea().apply {
         isEditable = false
-//        document = mainCodeEditor.document
-        text = recalculateSourceForK2(INITIAL_SOURCE)
         caret = CaretWithoutVisibilityAdjustment()
     }
 
-    val scrollPaneSynchronizer = ScrollPaneSynchronizer()
+    private val scrollPaneSynchronizer = ScrollPaneSynchronizer()
 
     init {
-        initialize()
+        setTitle(TITLE)
+        defaultCloseOperation = EXIT_ON_CLOSE
+        setSize(1200, 600)
+
+        contentPane.apply {
+            layout = GridLayout(1, 3, PANES_GAP, PANES_GAP)
+            add(scrollPaneSynchronizer.createScrollPaneFor(leftCodeViewer))
+            add(scrollPaneSynchronizer.createScrollPaneFor(mainCodeEditor))
+            add(scrollPaneSynchronizer.createScrollPaneFor(rightCodeViewer))
+
+            (this as? JComponent)?.border = BorderFactory.createEmptyBorder(PANES_GAP, PANES_GAP, PANES_GAP, PANES_GAP)
+
+            mainCodeEditor.document.addDocumentListener(SameActionDocumentListener {
+                mainCodeChangeListeners.forEach { it() }
+            })
+
+            background = Color(247, 248, 250)
+        }
     }
-}
 
-fun UIComparatorFrame.initialize() {
-    setTitle(UIComparatorFrame.TITLE)
-    defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-    setSize(1200, 600)
+    private val mainCodeChangeListeners = mutableListOf<() -> Unit>()
 
-    contentPane.apply {
-        layout = GridLayout(1, 3, UIComparatorFrame.PANES_GAP, UIComparatorFrame.PANES_GAP)
-        add(scrollPaneSynchronizer.createScrollPaneFor(k1CodeViewer))
-        add(scrollPaneSynchronizer.createScrollPaneFor(mainCodeEditor))
-        add(scrollPaneSynchronizer.createScrollPaneFor(k2CodeViewer))
+    fun addMainCodeChangeListener(callback: () -> Unit) {
+        mainCodeChangeListeners.add(callback)
+    }
 
-        (this as? JComponent)?.border = BorderFactory.createEmptyBorder(
-            UIComparatorFrame.PANES_GAP,
-            UIComparatorFrame.PANES_GAP,
-            UIComparatorFrame.PANES_GAP,
-            UIComparatorFrame.PANES_GAP
-        )
+    val mainCode: String get() = mainCodeEditor.text
 
-        mainCodeEditor.document.addDocumentListener(SameActionDocumentListener {
-            k1CodeViewer.text = recalculateSourceForK1(mainCodeEditor.text)
-            k2CodeViewer.text = recalculateSourceForK2(mainCodeEditor.text)
-        })
+    fun setLeftCode(text: String) {
+        leftCodeViewer.text = text
+    }
 
-        background = Color(247, 248, 250)
+    fun setRightCode(text: String) {
+        rightCodeViewer.text = text
     }
 }
 
 fun recalculateSourceForK1(source: String) = source.replace("[a-zA-Z]".toRegex(), "a")
 fun recalculateSourceForK2(source: String) = source.replace("[a-zA-Z]".toRegex(), "b")
 
-fun main() {
-    EventQueue.invokeLater {
-        spawn(::UIComparatorFrame)
+fun main() = EventQueue.invokeLater {
+    spawn(::UIComparatorFrame).apply {
+        setLeftCode(recalculateSourceForK1(mainCode))
+        setRightCode(recalculateSourceForK2(mainCode))
+
+        addMainCodeChangeListener {
+            setLeftCode(recalculateSourceForK1(mainCode))
+            setRightCode(recalculateSourceForK2(mainCode))
+        }
     }
 }
