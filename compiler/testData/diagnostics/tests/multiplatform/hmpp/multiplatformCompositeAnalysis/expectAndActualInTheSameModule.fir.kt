@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // MODULE: common
 // TARGET_PLATFORM: Common
 

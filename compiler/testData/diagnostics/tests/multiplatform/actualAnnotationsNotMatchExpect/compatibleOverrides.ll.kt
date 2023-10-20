@@ -14,5 +14,5 @@ expect class CompatibleOverrides {
 actual class CompatibleOverrides {
     actual fun foo() {}
 
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>(withArg: Any) {}<!>
+    actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>foo<!>(withArg: Any) {}
 }

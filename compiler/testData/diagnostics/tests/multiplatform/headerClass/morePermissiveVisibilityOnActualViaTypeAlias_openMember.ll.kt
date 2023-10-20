@@ -2,9 +2,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect open class Container {
-    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>internal open fun internalFun()<!>
-}<!>
+expect open class Container {
+    internal open fun internalFun()
+}
 
 // MODULE: m2-jvm()()(m1-common)
 

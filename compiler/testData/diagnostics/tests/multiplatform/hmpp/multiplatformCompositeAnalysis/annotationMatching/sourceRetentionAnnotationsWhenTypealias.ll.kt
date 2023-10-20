@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// Bug KT-62886
+// LL_FIR_DIVERGENCE
 // FIR_IDENTICAL
 // WITH_STDLIB
 // MODULE: common
@@ -12,4 +15,4 @@ expect annotation class CommonVolatile
 @Retention(AnnotationRetention.SOURCE)
 actual annotation class Ann
 
-actual typealias CommonVolatile = kotlin.jvm.Volatile
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>CommonVolatile<!> = kotlin.jvm.Volatile

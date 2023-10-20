@@ -3,9 +3,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class Mode {
+expect enum class Mode {
     Throughput, AverageTime
-}<!>
+}
 
 expect annotation class BenchmarkMode(vararg val value: Mode)
 

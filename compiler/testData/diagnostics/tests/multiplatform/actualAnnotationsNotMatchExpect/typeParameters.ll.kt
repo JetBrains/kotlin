@@ -13,15 +13,15 @@ expect class ViaTypealias<@Ann A>
 
 expect class TypealiasParamNotAccepted<@Ann A>
 
-<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun <@Ann A, @Ann B> withIncompatibility()<!>
+expect fun <@Ann A, @Ann B> withIncompatibility()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <A> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inMethod<!>() {}<!>
+actual fun <A> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inMethod<!>() {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <@Ann A, B> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inMethodTwoParams<!>() {}<!>
+actual fun <@Ann A, B> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inMethodTwoParams<!>() {}
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>InClass<!><A><!>
+actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>InClass<!><A>
 
 class ViaTypealiasImpl<@Ann A>
 
@@ -29,6 +29,6 @@ actual typealias ViaTypealias<A> = ViaTypealiasImpl<A>
 
 class TypealiasParamNotAcceptedImpl<A>
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>TypealiasParamNotAccepted<!><@Ann A> = TypealiasParamNotAcceptedImpl<A><!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>TypealiasParamNotAccepted<!><@Ann A> = TypealiasParamNotAcceptedImpl<A>
 
 actual fun <A> <!ACTUAL_WITHOUT_EXPECT!>withIncompatibility<!>() {}

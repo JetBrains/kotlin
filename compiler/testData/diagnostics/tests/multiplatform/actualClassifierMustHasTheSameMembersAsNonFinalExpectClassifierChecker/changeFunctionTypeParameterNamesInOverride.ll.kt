@@ -5,7 +5,7 @@ open class Base {
     open fun <T> foo(t: T) {}
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect open class Foo : Base<!>
+expect open class Foo : Base
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

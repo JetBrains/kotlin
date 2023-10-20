@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// UNRESOLVED_REFERENCE on MyOptIn is due to bug KT-61757
+// LL_FIR_DIVERGENCE
 // WITH_STDLIB
 // MODULE: m1-common
 // FILE: common.kt
@@ -14,10 +17,10 @@ annotation class MyOptIn
 @Deprecated(message = "Some text")
 @DeprecatedSinceKotlin("1.8")
 @Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
-@MyOptIn
-@WasExperimental(MyOptIn::class)
+@<!UNRESOLVED_REFERENCE!>MyOptIn<!>
+@WasExperimental(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>MyOptIn<!>::class<!>)
 @kotlin.internal.RequireKotlin(version = "1.8")
-@OptIn(MyOptIn::class)
+@OptIn(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!><!UNRESOLVED_REFERENCE!>MyOptIn<!>::class<!>)
 expect fun skippedAnnotationsOnExpectOnly()
 
 @OptIn(ExperimentalMultiplatform::class)
@@ -29,8 +32,8 @@ expect class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
 package kotlin
 
 @OptIn(ExperimentalMultiplatform::class)
-actual annotation class OptionalExpectationOnExpectOnly
+actual annotation class <!ACTUAL_WITHOUT_EXPECT, ACTUAL_WITHOUT_EXPECT!>OptionalExpectationOnExpectOnly<!>
 
-actual fun skippedAnnotationsOnExpectOnly() {}
+actual fun <!ACTUAL_WITHOUT_EXPECT!>skippedAnnotationsOnExpectOnly<!>() {}
 
-actual class ImplicitlyActualizedByJvmDeclarationOnExpectOnly
+actual class <!ACTUAL_WITHOUT_EXPECT!>ImplicitlyActualizedByJvmDeclarationOnExpectOnly<!>

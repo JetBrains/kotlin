@@ -5,9 +5,9 @@
 open class Base {
     internal open fun foo() {}
 }
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Foo : Base {
-    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>override fun foo()<!>
-}<!>
+expect class Foo : Base {
+    override fun foo()
+}
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

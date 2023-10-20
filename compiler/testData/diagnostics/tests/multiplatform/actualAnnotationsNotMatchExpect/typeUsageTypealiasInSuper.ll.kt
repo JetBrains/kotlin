@@ -11,4 +11,4 @@ expect class Foo: @Ann I
 // FILE: jvm.kt
 typealias ITypealias = I
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> : ITypealias<!>
+actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>Foo<!> : ITypealias

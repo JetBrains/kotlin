@@ -48,35 +48,35 @@ expect class InnerClassInsideTypealias {
 // FILE: jvm.kt
 class KtTypealiasNotMatchImpl
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>KtTypealiasNotMatch<!> = KtTypealiasNotMatchImpl<!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>KtTypealiasNotMatch<!> = KtTypealiasNotMatchImpl
 
 class AnnotationsNotConsideredOnTypealiasImpl
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>@Ann
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>AnnotationsNotConsideredOnTypealias<!> = AnnotationsNotConsideredOnTypealiasImpl<!>
+@Ann
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>AnnotationsNotConsideredOnTypealias<!> = AnnotationsNotConsideredOnTypealiasImpl
 
 class MethodsInsideTypealiasImpl {
     fun foo() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MethodsInsideTypealias<!> = MethodsInsideTypealiasImpl<!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MethodsInsideTypealias<!> = MethodsInsideTypealiasImpl
 
 class ValueInsideTypealiasImpl {
     val value: String = ""
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ValueInsideTypealias<!> = ValueInsideTypealiasImpl<!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ValueInsideTypealias<!> = ValueInsideTypealiasImpl
 
 class ConstructorInsideTypealiasImpl
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ConstructorInsideTypealias<!> = ConstructorInsideTypealiasImpl<!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ConstructorInsideTypealias<!> = ConstructorInsideTypealiasImpl
 
 class MethodWithComplexAnnInsideTypealiasImpl {
     @ComplexAnn("13")
     fun withComplexAnn() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias MethodWithComplexAnnInsideTypealias = MethodWithComplexAnnInsideTypealiasImpl<!>
+actual typealias MethodWithComplexAnnInsideTypealias = MethodWithComplexAnnInsideTypealiasImpl
 
 class InnerClassInsideTypealiasImpl {
     class Foo {
@@ -84,4 +84,4 @@ class InnerClassInsideTypealiasImpl {
     }
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>InnerClassInsideTypealias<!> = InnerClassInsideTypealiasImpl<!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>InnerClassInsideTypealias<!> = InnerClassInsideTypealiasImpl

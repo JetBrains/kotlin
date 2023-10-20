@@ -1,3 +1,6 @@
+// LL_FIR_DIVERGENCE
+// Bug KT-62886
+// LL_FIR_DIVERGENCE
 // WITH_STDLIB
 // DIAGNOSTICS: -ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION
 // MODULE: m1-common
@@ -20,6 +23,6 @@ class SourceAvailableImpl {
     fun foo() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>SourceAvailable<!> = SourceAvailableImpl<!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>SourceAvailable<!> = SourceAvailableImpl
 
-actual typealias FromLib = kotlin.SinceKotlin
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>FromLib<!> = kotlin.SinceKotlin

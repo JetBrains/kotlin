@@ -36,8 +36,8 @@ expect abstract class MyAbstractIterator<T> {
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias MyDeprecatedNotMatch = kotlin.Deprecated<!>
+actual typealias MyDeprecatedNotMatch = kotlin.Deprecated
 
 actual typealias MyDeprecatedMatch = kotlin.Deprecated
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MyAbstractIterator<!><T> = AbstractIterator<T><!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MyAbstractIterator<!><T> = AbstractIterator<T>

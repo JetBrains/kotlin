@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect annotation class A<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>(vararg val x: String)<!><!>
+expect annotation class A(vararg val x: String)
 
 @A("abc", "foo", "bar")
 fun test() {}

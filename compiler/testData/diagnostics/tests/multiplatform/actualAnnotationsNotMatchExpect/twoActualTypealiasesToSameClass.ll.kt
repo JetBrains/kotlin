@@ -17,5 +17,5 @@ class Impl {
     fun foo() {}
 }
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>WithAnn<!> = Impl<!>
+actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>WithAnn<!> = Impl
 actual typealias WithoutAnn = Impl

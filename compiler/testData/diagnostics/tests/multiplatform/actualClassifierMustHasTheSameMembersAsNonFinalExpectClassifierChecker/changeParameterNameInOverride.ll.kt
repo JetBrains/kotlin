@@ -5,7 +5,7 @@ open class Base {
     open fun foo(param: Int) {}
 }
 
-<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect open class Foo1 : Base<!>
+expect open class Foo1 : Base
 expect open class Foo2 : Base
 expect open class Foo3 {
     open fun foo(param: Int)
