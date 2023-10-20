@@ -55,6 +55,7 @@ internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
             referencedSymbolRenderer = FirIdRendererBasedSymbolRenderer(),
             resolvedNamedReferenceRenderer = FirResolvedNamedReferenceRenderer(),
             resolvedQualifierRenderer = FirResolvedQualifierRenderer(),
+            getClassCallRenderer = FirGetClassCallRendererForReadability(),
         ).renderElementAsString(ann, trim = true)
     }
 }
