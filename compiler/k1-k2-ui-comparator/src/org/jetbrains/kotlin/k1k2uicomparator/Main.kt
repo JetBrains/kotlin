@@ -39,9 +39,10 @@ class UIComparatorFrame : JFrame() {
 
         contentPane.apply {
             layout = GridLayout(1, 3, PANES_GAP, PANES_GAP)
-            add(scrollPaneSynchronizer.createScrollPaneFor(leftCodeViewer))
-            add(scrollPaneSynchronizer.createScrollPaneFor(mainCodeEditor))
-            add(scrollPaneSynchronizer.createScrollPaneFor(rightCodeViewer))
+
+            add(scrollPaneSynchronizer.createScrollPaneFor(leftCodeViewer).withTitle("K1"))
+            add(scrollPaneSynchronizer.createScrollPaneFor(mainCodeEditor).withTitle("Clear Source"))
+            add(scrollPaneSynchronizer.createScrollPaneFor(rightCodeViewer).withTitle("K2"))
 
             (this as? JComponent)?.border = BorderFactory.createEmptyBorder(PANES_GAP, PANES_GAP, PANES_GAP, PANES_GAP)
 
