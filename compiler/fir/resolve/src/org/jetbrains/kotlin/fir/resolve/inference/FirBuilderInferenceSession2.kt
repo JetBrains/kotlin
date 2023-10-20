@@ -173,6 +173,7 @@ class FirBuilderInferenceSession2(
         if (this is FirWrappedArgumentExpression) return expression.isLambda()
         if (this is FirAnonymousFunctionExpression) return true
         if (this is FirCallableReferenceAccess) return true
+        if (this is FirAnonymousObjectExpression) return true
         return false
     }
 

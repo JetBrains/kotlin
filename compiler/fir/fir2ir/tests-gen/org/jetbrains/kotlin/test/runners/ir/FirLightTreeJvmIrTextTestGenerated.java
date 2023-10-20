@@ -3213,6 +3213,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
         }
 
         @Test
+        @TestMetadata("noSyntheticTypeParameterLeftAfterPCLA.kt")
+        public void testNoSyntheticTypeParameterLeftAfterPCLA() throws Exception {
+            runTest("compiler/testData/ir/irText/regressions/noSyntheticTypeParameterLeftAfterPCLA.kt");
+        }
+
+        @Test
         @TestMetadata("typeAliasCtorForGenericClass.kt")
         public void testTypeAliasCtorForGenericClass() throws Exception {
             runTest("compiler/testData/ir/irText/regressions/typeAliasCtorForGenericClass.kt");
