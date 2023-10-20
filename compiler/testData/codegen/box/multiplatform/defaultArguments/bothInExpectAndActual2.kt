@@ -21,8 +21,6 @@ actual interface I {
     actual fun test(source: String = "actual")
 }
 
-@OptIn(ExperimentalMultiplatform::class)
-@AllowDifferentMembersInActual
 actual interface J : I {
     override fun test(source: String) {
         if (source != "actual") throw AssertionError(source)

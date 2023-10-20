@@ -16,14 +16,14 @@ expect open class Foo : Transitive {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual open class Base<T> {
-    actual fun existingMethodInBase(param: T) {}
-    open fun injected(param: T): Any = ""
+actual typealias Base<T> = BaseImpl<T>
+
+open class BaseImpl<T> {
+    fun existingMethodInBase(param: T) {}
+    fun injected() {}
 }
 
 actual open class Foo : Transitive() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
-
-    override fun injected(param: String): String = "" // covariant override
 }

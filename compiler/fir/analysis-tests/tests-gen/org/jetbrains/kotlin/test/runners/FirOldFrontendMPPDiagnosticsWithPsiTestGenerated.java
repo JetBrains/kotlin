@@ -365,18 +365,6 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
-        @TestMetadata("allowDifferentMembersInActual_class.kt")
-        public void testAllowDifferentMembersInActual_class() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/allowDifferentMembersInActual_class.kt");
-        }
-
-        @Test
-        @TestMetadata("allowDifferentMembersInActual_typealias.kt")
-        public void testAllowDifferentMembersInActual_typealias() throws Exception {
-            runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/allowDifferentMembersInActual_typealias.kt");
-        }
-
-        @Test
         @TestMetadata("changeClassTypeParameterNames.kt")
         public void testChangeClassTypeParameterNames() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/actualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker/changeClassTypeParameterNames.kt");
