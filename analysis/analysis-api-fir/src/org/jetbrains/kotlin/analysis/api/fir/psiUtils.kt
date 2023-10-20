@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverridesOrDelegated
 
 private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.FromUseSiteTarget,
@@ -33,8 +36,13 @@ internal fun FirElement.getAllowedPsi() = when (val source = source) {
 fun FirElement.findPsi(): PsiElement? =
     getAllowedPsi()
 
-fun FirBasedSymbol<*>.findPsi(): PsiElement? =
-    fir.findPsi() ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(fir)
+fun FirBasedSymbol<*>.findPsi(): PsiElement? {
+    return if (this is FirCallableSymbol<*>) {
+        fir.unwrapFakeOverridesOrDelegated().findPsi()
+    } else {
+        fir.findPsi()
+    } ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(fir)
+}
 
 /**
  * Finds [PsiElement] which will be used as go-to referenced element for [KtPsiReference]
@@ -42,5 +50,9 @@ fun FirBasedSymbol<*>.findPsi(): PsiElement? =
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
 fun FirDeclaration.findReferencePsi(): PsiElement? {
-    return psi ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(this)
+    return if (this is FirCallableDeclaration) {
+        unwrapFakeOverridesOrDelegated().psi
+    } else {
+        psi
+    } ?: FirSyntheticFunctionInterfaceSourceProvider.findPsi(this)
 }
