@@ -73,9 +73,6 @@ class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
     @Disabled("Doesn't make sense in Kapt 4")
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
 
-    @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")
-    override fun testMPPKaptPresence(gradleVersion: GradleVersion) {}
-
     @Disabled("Incremental compilation doesn't work in 2.0")
     override fun testSimpleWithIC(gradleVersion: GradleVersion) {}
 
