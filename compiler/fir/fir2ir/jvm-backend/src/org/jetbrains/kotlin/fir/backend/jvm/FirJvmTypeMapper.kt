@@ -136,8 +136,8 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             return when (val symbol = lookupTag.toSymbol(session)) {
                 is FirRegularClassSymbol -> buildPossiblyInnerType(symbol, 0)
                 is FirTypeAliasSymbol -> {
-                    val expandedType = fullyExpandedType(session) as? ConeClassLikeType
-                    val classSymbol = expandedType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
+                    val expandedType = fullyExpandedType(session)
+                    val classSymbol = expandedType.lookupTag.toSymbol(session) as? FirRegularClassSymbol
                     classSymbol?.let { expandedType.buildPossiblyInnerType(it, 0) }
                 }
                 else -> null

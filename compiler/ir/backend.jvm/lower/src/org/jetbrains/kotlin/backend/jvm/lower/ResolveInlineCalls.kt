@@ -39,7 +39,7 @@ class ResolveInlineCalls(val context: JvmBackendContext) : IrElementVisitorVoid,
         expression.acceptChildren(this, null)
 
         if (!expression.symbol.owner.isInlineFunctionCall(context)) return
-        val maybeFakeOverrideOfMultiFileBridge = expression.symbol.owner as? IrSimpleFunction ?: return
+        val maybeFakeOverrideOfMultiFileBridge = expression.symbol.owner
         val resolved =
             maybeFakeOverrideOfMultiFileBridge.resolveMultiFileFacadeMember() ?: maybeFakeOverrideOfMultiFileBridge.resolveFakeOverride()
             ?: return

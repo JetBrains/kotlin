@@ -36,8 +36,7 @@ abstract class AbstractRendererTest : AbstractAnalysisApiSingleFileTest() {
             buildString {
                 ktFile.declarations.forEach { declaration ->
                     analyseForTest(declaration) {
-                        val symbol = declaration.getSymbol() as? KtDeclarationSymbol ?: return@analyseForTest
-                        append(symbol.render(renderer))
+                        append(declaration.getSymbol().render(renderer))
                         appendLine()
                         appendLine()
                     }

@@ -137,7 +137,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
 
 private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
     if (receiver == null || receiver is JsThisRef) return false
-    val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
+    val simpleFunction = call.symbol.owner
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
 
     if (call.origin === JsStatementOrigins.EXPLICIT_INVOKE) return false

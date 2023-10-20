@@ -31,8 +31,8 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
     val purgeUserLibs = arguments.purgeUserLibs
     val nopack = arguments.nopack
     val temporaryFilesDir = arguments.tempDir
-    val moduleName = (arguments as? CInteropArguments)?.moduleName
-    val shortModuleName = (arguments as? CInteropArguments)?.shortModuleName
+    val moduleName = arguments.moduleName
+    val shortModuleName = arguments.shortModuleName
 
     val buildDir = File("$outputFileName-build")
     val generatedDir = File(buildDir, "kotlin")

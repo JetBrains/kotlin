@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -362,9 +361,7 @@ private fun checkApplicabilityForArgumentType(
                     return ConeTypeIntersector.intersectTypes(context.session.typeContext, constraintTypes)
                 }
 
-                val originalTypeParameter =
-                    (lookupTag as? ConeTypeVariableTypeConstructor)?.originalTypeParameter as? ConeTypeParameterLookupTag
-
+                val originalTypeParameter = lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag
                 if (originalTypeParameter != null)
                     return ConeTypeParameterTypeImpl(originalTypeParameter, type.isNullable, type.attributes)
             } else if (type is ConeIntegerLiteralType) {

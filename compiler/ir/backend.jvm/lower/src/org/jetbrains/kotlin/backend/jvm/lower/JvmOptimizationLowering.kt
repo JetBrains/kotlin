@@ -114,7 +114,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         }
 
         private fun optimizePropertyAccess(expression: IrCall, data: IrDeclaration?): IrExpression {
-            val accessor = expression.symbol.owner as? IrSimpleFunction ?: return expression
+            val accessor = expression.symbol.owner
             if (accessor.modality != Modality.FINAL || accessor.isExternal) return expression
             val property = accessor.correspondingPropertySymbol?.owner ?: return expression
             if (property.isLateinit) return expression
@@ -357,9 +357,8 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             when (statement) {
                 is IrDoWhileLoop -> {
                     // Expecting counter loop
-                    val doWhileLoop = statement as? IrDoWhileLoop ?: return null
-                    if (doWhileLoop.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
-                    val doWhileLoopBody = doWhileLoop.body as? IrComposite ?: return null
+                    if (statement.origin != JvmLoweredStatementOrigin.DO_WHILE_COUNTER_LOOP) return null
+                    val doWhileLoopBody = statement.body as? IrComposite ?: return null
                     if (doWhileLoopBody.origin != IrStatementOrigin.FOR_LOOP_INNER_WHILE) return null
                     val iterationInitialization = doWhileLoopBody.statements[0] as? IrComposite ?: return null
                     val loopVariableIndex = iterationInitialization.statements.indexOfFirst { it.isLoopVariable() }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
@@ -83,7 +82,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                     val builder = StringBuilder()
                     args.elements.forEach {
                         require(it is IrConst<*>) { renderCompilerError(irFile, it, "expected const") }
-                        val value = (it as? IrConst<*>)?.value
+                        val value = it.value
                         require(value is Short && value >= 0 && value <= 0xff) {
                             renderCompilerError(irFile, it, "incorrect value for binary data: $value")
                         }

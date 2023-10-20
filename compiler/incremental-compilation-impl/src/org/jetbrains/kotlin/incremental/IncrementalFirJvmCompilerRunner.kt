@@ -282,8 +282,7 @@ open class IncrementalFirJvmCompilerRunner(
                 allowNonCachedDeclarations = false,
                 useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
             )
-            val irGenerationExtensions =
-                (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()
+            val irGenerationExtensions = projectEnvironment.project.let { IrGenerationExtension.getInstances(it) }
             val (irModuleFragment, components, pluginContext, irActualizedResult) = cycleResult.convertToIrAndActualizeForJvm(
                 extensions, fir2IrConfiguration, irGenerationExtensions,
             )

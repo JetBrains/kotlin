@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -101,8 +100,8 @@ class EnumExternalEntriesLowering(private val context: JvmBackendContext) : File
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val owner = expression.symbol.owner as? IrSimpleFunction
-        val parentClass = owner?.parent as? IrClass ?: return super.visitCall(expression)
+        val owner = expression.symbol.owner
+        val parentClass = owner.parent as? IrClass ?: return super.visitCall(expression)
         val shouldBeLowered = owner.name == SpecialNames.ENUM_GET_ENTRIES && parentClass.isEnumClassWhichRequiresExternalEntries()
         if (!shouldBeLowered) return super.visitCall(expression)
         val field = state!!.getEntriesFieldForEnum(parentClass)

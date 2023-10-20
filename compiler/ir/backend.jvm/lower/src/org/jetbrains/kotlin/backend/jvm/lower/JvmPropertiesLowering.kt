@@ -51,7 +51,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression)
+        val simpleFunction = expression.symbol.owner
         val property = simpleFunction.correspondingPropertySymbol?.owner ?: return super.visitCall(expression)
         expression.transformChildrenVoid()
 

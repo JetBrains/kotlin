@@ -194,8 +194,7 @@ class PsiInlineCodegen(
     override fun reorderArgumentsIfNeeded(actualArgsWithDeclIndex: List<ArgumentAndDeclIndex>, valueParameterTypes: List<Type>) = Unit
 
     override fun isInlinedToInlineFunInKotlinRuntime(): Boolean {
-        val codegen = this.codegen as? ExpressionCodegen ?: return false
-        val caller = codegen.context.functionDescriptor
+        val caller = this.codegen.context.functionDescriptor
         if (!caller.isInline) return false
         val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
         return callerPackage.fqName.asString().startsWith("kotlin.")

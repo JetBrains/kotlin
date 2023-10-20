@@ -1027,7 +1027,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ),
         )
 
-        (result as? FirVariableAssignment)?.let { dataFlowAnalyzer.exitVariableAssignment(it) }
+        dataFlowAnalyzer.exitVariableAssignment(result)
 
         return result
     }

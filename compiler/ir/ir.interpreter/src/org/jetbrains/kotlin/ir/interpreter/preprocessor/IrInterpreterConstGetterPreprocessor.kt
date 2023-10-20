@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
@@ -25,8 +24,7 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
     }
 
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
-        val function = (expression.symbol.owner as? IrSimpleFunction) ?: return super.visitCall(expression, data)
-        val field = function.correspondingPropertySymbol?.owner?.backingField ?: return super.visitCall(expression, data)
+        val field = expression.symbol.owner.correspondingPropertySymbol?.owner?.backingField ?: return super.visitCall(expression, data)
         return expression.lowerConstRead(field, data) ?: super.visitCall(expression, data)
     }
 

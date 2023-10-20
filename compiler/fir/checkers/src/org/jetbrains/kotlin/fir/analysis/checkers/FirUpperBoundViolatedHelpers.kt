@@ -190,22 +190,20 @@ fun checkUpperBoundViolated(
         if (argumentType != null && argumentSource != null) {
             if (!isIgnoreTypeParameters || (argumentType.typeArguments.isEmpty() && argumentType !is ConeTypeParameterType)) {
                 val intersection =
-                    typeSystemContext.intersectTypes(typeParameters[index].resolvedBounds.map { it.coneType }) as? ConeKotlinType
-                if (intersection != null) {
-                    val upperBound = substitutor.substituteOrSelf(intersection)
-                    if (!AbstractTypeChecker.isSubtypeOf(
-                            typeSystemContext,
-                            argumentType,
-                            upperBound,
-                            stubTypesEqualToAnything = true
-                        )
-                    ) {
-                        val factory = when {
-                            isReportExpansionError && argumentTypeRef == null -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
-                            else -> FirErrors.UPPER_BOUND_VIOLATED
-                        }
-                        reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
+                    typeSystemContext.intersectTypes(typeParameters[index].resolvedBounds.map { it.coneType })
+                val upperBound = substitutor.substituteOrSelf(intersection)
+                if (!AbstractTypeChecker.isSubtypeOf(
+                        typeSystemContext,
+                        argumentType,
+                        upperBound,
+                        stubTypesEqualToAnything = true
+                    )
+                ) {
+                    val factory = when {
+                        isReportExpansionError && argumentTypeRef == null -> FirErrors.UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION
+                        else -> FirErrors.UPPER_BOUND_VIOLATED
                     }
+                    reporter.reportOn(argumentSource, factory, upperBound, argumentType.type, context)
                 }
             }
 

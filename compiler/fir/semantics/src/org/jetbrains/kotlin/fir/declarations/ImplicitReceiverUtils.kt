@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 fun SessionHolder.collectImplicitReceivers(
     type: ConeKotlinType?,
@@ -87,7 +85,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
             ?.asTowerDataElementForStaticScope(staticScopeOwnerSymbol = superClass.symbol)
             ?.let(superClassesStaticsAndCompanionReceivers::add)
 
-        (superClass as? FirRegularClass)?.companionObjectSymbol?.let {
+        superClass.companionObjectSymbol?.let {
             val superCompanionReceiver = ImplicitDispatchReceiverValue(
                 it, session, scopeSession
             )

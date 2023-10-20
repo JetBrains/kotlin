@@ -284,7 +284,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
 
         return lookupSuperTypes(this, lookupInterfaces = true, deep = true, session, substituteTypes = false).any { superType ->
             // Note: We check just classId here, so type substitution isn't needed   ^ (we aren't interested in type arguments)
-            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isCloneableId() == true
+            superType.fullyExpandedType(session).lookupTag.classId.isCloneableId()
         }
     }
 

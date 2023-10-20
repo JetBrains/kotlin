@@ -7,23 +7,24 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import llvm.LLVMABIAlignmentOfType
 import llvm.LLVMABISizeOfType
-import llvm.LLVMPreferredAlignmentOfType
 import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
+import org.jetbrains.kotlin.backend.konan.ir.isSpecialClassWithNoSupertypes
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
-import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
+import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.objcinterop.*
+import org.jetbrains.kotlin.ir.objcinterop.canObjCClassMethodBeCalledVirtually
+import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
+import org.jetbrains.kotlin.ir.objcinterop.isObjCClassMethod
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -470,8 +471,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         irClass.annotations.forEach {
             val irFile = irClass.fileOrNull
 
-            val annotationClass = (it.symbol.owner as? IrConstructor)?.constructedClass
-                    ?: error(irFile, it, "unexpected annotation")
+            val annotationClass = it.symbol.owner.constructedClass
 
             if (annotationClass.hasAnnotation(RuntimeNames.associatedObjectKey)) {
                 val argument = it.getValueArgument(0)

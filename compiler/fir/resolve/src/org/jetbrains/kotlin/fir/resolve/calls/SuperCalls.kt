@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun BodyResolveComponents.findTypesForSuperCandidates(
     superTypeRefs: List<FirTypeRef>,
@@ -144,7 +142,7 @@ private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name:
             scopeSession = scopeSession,
             callableCopyTypeCalculator = CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
-        )?.processPropertiesByName(name) { addIfNotNull(it.fir as? FirVariable) }
+        )?.processPropertiesByName(name) { add(it.fir) }
     }
 
 

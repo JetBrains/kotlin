@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -42,7 +41,7 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         val firSession = useSiteSession
         val scopeSession = getScopeSessionFor(firSession)
         return if (isStatic) {
-            val firClass = owner.fir as? FirClass ?: return null
+            val firClass = owner.fir
             firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, firSession, scopeSession)
         } else {
             owner.unsubstitutedScope(

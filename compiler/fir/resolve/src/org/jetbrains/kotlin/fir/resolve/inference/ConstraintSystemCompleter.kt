@@ -421,7 +421,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                     processBlocks = true
                 ) { candidate ->
                     candidate.postponedAtoms.forEach { atom ->
-                        notAnalyzedArguments.addIfNotNull((atom as? PostponedResolvedAtom)?.takeUnless { it.analyzed })
+                        notAnalyzedArguments.addIfNotNull(atom.takeUnless { it.analyzed })
                     }
                 }
             }

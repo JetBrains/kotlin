@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.SimplePSIKotlinCallArgument
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.TypeUtils
 
@@ -32,7 +31,7 @@ object NullableVarargArgumentCallChecker : CallChecker {
                 if (!arg.isSpread || arg !is SimplePSIKotlinCallArgument) continue
 
                 val spreadElement = arg.valueArgument.getSpreadElement() ?: continue
-                val receiver = (arg.receiver as? ReceiverValueWithSmartCastInfo) ?: continue
+                val receiver = arg.receiver
 
                 val type = if (receiver.stableType.constructor is TypeVariableTypeConstructor) {
                     context.trace.bindingContext[EXPRESSION_TYPE_INFO, arg.valueArgument.getArgumentExpression()]?.type

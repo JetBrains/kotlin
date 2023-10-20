@@ -108,7 +108,7 @@ internal class StubBasedFirTypeDeserializer(
         val annotations = annotationDeserializer.loadAnnotations(typeReference).toMutableList()
         val parent = (typeReference.stub ?: loadStubByElement(typeReference))?.parentStub
         if (parent is KotlinParameterStubImpl) {
-            (parent as? KotlinParameterStubImpl)?.functionTypeParameterName?.let { paramName ->
+            parent.functionTypeParameterName?.let { paramName ->
                 annotations += buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
                         type = StandardNames.FqNames.parameterNameClassId.toLookupTag()

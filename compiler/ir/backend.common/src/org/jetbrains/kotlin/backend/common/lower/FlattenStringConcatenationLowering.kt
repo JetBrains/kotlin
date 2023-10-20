@@ -120,9 +120,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
                 if (superQualifierSymbol != null)
                     return false
 
-                val function = symbol.owner as? IrSimpleFunction
-                    ?: return false
-
+                val function = symbol.owner
                 return function.isToString || function.isNullableToString
             }
 

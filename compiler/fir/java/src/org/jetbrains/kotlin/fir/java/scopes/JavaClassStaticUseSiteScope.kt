@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JavaClassStaticUseSiteScope internal constructor(
     session: FirSession,
@@ -34,7 +33,7 @@ class JavaClassStaticUseSiteScope internal constructor(
     private fun computeFunctions(name: Name): MutableList<FirNamedFunctionSymbol> {
         val superClassSymbols = mutableListOf<FirNamedFunctionSymbol>()
         superClassScope.processFunctionsByName(name) {
-            superClassSymbols.addIfNotNull(it as? FirNamedFunctionSymbol)
+            superClassSymbols.add(it)
         }
 
         val result = mutableListOf<FirNamedFunctionSymbol>()

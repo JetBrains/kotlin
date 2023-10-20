@@ -193,7 +193,7 @@ internal open class KtUltraLightFieldImpl protected constructor(
     override val lightMemberOrigin = LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER)
 
     override fun setName(@NonNls name: String): PsiElement {
-        (kotlinOrigin as? KtNamedDeclaration)?.setName(name)
+        kotlinOrigin.setName(name)
         return this
     }
 

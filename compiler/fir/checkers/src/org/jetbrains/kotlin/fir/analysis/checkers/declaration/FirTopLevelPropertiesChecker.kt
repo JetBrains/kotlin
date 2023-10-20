@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -58,7 +57,7 @@ object FirTopLevelPropertiesChecker : FirFileChecker() {
         }
 
         val propertySymbols = topLevelProperties.mapNotNullTo(mutableSetOf()) { declaration ->
-            (declaration.symbol as? FirPropertySymbol)?.takeIf { it.requiresInitialization(isForInitialization = true) }
+            declaration.symbol.takeIf { it.requiresInitialization(isForInitialization = true) }
         }
         if (propertySymbols.isEmpty()) return null
 

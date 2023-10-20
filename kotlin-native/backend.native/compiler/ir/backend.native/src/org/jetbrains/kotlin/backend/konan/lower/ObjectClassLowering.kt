@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irCall
 
 internal fun Context.getObjectClassInstanceFunction(clazz: IrClass) = mapping.objectInstanceGetter.getOrPut(clazz) {
     when {
@@ -159,8 +158,7 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
         val statements = this.body?.statements ?: return false
         if (statements.isEmpty()) return false
         val constructorCall = statements[0] as? IrDelegatingConstructorCall ?: return false
-        val constructor = constructorCall.symbol.owner as? IrConstructor ?: return false
-        if (!constructor.constructedClass.isAny()) return false
+        if (!constructorCall.symbol.owner.constructedClass.isAny()) return false
         return statements.asSequence().drop(1).all {
             it is IrBlock && it.origin == IrStatementOrigin.INITIALIZE_FIELD
         }

@@ -300,10 +300,9 @@ class KtFe10ExpressionTypeProvider(
     }
 
     override fun isDefinitelyNotNull(expression: KtExpression): Boolean {
-        val ktExpression = expression as? KtExpression ?: return false
-        val bindingContext = analysisContext.analyze(ktExpression)
+        val bindingContext = analysisContext.analyze(expression)
 
-        val smartCasts = bindingContext[BindingContext.SMARTCAST, ktExpression]
+        val smartCasts = bindingContext[BindingContext.SMARTCAST, expression]
 
         if (smartCasts is MultipleSmartCasts) {
             if (smartCasts.map.values.all { !it.isMarkedNullable }) {

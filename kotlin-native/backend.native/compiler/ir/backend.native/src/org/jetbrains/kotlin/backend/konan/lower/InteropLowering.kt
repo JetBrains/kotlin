@@ -51,8 +51,6 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal class InteropLowering(generationState: NativeGenerationState) : FileLoweringPass {
     // TODO: merge these lowerings.
@@ -1034,11 +1032,7 @@ private class InteropTransformer(
         if (!function.isFromInteropLibrary()) return null
         if (!function.isGetter) return null
 
-        val constantProperty = (function as? IrSimpleFunction)
-                ?.correspondingPropertySymbol
-                ?.owner
-                ?.takeIf { it.isConst }
-                ?: return null
+        val constantProperty = function.correspondingPropertySymbol?.owner?.takeIf { it.isConst } ?: return null
 
         val initializer = constantProperty.backingField?.initializer?.expression
         require(initializer is IrConst<*>) { renderCompilerError(expression) }
@@ -1088,9 +1082,7 @@ private class InteropTransformer(
         builder.at(expression)
         val function = expression.symbol.owner
 
-        if ((function as? IrSimpleFunction)?.resolveFakeOverrideMaybeAbstract()?.symbol
-                == symbols.interopNativePointedRawPtrGetter) {
-
+        if (function.resolveFakeOverrideMaybeAbstract()?.symbol == symbols.interopNativePointedRawPtrGetter) {
             // Replace by the intrinsic call to be handled by code generator:
             return builder.irCall(symbols.interopNativePointedGetRawPointer).apply {
                 extensionReceiver = expression.dispatchReceiver

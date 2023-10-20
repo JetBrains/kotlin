@@ -369,13 +369,13 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             subClassLookupTag: ConeClassLikeLookupTag,
             firField: FirField,
         ): D? {
-            val callable = this.fir as? D ?: return null
+            val callable = this.fir
 
             val delegatedWrapperData = callable.delegatedWrapperData ?: return null
             if (delegatedWrapperData.containingClass != subClassLookupTag) return null
             if (delegatedWrapperData.delegateField != firField) return null
 
-            val wrapped = delegatedWrapperData.wrapped as? D ?: return null
+            val wrapped = delegatedWrapperData.wrapped
 
             @Suppress("UNCHECKED_CAST")
             val wrappedSymbol = wrapped.symbol as? S ?: return null

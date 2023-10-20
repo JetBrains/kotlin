@@ -442,8 +442,7 @@ class FakeOverrideGenerator(
             overridden.containingClassLookupTag()?.toSymbol(session)?.fir as? FirClass ?: return emptyList()
 
         val overriddenContainingIrClass =
-            declarationStorage.classifierStorage.getOrCreateIrClass(overriddenContainingClass.symbol).symbol.owner as? IrClass
-                ?: return emptyList()
+            declarationStorage.classifierStorage.getOrCreateIrClass(overriddenContainingClass.symbol).symbol.owner
 
         return superClasses.mapNotNull { superClass ->
             if (superClass == overriddenContainingIrClass ||

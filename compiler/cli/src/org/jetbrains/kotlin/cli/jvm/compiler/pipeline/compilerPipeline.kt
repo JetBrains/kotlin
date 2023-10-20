@@ -274,9 +274,7 @@ fun compileModuleToAnalyzedFir(
         incrementalExcludesScope
     )?.also { librariesScope -= it }
 
-    val extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)
-        ?.let { FirExtensionRegistrar.getInstances(it.project) }
-        ?: emptyList()
+    val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
 
     val allSources = mutableListOf<KtSourceFile>().apply {
         addAll(input.groupedSources.commonSources)

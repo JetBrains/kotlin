@@ -339,8 +339,16 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         if (!checkIfValidTypeName(clazz, Type.getObjectType(clazz.name))) return null
 
         val descriptor = kaptContext.origins[clazz]?.descriptor ?: return null
-        val isNested = (descriptor as? ClassDescriptor)?.isNested ?: false
-        val isInner = isNested && (descriptor as? ClassDescriptor)?.isInner ?: false
+
+        val isNested: Boolean
+        val isInner: Boolean
+        if (descriptor is ClassDescriptor) {
+            isNested = descriptor.isNested
+            isInner = isNested && descriptor.isInner
+        } else {
+            isNested = false
+            isInner = false
+        }
 
         val flags = getClassAccessFlags(clazz, descriptor, isInner, isNested)
 
