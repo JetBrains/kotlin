@@ -60,10 +60,15 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
 
     fun assertCollectedDiagnostics(testServices: TestServices, expectedExtension: String) {
-        if (dumper.isEmpty()) return
-        val resultDump = dumper.generateResultingDump()
+        if (directive !in testServices.moduleStructure.allDirectives) {
+            return
+        }
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutExtension.removeSuffix(".fir")}$expectedExtension")
+        if (dumper.isEmpty() && !expectedFile.exists()) {
+            return
+        }
+        val resultDump = dumper.generateResultingDump()
         testServices.assertions.assertEqualsToFile(expectedFile, resultDump)
     }
 
