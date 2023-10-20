@@ -42,8 +42,7 @@ method global$fun_getX$fun_take$T_Any$return$NT_Int(local$a: dom$Any)
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$Any())
   if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$global$class_IntHolder())) {
     anonymous$0 := (dom$Casting$cast(local$a, dom$Type$special$Nullable(dom$Type$global$class_IntHolder())): dom$Nullable[Ref])
-    inhale anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-      acc((dom$Casting$cast(anonymous$0, dom$Type$global$class_IntHolder()): Ref).class_IntHolder$member_x, wildcard)
+    inhale acc((dom$Casting$cast(anonymous$0, dom$Type$global$class_IntHolder()): Ref).class_IntHolder$member_x, wildcard)
   } else {
     anonymous$0 := (dom$Nullable$null(): dom$Nullable[Ref])}
   if (anonymous$0 == (dom$Nullable$null(): dom$Nullable[Ref])) {

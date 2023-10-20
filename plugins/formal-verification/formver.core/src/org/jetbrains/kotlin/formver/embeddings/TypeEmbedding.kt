@@ -100,6 +100,9 @@ interface TypeEmbedding {
      * Note that nullability doesn't stack, hence nullable types must return themselves.
      */
     fun getNullable(): TypeEmbedding = NullableTypeEmbedding(this)
+
+    val isNullable: Boolean
+        get() = false
 }
 
 fun <R> TypeEmbedding.flatMapUniqueFields(action: (SimpleKotlinName, FieldEmbedding) -> List<R>): List<R> {
@@ -177,6 +180,8 @@ data class NullableTypeEmbedding(val elementType: TypeEmbedding) : TypeEmbedding
     }
 
     override fun getNullable(): TypeEmbedding = this
+
+    override val isNullable = true
 }
 
 abstract class UnspecifiedFunctionTypeEmbedding : TypeEmbedding {

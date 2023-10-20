@@ -375,7 +375,15 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             FirOperation.SAFE_AS -> data.withResult(conversionType.getNullable()) {
                 val ifBlock = withNewScopeToBlock {
                     resultCtx.resultVar.setValue(argument, this, null)
-                    for (invariant in resultCtx.resultVar.accessInvariants()) {
+                    // If the argument was of a non-nullable type, then in this branch we know that the result is also non-null
+                    // and can thus inhale stronger permissions.
+                    val invariants = if (argument.type.isNullable) {
+                        resultCtx.resultVar.accessInvariants()
+                    } else {
+                        conversionType.accessInvariants(Cast(resultExp, conversionType).toViper())
+                    }
+
+                    for (invariant in invariants) {
                         addStatement(Stmt.Inhale(invariant))
                     }
                 }
