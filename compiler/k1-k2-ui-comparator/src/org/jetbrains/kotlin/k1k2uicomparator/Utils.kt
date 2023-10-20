@@ -11,7 +11,7 @@ import javax.swing.JViewport
 val JViewport.scrollableHeight get() = viewSize.height - extentSize.height
 val JViewport.scrollableWidth get() = viewSize.width - extentSize.width
 
-fun spawn(construct: () -> JFrame) =
+fun <T : JFrame> spawn(construct: () -> T) =
     construct().apply {
         setLocationRelativeTo(null)
         isVisible = true
