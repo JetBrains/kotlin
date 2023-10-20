@@ -47,6 +47,11 @@ val uiComparatorStyleForCompiler = UIComparatorStyle(
     rightViewerTitle = "K2",
 )
 
+/**
+ * Don't press the gutter icon if you are using
+ * JPS, it won't work properly. Use the Gradle
+ * task `runTest`.
+ */
 fun main() = EventQueue.invokeLater {
     val mainFrame = spawn { UIComparatorFrame(uiComparatorStyleForCompiler) }
     val coroutineScope = CoroutineScope(Dispatchers.Default)
