@@ -18,12 +18,10 @@ expect open class Foo : Transitive {
 
 actual open class Base<T> {
     actual fun existingMethodInBase(param: T) {}
-    open fun injected(param: T): Any = ""
+    fun injected() {}
 }
 
 actual open class Foo : Transitive() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
-
-    override fun injected(param: String): String = "" // covariant override
 }

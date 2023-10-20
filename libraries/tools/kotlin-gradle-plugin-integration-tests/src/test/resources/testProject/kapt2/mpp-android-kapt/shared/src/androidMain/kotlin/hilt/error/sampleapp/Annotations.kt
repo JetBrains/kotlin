@@ -7,7 +7,6 @@ package hilt.error.sampleapp
  */
 actual typealias HiltViewModel = dagger.hilt.android.lifecycle.HiltViewModel
 
-@AllowDifferentMembersInActual
 actual typealias ViewModel = androidx.lifecycle.ViewModel
 
 actual typealias Inject = javax.inject.Inject

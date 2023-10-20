@@ -86,8 +86,6 @@ private fun checkExpectActualScopeDiff(
     }
 }
 
-private val allowDifferentMembersInActualFqn = FqName("kotlin.AllowDifferentMembersInActual")
-
 @OptIn(ExperimentalContracts::class)
 internal fun matchActualWithNonFinalExpect(
     declaration: KtDeclaration,
@@ -109,10 +107,6 @@ internal fun matchActualWithNonFinalExpect(
     descriptor as ClassifierDescriptorWithTypeParameters
 
     if (!descriptor.isActual) return null
-
-    with(OptInUsageChecker) {
-        if (declaration.isDeclarationAnnotatedWith(allowDifferentMembersInActualFqn, context.trace.bindingContext)) return null
-    }
 
     val actual = when (descriptor) {
         is ClassDescriptor -> descriptor
