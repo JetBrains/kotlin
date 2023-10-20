@@ -34,3 +34,7 @@ val JViewport.scrollableWidth get() = viewSize.width - extentSize.width
 fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length else it }
 
 fun Int.alignByMultiplesOf(alignment: Int) = this / alignment * alignment
+
+val Int.isEven get() = this and 1 == 0
+
+val Int.isOdd get() = !isEven

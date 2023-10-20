@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.k1k2uicomparator.components
 import org.jetbrains.kotlin.k1k2uicomparator.support.DefaultStyles
 import org.jetbrains.kotlin.k1k2uicomparator.support.alignByMultiplesOf
 import org.jetbrains.kotlin.k1k2uicomparator.support.indentWidth
+import org.jetbrains.kotlin.k1k2uicomparator.support.isOdd
 import java.awt.Font
 import java.awt.Rectangle
 import java.awt.event.KeyEvent
@@ -68,6 +69,7 @@ private val pairedSymbol = mapOf(
 private val Char.fullPair get() = "$this" + pairedSymbol[this]
 
 private val indentShiftingCharacters = pairedSymbol.entries.take(3).associate { it.key to it.value }
+private val quotes = listOf('`', '"', '\'')
 
 private val JTextArea.previousCharacter get() = getText(caretPosition - 1, 1).first()
 private val JTextArea.nextCharacter get() = getText(caretPosition, 1).first()
@@ -90,6 +92,16 @@ private val JTextArea.isLinePartBeforeCaretBlank: Boolean
         val lineBeforeCaret = text.substring(lineStartOffset, caretPosition)
         return lineBeforeCaret.isBlank()
     }
+
+private fun JTextArea.isProbablyFixingUnbalancedQuote(character: Char): Boolean {
+    if (character !in quotes) {
+        return false
+    }
+
+    val currentLineNumber = getLineOfOffset(caretPosition)
+    val currentLineStartOffset = getLineStartOffset(currentLineNumber)
+    return text.substring(currentLineStartOffset, caretPosition).count { it == character }.isOdd
+}
 
 /**
  * Sometimes, consuming events in keyPressed doesn't
@@ -175,7 +187,7 @@ private fun JTextArea.handleConsumingCodeAreaInput(e: KeyEvent) {
             caretPosition++
             e.consume()
         }
-        e.keyChar in pairedSymbol -> {
+        e.keyChar in pairedSymbol && !isProbablyFixingUnbalancedQuote(e.keyChar) -> {
             insert(e.keyChar.fullPair, caretPosition)
             caretPosition--
             e.consume()
