@@ -110,3 +110,6 @@ fun <I : A> incompatibleEnumAndUnrelatedInterfaceThroughTypeParameter(x: G?, i: 
     x == i
 }
 
+fun incompatibleEnumAndUnrelatedInterface(x: G?, i: A?) {
+    x == i
+}
