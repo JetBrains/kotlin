@@ -48,6 +48,12 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     JS_KLIB_INCREMENTAL(OR, SAFE),
     JS_IR_INCREMENTAL(OR, SAFE),
 
+    //Build reports
+    FILE_BUILD_REPORT(OR, SAFE),
+    BUILD_SCAN_BUILD_REPORT(OR, SAFE),
+    HTTP_BUILD_REPORT(OR, SAFE),
+    SINGLE_FILE_BUILD_REPORT(OR, SAFE),
+
     //Dokka features
     ENABLED_DOKKA(OR, SAFE),
     ENABLED_DOKKA_HTML(OR, SAFE),

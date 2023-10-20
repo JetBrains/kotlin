@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAc
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -195,7 +196,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
     /**
      * Collect project general and configuration metrics at the start of a build
      */
-    open fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean): MetricContainer = MetricContainer()
+    open fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean, buildReportOutputs: List<BuildReportType>): MetricContainer = MetricContainer()
 
     open fun recordProjectsEvaluated(gradle: Gradle) {}
 }
@@ -312,7 +313,7 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
     }
 
-    override fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean) =
-        KotlinBuildStatHandler().collectConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled)
+    override fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean, buildReportOutputs: List<BuildReportType>) =
+        KotlinBuildStatHandler().collectConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled, buildReportOutputs)
 
 }

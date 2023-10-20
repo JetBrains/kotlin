@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.statistics.plugins.ObservablePlugins
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -84,11 +85,21 @@ class KotlinBuildStatHandler {
         project: Project,
         sessionLogger: BuildSessionLogger,
         isProjectIsolationEnabled: Boolean,
+        buildReportOutputs: List<BuildReportType>,
     ): MetricContainer {
         val gradle = project.gradle
         val configurationTimeMetrics = MetricContainer()
         configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
         configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
+        buildReportOutputs.forEach {
+            when (it) {
+                BuildReportType.BUILD_SCAN -> configurationTimeMetrics.put(BooleanMetrics.BUILD_SCAN_BUILD_REPORT, true)
+                BuildReportType.FILE -> configurationTimeMetrics.put(BooleanMetrics.FILE_BUILD_REPORT, true)
+                BuildReportType.HTTP -> configurationTimeMetrics.put(BooleanMetrics.HTTP_BUILD_REPORT, true)
+                BuildReportType.SINGLE_FILE -> configurationTimeMetrics.put(BooleanMetrics.SINGLE_FILE_BUILD_REPORT, true)
+                BuildReportType.TRY_K2_CONSOLE -> {}//ignore
+            }
+        }
 
         if (isProjectIsolationEnabled) { //support project isolation - KT-58768
             return configurationTimeMetrics

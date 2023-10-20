@@ -64,7 +64,8 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
             }
 
             val fusStatisticsAvailable = fusStatisticsAvailable(project)
-            val buildScanReportEnabled = reportingSettings(project).buildReportOutputs.contains(BuildReportType.BUILD_SCAN)
+            val buildReportOutputs = reportingSettings(project).buildReportOutputs
+            val buildScanReportEnabled = buildReportOutputs.contains(BuildReportType.BUILD_SCAN)
 
             //Workaround for known issues for Gradle 8+: https://github.com/gradle/gradle/issues/24887:
             // when this OperationCompletionListener is called services can be already closed for Gradle 8,
@@ -78,7 +79,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                 }
 
                 spec.parameters.configurationMetrics.set(project.provider {
-                    KotlinBuildStatsService.getInstance()?.collectStartMetrics(project, isProjectIsolationEnabled)
+                    KotlinBuildStatsService.getInstance()?.collectStartMetrics(project, isProjectIsolationEnabled, buildReportOutputs)
                 })
                 spec.parameters.fusStatisticsAvailable.set(fusStatisticsAvailable)
             }.also { buildService ->
