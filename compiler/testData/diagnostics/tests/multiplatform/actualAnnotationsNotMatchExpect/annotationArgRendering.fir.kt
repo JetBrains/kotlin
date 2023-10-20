@@ -12,6 +12,11 @@ expect fun stringConcat()
 
 expect fun onType(): @Ann2("") Any?
 
+annotation class Ann3(val kclass: kotlin.reflect.KClass<*>)
+
+@Ann3(String::class)
+expect fun kclassArg()
+
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("Ann; Ann; Annotation `kotlin.annotation.Target` is missing on actual declaration")!>actual annotation class Ann<!>
@@ -20,3 +25,5 @@ expect fun onType(): @Ann2("") Any?
 
 // Not reported in K1, because supported starting from K2
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("onType; onType; Annotation `Ann2` is missing on actual declaration")!>actual fun onType(): Any? = null<!>
+
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT("kclassArg; kclassArg; Annotation `Ann3` is missing on actual declaration")!>actual fun kclassArg() {}<!>
