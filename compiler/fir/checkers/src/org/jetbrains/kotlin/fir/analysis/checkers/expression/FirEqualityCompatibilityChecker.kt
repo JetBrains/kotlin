@@ -57,7 +57,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             // In either case K1 may not report a diagnostic
             // due to some reasons, and we need to
             // account for them.
-            val isCaseMissedByK1 = isCaseMissedByK1Intersector(l.originalType, r.originalType, context.session)
+            val isCaseMissedByK1 = isCaseMissedByK1Intersector(l.originalTypeInfo, r.originalTypeInfo)
                     && isCaseMissedByAdditionalK1IncompatibleEnumsCheck(l.originalType, r.originalType, context.session)
             val replicateK1Behavior = !context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
 
@@ -111,11 +111,12 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     }
 
     private fun getInapplicabilityFor(l: TypeInfo, r: TypeInfo): Applicability {
-        val isIntersectionEmpty = l.enforcesEmptyIntersection || r.enforcesEmptyIntersection
+        val isNonEmptyIntersectionInK1 = isCaseMissedByK1Intersector(l, r)
         val isOneEnum = l.isEnumClass || r.isEnumClass
 
         return when {
-            !isIntersectionEmpty && isOneEnum -> Applicability.INAPPLICABLE_AS_ENUMS
+            // This code aims to replicate the K1's choice of diagnostics
+            isNonEmptyIntersectionInK1 && isOneEnum -> Applicability.INAPPLICABLE_AS_ENUMS
             else -> Applicability.GENERALLY_INAPPLICABLE
         }
     }
@@ -134,6 +135,15 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
     private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext) =
         notNullType.isSubtypeOf(other.notNullType, context.session)
 
+    /**
+     * K1 reports different diagnostics for different
+     * cases, and this enum helps to replicate the K1's
+     * choice of diagnostics.
+     *
+     * Should the K2's diagnostic severity differ,
+     * the proper version will be picked later
+     * when reporting the diagnostic.
+     */
     private enum class Applicability {
         APPLICABLE,
         GENERALLY_INAPPLICABLE,
@@ -284,11 +294,11 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
 private class TypeInfo(
     val type: ConeKotlinType,
     val notNullType: ConeKotlinType,
-    val isFinalClass: Boolean,
     val isEnumClass: Boolean,
     val isPrimitive: Boolean,
     val isBuiltin: Boolean,
     val isValueClass: Boolean,
+    val canHaveSubtypesAccordingToK1: Boolean,
 ) {
     override fun toString() = "$type"
 }
@@ -308,10 +318,6 @@ private fun ConeKotlinType.canHaveSubtypesAccordingToK1(session: FirSession): Bo
         else -> true
     }
 }
-
-// This property is used to replicate K1 behavior, and it
-// tries to predict empty intersections from the K1 point-of-view.
-private val TypeInfo.enforcesEmptyIntersection get() = isFinalClass && !isEnumClass
 
 private val TypeInfo.isNullableEnum get() = isEnumClass && type.isNullable
 
@@ -336,11 +342,11 @@ private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
 
     return TypeInfo(
         type, notNullType,
-        isFinalClass = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
         isEnumClass = bounds.any { it.isEnum(session) },
         isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = bounds.any { it.toClassSymbol(session)?.isBuiltin == true },
         isValueClass = bounds.any { it.toClassSymbol(session)?.isInline == true },
+        canHaveSubtypesAccordingToK1(session),
     )
 }
 
@@ -378,8 +384,8 @@ private fun FirExpression.toArgumentInfo(context: CheckerContext) =
         this, resolvedType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
     )
 
-private fun isCaseMissedByK1Intersector(a: ConeKotlinType, b: ConeKotlinType, session: FirSession) =
-    a.canHaveSubtypesAccordingToK1(session) && b.canHaveSubtypesAccordingToK1(session)
+private fun isCaseMissedByK1Intersector(a: TypeInfo, b: TypeInfo) =
+    a.canHaveSubtypesAccordingToK1 && b.canHaveSubtypesAccordingToK1
 
 private fun isCaseMissedByAdditionalK1IncompatibleEnumsCheck(a: ConeKotlinType, b: ConeKotlinType, session: FirSession): Boolean {
     return when {
