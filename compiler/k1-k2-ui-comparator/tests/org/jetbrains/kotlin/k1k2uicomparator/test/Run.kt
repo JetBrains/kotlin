@@ -3,11 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.k1k2uicomparator
+package org.jetbrains.kotlin.k1k2uicomparator.test
 
 import org.junit.jupiter.api.Test
 
-class Runner {
+class TestRunner {
     @Test
     fun runMain() = main()
+}
+
+fun main() {
+    org.jetbrains.kotlin.k1k2uicomparator.main()
 }
