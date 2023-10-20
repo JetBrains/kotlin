@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.calls.UnsafeCall
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -126,6 +123,10 @@ object FirForLoopChecker : FirBlockChecker() {
                         else -> {
                             error("ConeInapplicableWrongReceiver, but no diagnostic reported")
                         }
+                    }
+                    is ConeConstraintSystemHasContradiction -> {
+                        if (calleeReference.name == OperatorNameConventions.ITERATOR)
+                            reporter.reportOn(reportSource, missingFactory, context)
                     }
                     is ConeInapplicableCandidateError -> {
                         if (unsafeCallFactory != null || noneApplicableFactory != null) {
