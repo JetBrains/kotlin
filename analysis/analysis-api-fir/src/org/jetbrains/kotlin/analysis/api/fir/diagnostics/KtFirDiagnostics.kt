@@ -1723,6 +1723,15 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val containingTypes: List<KtSymbol>
     }
 
+    interface ExpansiveInheritance : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ExpansiveInheritance::class
+    }
+
+    interface ExpansiveInheritanceInJava : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ExpansiveInheritanceInJava::class
+        val containingTypes: List<KtSymbol>
+    }
+
     interface DeprecatedTypeParameterSyntax : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = DeprecatedTypeParameterSyntax::class
     }

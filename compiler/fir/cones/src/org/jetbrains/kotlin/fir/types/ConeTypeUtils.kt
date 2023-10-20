@@ -53,6 +53,14 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
 
 // ----------------------------------- Transformations -----------------------------------
 
+fun ConeKotlinType.unwrapLowerBound(): ConeSimpleKotlinType {
+    return when(this) {
+        is ConeDefinitelyNotNullType -> original.unwrapLowerBound()
+        is ConeFlexibleType -> lowerBound.unwrapLowerBound()
+        is ConeSimpleKotlinType -> this
+    }
+}
+
 fun ConeKotlinType.upperBoundIfFlexible(): ConeSimpleKotlinType {
     return when (this) {
         is ConeSimpleKotlinType -> this

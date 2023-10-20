@@ -140,6 +140,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirDelegateFieldTypeMismatchChecker,
             FirMultipleDefaultsInheritedFromSupertypesChecker,
             FirFiniteBoundRestrictionChecker,
+            FirNonExpansiveInheritanceRestrictionChecker,
             FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker,
         )
 
