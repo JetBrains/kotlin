@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -273,6 +274,22 @@ class FirCallCompletionResultsWriterTransformer(
             ) as? FirClassSubstitutionScope ?: return null
 
         val original = fir.originalForSubstitutionOverride ?: return null
+
+        if (fir is FirSyntheticProperty && fir.symbol is FirSimpleSyntheticPropertySymbol && original is FirSyntheticProperty) {
+            var result: FirBasedSymbol<*>? = null
+            FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(session, updatedDispatchReceiverType, scope)
+                ?.processPropertiesByName(fir.name) {
+                    val newProperty = it.fir as? FirSyntheticProperty ?: return@processPropertiesByName
+                    val originalForNew = newProperty.originalForSubstitutionOverride ?: return@processPropertiesByName
+                    if (originalForNew.getter.delegate == original.getter.delegate) {
+                        check(result == null)
+                        result = it
+                    }
+                }
+
+            return result ?: error("Not found synthetic property: ${fir.renderWithType()}")
+        }
+
         return findSingleSubstitutedSymbolWithOriginal(original.symbol) { processor ->
             when (original) {
                 is FirSimpleFunction -> scope.processFunctionsByName(original.name, processor)

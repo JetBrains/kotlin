@@ -16992,6 +16992,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("substitutedSyntheticPropertyUsage.kt")
+                public void testSubstitutedSyntheticPropertyUsage() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/substitutedSyntheticPropertyUsage.kt");
+                }
+
+                @Test
                 @TestMetadata("theSimplestBuilder.kt")
                 public void testTheSimplestBuilder() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/theSimplestBuilder.kt");
