@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirExpectActualMatchingContext
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -18,7 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -28,7 +32,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualAnnotationMatchChecker
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
@@ -212,7 +215,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         }
         if (expectedSingleCandidate != null) {
             checkOptInAnnotation(declaration, expectedSingleCandidate, context, reporter)
-            checkAnnotationsMatch(expectedSingleCandidate, symbol, context, reporter)
         }
     }
 
@@ -268,33 +270,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 context
             )
         }
-    }
-
-    // TODO(Roman.Efremov): KT-62559 prevent reporting ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT twice in CLI mode in K2
-    @OptIn(InternalDiagnosticFactoryMethod::class)
-    private fun checkAnnotationsMatch(
-        expectSymbol: FirBasedSymbol<*>,
-        actualSymbol: FirBasedSymbol<*>,
-        context: CheckerContext,
-        reporter: DiagnosticReporter
-    ) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiplatformRestrictions)) return
-        val matchingContext = context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)
-        val incompatibility =
-            AbstractExpectActualAnnotationMatchChecker.areAnnotationsCompatible(expectSymbol, actualSymbol, matchingContext) ?: return
-        val actualAnnotationTargetSourceElement = (incompatibility.actualAnnotationTargetElement as FirSourceElement).element
-
-        reporter.report(
-            FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.on(
-                actualSymbol.source.requireNotNull(),
-                incompatibility.expectSymbol as FirBasedSymbol<*>,
-                incompatibility.actualSymbol as FirBasedSymbol<*>,
-                actualAnnotationTargetSourceElement,
-                incompatibility.type.mapAnnotationType { it.annotationSymbol as FirAnnotation },
-                positioningStrategy = null,
-            ),
-            context,
-        )
     }
 
     // we don't require `actual` modifier on
