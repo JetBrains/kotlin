@@ -1,13 +1,16 @@
 plugins {
     application
     kotlin("jvm")
+    id("jps-compatible")
     kotlin("plugin.serialization")
 }
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
+    implementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":compiler:fir:analysis-tests"))
     testImplementation(projectTests(":generators:test-generator"))
 
     testImplementation(project(":compiler:fir:checkers"))
@@ -40,6 +43,9 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    compileOnly(kotlinStdlib())
+    compileOnly(intellijCore())
 }
 
 application {

@@ -52,6 +52,12 @@ class GlobalMetadataInfoHandler(
     }
 
     fun compareAllMetaDataInfos() {
+        val actualText = renderMetaInfos()
+        val moduleStructure = testServices.moduleStructure
+        testServices.assertions.assertEqualsToFile(moduleStructure.originalTestDataFiles.single(), actualText)
+    }
+
+    fun renderMetaInfos(): String {
         // TODO: adapt to multiple testdata files
         val moduleStructure = testServices.moduleStructure
         val builder = StringBuilder()
@@ -73,8 +79,7 @@ class GlobalMetadataInfoHandler(
                 builder.append(actualFileContent)
             }
         }
-        val actualText = builder.toString()
-        testServices.assertions.assertEqualsToFile(moduleStructure.originalTestDataFiles.single(), actualText)
+        return builder.toString()
     }
 
     private fun StringBuilder.stripAdditionalEmptyLines(file: TestFile): CharSequence {

@@ -18,6 +18,11 @@ abstract class ModuleStructureExtractor @OptIn(TestInfrastructureInternals::clas
         directivesContainer: DirectivesContainer,
     ): TestModuleStructure
 
+    abstract fun splitTestDataSourceCodeByModules(
+        testDataSourceCode: String,
+        directivesContainer: DirectivesContainer,
+    ): TestModuleStructure
+
     companion object {
         const val DEFAULT_MODULE_NAME = "main"
     }

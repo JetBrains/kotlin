@@ -38,6 +38,20 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
     }
 
+    fun runTestSource(sourceCode: String, beforeDispose: (TestConfiguration) -> Unit = {}): String {
+        try {
+            return runTestForSourceCodeImpl(sourceCode)
+        } finally {
+            try {
+                testConfiguration.testServices.temporaryDirectoryManager.cleanupTemporaryDirectories()
+            } catch (e: IOException) {
+                println("Failed to clean temporary directories: ${e.message}\n${e.stackTrace}")
+            }
+            beforeDispose(testConfiguration)
+            Disposer.dispose(testConfiguration.rootDisposable)
+        }
+    }
+
     private fun runTestImpl(@TestDataFile testDataFileName: String) {
         val services = testConfiguration.testServices
 
@@ -67,6 +81,27 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         runTestPipeline(moduleStructure, services)
+    }
+
+    private fun runTestForSourceCodeImpl(sourceCode: String): String {
+        val services = testConfiguration.testServices
+
+        val moduleStructure = try {
+            testConfiguration.moduleStructureExtractor.splitTestDataSourceCodeByModules(
+                sourceCode,
+                testConfiguration.directives,
+            ).also {
+                services.register(TestModuleStructure::class, it)
+            }
+        } catch (e: ExceptionFromModuleStructureTransformer) {
+            services.register(TestModuleStructure::class, e.alreadyParsedModuleStructure)
+            val exception = filterFailedExceptions(
+                listOf(WrappedException.FromModuleStructureTransformer(e.cause))
+            ).singleOrNull() ?: return ""
+            throw exception
+        }
+
+        return runTestPipelineForSources(moduleStructure, services)
     }
 
     fun runTestPipeline(moduleStructure: TestModuleStructure, services: TestServices) {
@@ -114,6 +149,46 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         }
 
         reportFailures(services)
+    }
+
+    fun runTestPipelineForSources(moduleStructure: TestModuleStructure, services: TestServices): String {
+        val globalMetadataInfoHandler = testConfiguration.testServices.globalMetadataInfoHandler
+        globalMetadataInfoHandler.parseExistingMetadataInfosFromAllSources()
+
+        val modules = moduleStructure.modules
+        val dependencyProvider = DependencyProviderImpl(services, modules)
+        services.registerDependencyProvider(dependencyProvider)
+
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
+            preprocessor.preprocessModuleStructure(moduleStructure)
+        }
+
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
+            preprocessor.prepareSealedClassInheritors(moduleStructure)
+        }
+
+        for (module in modules) {
+            val shouldProcessNextModules = processModule(module, dependencyProvider)
+            if (!shouldProcessNextModules) break
+        }
+
+        for (handler in allRanHandlers) {
+            val wrapperFactory: (Throwable) -> WrappedException = { WrappedException.FromHandler(it, handler) }
+            withAssertionCatching(wrapperFactory) {
+                val thereWasAnException = allFailedExceptions.isNotEmpty()
+                if (handler.shouldRun(thereWasAnException)) {
+                    handler.processAfterAllModules(thereWasAnException)
+                }
+            }
+        }
+
+//        testConfiguration.afterAnalysisCheckers.forEach {
+//            withAssertionCatching(WrappedException::FromAfterAnalysisChecker) {
+//                it.check(allFailedExceptions)
+//            }
+//        }
+
+        return globalMetadataInfoHandler.renderMetaInfos()
     }
 
     fun reportFailures(services: TestServices) {
