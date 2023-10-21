@@ -55,46 +55,47 @@ class ScrollPaneSynchronizer {
     }
 
     private fun updateHorizontalScrollPanesOtherThan(that: JScrollPane, thatPosition: Int) {
-        val scrollableWidth = that.viewport.scrollableWidth
-
-        // We don't want the small viewport to reset the
-        // bigger ones to 0 on scroll.
-        if (scrollableWidth <= 0) {
-            return
-        }
-
-        val scrollPercentage = thatPosition.toDouble() / scrollableWidth
-
-        for (it in scrollPanes) {
-            if (it == that) {
-                // This is crucial, despite the cache.
-                // After recalculating the position from
-                // the current percentage we may get a different
-                // value than the current one due to int rounding.
-                continue
-            }
-
-            val newScrollBarValue = (scrollPercentage * it.viewport.scrollableWidth).toInt()
-            val itPosition = it.viewport.viewPosition.x
-
-            if (newScrollBarValue != itPosition) {
+        updateScrollPanesOtherThan(
+            that, thatPosition,
+            measureScrollableSpace = { it.viewport.scrollableWidth },
+            getPosition = { it.viewport.viewPosition.x },
+            setPosition = { it, newScrollBarValue ->
                 scrollPanesCurrentPercentages[it]?.latestX = newScrollBarValue
                 // Accessing `y` from the newer position, because it's orthogonal
                 it.viewport.viewPosition = Point(newScrollBarValue, it.viewport.viewPosition.y)
-            }
-        }
+            },
+        )
     }
 
-    private fun updateVerticalScrollPanesOtherThan(that: JScrollPane, currentPosition: Int) {
-        val scrollableHeight = that.viewport.scrollableHeight
+    private fun updateVerticalScrollPanesOtherThan(that: JScrollPane, thatPosition: Int) {
+        updateScrollPanesOtherThan(
+            that, thatPosition,
+            measureScrollableSpace = { it.viewport.scrollableHeight },
+            getPosition = { it.viewport.viewPosition.y },
+            setPosition = { it, newScrollBarValue ->
+                scrollPanesCurrentPercentages[it]?.latestY = newScrollBarValue
+                // Accessing `x` from the newer position, because it's orthogonal
+                it.viewport.viewPosition = Point(it.viewport.viewPosition.x, newScrollBarValue)
+            },
+        )
+    }
+
+    private inline fun updateScrollPanesOtherThan(
+        that: JScrollPane,
+        thatPosition: Int,
+        measureScrollableSpace: (JScrollPane) -> Int,
+        getPosition: (JScrollPane) -> Int,
+        setPosition: (JScrollPane, Int) -> Unit,
+    ) {
+        val scrollableSpace = measureScrollableSpace(that)
 
         // We don't want the small viewport to reset the
         // bigger ones to 0 on scroll.
-        if (scrollableHeight <= 0) {
+        if (scrollableSpace <= 0) {
             return
         }
 
-        val scrollPercentage = currentPosition.toDouble() / scrollableHeight
+        val scrollPercentage = thatPosition.toDouble() / scrollableSpace
 
         for (it in scrollPanes) {
             if (it == that) {
@@ -105,13 +106,11 @@ class ScrollPaneSynchronizer {
                 continue
             }
 
-            val newScrollBarValue = (scrollPercentage * it.viewport.scrollableHeight).toInt()
-            val itPosition = it.viewport.viewPosition.y
+            val newScrollBarValue = (scrollPercentage * measureScrollableSpace(it)).toInt()
+            val itPosition = getPosition(it)
 
             if (newScrollBarValue != itPosition) {
-                scrollPanesCurrentPercentages[it]?.latestY = newScrollBarValue
-                // Accessing `y` from the newer position, because it's orthogonal
-                it.viewport.viewPosition = Point(it.viewport.viewPosition.x, newScrollBarValue)
+                setPosition(it, newScrollBarValue)
             }
         }
     }
