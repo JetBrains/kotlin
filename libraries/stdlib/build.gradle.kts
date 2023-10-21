@@ -268,6 +268,10 @@ kotlin {
     }
 
     sourceSets {
+        fun <TP : TaskProvider<*>> TP.requiredForImport(): TP {
+            tasks.findByName("prepareKotlinIdeaImport")?.dependsOn(this)
+            return this
+        }
         all {
             kotlin.setSrcDirs(emptyList<File>())
         }
@@ -347,7 +351,7 @@ kotlin {
         val jsMain by getting {
             val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
-                srcDir(prepareJsIrMainSources)
+                srcDir(prepareJsIrMainSources.requiredForImport())
                 srcDir("$jsDir/builtins")
                 srcDir("$jsDir/runtime")
                 srcDir("$jsDir/src").apply {
@@ -426,7 +430,7 @@ kotlin {
             dependsOn(nativeWasmMain)
             val prepareWasmBuiltinSources by tasks.registering(Sync::class)
             kotlin {
-                srcDir(prepareWasmBuiltinSources)
+                srcDir(prepareWasmBuiltinSources.requiredForImport())
                 srcDir("wasm/builtins")
                 srcDir("wasm/internal")
                 srcDir("wasm/runtime")
@@ -511,8 +515,21 @@ kotlin {
         }
 
         if (kotlinBuildProperties.isInIdeaSync) {
+            val nativeKotlinTestCommon by creating {
+                dependsOn(commonMain.get())
+                val prepareKotlinTestCommonNativeSources by tasks.registering(Sync::class) {
+                    from("../kotlin.test/common/src/main/kotlin")
+                    from("../kotlin.test/annotations-common/src/main/kotlin")
+                    into("$buildDir/src/native-kotlin-test-common-sources")
+                }
+
+                kotlin {
+                    srcDir(prepareKotlinTestCommonNativeSources.requiredForImport())
+                }
+            }
             val nativeMain by getting {
                 dependsOn(nativeWasmMain)
+                dependsOn(nativeKotlinTestCommon)
                 kotlin {
                     srcDir("$rootDir/kotlin-native/runtime/src/main/kotlin")
                     srcDir("$rootDir/kotlin-native/Interop/Runtime/src/main/kotlin")
