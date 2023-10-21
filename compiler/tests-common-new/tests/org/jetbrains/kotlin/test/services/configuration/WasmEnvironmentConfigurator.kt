@@ -93,7 +93,7 @@ abstract class WasmEnvironmentConfigurator(testServices: TestServices) : Environ
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, true)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
 
-        val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
+        val sourceDirs = module.files.mapNotNull { it.originalFile?.parent }.distinct()
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
 

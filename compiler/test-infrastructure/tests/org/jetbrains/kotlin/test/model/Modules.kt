@@ -50,7 +50,13 @@ data class TestModule(
 class TestFile(
     val relativePath: String,
     val originalContent: String,
-    val originalFile: File,
+    /**
+     * `null` means the test infrastructure
+     * was executed against a "virtual" test
+     * file that contains some source code,
+     * but doesn't exist physically on the drive.
+     */
+    val originalFile: File?,
     val startLineNumberInOriginalFile: Int, // line count starts with 0
     /*
      * isAdditional means that this file provided as addition to sources of testdata

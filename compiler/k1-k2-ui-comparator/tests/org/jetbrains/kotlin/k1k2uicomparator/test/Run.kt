@@ -27,6 +27,13 @@ class TestRunner {
 private val k1Runner = DiagnosticTestGenerated()
 private val k2Runner = FirLightTreeOldFrontendDiagnosticsTestGenerated()
 
+/**
+ * The path supplied to the runners
+ * for configuration purposes
+ * (`forTestsMatching`).
+ */
+const val pathForConfigurationImitation = ""
+
 private val emptyKotlinTestInfo = KotlinTestInfo(
     className = "_undefined_",
     methodName = "_testUndefined_",
@@ -42,13 +49,13 @@ fun main() = EventQueue.invokeLater {
     fun processK1(sourceInitially: String): String {
         initIdeaConfiguration()
         k1Runner.initTestInfo(emptyKotlinTestInfo)
-        return testRunner("", k1Runner.configuration).runTestSource(sourceInitially)
+        return testRunner(pathForConfigurationImitation, k1Runner.configuration).runTestSource(sourceInitially)
     }
 
     fun processK2(sourceInitially: String): String {
         initIdeaConfiguration()
         k2Runner.initTestInfo(emptyKotlinTestInfo)
-        return testRunner("", k2Runner.configuration).runTestSource(sourceInitially)
+        return testRunner(pathForConfigurationImitation, k2Runner.configuration).runTestSource(sourceInitially)
     }
 
     fun recalculate(

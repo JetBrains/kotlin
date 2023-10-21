@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.impl.valueOfOrNull
 import java.io.File
@@ -87,8 +88,29 @@ fun checkSteppingTestResult(
     loggedItems: List<SteppingTestLoggedData>,
     directives: RegisteredDirectives
 ) {
-    val actual = mutableListOf<String>()
     val lines = wholeFile.readLines()
+    val result = calculateSteppingTestResult(frontendKind, targetBackend, lines, loggedItems)
+    assertEqualsToFile(wholeFile, result)
+}
+
+fun checkSteppingTestResult(
+    frontendKind: FrontendKind<*>,
+    targetBackend: TargetBackend,
+    originalSource: String,
+    loggedItems: List<SteppingTestLoggedData>
+) {
+    val lines = originalSource.split("\n")
+    val result = calculateSteppingTestResult(frontendKind, targetBackend, lines, loggedItems)
+    assertEquals(originalSource, result)
+}
+
+fun calculateSteppingTestResult(
+    frontendKind: FrontendKind<*>,
+    targetBackend: TargetBackend,
+    lines: List<String>,
+    loggedItems: List<SteppingTestLoggedData>,
+): String {
+    val actual = mutableListOf<String>()
     val directivesInTestFile = mutableSetOf<Directive>()
     var forceStepInto = false
     for (line in lines) {
@@ -176,7 +198,7 @@ fun checkSteppingTestResult(
         actual.add("")
     }
 
-    assertEqualsToFile(wholeFile, actual.joinToString("\n"))
+    return actual.joinToString("\n")
 }
 
 private fun String.getDeclaredDirectives(): List<Directive> {

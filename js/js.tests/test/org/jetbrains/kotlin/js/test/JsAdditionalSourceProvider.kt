@@ -21,12 +21,13 @@ import java.io.FileFilter
 class JsAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         if (JsEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
+        val originalFile = module.files.first().originalFile ?: return emptyList()
         // For multiplatform projects, add the files only to common modules with no dependencies.
         if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
             module.allDependencies.isNotEmpty()) {
             return emptyList()
         }
-        return getAdditionalKotlinFiles(module.files.first().originalFile.parent).map { it.toTestFile() }
+        return getAdditionalKotlinFiles(originalFile.parent).map { it.toTestFile() }
     }
 
     companion object {

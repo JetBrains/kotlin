@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.test.utils.withExtension
 
 class KaptContextHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
+        val expectedFile = module.files.first().originalFile?.withExtension(".txt")
+            ?: error("Handling Kapt requires a real test file")
         val kaptContext = info.kaptContext
         val compilationUnits = convert(module, kaptContext, generateNonExistentClass = false)
         kaptContext.doAnnotationProcessing(
@@ -28,7 +30,6 @@ class KaptContextHandler(testServices: TestServices) : BaseKaptHandler(testServi
         val stubJavaFiles = kaptContext.options.sourcesOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
         val actualRaw = stubJavaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' }).trimTrailingWhitespacesAndAddNewlineAtEOF()
-        val expectedFile = module.files.first().originalFile.withExtension(".txt")
         assertions.assertEqualsToFile(expectedFile, actual)
     }
 

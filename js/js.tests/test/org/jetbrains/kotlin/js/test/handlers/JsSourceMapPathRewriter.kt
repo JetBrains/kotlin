@@ -50,7 +50,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
         val testFile = allTestFiles.find { it.name == sourceMapPath }
             ?: allTestFiles.find { "/${it.name}" == sourceMapPath }
             ?: return null
-        return testFile.originalFile.absolutePath
+        return testFile.originalFile?.absolutePath
     }
 
     /**

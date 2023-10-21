@@ -32,7 +32,8 @@ class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourc
             module.allDependencies.isNotEmpty()) {
             return emptyList()
         }
-        return getAdditionalKotlinFiles(module.files.first().originalFile.parent).map { it.toTestFile() }
+        val originalFile = module.files.first().originalFile ?: return emptyList()
+        return getAdditionalKotlinFiles(originalFile.parent).map { it.toTestFile() }
     }
 
     companion object {

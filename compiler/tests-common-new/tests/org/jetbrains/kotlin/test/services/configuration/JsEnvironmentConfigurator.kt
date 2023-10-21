@@ -102,7 +102,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         private fun getPrefixPostfixFile(module: TestModule, prefix: Boolean): File? {
             val suffix = if (prefix) ".prefix" else ".postfix"
-            val originalFile = module.files.first().originalFile
+            val originalFile = module.files.first().originalFile ?: return null
             return originalFile.parentFile.resolve(originalFile.name + suffix).takeIf { it.exists() }
         }
 
@@ -231,7 +231,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val multiModule = testServices.moduleStructure.modules.size > 1
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
 
-        val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
+        val sourceDirs = module.files.mapNotNull { it.originalFile?.parent }.distinct()
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
 

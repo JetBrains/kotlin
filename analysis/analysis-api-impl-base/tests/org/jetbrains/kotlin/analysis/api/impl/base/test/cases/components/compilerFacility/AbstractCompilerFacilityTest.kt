@@ -199,7 +199,7 @@ private class CompilerFacilityEnvironmentConfigurator(testServices: TestServices
 }
 
 internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices: TestServices): KtCodeFragment? {
-    val ioFile = module.files.single { it.name == ktFile.name }.originalFile
+    val ioFile = module.files.single { it.name == ktFile.name }.originalFile ?: error("Creating a .fragment. requires a real test file")
     val ioFragmentFile = File(ioFile.parent, "${ioFile.nameWithoutExtension}.fragment.${ioFile.extension}")
 
     if (!ioFragmentFile.exists()) {

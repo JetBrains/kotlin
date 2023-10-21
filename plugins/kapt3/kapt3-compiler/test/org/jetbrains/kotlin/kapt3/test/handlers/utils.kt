@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.utils.withExtension
 
 fun Assertions.checkTxtAccordingToBackend(module: TestModule, actual: String, fileSuffix: String = "") {
-    val testDataFile = module.files.first().originalFile
+    val testDataFile = module.files.first().originalFile ?: error("Checking txt requires a real test file")
     val expectedFile = testDataFile.withExtension("$fileSuffix.txt")
     assertEqualsToFile(expectedFile, actual)
 }
