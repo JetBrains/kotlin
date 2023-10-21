@@ -41,18 +41,20 @@ class ScrollPaneSynchronizer {
     private val scrollPanesCurrentPercentages = mutableMapOf<JScrollPane, ScrollPaneStateInfo>()
 
     private fun applyScrollsFrom(scrollPane: JScrollPane) {
-        if (scrollPane.viewport.viewPosition.x != scrollPanesCurrentPercentages[scrollPane]?.latestX) {
-            scrollPanesCurrentPercentages[scrollPane]?.latestX = scrollPane.viewport.viewPosition.x
-            updateHorizontalScrollPanesOtherThan(scrollPane)
+        val currentPosition = scrollPane.viewport.viewPosition
+
+        if (currentPosition.x != scrollPanesCurrentPercentages[scrollPane]?.latestX) {
+            scrollPanesCurrentPercentages[scrollPane]?.latestX = currentPosition.x
+            updateHorizontalScrollPanesOtherThan(scrollPane, currentPosition.x)
         }
 
-        if (scrollPane.viewport.viewPosition.y != scrollPanesCurrentPercentages[scrollPane]?.latestY) {
-            scrollPanesCurrentPercentages[scrollPane]?.latestY = scrollPane.viewport.viewPosition.y
-            updateVerticalScrollPanesOtherThan(scrollPane)
+        if (currentPosition.y != scrollPanesCurrentPercentages[scrollPane]?.latestY) {
+            scrollPanesCurrentPercentages[scrollPane]?.latestY = currentPosition.y
+            updateVerticalScrollPanesOtherThan(scrollPane, currentPosition.y)
         }
     }
 
-    private fun updateHorizontalScrollPanesOtherThan(that: JScrollPane) {
+    private fun updateHorizontalScrollPanesOtherThan(that: JScrollPane, thatPosition: Int) {
         val scrollableWidth = that.viewport.scrollableWidth
 
         // We don't want the small viewport to reset the
@@ -61,19 +63,29 @@ class ScrollPaneSynchronizer {
             return
         }
 
-        val scrollPercentage = that.viewport.viewPosition.x.toDouble() / scrollableWidth
+        val scrollPercentage = thatPosition.toDouble() / scrollableWidth
 
         for (it in scrollPanes) {
-            val newScrollBarValue = (scrollPercentage * it.viewport.scrollableWidth).toInt()
+            if (it == that) {
+                // This is crucial, despite the cache.
+                // After recalculating the position from
+                // the current percentage we may get a different
+                // value than the current one due to int rounding.
+                continue
+            }
 
-            if (newScrollBarValue != it.viewport.viewPosition.x) {
+            val newScrollBarValue = (scrollPercentage * it.viewport.scrollableWidth).toInt()
+            val itPosition = it.viewport.viewPosition.x
+
+            if (newScrollBarValue != itPosition) {
                 scrollPanesCurrentPercentages[it]?.latestX = newScrollBarValue
+                // Accessing `y` from the newer position, because it's orthogonal
                 it.viewport.viewPosition = Point(newScrollBarValue, it.viewport.viewPosition.y)
             }
         }
     }
 
-    private fun updateVerticalScrollPanesOtherThan(that: JScrollPane) {
+    private fun updateVerticalScrollPanesOtherThan(that: JScrollPane, currentPosition: Int) {
         val scrollableHeight = that.viewport.scrollableHeight
 
         // We don't want the small viewport to reset the
@@ -82,13 +94,23 @@ class ScrollPaneSynchronizer {
             return
         }
 
-        val scrollPercentage = that.viewport.viewPosition.y.toDouble() / scrollableHeight
+        val scrollPercentage = currentPosition.toDouble() / scrollableHeight
 
         for (it in scrollPanes) {
-            val newScrollBarValue = (scrollPercentage * it.viewport.scrollableHeight).toInt()
+            if (it == that) {
+                // This is crucial, despite the cache.
+                // After recalculating the position from
+                // the current percentage we may get a different
+                // value than the current one due to int rounding.
+                continue
+            }
 
-            if (newScrollBarValue != it.viewport.viewPosition.y) {
+            val newScrollBarValue = (scrollPercentage * it.viewport.scrollableHeight).toInt()
+            val itPosition = it.viewport.viewPosition.y
+
+            if (newScrollBarValue != itPosition) {
                 scrollPanesCurrentPercentages[it]?.latestY = newScrollBarValue
+                // Accessing `y` from the newer position, because it's orthogonal
                 it.viewport.viewPosition = Point(it.viewport.viewPosition.x, newScrollBarValue)
             }
         }
