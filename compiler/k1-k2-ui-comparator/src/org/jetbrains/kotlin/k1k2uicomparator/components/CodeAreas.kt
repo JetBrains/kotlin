@@ -77,9 +77,13 @@ private val JTextArea.nextCharacter get() = getText(caretPosition, 1).first()
 private val JTextArea.previousIsFirstInPair get() = caretPosition > 0 && previousCharacter in pairedSymbol
 private val JTextArea.nextIsSecondInPair get() = caretPosition < text.length && nextCharacter == pairedSymbol[previousCharacter]
 
+context(JTextArea)
+private val Int.alignedIndent: String
+    get() = " ".repeat(alignByMultiplesOf(tabSize))
+
 private fun JTextArea.getIndentOfLine(line: String): Int {
-    val noTabLine = line.removeSuffix("\n").replace("\t", " ".repeat(tabSize))
-    return noTabLine.indentWidth().alignByMultiplesOf(tabSize)
+    val noTabLine = line.removeSuffix("\n").replace("\t", tabSize.alignedIndent)
+    return noTabLine.indentWidth()
 }
 
 private fun JTextArea.getIndentOfLineWithin(lineStartOffset: Int, lineEndOffset: Int) =
@@ -133,7 +137,7 @@ private fun JTextArea.handleDefaultCodeAreaInput(e: KeyEvent) {
                         val inverseIndent = previousLine.reversed().indentWidth()
                         replaceRange("", currentLineStartOffset - inverseIndent, currentLineStartOffset + currentLineIndent)
                     } else {
-                        replaceRange(" ".repeat(currentLineIndent), previousLineStart, currentLineStartOffset + currentLineIndent)
+                        replaceRange(currentLineIndent.alignedIndent, previousLineStart, currentLineStartOffset + currentLineIndent)
                     }
                 } else {
                     replaceRange("", currentLineStartOffset, currentLineStartOffset + currentLineIndent)
@@ -143,7 +147,7 @@ private fun JTextArea.handleDefaultCodeAreaInput(e: KeyEvent) {
             }
         }
         KeyEvent.VK_TAB -> {
-            insert(" ".repeat(tabSize), caretPosition)
+            insert(tabSize.alignedIndent, caretPosition)
             e.consume()
         }
         KeyEvent.VK_ENTER -> {
@@ -155,16 +159,16 @@ private fun JTextArea.handleDefaultCodeAreaInput(e: KeyEvent) {
 
             when {
                 caretPosition > 0 && previousCharacter in indentShiftingCharacters.keys -> {
-                    replaceRange("\n" + " ".repeat(currentLineIndent + tabSize), caretPosition, caretPosition + indentAfterCaret)
+                    replaceRange("\n" + (currentLineIndent + tabSize).alignedIndent, caretPosition, caretPosition + indentAfterCaret)
 
                     if (caretPosition < text.length && nextCharacter in indentShiftingCharacters.values) {
-                        val spaceAfterCaret = "\n" + " ".repeat(currentLineIndent)
+                        val spaceAfterCaret = "\n" + currentLineIndent.alignedIndent
                         insert(spaceAfterCaret, caretPosition)
                         caretPosition -= spaceAfterCaret.length
                     }
                 }
                 else -> {
-                    val spaceBeforeCaret = "\n" + " ".repeat(currentLineIndent)
+                    val spaceBeforeCaret = "\n" + currentLineIndent.alignedIndent
                     replaceRange(spaceBeforeCaret, caretPosition, caretPosition + indentAfterCaret)
                 }
             }
