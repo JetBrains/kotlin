@@ -80,26 +80,38 @@ class KotlinBuildStatHandler {
         }
     }
 
-    internal fun collectConfigurationTimeMetrics(
+    internal fun collectGeneralConfigurationTimeMetrics(
+        project: Project,
+        sessionLogger: BuildSessionLogger,
+    ): MetricContainer {
+        val configurationTimeMetrics = MetricContainer()
+
+        val statisticOverhead = measureTimeMillis {
+            val gradle = project.gradle
+            configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
+            configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
+            gradle.taskGraph.whenReady { taskExecutionGraph ->
+                val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
+                configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+            }
+
+        }
+        sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
+
+        return configurationTimeMetrics
+
+    }
+
+    internal fun collectProjectConfigurationTimeMetrics(
         project: Project,
         sessionLogger: BuildSessionLogger,
         isProjectIsolationEnabled: Boolean,
     ): MetricContainer {
-        val gradle = project.gradle
         val configurationTimeMetrics = MetricContainer()
-        configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
-        configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
 
         if (isProjectIsolationEnabled) { //support project isolation - KT-58768
             return configurationTimeMetrics
         }
-
-        gradle.taskGraph.whenReady { taskExecutionGraph ->
-            val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
-            configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
-        }// constants are saved in IDEA plugin and could not be accessed directly
-        fun buildSrcExists(project: Project) = File(project.projectDir, "buildSrc").exists()
-        configurationTimeMetrics.put(BooleanMetrics.BUILD_SRC_EXISTS, buildSrcExists(gradle.rootProject))
 
         val statisticOverhead = measureTimeMillis {
             collectAppliedPluginsStatistics(project, configurationTimeMetrics)

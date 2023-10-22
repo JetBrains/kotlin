@@ -102,7 +102,8 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
                         kotlinBuildStatsServicesRegistry = it
                     }
 
-                    val defaultServiceName = KotlinBuildStatsServicesRegistry.getBeanName(KotlinBuildStatsServicesRegistry.DEFAULT_SERVICE_QUALIFIER)
+                    val defaultServiceName =
+                        KotlinBuildStatsServicesRegistry.getBeanName(KotlinBuildStatsServicesRegistry.DEFAULT_SERVICE_QUALIFIER)
                     val instance = kotlinBuildStatsServicesRegistry?.getDefaultService()
                     if (instance != null) {
                         registry.logger.debug("$defaultServiceName is already instantiated. Current instance is $instance")
@@ -193,9 +194,14 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
     open fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: List<MetricContainer>) {}
 
     /**
-     * Collect project general and configuration metrics at the start of a build
+     * Collect project's configuration metrics
      */
-    open fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean): MetricContainer = MetricContainer()
+    open fun collectProjectConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean): MetricContainer = MetricContainer()
+
+    /**
+     * Collect general configuration metrics
+     */
+    open fun collectGeneralConfigurationMetrics(project: Project): MetricContainer = MetricContainer()
 
     open fun recordProjectsEvaluated(gradle: Gradle) {}
 }
@@ -312,7 +318,9 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
     }
 
-    override fun collectStartMetrics(project: Project, isProjectIsolationEnabled: Boolean) =
-        KotlinBuildStatHandler().collectConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled)
+    override fun collectProjectConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean) =
+        KotlinBuildStatHandler().collectProjectConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled)
 
+    override fun collectGeneralConfigurationMetrics(project: Project) =
+        KotlinBuildStatHandler().collectGeneralConfigurationTimeMetrics(project, sessionLogger)
 }

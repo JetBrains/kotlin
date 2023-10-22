@@ -65,7 +65,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                 @Suppress("UNCHECKED_CAST")
                 return (it.service as Provider<BuildFlowService>).also {
                     it.get().parameters.configurationMetrics.add(project.provider {
-                        KotlinBuildStatsService.getInstance()?.collectStartMetrics(project, isProjectIsolationEnabled)
+                        KotlinBuildStatsService.getInstance()?.collectProjectConfigurationMetrics(project, isProjectIsolationEnabled)
                     })
                 }
             }
@@ -84,7 +84,11 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                 }
 
                 spec.parameters.configurationMetrics.add(project.provider {
-                    KotlinBuildStatsService.getInstance()?.collectStartMetrics(project, isProjectIsolationEnabled)
+                    KotlinBuildStatsService.getInstance()?.collectGeneralConfigurationMetrics(project)
+                })
+
+                spec.parameters.configurationMetrics.add(project.provider {
+                    KotlinBuildStatsService.getInstance()?.collectProjectConfigurationMetrics(project, isProjectIsolationEnabled)
                 })
                 spec.parameters.fusStatisticsAvailable.set(fusStatisticsAvailable)
             }.also { buildService ->
