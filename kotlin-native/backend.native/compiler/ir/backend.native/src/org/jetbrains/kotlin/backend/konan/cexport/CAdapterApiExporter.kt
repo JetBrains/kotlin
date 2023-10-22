@@ -245,7 +245,6 @@ internal class CAdapterApiExporter(
         output("#endif  /* KONAN_${prefix.uppercase()}_H */")
 
         outputStreamWriter.close()
-        println("Produced library API in ${prefix}_api.h")
 
         outputStreamWriter = cppAdapterFile.printWriter()
 
