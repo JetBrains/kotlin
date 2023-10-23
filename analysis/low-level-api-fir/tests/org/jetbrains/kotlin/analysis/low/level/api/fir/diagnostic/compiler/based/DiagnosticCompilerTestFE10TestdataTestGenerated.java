@@ -24220,6 +24220,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("nestedAnnotationClassViaActualTypeAlias.kt")
+                public void testNestedAnnotationClassViaActualTypeAlias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/nestedAnnotationClassViaActualTypeAlias.kt");
+                }
+
+                @Test
                 @TestMetadata("repeatableNoArg.kt")
                 public void testRepeatableNoArg() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/repeatableNoArg.kt");
@@ -24775,6 +24781,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 @TestMetadata("annotationArgumentEquality.kt")
                 public void testAnnotationArgumentEquality() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationArgumentEquality.kt");
+                }
+
+                @Test
+                @TestMetadata("annotationDefaultArgKclassWithNestedClassViaActualTypeAlias.kt")
+                public void testAnnotationDefaultArgKclassWithNestedClassViaActualTypeAlias() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationDefaultArgKclassWithNestedClassViaActualTypeAlias.kt");
                 }
 
                 @Test
