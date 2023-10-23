@@ -19,7 +19,7 @@ class DumpMetadataTest {
     private fun dumpMetadata(library: String, printOutput: Boolean = false, expected: () -> String) {
         val output = StringBuilder()
         val lib = Library(library, null)
-        lib.dumpMetadata(output, false)
+        lib.dumpMetadata(output, false, null)
         if (printOutput) {
             println(output.trim().toString())
         }
@@ -34,7 +34,7 @@ class DumpMetadataTest {
     fun `Stdlib content should be printed without exceptions`() {
         val output = StringBuilder()
         val distributionPath = System.getProperty("konan.home")
-        Library(Distribution(distributionPath).stdlib, null).dumpMetadata(output, false)
+        Library(Distribution(distributionPath).stdlib, null).dumpMetadata(output, false, null)
     }
 
     @Test

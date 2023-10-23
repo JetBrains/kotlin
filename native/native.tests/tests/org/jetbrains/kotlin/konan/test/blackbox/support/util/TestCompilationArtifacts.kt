@@ -20,29 +20,46 @@ private fun invokeKlibTool(kotlinNativeClassLoader: ClassLoader, klibFile: File,
 
 }
 
-internal fun TestCompilationArtifact.KLIB.dumpMetadata(kotlinNativeClassLoader: ClassLoader): String {
-    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "dumpMetadata", /* printSignatures= */ false)
-}
+internal fun TestCompilationArtifact.KLIB.dumpMetadata(kotlinNativeClassLoader: ClassLoader): String = invokeKlibTool(
+    kotlinNativeClassLoader = kotlinNativeClassLoader,
+    klibFile = klibFile,
+    functionName = "dumpMetadata",
+    /* printSignatures= */ false,
+    /* signatureVersion= */ null
+)
 
 internal fun TestCompilationArtifact.KLIB.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
-    printSignatures: Boolean = false,
-): String {
-    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "dumpIr", printSignatures)
-}
+    printSignatures: Boolean,
+    signatureVersion: KotlinIrSignatureVersion?
+): String = invokeKlibTool(
+    kotlinNativeClassLoader = kotlinNativeClassLoader,
+    klibFile = klibFile,
+    functionName = "dumpIr",
+    /* printSignatures= */ printSignatures,
+    /* signatureVersion= */ signatureVersion?.let { getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion) }
+)
 
 internal fun TestCompilationArtifact.KLIB.dumpIrSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
-): String {
-    // This ceremony is required to load `KotlinIrSignatureVersion` class from the isolated class loader and thus avoid
-    // "argument type mismatch" exception raised by the Java reflection API.
-    // TODO: migrate on CLI-based scheme of invocation of all KLIB tool commands
-    val signatureVersionForIsolatedClassLoader = Class.forName(
+): String = invokeKlibTool(
+    kotlinNativeClassLoader = kotlinNativeClassLoader,
+    klibFile = klibFile,
+    functionName = "dumpIrSignatures",
+    /* signatureVersion= */ getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion)
+)
+
+// This ceremony is required to load `KotlinIrSignatureVersion` class from the isolated class loader and thus avoid
+// "argument type mismatch" exception raised by the Java reflection API.
+// TODO: migrate on CLI-based scheme of invocation of all KLIB tool commands
+private fun getSignatureVersionForIsolatedClassLoader(
+    kotlinNativeClassLoader: ClassLoader,
+    signatureVersion: KotlinIrSignatureVersion,
+): Any {
+    return Class.forName(
         signatureVersion::class.java.canonicalName,
         true,
         kotlinNativeClassLoader
     ).getDeclaredConstructor(Int::class.java).newInstance(signatureVersion.number)!!
-
-    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "dumpIrSignatures", signatureVersionForIsolatedClassLoader)
 }

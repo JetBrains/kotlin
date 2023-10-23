@@ -53,7 +53,7 @@ abstract class AbstractNativeKlibDumpIrTest : AbstractNativeSimpleTest() {
     ) {
         val artifact = compilationResult.assertSuccess().resultingArtifact
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
-        val klibIr = artifact.dumpIr(kotlinNativeClassLoader.classLoader, printSignatures)
+        val klibIr = artifact.dumpIr(kotlinNativeClassLoader.classLoader, printSignatures, null) // TODO: test for all signature versions, KT-62828
         assertEqualsToFile(expectedContents, klibIr)
     }
 

@@ -273,10 +273,15 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun dumpIr(output: Appendable, printSignatures: Boolean) {
+    fun dumpIr(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
         val module = loadModule()
         val library = module.kotlinLibrary
         checkLibraryHasIr(library)
+
+        if (signatureVersion != null && signatureVersion != KotlinIrSignatureVersion.V2) {
+            // TODO: support passing any signature version through `DumpIrTreeOptions`, KT-62828
+            logWarning("using a non-default signature version in \"dump-ir\" is not supported yet")
+        }
 
         val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
         val idSignaturer = KonanIdSignaturer(KonanManglerDesc)
@@ -296,15 +301,15 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?) {
         output.append(irFragment.dump(DumpIrTreeOptions(printSignatures = printSignatures)))
     }
 
-    fun contents(output: Appendable, printSignatures: Boolean) {
+    fun contents(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
         logWarning("\"contents\" has been renamed to \"dump-metadata\". Please, use new command name.")
-        dumpMetadata(output, printSignatures)
+        dumpMetadata(output, printSignatures, signatureVersion)
     }
 
-    fun dumpMetadata(output: Appendable, printSignatures: Boolean) {
+    fun dumpMetadata(output: Appendable, printSignatures: Boolean, signatureVersion: KotlinIrSignatureVersion?) {
         val module = loadModule()
         val signatureRenderer = if (printSignatures)
-            DefaultKlibSignatureRenderer(KotlinIrSignatureVersion.V1, "// Signature: ") // TODO: use the version from `-signature-version`
+            DefaultKlibSignatureRenderer(signatureVersion, "// Signature: ")
         else
             KlibSignatureRenderer.NO_SIGNATURE
         val printer = DeclarationPrinter(output, DefaultDeclarationHeaderRenderer, signatureRenderer)
@@ -394,11 +399,11 @@ fun main(args: Array<String>) {
     val library = Library(command.library, repository)
 
     when (command.verb) {
-        "dump-ir" -> library.dumpIr(System.out, printSignatures)
+        "dump-ir" -> library.dumpIr(System.out, printSignatures, signatureVersion)
         "dump-ir-signatures" -> library.dumpIrSignatures(System.out, signatureVersion)
-        "dump-metadata" -> library.dumpMetadata(System.out, printSignatures)
+        "dump-metadata" -> library.dumpMetadata(System.out, printSignatures, signatureVersion)
         "dump-metadata-signatures" -> library.dumpMetadataSignatures(System.out, signatureVersion)
-        "contents" -> library.contents(System.out, printSignatures)
+        "contents" -> library.contents(System.out, printSignatures, signatureVersion)
         "signatures" -> library.signatures(System.out, signatureVersion)
         "info" -> library.info()
         "install" -> library.install()
