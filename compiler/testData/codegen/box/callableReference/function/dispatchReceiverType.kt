@@ -1,13 +1,13 @@
 // TARGET_BACKEND: JVM
 // MODULE: lib
-// FILE: X.java
+// FILE: test/X.java
 package test;
 
 public class X extends PX {
     public X(String x) { super(x); }
 }
 
-// FILE: PX.java
+// FILE: test/PX.java
 package test;
 
 class PX {
