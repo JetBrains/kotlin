@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.lower.BirJvmStaticInObjectLowering
 import org.jetbrains.kotlin.bir.backend.lower.BirRepeatedAnnotationLowering
+import org.jetbrains.kotlin.bir.backend.lower.BirTypeAliasAnnotationMethodsLowering
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
@@ -59,6 +60,7 @@ fun lowerWithBir(
 private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirJvmStaticInObjectLowering,
     ::BirRepeatedAnnotationLowering,
+    ::BirTypeAliasAnnotationMethodsLowering,
 )
 
 private class ConvertIrToBirPhase(name: String, description: String) :
