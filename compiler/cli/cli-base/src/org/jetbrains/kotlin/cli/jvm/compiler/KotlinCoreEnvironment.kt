@@ -681,8 +681,8 @@ class KotlinCoreEnvironment private constructor(
             val pluginRoot: File =
                 configuration.get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)?.let(::File)
                     ?: PathUtil.getResourcePathForClass(this::class.java).takeIf { it.hasConfigFile(configFilePath) }
-                    // hack for load extensions when compiler run directly from project directory (e.g. in tests)
-                    ?: File("compiler/cli/cli-common/resources").takeIf { it.hasConfigFile(configFilePath) }
+                    // hack for load extensions when compiler run for tests
+                    ?: PathUtil.getResourcePathForClass(this::class.java).parentFile.parentFile.parentFile.parentFile.resolve("cli-common/resources").takeIf { it.hasConfigFile(configFilePath) }
                     ?: configuration.get(CLIConfigurationKeys.PATH_TO_KOTLIN_COMPILER_JAR)?.takeIf { it.hasConfigFile(configFilePath) }
                     ?: throw IllegalStateException(
                         "Unable to find extension point configuration $configFilePath " +

@@ -32,6 +32,20 @@ tasks.register<JavaExec>("runTest") {
     mainClass.set("org.jetbrains.kotlin.k1k2uicomparator.test.RunKt")
 }
 
+tasks.register<Jar>("jarTest") {
+    group = BasePlugin.BUILD_GROUP
+
+    from(
+        sourceSets.main.get().output,
+        sourceSets.test.get().output,
+    )
+
+    manifest {
+        attributes["Class-Path"] = configurations.testRuntimeClasspath.get().joinToString(" ")
+        attributes["Main-Class"] = "org.jetbrains.kotlin.k1k2uicomparator.test.RunKt"
+    }
+}
+
 sourceSets {
     "main" {
         projectDefault()

@@ -7,6 +7,7 @@ val testModules = listOf(
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-compiler-utils",
     ":compiler:tests-common-new",
+    ":compiler:fir:analysis-tests",
     ":generators:test-generator"
 )
 
