@@ -59,6 +59,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleSymbolByReferenceTestGenerate
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/symbolByReference/js")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Js {
+        @Test
+        public void testAllFilesPresentInJs() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/symbolByReference/js"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/symbols/symbolByReference/withTestCompilerPluginEnabled")
     @TestDataPath("$PROJECT_ROOT")
     public class WithTestCompilerPluginEnabled {

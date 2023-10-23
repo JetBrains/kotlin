@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
@@ -92,6 +93,7 @@ internal class KtFirFunctionSymbol(
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion {
             when {
+                firSymbol.origin == FirDeclarationOrigin.DynamicScope -> KtSymbolKind.CLASS_MEMBER
                 firSymbol.isLocal -> KtSymbolKind.LOCAL
                 firSymbol.containingClassLookupTag()?.classId == null -> KtSymbolKind.TOP_LEVEL
                 else -> KtSymbolKind.CLASS_MEMBER

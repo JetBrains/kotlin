@@ -154,4 +154,12 @@ public enum class KtSymbolOrigin {
      * @see org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin.Plugin
      */
     PLUGIN,
+
+
+    /**
+     * Declaration from dynamic Kotlin/JS scope.
+     *
+     * See: [Dynamic type Kotlin documentation](https://kotlinlang.org/docs/dynamic-type.html)
+     */
+    JS_DYNAMIC,
 }

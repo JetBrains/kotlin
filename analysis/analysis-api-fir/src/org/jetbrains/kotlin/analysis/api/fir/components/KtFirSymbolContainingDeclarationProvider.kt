@@ -76,7 +76,16 @@ internal class KtFirSymbolContainingDeclarationProvider(
 
             is KtCallableSymbol -> {
                 val outerFirClassifier = symbol.firSymbol.getContainingClassSymbol(symbol.firSymbol.llFirSession)
-                    ?: return getParentSymbolByPsi()
+                if (outerFirClassifier == null) {
+                    return when (firSymbol.origin) {
+                        FirDeclarationOrigin.DynamicScope -> {
+                            // A callable declaration from dynamic scope has no containing declaration as it comes from a dynamic type
+                            // which is not based on a specific classifier
+                            null
+                        }
+                        else -> getParentSymbolByPsi()
+                    }
+                }
                 firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
             }
 

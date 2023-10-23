@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclaratio
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescDefaultBackingFieldSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DynamicFunctionDescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.getModule
@@ -64,6 +65,10 @@ internal class KtFe10SymbolContainingDeclarationProvider(
 
         if (symbol is KtBackingFieldSymbol) {
             return getContainingModule(symbol.owningProperty)
+        }
+
+        if (symbol is KtFe10DynamicFunctionDescValueParameterSymbol) {
+            return getContainingModule(symbol.owner)
         }
 
         TODO(symbol::class.java.name)

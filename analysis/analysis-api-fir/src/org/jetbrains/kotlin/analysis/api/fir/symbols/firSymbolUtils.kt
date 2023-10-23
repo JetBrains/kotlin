@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.create
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
@@ -79,8 +81,13 @@ private fun createContextReceiver(
     builder.token
 )
 
-internal fun FirCallableSymbol<*>.getCallableIdIfNonLocal(): CallableId? =
-    callableId.takeUnless { it.isLocal }
+internal fun FirCallableSymbol<*>.getCallableIdIfNonLocal(): CallableId? {
+    return when {
+        origin == FirDeclarationOrigin.DynamicScope -> null
+        callableId.isLocal -> null
+        else -> callableId
+    }
+}
 
 internal fun FirClassLikeSymbol<*>.getClassIdIfNonLocal(): ClassId? =
     classId.takeUnless { it.isLocal }
@@ -88,7 +95,15 @@ internal fun FirClassLikeSymbol<*>.getClassIdIfNonLocal(): ClassId? =
 internal fun FirCallableSymbol<*>.dispatchReceiverType(
     builder: KtSymbolByFirBuilder,
 ): KtType? {
-    return dispatchReceiverType?.let { builder.typeBuilder.buildKtType(it) }
+    val type = if (
+        origin == FirDeclarationOrigin.DynamicScope
+        && (this is FirPropertySymbol || this is FirFunctionSymbol)
+    ) {
+        ConeDynamicType.create(builder.rootSession)
+    } else {
+        dispatchReceiverType
+    }
+    return type?.let { builder.typeBuilder.buildKtType(it) }
 }
 
 internal fun FirVariableSymbol<*>.getKtConstantInitializer(resolveSession: LLFirResolveSession): KtInitializerValue? {

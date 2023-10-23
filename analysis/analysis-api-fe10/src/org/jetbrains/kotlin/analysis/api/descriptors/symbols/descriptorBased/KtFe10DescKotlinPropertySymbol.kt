@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 internal class KtFe10DescKotlinPropertySymbol(
@@ -37,7 +38,12 @@ internal class KtFe10DescKotlinPropertySymbol(
         get() = withValidityAssertion { descriptor.name }
 
     override val symbolKind: KtSymbolKind
-        get() = withValidityAssertion { descriptor.ktSymbolKind }
+        get() = withValidityAssertion {
+            if (descriptor.isDynamic()) {
+                return@withValidityAssertion KtSymbolKind.CLASS_MEMBER
+            }
+            descriptor.ktSymbolKind
+        }
 
     override val isLateInit: Boolean
         get() = withValidityAssertion { descriptor.isLateInit }
@@ -67,10 +73,10 @@ internal class KtFe10DescKotlinPropertySymbol(
         get() = withValidityAssertion { descriptor.isExpect }
 
     override val hasGetter: Boolean
-        get() = withValidityAssertion { true }
+        get() = withValidityAssertion { !descriptor.isDynamic() }
 
     override val hasSetter: Boolean
-        get() = withValidityAssertion { descriptor.isVar }
+        get() = withValidityAssertion { !descriptor.isDynamic() && !isVal }
 
     override val callableIdIfNonLocal: CallableId?
         get() = withValidityAssertion { descriptor.callableIdIfNotLocal }
@@ -86,14 +92,16 @@ internal class KtFe10DescKotlinPropertySymbol(
             createKtInitializerValue(initializer, descriptor, analysisContext)
         }
 
-    override val getter: KtPropertyGetterSymbol
+    override val getter: KtPropertyGetterSymbol?
         get() = withValidityAssertion {
+            if (descriptor.isDynamic()) return null
             val getter = descriptor.getter ?: return KtFe10DescDefaultPropertyGetterSymbol(descriptor, analysisContext)
             return KtFe10DescPropertyGetterSymbol(getter, analysisContext)
         }
 
     override val setter: KtPropertySetterSymbol?
         get() = withValidityAssertion {
+            if (descriptor.isDynamic()) return null
             if (!descriptor.isVar) {
                 return null
             }

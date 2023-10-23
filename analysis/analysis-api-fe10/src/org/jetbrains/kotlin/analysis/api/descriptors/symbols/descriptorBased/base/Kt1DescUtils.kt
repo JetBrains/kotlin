@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -141,6 +142,7 @@ internal fun KtSymbol.getDescriptor(): DeclarationDescriptor? {
         is KtFe10PsiDefaultSetterParameterSymbol -> descriptor
         is KtFe10PsiDefaultPropertySetterSymbol -> null
         is KtFe10DescDefaultPropertySetterSymbol -> null
+        is KtFe10DynamicFunctionDescValueParameterSymbol -> null
         is KtFe10FileSymbol -> null
         is KtFe10DescDefaultPropertySetterSymbol.DefaultKtValueParameterSymbol -> descriptor
         is KtFe10PsiDefaultPropertySetterSymbol.DefaultKtValueParameterSymbol -> descriptor
@@ -331,7 +333,11 @@ internal fun DeclarationDescriptor.getSymbolOrigin(analysisContext: Fe10Analysis
         is CallableMemberDescriptor -> when (kind) {
             CallableMemberDescriptor.Kind.DELEGATION -> return KtSymbolOrigin.DELEGATED
             CallableMemberDescriptor.Kind.SYNTHESIZED -> return KtSymbolOrigin.SOURCE_MEMBER_GENERATED
-            else -> {}
+            else -> {
+                if (isDynamic()) {
+                    return KtSymbolOrigin.JS_DYNAMIC
+                }
+            }
         }
     }
 

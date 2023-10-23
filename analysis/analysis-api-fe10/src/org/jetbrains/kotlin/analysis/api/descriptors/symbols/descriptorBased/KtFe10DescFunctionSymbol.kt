@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 internal class KtFe10DescFunctionSymbol private constructor(
@@ -49,13 +50,24 @@ internal class KtFe10DescFunctionSymbol private constructor(
     }
 
     override val symbolKind: KtSymbolKind
-        get() = withValidityAssertion { descriptor.ktSymbolKind }
+        get() = withValidityAssertion {
+            if (descriptor.isDynamic()) {
+                return@withValidityAssertion KtSymbolKind.CLASS_MEMBER
+            }
+            descriptor.ktSymbolKind
+        }
 
     override val isSuspend: Boolean
         get() = withValidityAssertion { descriptor.isSuspend }
 
     override val isOperator: Boolean
-        get() = withValidityAssertion { descriptor.isOperator }
+        get() = withValidityAssertion {
+            if (descriptor.isDynamic()) {
+                // For consistency with the K2 implementation, see `FirDynamicMembersStorage`
+                return@withValidityAssertion true
+            }
+            descriptor.isOperator
+        }
 
     override val isExternal: Boolean
         get() = withValidityAssertion { descriptor.isExternal }
@@ -67,7 +79,13 @@ internal class KtFe10DescFunctionSymbol private constructor(
         get() = withValidityAssertion { descriptor.isExplicitOverride }
 
     override val isInfix: Boolean
-        get() = withValidityAssertion { descriptor.isInfix }
+        get() = withValidityAssertion {
+            if (descriptor.isDynamic()) {
+                // For consistency with the K2 implementation, see `FirDynamicMembersStorage`
+                return@withValidityAssertion true
+            }
+            descriptor.isInfix
+        }
 
     override val isStatic: Boolean
         get() = withValidityAssertion { descriptor is JavaCallableMemberDescriptor && DescriptorUtils.isStaticDeclaration(descriptor) }
@@ -82,7 +100,13 @@ internal class KtFe10DescFunctionSymbol private constructor(
         get() = withValidityAssertion { descriptor.isExpect }
 
     override val valueParameters: List<KtValueParameterSymbol>
-        get() = withValidityAssertion { descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisContext) } }
+        get() = withValidityAssertion {
+            if (descriptor.isDynamic()) {
+                // For consistency with the K2 implementation, see `FirDynamicMembersStorage`
+                return@withValidityAssertion listOf(KtFe10DynamicFunctionDescValueParameterSymbol(this))
+            }
+            descriptor.valueParameters.map { KtFe10DescValueParameterSymbol(it, analysisContext) }
+        }
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { descriptor.ktHasStableParameterNames }

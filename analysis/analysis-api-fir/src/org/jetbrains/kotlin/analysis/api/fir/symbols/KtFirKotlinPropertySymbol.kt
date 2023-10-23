@@ -68,6 +68,9 @@ internal class KtFirKotlinPropertySymbol(
 
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion {
+            if (firSymbol.origin == FirDeclarationOrigin.DynamicScope) {
+                return@withValidityAssertion KtSymbolKind.CLASS_MEMBER
+            }
             when (firSymbol.containingClassLookupTag()?.classId) {
                 null -> KtSymbolKind.TOP_LEVEL
                 else -> KtSymbolKind.CLASS_MEMBER
