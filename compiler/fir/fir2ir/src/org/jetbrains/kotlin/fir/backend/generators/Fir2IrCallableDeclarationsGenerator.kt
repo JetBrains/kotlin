@@ -1118,7 +1118,7 @@ internal fun IrDeclaration.setParent(irParent: IrDeclarationParent?) {
  *      Note that IrClass will be a parent if some declaration is declared inside anonymous initializer, because IrAnonymousInitializer
  *      is not a IrDeclarationParent
  */
-@OptIn(IrSymbolInternals::class)
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 internal fun addDeclarationToParent(declaration: IrDeclaration, irParent: IrDeclarationParent?) {
     if (irParent == null) return
     when (irParent) {

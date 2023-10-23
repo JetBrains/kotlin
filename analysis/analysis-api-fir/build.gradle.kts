@@ -62,7 +62,7 @@ sourceSets {
     }
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")

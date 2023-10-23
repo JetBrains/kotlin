@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
@@ -182,7 +182,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         return result?.unwrapSubstitutionOverrides()
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     fun bindDelegatedMembersOverriddenSymbols(irClass: IrClass) {
         val superClasses by lazy(LazyThreadSafetyMode.NONE) {
             irClass.superTypes.mapNotNullTo(mutableSetOf()) { it.classifierOrNull?.owner as? IrClass }

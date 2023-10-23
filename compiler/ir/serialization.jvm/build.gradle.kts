@@ -12,7 +12,7 @@ dependencies {
     api(project(":compiler:frontend.java"))
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" {

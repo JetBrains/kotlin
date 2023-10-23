@@ -41,7 +41,7 @@ compileCompilerKotlin {
             '-Xskip-prerelease-check']
 }
 
-TasksKt.optInToIrSymbolInternals(project)
+TasksKt.optInToUnsafeDuringIrConstructionAPI(project)
 
 compileCli_bcKotlin {
     kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']

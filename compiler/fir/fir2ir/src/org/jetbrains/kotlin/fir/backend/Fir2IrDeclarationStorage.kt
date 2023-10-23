@@ -257,7 +257,7 @@ class Fir2IrDeclarationStorage(
             functionCache,
             signatureCalculator
         ) { signature ->
-            @OptIn(IrSymbolInternals::class)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             symbolTable.referenceSimpleFunctionIfAny(signature)?.owner
         }
         return cachedIrCallable
@@ -362,7 +362,7 @@ class Fir2IrDeclarationStorage(
     ): IrConstructor? {
         return constructorCache[constructor] ?: signatureCalculator()?.let { signature ->
             symbolTable.referenceConstructorIfAny(signature)?.let { irConstructorSymbol ->
-                @OptIn(IrSymbolInternals::class)
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
                 val irConstructor = irConstructorSymbol.owner
                 constructorCache[constructor] = irConstructor
                 irConstructor
@@ -576,7 +576,7 @@ class Fir2IrDeclarationStorage(
             propertyCache,
             signatureCalculator
         ) { signature ->
-            @OptIn(IrSymbolInternals::class)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             symbolTable.referencePropertyIfAny(signature)?.owner
         }
     }

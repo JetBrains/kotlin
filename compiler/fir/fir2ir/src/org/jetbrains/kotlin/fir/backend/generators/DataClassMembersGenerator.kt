@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContextBase
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -103,7 +103,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             override fun getProperty(irValueParameter: IrValueParameter?): IrProperty =
                 irValueParameter?.let {
                     // `irClass` is a source class and definitely is not a lazy class
-                    @OptIn(IrSymbolInternals::class)
+                    @OptIn(UnsafeDuringIrConstructionAPI::class)
                     irClass.properties.single { irProperty ->
                         irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
                     }
@@ -236,7 +236,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         }
 
         // `irClass` is a source class and definitely is not a lazy class
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         fun generateBodies() {
             val propertyParametersCount = irClass.primaryConstructor?.explicitParameters?.size ?: 0
             val properties = irClass.properties.filter { it.backingField != null }.take(propertyParametersCount).toList()
@@ -286,7 +286,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
             irFunction.origin = origin
             val index = DataClassResolver.getComponentIndex(irFunction.name.asString())
             // `irClass` is a source class and definitely is not a lazy class
-            @OptIn(IrSymbolInternals::class)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
             val irProperty = irDataClassMembersGenerator.getProperty(valueParameter)
             irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
@@ -295,7 +295,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         fun generateCopyBody(irFunction: IrFunction) {
             irFunction.origin = origin
             // `irClass` is a source class and definitely is not a lazy class
-            @OptIn(IrSymbolInternals::class)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             irDataClassMembersGenerator.generateCopyFunction(irFunction, irClass.primaryConstructor!!.symbol)
         }
 

@@ -23,7 +23,7 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }

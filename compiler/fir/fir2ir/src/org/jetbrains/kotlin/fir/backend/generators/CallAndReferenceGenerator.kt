@@ -164,7 +164,7 @@ class CallAndReferenceGenerator(
                     ?: run {
                         // In case of [IrField] without the corresponding property, we've created it directly from [FirField].
                         // Since it's used as a field reference, we need a bogus property as a placeholder.
-                        @OptIn(IrSymbolInternals::class)
+                        @OptIn(UnsafeDuringIrConstructionAPI::class)
                         declarationStorage.getOrCreateIrPropertyByPureField(fieldSymbol.fir, irFieldSymbol.owner.parent).symbol
                     }
                 return IrPropertyReferenceImpl(
@@ -725,7 +725,7 @@ class CallAndReferenceGenerator(
         }
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrPropertySymbol.overriddenBackingFieldOrNull(): IrFieldSymbol? {
         return owner.overriddenSymbols.firstNotNullOfOrNull {
             val owner = it.owner

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenAccessorSymbols
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.name.Name
@@ -115,7 +114,7 @@ class Fir2IrLazyPropertyAccessor(
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
         if (firParentClass == null) return@lazyVar emptyList()
         // If property accessor is created then corresponding property is definitely created too
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         correspondingPropertySymbol!!.owner.overriddenSymbols.mapNotNull {
             when (isSetter) {
                 false -> declarationStorage.findGetterOfProperty(it)

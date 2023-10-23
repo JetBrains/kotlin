@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -56,7 +56,7 @@ class IrLazyClass(
         }
     }
 
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> by lazyVar(stubGenerator.lock) {
         ArrayList<IrDeclaration>().also {
             typeTranslator.buildWithScope(this) {

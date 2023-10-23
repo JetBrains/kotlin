@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
@@ -190,7 +190,7 @@ class Fir2IrConverter(
          *
          * `irFile` is definitely not a lazy class
          */
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         irFile.declarations.clear()
     }
 
@@ -215,7 +215,7 @@ class Fir2IrConverter(
          *
          * `irClass` is a source class and definitely is not a lazy class
          */
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         irClass.declarations.clear()
     }
 
@@ -229,7 +229,7 @@ class Fir2IrConverter(
         }
 
         // `irClass` is a source class and definitely is not a lazy class
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         irClass.declarations.addAll(classifierStorage.getFieldsWithContextReceiversForClass(irClass, klass))
 
         val irConstructor = klass.primaryConstructorIfAny(session)?.let {
@@ -354,7 +354,7 @@ class Fir2IrConverter(
     private fun bindFakeOverridesInFile(file: FirFile) {
         val irFile = declarationStorage.getIrFile(file)
         // `irFile` definitely is not a lazy class
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         for (irDeclaration in irFile.declarations) {
             if (irDeclaration is IrClass) {
                 bindFakeOverridesInClass(irDeclaration)
@@ -363,7 +363,7 @@ class Fir2IrConverter(
     }
 
     // `irClass` is a source class and definitely is not a lazy class
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     fun bindFakeOverridesInClass(klass: IrClass) {
         require(klass !is Fir2IrLazyClass)
         fakeOverrideGenerator.bindOverriddenSymbols(klass.declarations)
@@ -376,7 +376,7 @@ class Fir2IrConverter(
     }
 
     // `irClass` is a source class and definitely is not a lazy class
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun delegatedMembers(irClass: IrClass): List<FirDeclaration> {
         return irClass.declarations.filter {
             it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
@@ -439,7 +439,7 @@ class Fir2IrConverter(
          *
          * `irClass` is a source class and definitely is not a lazy class
          */
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         irClass.declarations.clear()
     }
 
@@ -469,7 +469,7 @@ class Fir2IrConverter(
          *
          * `irClass` is a source class and definitely is not a lazy class
          */
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         fun addDeclarationToParentIfNeeded(irDeclaration: IrDeclaration) {
             when (parent) {
                 is IrFile -> parent.declarations += irDeclaration

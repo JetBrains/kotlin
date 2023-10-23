@@ -71,7 +71,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBasedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.DelicateSymbolTableApi
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -305,7 +305,7 @@ internal class KtFirCompilerFacility(
         irCodeFragmentFiles.forEach { it.acceptVoid(patchingVisitor) }
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun computeAdditionalCodeFragmentMapping(descriptor: IrBasedDeclarationDescriptor<*>): CodeFragmentCapturedValue? {
         val owner = descriptor.owner
 
@@ -635,7 +635,7 @@ private class IrDeclarationPatchingVisitor(private val mapping: Map<FirDeclarati
         super.visitClassReference(expression)
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private inline fun <reified T : IrSymbol> patchIfNeeded(irSymbol: T?, patcher: (T) -> Unit) {
         if (irSymbol != null) {
             val irDeclaration = irSymbol.owner as? IrMetadataSourceOwner ?: return
@@ -701,7 +701,7 @@ private class DeclarationRegistrarVisitor(private val consumer: SymbolTable) : I
         super.visitEnumEntry(declaration)
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private inline fun <reified S : IrSymbol, D : IrDeclaration> register(
         declaration: D,
         registrar: (IdSignature, () -> S, (S) -> D) -> Unit,

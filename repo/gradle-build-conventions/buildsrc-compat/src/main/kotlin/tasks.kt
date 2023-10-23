@@ -411,8 +411,8 @@ fun Project.optInToExperimentalCompilerApi() {
     optInTo("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }
 
-fun Project.optInToIrSymbolInternals() {
-    optInTo("org.jetbrains.kotlin.ir.symbols.IrSymbolInternals")
+fun Project.optInToUnsafeDuringIrConstructionAPI() {
+    optInTo("org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI")
 }
 
 fun Project.optInToObsoleteDescriptorBasedAPI() {

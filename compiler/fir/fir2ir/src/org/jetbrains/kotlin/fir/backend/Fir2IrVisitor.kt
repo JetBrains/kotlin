@@ -41,12 +41,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.util.coerceToUnit
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -150,7 +149,7 @@ class Fir2IrVisitor(
                 memberGenerator.convertClassContent(correspondingClass, anonymousObject)
 
                 // `correspondingClass` definitely is not a lazy class
-                @OptIn(IrSymbolInternals::class)
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
                 val constructor = correspondingClass.constructors.first()
                 irEnumEntry.initializerExpression = irFactory.createExpressionBody(
                     IrEnumConstructorCallImpl(
@@ -176,7 +175,7 @@ class Fir2IrVisitor(
         } else if (irParentEnumClass != null && initializer == null) {
             // a default-ish enum entry whose initializer would be a delegating constructor call
             // `irParentEnumClass` definitely is not a lazy class
-            @OptIn(IrSymbolInternals::class)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             val constructor = irParentEnumClass.defaultConstructor
                 ?: error("Assuming that default constructor should exist and be converted at this point")
             enumEntry.convertWithOffsets { startOffset, endOffset ->
@@ -332,7 +331,7 @@ class Fir2IrVisitor(
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Any?): IrElement {
         val irClass = classifierStorage.getCachedIrCodeFragment(codeFragment)!!
         // class for code fragment definitely is not a lazy class
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val irFunction = irClass.declarations.firstIsInstance<IrSimpleFunction>()
 
         declarationStorage.enterScope(irFunction.symbol)
@@ -371,7 +370,7 @@ class Fir2IrVisitor(
                         endOffset,
                         anonymousClassType,
                         // a class for an anonymous object definitely is not a lazy class
-                        @OptIn(IrSymbolInternals::class)
+                        @OptIn(UnsafeDuringIrConstructionAPI::class)
                         irAnonymousObject.constructors.first().symbol,
                         irAnonymousObject.typeParameters.size,
                         origin = IrStatementOrigin.OBJECT_LITERAL

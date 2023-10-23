@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -363,7 +363,7 @@ class Fir2IrImplicitCastInserter(
                  *   bound at the time of body conversion, so it's safe to take the owner for them
                  * If symbol is unbound then this annotation can not be neither @EnhancedNullability or @FlexibleNullability
                  */
-                @OptIn(IrSymbolInternals::class)
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
                 val classId = constructorSymbol.owner.parentAsClass.classId
                 classId == StandardClassIds.Annotations.EnhancedNullability ||
                         classId == StandardClassIds.Annotations.FlexibleNullability

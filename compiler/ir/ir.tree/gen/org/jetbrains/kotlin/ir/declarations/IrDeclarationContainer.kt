@@ -8,7 +8,7 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 
 /**
  * A non-leaf IR tree element.
@@ -22,6 +22,6 @@ interface IrDeclarationContainer : IrDeclarationParent {
      *   before IR for all sources is built (because fake-overrides of lazy classes may depend on
      *   declaration of source classes, e.g. for java source classes)
      */
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     val declarations: MutableList<IrDeclaration>
 }

@@ -168,7 +168,7 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     }
 
     // `irClass` is a source class and definitely is not a lazy class
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrClass.declareTypeParameters(klass: FirClass) {
         classifierStorage.preCacheTypeParameters(klass, symbol)
         setTypeParameters(this, klass)

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
@@ -86,7 +86,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         // It is safe to access an owner of property symbol here, because this function may be called
         // only from property accessor of corresponding property
         // We inside accessor -> accessor is built -> property is built
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val property = propertySymbol.owner
         for (parent in parentStack.asReversed()) {
             when (parent) {
@@ -101,7 +101,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
     inline fun <reified D : IrDeclaration> findDeclarationInParentsStack(symbol: IrSymbol): @kotlin.internal.NoInfer D {
         // This is an unsafe fast path for production
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
-            @OptIn(IrSymbolInternals::class)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             return symbol.owner as D
         }
         // With slow assertions the following code guarantees that taking owner from symbol is safe
@@ -115,7 +115,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
          *   for which we have Fir2IrLazyClass in symbol
          */
         if (configuration.allowNonCachedDeclarations) {
-            @OptIn(IrSymbolInternals::class)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             return symbol.owner as D
         }
         error("Declaration with symbol $symbol is not found in parents stack")

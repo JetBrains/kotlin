@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 // opt-in is safe, this code runs after fir2ir is over and all symbols are bound
-@OptIn(IrSymbolInternals::class)
+@OptIn(UnsafeDuringIrConstructionAPI::class)
 class Fir2IrAnnotationsFromPluginRegistrar(private val components: Fir2IrComponents) : IrAnnotationsFromPluginRegistrar() {
     private val generatedIrDeclarationsByFileByOffset = mutableMapOf<String, MutableMap<Pair<Int, Int>, MutableList<IrConstructorCall>>>()
 

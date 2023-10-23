@@ -16,4 +16,4 @@ sourceSets {
     "main" { projectDefault() }
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()

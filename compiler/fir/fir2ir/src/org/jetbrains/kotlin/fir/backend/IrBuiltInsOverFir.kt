@@ -158,7 +158,7 @@ class IrBuiltInsOverFir(
 
     private val intrinsicConstAnnotation: IrConstructorCall by lazy {
         // class for intrinsicConst is created manually and it definitely is not a lazy class
-        @OptIn(IrSymbolInternals::class)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         val constructor = intrinsicConst.constructors.single()
         IrConstructorCallImpl.Companion.fromSymbolOwner(intrinsicConst.defaultType, constructor)
     }
@@ -314,7 +314,7 @@ class IrBuiltInsOverFir(
                     isIntrinsicConst = isIntrinsicConst
                 ).also {
                     // `kotlinInternalIrPackageFragment` definitely is not a lazy class
-                    @OptIn(IrSymbolInternals::class)
+                    @OptIn(UnsafeDuringIrConstructionAPI::class)
                     declarations.add(it)
                 }.symbol
             }
@@ -379,7 +379,7 @@ class IrBuiltInsOverFir(
                     origin = BUILTIN_OPERATOR
                 ).also {
                     // `kotlinInternalIrPackageFragment` definitely is not a lazy class
-                    @OptIn(IrSymbolInternals::class)
+                    @OptIn(UnsafeDuringIrConstructionAPI::class)
                     declarations.add(it)
                 }.symbol
             }
@@ -412,7 +412,7 @@ class IrBuiltInsOverFir(
         }.toMap()
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
         unsignedTypesToUnsignedArrays.map { (k, v) -> v to loadClass(k.classId).owner.defaultType }.toMap()
     }
@@ -426,19 +426,19 @@ class IrBuiltInsOverFir(
 
     override val enumClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Enum) }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val intPlusSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
             it.owner.name == OperatorNameConventions.PLUS && it.owner.valueParameters[0].type == intType
         }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val intTimesSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
             it.owner.name == OperatorNameConventions.TIMES && it.owner.valueParameters[0].type == intType
         }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override val intXorSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
             it.owner.name == OperatorNameConventions.XOR && it.owner.valueParameters[0].type == intType
@@ -524,22 +524,22 @@ class IrBuiltInsOverFir(
     private val suspendFunctionNMap = mutableMapOf<Int, IrClass>()
     private val kSuspendFunctionNMap = mutableMapOf<Int, IrClass>()
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun functionN(arity: Int): IrClass = functionNMap.getOrPut(arity) {
         loadClass(StandardClassIds.FunctionN(arity)).owner
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun kFunctionN(arity: Int): IrClass = kFunctionNMap.getOrPut(arity) {
         loadClass(StandardClassIds.KFunctionN(arity)).owner
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun suspendFunctionN(arity: Int): IrClass = suspendFunctionNMap.getOrPut(arity) {
         loadClass(StandardClassIds.SuspendFunctionN(arity)).owner
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun kSuspendFunctionN(arity: Int): IrClass = kSuspendFunctionNMap.getOrPut(arity) {
         loadClass(StandardClassIds.KSuspendFunctionN(arity)).owner
     }
@@ -563,13 +563,13 @@ class IrBuiltInsOverFir(
         return loadClassSafe(ClassId(packageName, identifier))
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> {
         return builtInClass.functions.filter { it.owner.name == name }.asIterable()
     }
 
     // This function should not be called from fir2ir code
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     override fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
         val definingClass = lhsType.getMaybeBuiltinClass() ?: error("Defining class not found: $lhsType")
         return definingClass.functions.single { function ->
@@ -578,7 +578,7 @@ class IrBuiltInsOverFir(
     }
 
     // This function should not be called from fir2ir code
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     override fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
         val definingClass = receiverType.getMaybeBuiltinClass() ?: error("Defining class not found: $receiverType")
         return definingClass.functions.single { function ->
@@ -601,7 +601,7 @@ class IrBuiltInsOverFir(
         return components.classifierStorage.getOrCreateIrClass(firClassSymbol).symbol
     }
 
-    @OptIn(IrSymbolInternals::class)
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private fun IrType.getMaybeBuiltinClass(): IrClass? {
         val lhsClassFqName = classFqName!!
         return baseIrTypes.find { it.classFqName == lhsClassFqName }?.getClass()

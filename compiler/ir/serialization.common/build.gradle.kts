@@ -16,7 +16,7 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {

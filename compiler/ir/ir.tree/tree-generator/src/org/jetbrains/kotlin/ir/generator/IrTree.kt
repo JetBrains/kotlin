@@ -351,7 +351,7 @@ object IrTree : AbstractTreeBuilder() {
                    declaration of source classes, e.g. for java source classes)
             """.trimIndent()
             generationCallback = {
-                addAnnotation(ClassName("org.jetbrains.kotlin.ir.symbols", "IrSymbolInternals"))
+                addAnnotation(ClassName("org.jetbrains.kotlin.ir.symbols", "UnsafeDuringIrConstructionAPI"))
             }
         }
     }

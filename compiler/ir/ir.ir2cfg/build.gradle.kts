@@ -10,7 +10,7 @@ dependencies {
     api(project(":compiler:ir.tree"))
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }

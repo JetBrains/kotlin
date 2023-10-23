@@ -30,11 +30,10 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 
 /**
- * Usage of [IrSymbol.owner] can be unsafe in some context (like in fir2ir), where not all symbols can be bound),
- *   so it should be used with care
+ * Usage of marked API can be unsafe at the stage when IR for the whole module is not built yet (specifically in fir2ir)
  */
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-annotation class IrSymbolInternals
+annotation class UnsafeDuringIrConstructionAPI
 
 /**
  * A special object that can be used to refer to [IrDeclaration]s and some other entities from IR nodes.
@@ -66,7 +65,7 @@ interface IrSymbol : DeclarationSymbolMarker {
      * **A:** Because we most often need to access a symbol's owner in lowerings, which happen after linkage, at which point all symbols
      * should be already bound. Declaring this property nullable would make working with it more difficult most of the time.
      */
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     val owner: IrSymbolOwner
 
     /**
@@ -126,7 +125,7 @@ val IrSymbol.isPublicApi: Boolean
  * Only leaf interfaces in the symbol hierarchy inherit from this interface.
  */
 interface IrBindableSymbol<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner> : IrSymbol {
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     override val owner: Owner
 
     @ObsoleteDescriptorBasedAPI
@@ -230,7 +229,7 @@ sealed interface IrValueSymbol : IrSymbol {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ValueDescriptor
 
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     override val owner: IrValueDeclaration
 }
 
@@ -253,7 +252,7 @@ sealed interface IrReturnTargetSymbol : IrSymbol {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
 
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     override val owner: IrReturnTarget
 }
 
@@ -263,7 +262,7 @@ sealed interface IrReturnTargetSymbol : IrSymbol {
  * @see IrFunctionReference
  */
 sealed interface IrFunctionSymbol : IrReturnTargetSymbol, FunctionSymbolMarker {
-    @IrSymbolInternals
+    @UnsafeDuringIrConstructionAPI
     override val owner: IrFunction
 }
 

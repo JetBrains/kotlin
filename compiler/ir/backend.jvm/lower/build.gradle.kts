@@ -11,7 +11,7 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" {

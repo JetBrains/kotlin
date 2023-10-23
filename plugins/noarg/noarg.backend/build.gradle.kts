@@ -13,7 +13,7 @@ dependencies {
     implementation(kotlinStdlib())
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }

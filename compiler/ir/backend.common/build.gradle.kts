@@ -12,7 +12,7 @@ dependencies {
     compileOnly(intellijCore())
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 sourceSets {
     "main" { projectDefault() }

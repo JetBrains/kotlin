@@ -186,7 +186,7 @@ val IrDeclaration.fileEntry: IrFileEntry
     }
 
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClass.companionObject(): IrClass? =
     this.declarations.singleOrNull { it is IrClass && it.isCompanion } as IrClass?
 
@@ -285,7 +285,7 @@ class NaiveSourceBasedFileEntryImpl(
 }
 
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
     val properties = declarations.filterIsInstanceAnd<IrProperty> { it.name.asString() == name }
     if (properties.size > 1) {
@@ -301,24 +301,24 @@ fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =
     findDeclaration<IrSimpleFunction> { it.name.asString() == name }?.symbol
 
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClass.getPropertyGetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.getter?.symbol
         ?: getSimpleFunction("<get-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
 
 // This declaration accesses IrDeclarationContainer.declarations, which is marked with this opt-in
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClass.getPropertySetter(name: String): IrSimpleFunctionSymbol? =
     getPropertyDeclaration(name)?.setter?.symbol
         ?: getSimpleFunction("<set-$name>").also { assert(it?.owner?.correspondingPropertySymbol?.owner?.name?.asString() == name) }
 
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getSimpleFunction(name: String): IrSimpleFunctionSymbol? = owner.getSimpleFunction(name)
 
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertyGetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertyGetter(name)
 
-@IrSymbolInternals
+@UnsafeDuringIrConstructionAPI
 fun IrClassSymbol.getPropertySetter(name: String): IrSimpleFunctionSymbol? = owner.getPropertySetter(name)
 
 fun filterOutAnnotations(fqName: FqName, annotations: List<IrConstructorCall>): List<IrConstructorCall> {
