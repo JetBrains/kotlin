@@ -131,7 +131,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
             // a static import. In this case, the parameter default initializer will not have its type set, which isn't usually an
             // issue except in edge cases like KT-47702 where we do need to evaluate the default values of annotations.
             // As a fallback, we use the expected type which should be the type of the enum.
-            classId = enumClassId ?: expectedTypeRef?.coneTypeOrNull?.lowerBoundIfFlexible()?.classId,
+            classId = requireNotNull(enumClassId ?: expectedTypeRef?.coneTypeOrNull?.lowerBoundIfFlexible()?.classId),
             entryName = entryName
         )
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
@@ -172,9 +172,9 @@ private val JAVA_TARGETS_TO_KOTLIN = mapOf(
     "TYPE_USE" to EnumSet.of(AnnotationTarget.TYPE)
 )
 
-private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Name?): FirPropertyAccessExpression {
+private fun buildEnumCall(session: FirSession, classId: ClassId, entryName: Name?): FirPropertyAccessExpression {
     return buildPropertyAccessExpression {
-        val resolvedCalleeReference: FirResolvedNamedReference? = if (classId != null && entryName != null) {
+        val resolvedCalleeReference: FirResolvedNamedReference? = if (entryName != null) {
             session.symbolProvider.getClassDeclaredPropertySymbols(classId, entryName)
                 .firstOrNull()?.let { propertySymbol ->
                     buildResolvedNamedReference {
@@ -198,13 +198,11 @@ private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Nam
                     diagnostic = ConeSimpleDiagnostic("Enum entry name is null in Java for $classId", DiagnosticKind.Java)
                 }
 
-        if (classId != null) {
-            this.coneTypeOrNull = ConeClassLikeTypeImpl(
-                classId.toLookupTag(),
-                emptyArray(),
-                isNullable = false
-            )
-        }
+        this.coneTypeOrNull = ConeClassLikeTypeImpl(
+            classId.toLookupTag(),
+            emptyArray(),
+            isNullable = false
+        )
     }
 }
 
