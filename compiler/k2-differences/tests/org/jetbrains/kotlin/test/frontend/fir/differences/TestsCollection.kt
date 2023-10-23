@@ -112,7 +112,9 @@ fun collectTestsStats(projectDirectory: File): TestsCollection {
         action = { file ->
             status.loading("Traversing " + file.path.replace(projectDirectory.path, ""), probability = 0.01)
 
-            val willBeCheckedWithTheCorrespondingK1File = file.name.contains(".fir.") || file.name.contains(".reversed.")
+            val willBeCheckedWithTheCorrespondingK1File = file.name.contains(".fir.")
+                    || file.name.contains(".reversed.")
+                    || file.name.contains(".ll.")
             val isKotlinFile = file.name.endsWith(".kt")
 
             if (!isKotlinFile || willBeCheckedWithTheCorrespondingK1File) {
