@@ -1,126 +1,121 @@
-/*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.bir.backend
 
-import org.jetbrains.kotlin.bir.BirBuiltIns
-import org.jetbrains.kotlin.bir.BirForest
-import org.jetbrains.kotlin.bir.declarations.BirClass
-import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
+import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
+import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
+import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
+import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
-import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.name.Name
-
-/*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-abstract class BirBuiltInSymbols constructor(
-    protected val birBuiltIns: BirBuiltIns,
-    protected val birForest: BirForest,
-    protected val converter: Ir2BirConverter,
+open class BirBuiltInSymbols(
+    irSymbols: Symbols,
+    converter: Ir2BirConverter,
 ) {
-    val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
-
-    val charSequence = getClass(Name.identifier("CharSequence"), "kotlin")
-    val string = getClass(Name.identifier("String"), "kotlin")
-
-    val primitiveIteratorsByType = PrimitiveType.values().associate { type ->
-        val iteratorClass = getClass(Name.identifier(type.typeName.asString() + "Iterator"), "kotlin", "collections")
-        type to iteratorClass
+    val throwNullPointerException: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.throwNullPointerException)
+    val throwTypeCastException: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.throwTypeCastException)
+    val throwUninitializedPropertyAccessException: BirSimpleFunctionSymbol =
+        converter.remapSymbol(irSymbols.throwUninitializedPropertyAccessException)
+    val throwKotlinNothingValueException: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.throwKotlinNothingValueException)
+    val stringBuilder: BirClassSymbol = converter.remapSymbol(irSymbols.stringBuilder)
+    val defaultConstructorMarker: BirClassSymbol = converter.remapSymbol(irSymbols.defaultConstructorMarker)
+    val continuationClass: BirClassSymbol = converter.remapSymbol(irSymbols.continuationClass)
+    val functionAdapter: BirClassSymbol = converter.remapSymbol(irSymbols.functionAdapter)
+    val unsafeCoerceIntrinsic: BirSimpleFunctionSymbol? = irSymbols.unsafeCoerceIntrinsic?.let { converter.remapSymbol(it) }
+    val arraysContentEquals = irSymbols.arraysContentEquals?.entries?.associate {
+        converter.remapType(it.key) to converter.remapSymbol<_, BirSimpleFunctionSymbol>(it.value)
     }
-
-    val asserts = birBuiltIns.findFunctions(Name.identifier("assert"), "kotlin")
-
-    private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")
-    private fun progressionOrNull(name: String) = findClass(Name.identifier(name), "kotlin", "ranges")
-
-    // The "...OrNull" variants are used for the classes below because the minimal stdlib used in tests do not include those classes.
-    // It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
-    // added, which would include a lot of the full stdlib.
-    open val uByte = findClass(Name.identifier("UByte"), "kotlin")
-    open val uShort = findClass(Name.identifier("UShort"), "kotlin")
-    open val uInt = findClass(Name.identifier("UInt"), "kotlin")
-    open val uLong = findClass(Name.identifier("ULong"), "kotlin")
-    val uIntProgression = progressionOrNull("UIntProgression")
-    val uLongProgression = progressionOrNull("ULongProgression")
-    val uIntRange = progressionOrNull("UIntRange")
-    val uLongRange = progressionOrNull("ULongRange")
-    val sequence = findClass(Name.identifier("Sequence"), "kotlin", "sequences")
-
-    val charProgression = progression("CharProgression")
-    val intProgression = progression("IntProgression")
-    val longProgression = progression("LongProgression")
-    val progressionClasses = listOfNotNull(charProgression, intProgression, longProgression, uIntProgression, uLongProgression)
-
-    val charRange = progression("CharRange")
-    val intRange = progression("IntRange")
-    val longRange = progression("LongRange")
-    val rangeClasses = listOfNotNull(charRange, intRange, longRange, uIntRange, uLongRange)
-
-    val closedRange = progression("ClosedRange")
-
-    // todo: those use IrClassifierSymbol
-    /*open val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltinFunctionsByReturnType(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
-    open val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(Name.identifier("toUInt"), "kotlin")
-    open val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(Name.identifier("toULong"), "kotlin")*/
-
-
-    abstract val throwNullPointerException: BirSimpleFunction
-    abstract val throwTypeCastException: BirSimpleFunction
-
-    abstract val throwUninitializedPropertyAccessException: BirSimpleFunction
-
-    abstract val throwKotlinNothingValueException: BirSimpleFunction
-
-    open val throwISE: BirSimpleFunction
-        get() = error("throwISE is not implemented")
-
-    abstract val stringBuilder: BirClass
-
-    abstract val defaultConstructorMarker: BirClass
-
-    abstract val coroutineImpl: BirClass
-
-    abstract val coroutineSuspendedGetter: BirSimpleFunction
-
-    abstract val getContinuation: BirSimpleFunction
-
-    abstract val continuationClass: BirClass
-
-    abstract val coroutineContextGetter: BirSimpleFunction
-
-    abstract val suspendCoroutineUninterceptedOrReturn: BirSimpleFunction
-
-    abstract val coroutineGetContext: BirSimpleFunction
-
-    abstract val returnIfSuspended: BirSimpleFunction
-
-    abstract val functionAdapter: BirClass
-
-    open val unsafeCoerceIntrinsic: BirSimpleFunction? = null
-
-    open val getWithoutBoundCheckName: Name? = null
-
-    open val setWithoutBoundCheckName: Name? = null
-
-    open val arraysContentEquals: Map<BirType, BirSimpleFunction>? = null
-
-
-    protected fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): BirClass? {
-        return birBuiltIns.findClass(name, *packageNameSegments)
-    }
-
-    protected fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): BirClass =
-        findClass(name, *packageNameSegments)
-            ?: error("Class '$name' not found in package '${packageNameSegments.joinToString(".")}'")
+    val iterator: BirClassSymbol = converter.remapSymbol(irSymbols.iterator)
+    val charSequence: BirClassSymbol = converter.remapSymbol(irSymbols.charSequence)
+    val string: BirClassSymbol = converter.remapSymbol(irSymbols.string)
+    val primitiveIteratorsByType = irSymbols.primitiveIteratorsByType.mapValues { converter.remapSymbol<_, BirClassSymbol>(it.value) }
+    val asserts: List<BirSimpleFunctionSymbol> = irSymbols.asserts.map { converter.remapSymbol(it) }
+    val uByte: BirClassSymbol? = irSymbols.uByte?.let { converter.remapSymbol(it) }
+    val uShort: BirClassSymbol? = irSymbols.uShort?.let { converter.remapSymbol(it) }
+    val uInt: BirClassSymbol? = irSymbols.uInt?.let { converter.remapSymbol(it) }
+    val uLong: BirClassSymbol? = irSymbols.uLong?.let { converter.remapSymbol(it) }
+    val uIntProgression: BirClassSymbol? = irSymbols.uIntProgression?.let { converter.remapSymbol(it) }
+    val uLongProgression: BirClassSymbol? = irSymbols.uLongProgression?.let { converter.remapSymbol(it) }
+    val uIntRange: BirClassSymbol? = irSymbols.uIntRange?.let { converter.remapSymbol(it) }
+    val uLongRange: BirClassSymbol? = irSymbols.uLongRange?.let { converter.remapSymbol(it) }
+    val sequence: BirClassSymbol? = irSymbols.sequence?.let { converter.remapSymbol(it) }
+    val charProgression: BirClassSymbol = converter.remapSymbol(irSymbols.charProgression)
+    val intProgression: BirClassSymbol = converter.remapSymbol(irSymbols.intProgression)
+    val longProgression: BirClassSymbol = converter.remapSymbol(irSymbols.longProgression)
+    val progressionClasses: List<BirClassSymbol> = irSymbols.progressionClasses.map { converter.remapSymbol(it) }
+    val charRange: BirClassSymbol = converter.remapSymbol(irSymbols.charRange)
+    val intRange: BirClassSymbol = converter.remapSymbol(irSymbols.intRange)
+    val longRange: BirClassSymbol = converter.remapSymbol(irSymbols.longRange)
+    val rangeClasses: List<BirClassSymbol> = irSymbols.rangeClasses.map { converter.remapSymbol(it) }
+    val closedRange: BirClassSymbol = converter.remapSymbol(irSymbols.closedRange)
+    val getProgressionLastElementByReturnType =
+        irSymbols.getProgressionLastElementByReturnType.entries.associate {
+            converter.remapSymbol<_, BirClassifierSymbol>(it.key) to
+                    converter.remapSymbol<_, BirSimpleFunctionSymbol>(it.value)
+        }
+    val toUIntByExtensionReceiver =
+        irSymbols.toUIntByExtensionReceiver.entries.associate {
+            converter.remapSymbol<_, BirClassifierSymbol>(it.key) to
+                    converter.remapSymbol<_, BirSimpleFunctionSymbol>(it.value)
+        }
+    val toULongByExtensionReceiver =
+        irSymbols.toULongByExtensionReceiver.entries.associate {
+            converter.remapSymbol<_, BirClassifierSymbol>(it.key) to
+                    converter.remapSymbol<_, BirSimpleFunctionSymbol>(it.value)
+        }
+    val any: BirClassSymbol = converter.remapSymbol(irSymbols.any)
+    val unit: BirClassSymbol = converter.remapSymbol(irSymbols.unit)
+    val char: BirClassSymbol = converter.remapSymbol(irSymbols.char)
+    val byte: BirClassSymbol = converter.remapSymbol(irSymbols.byte)
+    val short: BirClassSymbol = converter.remapSymbol(irSymbols.short)
+    val int: BirClassSymbol = converter.remapSymbol(irSymbols.int)
+    val long: BirClassSymbol = converter.remapSymbol(irSymbols.long)
+    val float: BirClassSymbol = converter.remapSymbol(irSymbols.float)
+    val double: BirClassSymbol = converter.remapSymbol(irSymbols.double)
+    val integerClasses: List<BirClassSymbol> = irSymbols.integerClasses.map { converter.remapSymbol(it) }
+    val progressionElementTypes: List<BirType> = irSymbols.progressionElementTypes.map { converter.remapType(it) }
+    val arrayOf: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.arrayOf)
+    val arrayOfNulls: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.arrayOfNulls)
+    val array: BirClassSymbol = converter.remapSymbol(irSymbols.array)
+    val byteArray: BirClassSymbol = converter.remapSymbol(irSymbols.byteArray)
+    val charArray: BirClassSymbol = converter.remapSymbol(irSymbols.charArray)
+    val shortArray: BirClassSymbol = converter.remapSymbol(irSymbols.shortArray)
+    val intArray: BirClassSymbol = converter.remapSymbol(irSymbols.intArray)
+    val longArray: BirClassSymbol = converter.remapSymbol(irSymbols.longArray)
+    val floatArray: BirClassSymbol = converter.remapSymbol(irSymbols.floatArray)
+    val doubleArray: BirClassSymbol = converter.remapSymbol(irSymbols.doubleArray)
+    val booleanArray: BirClassSymbol = converter.remapSymbol(irSymbols.booleanArray)
+    val byteArrayType: BirSimpleType = converter.remapSimpleType(irSymbols.byteArrayType)
+    val charArrayType: BirSimpleType = converter.remapSimpleType(irSymbols.charArrayType)
+    val shortArrayType: BirSimpleType = converter.remapSimpleType(irSymbols.shortArrayType)
+    val intArrayType: BirSimpleType = converter.remapSimpleType(irSymbols.intArrayType)
+    val longArrayType: BirSimpleType = converter.remapSimpleType(irSymbols.longArrayType)
+    val floatArrayType: BirSimpleType = converter.remapSimpleType(irSymbols.floatArrayType)
+    val doubleArrayType: BirSimpleType = converter.remapSimpleType(irSymbols.doubleArrayType)
+    val booleanArrayType: BirSimpleType = converter.remapSimpleType(irSymbols.booleanArrayType)
+    val primitiveTypesToPrimitiveArrays =
+        irSymbols.primitiveTypesToPrimitiveArrays.mapValues { converter.remapSymbol<_, BirClassSymbol>(it.value) }
+    val primitiveArraysToPrimitiveTypes =
+        irSymbols.primitiveArraysToPrimitiveTypes.mapKeys { converter.remapSymbol<_, BirClassSymbol>(it.key) }
+    val unsignedTypesToUnsignedArrays =
+        irSymbols.unsignedTypesToUnsignedArrays.mapValues { converter.remapSymbol<_, BirClassSymbol>(it.value) }
+    val arrays: List<BirClassSymbol> = irSymbols.arrays.map { converter.remapSymbol(it) }
+    val collection: BirClassSymbol = converter.remapSymbol(irSymbols.collection)
+    val set: BirClassSymbol = converter.remapSymbol(irSymbols.set)
+    val list: BirClassSymbol = converter.remapSymbol(irSymbols.list)
+    val map: BirClassSymbol = converter.remapSymbol(irSymbols.map)
+    val mapEntry: BirClassSymbol = converter.remapSymbol(irSymbols.mapEntry)
+    val iterable: BirClassSymbol = converter.remapSymbol(irSymbols.iterable)
+    val listIterator: BirClassSymbol = converter.remapSymbol(irSymbols.listIterator)
+    val mutableCollection: BirClassSymbol = converter.remapSymbol(irSymbols.mutableCollection)
+    val mutableSet: BirClassSymbol = converter.remapSymbol(irSymbols.mutableSet)
+    val mutableList: BirClassSymbol = converter.remapSymbol(irSymbols.mutableList)
+    val mutableMap: BirClassSymbol = converter.remapSymbol(irSymbols.mutableMap)
+    val mutableMapEntry: BirClassSymbol = converter.remapSymbol(irSymbols.mutableMapEntry)
+    val mutableIterable: BirClassSymbol = converter.remapSymbol(irSymbols.mutableIterable)
+    val mutableIterator: BirClassSymbol = converter.remapSymbol(irSymbols.mutableIterator)
+    val mutableListIterator: BirClassSymbol = converter.remapSymbol(irSymbols.mutableListIterator)
+    val comparable: BirClassSymbol = converter.remapSymbol(irSymbols.comparable)
 }

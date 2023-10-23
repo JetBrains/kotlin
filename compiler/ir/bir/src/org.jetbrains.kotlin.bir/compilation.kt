@@ -65,11 +65,8 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, IrModuleFr
         val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
         ir2BirConverter.birForest = birForest
         val birContext = JvmBirBackendContext(
-            context.builtIns,
-            context.irBuiltIns,
-            context.symbolTable,
+            context,
             input.descriptor,
-            context.configuration,
             birForest,
             ir2BirConverter,
             dynamicPropertyManager,
