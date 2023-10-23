@@ -1373,46 +1373,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testIncrementalCompilation() = with(Project("new-mpp-jvm-js-ic", gradleVersion)) {
-        setupWorkingDir()
-
-        build("build") {
-            assertSuccessful()
-        }
-
-        val libCommonClassKt = projectDir.getFileByName("LibCommonClass.kt")
-        val libCommonClassJsKt = projectDir.getFileByName("LibCommonClassJs.kt")
-        libCommonClassJsKt.modify { it.checkedReplace("platform = \"js\"", "platform = \"Kotlin/JS\"") }
-
-        val libCommonClassJvmKt = projectDir.getFileByName("LibCommonClassJvm.kt")
-        libCommonClassJvmKt.modify { it.checkedReplace("platform = \"jvm\"", "platform = \"Kotlin/JVM\"") }
-        build("build") {
-            assertSuccessful()
-            assertCompiledKotlinSources(project.relativize(libCommonClassKt, libCommonClassJsKt, libCommonClassJvmKt))
-        }
-
-        val libJvmPlatformUtilKt = projectDir.getFileByName("libJvmPlatformUtil.kt")
-        libJvmPlatformUtilKt.modify {
-            it.checkedReplace("fun libJvmPlatformUtil", "inline fun libJvmPlatformUtil")
-        }
-        build("build") {
-            assertSuccessful()
-            val useLibJvmPlatformUtilKt = projectDir.getFileByName("useLibJvmPlatformUtil.kt")
-            assertCompiledKotlinSources(project.relativize(libJvmPlatformUtilKt, useLibJvmPlatformUtilKt))
-        }
-
-        val libJsPlatformUtilKt = projectDir.getFileByName("libJsPlatformUtil.kt")
-        libJsPlatformUtilKt.modify {
-            it.checkedReplace("fun libJsPlatformUtil", "inline fun libJsPlatformUtil")
-        }
-        build("build") {
-            assertSuccessful()
-            val useLibJsPlatformUtilKt = projectDir.getFileByName("useLibJsPlatformUtil.kt")
-            assertCompiledKotlinSources(project.relativize(libJsPlatformUtilKt, useLibJsPlatformUtilKt))
-        }
-    }
-
-    @Test
     fun testPomRewritingInSinglePlatformProject() = with(Project("kt-27059-pom-rewriting")) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)

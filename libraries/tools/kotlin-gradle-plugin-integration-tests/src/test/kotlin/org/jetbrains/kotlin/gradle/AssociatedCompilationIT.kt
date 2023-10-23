@@ -9,15 +9,14 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceFirst
-import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Incremental scenarios with associated compilation")
+@JvmGradlePluginTests
 class AssociatedCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
-    @JvmGradlePluginTests
     @DisplayName("Rebuild forced if associated compilation changes")
     @GradleTest
     fun testRebuildOnAssociatedCompilationChange(gradleVersion: GradleVersion) {
@@ -38,7 +37,6 @@ class AssociatedCompilationIT : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests
     @DisplayName("Rebuild after used internal ABI change in associated compilation")
     @GradleTest
     fun testRebuildOnUsedApiChangeInAssociatedCompilation(gradleVersion: GradleVersion) {
@@ -55,7 +53,6 @@ class AssociatedCompilationIT : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests
     @DisplayName("No rebuild after private ABI change in associated compilation")
     @GradleTest
     fun testNoRebuildOnPrivateChangeInAssociatedCompilation(gradleVersion: GradleVersion) {
@@ -71,7 +68,6 @@ class AssociatedCompilationIT : KGPBaseTest() {
         }
     }
 
-    @JvmGradlePluginTests
     @DisplayName("No rebuild after unused ABI change in associated compilation")
     @GradleTest
     fun testNoRebuildOnUnusedInternalChangeInAssociatedCompilation(gradleVersion: GradleVersion) {
