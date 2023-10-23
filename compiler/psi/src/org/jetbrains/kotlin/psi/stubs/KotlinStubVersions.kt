@@ -30,4 +30,8 @@ object KotlinStubVersions {
     // JS stub version should be increased if changes are made to js stub building subsystem (org.jetbrains.kotlin.idea.decompiler.js)
     // Increasing this version will lead to reindexing of js binary files (see KotlinJavaScriptMetaFileType).
     const val JS_STUB_VERSION = BINARY_STUB_VERSION + 4
+
+    // K/N stub version should be increased if changes are made to K/N stub building subsystem.
+    // Increasing this version will lead to reindexing of K/N binary files (see KlibMetaFileType).
+    const val KOTLIN_NATIVE_STUB_VERSION = BINARY_STUB_VERSION + 7
 }

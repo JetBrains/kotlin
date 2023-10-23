@@ -16,7 +16,7 @@ class KotlinNativeMetadataDecompiler : Fe10KlibMetadataDecompiler<KlibMetadataVe
     DynamicTypeDeserializer,
     { KlibMetadataVersion.INSTANCE },
     { KlibMetadataVersion.INVALID_VERSION },
-    KlibMetaFileType.STUB_VERSION + KotlinStubVersions.BUILTIN_STUB_VERSION
+    KotlinStubVersions.KOTLIN_NATIVE_STUB_VERSION,
 ) {
     override fun doReadFile(file: VirtualFile): FileWithMetadata? {
         return FileWithMetadata.forPackageFragment(file)

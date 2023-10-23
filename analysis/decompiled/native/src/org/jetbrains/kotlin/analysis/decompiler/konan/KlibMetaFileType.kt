@@ -23,6 +23,5 @@ object KlibMetaFileType : FileType {
     override fun isReadOnly() = true
     override fun getCharset(file: VirtualFile, content: ByteArray): Nothing? = null
 
-    const val STUB_VERSION = 2
     private const val DEFAULT_DESCRIPTION = "Klib Metadata"
 }
