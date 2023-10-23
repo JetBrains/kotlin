@@ -40,4 +40,15 @@ digraph ComplexScript_kts {
     9 -> {10};
     10 -> {11};
 
+    subgraph cluster_4 {
+        color=red
+        12 [label="Enter property [3]" style="filled" fillcolor=red];
+        13 [label="Access variable R|/y| [3]"];
+        14 [label="Function call: R|/foo|(...) [3]" style="filled" fillcolor=yellow];
+        15 [label="Exit property [3]" style="filled" fillcolor=red];
+    }
+    12 -> {13};
+    13 -> {14};
+    14 -> {15};
+
 }

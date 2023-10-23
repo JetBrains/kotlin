@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
@@ -144,6 +145,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     useConfigurators(
         ::CommonEnvironmentConfigurator,
         ::JvmEnvironmentConfigurator,
+        ::ScriptingEnvironmentConfigurator,
     )
 
     useAdditionalSourceProviders(

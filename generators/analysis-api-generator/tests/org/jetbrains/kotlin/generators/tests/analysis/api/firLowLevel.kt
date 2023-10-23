@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceWho
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_OR_KTS
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -248,11 +249,13 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 // MPP tests are not actual for Analysis Api (IDE) infrastructure because it doesn't use IR at all, unlike MPP
                 excludeDirsRecursively = listOf("multiplatform"),
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                pattern = KT_OR_KTS,
             )
             model(
                 "diagnostics/testsWithStdLib",
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                excludeDirs = listOf("native")
+                excludeDirs = listOf("native"),
+                pattern = KT_OR_KTS,
             )
         }
 

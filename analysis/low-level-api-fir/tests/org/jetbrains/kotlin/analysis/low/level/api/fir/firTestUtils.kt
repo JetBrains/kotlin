@@ -86,5 +86,6 @@ fun Collection<FirFile>.getDeclarationsToResolve() = flatMap { it.collectAllElem
     declaration is FirFile ||
             declaration is FirBackingField ||
             declaration is FirAnonymousFunction ||
-            declaration is FirValueParameter && declaration.containingFunctionSymbol is FirAnonymousFunctionSymbol
+            declaration is FirValueParameter && declaration.containingFunctionSymbol is FirAnonymousFunctionSymbol ||
+            declaration is FirProperty && declaration.isLocal
 }
