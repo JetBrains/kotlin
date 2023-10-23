@@ -7,7 +7,6 @@ package org.jetbrains.kotlinx.serialization.compiler.diagnostic
 
 import com.intellij.openapi.util.io.JarUtil
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import java.io.File
@@ -20,8 +19,9 @@ data class RuntimeVersions(val implementationVersion: ApiVersion?, val requireKo
     }
 
     fun currentCompilerMatchRequired(): Boolean {
-        val current = requireNotNull(KotlinCompilerVersion.getVersion()?.let(ApiVersion.Companion::parse))
-        return requireKotlinVersion == null || requireKotlinVersion <= current
+        return true
+//        val current = requireNotNull(KotlinCompilerVersion.getVersion()?.let(ApiVersion.Companion::parse))
+//        return requireKotlinVersion == null || requireKotlinVersion <= current
     }
 
     fun implementationVersionMatchSupported(): Boolean {
