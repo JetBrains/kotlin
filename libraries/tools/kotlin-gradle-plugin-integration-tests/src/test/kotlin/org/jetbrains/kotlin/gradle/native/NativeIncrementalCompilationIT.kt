@@ -8,15 +8,17 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.DisplayName
-import java.nio.file.Path
-import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
+@OsCondition(
+    // Disabled on Windows for now.
+    supportedOn = [OS.LINUX, OS.MAC],
+    enabledOnCI = [OS.LINUX, OS.MAC]
+)
 @DisplayName("Tests for K/N incremental compilation")
 @NativeGradlePluginTests
 class NativeIncrementalCompilationIT : KGPBaseTest() {
