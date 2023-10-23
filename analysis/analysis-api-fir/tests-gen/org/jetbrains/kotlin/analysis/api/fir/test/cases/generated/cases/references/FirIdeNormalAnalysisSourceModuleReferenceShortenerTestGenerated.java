@@ -643,6 +643,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
             runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/nestedClassFromSupertypes6_java.kt");
         }
 
+        @Test
+        @TestMetadata("TypeWithGenericsAsExtensionReceiverType_innerType.kt")
+        public void testTypeWithGenericsAsExtensionReceiverType_innerType() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/TypeWithGenericsAsExtensionReceiverType_innerType.kt");
+        }
+
+        @Test
+        @TestMetadata("TypeWithGenericsAsExtensionReceiverType_nestedType.kt")
+        public void testTypeWithGenericsAsExtensionReceiverType_nestedType() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/TypeWithGenericsAsExtensionReceiverType_nestedType.kt");
+        }
+
         @Nested
         @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions")
         @TestDataPath("$PROJECT_ROOT")

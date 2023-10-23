@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
-import org.jetbrains.kotlin.fir.java.scopes.JavaClassMembersEnhancementScope
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -320,15 +319,21 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
     fun findScopesAtPosition(
         position: KtElement,
         newImports: Sequence<FqName>,
-        towerContextProvider: FirTowerContextProvider
+        towerContextProvider: FirTowerContextProvider,
+        withImplicitReceivers: Boolean = true,
     ): List<FirScope>? {
         val towerDataContext = towerContextProvider.getClosestAvailableParentContext(position) ?: return null
-        val result = buildList {
-            addAll(towerDataContext.nonLocalTowerDataElements.flatMap {
+        val nonLocalScopes = towerDataContext.nonLocalTowerDataElements
+            .asSequence()
+            .filter { withImplicitReceivers || it.implicitReceiver == null }
+            .flatMap {
                 // We must use `it.getAvailableScopes()` instead of `it.scope` to check scopes of companion objects
                 // and context receivers as well.
                 it.getAvailableScopes()
-            })
+            }
+
+        val result = buildList {
+            addAll(nonLocalScopes)
             addIfNotNull(createFakeImportingScope(newImports))
             addAll(towerDataContext.localScopes)
         }
@@ -552,8 +557,13 @@ private class ElementsToShortenCollector(
         wholeClassQualifier: ClassId,
         wholeQualifierElement: KtElement,
     ): ElementToShorten? {
-        val positionScopes: List<FirScope> =
-            shorteningContext.findScopesAtPosition(wholeQualifierElement, getNamesToImport(), towerContextProvider) ?: return null
+        val positionScopes = shorteningContext.findScopesAtPosition(
+            wholeQualifierElement,
+            getNamesToImport(),
+            towerContextProvider,
+            withImplicitReceivers = false,
+        ) ?: return null
+
         val allClassIds = wholeClassQualifier.outerClassesWithSelf
         val allQualifiers = wholeQualifierElement.qualifiedElementsWithSelf
         return findClassifierElementsToShorten(
@@ -731,26 +741,8 @@ private class ElementsToShortenCollector(
         classId: ClassId,
         element: KtElement,
         classSymbol: FirClassLikeSymbol<*>,
-        positionScopes: List<FirScope>,
+        scopes: List<FirScope>,
     ): Boolean {
-        // If its parent has a type parameter, we cannot shorten it because it will lose its type parameter.
-        if (classSymbol.hasTypeParameterFromParent()) return false
-
-        /**
-         * Class use-site member scopes may contain classifiers which are not actually available without explicit import.
-         * And if the class is declared in Java, it can be represented with JavaClassMembersEnhancementScope.
-         */
-        val scopes = positionScopes.filter {
-            when (it) {
-                // KTIJ-24684, KTIJ-24662
-                is FirClassUseSiteMemberScope -> false
-                // KTIJ-26785
-                is JavaClassMembersEnhancementScope -> false
-
-                else -> true
-            }
-        }
-
         val name = classId.shortClassName
         val availableClassifiers = shorteningContext.findClassifiersInScopesByName(scopes, name)
         val matchingAvailableSymbol = availableClassifiers.firstOrNull { it.availableSymbol.symbol.classIdIfExists == classId }
@@ -787,6 +779,9 @@ private class ElementsToShortenCollector(
             val classSymbol = shorteningContext.toClassSymbol(classId) ?: return null
             val option = classShortenOption(classSymbol)
             if (option == ShortenOption.DO_NOT_SHORTEN) continue
+
+            // If its parent has a type parameter, we do not shorten it ATM because it will lose its type parameter. See KTIJ-26072
+            if (classSymbol.hasTypeParameterFromParent()) continue
 
             if (shortenClassifierIfAlreadyImported(classId, element, classSymbol, positionScopes)) {
                 return createElementToShorten(element, null, false)
