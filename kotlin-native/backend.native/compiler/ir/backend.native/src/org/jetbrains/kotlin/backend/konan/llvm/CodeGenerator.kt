@@ -209,8 +209,8 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
 internal object VirtualTablesLookup {
     private fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
         val interfaceTableRecordPtrType = pointerType(runtime.interfaceTableRecordType)
-        val interfaceTableSize = load(llvm.int32Type, structGep(typeInfo, 9 /* interfaceTableSize_ */))
-        val interfaceTable = load(interfaceTableRecordPtrType, structGep(typeInfo, 10 /* interfaceTable_ */))
+        val interfaceTableSize = load(llvm.int32Type, structGep2(runtime.typeInfoType, typeInfo, 9 /* interfaceTableSize_ */))
+        val interfaceTable = load(interfaceTableRecordPtrType, structGep2(runtime.typeInfoType, typeInfo, 10 /* interfaceTable_ */))
 
         fun fastPath(): LLVMValueRef {
             // The fastest optimistic version.
@@ -260,7 +260,7 @@ internal object VirtualTablesLookup {
             // Essentially: typeInfo.itable[place(interfaceId)].id == interfaceId
             val interfaceId = dstHierarchyInfo.interfaceId
             val interfaceTableRecord = getInterfaceTableRecord(objTypeInfo, interfaceId)
-            icmpEq(load(llvm.int32Type, structGep(interfaceTableRecord, 0 /* id */)), llvm.int32(interfaceId))
+            icmpEq(load(llvm.int32Type, structGep2(runtime.interfaceTableRecordType, interfaceTableRecord, 0 /* id */)), llvm.int32(interfaceId))
         }
     }
 
@@ -293,7 +293,7 @@ internal object VirtualTablesLookup {
                 // Essentially: typeInfo.itable[place(interfaceId)].vtable[method]
                 val itablePlace = layoutBuilder.itablePlace(irFunction)
                 val interfaceTableRecord = getInterfaceTableRecord(typeInfoPtr, itablePlace.interfaceId)
-                val vtable = load(llvm.int8PtrPtrType, structGep(interfaceTableRecord, 2 /* vtable */))
+                val vtable = load(llvm.int8PtrPtrType, structGep2(runtime.interfaceTableRecordType, interfaceTableRecord, 2 /* vtable */))
                 val slot = gep(llvm.int8PtrType, vtable, llvm.int32(itablePlace.methodIndex))
                 load(functionPtrType, bitcast(functionPtrPtrType, slot))
             }
@@ -418,7 +418,7 @@ internal class StackLocalsManagerImpl(
 
             memset(bitcast(llvm.int8PtrType, stackSlot), 0, LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8)
 
-            val objectHeader = structGep(stackSlot, 0, "objHeader")
+            val objectHeader = structGep2(type, stackSlot, 0, "objHeader")
             val typeInfo = codegen.typeInfoForAllocation(irClass)
             setTypeInfoForLocalObject(objectHeader, typeInfo)
             val gcRootSetSlot = createRootSetSlot()
@@ -472,12 +472,12 @@ internal class StackLocalsManagerImpl(
             val typeInfo = codegen.typeInfoValue(irClass)
             val arraySlot = LLVMBuildAlloca(builder, arrayType, "")!!
             // Set array size in ArrayHeader.
-            val arrayHeaderSlot = structGep(arraySlot, 0, "arrayHeader")
+            val arrayHeaderSlot = structGep2(arrayType, arraySlot, 0, "arrayHeader")
             setTypeInfoForLocalObject(arrayHeaderSlot, typeInfo)
-            val sizeField = structGep(arrayHeaderSlot, 1, "count_")
+            val sizeField = structGep2(runtime.arrayHeaderType, arrayHeaderSlot, 1, "count_")
             store(count, sizeField)
 
-            memset(bitcast(llvm.int8PtrType, structGep(arraySlot, 1, "arrayBody")),
+            memset(bitcast(llvm.int8PtrType, structGep2(arrayType, arraySlot, 1, "arrayBody")),
                     0,
                     constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
             )
@@ -499,23 +499,23 @@ internal class StackLocalsManagerImpl(
     override fun clean(refsOnly: Boolean) = stackLocals.forEach { clean(it, refsOnly) }
 
     private fun clean(stackLocal: StackLocal, refsOnly: Boolean) = with(functionGenerationContext) {
+        val info = llvmDeclarations.forClass(stackLocal.irClass)
+        val type = info.bodyType
         if (stackLocal.isArray) {
             if (stackLocal.irClass.symbol == context.ir.symbols.array) {
                 call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
             } else if (!refsOnly) {
-                memset(bitcast(llvm.int8PtrType, structGep(stackLocal.stackAllocationPtr, 1, "arrayBody")),
+                memset(bitcast(llvm.int8PtrType, structGep2(type, stackLocal.stackAllocationPtr, 1, "arrayBody")),
                         0,
                         stackLocal.arraySize!! * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[stackLocal.irClass.symbol]).toInt() / 8
                 )
             }
         } else {
-            val info = llvmDeclarations.forClass(stackLocal.irClass)
-            val type = info.bodyType
             for (fieldIndex in info.fieldIndices.values.sorted()) {
                 val fieldType = LLVMStructGetTypeAtIndex(type, fieldIndex)!!
 
                 if (isObjectType(fieldType)) {
-                    val fieldPtr = structGep(stackLocal.stackAllocationPtr, fieldIndex, "")!!
+                    val fieldPtr = structGep2(type, stackLocal.stackAllocationPtr, fieldIndex, "")!!
                     if (refsOnly)
                         storeHeapRef(kNullObjHeaderPtr, fieldPtr)
                     else
@@ -538,7 +538,7 @@ internal class StackLocalsManagerImpl(
     }
 
     private fun setTypeInfoForLocalObject(objectHeader: LLVMValueRef, typeInfoPointer: LLVMValueRef) = with(functionGenerationContext) {
-        val typeInfo = structGep(objectHeader, 0, "typeInfoOrMeta_")
+        val typeInfo = structGep2(runtime.objHeaderType, objectHeader, 0, "typeInfoOrMeta_")
         // Set tag OBJECT_TAG_PERMANENT_CONTAINER | OBJECT_TAG_NONTRIVIAL_CONTAINER.
         val typeInfoValue = intToPtr(or(ptrToInt(typeInfoPointer, codegen.intPtrType),
                 codegen.immThreeIntPtrType), kTypeInfoPtr)
@@ -1280,7 +1280,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef {
-        val typeInfoOrMetaPtr = structGep(objPtr, 0  /* typeInfoOrMeta_ */)
+        val typeInfoOrMetaPtr = structGep2(runtime.objHeaderType, objPtr, 0  /* typeInfoOrMeta_ */)
 
         val memoryOrder = if (context.config.targetHasAddressDependency) {
             /**
@@ -1298,7 +1298,7 @@ internal abstract class FunctionGenerationContext(
         // Clear two lower bits.
         val typeInfoOrMetaRaw = and(typeInfoOrMetaWithFlags, codegen.immTypeInfoMask)
         val typeInfoOrMeta = intToPtr(typeInfoOrMetaRaw, kTypeInfoPtr)
-        val typeInfoPtrPtr = structGep(typeInfoOrMeta, 0 /* typeInfo */)
+        val typeInfoPtrPtr = structGep2(runtime.typeInfoType, typeInfoOrMeta, 0 /* typeInfo */)
         return load(codegen.kTypeInfoPtr, typeInfoPtrPtr, memoryOrder = LLVMAtomicOrdering.LLVMAtomicOrderingMonotonic)
     }
 
