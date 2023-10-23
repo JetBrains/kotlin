@@ -37,6 +37,9 @@ abstract class PublicPackageJsonTask :
     abstract val jsIrCompilation: Property<Boolean>
 
     @get:Input
+    abstract val esModules: Property<Boolean>
+
+    @get:Input
     abstract val npmProjectName: Property<String>
 
     @get:Internal
@@ -85,7 +88,8 @@ abstract class PublicPackageJsonTask :
             externalDependencies,
             packageJsonHandlers.get()
         ).let { packageJson ->
-            packageJson.main = "${npmProjectName.get()}.js"
+            val extension = if (esModules.get()) "mjs" else "js"
+            packageJson.main = "${npmProjectName.get()}.$extension"
 
             if (jsIrCompilation.get()) {
                 packageJson.types = "${npmProjectName.get()}.d.ts"
