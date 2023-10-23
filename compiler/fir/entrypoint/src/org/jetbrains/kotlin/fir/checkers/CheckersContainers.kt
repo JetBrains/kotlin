@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationChecke
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmExpressionCheckers
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.WasmTypeCheckers
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 
 fun FirSessionConfigurator.registerCommonCheckers() {
@@ -50,4 +51,5 @@ fun FirSessionConfigurator.registerNativeCheckers() {
 fun FirSessionConfigurator.registerWasmCheckers() {
     useCheckers(WasmDeclarationCheckers)
     useCheckers(WasmExpressionCheckers)
+    useCheckers(WasmTypeCheckers)
 }
