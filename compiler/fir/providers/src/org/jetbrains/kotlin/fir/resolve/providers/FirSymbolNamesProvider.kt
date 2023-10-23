@@ -146,6 +146,9 @@ object FirNullSymbolNamesProvider : FirSymbolNamesProvider() {
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
 
+    override val mayHaveSyntheticFunctionTypes: Boolean get() = true
+    override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = true
+
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = true
 }
