@@ -5,6 +5,7 @@
 
 package kotlinx.validation.test
 
+import kotlinx.validation.API_DIR
 import kotlinx.validation.api.*
 import org.assertj.core.api.*
 import org.junit.Test
@@ -183,7 +184,7 @@ internal class DefaultConfigTests : BaseKotlinGradleTest() {
         runner.build().apply {
             assertTaskSuccess(":apiDump")
 
-            val apiDumpFile = rootProjectDir.resolve("api/testproject.api")
+            val apiDumpFile = rootProjectDir.resolve("$API_DIR/testproject.api")
             assertTrue(apiDumpFile.exists(), "api dump file ${apiDumpFile.path} should exist")
 
             assertFalse(rootProjectApiDump.exists(), "api dump file ${rootProjectApiDump.path} should NOT exist " +

@@ -5,6 +5,7 @@
 
 package kotlinx.validation.api
 
+import kotlinx.validation.API_DIR
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -16,5 +17,5 @@ public open class BaseKotlinGradleTest {
 
     internal val rootProjectDir: File get() = testProjectDir.root
 
-    internal val rootProjectApiDump: File get() = rootProjectDir.resolve("api/${rootProjectDir.name}.api")
+    internal val rootProjectApiDump: File get() = rootProjectDir.resolve("$API_DIR/${rootProjectDir.name}.api")
 }

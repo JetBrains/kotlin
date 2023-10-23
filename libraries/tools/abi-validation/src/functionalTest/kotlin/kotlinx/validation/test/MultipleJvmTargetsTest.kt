@@ -5,6 +5,7 @@
 
 package kotlinx.validation.test
 
+import kotlinx.validation.API_DIR
 import kotlinx.validation.api.*
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.testkit.runner.GradleRunner
@@ -30,14 +31,14 @@ internal class MultipleJvmTargetsTest : BaseKotlinGradleTest() {
                 arguments.add(":apiCheck")
             }
 
-            dir("api/jvm/") {
+            dir("$API_DIR/jvm/") {
                 file("testproject.api") {
                     resolve("examples/classes/Subsub1Class.dump")
                     resolve("examples/classes/Subsub2Class.dump")
                 }
             }
 
-            dir("api/anotherJvm/") {
+            dir("$API_DIR/anotherJvm/") {
                 file("testproject.api") {
                     resolve("examples/classes/Subsub1Class.dump")
                 }
@@ -69,14 +70,14 @@ internal class MultipleJvmTargetsTest : BaseKotlinGradleTest() {
                 arguments.add(":check")
             }
 
-            dir("api/jvm/") {
+            dir("$API_DIR/jvm/") {
                 file("testproject.api") {
                     resolve("examples/classes/Subsub2Class.dump")
                     resolve("examples/classes/Subsub1Class.dump")
                 }
             }
 
-            dir("api/anotherJvm/") {
+            dir("$API_DIR/anotherJvm/") {
                 file("testproject.api") {
                     resolve("examples/classes/Subsub2Class.dump")
                 }
@@ -134,7 +135,7 @@ internal class MultipleJvmTargetsTest : BaseKotlinGradleTest() {
         }
     }
 
-    private val jvmApiDump: File get() = rootProjectDir.resolve("api/jvm/testproject.api")
-    private val anotherApiDump: File get() = rootProjectDir.resolve("api/anotherJvm/testproject.api")
+    private val jvmApiDump: File get() = rootProjectDir.resolve("$API_DIR/jvm/testproject.api")
+    private val anotherApiDump: File get() = rootProjectDir.resolve("$API_DIR/anotherJvm/testproject.api")
 
 }

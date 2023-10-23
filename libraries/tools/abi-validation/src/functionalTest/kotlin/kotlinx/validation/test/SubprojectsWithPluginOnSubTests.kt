@@ -5,6 +5,7 @@
 
 package kotlinx.validation.test
 
+import kotlinx.validation.API_DIR
 import kotlinx.validation.api.*
 import kotlinx.validation.api.BaseKotlinGradleTest
 import kotlinx.validation.api.assertTaskSuccess
@@ -241,7 +242,7 @@ internal class SubprojectsWithPluginOnSubTests : BaseKotlinGradleTest() {
         runner.build().apply {
             assertTaskSuccess(":sub1:apiDump")
 
-            val apiDumpFile = rootProjectDir.resolve("sub1/api/sub1.api")
+            val apiDumpFile = rootProjectDir.resolve("sub1/$API_DIR/sub1.api")
             assertTrue(apiDumpFile.exists(), "api dump file ${apiDumpFile.path} should exist")
 
             Assertions.assertThat(apiDumpFile.readText()).isEqualToIgnoringNewLines("")
@@ -280,21 +281,21 @@ internal class SubprojectsWithPluginOnSubTests : BaseKotlinGradleTest() {
 
             assertFalse(rootProjectApiDump.exists(), "api dump file ${rootProjectApiDump.path} should NOT exist")
 
-            val apiSub1 = rootProjectDir.resolve("sub1/api/sub1.api")
+            val apiSub1 = rootProjectDir.resolve("sub1/$API_DIR/sub1.api")
             assertTrue(apiSub1.exists(), "api dump file ${apiSub1.path} should exist")
             Assertions.assertThat(apiSub1.readText()).isEqualToIgnoringNewLines("")
 
-            val apiSubsub1 = rootProjectDir.resolve("sub1/subsub1/api/subsub1.api")
+            val apiSubsub1 = rootProjectDir.resolve("sub1/subsub1/$API_DIR/subsub1.api")
             assertTrue(apiSubsub1.exists(), "api dump file ${apiSubsub1.path} should exist")
             val apiSubsub1Expected = readFileList("examples/classes/Subsub1Class.dump")
             Assertions.assertThat(apiSubsub1.readText()).isEqualToIgnoringNewLines(apiSubsub1Expected)
 
-            val apiSubsub2 = rootProjectDir.resolve("sub1/subsub2/api/subsub2.api")
+            val apiSubsub2 = rootProjectDir.resolve("sub1/subsub2/$API_DIR/subsub2.api")
             assertTrue(apiSubsub2.exists(), "api dump file ${apiSubsub2.path} should exist")
             val apiSubsub2Expected = readFileList("examples/classes/Subsub2Class.dump")
             Assertions.assertThat(apiSubsub2.readText()).isEqualToIgnoringNewLines(apiSubsub2Expected)
 
-            val apiSub2 = rootProjectDir.resolve("sub2/api/sub2.api")
+            val apiSub2 = rootProjectDir.resolve("sub2/$API_DIR/sub2.api")
             assertFalse(apiSub2.exists(), "api dump file ${apiSub2.path} should NOT exist")
         }
     }

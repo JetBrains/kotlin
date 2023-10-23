@@ -5,6 +5,7 @@
 
 package kotlinx.validation.test
 
+import kotlinx.validation.API_DIR
 import kotlinx.validation.api.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -29,7 +30,7 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
                     arguments.add("--stacktrace")
                 }
 
-                dir("api/") {
+                dir("$API_DIR/") {
                     file("testproject.api") {
                         resolve("examples/classes/Subsub1Class.dump")
                         resolve("examples/classes/Subsub2Class.dump")
@@ -61,7 +62,7 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
                     arguments.add("--stacktrace")
                 }
 
-                dir("api/") {
+                dir("$API_DIR/") {
                     file("testproject.api") {
                         resolve("examples/classes/Subsub2Class.dump")
                         resolve("examples/classes/Subsub1Class.dump")
@@ -116,6 +117,6 @@ internal class MultiPlatformSingleJvmTargetTest : BaseKotlinGradleTest() {
         }
     }
 
-    private val jvmApiDump: File get() = rootProjectDir.resolve("api/testproject.api")
+    private val jvmApiDump: File get() = rootProjectDir.resolve("$API_DIR/testproject.api")
 
 }
