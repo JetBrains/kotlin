@@ -1,0 +1,9 @@
+package <root> {
+    object Bar
+    class Foo constructor()
+    typealias MyTransformer = (String) -> Int
+    val v1: Int = 1
+    val v2: String = "hello"
+    val v3: (String) -> Int
+    val v4: MyTransformer /* = (String) -> Int */
+}

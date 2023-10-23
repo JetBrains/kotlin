@@ -1,3 +1,4 @@
+package test {
     annotation class AnnoBackingField constructor() : Annotation
     annotation class AnnoClass constructor() : Annotation
     @Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) annotation class AnnoClassTypeParameter constructor() : Annotation
@@ -28,3 +29,4 @@
     @AnnoPropertyExtensionReceiver val Foo.extProp: Int
     @AnnoFunction fun @receiver:AnnoFunctionExtensionReceiver Foo.extfun(@AnnoFunctionParam x: Int)
     fun <@AnnoFunctionTypeParameter T> f(x: B<@AnnoClassUsageTypeParameter Int>)
+}

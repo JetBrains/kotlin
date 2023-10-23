@@ -1,3 +1,4 @@
+package test {
     data class DataClass constructor(intProp: Int, stringProp: String) {
         val intProp: Int
         val nonConstructorProp: Int = 0
@@ -14,3 +15,4 @@
         override fun hashCode(): Int
         override fun toString(): String
     }
+}

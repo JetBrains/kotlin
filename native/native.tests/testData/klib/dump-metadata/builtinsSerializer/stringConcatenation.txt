@@ -4,3 +4,4 @@ package <root> {
         const val O: String = "O"
         val concat: String = "OK"
     }
+}

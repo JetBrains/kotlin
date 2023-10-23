@@ -1,0 +1,11 @@
+package <root> {
+    enum class E private constructor(x: Int = ...) : Enum<E> {
+        enum entry A
+        enum entry B
+        enum entry C
+        val enumVal: Int = 0
+        var enumVar: String
+        val x: Int
+        open fun enumFun(): Int
+    }
+}

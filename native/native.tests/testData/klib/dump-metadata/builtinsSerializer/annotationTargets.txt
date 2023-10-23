@@ -1,3 +1,4 @@
+package test {
     @anno(x = "top level class") class C1 @anno(x = "constructor") constructor() {
         @anno(x = "member property") val p3: Nothing?
         @anno(x = "member extension property") val Int.v4: Int
@@ -13,3 +14,4 @@
     @anno(x = "extension function") fun Long.f2(@anno(x = "extension function parameter") p: Int)
     @anno(x = "top level property") val p1: Nothing?
     @anno(x = "extension property") val Double.p2: Double
+}

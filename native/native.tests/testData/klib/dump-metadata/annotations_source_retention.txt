@@ -1,3 +1,4 @@
+package test {
     @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoBackingField constructor() : Annotation
     @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoClass constructor() : Annotation
     @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoConstructor constructor() : Annotation
@@ -20,3 +21,4 @@
     }
     val Foo.extProp: Int
     fun Foo.extfun(x: Int)
+}

@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpMetadataTest {
     @Test
+    @TestMetadata("Accessors.kt")
+    public void testAccessors() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/Accessors.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInDump_metadata() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-metadata"), Pattern.compile("^([^_](.+)).kt$"), null, true);
     }
@@ -37,9 +43,33 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
     }
 
     @Test
+    @TestMetadata("Classes.kt")
+    public void testClasses() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/Classes.kt");
+    }
+
+    @Test
+    @TestMetadata("Constructors.kt")
+    public void testConstructors() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/Constructors.kt");
+    }
+
+    @Test
     @TestMetadata("data_class.kt")
     public void testData_class() throws Exception {
         runTest("native/native.tests/testData/klib/dump-metadata/data_class.kt");
+    }
+
+    @Test
+    @TestMetadata("Enum.kt")
+    public void testEnum() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/Enum.kt");
+    }
+
+    @Test
+    @TestMetadata("FunctionModifiers.kt")
+    public void testFunctionModifiers() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/FunctionModifiers.kt");
     }
 
     @Test
@@ -55,9 +85,51 @@ public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpM
     }
 
     @Test
+    @TestMetadata("MethodModality.kt")
+    public void testMethodModality() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/MethodModality.kt");
+    }
+
+    @Test
+    @TestMetadata("Objects.kt")
+    public void testObjects() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/Objects.kt");
+    }
+
+    @Test
     @TestMetadata("property_accessors.kt")
     public void testProperty_accessors() throws Exception {
         runTest("native/native.tests/testData/klib/dump-metadata/property_accessors.kt");
+    }
+
+    @Test
+    @TestMetadata("TopLevelFunctions.kt")
+    public void testTopLevelFunctions() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/TopLevelFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("TopLevelPropertiesCustomPackage.kt")
+    public void testTopLevelPropertiesCustomPackage() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/TopLevelPropertiesCustomPackage.kt");
+    }
+
+    @Test
+    @TestMetadata("TopLevelPropertiesRootPackage.kt")
+    public void testTopLevelPropertiesRootPackage() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/TopLevelPropertiesRootPackage.kt");
+    }
+
+    @Test
+    @TestMetadata("TopLevelPropertiesWithClassesCustomPackage.kt")
+    public void testTopLevelPropertiesWithClassesCustomPackage() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/TopLevelPropertiesWithClassesCustomPackage.kt");
+    }
+
+    @Test
+    @TestMetadata("TopLevelPropertiesWithClassesRootPackage.kt")
+    public void testTopLevelPropertiesWithClassesRootPackage() throws Exception {
+        runTest("native/native.tests/testData/klib/dump-metadata/TopLevelPropertiesWithClassesRootPackage.kt");
     }
 
     @Test

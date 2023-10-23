@@ -1,3 +1,4 @@
+package test {
     annotation class Anno constructor(value: String) : Annotation {
         val value: String
     }
@@ -5,3 +6,4 @@
     var v2: String
         @Anno(value = "getter") get
         @Anno(value = "setter") set
+}

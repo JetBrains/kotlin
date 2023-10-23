@@ -1,4 +1,5 @@
-abstract class A constructor() {
+package test {
+    abstract class A constructor() {
         abstract val a: Int
         abstract var b: Int
             protected set
@@ -13,3 +14,4 @@ abstract class A constructor() {
         open var l: Int
             protected set
     }
+}

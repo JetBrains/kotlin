@@ -1,3 +1,4 @@
+package test {
     @Retention(value = AnnotationRetention.SOURCE) @Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) annotation class A constructor() : Annotation
     enum class Enum private constructor() : Enum<Enum> {
         enum entry ENTRY
@@ -5,3 +6,4 @@
     class Klass constructor()
     fun <T> function(param: Unit)
     val property: Unit
+}

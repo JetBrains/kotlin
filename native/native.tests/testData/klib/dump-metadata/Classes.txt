@@ -1,0 +1,48 @@
+package <root> {
+    class A constructor() {
+        val aVal: Int = 0
+        var aVar: String
+        fun aFun()
+        inner class B constructor() {
+            val bVal: Int = 0
+            var bVar: String
+            fun bFun()
+            inner class C constructor() {
+                val cVal: Int = 0
+                var cVar: String
+                fun cFun()
+            }
+        }
+        class E constructor() {
+            val eVal: Int = 0
+            var eVar: String
+            fun eFun()
+        }
+    }
+    data class F constructor(fVal: Int, fVar: String) {
+        val fVal: Int
+        var fVar: String
+        operator fun component1(): Int
+        operator fun component2(): String
+        fun copy(fVal: Int = ..., fVar: String = ...): F
+        override fun equals(other: Any?): Boolean
+        fun fFun()
+        override fun hashCode(): Int
+        override fun toString(): String
+    }
+    class FinalImpl constructor() : OpenImpl {
+        override val iVal: Int = 0
+        override var iVar: String
+        override fun iFun()
+    }
+    interface Interface {
+        val iVal: Int
+        var iVar: String
+        fun iFun()
+    }
+    open class OpenImpl constructor() : Interface {
+        override val iVal: Int = 0
+        override var iVar: String
+        override fun iFun()
+    }
+}

@@ -1,0 +1,18 @@
+package <root> {
+    object A {
+        fun a()
+    }
+    class B constructor() {
+        companion object {
+            fun b()
+        }
+        object C {
+            fun c()
+        }
+    }
+    class D constructor() {
+        companion object E {
+            fun e()
+        }
+    }
+}

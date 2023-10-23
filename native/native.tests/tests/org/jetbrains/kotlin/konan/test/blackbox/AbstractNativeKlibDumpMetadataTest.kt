@@ -34,8 +34,11 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
 
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
         val metadata = testCompilationResult.assertSuccess().resultingArtifact.dumpMetadata(kotlinNativeClassLoader.classLoader)
-        val metadataFiltered = filterContentsOutput(metadata, linestoExclude = listOf("package test {", "}", ""))
-        assertEqualsToFile(File("${testPathFull.canonicalPath.substringBeforeLast(".")}.txt"), StringUtilRt.convertLineSeparators(metadataFiltered))
+        val metadataFiltered = filterOutput(metadata)
+        assertEqualsToFile(
+            File("${testPathFull.canonicalPath.substringBeforeLast(".")}.txt"),
+            StringUtilRt.convertLineSeparators(metadataFiltered)
+        )
     }
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
@@ -56,9 +59,25 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         }
     }
 
-    private fun filterContentsOutput(contents: String, linestoExclude: List<String>) =
-        contents.lines()
-            .filterNot { line ->
-                linestoExclude.any { exclude -> exclude == line }
-            }.joinToString(separator = "\n")
+    // Remove intermediate "}\n\npackage ABC {\n" parts.
+    private fun filterOutput(contents: String): String {
+        var packageLineMet = false
+        return contents.lineSequence()
+            .dropWhile { line -> line.isBlank() }
+            .filter { line ->
+                when {
+                    line.isBlank() -> false
+                    line.startsWith("package ") -> {
+                        if (packageLineMet)
+                            false
+                        else {
+                            packageLineMet = true
+                            true
+                        }
+                    }
+                    line == "}" -> false
+                    else -> true
+                }
+            }.joinToString(separator = "\n", postfix = "\n}")
+    }
 }

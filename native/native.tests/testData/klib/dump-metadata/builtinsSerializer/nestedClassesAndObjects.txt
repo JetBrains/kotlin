@@ -1,3 +1,4 @@
+package test {
     class ClassA constructor() {
         class classB constructor() {
             fun memberFromB(): Int
@@ -25,3 +26,4 @@
             val memberFromObjA: Int = 300
         }
     }
+}

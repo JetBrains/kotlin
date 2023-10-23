@@ -1,3 +1,4 @@
+package test {
     class Class constructor() {
         val arrayConst: Any = {1.toByte(), 2.toByte()}
         val booleanConst: Boolean = true
@@ -27,3 +28,4 @@
     val longConst: Long = 40.toLong()
     val shortConst: Short = 20.toShort()
     val stringConst: String = "abcd"
+}

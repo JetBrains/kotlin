@@ -1,3 +1,4 @@
+package test {
     @JustEnum(weapon = Weapon.SCISSORS) @EnumArray(enumArray = {}) class C1 constructor()
     @EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) class C2 constructor()
     annotation class EnumArray constructor(enumArray: Array<Weapon>) : Annotation {
@@ -11,3 +12,4 @@
         enum entry PAPER
         enum entry SCISSORS
     }
+}

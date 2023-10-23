@@ -2,33 +2,12 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-import org.jetbrains.kotlin.UtilsKt
 
 buildscript {
     apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
 }
 
 apply plugin: 'kotlin'
-apply plugin: 'konan'
-
-ext.useCustomDist = UtilsKt.getUseCustomDist(project)
-
-konanArtifacts {
-    def testFiles = fileTree('src/test/testData') {
-        include "*.kt"
-    }
-    testFiles.files.each { file ->
-        def name = file.name
-        library(name.take(name.lastIndexOf('.'))) {
-            srcFiles file.absolutePath
-
-            // Build the compiler before building the test unless a custom path to the distribution is specified.
-            if (!useCustomDist) {
-                dependsOn ':dist'
-            }
-        }
-    }
-}
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
@@ -51,13 +30,4 @@ dependencies {
 test {
     dependsOn 'cleanTest'
     // Specify a path to the distribution that is used in the tests.
-    systemProperty('konan.home', UtilsKt.getKotlinNativeDist(project))
-    dependsOn konanArtifacts.collect { it.getByTarget('host') }
-    if (useCustomDist) {
-        // Use the klib utility from the distribution
-        def distClasspath = fileTree("${UtilsKt.getKotlinNativeDist(project)}/konan/lib") {
-            include "**/*.jar"
-        }
-        classpath = distClasspath + sourceSets.test.runtimeClasspath - sourceSets.main.runtimeClasspath
-    }
 }

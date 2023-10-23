@@ -1,3 +1,4 @@
+package test {
     enum class My private constructor() : Enum<My> {
         enum entry ALPHA
         enum entry BETA
@@ -7,3 +8,4 @@
         val m: Array<out My>
     }
     @ann(m = {My.ALPHA, My.BETA}) annotation class annotated constructor() : Annotation
+}

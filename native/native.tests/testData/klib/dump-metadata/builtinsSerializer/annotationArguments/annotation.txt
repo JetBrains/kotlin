@@ -1,3 +1,4 @@
+package test {
     annotation class AnnotationArray constructor(annotationArray: Array<JustAnnotation>) : Annotation {
         val annotationArray: Array<JustAnnotation>
     }
@@ -7,3 +8,4 @@
     annotation class JustAnnotation constructor(annotation: Empty) : Annotation {
         val annotation: Empty
     }
+}

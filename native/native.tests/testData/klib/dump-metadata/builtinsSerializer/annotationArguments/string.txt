@@ -1,3 +1,4 @@
+package test {
     @JustString(string = "kotlin") @StringArray(stringArray = {}) class C1 constructor()
     @StringArray(stringArray = {"java", ""}) class C2 constructor()
     annotation class JustString constructor(string: String) : Annotation {
@@ -6,3 +7,4 @@
     annotation class StringArray constructor(stringArray: Array<String>) : Annotation {
         val stringArray: Array<String>
     }
+}

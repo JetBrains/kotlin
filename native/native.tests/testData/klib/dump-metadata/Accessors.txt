@@ -1,0 +1,17 @@
+package custom.pkg {
+    annotation class A constructor() : Annotation
+    class Foo constructor() {
+        @A val annotated: Int = 0
+        var annotatedAccessors: Int
+            @A get
+            @A set
+        val annotatedGetter: Int = 0
+            @A get
+        var annotatedSetter: Int
+            @A set
+        var privateSetter: Int
+            private set
+        protected val protectedSimple: Int = 0
+        val simple: Int = 0
+    }
+}

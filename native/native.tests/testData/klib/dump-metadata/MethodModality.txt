@@ -1,0 +1,19 @@
+package <root> {
+    abstract class AbstractClass constructor() : Interface {
+        abstract fun abstractFun()
+        override fun interfaceFun()
+    }
+    class FinalClass constructor() : OpenClass {
+        override fun openFun1()
+        final override fun openFun2()
+    }
+    interface Interface {
+        fun interfaceFun()
+    }
+    open class OpenClass constructor() : AbstractClass {
+        override fun abstractFun()
+        fun finalFun()
+        open fun openFun1()
+        open fun openFun2()
+    }
+}

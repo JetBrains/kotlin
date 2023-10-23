@@ -1,0 +1,20 @@
+package <root> {
+    annotation class A constructor() : Annotation
+    class Bar @A constructor(x: Int)
+    class Baz private constructor(x: Int)
+    class Foo constructor(x: Int) {
+        constructor()
+        constructor(x: Double)
+        constructor(x: Double, y: Int)
+        protected constructor(x: String)
+        @A constructor(x: Foo)
+    }
+    class Qux protected constructor(x: Int)
+    class Typed<T> constructor(x: Int) {
+        constructor()
+        constructor(x: Double)
+        constructor(x: Double, y: Int)
+        protected constructor(x: String)
+        @A constructor(x: Foo)
+    }
+}

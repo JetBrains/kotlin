@@ -1,0 +1,10 @@
+package <root> {
+    class Foo constructor() {
+        fun f1()
+        infix fun f2(x: Int)
+        suspend fun f3()
+        tailrec fun f4()
+        fun f5(vararg x: Int)
+        operator fun plus(x: Int)
+    }
+}
