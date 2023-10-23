@@ -31,7 +31,18 @@ fun lowerWithBir(
         .toMutableList() as MutableList<CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>>
 
     val idx = newPhases.indexOfFirst { (it as AnyNamedPhase).name == "FileClass" }
-    newPhases.add(idx + 1, invokeBirLoweringsPhase)
+    val birPhases = listOf<AbstractNamedCompilerPhase<JvmBackendContext, *, *>>(
+        ConvertIrToBirPhase(
+            "Convert IR to BIR",
+            "Experimental phase to test alternative IR architecture",
+        ),
+        NamedCompilerPhase(
+            "Run BIR lowerings",
+            "Experimental phase to test alternative IR architecture",
+            lower = BirLowering,
+        )
+    )
+    newPhases.addAll(idx + 1, birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>)
 
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfig(compoundPhase)
@@ -45,24 +56,14 @@ fun lowerWithBir(
     compoundPhase.invokeToplevel(phaseConfig, context, irModuleFragment)
 }
 
-private val invokeBirLoweringsPhase = SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment>(
-    "!!!BIR run lowerings",
-    "Experimental phase to test alternative IR architecture",
-    lower = BirLowering,
-)
-
 private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirJvmStaticInObjectLowering,
     ::BirRepeatedAnnotationLowering,
 )
 
-private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, IrModuleFragment> {
-    override fun invoke(
-        phaseConfig: PhaseConfigurationService,
-        phaserState: PhaserState<IrModuleFragment>,
-        context: JvmBackendContext,
-        input: IrModuleFragment,
-    ): IrModuleFragment {
+private class ConvertIrToBirPhase(name: String, description: String) :
+    SimpleNamedCompilerPhase<JvmBackendContext, IrModuleFragment, BirCompilationBundle>(name, description) {
+    override fun phaseBody(context: JvmBackendContext, input: IrModuleFragment): BirCompilationBundle {
         val dynamicPropertyManager = BirElementDynamicPropertyManager()
 
         val externalDependenciesBir = BirForest()
@@ -91,17 +92,9 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, IrModuleFr
 
         countElements(birModule)
 
-        compiledBir.applyNewRegisteredIndices()
-        compiledBir.reindexAllElements()
-
-        for (phase in birContext.loweringPhases) {
-            println("Running BIR phase ${phase.javaClass.name}")
-            phase(birModule)
-        }
-
-        exitProcess(0)
-        return input
+        return BirCompilationBundle(birModule, birContext)
     }
+
 
     private fun countElements(root: BirElement): Int {
         var count = 0
@@ -110,5 +103,37 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, IrModuleFr
             it.walkIntoChildren()
         }
         return count
+    }
+
+    override fun outputIfNotEnabled(
+        phaseConfig: PhaseConfigurationService,
+        phaserState: PhaserState<IrModuleFragment>,
+        context: JvmBackendContext,
+        input: IrModuleFragment,
+    ): BirCompilationBundle {
+        error("Must be enabled")
+    }
+}
+
+private class BirCompilationBundle(val birModule: BirModuleFragment, val backendContext: JvmBirBackendContext)
+
+private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompilationBundle> {
+    override fun invoke(
+        phaseConfig: PhaseConfigurationService,
+        phaserState: PhaserState<BirCompilationBundle>,
+        context: JvmBackendContext,
+        input: BirCompilationBundle,
+    ): BirCompilationBundle {
+        val compiledBir = input.backendContext.compiledBir
+        compiledBir.applyNewRegisteredIndices()
+        compiledBir.reindexAllElements()
+
+        for (phase in input.backendContext.loweringPhases) {
+            println("Running BIR phase ${phase.javaClass.name}")
+            phase(input.birModule)
+        }
+
+        exitProcess(0)
+        return input
     }
 }
