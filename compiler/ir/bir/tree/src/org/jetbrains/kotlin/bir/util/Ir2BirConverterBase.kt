@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.bir.util
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementDynamicPropertyManager
-import org.jetbrains.kotlin.bir.BirForest
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.declarations.BirSymbolOwner
@@ -36,7 +33,7 @@ import kotlin.collections.set
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class Ir2BirConverterBase() {
-    var birForest: BirForest? = null
+    var appendElementAsForestRoot: (IrElement, BirElement) -> BirForest? = { _, _ -> null }
     var copyAncestorsForOrphanedElements = false
 
     private val collectedBirElementsWithoutParent = mutableListOf<BirElement>()
@@ -62,7 +59,9 @@ abstract class Ir2BirConverterBase() {
         copyIrTree(listOf(irRootElement)).single()
 
     protected fun <Ir : IrElement, Bir : BirElement> copyNotReferencedElement(old: Ir, copy: () -> Bir): Bir {
-        return doCopyElement(old, copy)
+        val new = doCopyElement(old, copy)
+        appendElementAsForestRoot(old, new)?.attachRootElement(new as BirElementBase)
+        return new
     }
 
     protected fun <Ir : IrElement, ME : BirElement, SE : ME> copyReferencedElement(
@@ -83,6 +82,8 @@ abstract class Ir2BirConverterBase() {
 
             val new = copy()
             map[old] = new
+
+            appendElementAsForestRoot(old, new)?.attachRootElement(new as BirElementBase)
 
             if (old is IrSymbolOwner) {
                 val symbol = symbolOwnersCurrentlyBeingConverted.remove(old)
@@ -307,9 +308,8 @@ abstract class Ir2BirConverterBase() {
     }
 
     companion object {
-        fun IrElement.convertToBir(birForest: BirForest): BirElement {
+        fun IrElement.convertToBir(): BirElement {
             val converter = Ir2BirConverter(BirElementDynamicPropertyManager())
-            converter.birForest = birForest
             return converter.copyIrTree(listOf(this)).single()
         }
     }
