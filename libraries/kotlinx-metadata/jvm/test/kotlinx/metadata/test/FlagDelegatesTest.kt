@@ -147,7 +147,9 @@ class FlagDelegatesTest {
         }
 
         assertProperty("getterSetterNoFieldNoParamVar", true, true, true) {
-            assertEquals(true, it?.name == "_") // TODO: KT-62582
+            assertEquals(true, it?.name == "_") // KT-62582 (K2 should have _ here despite a special name is used in K1)
+            // K1 version
+            // assertEquals(true, it?.name?.contains("anonymous parameter"))
         }
 
         assertProperty("defaultSetterVar", true, true, false)
