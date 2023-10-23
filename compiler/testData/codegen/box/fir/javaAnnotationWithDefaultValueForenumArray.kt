@@ -1,5 +1,6 @@
 // IGNORE_LIGHT_ANALYSIS
 // TARGET_BACKEND: JVM
+// MUTE_LL_FIR: KT-62776
 // FILE: ArrayAnnEnumJava.java
 package light.ann.array;
 

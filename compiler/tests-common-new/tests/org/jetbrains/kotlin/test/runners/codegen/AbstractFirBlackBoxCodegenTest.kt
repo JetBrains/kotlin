@@ -6,18 +6,18 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.ir.CodegenWithIrFakeOverrideGeneratorSuppressor
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
-import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.backend.ir.CodegenWithIrFakeOverrideGeneratorSuppressor
-import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
@@ -54,12 +54,6 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
                 -USE_PSI_CLASS_FILES_READING
             }
 
-            forTestsMatching("*WithStdLib/*") {
-                defaultDirectives {
-                    +WITH_STDLIB
-                }
-            }
-
             configureFirHandlersStep {
                 useHandlersAtFirst(
                     ::FirDumpHandler,
@@ -79,11 +73,21 @@ abstract class AbstractFirBlackBoxCodegenTestBase(
 
             configureDumpHandlersForCodegenTest()
 
-            forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
-                defaultDirectives {
-                    LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
-                }
-            }
+            baseFirBlackBoxCodegenTestDirectivesConfiguration()
+        }
+    }
+}
+
+fun TestConfigurationBuilder.baseFirBlackBoxCodegenTestDirectivesConfiguration() {
+    forTestsMatching("*WithStdLib/*") {
+        defaultDirectives {
+            +WITH_STDLIB
+        }
+    }
+
+    forTestsMatching("compiler/testData/codegen/box/properties/backingField/*") {
+        defaultDirectives {
+            LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
         }
     }
 }

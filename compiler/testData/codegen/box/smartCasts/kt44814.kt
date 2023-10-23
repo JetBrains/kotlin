@@ -3,6 +3,7 @@
 // DUMP_IR
 // DUMP_CFG
 // RENDERER_CFG_LEVELS
+// MUTE_LL_FIR: KT-62834
 
 class FlyweightCapableTreeStructure
 
