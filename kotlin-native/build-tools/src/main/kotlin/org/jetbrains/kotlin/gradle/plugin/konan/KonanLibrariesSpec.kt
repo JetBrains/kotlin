@@ -8,14 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin.konan
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanArtifactWithLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanBuildingTask
 import org.jetbrains.kotlin.konan.*
 import org.jetbrains.kotlin.konan.library.defaultResolver
-import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.SearchPathResolver
@@ -26,14 +23,14 @@ open class KonanLibrariesSpec(
         @Internal val project: Project
 ) {
 
-    @InputFiles val files = mutableSetOf<FileCollection>()
+    @InputFiles @PathSensitive(PathSensitivity.RELATIVE) val files = mutableSetOf<FileCollection>()
 
     @Input val namedKlibs = mutableSetOf<String>()
 
     @Internal val artifacts = mutableListOf<KonanBuildingTask>()
 
     val artifactFiles: List<File>
-        @InputFiles get() = artifacts.map { it.artifact }
+        @InputFiles @PathSensitive(PathSensitivity.RELATIVE) get() = artifacts.map { it.artifact }
 
     @Internal val explicitRepos = mutableSetOf<File>()
 

@@ -5,22 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin.tasks
 
-import groovy.lang.Closure
-import org.codehaus.groovy.runtime.GStringImpl
-import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.process.CommandLineArgumentProvider
-import org.jetbrains.kotlin.konan.library.defaultResolver
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.plugin.konan.*
-import org.jetbrains.kotlin.gradle.plugin.konan.dumpProperties
-import org.jetbrains.kotlin.gradle.plugin.konan.environmentVariables
-import org.jetbrains.kotlin.gradle.plugin.konan.konanBuildRoot
-import org.jetbrains.kotlin.gradle.plugin.konan.targetSubdir
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
 
 /**
@@ -59,14 +48,16 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         @Internal get() = srcFiles_.takeIf { !it.isEmpty() } ?: listOf(project.konanDefaultSrcFiles)
 
     val allSources: Collection<FileCollection>
-        @InputFiles get() = listOf(srcFiles, commonSrcFiles).flatten()
+        @InputFiles @PathSensitive(PathSensitivity.RELATIVE) get() = listOf(srcFiles, commonSrcFiles).flatten()
 
     private val allSourceFiles: List<File>
         get() = allSources
                 .flatMap { it.files }
                 .filter { it.name.endsWith(".kt") }
 
-    @InputFiles val nativeLibraries = mutableSetOf<FileCollection>()
+    @InputFiles
+    @PathSensitive(PathSensitivity.RELATIVE)
+    val nativeLibraries = mutableSetOf<FileCollection>()
 
     @Input val linkerOpts = mutableListOf<String>()
 
@@ -388,6 +379,7 @@ open class KonanCompileFrameworkTask: KonanCompileNativeBinary() {
         @OutputDirectory get() = super.artifact
 }
 
+@CacheableTask
 open class KonanCompileLibraryTask: KonanCompileTask() {
     override val artifact: File
         @Internal get() = destinationDir.resolve(artifactFullName)
