@@ -156,6 +156,20 @@ abstract class AbstractInvalidationTest(
         return copy
     }
 
+    private fun CompilerConfiguration.enableKlibRelativePaths(moduleSourceDir: File) {
+        val bases = mutableListOf<String>()
+        val platformDirs = moduleSourceDir.listFiles() ?: arrayOf()
+        for (platformDir in platformDirs) {
+            if (platformDir.isDirectory) {
+                bases.add(platformDir.absolutePath)
+            }
+        }
+        if (bases.isEmpty()) {
+            bases.add(moduleSourceDir.absolutePath)
+        }
+        put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, bases)
+    }
+
     private inner class ProjectStepsExecutor(
         private val projectInfo: ProjectInfo,
         private val moduleInfos: Map<String, ModuleInfo>,
@@ -197,6 +211,7 @@ abstract class AbstractInvalidationTest(
                     }
                 }
                 val configuration = createConfiguration(module, projStep.language, projectInfo.moduleKind)
+                configuration.enableKlibRelativePaths(moduleSourceDir)
                 outputKlibFile.delete()
                 buildKlib(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
             }
