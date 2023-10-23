@@ -90,7 +90,7 @@ abstract class FirSymbolNamesProvider {
      * [FirSymbolProvider] can provide generated function types. The value should be constant, which allows composite symbol providers to
      * cache the result and achieve acceptable performance.
      */
-    open val mayHaveSyntheticFunctionTypes: Boolean = false
+    open val mayHaveSyntheticFunctionTypes: Boolean get() = false
 
     /**
      * Whether [classId] is considered a generated function type within the provider's scope and session.
