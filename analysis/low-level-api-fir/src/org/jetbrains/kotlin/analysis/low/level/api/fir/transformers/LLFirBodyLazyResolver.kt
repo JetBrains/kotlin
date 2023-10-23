@@ -104,6 +104,7 @@ private class LLFirBodyTargetResolver(
         firResolveContextCollector = firResolveContextCollector,
     ) {
         override val preserveCFGForClasses: Boolean get() = false
+        override val buildCfgForFiles: Boolean get() = false
     }
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {

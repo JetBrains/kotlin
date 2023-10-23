@@ -65,6 +65,7 @@ internal class LLFirImplicitBodyTargetResolver(
         returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
     ) {
         override val preserveCFGForClasses: Boolean get() = false
+        override val buildCfgForFiles: Boolean get() = false
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
