@@ -205,6 +205,19 @@ object AbstractTypeChecker {
         return isSubtypeOf(context.newTypeCheckerState(true, stubTypesEqualToAnything), subType, superType)
     }
 
+    /**
+     * It matches class types but ignores their type parameters
+     *
+     * Consider the following example:
+     *
+     * ```
+     * abstract class Foo<T>
+     * class FooBar : Foo<Any>()
+     * ```
+     *
+     * In this case `isSubtypeOfClass` returns `true` for `FooBar` and `Foo<T>` input arguments
+     * But `isSubtypeOf` returns `false` for the same input arguments
+     */
     fun isSubtypeOfClass(
         state: TypeCheckerState,
         typeConstructor: TypeConstructorMarker,
