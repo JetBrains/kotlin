@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substut
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractSymbolRenderingByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolInfoProvider.AbstractAnnotationApplicableTargetsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractBuildClassTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractTypeParameterTypeTest
@@ -371,6 +372,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("symbolDeclarationRenderer") {
         test(AbstractRendererTest::class) {
             model(it, "renderDeclaration")
+        }
+
+        test(AbstractSymbolRenderingByReferenceTest::class, analysisApiModeIs(AnalysisApiMode.Ide, AnalysisApiMode.Standalone)) {
+            model(it, "symbolRenderingByReference")
         }
     }
 

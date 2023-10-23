@@ -18,5 +18,12 @@ public object KtDeclarationRendererForDebug {
         typeRenderer = KtTypeRendererForDebug.WITH_QUALIFIED_NAMES
         declarationTypeApproximator = KtRendererTypeApproximator.NO_APPROXIMATION
     }
+
+    public val WITH_QUALIFIED_NAMES_DENOTABLE: KtDeclarationRenderer = KtDeclarationRendererForSource.WITH_QUALIFIED_NAMES.with {
+        singleTypeParameterRenderer = KtSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS
+        samConstructorRenderer = KtSamConstructorSymbolRenderer.AS_FUNCTION
+        typeRenderer = KtTypeRendererForDebug.WITH_QUALIFIED_NAMES
+        declarationTypeApproximator = KtRendererTypeApproximator.TO_DENOTABLE
+    }
 }
 

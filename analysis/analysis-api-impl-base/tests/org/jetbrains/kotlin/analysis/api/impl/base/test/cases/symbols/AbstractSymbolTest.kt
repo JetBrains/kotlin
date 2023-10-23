@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.test.fail
 
 abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
-    private val defaultRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
+    open val defaultRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
     open val defaultRendererOption: PrettyRendererOption? = null
 
