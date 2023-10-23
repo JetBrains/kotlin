@@ -151,7 +151,10 @@ internal fun FirExpression.checkExpressionForEnhancedTypeMismatch(
     val (actualTypeForComparison, expectedTypeForComparison) = getEnhancedTypesForComparison(actualType, expectedType, context)
         ?: return
 
-    if (!actualTypeForComparison.isSubtypeOf(context.session.typeContext, expectedTypeForComparison)) {
+    if (!actualTypeForComparison.isSubtypeOf(context.session.typeContext, expectedTypeForComparison) &&
+        // Don't report anything if the original types didn't match.
+        actualType.isSubtypeOf(context.session.typeContext, expectedType.asExpectedFunctionTypeIfSam(actualType, context))
+    ) {
         reporter.reportOn(source, factory, actualTypeForComparison, expectedTypeForComparison, context)
     }
 }
@@ -175,16 +178,22 @@ private fun getEnhancedTypesForComparison(
     val actualTypeForComparison = enhancedActualType ?: actualType
     val expectedTypeForComparison = enhancedExpectedType ?: expectedType
 
-    val expectedTypeAsFunctionTypeIfSam = if (
-        actualTypeForComparison.isSomeFunctionType(context.session) &&
-        !expectedTypeForComparison.isSomeFunctionType(context.session)
-    ) {
-        // TODO remove after KT-62847
-        val samResolver = FirSamResolver(context.session, context.scopeSession)
-        samResolver.getFunctionTypeForPossibleSamType(expectedTypeForComparison) ?: expectedTypeForComparison
-    } else {
-        expectedTypeForComparison
-    }
+    val expectedTypeAsFunctionTypeIfSam = expectedTypeForComparison.asExpectedFunctionTypeIfSam(actualTypeForComparison, context)
 
     return actualTypeForComparison to expectedTypeAsFunctionTypeIfSam
+}
+
+/**
+ * If the receiver is a SAM type and the [actualType] is a function type, converts the receiver to the corresponding function type.
+ * Otherwise, returns receiver.
+ *
+ * TODO remove after KT-62847
+ * */
+private fun ConeKotlinType.asExpectedFunctionTypeIfSam(actualType: ConeKotlinType, context: CheckerContext): ConeKotlinType {
+    if (!actualType.isSomeFunctionType(context.session) || isSomeFunctionType(context.session)) {
+        return this
+    }
+
+    val samResolver = FirSamResolver(context.session, context.scopeSession)
+    return samResolver.getFunctionTypeForPossibleSamType(this) ?: this
 }

@@ -1190,6 +1190,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
             }
 
             @Test
+            @TestMetadata("mutabilityAndNullabilityForWarning.kt")
+            public void testMutabilityAndNullabilityForWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/mutabilityAndNullabilityForWarning.kt");
+            }
+
+            @Test
             @TestMetadata("notNullVarargsOverrides.kt")
             public void testNotNullVarargsOverrides() throws Exception {
                 runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/misc/notNullVarargsOverrides.kt");
