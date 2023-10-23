@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
@@ -211,15 +210,15 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
                 RuntimeVersions.MINIMAL_SUPPORTED_VERSION.toString()
             )
         }
-        if (!currentVersions.currentCompilerMatchRequired()) {
-            reporter.reportOn(
-                classSymbol.serializableOrMetaAnnotationSource,
-                FirSerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
-                KotlinCompilerVersion.getVersion() ?: TOO_LOW,
-                currentVersions.implementationVersion?.toString() ?: UNKNOWN,
-                currentVersions.requireKotlinVersion?.toString() ?: NA
-            )
-        }
+//        if (!currentVersions.currentCompilerMatchRequired()) {
+//            reporter.reportOn(
+//                classSymbol.serializableOrMetaAnnotationSource,
+//                FirSerializationErrors.REQUIRED_KOTLIN_TOO_HIGH,
+//                KotlinCompilerVersion.getVersion() ?: TOO_LOW,
+//                currentVersions.implementationVersion?.toString() ?: UNKNOWN,
+//                currentVersions.requireKotlinVersion?.toString() ?: NA
+//            )
+//        }
     }
 
     context(CheckerContext)
