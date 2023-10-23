@@ -15,7 +15,8 @@ import java.io.File
 class ClassicFrontendFailingTestSuppressor(testServices: TestServices) : AbstractFailingTestSuppressor(testServices) {
 
     override fun testFile(): File {
-        return testServices.moduleStructure.originalTestDataFiles.first()
+        return testServices.moduleStructure.originalTestDataFiles.firstOrNull()
+            ?: error("ClassicFrontendFailingTestSuppressor can only work with real test files")
     }
 
     override fun hasFailure(failedAssertions: List<WrappedException>): Boolean {

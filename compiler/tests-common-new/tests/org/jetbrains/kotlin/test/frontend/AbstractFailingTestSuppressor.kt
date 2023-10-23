@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
 abstract class AbstractFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
@@ -17,6 +18,10 @@ abstract class AbstractFailingTestSuppressor(testServices: TestServices) : After
     protected abstract fun hasFailure(failedAssertions: List<WrappedException>): Boolean
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
+        val isRealTestFile = testServices.moduleStructure.originalTestDataFiles.isNotEmpty()
+        if (!isRealTestFile) {
+            return failedAssertions
+        }
         val failFile = testFile().parentFile.resolve("${testFile().nameWithoutExtension}.fail").takeIf { it.exists() }
             ?: return failedAssertions
         val failReason = failFile.readText().trim()

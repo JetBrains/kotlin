@@ -26,7 +26,7 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
 
     override fun check(failedAssertions: List<WrappedException>) {
         val moduleStructure = testServices.moduleStructure
-        val testData = moduleStructure.originalTestDataFiles.first()
+        val testData = moduleStructure.originalTestDataFiles.firstOrNull() ?: return
         if (testData.extension == "kts") return
         if (FirDiagnosticsDirectives.FIR_IDENTICAL in moduleStructure.allDirectives) return
         val (firTestData, originalTestData) = when {

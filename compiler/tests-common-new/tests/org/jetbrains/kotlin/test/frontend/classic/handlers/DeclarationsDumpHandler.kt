@@ -54,7 +54,7 @@ class DeclarationsDumpHandler(
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (dumper.isEmpty()) return
         val resultDump = dumper.generateResultingDump()
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.firstOrNull() ?: return
         val allDirectives = testServices.moduleStructure.allDirectives
         val prefix = when {
             DiagnosticsDirectives.NI_EXPECTED_FILE in allDirectives &&

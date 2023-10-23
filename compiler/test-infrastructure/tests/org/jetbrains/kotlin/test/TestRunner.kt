@@ -71,13 +71,23 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
     }
 
     private fun runTestForSourceCodeImpl(sourceCode: String): String {
+        val services = testConfiguration.testServices
+
         val moduleStructure = prepareModuleStructure {
             testConfiguration.moduleStructureExtractor.splitTestDataSourceCodeByModules(
                 sourceCode, testConfiguration.directives,
             )
         } ?: error("Couldn't prepare TestModuleStructure")
 
-        val globalMetadataInfoHandler = runMinimalTestPipeline(moduleStructure, testConfiguration.testServices)
+        val globalMetadataInfoHandler = runMinimalTestPipeline(moduleStructure, services)
+
+        testConfiguration.afterAnalysisCheckers.forEach {
+            withAssertionCatching(WrappedException::FromAfterAnalysisChecker) {
+                it.check(allFailedExceptions)
+            }
+        }
+
+        reportFailures(services)
         return globalMetadataInfoHandler.renderMetaInfos()
     }
 

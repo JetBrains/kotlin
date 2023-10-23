@@ -16,7 +16,8 @@ import java.io.File
 class FirFailingTestSuppressor(testServices: TestServices) : AbstractFailingTestSuppressor(testServices) {
 
     override fun testFile(): File {
-        return testServices.moduleStructure.originalTestDataFiles.first().firTestDataFile
+        return testServices.moduleStructure.originalTestDataFiles.firstOrNull()?.firTestDataFile
+            ?: error("FirFailingTestSuppressor can only work with real test files")
     }
 
     override fun hasFailure(failedAssertions: List<WrappedException>): Boolean {
