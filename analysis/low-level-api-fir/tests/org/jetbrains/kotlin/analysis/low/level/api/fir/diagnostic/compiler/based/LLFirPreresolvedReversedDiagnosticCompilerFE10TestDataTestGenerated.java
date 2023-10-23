@@ -23971,6 +23971,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("nestedClassViaActualTypealias.kt")
+            public void testNestedClassViaActualTypealias() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/nestedClassViaActualTypealias.kt");
+            }
+
+            @Test
             @TestMetadata("optionalExpectationDiagnostics.kt")
             public void testOptionalExpectationDiagnostics() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/optionalExpectationDiagnostics.kt");
