@@ -2299,49 +2299,9 @@ tasks.register("listof1", KonanLocalTest) {
     source = "datagen/literals/listof1.kt"
 }
 
-tasks.register("string_builder0", KonanLocalTest) {
+tasks.register("print_utf8", KonanLocalTest) {
     useGoldenData = true
-    source = "runtime/text/string_builder0.kt"
-}
-
-tasks.register("string_builder1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/text/string_builder1.kt"
-}
-
-tasks.register("string0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/text/string0.kt"
-}
-
-tasks.register("parse0", KonanLocalTest) {
-    source = "runtime/text/parse0.kt"
-}
-
-tasks.register("to_string0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/text/to_string0.kt"
-}
-
-tasks.register("trim", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/text/trim.kt"
-}
-
-tasks.register("chars0", KonanLocalTest) {
-    disabled = isAggressiveGC // TODO: Investigate why too slow
-    source = "runtime/text/chars0.kt"
-    expectedExitStatus = 0
-}
-
-tasks.register("indexof", KonanLocalTest) {
-    source = "runtime/text/indexof.kt"
-}
-
-tasks.register("utf8", KonanLocalTest) {
-    enabled = !isAggressiveGC // TODO: Investigate why too slow
-    useGoldenData = true
-    source = "runtime/text/utf8.kt"
+    source = "runtime/basic/print_utf8.kt"
 }
 
 tasks.register("catch1", KonanLocalTest) {

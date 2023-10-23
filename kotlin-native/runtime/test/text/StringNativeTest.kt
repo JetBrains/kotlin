@@ -16,6 +16,8 @@ class StringNativeTest {
 
         // Surrogate pairs
         assertEquals("\uD801\uDC4F\uD806\uDCD0\uD81B\uDE7F", "\uD801\uDC27\uD806\uDCB0\uD81B\uDE5F".lowercase())
+        assertEquals("\ud801\udc28", "\ud801\udc28".lowercase())
+        assertEquals("\ud801\udc28", "\ud801\udc00".lowercase())
 
         // Special Casing
         // LATIN CAPITAL LETTER I WITH DOT ABOVE
@@ -102,5 +104,51 @@ class StringNativeTest {
     fun uppercase() {
         // Non-ASCII
         assertEquals("\u00DE\u03A9\u0403\uA779", "\u00FE\u03A9\u0453\uA77A".uppercase())
+
+        // Surrogate pairs
+        assertEquals("\ud801\udc00", "\ud801\udc28".uppercase())
+        assertEquals("\ud801\udc00", "\ud801\udc00".uppercase())
+    }
+
+    @Test
+    fun capitalize() {
+        // Non-ASCII
+        assertEquals("\u00DE\u03A9\u0453\uA77A", "\u00FE\u03A9\u0453\uA77A".capitalize())
+    }
+
+    @Test fun indexOfString() {
+        assertEquals(1, "bceded".indexOf("ced", -1))
+
+        assertEquals(-1, "bceded".indexOf("e", 7))
+        assertEquals(-1, "bceded".indexOf("e", Int.MAX_VALUE))
+        assertEquals(6, "bceded".indexOf("", Int.MAX_VALUE))
+
+        assertEquals(-1, "".indexOf("a", -3))
+        assertEquals(0, "".indexOf("", 0))
+    }
+
+    @Test
+    fun indexOfChar() {
+        assertEquals(-1, "bcedef".indexOf('e', 5))
+
+        assertEquals(-1, "".indexOf('a', -3))
+        assertEquals(-1, "".indexOf('a', 10))
+
+        assertEquals(-1, "".indexOf(0.toChar(), -3))
+        assertEquals(-1, "".indexOf(0.toChar(), 10))
+    }
+
+    @Test
+    fun equalsIgnoreCase() {
+        assertTrue("hello".equals("HElLo", true))
+        assertTrue("Привет".equals("прИВет", true))
+    }
+
+    @Test
+    fun trim() {
+        assertEquals(expected = "String", actual = "\u0020 \u202FString\u2028\u2029".trim(),
+                message = "Trim special whitespaces")
+        assertEquals(expected = "\u1FFFString", actual = "\u00A0  \u1FFFString".trim(),
+                message = "Trim special whitespace but should left a unicode symbol")
     }
 }
