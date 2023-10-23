@@ -4,11 +4,11 @@ interface I1
 
 external open class EC1
 
-external class EC2 : C1
+external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>EC2<!> : C1
 
-external class EC3 : I1, C1
+external class <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>EC3<!> : I1, C1
 
-external interface EI1 : I1
+external interface <!EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE!>EI1<!> : I1
 
 interface <!NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE!>I2<!> : EI1
 

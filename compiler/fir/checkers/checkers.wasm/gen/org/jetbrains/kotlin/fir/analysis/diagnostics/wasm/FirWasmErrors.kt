@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.psi.KtElement
 object FirWasmErrors {
     // Externals
     val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirWasmErrorsDefaultMessages)

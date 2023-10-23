@@ -20,5 +20,8 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
         val NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("superType")
         }
+        val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("superType")
+        }
     }
 }
