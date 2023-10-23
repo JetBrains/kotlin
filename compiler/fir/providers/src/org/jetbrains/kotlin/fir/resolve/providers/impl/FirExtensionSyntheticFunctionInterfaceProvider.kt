@@ -92,11 +92,15 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
 
         override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = classId.getAcceptableFunctionTypeKind() != null
 
+        override fun getPackageNames(): Set<String> = emptySet()
+
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+        override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
+
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             // Generated function type names aren't included in the top-level classifier names set.
             emptySet()
 
-        override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
         override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
 
         override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = mayHaveSyntheticFunctionType(classId)

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.io.InputStream
 
 /**
@@ -85,8 +86,10 @@ open class FirBuiltinSymbolProvider(
     }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
-        override fun getPackageNamesWithTopLevelCallables(): Set<String> =
-            allPackageFragments.keys.mapTo(mutableSetOf()) { it.asString() }
+        override fun getPackageNames(): Set<String>? = allPackageFragments.keys.mapToSetOrEmpty(FqName::asString)
+
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+        override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) { fragment ->

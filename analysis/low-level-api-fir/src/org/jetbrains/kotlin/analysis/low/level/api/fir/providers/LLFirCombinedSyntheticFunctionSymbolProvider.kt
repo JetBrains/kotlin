@@ -35,8 +35,12 @@ internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
         // `FirCompositeSymbolNamesProvider` defines `mayHaveSyntheticFunctionTypes` and `mayHaveSyntheticFunctionType` correctly, which is
         // needed for consistency should this symbol provider be part of another composite symbol provider.
         object : FirCompositeSymbolNamesProvider(providers.map { it.symbolNamesProvider }) {
+            override fun getPackageNames(): Set<String> = emptySet()
+
+            override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
             override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
-            override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
+
+            override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
             override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
         }
 

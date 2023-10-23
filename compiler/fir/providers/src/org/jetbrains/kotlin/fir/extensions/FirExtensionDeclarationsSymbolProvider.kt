@@ -149,12 +149,25 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     // ------------------------------------------ provider methods ------------------------------------------
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
+
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? =
+            buildSet {
+                extensions.forEach { extension ->
+                    extension.topLevelClassIdsCache.getValue().mapTo(this) { it.packageFqName.asString() }
+                }
+            }
+
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             classNamesInPackageCache.getValue()[packageFqName] ?: emptySet()
 
+        override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
+
         override fun getPackageNamesWithTopLevelCallables(): Set<String> =
-            extensions.flatMapTo(mutableSetOf()) { extension ->
-                extension.topLevelCallableIdsCache.getValue().map { it.packageName.asString() }
+            buildSet {
+                extensions.forEach { extension ->
+                    extension.topLevelCallableIdsCache.getValue().mapTo(this) { it.packageName.asString() }
+                }
             }
 
         override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> =

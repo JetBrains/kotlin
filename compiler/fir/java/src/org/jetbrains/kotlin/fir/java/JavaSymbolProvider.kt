@@ -72,6 +72,8 @@ open class JavaSymbolProvider(
     override fun getPackage(fqName: FqName): FqName? = javaFacade.getPackage(fqName)
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
             javaFacade.knownClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
     }

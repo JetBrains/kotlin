@@ -46,11 +46,41 @@ public abstract class KotlinDeclarationProvider : KotlinComposableProvider {
     public abstract fun findFilesForScript(scriptFqName: FqName): Collection<KtScript>
 
     /**
-     * Calculates the set of package names which can be provided by this declaration provider and contain callables.
+     * Calculates the set of package names which can be provided by this declaration provider.
+     *
+     * The set may contain false positives. `null` may be returned if the package set is too expensive or impossible to compute.
+     *
+     * [computePackageNames] is used as the default implementation for [computePackageNamesWithTopLevelClassifiers] and
+     * [computePackageNamesWithTopLevelCallables] if either returns `null`. It depends on the declaration provider whether it's worth
+     * computing separate package sets for classifiers and callables, or just one set containing all package names.
+     */
+    public open fun computePackageNames(): Set<String>? = null
+
+    /**
+     * Whether the declaration provider has a specific implementation of [computePackageNamesWithTopLevelClassifiers]. This allows the
+     * Analysis API backend to determine whether classifier package sets are computed and cached separately or with [computePackageNames].
+     */
+    public abstract val hasSpecificClassifierPackageNamesComputation: Boolean
+
+    /**
+     * Calculates the set of package names which contain classifiers and can be provided by this declaration provider.
      *
      * The set may contain false positives. `null` may be returned if the package set is too expensive or impossible to compute.
      */
-    public abstract fun computePackageSetWithTopLevelCallableDeclarations(): Set<String>?
+    public open fun computePackageNamesWithTopLevelClassifiers(): Set<String>? = computePackageNames()
+
+    /**
+     * Whether the declaration provider has a specific implementation of [computePackageNamesWithTopLevelCallables]. This allows the
+     * Analysis API backend to determine whether callable package sets are computed and cached separately or with [computePackageNames].
+     */
+    public abstract val hasSpecificCallablePackageNamesComputation: Boolean
+
+    /**
+     * Calculates the set of package names which contain callables and can be provided by this declaration provider.
+     *
+     * The set may contain false positives. `null` may be returned if the package set is too expensive or impossible to compute.
+     */
+    public open fun computePackageNamesWithTopLevelCallables(): Set<String>? = computePackageNames()
 }
 
 public abstract class KotlinDeclarationProviderFactory {

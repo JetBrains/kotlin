@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 @ThreadSafeMutableState
 class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotlinScopeProvider) : FirProvider() {
@@ -82,8 +83,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         }
 
         override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
-            override fun getPackageNamesWithTopLevelCallables(): Set<String> =
-                state.allSubPackages.mapTo(mutableSetOf()) { it.asString() }
+            override fun getPackageNames(): Set<String> = state.allSubPackages.mapToSetOrEmpty(FqName::asString)
+
+            override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+            override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 
             override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
                 state.classifierInPackage[packageFqName].orEmpty()

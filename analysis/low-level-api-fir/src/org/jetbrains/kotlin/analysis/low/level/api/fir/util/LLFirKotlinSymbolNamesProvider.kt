@@ -24,26 +24,41 @@ internal open class LLFirKotlinSymbolNamesProvider(
     private val declarationProvider: KotlinDeclarationProvider,
     private val allowKotlinPackage: Boolean? = null,
 ) : FirSymbolNamesProvider() {
+    override fun getPackageNames(): Set<String>? = declarationProvider.computePackageNames()?.excludeKotlinPackageNamesIfNecessary()
+
+    override val hasSpecificClassifierPackageNamesComputation: Boolean
+        get() = declarationProvider.hasSpecificClassifierPackageNamesComputation
+
+    override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? =
+        declarationProvider
+            .computePackageNamesWithTopLevelClassifiers()
+            ?.excludeKotlinPackageNamesIfNecessary()
+
     override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> {
         if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return emptySet()
 
         return declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
     }
 
-    override fun getPackageNamesWithTopLevelCallables(): Set<String>? {
-        val packageNames = declarationProvider.computePackageSetWithTopLevelCallableDeclarations() ?: return null
+    override val hasSpecificCallablePackageNamesComputation: Boolean
+        get() = declarationProvider.hasSpecificCallablePackageNamesComputation
 
-        if (allowKotlinPackage == false && packageNames.any { it.isKotlinPackage() }) {
-            return packageNames.filterToSetOrEmpty { !it.isKotlinPackage() }
-        }
-
-        return packageNames
-    }
+    override fun getPackageNamesWithTopLevelCallables(): Set<String>? =
+        declarationProvider
+            .computePackageNamesWithTopLevelCallables()
+            ?.excludeKotlinPackageNamesIfNecessary()
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
         if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return emptySet()
 
         return declarationProvider.getTopLevelCallableNamesInPackage(packageFqName).ifEmpty { emptySet() }
+    }
+
+    private fun Set<String>.excludeKotlinPackageNamesIfNecessary(): Set<String> {
+        if (allowKotlinPackage == false && any { it.isKotlinPackage() }) {
+            return filterToSetOrEmpty { !it.isKotlinPackage() }
+        }
+        return this
     }
 
     companion object {

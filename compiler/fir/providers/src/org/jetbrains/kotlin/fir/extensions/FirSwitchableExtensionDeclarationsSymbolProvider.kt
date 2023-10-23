@@ -35,6 +35,18 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
     private var disabled: Boolean = false
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+        override fun getPackageNames(): Set<String>? =
+            if (disabled) null else delegate.symbolNamesProvider.getPackageNames()
+
+        override val hasSpecificClassifierPackageNamesComputation: Boolean
+            get() = delegate.symbolNamesProvider.hasSpecificClassifierPackageNamesComputation
+
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? =
+            if (disabled) null else delegate.symbolNamesProvider.getPackageNamesWithTopLevelClassifiers()
+
+        override val hasSpecificCallablePackageNamesComputation: Boolean
+            get() = delegate.symbolNamesProvider.hasSpecificCallablePackageNamesComputation
+
         override fun getPackageNamesWithTopLevelCallables(): Set<String>? =
             if (disabled) null else delegate.symbolNamesProvider.getPackageNamesWithTopLevelCallables()
 

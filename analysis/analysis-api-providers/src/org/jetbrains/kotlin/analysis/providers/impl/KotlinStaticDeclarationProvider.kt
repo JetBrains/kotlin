@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.concurrent.ConcurrentHashMap
 
 public class KotlinStaticDeclarationProvider internal constructor(
@@ -100,10 +101,23 @@ public class KotlinStaticDeclarationProvider internal constructor(
         return index.scriptMap[scriptFqName].orEmpty().filter { it.containingKtFile.virtualFile in scope }
     }
 
-    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
-        val packageNames = index.topLevelPropertyMap.keys + index.topLevelFunctionMap.keys
-        return packageNames.mapTo(mutableSetOf()) { it.asString() }
-    }
+    override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
+
+    override fun computePackageNamesWithTopLevelClassifiers(): Set<String> =
+        buildPackageNamesSetFrom(index.classMap.keys, index.typeAliasMap.keys)
+
+    override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
+
+    override fun computePackageNamesWithTopLevelCallables(): Set<String> =
+        buildPackageNamesSetFrom(index.topLevelPropertyMap.keys, index.topLevelFunctionMap.keys)
+
+    @Suppress("NOTHING_TO_INLINE")
+    private inline fun buildPackageNamesSetFrom(vararg fqNameSets: Set<FqName>): Set<String> =
+        buildSet {
+            for (fqNameSet in fqNameSets) {
+                fqNameSet.mapTo(this, FqName::asString)
+            }
+        }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
         index.topLevelPropertyMap[callableId.packageName]

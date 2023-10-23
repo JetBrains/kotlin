@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -75,13 +76,16 @@ private class LLFirResolveExtensionToolSymbolNamesProvider(
     private val packageFilter: LLFirResolveExtensionToolPackageFilter,
     private val fileProvider: LLFirResolveExtensionsFileProvider,
 ) : FirSymbolNamesProvider() {
+    override fun getPackageNames(): Set<String> = forbidAnalysis {
+        packageFilter.getAllPackages().mapToSetOrEmpty(FqName::asString)
+    }
+
+    override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+    override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
+
     override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return emptySet()
         fileProvider.getFilesByPackage(packageFqName).flatMap { it.getTopLevelClassifierNames() }.toSet()
-    }
-
-    override fun getPackageNamesWithTopLevelCallables(): Set<String> = forbidAnalysis {
-        packageFilter.getAllPackages().mapTo(mutableSetOf()) { it.asString() }
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
@@ -245,9 +249,10 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
             .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }
 
-    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
-        return emptySet()
-    }
+    override fun computePackageNames(): Set<String>? = null
+
+    override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+    override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 
     private inline fun getDeclarationProvidersByPackage(
         packageFqName: FqName,

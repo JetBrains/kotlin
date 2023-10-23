@@ -66,8 +66,22 @@ public class CompositeKotlinDeclarationProvider private constructor(
         return providers.flatMapTo(mutableListOf()) { it.findFilesForScript(scriptFqName) }
     }
 
-    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String>? {
-        return providers.flatMapToNullableSet { it.computePackageSetWithTopLevelCallableDeclarations() }
+    override fun computePackageNames(): Set<String>? {
+        return providers.flatMapToNullableSet { it.computePackageNames() }
+    }
+
+    override val hasSpecificClassifierPackageNamesComputation: Boolean
+        get() = providers.any { it.hasSpecificClassifierPackageNamesComputation }
+
+    override fun computePackageNamesWithTopLevelClassifiers(): Set<String>? {
+        return providers.flatMapToNullableSet { it.computePackageNamesWithTopLevelClassifiers() }
+    }
+
+    override val hasSpecificCallablePackageNamesComputation: Boolean
+        get() = providers.any { it.hasSpecificCallablePackageNamesComputation }
+
+    override fun computePackageNamesWithTopLevelCallables(): Set<String>? {
+        return providers.flatMapToNullableSet { it.computePackageNamesWithTopLevelCallables() }
     }
 
     public companion object {

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 class NativeForwardDeclarationsSymbolProvider(
     session: FirSession,
@@ -157,6 +158,11 @@ class NativeForwardDeclarationsSymbolProvider(
     }
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
+
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String>? =
+            includedForwardDeclarationsByPackage.keys.mapToSetOrEmpty(FqName::asString)
+
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             includedForwardDeclarationsByPackage[packageFqName].orEmpty()
     }

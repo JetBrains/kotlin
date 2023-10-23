@@ -129,9 +129,11 @@ public class FileBasedKotlinDeclarationProvider(public val kotlinFile: KtFile) :
     }
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = emptyList()
-    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
-        return setOf(kotlinFile.packageFqName.asString())
-    }
+
+    override fun computePackageNames(): Set<String> = setOf(kotlinFile.packageFqName.asString())
+
+    override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+    override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 
     override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> =
         listOfNotNull(kotlinFile.script?.takeIf { it.fqName == scriptFqName })
