@@ -18,7 +18,7 @@ internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProc
     override val executable get() = testRun.executable
 
     override val programArgs = buildList {
-        add(executable.executableFile.path)
+        add(executable.executable.executableFile.path)
         testRun.runParameters.forEach { it.applyTo(this) }
     }
 

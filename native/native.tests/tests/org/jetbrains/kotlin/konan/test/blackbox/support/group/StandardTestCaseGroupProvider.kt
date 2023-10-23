@@ -227,7 +227,8 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 computeExecutionTimeoutCheck(settings, expectedTimeoutFailure),
                 computeExitCodeCheck(testKind, registeredDirectives, location),
                 computeOutputDataFileCheck(testDataFile, registeredDirectives, location),
-                lldbSpec?.let { OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) } }
+                lldbSpec?.let { OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) } },
+                fileCheckMatcher = null,
             ),
             extras = when (testKind) {
                 TestKind.STANDALONE_NO_TR -> {

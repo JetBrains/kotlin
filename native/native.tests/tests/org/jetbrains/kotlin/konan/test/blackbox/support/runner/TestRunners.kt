@@ -23,9 +23,7 @@ internal object TestRunners {
             if (testTarget == hostTarget) {
                 LocalTestRunner(testRun)
             } else {
-                val nativeHome = get<KotlinNativeHome>()
-                val distribution = Distribution(nativeHome.dir.path)
-                val configurables = PlatformManager(distribution, true).platform(testTarget).configurables
+                val configurables = configurables
 
                 val executor = cached(
                     when {

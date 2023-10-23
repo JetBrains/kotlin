@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.settings
 
+import org.jetbrains.kotlin.konan.target.Configurables
+import org.jetbrains.kotlin.konan.target.Distribution
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import kotlin.reflect.KClass
@@ -59,3 +63,13 @@ internal class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any
  */
 internal class SimpleTestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
 internal class SimpleTestRunSettings(parent: SimpleTestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
+
+internal val Settings.configurables: Configurables
+    get() {
+        val distribution = Distribution(
+            get<KotlinNativeHome>().dir.path,
+            // Development variant of LLVM is used to have utilities like FileCheck
+            propertyOverrides = mapOf("llvmHome.${HostManager.hostName}" to "\$llvm.${HostManager.hostName}.dev")
+        )
+        return PlatformManager(distribution, true).platform(get<KotlinNativeTargets>().testTarget).configurables
+    }

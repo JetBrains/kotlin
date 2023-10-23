@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation.Companion.applyFileCheckArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation.Companion.applyPartialLinkageArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation.Companion.applyTestRunnerSpecificArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ExecutableCompilation.Companion.assertTestDumpFileNotEmptyIfExists
@@ -362,6 +363,7 @@ internal class ExecutableCompilation(
             }
         }
         applyPartialLinkageArgs(partialLinkageConfig)
+        applyFileCheckArgs(expectedArtifact.fileCheckStage, expectedArtifact.fileCheckDump)
         super.applySpecificArgs(argsBuilder)
     }
 
@@ -403,6 +405,13 @@ internal class ExecutableCompilation(
                     add("-Xpartial-linkage-loglevel=${logLevel.name.lowercase()}")
             }
         }
+
+        internal fun ArgsBuilder.applyFileCheckArgs(fileCheckStage: String?, fileCheckDump: File?) =
+            fileCheckStage?.let {
+                add("-Xllvm-variant=dev")  // FileCheck utility is provided in `LLVM dev`, not `LLVM user`
+                add("-Xsave-llvm-ir-after=$it")
+                add("-Xsave-llvm-ir-directory=${fileCheckDump!!.parent}")
+            }
     }
 }
 
@@ -464,6 +473,7 @@ internal class StaticCacheCompilation(
             add("-Xmake-per-file-cache")
 
         applyPartialLinkageArgs(partialLinkageConfig)
+        applyFileCheckArgs(expectedArtifact.fileCheckStage, expectedArtifact.fileCheckDump)
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {

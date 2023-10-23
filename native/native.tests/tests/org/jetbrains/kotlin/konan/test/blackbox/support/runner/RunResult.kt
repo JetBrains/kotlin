@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
 import kotlin.time.Duration
 
 internal data class RunResult(
+    val testExecutable: TestExecutable, // KT-62157: TODO extract out of RunResult and pass Pair(TestExecutable, RunResult)
     val exitCode: Int?,
     val timeout: Duration,
     val duration: Duration,

@@ -17,7 +17,7 @@ import java.io.File
 import java.io.IOException
 
 internal class TestExecutable(
-    val executableFile: File,
+    val executable: Executable,
     val loggedCompilationToolCall: LoggedData.CompilerCall,
     val testNames: Collection<TestName>
 ) {
@@ -42,7 +42,7 @@ internal class TestExecutable(
             }
 
             return TestExecutable(
-                executableFile = compilationResult.resultingArtifact.executableFile,
+                executable = compilationResult.resultingArtifact,
                 loggedCompilationToolCall = compilationResult.loggedData,
                 testNames = testNames
             )

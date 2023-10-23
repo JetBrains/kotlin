@@ -41,7 +41,7 @@ internal class RunnerWithExecutor(
         val stdout = ByteArrayOutputStream()
         val stderr = ByteArrayOutputStream()
         val request = ExecuteRequest(
-            executableAbsolutePath = executable.executableFile.absolutePath,
+            executableAbsolutePath = executable.executable.executableFile.absolutePath,
             args = programArgs,
             stdin = stdin,
             stdout = stdout,
@@ -50,6 +50,7 @@ internal class RunnerWithExecutor(
         )
         val response = executor.execute(request)
         RunResult(
+            testExecutable = executable,
             exitCode = response.exitCode,
             timeout = request.timeout,
             duration = response.executionTime,

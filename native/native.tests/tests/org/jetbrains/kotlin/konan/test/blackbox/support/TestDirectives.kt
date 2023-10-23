@@ -144,6 +144,10 @@ internal object TestDirectives : SimpleDirectivesContainer() {
     val FIR_IDENTICAL by directive(
         description = "Test behavior should be identical for FIR testing"
     )
+
+    val FILECHECK_STAGE by stringDirective(
+        description = "Specify a LLVM stage to dump LLVM IR after, and check it with LLVM FileCheck using its directives in test file"
+    )
 }
 
 internal enum class TestKind {

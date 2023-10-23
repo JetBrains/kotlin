@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
@@ -75,6 +77,8 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     customKlibs = settings.get(),
                     pipelineType = settings.get(),
                     testMode = settings.get(),
+                    cacheMode = settings.get(),
+                    optimizationMode = settings.get(),
                     timeouts = settings.get(),
                 )
 
@@ -99,8 +103,10 @@ private class ExtTestDataFile(
     testRoots: TestRoots,
     private val generatedSources: GeneratedSources,
     private val customKlibs: CustomKlibs,
-    private val pipelineType: PipelineType,
-    private val testMode: TestMode,
+    pipelineType: PipelineType,
+    testMode: TestMode,
+    cacheMode: CacheMode,
+    optimizationMode: OptimizationMode,
     private val timeouts: Timeouts,
 ) {
     private val structure by lazy {
@@ -144,6 +150,9 @@ private class ExtTestDataFile(
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
+                && !(FILECHECK_STAGE.name in structure.directives
+                     && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
+                && !(optimizationMode != OptimizationMode.OPT && structure.directives[FILECHECK_STAGE.name] == "OptimizeTLSDataLoads")
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
                      && pipelineType == PipelineType.K2
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
@@ -194,7 +203,7 @@ private class ExtTestDataFile(
         val entryPointFunctionFQN = findEntryPoint()
         generateTestLauncher(isStandaloneTest, entryPointFunctionFQN)
 
-        return doCreateTestCase(isStandaloneTest, sharedModules)
+        return doCreateTestCase(settings, isStandaloneTest, sharedModules)
     }
 
     /**
@@ -204,6 +213,7 @@ private class ExtTestDataFile(
      */
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
         if (directives.contains(NATIVE_STANDALONE_DIRECTIVE)) return true
+        if (directives.contains(FILECHECK_STAGE.name)) return true
 
         var isStandaloneTest = false
 
@@ -502,6 +512,7 @@ private class ExtTestDataFile(
     }
 
     private fun doCreateTestCase(
+        settings: Settings,
         isStandaloneTest: Boolean,
         sharedModules: ThreadSafeCache<String, TestModule.Shared?>
     ): TestCase = with(structure) {
@@ -513,14 +524,16 @@ private class ExtTestDataFile(
                 }
             }
         )
-
+        val fileCheckStage = retrieveFileCheckStage()
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
             kind = if (isStandaloneTest) TestKind.STANDALONE else TestKind.REGULAR,
             modules = modules,
             freeCompilerArgs = assembleFreeCompilerArgs(),
             nominalPackageName = testDataFileSettings.nominalPackageName,
-            checks = TestRunChecks.Default(timeouts.executionTimeout),
+            checks = TestRunChecks.Default(timeouts.executionTimeout)
+                .copy(fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) }),
+            fileCheckStage = fileCheckStage,
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
         )
         testCase.initialize(
@@ -529,6 +542,20 @@ private class ExtTestDataFile(
         )
 
         return testCase
+    }
+
+    private fun retrieveFileCheckStage(): String? {
+        val fileCheckStages = structure.directives.multiValues(FILECHECK_STAGE.name)
+        return when (fileCheckStages.size) {
+            0 -> {
+                require(!isDirectiveDefined(testDataFile.readText(), FILECHECK_STAGE.name)) {
+                    "In ${testDataFile.absolutePath}, one argument for FILECHECK directive is needed: LLVM stage name, to dump bitcode after"
+                }
+                null
+            }
+            1 -> fileCheckStages.single()
+            else -> fail { "In ${testDataFile.absolutePath}, only one argument for FILECHECK directive is allowed: $fileCheckStages" }
+        }
     }
 
     companion object {

@@ -15026,6 +15026,315 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/fileCheck")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        public class FileCheck {
+            @Test
+            @TestMetadata("adopted_function_reference.kt")
+            public void testAdopted_function_reference() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/adopted_function_reference.kt");
+            }
+
+            @Test
+            public void testAllFilesPresentInFileCheck() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("atomics.kt")
+            public void testAtomics() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/atomics.kt");
+            }
+
+            @Test
+            @TestMetadata("bce.kt")
+            public void testBce() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/bce.kt");
+            }
+
+            @Test
+            @TestMetadata("constants_merge.kt")
+            public void testConstants_merge() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/constants_merge.kt");
+            }
+
+            @Test
+            @TestMetadata("default_parameters_dont_box.kt")
+            public void testDefault_parameters_dont_box() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/default_parameters_dont_box.kt");
+            }
+
+            @Test
+            @TestMetadata("enum_when.kt")
+            public void testEnum_when() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/enum_when.kt");
+            }
+
+            @Test
+            @TestMetadata("escape_analysis.kt")
+            public void testEscape_analysis() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/escape_analysis.kt");
+            }
+
+            @Test
+            @TestMetadata("force_arm_instruction_set.kt")
+            public void testForce_arm_instruction_set() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/force_arm_instruction_set.kt");
+            }
+
+            @Test
+            @TestMetadata("function_attributes_at_callsite.kt")
+            public void testFunction_attributes_at_callsite() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/function_attributes_at_callsite.kt");
+            }
+
+            @Test
+            @TestMetadata("generic_function_references.kt")
+            public void testGeneric_function_references() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/generic_function_references.kt");
+            }
+
+            @Test
+            @TestMetadata("intrinsics.kt")
+            public void testIntrinsics() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/intrinsics.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49847_class.kt")
+            public void testKt49847_class() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt49847_class.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49847_generic.kt")
+            public void testKt49847_generic() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt49847_generic.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49847_generic_receiver.kt")
+            public void testKt49847_generic_receiver() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt49847_generic_receiver.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49847_sam_Any.kt")
+            public void testKt49847_sam_Any() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt49847_sam_Any.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49847_sam_Any_generic.kt")
+            public void testKt49847_sam_Any_generic() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt49847_sam_Any_generic.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49847_sam_Int.kt")
+            public void testKt49847_sam_Int() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt49847_sam_Int.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49847_sam_Int_generic.kt")
+            public void testKt49847_sam_Int_generic() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt49847_sam_Int_generic.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49847_simple_function_reference.kt")
+            public void testKt49847_simple_function_reference() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt49847_simple_function_reference.kt");
+            }
+
+            @Test
+            @TestMetadata("kt58654.kt")
+            public void testKt58654() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/kt58654.kt");
+            }
+
+            @Test
+            @TestMetadata("no_frame_on_constant_object_access.kt")
+            public void testNo_frame_on_constant_object_access() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/no_frame_on_constant_object_access.kt");
+            }
+
+            @Test
+            @TestMetadata("replace_invoke_with_call.kt")
+            public void testReplace_invoke_with_call() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/replace_invoke_with_call.kt");
+            }
+
+            @Test
+            @TestMetadata("signext_zeroext0.kt")
+            public void testSignext_zeroext0() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/signext_zeroext0.kt");
+            }
+
+            @Test
+            @TestMetadata("single_tls_load.kt")
+            public void testSingle_tls_load() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/single_tls_load.kt");
+            }
+
+            @Test
+            @TestMetadata("smoke0.kt")
+            public void testSmoke0() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/smoke0.kt");
+            }
+
+            @Test
+            @TestMetadata("suspend_returnNothing.kt")
+            public void testSuspend_returnNothing() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/suspend_returnNothing.kt");
+            }
+
+            @Test
+            @TestMetadata("suspend_tailcalls_functions.kt")
+            public void testSuspend_tailcalls_functions() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/suspend_tailcalls_functions.kt");
+            }
+
+            @Test
+            @TestMetadata("suspend_tailcalls_lambdas.kt")
+            public void testSuspend_tailcalls_lambdas() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/suspend_tailcalls_lambdas.kt");
+            }
+
+            @Test
+            @TestMetadata("when.kt")
+            public void testWhen() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/when.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/fileCheck/kt53261")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            public class Kt53261 {
+                @Test
+                public void testAllFilesPresentInKt53261() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck/kt53261"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("kt53261_inline_unbox.kt")
+                public void testKt53261_inline_unbox() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_inline_unbox.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_CPointer.kt")
+                public void testKt53261_noinline_CPointer() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_CPointer.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_NativePointed.kt")
+                public void testKt53261_noinline_NativePointed() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_NativePointed.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_NonNullNativePtr.kt")
+                public void testKt53261_noinline_NonNullNativePtr() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_NonNullNativePtr.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_StableRef.kt")
+                public void testKt53261_noinline_StableRef() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_StableRef.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_UByteArray.kt")
+                public void testKt53261_noinline_UByteArray() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_UByteArray.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_UIntArray.kt")
+                public void testKt53261_noinline_UIntArray() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_UIntArray.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_ULongArray.kt")
+                public void testKt53261_noinline_ULongArray() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_ULongArray.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_UShortArray.kt")
+                public void testKt53261_noinline_UShortArray() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_UShortArray.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53261_noinline_value_unbox.kt")
+                public void testKt53261_noinline_value_unbox() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/kt53261/kt53261_noinline_value_unbox.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("frontend-fir")
+            @FirPipeline()
+            @UseExtTestCaseGroupProvider()
+            public class StringConcatenationTypeNarrowing {
+                @Test
+                public void testAllFilesPresentInStringConcatenationTypeNarrowing() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("kt53119_append_generated.kt")
+                public void testKt53119_append_generated() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing/kt53119_append_generated.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53119_append_manual.kt")
+                public void testKt53119_append_manual() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing/kt53119_append_manual.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53119_plus_extension.kt")
+                public void testKt53119_plus_extension() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_extension.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53119_plus_generated_noescape.kt")
+                public void testKt53119_plus_generated_noescape() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_generated_noescape.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53119_plus_member.kt")
+                public void testKt53119_plus_member() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing/kt53119_plus_member.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53119_side_effect.kt")
+                public void testKt53119_side_effect() throws Exception {
+                    runTest("compiler/testData/codegen/box/fileCheck/stringConcatenationTypeNarrowing/kt53119_side_effect.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/finally")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("frontend-fir")

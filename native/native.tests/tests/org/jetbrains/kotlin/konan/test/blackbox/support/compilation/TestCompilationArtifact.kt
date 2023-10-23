@@ -15,14 +15,22 @@ internal sealed interface TestCompilationArtifact {
         override val logFile: File get() = klibFile.resolveSibling("${klibFile.name}.log")
     }
 
-    data class KLIBStaticCache(val cacheDir: File, val klib: KLIB) : TestCompilationArtifact {
+    data class KLIBStaticCache(val cacheDir: File, val klib: KLIB, val fileCheckStage: String? = null) : TestCompilationArtifact {
         override val logFile: File get() = cacheDir.resolve("${klib.klibFile.nameWithoutExtension}-cache.log")
+        val fileCheckDump: File?
+            get() = fileCheckStage?.let {
+                cacheDir.resolveSibling("out.$it.ll")
+            }
     }
 
-    data class Executable(val executableFile: File) : TestCompilationArtifact {
+    data class Executable(val executableFile: File, val fileCheckStage: String? = null) : TestCompilationArtifact {
         val path: String get() = executableFile.path
         override val logFile: File get() = executableFile.resolveSibling("${executableFile.name}.log")
         val testDumpFile: File get() = executableFile.resolveSibling("${executableFile.name}.dump")
+        val fileCheckDump: File?
+            get() = fileCheckStage?.let {
+                executableFile.resolveSibling("out.$it.ll")
+            }
     }
 
     data class ObjCFramework(private val buildDir: File, val frameworkName: String) : TestCompilationArtifact {

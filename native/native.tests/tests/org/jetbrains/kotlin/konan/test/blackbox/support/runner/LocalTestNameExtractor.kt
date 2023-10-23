@@ -16,7 +16,7 @@ internal class LocalTestNameExtractor(
     checks: TestRunChecks
 ) : AbstractLocalProcessRunner<Collection<TestName>>(checks) {
     override val visibleProcessName get() = "Test name extractor"
-    override val programArgs = listOf(executable.executableFile.path, "--ktest_list_tests")
+    override val programArgs = listOf(executable.executable.executableFile.path, "--ktest_list_tests")
     override val outputFilter get() = TestOutputFilter.NO_FILTERING
 
     override fun getLoggedParameters() = LoggedData.TestRunParameters(

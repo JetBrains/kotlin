@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.io.File
 import kotlin.time.Duration
@@ -24,13 +25,16 @@ internal sealed interface TestRunCheck {
     class OutputDataFile(val file: File) : TestRunCheck
 
     class OutputMatcher(val match: (String) -> Boolean): TestRunCheck
+
+    class FileCheckMatcher(val settings: Settings, val testDataFile: File): TestRunCheck
 }
 
-internal class TestRunChecks(
+internal data class TestRunChecks(
     val executionTimeoutCheck: ExecutionTimeout,
     private val exitCodeCheck: ExitCode,
     val outputDataFile: OutputDataFile?,
-    val outputMatcher: OutputMatcher?
+    val outputMatcher: OutputMatcher?,
+    val fileCheckMatcher: FileCheckMatcher?,
 ) : Iterable<TestRunCheck> {
 
     override fun iterator() = iterator {
@@ -38,6 +42,7 @@ internal class TestRunChecks(
         yield(exitCodeCheck)
         yieldIfNotNull(outputDataFile)
         yieldIfNotNull(outputMatcher)
+        yieldIfNotNull(fileCheckMatcher)
     }
 
     companion object {
@@ -47,7 +52,8 @@ internal class TestRunChecks(
             executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(timeout),
             exitCodeCheck = ExitCode.Expected(0),
             outputDataFile = null,
-            outputMatcher = null
+            outputMatcher = null,
+            fileCheckMatcher = null,
         )
     }
 }

@@ -117,7 +117,10 @@ internal class TestCompilationFactory {
         // Long pass.
         val freeCompilerArgs = rootModules.first().testCase.freeCompilerArgs // Should be identical inside the same test case group.
         val extras = testCases.first().extras // Should be identical inside the same test case group.
-        val executableArtifact = Executable(settings.artifactFileForExecutable(rootModules))
+        val fileCheckStage = testCases.map { it.fileCheckStage }.singleOrNull()
+        if (fileCheckStage != null)
+            require(testCases.size == 1) { "FILECHECK-enabled test must be standalone" }
+        val executableArtifact = Executable(settings.artifactFileForExecutable(rootModules), fileCheckStage)
 
         val (
             dependenciesToCompileExecutable: Iterable<CompiledDependency<*>>,

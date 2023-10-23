@@ -5,18 +5,22 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support.runner
 
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import kotlinx.coroutines.*
+import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.AbstractRunner.AbstractRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.UnfilteredProcessOutput.Companion.launchReader
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMode
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.configurables
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.TestOutputFilter
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.junit.jupiter.api.Assertions.fail
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.*
 
@@ -43,7 +47,7 @@ internal abstract class AbstractLocalProcessRunner<R>(protected val checks: Test
             val ignoreIOErrorsInProcessOutput = AtomicBoolean(false)
 
             val duration = measureTime {
-                process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()
+                process = ProcessBuilder(programArgs).directory(executable.executable.executableFile.parentFile).start()
                 customizeProcess(process)
 
                 unfilteredOutputReader = launchReader(
@@ -76,6 +80,7 @@ internal abstract class AbstractLocalProcessRunner<R>(protected val checks: Test
             }
 
             RunResult(
+                testExecutable = executable,
                 exitCode = exitCode,
                 timeout = executionTimeout,
                 duration = duration,
@@ -140,6 +145,53 @@ internal abstract class LocalResultHandler<R>(
                         }
                     }
                 }
+                is TestRunCheck.FileCheckMatcher -> {
+                    val fileCheckExecutable = check.settings.configurables.absoluteLlvmHome + File.separator + "bin" + File.separator +
+                            if (SystemInfo.isWindows) "FileCheck.exe" else "FileCheck"
+                    require(File(fileCheckExecutable).exists()) {
+                        "$fileCheckExecutable does not exist. Make sure Distribution for `settings.configurables` " +
+                                "was created using `propertyOverrides` to specify development variant of LLVM instead of user variant."
+                    }
+                    val fileCheckDump = runResult.testExecutable.executable.fileCheckDump!!
+                    val fileCheckOut = File(fileCheckDump.absolutePath + ".out")
+                    val fileCheckErr = File(fileCheckDump.absolutePath + ".err")
+
+                    val testTarget = check.settings.get<KotlinNativeTargets>().testTarget
+                    val checkPrefixes = buildList {
+                        add("CHECK")
+                        add("CHECK-${testTarget.abiInfoString}")
+                        add("CHECK-${testTarget.name.toUpperCaseAsciiOnly()}")
+                        if (testTarget.family.isAppleFamily) {
+                            add("CHECK-APPLE")
+                        }
+                    }
+                    val optimizationMode = check.settings.get<OptimizationMode>().name
+                    val checkPrefixesWithOptMode = checkPrefixes.map { "$it-$optimizationMode" }
+                    val commaSeparatedCheckPrefixes = (checkPrefixes + checkPrefixesWithOptMode).joinToString(",")
+
+                    val result = ProcessBuilder(
+                        fileCheckExecutable,
+                        check.testDataFile.absolutePath,
+                        "--input-file",
+                        fileCheckDump.absolutePath,
+                        "--check-prefixes", commaSeparatedCheckPrefixes,
+                        "--allow-deprecated-dag-overlap" // TODO specify it via new test directive for `function_attributes_at_callsite.kt`
+                    ).redirectOutput(fileCheckOut)
+                        .redirectError(fileCheckErr)
+                        .start()
+                        .waitFor()
+                    val errText = fileCheckErr.readText()
+                    val outText = fileCheckOut.readText()
+                    verifyExpectation(result == 0 && errText.isEmpty() && outText.isEmpty()) {
+                        val shortOutText = outText.lines().take(100)
+                        val shortErrText = errText.lines().take(100)
+                        "FileCheck matching of ${fileCheckDump.absolutePath}\n" +
+                                "with '--check-prefixes $commaSeparatedCheckPrefixes'\n" +
+                                "failed with result=$result:\n" +
+                                shortOutText.joinToString("\n") + "\n" +
+                                shortErrText.joinToString("\n")
+                    }
+                }
             }
         }
 
@@ -183,3 +235,11 @@ private class UnfilteredProcessOutput {
         }
     }
 }
+
+// Shameless borrowing `val KonanTarget.abiInfo` from module `:kotlin-native:backend.native`, which cannot be imported here for now.
+val KonanTarget.abiInfoString: String
+    get() = when {
+        this == KonanTarget.MINGW_X64 -> "WINDOWSX64"
+        !family.isAppleFamily && architecture == Architecture.ARM64 -> "AAPCS"
+        else -> "DEFAULTABI"
+    }
