@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.bir
 import java.lang.AutoCloseable
 
 class BirForest {
-    private val possiblyRootElements = mutableListOf<BirElementBase>()
+    private val possiblyRootElements = mutableSetOf<BirElementBase>()
 
     private val elementIndexSlots = arrayOfNulls<ElementsIndexSlot>(256)
     private var elementIndexSlotCount = 0
@@ -35,9 +35,12 @@ class BirForest {
         element.updateLevel()
     }
 
-    internal fun rootElementAttached(element: BirElementBase) {
-        elementAttached(element)
+    fun attachRootElement(element: BirElementBase) {
+        require(element.parent == null)
+        require(element.root == null || element.root === this)
+
         possiblyRootElements += element
+        elementAttached(element)
     }
 
     internal fun elementDetached(element: BirElementBase) {
@@ -127,7 +130,7 @@ class BirForest {
     }
 
     fun reindexAllElements() {
-        possiblyRootElements.retainAll { it.root == this && it.parent == null }
+        possiblyRootElements.retainAll { it.root === this && it.parent == null }
         for (root in possiblyRootElements) {
             root.accept { element ->
                 addElementToIndex(element as BirElementBase)

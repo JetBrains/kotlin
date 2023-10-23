@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.lower.BirJvmStaticInObjectLowering
 import org.jetbrains.kotlin.bir.backend.lower.BirRepeatedAnnotationLowering
+import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -63,23 +64,35 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, IrModuleFr
         input: IrModuleFragment,
     ): IrModuleFragment {
         val dynamicPropertyManager = BirElementDynamicPropertyManager()
-        val birForest = BirForest()
+
+        val externalDependenciesBir = BirForest()
+        val compiledBir = BirForest()
+
         val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
-        ir2BirConverter.birForest = birForest
+        ir2BirConverter.copyAncestorsForOrphanedElements = true
+        ir2BirConverter.appendElementAsForestRoot = { old, new ->
+            when {
+                old === input -> compiledBir
+                new is BirModuleFragment || new is BirExternalPackageFragment -> externalDependenciesBir
+                else -> null
+            }
+        }
+
         val birContext = JvmBirBackendContext(
             context,
             input.descriptor,
-            birForest,
+            compiledBir,
             ir2BirConverter,
             dynamicPropertyManager,
             birPhases,
         )
+
         val birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
 
         countElements(birModule)
 
-        birForest.applyNewRegisteredIndices()
-        birForest.reindexAllElements()
+        compiledBir.applyNewRegisteredIndices()
+        compiledBir.reindexAllElements()
 
         for (phase in birContext.loweringPhases) {
             println("Running BIR phase ${phase.javaClass.name}")
