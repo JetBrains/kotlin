@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -329,7 +330,6 @@ class Ir2BirConverter(
             name = old.name,
         )
     }) { new ->
-        birForest?.rootElementAttached(new)
         new.files.copyElements(old.files)
         new.copyDynamicProperties(old)
     }
@@ -482,13 +482,12 @@ class Ir2BirConverter(
         copyReferencedElement(old, externalPackageFragments, {
             BirExternalPackageFragmentImpl(
                 sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-                descriptor = mapDescriptor { old.packageFragmentDescriptor },
+                descriptor = if (old.symbol is DescriptorlessExternalPackageFragmentSymbol) null else mapDescriptor { old.packageFragmentDescriptor },
                 packageFqName = old.packageFqName,
-                containerSource = old.containerSource,
-                signature = old.symbol.signature,
+                containerSource = if (old.symbol is DescriptorlessExternalPackageFragmentSymbol) null else old.containerSource,
+                signature = if (old.symbol is DescriptorlessExternalPackageFragmentSymbol) null else old.symbol.signature,
             )
         }) { new ->
-            birForest?.rootElementAttached(new)
             new.declarations.copyElements(old.declarations)
             new.copyDynamicProperties(old)
         }

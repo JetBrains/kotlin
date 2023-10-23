@@ -26,16 +26,17 @@ class JvmBirBackendContext @OptIn(ObsoleteDescriptorBasedAPI::class) constructor
     irContext: JvmBackendContext,
     module: ModuleDescriptor,
     compiledBir: BirForest,
-    converter: Ir2BirConverter,
+    ir2BirConverter: Ir2BirConverter,
     dynamicPropertyManager: BirElementDynamicPropertyManager,
     phaseConfig: List<(JvmBirBackendContext) -> BirLoweringPhase>,
 ) : BirBackendContext(compiledBir, dynamicPropertyManager) {
     override val configuration: CompilerConfiguration = irContext.configuration
     override val builtIns = irContext.builtIns
 
-    override val birBuiltIns: BirBuiltIns = BirBuiltIns(irContext.irBuiltIns, converter)
-    override val builtInSymbols: JvmBirBuiltInSymbols = JvmBirBuiltInSymbols(irContext.ir.symbols, converter)
-    override val typeSystem: BirTypeSystemContext = BirTypeSystemContextImpl(birBuiltIns, compiledBir)
+    override val birBuiltIns: BirBuiltIns = BirBuiltIns(irContext.irBuiltIns, ir2BirConverter)
+    override val builtInSymbols: JvmBirBuiltInSymbols = JvmBirBuiltInSymbols(irContext.ir.symbols, ir2BirConverter)
+    override val typeSystem: BirTypeSystemContext = BirTypeSystemContextImpl(birBuiltIns)
+
     val generationState: GenerationState = irContext.state
 
     val loweringPhases = phaseConfig.map { it(this) }

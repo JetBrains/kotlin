@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.bir.types
 
 import org.jetbrains.kotlin.bir.BirBuiltIns
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirForest
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConst
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.bir.types.utils.isPrimitiveType as birTypePredicates
 
 interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext, TypeSystemCommonBackendContext {
     val birBuiltIns: BirBuiltIns
-    val birForest: BirForest // not as a contextual interface due to https://youtrack.jetbrains.com/issue/KT-51881/Consider-proper-support-for-context-receivers-in-interfaces
 
     override fun KotlinTypeMarker.asSimpleType() = this as? SimpleTypeMarker
 
@@ -150,7 +148,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
     private fun getTypeParameters(typeConstructor: TypeConstructorMarker): List<BirTypeParameter> {
         return when (typeConstructor) {
             is BirTypeParameterSymbol -> emptyList()
-            is BirClassSymbol -> with(birForest) { extractTypeParameters(typeConstructor.owner) }
+            is BirClassSymbol -> extractTypeParameters(typeConstructor.owner)
             else -> error("unsupported type constructor")
         }
     }
@@ -248,7 +246,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
         val element = classifier.ownerIfBound ?: return null
 
-        val typeParameters = with(birForest) { extractTypeParameters(element) }
+        val typeParameters = extractTypeParameters(element)
 
         require(typeArguments.size == typeParameters.size)
 
@@ -345,7 +343,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
         arguments: List<TypeArgumentMarker>,
         nullable: Boolean,
         isExtensionFunction: Boolean,
-        attributes: List<AnnotationMarker>?
+        attributes: List<AnnotationMarker>?,
     ): SimpleTypeMarker {
         val ourAnnotations = attributes?.memoryOptimizedFilterIsInstance<BirConstructorCall>()
         require(ourAnnotations?.size == attributes?.size)
@@ -546,7 +544,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
     override fun newTypeCheckerState(
         errorTypesEqualToAnything: Boolean,
-        stubTypesEqualToAnything: Boolean
+        stubTypesEqualToAnything: Boolean,
     ): TypeCheckerState = createBirTypeCheckerState(this)
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean = false
@@ -574,7 +572,7 @@ interface BirTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCo
 
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy {
         require(type is BirSimpleType)
-        val parameters = with(birForest) { extractTypeParameters(type.classifier as BirClass).memoryOptimizedMap { it.owner } }
+        val parameters = extractTypeParameters(type.classifier as BirClass).memoryOptimizedMap { it.owner }
         val typeSubstitutor = BirTypeSubstitutor(parameters, type.arguments, birBuiltIns)
 
         return object : TypeCheckerState.SupertypesPolicy.DoCustomTransform() {
@@ -637,5 +635,4 @@ fun extractTypeParameters(parent: BirElement): List<BirTypeParameter> {
 
 class BirTypeSystemContextImpl(
     override val birBuiltIns: BirBuiltIns,
-    override val birForest: BirForest
 ) : BirTypeSystemContext
