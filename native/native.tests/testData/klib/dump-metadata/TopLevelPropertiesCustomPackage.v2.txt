@@ -1,0 +1,12 @@
+package custom.pkg {
+    // Signature: custom.pkg/MyTransformer|null[0]
+    typealias MyTransformer = (String) -> Int
+    // Signature: custom.pkg/v1|{}v1[0]
+    val v1: Int = 1
+    // Signature: custom.pkg/v2|{}v2[0]
+    val v2: String = "hello"
+    // Signature: custom.pkg/v3|{}v3[0]
+    val v3: (String) -> Int
+    // Signature: custom.pkg/v4|{}v4[0]
+    val v4: MyTransformer /* = (String) -> Int */
+}

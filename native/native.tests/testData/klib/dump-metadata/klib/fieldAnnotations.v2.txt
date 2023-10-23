@@ -1,0 +1,15 @@
+package test {
+    // Signature: test/A|null[0]
+    class A constructor() {
+        // Signature: test/A.x|{}x[0]
+        @field:Ann var x: Int
+        // Signature: test/A.y|{}y[0]
+        @delegate:Ann var y: Int
+    }
+    // Signature: test/Ann|null[0]
+    annotation class Ann constructor() : Annotation
+    // Signature: test/x|{}x[0]
+    @field:Ann var x: Int
+    // Signature: test/y|{}y[0]
+    @delegate:Ann var y: Int
+}

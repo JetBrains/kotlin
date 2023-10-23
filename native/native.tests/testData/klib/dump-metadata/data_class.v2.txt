@@ -1,0 +1,32 @@
+package test {
+    // Signature: test/DataClass|null[0]
+    data class DataClass constructor(intProp: Int, stringProp: String) {
+        // Signature: test/DataClass.intProp|{}intProp[0]
+        val intProp: Int
+        // Signature: test/DataClass.nonConstructorProp|{}nonConstructorProp[0]
+        val nonConstructorProp: Int = 0
+        // Signature: test/DataClass.stringProp|{}stringProp[0]
+        val stringProp: String
+        // Signature: test/DataClass.component1|component1(){}[0]
+        operator fun component1(): Int
+        // Signature: test/DataClass.component2|component2(){}[0]
+        operator fun component2(): String
+        // Signature: test/DataClass.copy|copy(kotlin.Int;kotlin.String){}[0]
+        fun copy(intProp: Int = ..., stringProp: String = ...): DataClass
+        // Signature: test/DataClass.equals|equals(kotlin.Any?){}[0]
+        override fun equals(other: Any?): Boolean
+        // Signature: test/DataClass.hashCode|hashCode(){}[0]
+        override fun hashCode(): Int
+        // Signature: test/DataClass.toString|toString(){}[0]
+        override fun toString(): String
+    }
+    // Signature: test/DataObject|null[0]
+    data object DataObject {
+        // Signature: test/DataObject.equals|equals(kotlin.Any?){}[0]
+        override fun equals(other: Any?): Boolean
+        // Signature: test/DataObject.hashCode|hashCode(){}[0]
+        override fun hashCode(): Int
+        // Signature: test/DataObject.toString|toString(){}[0]
+        override fun toString(): String
+    }
+}

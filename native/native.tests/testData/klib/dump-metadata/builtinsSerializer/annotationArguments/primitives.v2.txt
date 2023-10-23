@@ -1,0 +1,23 @@
+package test {
+    // Signature: test/C|null[0]
+    @Primitives(boolean = true, byte = 7.toByte(), char = \u0025 ('%'), double = -3.14.toDouble(), float = 2.72.toFloat(), int = 239017, long = 123456789123456789.toLong(), short = 239.toShort()) class C constructor()
+    // Signature: test/Primitives|null[0]
+    annotation class Primitives constructor(byte: Byte, char: Char, short: Short, int: Int, long: Long, float: Float, double: Double, boolean: Boolean) : Annotation {
+        // Signature: test/Primitives.boolean|{}boolean[0]
+        val boolean: Boolean
+        // Signature: test/Primitives.byte|{}byte[0]
+        val byte: Byte
+        // Signature: test/Primitives.char|{}char[0]
+        val char: Char
+        // Signature: test/Primitives.double|{}double[0]
+        val double: Double
+        // Signature: test/Primitives.float|{}float[0]
+        val float: Float
+        // Signature: test/Primitives.int|{}int[0]
+        val int: Int
+        // Signature: test/Primitives.long|{}long[0]
+        val long: Long
+        // Signature: test/Primitives.short|{}short[0]
+        val short: Short
+    }
+}

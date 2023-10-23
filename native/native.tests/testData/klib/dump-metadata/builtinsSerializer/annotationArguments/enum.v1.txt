@@ -1,0 +1,25 @@
+package test {
+    // Signature: test/C1|null[0]
+    @JustEnum(weapon = Weapon.SCISSORS) @EnumArray(enumArray = {}) class C1 constructor()
+    // Signature: test/C2|null[0]
+    @EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) class C2 constructor()
+    // Signature: test/EnumArray|null[0]
+    annotation class EnumArray constructor(enumArray: Array<Weapon>) : Annotation {
+        // Signature: test/EnumArray.enumArray|-1032102509447694281[0]
+        val enumArray: Array<Weapon>
+    }
+    // Signature: test/JustEnum|null[0]
+    annotation class JustEnum constructor(weapon: Weapon) : Annotation {
+        // Signature: test/JustEnum.weapon|187372160426561863[0]
+        val weapon: Weapon
+    }
+    // Signature: test/Weapon|null[0]
+    enum class Weapon private constructor() : Enum<Weapon> {
+        // Signature: test/Weapon.ROCK|null[0]
+        enum entry ROCK
+        // Signature: test/Weapon.PAPER|null[0]
+        enum entry PAPER
+        // Signature: test/Weapon.SCISSORS|null[0]
+        enum entry SCISSORS
+    }
+}

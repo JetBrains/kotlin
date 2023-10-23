@@ -1,0 +1,9 @@
+package test {
+    // Signature: test/Ann|null[0]
+    @Retention(value = AnnotationRetention.BINARY) @Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) annotation class Ann constructor(value: String) : Annotation {
+        // Signature: test/Ann.value|{}value[0]
+        val value: String
+    }
+    // Signature: test/foo|foo(){0§<kotlin.Any?>}[0]
+    inline fun <reified @Ann(value = "abc") T> foo()
+}

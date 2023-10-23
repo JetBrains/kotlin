@@ -103,7 +103,7 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
                 "Test failed. CInterop compilation result was: $testCompilationResult"
             }
         } else {
-            val metadata = testCompilationResult.assertSuccess().resultingArtifact.dumpMetadata(kotlinNativeClassLoader.classLoader)
+            val metadata = testCompilationResult.assertSuccess().resultingArtifact.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
                 .let {
                     if (ignoreExperimentalForeignApi) {
                         it.replace("@ExperimentalForeignApi ", "")

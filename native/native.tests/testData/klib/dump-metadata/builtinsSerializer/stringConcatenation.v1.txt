@@ -1,0 +1,11 @@
+package <root> {
+    // Signature: /Foo|null[0]
+    @Deprecated(message = "O/{id}") class Foo constructor()
+    // Signature: /Obj|null[0]
+    object Obj {
+        // Signature: /Obj.O|-6675131087042329948[0]
+        const val O: String = "O"
+        // Signature: /Obj.concat|4194001668264387881[0]
+        val concat: String = "OK"
+    }
+}

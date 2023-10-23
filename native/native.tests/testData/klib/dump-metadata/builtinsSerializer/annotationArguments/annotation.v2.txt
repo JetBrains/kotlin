@@ -1,0 +1,18 @@
+package test {
+    // Signature: test/AnnotationArray|null[0]
+    annotation class AnnotationArray constructor(annotationArray: Array<JustAnnotation>) : Annotation {
+        // Signature: test/AnnotationArray.annotationArray|{}annotationArray[0]
+        val annotationArray: Array<JustAnnotation>
+    }
+    // Signature: test/C1|null[0]
+    @JustAnnotation(annotation = Empty) @AnnotationArray(annotationArray = {}) class C1 constructor()
+    // Signature: test/C2|null[0]
+    @AnnotationArray(annotationArray = {JustAnnotation(annotation = Empty), JustAnnotation(annotation = Empty)}) class C2 constructor()
+    // Signature: test/Empty|null[0]
+    annotation class Empty constructor() : Annotation
+    // Signature: test/JustAnnotation|null[0]
+    annotation class JustAnnotation constructor(annotation: Empty) : Annotation {
+        // Signature: test/JustAnnotation.annotation|{}annotation[0]
+        val annotation: Empty
+    }
+}

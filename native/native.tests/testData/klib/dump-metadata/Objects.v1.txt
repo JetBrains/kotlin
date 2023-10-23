@@ -1,0 +1,28 @@
+package <root> {
+    // Signature: /A|null[0]
+    object A {
+        // Signature: /A.a|-4432112437378250461[0]
+        fun a()
+    }
+    // Signature: /B|null[0]
+    class B constructor() {
+        // Signature: /B.Companion|null[0]
+        companion object {
+            // Signature: /B.Companion.b|4789657038926421504[0]
+            fun b()
+        }
+        // Signature: /B.C|null[0]
+        object C {
+            // Signature: /B.C.c|-2724918380551733646[0]
+            fun c()
+        }
+    }
+    // Signature: /D|null[0]
+    class D constructor() {
+        // Signature: /D.E|null[0]
+        companion object E {
+            // Signature: /D.E.e|-4971306249673273083[0]
+            fun e()
+        }
+    }
+}

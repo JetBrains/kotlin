@@ -1,0 +1,31 @@
+package test {
+    // Signature: test/A|null[0]
+    abstract class A constructor() {
+        // Signature: test/A.a|-1200697420457237799[0]
+        abstract val a: Int
+        // Signature: test/A.b|772347207915745207[0]
+        abstract var b: Int
+            // Signature: test/A.b.<set-b>|393614520529327556[0]
+            protected set
+        // Signature: test/A.c|-4416962153448040627[0]
+        val c: Int
+        // Signature: test/A.d|5174763769109925331[0]
+        val d: Int
+        // Signature: test/A.e|-5812214850253973038[0]
+        var e: Int
+        // Signature: test/A.f|4026638760133205152[0]
+        var f: Int
+            // Signature: test/A.f.<set-f>|3759249595734875908[0]
+            private set
+        // Signature: test/A.g|417398068120208694[0]
+        open val g: Int
+        // Signature: test/A.h|1569348114433471852[0]
+        open val h: Int
+        // Signature: test/A.k|2162811783424158931[0]
+        open var k: Int
+        // Signature: test/A.l|3307215303229595169[0]
+        open var l: Int
+            // Signature: test/A.l.<set-l>|2538976218320322727[0]
+            protected set
+    }
+}

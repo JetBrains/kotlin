@@ -1,0 +1,36 @@
+package <root> {
+    // Signature: /A|null[0]
+    annotation class A constructor() : Annotation
+    // Signature: /Bar|null[0]
+    class Bar @A constructor(x: Int)
+    // Signature: /Baz|null[0]
+    class Baz private constructor(x: Int)
+    // Signature: /Foo|null[0]
+    class Foo constructor(x: Int) {
+        // Signature: /Foo.<init>|-5645683436151566731[0]
+        constructor()
+        // Signature: /Foo.<init>|575075696928934302[0]
+        constructor(x: Double)
+        // Signature: /Foo.<init>|-648032236499795795[0]
+        constructor(x: Double, y: Int)
+        // Signature: /Foo.<init>|1280618353163213788[0]
+        protected constructor(x: String)
+        // Signature: /Foo.<init>|5452796351634795197[0]
+        @A constructor(x: Foo)
+    }
+    // Signature: /Qux|null[0]
+    class Qux protected constructor(x: Int)
+    // Signature: /Typed|null[0]
+    class Typed<T> constructor(x: Int) {
+        // Signature: /Typed.<init>|-5645683436151566731[0]
+        constructor()
+        // Signature: /Typed.<init>|575075696928934302[0]
+        constructor(x: Double)
+        // Signature: /Typed.<init>|-648032236499795795[0]
+        constructor(x: Double, y: Int)
+        // Signature: /Typed.<init>|1280618353163213788[0]
+        protected constructor(x: String)
+        // Signature: /Typed.<init>|5452796351634795197[0]
+        @A constructor(x: Foo)
+    }
+}

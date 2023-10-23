@@ -1,0 +1,13 @@
+package test {
+    // Signature: test/Class|null[0]
+    class Class constructor() {
+        // Signature: test/Class.member|member(){}[0]
+        fun member(): Nothing?
+    }
+    // Signature: test/extension|extension@0:0(){0§<kotlin.Any?>}[0]
+    fun <T> T.extension(): T?
+    // Signature: test/function|function(kotlin.Int;kotlin.String){}[0]
+    fun function(int: Int, string: String = ...): Class
+    // Signature: test/property|{}property[0]
+    val property: Unit
+}

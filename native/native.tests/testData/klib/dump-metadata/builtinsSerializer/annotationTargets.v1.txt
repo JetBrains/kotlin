@@ -1,0 +1,30 @@
+package test {
+    // Signature: test/C1|null[0]
+    @anno(x = "top level class") class C1 @anno(x = "constructor") constructor() {
+        // Signature: test/C1.p3|-373830470709388280[0]
+        @anno(x = "member property") val p3: Nothing?
+        // Signature: test/C1.v4|-38532081724949562[0]
+        @anno(x = "member extension property") val Int.v4: Int
+        // Signature: test/C1.f3|-21944318592270529[0]
+        @anno(x = "member function") fun f3(@anno(x = "member function parameter") p: Int)
+        // Signature: test/C1.f4|229292746020934047[0]
+        @anno(x = "member extension function") fun String.f4()
+        // Signature: test/C1.C2|null[0]
+        @anno(x = "nested class") class C2 constructor()
+        // Signature: test/C1.Companion|null[0]
+        @anno(x = "companion object") companion object
+    }
+    // Signature: test/anno|null[0]
+    annotation class anno constructor(x: String) : Annotation {
+        // Signature: test/anno.x|-8060530855978347579[0]
+        val x: String
+    }
+    // Signature: test/f1|7367719253560189071[0]
+    @anno(x = "top level function") fun f1(@anno(x = "top level function parameter") p: Int)
+    // Signature: test/f2|6524047282310410984[0]
+    @anno(x = "extension function") fun Long.f2(@anno(x = "extension function parameter") p: Int)
+    // Signature: test/p1|7711764890799440087[0]
+    @anno(x = "top level property") val p1: Nothing?
+    // Signature: test/p2|8934898181461715514[0]
+    @anno(x = "extension property") val Double.p2: Double
+}

@@ -1,0 +1,31 @@
+package custom.pkg {
+    // Signature: custom.pkg/A|null[0]
+    annotation class A constructor() : Annotation
+    // Signature: custom.pkg/Foo|null[0]
+    class Foo constructor() {
+        // Signature: custom.pkg/Foo.annotated|{}annotated[0]
+        @A val annotated: Int = 0
+        // Signature: custom.pkg/Foo.annotatedAccessors|{}annotatedAccessors[0]
+        var annotatedAccessors: Int
+            // Signature: custom.pkg/Foo.annotatedAccessors.<get-annotatedAccessors>|<get-annotatedAccessors>(){}[0]
+            @A get
+            // Signature: custom.pkg/Foo.annotatedAccessors.<set-annotatedAccessors>|<set-annotatedAccessors>(kotlin.Int){}[0]
+            @A set
+        // Signature: custom.pkg/Foo.annotatedGetter|{}annotatedGetter[0]
+        val annotatedGetter: Int = 0
+            // Signature: custom.pkg/Foo.annotatedGetter.<get-annotatedGetter>|<get-annotatedGetter>(){}[0]
+            @A get
+        // Signature: custom.pkg/Foo.annotatedSetter|{}annotatedSetter[0]
+        var annotatedSetter: Int
+            // Signature: custom.pkg/Foo.annotatedSetter.<set-annotatedSetter>|<set-annotatedSetter>(kotlin.Int){}[0]
+            @A set
+        // Signature: custom.pkg/Foo.privateSetter|{}privateSetter[0]
+        var privateSetter: Int
+            // Signature: custom.pkg/Foo.privateSetter.<set-privateSetter>|<set-privateSetter>(kotlin.Int){}[0]
+            private set
+        // Signature: custom.pkg/Foo.protectedSimple|{}protectedSimple[0]
+        protected val protectedSimple: Int = 0
+        // Signature: custom.pkg/Foo.simple|{}simple[0]
+        val simple: Int = 0
+    }
+}

@@ -1,0 +1,15 @@
+package test {
+    // Signature: test/A|null[0]
+    @Retention(value = AnnotationRetention.BINARY) @Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) annotation class A constructor() : Annotation
+    // Signature: test/Enum|null[0]
+    enum class Enum private constructor() : Enum<Enum> {
+        // Signature: test/Enum.ENTRY|null[0]
+        @A enum entry ENTRY
+    }
+    // Signature: test/Klass|null[0]
+    @A class Klass @A constructor()
+    // Signature: test/function|function(kotlin.Unit){0§<kotlin.Any?>}[0]
+    @A fun <@A T> function(@A param: Unit)
+    // Signature: test/property|{}property[0]
+    @A val property: Unit
+}

@@ -1,0 +1,13 @@
+package test {
+    // Signature: test/Class|null[0]
+    class Class constructor() {
+        // Signature: test/Class.member|-5369299060503369718[0]
+        fun member(): Nothing?
+    }
+    // Signature: test/extension|-6620817981111883314[0]
+    fun <T> T.extension(): T?
+    // Signature: test/function|894692402108510399[0]
+    fun function(int: Int, string: String = ...): Class
+    // Signature: test/property|4634558160746314112[0]
+    val property: Unit
+}

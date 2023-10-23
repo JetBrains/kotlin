@@ -1,0 +1,15 @@
+package test {
+    // Signature: test/A|null[0]
+    class A constructor() {
+        // Signature: test/A.x|-8060530855978347579[0]
+        @field:Ann var x: Int
+        // Signature: test/A.y|3625903257357557171[0]
+        @delegate:Ann var y: Int
+    }
+    // Signature: test/Ann|null[0]
+    annotation class Ann constructor() : Annotation
+    // Signature: test/x|-8060530855978347579[0]
+    @field:Ann var x: Int
+    // Signature: test/y|3625903257357557171[0]
+    @delegate:Ann var y: Int
+}

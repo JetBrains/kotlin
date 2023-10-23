@@ -1,0 +1,86 @@
+package <root> {
+    // Signature: /A|null[0]
+    class A constructor() {
+        // Signature: /A.aVal|{}aVal[0]
+        val aVal: Int = 0
+        // Signature: /A.aVar|{}aVar[0]
+        var aVar: String
+        // Signature: /A.aFun|aFun(){}[0]
+        fun aFun()
+        // Signature: /A.B|null[0]
+        inner class B constructor() {
+            // Signature: /A.B.bVal|{}bVal[0]
+            val bVal: Int = 0
+            // Signature: /A.B.bVar|{}bVar[0]
+            var bVar: String
+            // Signature: /A.B.bFun|bFun(){}[0]
+            fun bFun()
+            // Signature: /A.B.C|null[0]
+            inner class C constructor() {
+                // Signature: /A.B.C.cVal|{}cVal[0]
+                val cVal: Int = 0
+                // Signature: /A.B.C.cVar|{}cVar[0]
+                var cVar: String
+                // Signature: /A.B.C.cFun|cFun(){}[0]
+                fun cFun()
+            }
+        }
+        // Signature: /A.E|null[0]
+        class E constructor() {
+            // Signature: /A.E.eVal|{}eVal[0]
+            val eVal: Int = 0
+            // Signature: /A.E.eVar|{}eVar[0]
+            var eVar: String
+            // Signature: /A.E.eFun|eFun(){}[0]
+            fun eFun()
+        }
+    }
+    // Signature: /F|null[0]
+    data class F constructor(fVal: Int, fVar: String) {
+        // Signature: /F.fVal|{}fVal[0]
+        val fVal: Int
+        // Signature: /F.fVar|{}fVar[0]
+        var fVar: String
+        // Signature: /F.component1|component1(){}[0]
+        operator fun component1(): Int
+        // Signature: /F.component2|component2(){}[0]
+        operator fun component2(): String
+        // Signature: /F.copy|copy(kotlin.Int;kotlin.String){}[0]
+        fun copy(fVal: Int = ..., fVar: String = ...): F
+        // Signature: /F.equals|equals(kotlin.Any?){}[0]
+        override fun equals(other: Any?): Boolean
+        // Signature: /F.fFun|fFun(){}[0]
+        fun fFun()
+        // Signature: /F.hashCode|hashCode(){}[0]
+        override fun hashCode(): Int
+        // Signature: /F.toString|toString(){}[0]
+        override fun toString(): String
+    }
+    // Signature: /FinalImpl|null[0]
+    class FinalImpl constructor() : OpenImpl {
+        // Signature: /FinalImpl.iVal|{}iVal[0]
+        override val iVal: Int = 0
+        // Signature: /FinalImpl.iVar|{}iVar[0]
+        override var iVar: String
+        // Signature: /FinalImpl.iFun|iFun(){}[0]
+        override fun iFun()
+    }
+    // Signature: /Interface|null[0]
+    interface Interface {
+        // Signature: /Interface.iVal|{}iVal[0]
+        val iVal: Int
+        // Signature: /Interface.iVar|{}iVar[0]
+        var iVar: String
+        // Signature: /Interface.iFun|iFun(){}[0]
+        fun iFun()
+    }
+    // Signature: /OpenImpl|null[0]
+    open class OpenImpl constructor() : Interface {
+        // Signature: /OpenImpl.iVal|{}iVal[0]
+        override val iVal: Int = 0
+        // Signature: /OpenImpl.iVar|{}iVar[0]
+        override var iVar: String
+        // Signature: /OpenImpl.iFun|iFun(){}[0]
+        override fun iFun()
+    }
+}

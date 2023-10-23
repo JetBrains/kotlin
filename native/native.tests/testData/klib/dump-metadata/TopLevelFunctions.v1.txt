@@ -1,0 +1,40 @@
+package <root> {
+    // Signature: /A|null[0]
+    annotation class A constructor() : Annotation
+    // Signature: /B|null[0]
+    annotation class B constructor() : Annotation
+    // Signature: /Foo|null[0]
+    class Foo constructor()
+    // Signature: /a|-4432112437378250461[0]
+    @A @B fun a()
+    // Signature: /e|8989066053884186758[0]
+    fun Foo.e()
+    // Signature: /f1|-1560136604489335247[0]
+    fun f1(x: Foo)
+    // Signature: /f2|8193757935438764272[0]
+    fun f2(x: Foo, y: Foo): Int
+    // Signature: /i1|-6444280688669682335[0]
+    inline fun i1(block: () -> Foo)
+    // Signature: /i2|-6849364972861294160[0]
+    inline fun i2(noinline block: () -> Foo)
+    // Signature: /i3|-3309425284353652160[0]
+    inline fun i3(crossinline block: () -> Foo)
+    // Signature: /i4|-6304681376176934836[0]
+    fun i4(block: (Foo) -> Int)
+    // Signature: /i5|-3051198308501003303[0]
+    fun i5(block: (Foo, Foo) -> Int)
+    // Signature: /i6|6453956519947412951[0]
+    fun i6(block: Foo.() -> Int)
+    // Signature: /i7|-2413842829876213778[0]
+    fun i7(block: Foo.(Foo) -> Int)
+    // Signature: /t1|4730456697336757969[0]
+    fun <T> t1(x: Foo)
+    // Signature: /t2|-90499170678395935[0]
+    fun <T> t2(x: T)
+    // Signature: /t3|7012475377071720756[0]
+    fun <T, F> t3(x: T, y: F)
+    // Signature: /t4|-3843581059144476593[0]
+    inline fun <reified T> t4(x: T)
+    // Signature: /t5|236307131019209421[0]
+    fun <T : Number> t5(x: T)
+}

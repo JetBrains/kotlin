@@ -1,0 +1,25 @@
+package test {
+    // Signature: test/C1|null[0]
+    @PrimitiveArrays(booleanArray = {true, false, true}, byteArray = {-7.toByte(), 7.toByte()}, charArray = {\u0025 ('%'), \u007A ('z')}, doubleArray = {-3.14.toDouble()}, floatArray = {2.72.toFloat(), 0.0.toFloat()}, intArray = {239017, -1}, longArray = {123456789123456789.toLong()}, shortArray = {239.toShort()}) class C1 constructor()
+    // Signature: test/C2|null[0]
+    @PrimitiveArrays(booleanArray = {}, byteArray = {}, charArray = {}, doubleArray = {}, floatArray = {}, intArray = {}, longArray = {}, shortArray = {}) class C2 constructor()
+    // Signature: test/PrimitiveArrays|null[0]
+    annotation class PrimitiveArrays constructor(byteArray: ByteArray, charArray: CharArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray, booleanArray: BooleanArray) : Annotation {
+        // Signature: test/PrimitiveArrays.booleanArray|7605527965651232515[0]
+        val booleanArray: BooleanArray
+        // Signature: test/PrimitiveArrays.byteArray|-2314777124899298189[0]
+        val byteArray: ByteArray
+        // Signature: test/PrimitiveArrays.charArray|-5349931751208968301[0]
+        val charArray: CharArray
+        // Signature: test/PrimitiveArrays.doubleArray|-3027997348205759511[0]
+        val doubleArray: DoubleArray
+        // Signature: test/PrimitiveArrays.floatArray|-863616440006860352[0]
+        val floatArray: FloatArray
+        // Signature: test/PrimitiveArrays.intArray|-5845507301569286943[0]
+        val intArray: IntArray
+        // Signature: test/PrimitiveArrays.longArray|-261136028309834719[0]
+        val longArray: LongArray
+        // Signature: test/PrimitiveArrays.shortArray|3516401755230006906[0]
+        val shortArray: ShortArray
+    }
+}

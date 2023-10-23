@@ -1,0 +1,36 @@
+package <root> {
+    // Signature: /A|null[0]
+    annotation class A constructor() : Annotation
+    // Signature: /Bar|null[0]
+    class Bar @A constructor(x: Int)
+    // Signature: /Baz|null[0]
+    class Baz private constructor(x: Int)
+    // Signature: /Foo|null[0]
+    class Foo constructor(x: Int) {
+        // Signature: /Foo.<init>|<init>(){}[0]
+        constructor()
+        // Signature: /Foo.<init>|<init>(kotlin.Double){}[0]
+        constructor(x: Double)
+        // Signature: /Foo.<init>|<init>(kotlin.Double;kotlin.Int){}[0]
+        constructor(x: Double, y: Int)
+        // Signature: /Foo.<init>|<init>(kotlin.String){}[0]
+        protected constructor(x: String)
+        // Signature: /Foo.<init>|<init>(Foo){}[0]
+        @A constructor(x: Foo)
+    }
+    // Signature: /Qux|null[0]
+    class Qux protected constructor(x: Int)
+    // Signature: /Typed|null[0]
+    class Typed<T> constructor(x: Int) {
+        // Signature: /Typed.<init>|<init>(){}[0]
+        constructor()
+        // Signature: /Typed.<init>|<init>(kotlin.Double){}[0]
+        constructor(x: Double)
+        // Signature: /Typed.<init>|<init>(kotlin.Double;kotlin.Int){}[0]
+        constructor(x: Double, y: Int)
+        // Signature: /Typed.<init>|<init>(kotlin.String){}[0]
+        protected constructor(x: String)
+        // Signature: /Typed.<init>|<init>(Foo){}[0]
+        @A constructor(x: Foo)
+    }
+}

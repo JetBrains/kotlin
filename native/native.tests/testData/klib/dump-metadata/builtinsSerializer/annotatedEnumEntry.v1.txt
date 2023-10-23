@@ -1,0 +1,22 @@
+package test {
+    // Signature: test/Anno|null[0]
+    annotation class Anno constructor(value: String = ..., x: Int = ...) : Annotation {
+        // Signature: test/Anno.value|1987073854177347439[0]
+        val value: String
+        // Signature: test/Anno.x|-8060530855978347579[0]
+        val x: Int
+    }
+    // Signature: test/Bnno|null[0]
+    annotation class Bnno constructor() : Annotation
+    // Signature: test/Eee|null[0]
+    enum class Eee private constructor() : Enum<Eee> {
+        // Signature: test/Eee.Entry1|null[0]
+        @Anno enum entry Entry1
+        // Signature: test/Eee.Entry2|null[0]
+        enum entry Entry2
+        // Signature: test/Eee.Entry3|null[0]
+        @Anno(value = "3") @Bnno enum entry Entry3
+        // Signature: test/Eee.Entry4|null[0]
+        @Anno(value = "4", x = 4) enum entry Entry4
+    }
+}

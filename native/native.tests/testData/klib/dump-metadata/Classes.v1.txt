@@ -1,0 +1,86 @@
+package <root> {
+    // Signature: /A|null[0]
+    class A constructor() {
+        // Signature: /A.aVal|-4026160909590410018[0]
+        val aVal: Int = 0
+        // Signature: /A.aVar|3814694652979924453[0]
+        var aVar: String
+        // Signature: /A.aFun|-596272525427331003[0]
+        fun aFun()
+        // Signature: /A.B|null[0]
+        inner class B constructor() {
+            // Signature: /A.B.bVal|47661200932476778[0]
+            val bVal: Int = 0
+            // Signature: /A.B.bVar|1733087153451115465[0]
+            var bVar: String
+            // Signature: /A.B.bFun|4199274722730592230[0]
+            fun bFun()
+            // Signature: /A.B.C|null[0]
+            inner class C constructor() {
+                // Signature: /A.B.C.cVal|5776604707001436517[0]
+                val cVal: Int = 0
+                // Signature: /A.B.C.cVar|-6552073779725328843[0]
+                var cVar: String
+                // Signature: /A.B.C.cFun|5963622644484500428[0]
+                fun cFun()
+            }
+        }
+        // Signature: /A.E|null[0]
+        class E constructor() {
+            // Signature: /A.E.eVal|3045358633348092364[0]
+            val eVal: Int = 0
+            // Signature: /A.E.eVar|3111249734155596017[0]
+            var eVar: String
+            // Signature: /A.E.eFun|3495051381223408264[0]
+            fun eFun()
+        }
+    }
+    // Signature: /F|null[0]
+    data class F constructor(fVal: Int, fVar: String) {
+        // Signature: /F.fVal|6893318909478774212[0]
+        val fVal: Int
+        // Signature: /F.fVar|-2983039959624530436[0]
+        var fVar: String
+        // Signature: /F.component1|162597135895221648[0]
+        operator fun component1(): Int
+        // Signature: /F.component2|3796717572321500973[0]
+        operator fun component2(): String
+        // Signature: /F.copy|5893098757611139585[0]
+        fun copy(fVal: Int = ..., fVar: String = ...): F
+        // Signature: /F.equals|4638265728071529943[0]
+        override fun equals(other: Any?): Boolean
+        // Signature: /F.fFun|2647324645836040292[0]
+        fun fFun()
+        // Signature: /F.hashCode|3409210261493131192[0]
+        override fun hashCode(): Int
+        // Signature: /F.toString|-1522858123163872138[0]
+        override fun toString(): String
+    }
+    // Signature: /FinalImpl|null[0]
+    class FinalImpl constructor() : OpenImpl {
+        // Signature: /FinalImpl.iVal|-7454916029695635493[0]
+        override val iVal: Int = 0
+        // Signature: /FinalImpl.iVar|5660235026806079480[0]
+        override var iVar: String
+        // Signature: /FinalImpl.iFun|-7944844664160120593[0]
+        override fun iFun()
+    }
+    // Signature: /Interface|null[0]
+    interface Interface {
+        // Signature: /Interface.iVal|-7454916029695635493[0]
+        val iVal: Int
+        // Signature: /Interface.iVar|5660235026806079480[0]
+        var iVar: String
+        // Signature: /Interface.iFun|-7944844664160120593[0]
+        fun iFun()
+    }
+    // Signature: /OpenImpl|null[0]
+    open class OpenImpl constructor() : Interface {
+        // Signature: /OpenImpl.iVal|-7454916029695635493[0]
+        override val iVal: Int = 0
+        // Signature: /OpenImpl.iVar|5660235026806079480[0]
+        override var iVar: String
+        // Signature: /OpenImpl.iFun|-7944844664160120593[0]
+        override fun iFun()
+    }
+}

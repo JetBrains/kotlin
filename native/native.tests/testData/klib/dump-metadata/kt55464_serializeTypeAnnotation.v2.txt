@@ -1,0 +1,6 @@
+package test {
+    // Signature: test/C|null[0]
+    class C constructor()
+    // Signature: test/builder|builder@test.C(kotlin.Function1<test.C,kotlin.Unit>){}[0]
+    fun C.builder(c: C.() -> Unit)
+}

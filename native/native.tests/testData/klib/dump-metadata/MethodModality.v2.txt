@@ -1,0 +1,32 @@
+package <root> {
+    // Signature: /AbstractClass|null[0]
+    abstract class AbstractClass constructor() : Interface {
+        // Signature: /AbstractClass.abstractFun|abstractFun(){}[0]
+        abstract fun abstractFun()
+        // Signature: /AbstractClass.interfaceFun|interfaceFun(){}[0]
+        override fun interfaceFun()
+    }
+    // Signature: /FinalClass|null[0]
+    class FinalClass constructor() : OpenClass {
+        // Signature: /FinalClass.openFun1|openFun1(){}[0]
+        override fun openFun1()
+        // Signature: /FinalClass.openFun2|openFun2(){}[0]
+        final override fun openFun2()
+    }
+    // Signature: /Interface|null[0]
+    interface Interface {
+        // Signature: /Interface.interfaceFun|interfaceFun(){}[0]
+        fun interfaceFun()
+    }
+    // Signature: /OpenClass|null[0]
+    open class OpenClass constructor() : AbstractClass {
+        // Signature: /OpenClass.abstractFun|abstractFun(){}[0]
+        override fun abstractFun()
+        // Signature: /OpenClass.finalFun|finalFun(){}[0]
+        fun finalFun()
+        // Signature: /OpenClass.openFun1|openFun1(){}[0]
+        open fun openFun1()
+        // Signature: /OpenClass.openFun2|openFun2(){}[0]
+        open fun openFun2()
+    }
+}

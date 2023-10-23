@@ -1,0 +1,58 @@
+package test {
+    // Signature: test/Class|null[0]
+    class Class constructor() {
+        // Signature: test/Class.arrayConst|-5420156590449024299[0]
+        val arrayConst: Any = {1.toByte(), 2.toByte()}
+        // Signature: test/Class.booleanConst|-4426657168193867786[0]
+        val booleanConst: Boolean = true
+        // Signature: test/Class.byteConst|-838020094916250484[0]
+        val byteConst: Byte = 10.toByte()
+        // Signature: test/Class.charConst|-3386388106267045546[0]
+        val charConst: Char = \u0041 ('A')
+        // Signature: test/Class.doubleConst|-3410345003879286930[0]
+        val doubleConst: Double = 3.0.toDouble()
+        // Signature: test/Class.enumConst|1893601016514874327[0]
+        val enumConst: Weapon? = Weapon.ROCK
+        // Signature: test/Class.floatConst|-7988261885828380685[0]
+        val floatConst: Float = 2.0.toFloat()
+        // Signature: test/Class.intConst|-4862245503535493206[0]
+        val intConst: Int = 30
+        // Signature: test/Class.longConst|-6740116794455248124[0]
+        val longConst: Long = 40.toLong()
+        // Signature: test/Class.shortConst|4526352702631103302[0]
+        val shortConst: Short = 20.toShort()
+        // Signature: test/Class.stringConst|7958415035753538639[0]
+        val stringConst: String = "abcd"
+    }
+    // Signature: test/Weapon|null[0]
+    enum class Weapon private constructor() : Enum<Weapon> {
+        // Signature: test/Weapon.ROCK|null[0]
+        enum entry ROCK
+        // Signature: test/Weapon.PAPER|null[0]
+        enum entry PAPER
+        // Signature: test/Weapon.SCISSORS|null[0]
+        enum entry SCISSORS
+    }
+    // Signature: test/arrayConst|-5420156590449024299[0]
+    val arrayConst: Any = {1.toByte(), 2.toByte()}
+    // Signature: test/booleanConst|-4426657168193867786[0]
+    val booleanConst: Boolean = true
+    // Signature: test/byteConst|-838020094916250484[0]
+    val byteConst: Byte = 10.toByte()
+    // Signature: test/charConst|-3386388106267045546[0]
+    val charConst: Char = \u0041 ('A')
+    // Signature: test/doubleConst|-3410345003879286930[0]
+    val doubleConst: Double = 3.0.toDouble()
+    // Signature: test/enumConst|1893601016514874327[0]
+    val enumConst: Weapon? = Weapon.ROCK
+    // Signature: test/floatConst|-7988261885828380685[0]
+    val floatConst: Float = 2.0.toFloat()
+    // Signature: test/intConst|-4862245503535493206[0]
+    val intConst: Int = 30
+    // Signature: test/longConst|-6740116794455248124[0]
+    val longConst: Long = 40.toLong()
+    // Signature: test/shortConst|4526352702631103302[0]
+    val shortConst: Short = 20.toShort()
+    // Signature: test/stringConst|7958415035753538639[0]
+    val stringConst: String = "abcd"
+}

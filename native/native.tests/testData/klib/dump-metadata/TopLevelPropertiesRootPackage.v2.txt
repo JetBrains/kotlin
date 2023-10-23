@@ -1,0 +1,12 @@
+package <root> {
+    // Signature: /MyTransformer|null[0]
+    typealias MyTransformer = (String) -> Int
+    // Signature: /v1|{}v1[0]
+    val v1: Int = 1
+    // Signature: /v2|{}v2[0]
+    val v2: String = "hello"
+    // Signature: /v3|{}v3[0]
+    val v3: (String) -> Int
+    // Signature: /v4|{}v4[0]
+    val v4: MyTransformer /* = (String) -> Int */
+}

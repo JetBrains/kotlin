@@ -1,0 +1,31 @@
+package custom.pkg {
+    // Signature: custom.pkg/A|null[0]
+    annotation class A constructor() : Annotation
+    // Signature: custom.pkg/Foo|null[0]
+    class Foo constructor() {
+        // Signature: custom.pkg/Foo.annotated|4796959806228949141[0]
+        @A val annotated: Int = 0
+        // Signature: custom.pkg/Foo.annotatedAccessors|-2696733316289958808[0]
+        var annotatedAccessors: Int
+            // Signature: custom.pkg/Foo.annotatedAccessors.<get-annotatedAccessors>|1622120395968958718[0]
+            @A get
+            // Signature: custom.pkg/Foo.annotatedAccessors.<set-annotatedAccessors>|-2659697716788262479[0]
+            @A set
+        // Signature: custom.pkg/Foo.annotatedGetter|2662566077187940730[0]
+        val annotatedGetter: Int = 0
+            // Signature: custom.pkg/Foo.annotatedGetter.<get-annotatedGetter>|811214482955708703[0]
+            @A get
+        // Signature: custom.pkg/Foo.annotatedSetter|-2080041549422472915[0]
+        var annotatedSetter: Int
+            // Signature: custom.pkg/Foo.annotatedSetter.<set-annotatedSetter>|4219770012469820688[0]
+            @A set
+        // Signature: custom.pkg/Foo.privateSetter|-7367207755766039228[0]
+        var privateSetter: Int
+            // Signature: custom.pkg/Foo.privateSetter.<set-privateSetter>|-2122183718828263324[0]
+            private set
+        // Signature: custom.pkg/Foo.protectedSimple|8596646478392887235[0]
+        protected val protectedSimple: Int = 0
+        // Signature: custom.pkg/Foo.simple|1899398506587500007[0]
+        val simple: Int = 0
+    }
+}

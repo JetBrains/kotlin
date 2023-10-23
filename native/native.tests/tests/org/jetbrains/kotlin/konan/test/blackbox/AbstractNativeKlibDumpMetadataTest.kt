@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeCla
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpMetadata
+import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
+import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -33,12 +35,23 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         val testCompilationResult: TestCompilationResult.Success<out KLIB> = compileToLibrary(testCase)
 
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
-        val metadata = testCompilationResult.assertSuccess().resultingArtifact.dumpMetadata(kotlinNativeClassLoader.classLoader)
-        val metadataFiltered = filterOutput(metadata)
-        assertEqualsToFile(
-            File("${testPathFull.canonicalPath.substringBeforeLast(".")}.txt"),
-            StringUtilRt.convertLineSeparators(metadataFiltered)
-        )
+        val klib: KLIB = testCompilationResult.assertSuccess().resultingArtifact
+
+        (KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS + null).forEach { signatureVersion: KotlinIrSignatureVersion? ->
+            val metadataDump = klib.dumpMetadata(
+                kotlinNativeClassLoader.classLoader,
+                printSignatures = signatureVersion != null,
+                signatureVersion
+            )
+            val filteredMetadataDump = StringUtilRt.convertLineSeparators(filterMetadataDump(metadataDump))
+
+            val goldenDataFile = testPathFull.withSuffixAndExtension(
+                suffix = signatureVersion?.let { ".v${it.number}" } ?: "",
+                extension = "txt"
+            )
+
+            assertEqualsToFile(goldenDataFile, filteredMetadataDump)
+        }
     }
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
@@ -60,7 +73,7 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
     }
 
     // Remove intermediate "}\n\npackage ABC {\n" parts.
-    private fun filterOutput(contents: String): String {
+    private fun filterMetadataDump(contents: String): String {
         var packageLineMet = false
         return contents.lineSequence()
             .dropWhile { line -> line.isBlank() }

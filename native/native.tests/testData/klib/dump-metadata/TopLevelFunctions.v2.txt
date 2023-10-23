@@ -1,0 +1,40 @@
+package <root> {
+    // Signature: /A|null[0]
+    annotation class A constructor() : Annotation
+    // Signature: /B|null[0]
+    annotation class B constructor() : Annotation
+    // Signature: /Foo|null[0]
+    class Foo constructor()
+    // Signature: /a|a(){}[0]
+    @A @B fun a()
+    // Signature: /e|e@Foo(){}[0]
+    fun Foo.e()
+    // Signature: /f1|f1(Foo){}[0]
+    fun f1(x: Foo)
+    // Signature: /f2|f2(Foo;Foo){}[0]
+    fun f2(x: Foo, y: Foo): Int
+    // Signature: /i1|i1(kotlin.Function0<Foo>){}[0]
+    inline fun i1(block: () -> Foo)
+    // Signature: /i2|i2(kotlin.Function0<Foo>){}[0]
+    inline fun i2(noinline block: () -> Foo)
+    // Signature: /i3|i3(kotlin.Function0<Foo>){}[0]
+    inline fun i3(crossinline block: () -> Foo)
+    // Signature: /i4|i4(kotlin.Function1<Foo,kotlin.Int>){}[0]
+    fun i4(block: (Foo) -> Int)
+    // Signature: /i5|i5(kotlin.Function2<Foo,Foo,kotlin.Int>){}[0]
+    fun i5(block: (Foo, Foo) -> Int)
+    // Signature: /i6|i6(kotlin.Function1<Foo,kotlin.Int>){}[0]
+    fun i6(block: Foo.() -> Int)
+    // Signature: /i7|i7(kotlin.Function2<Foo,Foo,kotlin.Int>){}[0]
+    fun i7(block: Foo.(Foo) -> Int)
+    // Signature: /t1|t1(Foo){0§<kotlin.Any?>}[0]
+    fun <T> t1(x: Foo)
+    // Signature: /t2|t2(0:0){0§<kotlin.Any?>}[0]
+    fun <T> t2(x: T)
+    // Signature: /t3|t3(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+    fun <T, F> t3(x: T, y: F)
+    // Signature: /t4|t4(0:0){0§<kotlin.Any?>}[0]
+    inline fun <reified T> t4(x: T)
+    // Signature: /t5|t5(0:0){0§<kotlin.Number>}[0]
+    fun <T : Number> t5(x: T)
+}

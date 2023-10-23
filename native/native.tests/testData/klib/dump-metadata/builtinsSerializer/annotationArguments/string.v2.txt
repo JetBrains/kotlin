@@ -1,0 +1,16 @@
+package test {
+    // Signature: test/C1|null[0]
+    @JustString(string = "kotlin") @StringArray(stringArray = {}) class C1 constructor()
+    // Signature: test/C2|null[0]
+    @StringArray(stringArray = {"java", ""}) class C2 constructor()
+    // Signature: test/JustString|null[0]
+    annotation class JustString constructor(string: String) : Annotation {
+        // Signature: test/JustString.string|{}string[0]
+        val string: String
+    }
+    // Signature: test/StringArray|null[0]
+    annotation class StringArray constructor(stringArray: Array<String>) : Annotation {
+        // Signature: test/StringArray.stringArray|{}stringArray[0]
+        val stringArray: Array<String>
+    }
+}

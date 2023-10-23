@@ -1,0 +1,6 @@
+package test {
+    // Signature: test/Annotation|null[0]
+    annotation class Annotation constructor() : Annotation
+    // Signature: test/foo|foo(kotlin.Int){}[0]
+    fun foo(@Annotation arg: Int)
+}

@@ -1,0 +1,18 @@
+package test {
+    // Signature: test/My|null[0]
+    enum class My private constructor() : Enum<My> {
+        // Signature: test/My.ALPHA|null[0]
+        enum entry ALPHA
+        // Signature: test/My.BETA|null[0]
+        enum entry BETA
+        // Signature: test/My.OMEGA|null[0]
+        enum entry OMEGA
+    }
+    // Signature: test/ann|null[0]
+    annotation class ann constructor(vararg m: My) : Annotation {
+        // Signature: test/ann.m|{}m[0]
+        val m: Array<out My>
+    }
+    // Signature: test/annotated|null[0]
+    @ann(m = {My.ALPHA, My.BETA}) annotation class annotated constructor() : Annotation
+}

@@ -1,0 +1,19 @@
+package <root> {
+    // Signature: /E|null[0]
+    enum class E private constructor(x: Int = ...) : Enum<E> {
+        // Signature: /E.A|null[0]
+        enum entry A
+        // Signature: /E.B|null[0]
+        enum entry B
+        // Signature: /E.C|null[0]
+        enum entry C
+        // Signature: /E.enumVal|{}enumVal[0]
+        val enumVal: Int = 0
+        // Signature: /E.enumVar|{}enumVar[0]
+        var enumVar: String
+        // Signature: /E.x|{}x[0]
+        val x: Int
+        // Signature: /E.enumFun|enumFun(){}[0]
+        open fun enumFun(): Int
+    }
+}

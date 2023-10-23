@@ -1,0 +1,6 @@
+package test {
+    // Signature: test/C|null[0]
+    class C constructor()
+    // Signature: test/builder|-5741056786925655007[0]
+    fun C.builder(c: C.() -> Unit)
+}

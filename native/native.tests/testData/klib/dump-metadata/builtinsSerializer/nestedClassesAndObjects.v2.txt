@@ -1,0 +1,46 @@
+package test {
+    // Signature: test/ClassA|null[0]
+    class ClassA constructor() {
+        // Signature: test/ClassA.classB|null[0]
+        class classB constructor() {
+            // Signature: test/ClassA.classB.memberFromB|memberFromB(){}[0]
+            fun memberFromB(): Int
+            // Signature: test/ClassA.classB.BC|null[0]
+            class BC constructor() {
+                // Signature: test/ClassA.classB.BC.memberFromBB|{}memberFromBB[0]
+                val memberFromBB: Int = 150
+            }
+            // Signature: test/ClassA.classB.BO|null[0]
+            object BO {
+                // Signature: test/ClassA.classB.BO.memberFromBO|{}memberFromBO[0]
+                val memberFromBO: Int = 175
+            }
+        }
+        // Signature: test/ClassA.classC|null[0]
+        inner class classC constructor() {
+            // Signature: test/ClassA.classC.memberFromC|{}memberFromC[0]
+            val memberFromC: Int = 200
+        }
+    }
+    // Signature: test/E|null[0]
+    class E constructor() {
+        // Signature: test/E.Companion|null[0]
+        companion object {
+            // Signature: test/E.Companion.stat|{}stat[0]
+            val stat: Int = 250
+            // Signature: test/E.Companion.D|null[0]
+            class D constructor() {
+                // Signature: test/E.Companion.D.memberFromD|{}memberFromD[0]
+                val memberFromD: Int = 275
+            }
+        }
+    }
+    // Signature: test/F|null[0]
+    class F constructor() {
+        // Signature: test/F.ObjA|null[0]
+        object ObjA {
+            // Signature: test/F.ObjA.memberFromObjA|{}memberFromObjA[0]
+            val memberFromObjA: Int = 300
+        }
+    }
+}

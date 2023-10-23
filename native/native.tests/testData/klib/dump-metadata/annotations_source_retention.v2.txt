@@ -1,0 +1,45 @@
+package test {
+    // Signature: test/AnnoBackingField|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoBackingField constructor() : Annotation
+    // Signature: test/AnnoClass|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoClass constructor() : Annotation
+    // Signature: test/AnnoConstructor|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoConstructor constructor() : Annotation
+    // Signature: test/AnnoConstructorParameter|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoConstructorParameter constructor() : Annotation
+    // Signature: test/AnnoDelegatedField|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoDelegatedField constructor() : Annotation
+    // Signature: test/AnnoFunction|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoFunction constructor() : Annotation
+    // Signature: test/AnnoFunctionExtensionReceiver|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoFunctionExtensionReceiver constructor() : Annotation
+    // Signature: test/AnnoFunctionParam|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoFunctionParam constructor() : Annotation
+    // Signature: test/AnnoGetter|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoGetter constructor() : Annotation
+    // Signature: test/AnnoProperty|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoProperty constructor() : Annotation
+    // Signature: test/AnnoPropertyExtensionReceiver|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoPropertyExtensionReceiver constructor() : Annotation
+    // Signature: test/AnnoSetParam|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoSetParam constructor() : Annotation
+    // Signature: test/AnnoSetParam2|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoSetParam2 constructor() : Annotation
+    // Signature: test/AnnoSetter|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoSetter constructor() : Annotation
+    // Signature: test/AnnoSetter2|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) annotation class AnnoSetter2 constructor() : Annotation
+    // Signature: test/Foo|null[0]
+    class Foo constructor(i: Int) {
+        // Signature: test/Foo.immutableProp|{}immutableProp[0]
+        val immutableProp: Int
+        // Signature: test/Foo.mutableProp|{}mutableProp[0]
+        var mutableProp: Int
+        // Signature: test/Foo.prop|{}prop[0]
+        var prop: Int
+    }
+    // Signature: test/extProp|@test.Foo{}extProp[0]
+    val Foo.extProp: Int
+    // Signature: test/extfun|extfun@test.Foo(kotlin.Int){}[0]
+    fun Foo.extfun(x: Int)
+}

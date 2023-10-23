@@ -39,7 +39,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
 
         val includeFrameworkArgs = TestCompilerArgs("-compiler-option", "-F${testDataDir.canonicalPath}")
         val klib1: KLIB = cinteropToLibrary(targets, def1File, buildDir, includeFrameworkArgs).assertSuccess().resultingArtifact
-        val metadata1 = klib1.dumpMetadata(kotlinNativeClassLoader.classLoader)
+        val metadata1 = klib1.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
 
         val expectedFiltered1Output = golden1File.readText()
         val actualFiltered1Output = filterContentsOutput(metadata1, " pod.Version|POD|class Pod")
@@ -47,7 +47,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
 
         val cinterop2ExtraArgs = TestCompilerArgs("-l", klib1.klibFile.canonicalPath, "-compiler-option", "-fmodules")
         val klib2: KLIB = cinteropToLibrary(targets, def2File, buildDir, includeFrameworkArgs + cinterop2ExtraArgs).assertSuccess().resultingArtifact
-        val metadata2 = klib2.dumpMetadata(kotlinNativeClassLoader.classLoader)
+        val metadata2 = klib2.dumpMetadata(kotlinNativeClassLoader.classLoader, false, null)
 
         val expectedFiltered2Output = golden2File.readText()
         val actualFiltered2Output = filterContentsOutput(metadata2, " pod.Version|POD|class Pod")

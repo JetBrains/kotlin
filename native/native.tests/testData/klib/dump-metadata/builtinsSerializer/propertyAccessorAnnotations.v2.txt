@@ -1,0 +1,15 @@
+package test {
+    // Signature: test/Anno|null[0]
+    annotation class Anno constructor(value: String) : Annotation {
+        // Signature: test/Anno.value|{}value[0]
+        val value: String
+    }
+    // Signature: test/v1|{}v1[0]
+    @Anno(value = "property") val v1: String = ""
+    // Signature: test/v2|{}v2[0]
+    var v2: String
+        // Signature: test/v2.<get-v2>|<get-v2>(){}[0]
+        @Anno(value = "getter") get
+        // Signature: test/v2.<set-v2>|<set-v2>(kotlin.String){}[0]
+        @Anno(value = "setter") set
+}

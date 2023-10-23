@@ -1,0 +1,17 @@
+package <root> {
+    // Signature: /Foo|null[0]
+    class Foo constructor() {
+        // Signature: /Foo.f1|3067719429478803475[0]
+        fun f1()
+        // Signature: /Foo.f2|998031826907343926[0]
+        infix fun f2(x: Int)
+        // Signature: /Foo.f3|-7352656899019660364[0]
+        suspend fun f3()
+        // Signature: /Foo.f4|-653369539400762817[0]
+        tailrec fun f4()
+        // Signature: /Foo.f5|136030160982396464[0]
+        fun f5(vararg x: Int)
+        // Signature: /Foo.plus|4955128566171430399[0]
+        operator fun plus(x: Int)
+    }
+}

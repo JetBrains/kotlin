@@ -1,0 +1,30 @@
+package test {
+    // Signature: test/C1|null[0]
+    @anno(x = "top level class") class C1 @anno(x = "constructor") constructor() {
+        // Signature: test/C1.p3|{}p3[0]
+        @anno(x = "member property") val p3: Nothing?
+        // Signature: test/C1.v4|@kotlin.Int{}v4[0]
+        @anno(x = "member extension property") val Int.v4: Int
+        // Signature: test/C1.f3|f3(kotlin.Int){}[0]
+        @anno(x = "member function") fun f3(@anno(x = "member function parameter") p: Int)
+        // Signature: test/C1.f4|f4@kotlin.String(){}[0]
+        @anno(x = "member extension function") fun String.f4()
+        // Signature: test/C1.C2|null[0]
+        @anno(x = "nested class") class C2 constructor()
+        // Signature: test/C1.Companion|null[0]
+        @anno(x = "companion object") companion object
+    }
+    // Signature: test/anno|null[0]
+    annotation class anno constructor(x: String) : Annotation {
+        // Signature: test/anno.x|{}x[0]
+        val x: String
+    }
+    // Signature: test/f1|f1(kotlin.Int){}[0]
+    @anno(x = "top level function") fun f1(@anno(x = "top level function parameter") p: Int)
+    // Signature: test/f2|f2@kotlin.Long(kotlin.Int){}[0]
+    @anno(x = "extension function") fun Long.f2(@anno(x = "extension function parameter") p: Int)
+    // Signature: test/p1|{}p1[0]
+    @anno(x = "top level property") val p1: Nothing?
+    // Signature: test/p2|@kotlin.Double{}p2[0]
+    @anno(x = "extension property") val Double.p2: Double
+}

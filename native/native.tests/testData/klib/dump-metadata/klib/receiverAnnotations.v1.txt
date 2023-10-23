@@ -1,0 +1,15 @@
+package test {
+    // Signature: test/A|null[0]
+    class A constructor() {
+        // Signature: test/A.bar|6925958872823381534[0]
+        @Ann val @receiver:Ann Int.bar: Int
+        // Signature: test/A.foo|-5711085108413366035[0]
+        @Ann fun @receiver:Ann Int.foo(@Ann arg: Int): Int
+    }
+    // Signature: test/Ann|null[0]
+    annotation class Ann constructor() : Annotation
+    // Signature: test/bar|6925958872823381534[0]
+    @Ann val @receiver:Ann Int.bar: Int
+    // Signature: test/foo|-5711085108413366035[0]
+    @Ann fun @receiver:Ann Int.foo(@Ann arg: Int): Int
+}

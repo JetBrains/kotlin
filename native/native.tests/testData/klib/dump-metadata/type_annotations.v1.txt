@@ -1,0 +1,14 @@
+package test {
+    // Signature: test/AnnoBinary|null[0]
+    @Retention(value = AnnotationRetention.BINARY) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoBinary constructor() : Annotation
+    // Signature: test/AnnoRuntime|null[0]
+    @Retention(value = AnnotationRetention.RUNTIME) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoRuntime constructor() : Annotation
+    // Signature: test/AnnoSource|null[0]
+    @Retention(value = AnnotationRetention.SOURCE) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoSource constructor() : Annotation
+    // Signature: test/withBinaryAnnotation|-5614294297255841421[0]
+    fun withBinaryAnnotation(id: @AnnoBinary Int)
+    // Signature: test/withRuntimeAnnotation|-6394651783725815393[0]
+    fun withRuntimeAnnotation(id: @AnnoRuntime Int)
+    // Signature: test/withSourceAnnotation|-44362520776994771[0]
+    fun withSourceAnnotation(id: Int)
+}

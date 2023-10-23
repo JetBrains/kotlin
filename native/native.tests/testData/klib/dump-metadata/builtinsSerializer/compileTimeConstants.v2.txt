@@ -1,0 +1,58 @@
+package test {
+    // Signature: test/Class|null[0]
+    class Class constructor() {
+        // Signature: test/Class.arrayConst|{}arrayConst[0]
+        val arrayConst: Any = {1.toByte(), 2.toByte()}
+        // Signature: test/Class.booleanConst|{}booleanConst[0]
+        val booleanConst: Boolean = true
+        // Signature: test/Class.byteConst|{}byteConst[0]
+        val byteConst: Byte = 10.toByte()
+        // Signature: test/Class.charConst|{}charConst[0]
+        val charConst: Char = \u0041 ('A')
+        // Signature: test/Class.doubleConst|{}doubleConst[0]
+        val doubleConst: Double = 3.0.toDouble()
+        // Signature: test/Class.enumConst|{}enumConst[0]
+        val enumConst: Weapon? = Weapon.ROCK
+        // Signature: test/Class.floatConst|{}floatConst[0]
+        val floatConst: Float = 2.0.toFloat()
+        // Signature: test/Class.intConst|{}intConst[0]
+        val intConst: Int = 30
+        // Signature: test/Class.longConst|{}longConst[0]
+        val longConst: Long = 40.toLong()
+        // Signature: test/Class.shortConst|{}shortConst[0]
+        val shortConst: Short = 20.toShort()
+        // Signature: test/Class.stringConst|{}stringConst[0]
+        val stringConst: String = "abcd"
+    }
+    // Signature: test/Weapon|null[0]
+    enum class Weapon private constructor() : Enum<Weapon> {
+        // Signature: test/Weapon.ROCK|null[0]
+        enum entry ROCK
+        // Signature: test/Weapon.PAPER|null[0]
+        enum entry PAPER
+        // Signature: test/Weapon.SCISSORS|null[0]
+        enum entry SCISSORS
+    }
+    // Signature: test/arrayConst|{}arrayConst[0]
+    val arrayConst: Any = {1.toByte(), 2.toByte()}
+    // Signature: test/booleanConst|{}booleanConst[0]
+    val booleanConst: Boolean = true
+    // Signature: test/byteConst|{}byteConst[0]
+    val byteConst: Byte = 10.toByte()
+    // Signature: test/charConst|{}charConst[0]
+    val charConst: Char = \u0041 ('A')
+    // Signature: test/doubleConst|{}doubleConst[0]
+    val doubleConst: Double = 3.0.toDouble()
+    // Signature: test/enumConst|{}enumConst[0]
+    val enumConst: Weapon? = Weapon.ROCK
+    // Signature: test/floatConst|{}floatConst[0]
+    val floatConst: Float = 2.0.toFloat()
+    // Signature: test/intConst|{}intConst[0]
+    val intConst: Int = 30
+    // Signature: test/longConst|{}longConst[0]
+    val longConst: Long = 40.toLong()
+    // Signature: test/shortConst|{}shortConst[0]
+    val shortConst: Short = 20.toShort()
+    // Signature: test/stringConst|{}stringConst[0]
+    val stringConst: String = "abcd"
+}
