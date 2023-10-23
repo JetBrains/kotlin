@@ -440,7 +440,7 @@ class FirElementSerializer private constructor(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(property)),
             ProtoEnumFlags.modality(modality),
-            ProtoBuf.MemberKind.DECLARATION,
+            property.memberKind(),
             property.isVar, hasGetter, hasSetter, hasConstant, property.isConst, property.isLateInit,
             property.isExternal, property.delegateFieldSymbol != null, property.isExpect
         )
@@ -490,6 +490,13 @@ class FirElementSerializer private constructor(
         extension.serializeProperty(property, builder, versionRequirementTable, local)
 
         return builder
+    }
+
+    private fun FirProperty.memberKind(): MemberKind {
+        return when (origin) {
+            FirDeclarationOrigin.Delegated -> MemberKind.DELEGATION
+            else -> MemberKind.DECLARATION
+        }
     }
 
     fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(session, function) {
