@@ -84,7 +84,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                 }
 
                 spec.parameters.configurationMetrics.add(project.provider {
-                    KotlinBuildStatsService.getInstance()?.collectGeneralConfigurationMetrics(project)
+                    KotlinBuildStatsService.getInstance()?.collectGeneralConfigurationMetrics(project, isProjectIsolationEnabled)
                 })
 
                 spec.parameters.configurationMetrics.add(project.provider {

@@ -83,6 +83,7 @@ class KotlinBuildStatHandler {
     internal fun collectGeneralConfigurationTimeMetrics(
         project: Project,
         sessionLogger: BuildSessionLogger,
+        isProjectIsolationEnabled: Boolean,
     ): MetricContainer {
         val configurationTimeMetrics = MetricContainer()
 
@@ -90,11 +91,12 @@ class KotlinBuildStatHandler {
             val gradle = project.gradle
             configurationTimeMetrics.put(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
             configurationTimeMetrics.put(StringMetrics.GRADLE_VERSION, gradle.gradleVersion)
-            gradle.taskGraph.whenReady { taskExecutionGraph ->
-                val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
-                configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+            if (!isProjectIsolationEnabled) {
+                gradle.taskGraph.whenReady { taskExecutionGraph ->
+                    val executedTaskNames = taskExecutionGraph.allTasks.map { it.name }.distinct()
+                    configurationTimeMetrics.put(BooleanMetrics.MAVEN_PUBLISH_EXECUTED, executedTaskNames.contains("install"))
+                }
             }
-
         }
         sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
 
