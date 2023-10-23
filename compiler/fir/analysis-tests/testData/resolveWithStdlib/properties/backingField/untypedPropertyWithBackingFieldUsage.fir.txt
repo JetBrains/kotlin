@@ -1,6 +1,6 @@
 FILE: untypedPropertyWithBackingFieldUsage.kt
-    public final val simpleNoTypeBlock: <ERROR TYPE REF: Unresolved name: field>
-        public get(): <ERROR TYPE REF: Unresolved name: field> {
+    public final val simpleNoTypeBlock: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
+        public get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate> {
             ^ <Unresolved name: field>#
         }
     public final val simpleNoTypeExpression: <ERROR TYPE REF: Unresolved name: field>
@@ -15,9 +15,9 @@ FILE: untypedPropertyWithBackingFieldUsage.kt
         public get(): R|kotlin/Int| {
             ^ F|/simpleTypeExpression|
         }
-    public final val withFieldNoTypeBlock: R|kotlin/Int|
+    public final val withFieldNoTypeBlock: <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate>
         private <explicit backing field>: R|kotlin/Double| = Double(3.14)
-        public get(): R|kotlin/Int| {
+        public get(): <ERROR TYPE REF: Cannot infer variable type without initializer / getter / delegate> {
             ^ <Unresolved name: field>#.R|kotlin/text/toInt|()
         }
     public final val withFieldNoTypeExpression: R|kotlin/Int|

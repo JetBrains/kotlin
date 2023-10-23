@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -1211,7 +1212,7 @@ open class FirDeclarationsResolveTransformer(
                     val unwrappedInitializer = initializer.unwrapSmartcastExpression()
                     unwrappedInitializer.resolvedType.toFirResolvedTypeRef()
                 }
-                variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> variable.getter?.returnTypeRef
+                variable.getter?.body is FirSingleExpressionBlock -> variable.getter?.returnTypeRef
                 else -> null
             }
 

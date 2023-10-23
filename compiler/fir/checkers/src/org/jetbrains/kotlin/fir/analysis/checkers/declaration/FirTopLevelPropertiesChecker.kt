@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
 
 // See old FE's [DeclarationsChecker]
@@ -85,7 +86,7 @@ internal fun checkPropertyInitializer(
         val returnTypeRef = property.returnTypeRef
         if (property.initializer == null &&
             property.delegate == null &&
-            returnTypeRef is FirErrorTypeRef && returnTypeRef.diagnostic is ConeLocalVariableNoTypeOrInitializer
+            returnTypeRef.noExplicitType()
         ) {
             property.source?.let {
                 reporter.reportOn(it, FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, context)
@@ -171,7 +172,14 @@ internal fun checkPropertyInitializer(
                         )
                     }
                 }
+            } else if (
+                property.returnTypeRef.noExplicitType() &&
+                !property.hasExplicitBackingField &&
+                (property.getter is FirDefaultPropertyAccessor || (property.getter?.hasBody == true && property.getter?.returnTypeRef?.noExplicitType() == true))
+            ) {
+                reporter.reportOn(propertySource, FirErrors.PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, context)
             }
+
             if (property.isLateInit) {
                 if (isExpect) {
                     reporter.reportOn(propertySource, FirErrors.EXPECTED_LATEINIT_PROPERTY, context)
@@ -185,6 +193,10 @@ internal fun checkPropertyInitializer(
             }
         }
     }
+}
+
+private fun FirTypeRef.noExplicitType(): Boolean {
+    return this is FirErrorTypeRef && diagnostic is ConeLocalVariableNoTypeOrInitializer
 }
 
 private fun reportMustBeInitialized(

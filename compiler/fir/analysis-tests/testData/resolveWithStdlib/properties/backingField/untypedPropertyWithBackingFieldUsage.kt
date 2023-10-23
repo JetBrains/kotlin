@@ -1,4 +1,4 @@
-val simpleNoTypeBlock
+<!PROPERTY_WITH_NO_TYPE_NO_INITIALIZER!>val simpleNoTypeBlock<!>
     get() {
         return <!UNRESOLVED_REFERENCE!>field<!>
     }
