@@ -16,6 +16,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -80,6 +81,7 @@ class KotlinCompilationNpmResolver(
             it.jsIrCompilation.set(compilation is KotlinJsIrCompilation)
             it.npmProjectName.set(npmProject.name)
             it.npmProjectMain.set(npmProject.main)
+            it.esModules.set(compilation.compilerOptions.options.moduleKind.get() == JsModuleKind.MODULE_ES)
         }.also { packageJsonTask ->
             project.dependencies.attributesSchema {
                 it.attribute(publicPackageJsonAttribute)

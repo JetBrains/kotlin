@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Project
 import org.gradle.process.ExecSpec
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -31,7 +32,12 @@ val KotlinJsCompilation.npmProject: NpmProject
 open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Serializable {
     val compilationName = compilation.disambiguatedName
 
-    private val extension = if (compilation.platformType == KotlinPlatformType.wasm) ".mjs" else ".js"
+    private val extension by lazy {
+        if (
+            compilation.platformType == KotlinPlatformType.wasm ||
+            compilation.kotlinOptions.moduleKind == JsModuleKind.MODULE_ES.kind
+        ) ".mjs" else ".js"
+    }
 
     val name: String by lazy {
         buildNpmProjectName()

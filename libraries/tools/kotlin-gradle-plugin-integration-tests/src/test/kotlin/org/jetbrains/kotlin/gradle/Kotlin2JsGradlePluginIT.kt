@@ -624,6 +624,61 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
         }
     }
 
+
+    @DisplayName("package json contains correct extension for ES-modules")
+    @GradleTest
+    fun testPackageJsonWithEsModules(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            subProject("app").buildGradleKts.modify {
+                it + """
+                    |
+                    |kotlin.target.useEsModules()
+                    |
+                """.trimMargin()
+            }
+
+            build(":app:packageJson") {
+                val packageJson = projectPath
+                    .resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let {
+                        Gson().fromJson(it.readText(), PackageJson::class.java)
+                    }
+
+                assertEquals(packageJson.main, "kotlin/kotlin-js-browser-app.mjs")
+
+            }
+        }
+    }
+
+    @DisplayName("public package json contains correct extension for ES-modules")
+    @GradleTest
+    fun testPublicPackageJsonWithEsModules(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            subProject("app").buildGradleKts.modify {
+                it + """
+                    |
+                    |kotlin.target.useEsModules()
+                    |
+                """.trimMargin()
+            }
+
+            build(":app:publicPackageJson") {
+                val packageJson = subProject("app").projectPath
+                    .resolve("build/tmp/publicPackageJson")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let {
+                        Gson().fromJson(it.readText(), PackageJson::class.java)
+                    }
+
+                assertEquals(packageJson.main, "kotlin-js-browser-app.mjs")
+
+            }
+        }
+    }
+
     @DisplayName("Multiple targets works without clash")
     @GradleTest
     fun testMultipleJsTargets(gradleVersion: GradleVersion) {
