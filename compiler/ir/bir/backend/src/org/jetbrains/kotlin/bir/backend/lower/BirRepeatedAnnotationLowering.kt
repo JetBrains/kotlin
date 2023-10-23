@@ -124,12 +124,12 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
         val containerClass = BirClass.build {
             kind = ClassKind.ANNOTATION_CLASS
             name = Name.identifier(JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME)
-        }.apply {
+            val clazz = this@build
             thisReceiver = BirValueParameter.build {
                 name = SpecialNames.THIS
                 origin = IrDeclarationOrigin.INSTANCE_RECEIVER
                 index = UNDEFINED_PARAMETER_INDEX
-                type = this@apply.typeWithParameters(typeParameters)
+                type = clazz.typeWithParameters(typeParameters)
             }
             superTypes = listOf(birBuiltIns.annotationType)
         }
