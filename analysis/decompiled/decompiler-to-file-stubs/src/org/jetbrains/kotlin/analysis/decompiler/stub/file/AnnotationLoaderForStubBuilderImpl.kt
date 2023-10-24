@@ -40,11 +40,19 @@ class AnnotationLoaderForStubBuilderImpl(
         return annotations.map { loadAnnotation(it, container.nameResolver) }
     }
 
-    override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<AnnotationWithArgs> =
-        emptyList()
+    override fun loadPropertyBackingFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<AnnotationWithArgs> {
+        val annotations = protocol.propertyBackingFieldAnnotation?.let { proto.getExtension(it) }.orEmpty()
+        return annotations.map { annotationProto ->
+            loadAnnotation(annotationProto, container.nameResolver)
+        }
+    }
 
-    override fun loadPropertyDelegateFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<AnnotationWithArgs> =
-        emptyList()
+    override fun loadPropertyDelegateFieldAnnotations(container: ProtoContainer, proto: ProtoBuf.Property): List<AnnotationWithArgs> {
+        val annotations = protocol.propertyDelegatedFieldAnnotation?.let {proto.getExtension(it) }.orEmpty()
+        return annotations.map { annotationProto ->
+            loadAnnotation(annotationProto, container.nameResolver)
+        }
+    }
 
     override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<AnnotationWithArgs> =
         proto.getExtension(protocol.enumEntryAnnotation).orEmpty().map { loadAnnotation(it, container.nameResolver) }
@@ -62,7 +70,21 @@ class AnnotationLoaderForStubBuilderImpl(
         container: ProtoContainer,
         proto: MessageLite,
         kind: AnnotatedCallableKind
-    ): List<AnnotationWithArgs> = emptyList()
+    ): List<AnnotationWithArgs> {
+        val annotations = when (proto) {
+            is ProtoBuf.Function -> protocol.functionExtensionReceiverAnnotation?.let { proto.getExtension(it) }
+            is ProtoBuf.Property -> when (kind) {
+                AnnotatedCallableKind.PROPERTY, AnnotatedCallableKind.PROPERTY_GETTER, AnnotatedCallableKind.PROPERTY_SETTER -> {
+                    protocol.propertyExtensionReceiverAnnotation?.let { proto.getExtension(it) }
+                }
+                else -> error("Unsupported callable kind with property proto for receiver annotations: $kind")
+            }
+            else -> error("Unknown message: $proto")
+        }.orEmpty()
+        return annotations.map { annotationProto ->
+            loadAnnotation(annotationProto, container.nameResolver)
+        }
+    }
 
     override fun loadTypeAnnotations(
         proto: ProtoBuf.Type,
