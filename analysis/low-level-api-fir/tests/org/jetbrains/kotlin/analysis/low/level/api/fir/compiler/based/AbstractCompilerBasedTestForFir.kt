@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
-import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -84,17 +85,16 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
 
         private fun analyzeDependsOnModule(module: TestModule): FirOutputPartForDependsOnModule {
             val moduleInfoProvider = testServices.ktModuleProvider
-            val ktModule = moduleInfoProvider.getModule(module.name) as KtSourceModuleByCompilerConfiguration
+            val ktModule = moduleInfoProvider.getModule(module.name) as KtModuleByCompilerConfiguration
 
             val project = ktModule.project
-            val firResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(ktModule)
+            val firResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(ktModule as KtModule)
 
-            val allFirFiles =
-                module.files.filter { it.isKtFile }.zip(
-                    ktModule.psiFiles
-                        .filterIsInstance<KtFile>()
-                        .map { psiFile -> psiFile.getOrBuildFirFile(firResolveSession) }
-                )
+            val allFirFiles = module.files.filter { it.isKtFile }.zip(
+                ktModule.psiFiles
+                    .filterIsInstance<KtFile>()
+                    .map { psiFile -> psiFile.getOrBuildFirFile(firResolveSession) }
+            )
 
             val diagnosticCheckerFilter = if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
                 DiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS

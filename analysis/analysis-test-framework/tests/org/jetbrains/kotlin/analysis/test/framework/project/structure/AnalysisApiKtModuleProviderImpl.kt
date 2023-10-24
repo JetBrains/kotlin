@@ -53,6 +53,7 @@ val TestServices.ktModuleProvider: AnalysisApiKtModuleProvider by TestServices.t
 fun List<KtModuleWithFiles>.associateByName(): Map<String, KtModuleWithFiles> {
     return associateBy { (ktModule, _) ->
         when (ktModule) {
+            is KtModuleByCompilerConfiguration -> ktModule.moduleName
             is KtSourceModule -> ktModule.moduleName
             is KtLibraryModule -> ktModule.libraryName
             is KtLibrarySourceModule -> ktModule.libraryName

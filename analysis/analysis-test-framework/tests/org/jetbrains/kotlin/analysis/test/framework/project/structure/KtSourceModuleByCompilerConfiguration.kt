@@ -110,6 +110,16 @@ class KtSourceModuleByCompilerConfiguration(
         TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, psiFiles.filterIsInstance<KtFile>())
 }
 
+class KtScriptModuleByCompilerConfiguration(
+    project: Project,
+    testModule: TestModule,
+    override val file: KtFile,
+    testServices: TestServices,
+) : KtModuleByCompilerConfiguration(project, testModule, listOf(file), testServices), KtScriptModule {
+    override val ktModule: KtModule get() = this
+    override val contentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
+}
+
 class KtLibraryModuleByCompilerConfiguration(
     project: Project,
     testModule: TestModule,
