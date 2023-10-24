@@ -574,16 +574,6 @@ Warning: This mode is not backward compatible and might cause compilation errors
         }
 
     @Argument(
-        value = "-Xbuiltins-from-sources",
-        description = "Compile built-ins from sources."
-    )
-    var builtInsFromSources = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xexpect-actual-classes",
         description = """'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
 Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning."""
@@ -756,7 +746,6 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             )
             put(AnalysisFlags.extendedCompilerChecks, extendedCompilerChecks)
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
-            put(AnalysisFlags.builtInsFromSources, builtInsFromSources)
             put(AnalysisFlags.muteExpectActualClassesWarning, expectActualClasses)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
             put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)

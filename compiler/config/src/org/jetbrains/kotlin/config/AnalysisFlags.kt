@@ -49,9 +49,6 @@ object AnalysisFlags {
     val allowKotlinPackage by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val builtInsFromSources by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val muteExpectActualClassesWarning by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic

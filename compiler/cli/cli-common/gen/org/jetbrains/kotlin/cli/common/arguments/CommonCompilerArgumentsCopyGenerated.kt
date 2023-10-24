@@ -15,7 +15,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.apiVersion = from.apiVersion
     to.autoAdvanceApiVersion = from.autoAdvanceApiVersion
     to.autoAdvanceLanguageVersion = from.autoAdvanceLanguageVersion
-    to.builtInsFromSources = from.builtInsFromSources
     to.checkPhaseConditions = from.checkPhaseConditions
     to.checkStickyPhaseConditions = from.checkStickyPhaseConditions
     to.commonSources = from.commonSources?.copyOf()
