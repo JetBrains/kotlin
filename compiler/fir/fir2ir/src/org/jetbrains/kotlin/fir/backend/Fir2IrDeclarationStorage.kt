@@ -269,6 +269,7 @@ class Fir2IrDeclarationStorage(
         return cachedIrCallable
     }
 
+    @GetOrCreateSensitiveAPI
     fun getOrCreateIrFunction(
         function: FirFunction,
         irParent: IrDeclarationParent?,
@@ -279,6 +280,7 @@ class Fir2IrDeclarationStorage(
         return getOrCreateIrFunction(function, { irParent }, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
     }
 
+    @GetOrCreateSensitiveAPI
     private fun getOrCreateIrFunction(
         function: FirFunction,
         irParent: () -> IrDeclarationParent?,
@@ -301,7 +303,6 @@ class Fir2IrDeclarationStorage(
         return createAndCacheIrFunction(function, irParent(), predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
     }
 
-    @LeakedDeclarationCaches
     fun createAndCacheIrFunction(
         function: FirFunction,
         irParent: IrDeclarationParent?,
@@ -874,6 +875,7 @@ class Fir2IrDeclarationStorage(
                 getIrConstructorSymbol(fir.symbol)
             }
             else -> {
+                @OptIn(GetOrCreateSensitiveAPI::class)
                 getOrCreateIrFunction(
                     fir,
                     { findIrParent(fir, fakeOverrideOwnerLookupTag) },
@@ -1176,6 +1178,13 @@ internal var FirProperty.isStubPropertyForPureField: Boolean? by FirDeclarationD
  */
 @RequiresOptIn
 annotation class LeakedDeclarationCaches
+
+/**
+ * This annotation indicates that an annotated method can create a declaration in ad-hock way, so it should be used with caution
+ * In most cases, it's recommended to use method which return symbol or which forcefully creates a declaration
+ */
+@RequiresOptIn
+annotation class GetOrCreateSensitiveAPI
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
 internal fun <D : IrDeclaration> IrBindableSymbol<*, D>.ownerIfBound(): D? {

@@ -173,6 +173,7 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
             }
             SymbolKind.FUNCTION_SYMBOL -> {
                 val firSimpleFunction = firDeclaration as FirSimpleFunction
+                @OptIn(GetOrCreateSensitiveAPI::class)
                 declarationStorage.getOrCreateIrFunction(firSimpleFunction, parent)
             }
             SymbolKind.PROPERTY_SYMBOL -> {

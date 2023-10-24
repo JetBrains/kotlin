@@ -195,6 +195,7 @@ class Fir2IrLazyClass(
                         symbol.containingClassLookupTag() != ownerLookupTag -> {}
                         symbol.isAbstractMethodOfAny() -> {}
                         else -> {
+                            @OptIn(GetOrCreateSensitiveAPI::class)
                             result += declarationStorage.getOrCreateIrFunction(symbol.fir, this, origin)
                         }
                     }

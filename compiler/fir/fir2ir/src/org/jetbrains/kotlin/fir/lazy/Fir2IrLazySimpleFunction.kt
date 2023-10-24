@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.GetOrCreateSensitiveAPI
 import org.jetbrains.kotlin.fir.backend.contextReceiversForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrCallableDeclarationsGenerator
 import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenFunctionSymbols
@@ -110,6 +111,7 @@ class Fir2IrLazySimpleFunction(
 
     override val initialSignatureFunction: IrFunction? by lazy {
         val originalFunction = fir.initialSignatureAttr as? FirFunction ?: return@lazy null
+        @OptIn(GetOrCreateSensitiveAPI::class)
         declarationStorage.getOrCreateIrFunction(originalFunction, parent).also {
             check(it !== this) { "Initial function can not be the same as remapped function" }
         }

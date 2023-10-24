@@ -214,7 +214,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         firSubClass: FirClass,
         delegateOverride: FirSimpleFunction
     ): IrSimpleFunction {
-        val delegateFunction = declarationStorage.getOrCreateIrFunction(
+        val delegateFunction = declarationStorage.createAndCacheIrFunction(
             delegateOverride, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
             fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
         )

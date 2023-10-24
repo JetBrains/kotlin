@@ -125,6 +125,7 @@ class Fir2IrLazyPropertyAccessor(
 
     override val initialSignatureFunction: IrFunction? by lazy {
         val originalFirFunction = (fir as? FirSyntheticPropertyAccessor)?.delegate ?: return@lazy null
+        @OptIn(GetOrCreateSensitiveAPI::class)
         declarationStorage.getOrCreateIrFunction(originalFirFunction, parent)
     }
 

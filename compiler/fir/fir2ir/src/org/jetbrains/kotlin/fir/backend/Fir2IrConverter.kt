@@ -458,6 +458,9 @@ class Fir2IrConverter(
         }
     }
 
+    /**
+     * This function creates IR declarations for callable members without filling their body
+     */
     private fun processMemberDeclaration(
         declaration: FirDeclaration,
         containingClass: FirClass?,
@@ -508,7 +511,7 @@ class Fir2IrConverter(
                 }
             }
             is FirSimpleFunction -> {
-                declarationStorage.getOrCreateIrFunction(declaration, parent, isLocal = isInLocalClass)
+                declarationStorage.createAndCacheIrFunction(declaration, parent, isLocal = isInLocalClass)
             }
             is FirProperty -> {
                 if (
