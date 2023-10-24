@@ -10,13 +10,23 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.lower.BirJvmStaticInObjectLowering
+import org.jetbrains.kotlin.bir.backend.lower.BirProvisionalFunctionExpressionLowering
 import org.jetbrains.kotlin.bir.backend.lower.BirRepeatedAnnotationLowering
 import org.jetbrains.kotlin.bir.backend.lower.BirTypeAliasAnnotationMethodsLowering
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import kotlin.system.exitProcess
+import org.jetbrains.kotlin.ir.util.transformFlat
+import kotlin.time.DurationUnit
+import kotlin.time.measureTimedValue
+
+private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
+    ::BirJvmStaticInObjectLowering,
+    ::BirRepeatedAnnotationLowering,
+    ::BirTypeAliasAnnotationMethodsLowering,
+)
 
 private val excludedStandardPhases = setOf<String>()
 
@@ -25,30 +35,47 @@ fun lowerWithBir(
     context: JvmBackendContext,
     irModuleFragment: IrModuleFragment,
 ) {
-    val standardPhases = phases.getNamedSubphases()
-    val newPhases = standardPhases
-        .filter { it.first == 1 }
-        .map { it.second }
-        .toMutableList() as MutableList<CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>>
+    val newPhases = reconstructPhases(phases, context.phaseConfig.needProfiling)
 
-    val idx = newPhases.indexOfFirst { (it as AnyNamedPhase).name == "FileClass" }
     val birPhases = listOf<AbstractNamedCompilerPhase<JvmBackendContext, *, *>>(
         ConvertIrToBirPhase(
             "Convert IR to BIR",
             "Experimental phase to test alternative IR architecture",
+            context.phaseConfig.needProfiling,
         ),
         NamedCompilerPhase(
             "Run BIR lowerings",
             "Experimental phase to test alternative IR architecture",
             lower = BirLowering,
-        )
+        ),
+        ConvertBirToIrPhase(
+            "Convert lowered BIR back to IR",
+            "Experimental phase to test alternative IR architecture",
+        ),
     )
-    newPhases.addAll(idx + 1, birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>)
+    newPhases.addAll(
+        newPhases.indexOfFirst { (it as AnyNamedPhase).name == "FileClass" } + 1,
+        birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
+    )
+
+    /*newPhases.add(
+        newPhases.indexOfFirst { (it as AnyNamedPhase).name == "FileClass" } + 1,
+        CompilerPhase("Terminate", "Goodbay", lower = )
+    )*/
 
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
-    val phaseConfig = PhaseConfig(compoundPhase)
+    val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
+        enabled += compoundPhase.toPhaseMap().values.toSet()
+        verbose += context.phaseConfig.verbose
+        toDumpStateBefore += context.phaseConfig.toDumpStateBefore
+        toDumpStateAfter += context.phaseConfig.toDumpStateAfter
+        dumpToDirectory = context.phaseConfig.dumpToDirectory
+        dumpOnlyFqName = context.phaseConfig.dumpOnlyFqName
+        checkConditions = context.phaseConfig.checkConditions
+        checkStickyConditions = context.phaseConfig.checkStickyConditions
+    }.build()
 
-    val standardPhasesByName = standardPhases.associate { it.second.name to it.second }
+    val standardPhasesByName = newPhases.associateBy { (it as AnyNamedPhase).name }
     excludedStandardPhases.forEach {
         val phase = standardPhasesByName[it] as AnyNamedPhase
         phaseConfig.disable(phase)
@@ -57,13 +84,103 @@ fun lowerWithBir(
     compoundPhase.invokeToplevel(phaseConfig, context, irModuleFragment)
 }
 
-private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
-    ::BirJvmStaticInObjectLowering,
-    ::BirRepeatedAnnotationLowering,
-    ::BirTypeAliasAnnotationMethodsLowering,
-)
+private fun reconstructPhases(
+    phases: SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment>,
+    profile: Boolean,
+): MutableList<CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>> {
+    val standardPhases = phases.getNamedSubphases()
+    val newPhases = standardPhases
+        .filter { it.first == 1 }
+        .map { it.second }
+        .toMutableList() as MutableList<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
 
-private class ConvertIrToBirPhase(name: String, description: String) :
+    newPhases.transformFlat { topPhase ->
+        if (topPhase.name == "PerformByIrFile") {
+            val filePhases = topPhase.getNamedSubphases()
+                .filter { it.first == 1 }
+                .map { it.second as NamedCompilerPhase<JvmBackendContext, IrFile> }
+
+            val lower = CustomPerFileAggregateLoweringPhase(filePhases, profile)
+            listOf(NamedCompilerPhase(topPhase.name, topPhase.description, lower = lower))
+        } else {
+            val lower = object : SameTypeCompilerPhase<JvmBackendContext, IrModuleFragment> {
+                override fun invoke(
+                    phaseConfig: PhaseConfigurationService,
+                    phaserState: PhaserState<IrModuleFragment>,
+                    context: JvmBackendContext,
+                    input: IrModuleFragment,
+                ): IrModuleFragment {
+                    topPhase.runBefore(phaseConfig, phaserState, context, input)
+                    context.inVerbosePhase = phaseConfig.isVerbose(topPhase)
+
+                    invokePhaseMeasuringTime(profile, topPhase.name) {
+                        topPhase.phaseBody(phaseConfig, phaserState, context, input)
+                    }
+
+                    topPhase.runAfter(phaseConfig, phaserState, context, input, input)
+                    return input
+                }
+            }
+
+            listOf(NamedCompilerPhase(topPhase.name, topPhase.description, lower = lower))
+        }
+    }
+
+    return newPhases as MutableList<CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>>
+}
+
+class CustomPerFileAggregateLoweringPhase(
+    private val filePhases: List<NamedCompilerPhase<JvmBackendContext, IrFile>>,
+    private val profile: Boolean,
+) : SameTypeCompilerPhase<JvmBackendContext, IrModuleFragment> {
+    override fun invoke(
+        phaseConfig: PhaseConfigurationService,
+        phaserState: PhaserState<IrModuleFragment>,
+        context: JvmBackendContext,
+        input: IrModuleFragment,
+    ): IrModuleFragment {
+        val filePhaserState = phaserState.changePhaserStateType<IrModuleFragment, IrFile>()
+        for (filePhase in filePhases) {
+            if (phaseConfig.isEnabled(filePhase)) {
+                for (irFile in input.files) {
+                    filePhase.runBefore(phaseConfig, filePhaserState, context, irFile)
+                }
+                context.inVerbosePhase = phaseConfig.isVerbose(filePhase)
+
+                invokePhaseMeasuringTime(profile, (filePhase as? NamedCompilerPhase<*, *>)?.name ?: filePhase.javaClass.simpleName) {
+                    for (irFile in input.files) {
+                        filePhase.phaseBody(phaseConfig, filePhaserState, context, irFile)
+                    }
+                }
+
+                for (irFile in input.files) {
+                    filePhase.runAfter(phaseConfig, filePhaserState, context, irFile, irFile)
+                }
+
+                phaserState.alreadyDone.add(filePhase)
+                phaserState.phaseCount++
+            } else {
+                for (irFile in input.files) {
+                    filePhase.outputIfNotEnabled(phaseConfig, filePhaserState, context, irFile)
+                }
+            }
+        }
+
+        return input
+    }
+
+    override fun getNamedSubphases(startDepth: Int): List<Pair<Int, AbstractNamedCompilerPhase<JvmBackendContext, *, *>>> {
+        return filePhases.map { startDepth + 1 to it }
+    }
+}
+
+private fun <R> invokePhaseMeasuringTime(profile: Boolean, name: String, block: () -> R): R {
+    val (result, time) = measureTimedValue(block)
+    println("Phase $name: ${time.toString(DurationUnit.MILLISECONDS, 2)}")
+    return result
+}
+
+private class ConvertIrToBirPhase(name: String, description: String, private val profile: Boolean) :
     SimpleNamedCompilerPhase<JvmBackendContext, IrModuleFragment, BirCompilationBundle>(name, description) {
     override fun phaseBody(context: JvmBackendContext, input: IrModuleFragment): BirCompilationBundle {
         val dynamicPropertyManager = BirElementDynamicPropertyManager()
@@ -92,13 +209,12 @@ private class ConvertIrToBirPhase(name: String, description: String) :
 
         val birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
 
-        countElements(birModule)
+        warmupLowerings(birModule)
 
-        return BirCompilationBundle(birModule, birContext)
+        return BirCompilationBundle(birModule, birContext, input, profile)
     }
 
-
-    private fun countElements(root: BirElement): Int {
+    private fun warmupLowerings(root: BirElement): Int {
         var count = 0
         root.accept {
             count++
@@ -117,7 +233,12 @@ private class ConvertIrToBirPhase(name: String, description: String) :
     }
 }
 
-private class BirCompilationBundle(val birModule: BirModuleFragment, val backendContext: JvmBirBackendContext)
+private class BirCompilationBundle(
+    val birModule: BirModuleFragment,
+    val backendContext: JvmBirBackendContext,
+    val originalIrModuleFragment: IrModuleFragment,
+    val profile: Boolean,
+)
 
 private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompilationBundle> {
     override fun invoke(
@@ -127,15 +248,37 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         input: BirCompilationBundle,
     ): BirCompilationBundle {
         val compiledBir = input.backendContext.compiledBir
-        compiledBir.applyNewRegisteredIndices()
-        compiledBir.reindexAllElements()
+        val profile = input.profile
 
-        for (phase in input.backendContext.loweringPhases) {
-            println("Running BIR phase ${phase.javaClass.name}")
-            phase(input.birModule)
+        invokePhaseMeasuringTime(profile, "!BIR - applyNewRegisteredIndices") {
+            compiledBir.applyNewRegisteredIndices()
+        }
+        invokePhaseMeasuringTime(profile, "!BIR - reindexAllElements") {
+            compiledBir.reindexAllElements()
         }
 
-        exitProcess(0)
+        for (phase in input.backendContext.loweringPhases) {
+            invokePhaseMeasuringTime(profile, "!BIR - ${phase.javaClass.simpleName}") {
+                phase(input.birModule)
+            }
+        }
+
         return input
+    }
+}
+
+private class ConvertBirToIrPhase(name: String, description: String) :
+    SimpleNamedCompilerPhase<JvmBackendContext, BirCompilationBundle, IrModuleFragment>(name, description) {
+    override fun phaseBody(context: JvmBackendContext, input: BirCompilationBundle): IrModuleFragment {
+        return input.originalIrModuleFragment
+    }
+
+    override fun outputIfNotEnabled(
+        phaseConfig: PhaseConfigurationService,
+        phaserState: PhaserState<BirCompilationBundle>,
+        context: JvmBackendContext,
+        input: BirCompilationBundle,
+    ): IrModuleFragment {
+        return input.originalIrModuleFragment
     }
 }
