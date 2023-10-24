@@ -375,6 +375,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    @GetOrCreateSensitiveAPI
     fun getOrCreateIrConstructor(
         constructor: FirConstructor,
         irParent: IrClass,
@@ -384,6 +385,7 @@ class Fir2IrDeclarationStorage(
         return getOrCreateIrConstructor(constructor, { irParent }, predefinedOrigin, isLocal)
     }
 
+    @GetOrCreateSensitiveAPI
     private fun getOrCreateIrConstructor(
         constructor: FirConstructor,
         irParent: () -> IrClass,
@@ -391,6 +393,15 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
     ): IrConstructor {
         getCachedIrConstructorSymbol(constructor)?.ownerIfBound()?.let { return it }
+        return createAndCacheIrConstructor(constructor, irParent, predefinedOrigin, isLocal)
+    }
+
+    fun createAndCacheIrConstructor(
+        constructor: FirConstructor,
+        irParent: () -> IrClass,
+        predefinedOrigin: IrDeclarationOrigin? = null,
+        isLocal: Boolean = false,
+    ): IrConstructor {
         // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
         return callablesGenerator.createIrConstructor(constructor, irParent(), predefinedOrigin, isLocal)
     }
@@ -400,6 +411,7 @@ class Fir2IrDeclarationStorage(
         constructorCache[constructor] = irConstructor.symbol
     }
 
+    @OptIn(GetOrCreateSensitiveAPI::class)
     fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
         val fir = firConstructorSymbol.fir
         return getOrCreateIrConstructor(fir, { findIrParent(fir, fakeOverrideOwnerLookupTag = null) as IrClass }).symbol

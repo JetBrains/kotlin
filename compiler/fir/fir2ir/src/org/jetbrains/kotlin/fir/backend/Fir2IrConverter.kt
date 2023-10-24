@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.FakeOverrideRebuilder
 import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
@@ -233,7 +234,13 @@ class Fir2IrConverter(
         irClass.declarations.addAll(classifierStorage.getFieldsWithContextReceiversForClass(irClass, klass))
 
         val irConstructor = klass.primaryConstructorIfAny(session)?.let {
-            declarationStorage.getOrCreateIrConstructor(it.fir, irClass, isLocal = klass.isLocal)
+            if (klass.classKind == ClassKind.ANNOTATION_CLASS) {
+                // TODO: this branch should be removed after fix of KT-62856
+                @OptIn(GetOrCreateSensitiveAPI::class)
+                declarationStorage.getOrCreateIrConstructor(it.fir, irClass, isLocal = klass.isLocal)
+            } else {
+                declarationStorage.createAndCacheIrConstructor(it.fir, { irClass }, isLocal = klass.isLocal)
+            }
         }
         // At least on enum entry creation we may need a default constructor, so ctors should be converted first
         for (declaration in syntheticPropertiesLast(allDeclarations)) {
@@ -532,7 +539,14 @@ class Fir2IrConverter(
                 }
             }
             is FirConstructor -> if (!declaration.isPrimary) {
-                declarationStorage.getOrCreateIrConstructor(declaration, parent as IrClass, isLocal = isInLocalClass)
+                // the primary constructor was already created in `processClassMembers` function
+                if (containingClass?.classKind == ClassKind.ANNOTATION_CLASS) {
+                    // TODO: this branch should be removed after fix of KT-62856
+                    @OptIn(GetOrCreateSensitiveAPI::class)
+                    declarationStorage.getOrCreateIrConstructor(declaration, parent as IrClass, isLocal = isInLocalClass)
+                } else {
+                    declarationStorage.createAndCacheIrConstructor(declaration, { parent as IrClass }, isLocal = isInLocalClass)
+                }
             }
             is FirEnumEntry -> {
                 classifierStorage.getOrCreateIrEnumEntry(declaration, parent as IrClass)
