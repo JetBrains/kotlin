@@ -12,9 +12,7 @@ import org.jetbrains.dokka.links.PointingToDeclaration
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import kotlin.test.*
-import utils.JavaCode
 
-@JavaCode
 class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         sourceSets {

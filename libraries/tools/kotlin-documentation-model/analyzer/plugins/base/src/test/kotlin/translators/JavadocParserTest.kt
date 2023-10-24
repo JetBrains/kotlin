@@ -14,9 +14,7 @@ import org.jetbrains.dokka.model.firstMemberOfType
 import utils.text
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import utils.JavaCode
 
-@JavaCode
 class JavadocParserTest : BaseAbstractTest() {
 
     private fun performJavadocTest(testOperation: (DModule) -> Unit) {

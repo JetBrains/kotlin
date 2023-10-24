@@ -12,7 +12,6 @@ import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import utils.AbstractModelTest
 import kotlin.test.Test
-import utils.UsingJDK
 
 class ExtensionsTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
     private fun <T : WithExtraProperties<R>, R : Documentable> T.checkExtension(name: String = "extension") =
@@ -71,7 +70,6 @@ class ExtensionsTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "cl
         }
     }
 
-    @UsingJDK
     @Test
     fun `should be extension for external classes`() {
         inlineModelTest(

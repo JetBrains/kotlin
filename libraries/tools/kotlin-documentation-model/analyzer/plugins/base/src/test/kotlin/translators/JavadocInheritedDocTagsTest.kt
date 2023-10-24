@@ -13,9 +13,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import org.jetbrains.dokka.model.doc.Deprecated as DokkaDeprecatedTag
 import org.jetbrains.dokka.model.doc.Throws as DokkaThrowsTag
-import utils.JavaCode
 
-@JavaCode
 class JavadocInheritedDocTagsTest : BaseAbstractTest() {
     @Suppress("DEPRECATION") // for includeNonPublic
     private val configuration = dokkaConfiguration {
