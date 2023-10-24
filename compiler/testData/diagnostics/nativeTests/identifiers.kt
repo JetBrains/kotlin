@@ -1,9 +1,13 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -MISSING_DEPENDENCY_SUPERCLASS
 
 // FIXME: rename identifiers.kt
 
 // FILE: 1.kt
 package <!INVALID_CHARACTERS_NATIVE_ERROR!>`check.pkg`<!>
+
+// FILE: 11.kt
+package one.<!INVALID_CHARACTERS_NATIVE_ERROR!>`two.three`<!>.four.<!INVALID_CHARACTERS_NATIVE_ERROR!>`five.six`<!>.seven
 
 // FILE: 2.kt
 package totally.normal.pkg

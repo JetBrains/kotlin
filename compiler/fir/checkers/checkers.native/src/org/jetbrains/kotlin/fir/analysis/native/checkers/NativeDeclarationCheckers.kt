@@ -33,4 +33,9 @@ object NativeDeclarationCheckers : DeclarationCheckers() {
             FirNativeObjCRefinementAnnotationChecker,
             FirNativeHiddenFromObjCInheritanceChecker,
         )
+
+    override val fileCheckers: Set<FirFileChecker>
+        get() = setOf(
+            FirNativePackageDirectiveChecker,
+        )
 }

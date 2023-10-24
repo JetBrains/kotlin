@@ -37,7 +37,7 @@ object FirNativeIdentifierChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
+    internal fun checkNameAndReport(name: Name, source: KtSourceElement?, context: CheckerContext, reporter: DiagnosticReporter) {
         if (source != null && source.kind !is KtFakeSourceElementKind && !name.isSpecial) {
             val text = name.asString()
             val message = when {

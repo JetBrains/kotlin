@@ -2,16 +2,19 @@
 
 ## Checkers structure
 
-There are four kinds of checkers:
+There are six kinds of checkers:
 - [DeclarationChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationChecker.kt)
 - [ExpressionChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionChecker.kt)
 - [FirTypeChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/type/FirTypeChecker.kt)
+- [FirLanguageVersionSettingsChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/config/FirLanguageVersionSettingsChecker.kt)
 - [FirControlFlowChecker](./src/org/jetbrains/kotlin/fir/analysis/checkers/cfa/FirControlFlowChecker.kt)
 
 The first three kinds are typed and may be restricted to checking only a specific type of declaration/expression/type ref. To simplify working with checkers for different FIR elements, there is a number of typed typealiases:
 - Declarations: [FirDeclarationCheckerAliases.kt](./gen/org/jetbrains/kotlin/fir/analysis/checkers/declaration/FirDeclarationCheckerAliases.kt)
 - Expressions: [FirExpressionCheckerAliases.kt](./gen/org/jetbrains/kotlin/fir/analysis/checkers/expression/FirExpressionCheckerAliases.kt)
 - Type refs: [FirTypeCheckerAliases.kt](./gen/org/jetbrains/kotlin/fir/analysis/checkers/type/FirTypeCheckerAliases.kt)
+
+The next kind, `FirLanguageVersionSettingsChecker`, is to check language version settings independently of particular code pieces.
 
 The last kind of checker, `FirControlFlowChecker`, is for checkers which perform Control Flow Analysis (CFA) and is supposed to work with every declaration that has its own Control Flow Graph (CFG)
 
