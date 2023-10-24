@@ -59,52 +59,9 @@ internal class KtFirImportOptimizer(
         if (existingImports.isEmpty()) return KtImportOptimizerResult()
 
         val firFile = file.getOrBuildFirFile(firResolveSession).apply { lazyResolveToPhaseRecursively(FirResolvePhase.BODY_RESOLVE) }
-
-        val explicitlyImportedFqNames = existingImports
-            .asSequence()
-            .mapNotNull { it.importPath }
-            .filter { !it.isAllUnder && !it.hasAlias() }
-            .map { it.fqName }
-            .toSet()
-
         val (usedDeclarations, unresolvedNames) = collectReferencedEntities(firFile)
 
-        // TODO remove unused imports computing code completely
-        val referencesEntities = usedDeclarations
-            .filterNot { (fqName, referencedByNames) ->
-                val fromCurrentPackage = fqName.parentOrNull() == file.packageFqName
-                val noAliasedImports = referencedByNames.singleOrNull() == fqName.shortName()
-
-                fromCurrentPackage && noAliasedImports
-            }
-
-        val requiredStarImports = referencesEntities.keys
-            .asSequence()
-            .filterNot { it in explicitlyImportedFqNames }
-            .mapNotNull { it.parentOrNull() }
-            .filterNot { it.isRoot }
-            .toSet()
-
-        val unusedImports = mutableSetOf<KtImportDirective>()
-        val alreadySeenImports = mutableSetOf<ImportPath>()
-
-        for (import in existingImports) {
-            val importPath = import.importPath ?: continue
-
-            val isUsed = when {
-                importPath.importedName in unresolvedNames -> true
-                !alreadySeenImports.add(importPath) -> false
-                importPath.isAllUnder -> unresolvedNames.isNotEmpty() || importPath.fqName in requiredStarImports
-                importPath.fqName in referencesEntities -> importPath.importedName in referencesEntities.getValue(importPath.fqName)
-                else -> false
-            }
-
-            if (!isUsed) {
-                unusedImports += import
-            }
-        }
-
-        return KtImportOptimizerResult(unusedImports, usedDeclarations, unresolvedNames)
+        return KtImportOptimizerResult(usedDeclarations, unresolvedNames)
     }
 
     private data class ReferencedEntitiesResult(
