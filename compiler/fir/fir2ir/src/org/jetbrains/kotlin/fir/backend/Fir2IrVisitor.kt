@@ -383,7 +383,8 @@ class Fir2IrVisitor(
     // ==================================================================================
 
     override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement = whileAnalysing(session, constructor) {
-        val irConstructor = declarationStorage.getCachedIrConstructor(constructor)!!
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val irConstructor = declarationStorage.getCachedIrConstructorSymbol(constructor)!!.owner
         return conversionScope.withFunction(irConstructor) {
             memberGenerator.convertFunctionContent(irConstructor, constructor, containingClass = conversionScope.containerFirClass())
         }
@@ -406,7 +407,8 @@ class Fir2IrVisitor(
                 simpleFunction, irParent = conversionScope.parent(), predefinedOrigin = IrDeclarationOrigin.LOCAL_FUNCTION, isLocal = true
             )
         } else {
-            declarationStorage.getCachedIrFunction(simpleFunction)!!
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            declarationStorage.getCachedIrFunctionSymbol(simpleFunction)!!.owner
         }
         return conversionScope.withFunction(irFunction) {
             memberGenerator.convertFunctionContent(
@@ -496,7 +498,8 @@ class Fir2IrVisitor(
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement = whileAnalysing(session, property) {
         if (property.isLocal) return visitLocalVariable(property)
-        val irProperty = declarationStorage.getCachedIrProperty(property, fakeOverrideOwnerLookupTag = null)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        val irProperty = declarationStorage.getCachedIrPropertySymbol(property, fakeOverrideOwnerLookupTag = null)?.owner
             ?: return IrErrorExpressionImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                 IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT),

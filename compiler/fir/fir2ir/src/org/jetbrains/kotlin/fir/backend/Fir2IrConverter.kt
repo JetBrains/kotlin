@@ -590,7 +590,10 @@ class Fir2IrConverter(
         }
 
         private fun FirProperty.evaluate(components: Fir2IrComponents, interpreter: IrInterpreter, mode: EvaluationMode): String? {
-            val irProperty = components.declarationStorage.getCachedIrProperty(this, fakeOverrideOwnerLookupTag = null) ?: return null
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            val irProperty = components.declarationStorage.getCachedIrPropertySymbol(
+                property = this, fakeOverrideOwnerLookupTag = null
+            )?.owner ?: return null
 
             fun IrProperty.tryToGetConst(): IrConst<*>? = (backingField?.initializer?.expression as? IrConst<*>)
             fun IrConst<*>.asString(): String {

@@ -195,7 +195,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunction {
         val irTarget = when (val firTarget = expression.target.labeledElement) {
-            is FirConstructor -> declarationStorage.getCachedIrConstructor(firTarget)
+            is FirConstructor -> declarationStorage.getCachedIrConstructorSymbol(firTarget)?.ownerIfBound()
             is FirPropertyAccessor -> {
                 var answer: IrFunction? = null
                 for ((property, firProperty) in propertyStack.asReversed()) {
@@ -207,7 +207,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
                 }
                 answer
             }
-            else -> declarationStorage.getCachedIrFunction(firTarget)
+            else -> declarationStorage.getCachedIrFunctionSymbol(firTarget)?.ownerIfBound()
         }
         for (potentialTarget in functionStack.asReversed()) {
             if (potentialTarget == irTarget) {

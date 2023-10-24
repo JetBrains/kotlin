@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
 class Fir2IrLocalCallableStorage {
 
@@ -32,8 +33,8 @@ class Fir2IrLocalCallableStorage {
     fun getVariable(variable: FirVariable): IrVariable? =
         last { getVariable(variable) }
 
-    fun getLocalFunction(localFunction: FirFunction): IrSimpleFunction? =
-        last { getLocalFunction(localFunction) }
+    fun getLocalFunctionSymbol(localFunction: FirFunction): IrSimpleFunctionSymbol? =
+        last { getLocalFunction(localFunction)?.symbol }
 
     fun getDelegatedProperty(property: FirProperty): IrLocalDelegatedProperty? =
         last { getDelegatedProperty(property) }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.isSetter
@@ -63,7 +64,9 @@ internal class ClassMemberGenerator(
             }
 
             val primaryConstructor = allDeclarations.firstOrNull { it is FirConstructor && it.isPrimary } as FirConstructor?
-            val irPrimaryConstructor = primaryConstructor?.let { declarationStorage.getCachedIrConstructor(it)!! }
+
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            val irPrimaryConstructor = primaryConstructor?.let { declarationStorage.getCachedIrConstructorSymbol(it)!!.owner }
             if (irPrimaryConstructor != null) {
                 with(declarationStorage) {
                     enterScope(irPrimaryConstructor.symbol)

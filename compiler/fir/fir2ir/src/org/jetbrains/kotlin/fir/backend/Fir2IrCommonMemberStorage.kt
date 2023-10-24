@@ -37,11 +37,11 @@ class Fir2IrCommonMemberStorage(
 
     val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()
 
-    val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunction> = ConcurrentHashMap()
+    val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunctionSymbol> = ConcurrentHashMap()
 
-    val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructor> = ConcurrentHashMap()
+    val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructorSymbol> = ConcurrentHashMap()
 
-    val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = ConcurrentHashMap()
+    val propertyCache: ConcurrentHashMap<FirProperty, IrPropertySymbol> = ConcurrentHashMap()
     val getterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> = ConcurrentHashMap()
     val setterForPropertyCache: ConcurrentHashMap<IrSymbol, IrSimpleFunctionSymbol> = ConcurrentHashMap()
     val backingFieldForPropertyCache: ConcurrentHashMap<IrPropertySymbol, IrFieldSymbol> = ConcurrentHashMap()
@@ -50,5 +50,5 @@ class Fir2IrCommonMemberStorage(
 
     val fakeOverridesInClass: MutableMap<IrClass, MutableMap<Fir2IrDeclarationStorage.FirOverrideKey, FirCallableDeclaration>> = mutableMapOf()
 
-    val irForFirSessionDependantDeclarationMap: MutableMap<Fir2IrDeclarationStorage.FakeOverrideIdentifier, IrDeclaration> = mutableMapOf()
+    val irForFirSessionDependantDeclarationMap: MutableMap<Fir2IrDeclarationStorage.FakeOverrideIdentifier, IrSymbol> = mutableMapOf()
 }
