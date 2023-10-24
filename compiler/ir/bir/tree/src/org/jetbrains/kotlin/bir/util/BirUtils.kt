@@ -27,11 +27,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
-import org.jetbrains.kotlin.utils.filterIsInstanceAnd
-import org.jetbrains.kotlin.utils.memoryOptimizedMap
-import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
 import java.io.File
 
 val BirDeclaration.parentAsClass: BirClass
@@ -66,6 +63,9 @@ val BirDeclaration.isAnonymousFunction get() = this is BirSimpleFunction && name
 val BirFunction.isStatic: Boolean
     get() = parent is BirClass && dispatchReceiverParameter == null
 
+
+val BirClass.functions: Sequence<BirSimpleFunction>
+    get() = declarations.asSequence().filterIsInstance<BirSimpleFunction>()
 
 val BirClass.constructors: Sequence<BirConstructor>
     get() = declarations.asSequence().filterIsInstance<BirConstructor>()
@@ -566,3 +566,9 @@ fun BirExpression.isTrivial() =
             this is BirGetObjectValue ||
             this is BirErrorExpression
 
+
+fun BirValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
+    listOf(this),
+    { current -> (current.parent as? BirSimpleFunction)?.overriddenSymbols?.map { it.owner.valueParameters[current.index] } ?: listOf() },
+    { current -> current.defaultValue != null }
+)
