@@ -208,7 +208,7 @@ class FlagDelegatesTest {
         val foo = Foo::class.java.readMetadataAsKmClass()
         val props = foo.properties.associateBy { it.name }
         with(props["x"]!!) {
-            assertEquals(MemberKind.DELEGATION, kind)
+            //assertEquals(MemberKind.DELEGATION, kind) // TODO: KT-62581 (uncomment after bootstrapping, remove TODO)
             assertFalse(isDelegated)
             assertFalse(getter.isNotDefault)
         }
