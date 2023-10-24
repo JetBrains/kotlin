@@ -9,7 +9,9 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Usage
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -34,8 +36,10 @@ internal val KotlinNativeHostSpecificMetadataArtifact = KotlinTargetArtifact { t
 
         configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
 
-        copyAttributes(from = apiElements.attributes, to = configuration.attributes)
-        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        target.project.launchInStage(AfterFinaliseDsl) {
+            copyAttributes(from = apiElements.attributes, to = configuration.attributes)
+            configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        }
     }
 
     val hostSpecificSourceSets = getHostSpecificSourceSets(target.project)
