@@ -79,8 +79,10 @@ class BinaryJavaClass(
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
-    override val isSealed: Boolean get() = permittedTypes.isNotEmpty()
-    override val permittedTypes = arrayListOf<JavaClassifierType>()
+    private val permittedTypesList: ArrayList<JavaClassifierType> = arrayListOf()
+    override val isSealed: Boolean get() = permittedTypesList.isNotEmpty()
+    override val permittedTypes: Sequence<JavaClassifierType>
+        get() = permittedTypesList.asSequence()
 
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
@@ -258,6 +260,6 @@ class BinaryJavaClass(
     }
 
     override fun visitPermittedSubclass(permittedSubclass: String?) {
-        permittedTypes.addIfNotNull(permittedSubclass?.convertInternalNameToClassifierType())
+        permittedTypesList.addIfNotNull(permittedSubclass?.convertInternalNameToClassifierType())
     }
 }

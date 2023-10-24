@@ -75,7 +75,7 @@ class DummyJavaClass(name: String, override val fqName: FqName, numberOfTypePara
         get() = shouldNotBeCalled()
     override val isSealed: Boolean
         get() = shouldNotBeCalled()
-    override val permittedTypes: Collection<JavaClassifierType>
+    override val permittedTypes: Sequence<JavaClassifierType>
         get() = shouldNotBeCalled()
     override val lightClassOriginKind: LightClassOriginKind?
         get() = shouldNotBeCalled()

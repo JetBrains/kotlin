@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.load.java.structure.impl
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElementFactory
 import com.intellij.psi.PsiTypeParameter
+import com.intellij.psi.SyntaxTraverser
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
@@ -68,9 +70,18 @@ class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassi
     override val isSealed: Boolean
         get() = JavaElementUtil.isSealed(this)
 
-    override val permittedTypes: Collection<JavaClassifierType>
-        get() = psi.permitsListTypes.convertIndexed { index, _ ->
-            JavaClassifierTypeImpl(sourceFactory.createPermittedTypeSource(psiElementSource, index))
+    override val permittedTypes: Sequence<JavaClassifierType>
+        get() {
+            if (!isSealed) return emptySequence()
+
+            val permitsListTypes = psi.permitsListTypes
+            return if (permitsListTypes.isNotEmpty()) {
+                permitsListTypes.convertIndexed { index, _ ->
+                    JavaClassifierTypeImpl(sourceFactory.createPermittedTypeSource(psiElementSource, index))
+                }.asSequence()
+            } else {
+                lazilyComputePermittedTypesInSameFile(psiElementSource)
+            }
         }
 
     override val isRecord: Boolean
@@ -161,5 +172,21 @@ class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassi
 
     companion object {
         private val LOGGER = Logger.getInstance(JavaClassImpl::class.java)
+    }
+}
+
+private fun lazilyComputePermittedTypesInSameFile(psiElementSource: JavaElementPsiSource<PsiClass>): Sequence<JavaClassifierType> {
+    return Sequence {
+        // Don't capture PSI directly but only via psiElementSource
+        val psi = psiElementSource.psi
+        val elementFactory = PsiElementFactory.getInstance(psi.project)
+
+        SyntaxTraverser.psiTraverser(psi.containingFile)
+            .filter(PsiClass::class.java)
+            // isInheritor can lead to resolution which can cause contract violations,
+            // that's why we compute it lazily only when the sequence is iterated.
+            .filter { it.isInheritor(psi, /* checkDeep: */ false) }
+            .map { JavaClassifierTypeImpl(psiElementSource.factory.createTypeSource(elementFactory.createType(it))) }
+            .iterator()
     }
 }

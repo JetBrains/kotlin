@@ -133,10 +133,11 @@ class ReflectJavaClass(
     override val isSealed: Boolean
         get() = Java16SealedRecordLoader.loadIsSealed(klass) ?: false
 
-    override val permittedTypes: Collection<JavaClassifierType>
+    override val permittedTypes: Sequence<JavaClassifierType>
         get() = Java16SealedRecordLoader.loadGetPermittedSubclasses(klass)
             ?.map(::ReflectJavaClassifierType)
-            ?: emptyList()
+            ?.asSequence()
+            ?: emptySequence()
 
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 
