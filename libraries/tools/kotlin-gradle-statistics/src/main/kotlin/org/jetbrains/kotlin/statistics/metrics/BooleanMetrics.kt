@@ -13,7 +13,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     // whether the build is executed from IDE or from console
     EXECUTED_FROM_IDEA(OVERRIDE, SAFE),
-
     // Build script
 
     //annotation processors

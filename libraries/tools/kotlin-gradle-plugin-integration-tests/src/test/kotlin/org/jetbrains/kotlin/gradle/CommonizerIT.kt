@@ -66,7 +66,7 @@ open class CommonizerIT : KGPBaseTest() {
     @GradleTest
     fun testCleanNativeDistributionCommonization(gradleVersion: GradleVersion, @TempDir konanData: Path) {
         nativeProject("commonizeNativeDistributionWithIosLinuxWindows", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(
+            val buildOptions = defaultBuildOptions.withBundledKotlinNative().copy(
                 konanDataDir = konanData
             )
 

@@ -57,3 +57,4 @@ outTmp/
 /test.output
 /kotlin-native/dist
 kotlin-ide/
+/.kotlin/

@@ -26,6 +26,9 @@ class NativeDownloadAndPlatformLibsNonParallelIT : KGPDaemonsBaseTest() {
     private val platformName: String = HostManager.platformName()
     private val currentCompilerVersion = NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.withBundledKotlinNative().copy()
+
 
     @DisplayName("Downloading K/N distribution in default .konan dir")
     @GradleTest

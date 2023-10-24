@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import java.util.*
-import kotlin.io.path.absolutePathString
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -91,7 +90,7 @@ data class BuildOptions(
         val reinstall: Boolean? = null,
         val restrictedDistribution: Boolean? = null,
         val useXcodeMessageStyle: Boolean? = null,
-        val version: String? = null,
+        val version: String? = System.getProperty("kotlinNativeVersion"),
         val cacheOrchestration: String? = null,
         val incremental: Boolean? = null,
     )
@@ -287,3 +286,17 @@ fun BuildOptions.suppressDeprecationWarningsSinceGradleVersion(
 ) = suppressDeprecationWarningsOn(reason) {
     currentGradleVersion >= GradleVersion.version(gradleVersion)
 }
+
+/**
+ * This wrapper erases k/n version from passing parameters,
+ * because we should use Kotlin Native bundled in KGP instead of which built from current branch.
+ *
+ * In this case we will use k/n version, which declared in KGP.
+ *
+ * The most common case is when we override local konan dir for some reason.
+ */
+fun BuildOptions.withBundledKotlinNative() = copy(
+    nativeOptions = nativeOptions.copy(
+        version = null
+    )
+)

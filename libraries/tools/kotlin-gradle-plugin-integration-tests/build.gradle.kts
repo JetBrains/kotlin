@@ -1,5 +1,6 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.jvm.toolchain.internal.NoToolchainAvailableException
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.pill.PillExtension
 import java.nio.file.Paths
 
@@ -111,6 +112,11 @@ dependencies {
     testCompileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 
+val konanDataDir: String = System.getProperty("konanDataDirForIntegrationTests")
+    ?: project.rootDir
+        .resolve(".kotlin")
+        .resolve("konan-for-gradle-tests").absolutePath
+
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
 val shortenTempRootName = project.providers.systemProperty("os.name").get().contains("Windows")
 
@@ -130,13 +136,52 @@ val cleanTestKitCacheTask = tasks.register<Delete>("cleanTestKitCache") {
 }
 
 tasks.register<Delete>("cleanUserHomeKonanDir") {
-    group = KGP_TEST_TASKS_GROUP
-    description = "Deletes ~/.konan dir before tests. This step is necessary to ensure that no test inadvertently creates this directory during execution."
+    description =
+        "Deletes ~/.konan dir before tests. This step is necessary to ensure that no test inadvertently creates this directory during execution."
 
     val userHomeKonanDir = Paths.get("${System.getProperty("user.home")}/.konan")
+
     delete(userHomeKonanDir)
 
-    println("Default .konan directory user's home has been deleted: $userHomeKonanDir")
+    doLast {
+        logger.info("Default .konan directory user's home has been deleted: $userHomeKonanDir")
+    }
+}
+
+tasks.register<Copy>("prepareNativeBundleForGradleIT") {
+
+    description = "This task adds depenecy on :kotlin-native:bundle and then copying built bundle into the tests' konan dir"
+
+    // 1. Build full Kotlin Native bundle
+    dependsOn(":kotlin-native:bundle")
+
+    // 2. Coping and extracting k/n artifacts from the 1st step to tests' konan data directory
+    val (extension, unzipFunction) = when (HostManager.host) {
+        KonanTarget.MINGW_X64 -> Pair("zip", ::zipTree)
+        else -> Pair("tar.gz", ::tarTree)
+    }
+
+    val kotlinNativeRootDir = rootProject.findProject(":kotlin-native")?.projectDir
+        ?: throw IllegalStateException("The path to kotlin-native module is undefined.")
+
+    from(
+        unzipFunction(
+            kotlinNativeRootDir.resolve("kotlin-native-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
+        )
+    )
+    from(
+        unzipFunction(
+            kotlinNativeRootDir.resolve("kotlin-native-prebuilt-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
+        )
+    )
+
+    into(
+        konanDataDir
+    )
+
+    doFirst {
+        delete(konanDataDir)
+    }
 }
 
 fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(include) {
@@ -145,6 +190,28 @@ fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(includ
 
 fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
     addAll(listOf("org.jetbrains.kotlin.gradle.native.*", "*Commonizer*"))
+}
+
+fun Test.applyKotlinNativeFromCurrentBranchIfNeeded() {
+    val kotlinNativeFromMasterEnabled = project.kotlinBuildProperties.isKotlinNativeEnabled && project.kotlinBuildProperties.useKotlinNativeLocalDistributionForTests
+    if (kotlinNativeFromMasterEnabled && !project.kotlinBuildProperties.isTeamcityBuild) {
+        dependsOn(":kotlin-gradle-plugin-integration-tests:prepareNativeBundleForGradleIT")
+    }
+
+    // Providing necessary properties for running tests with k/n built from master on the local environment
+    val defaultSnapshotVersion = project.kotlinBuildProperties.defaultSnapshotVersion
+    if (kotlinNativeFromMasterEnabled && defaultSnapshotVersion != null) {
+        systemProperty("kotlinNativeVersion", defaultSnapshotVersion)
+        systemProperty("konanDataDirForIntegrationTests", konanDataDir)
+    }
+
+    // Providing necessary properties for running tests with k/n built from master on the TeamCity
+    if (project.kotlinBuildProperties.isTeamcityBuild) {
+        System.getProperty("kotlinNativeVersionForGradleIT")?.let {
+            systemProperty("kotlinNativeVersion", it)
+        }
+        systemProperty("konanDataDirForIntegrationTests", konanDataDir)
+    }
 }
 
 fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>).() -> Unit) {
@@ -250,6 +317,7 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
         includeEngines("junit-jupiter")
     }
+    applyKotlinNativeFromCurrentBranchIfNeeded()
 }
 
 // Daemon tests could run only sequentially as they could not be shared between parallel test builds
@@ -274,6 +342,7 @@ val otherPluginsTestTask = tasks.register<Test>("kgpOtherTests") {
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "MppKGP", "AndroidKGP")
         includeEngines("junit-jupiter")
     }
+    applyKotlinNativeFromCurrentBranchIfNeeded()
 }
 
 val mppTestsTask = tasks.register<Test>("kgpMppTests") {
@@ -285,6 +354,7 @@ val mppTestsTask = tasks.register<Test>("kgpMppTests") {
         excludeTags("JvmKGP", "JsKGP", "NativeKGP", "DaemonsKGP", "OtherKGP", "AndroidKGP")
         includeEngines("junit-jupiter")
     }
+    applyKotlinNativeFromCurrentBranchIfNeeded()
 }
 
 val androidTestsTask = tasks.register<Test>("kgpAndroidTests") {

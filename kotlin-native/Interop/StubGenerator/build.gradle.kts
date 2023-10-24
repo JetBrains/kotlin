@@ -78,13 +78,3 @@ tasks {
         environment["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
     }
 }
-
-sourceSets {
-    "main" {
-        kotlin {
-            srcDir(project.kotlinNativeVersionSrc())
-            srcDir("../../shared/src/library/kotlin")
-            srcDir("../../shared/src/main/kotlin")
-        }
-    }
-}

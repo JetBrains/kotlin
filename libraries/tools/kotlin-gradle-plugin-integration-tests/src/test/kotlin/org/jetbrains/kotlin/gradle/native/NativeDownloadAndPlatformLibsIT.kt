@@ -15,15 +15,12 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
-import java.nio.file.Paths
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
-import kotlin.io.path.deleteRecursively
 
 // We temporarily disable it for windows until a proper fix is found for this issue:
 // https://youtrack.jetbrains.com/issue/KT-60138/NativeDownloadAndPlatformLibsIT-fails-on-Windows-OS
@@ -43,12 +40,12 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     private val currentCompilerVersion = NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
+        get() = super.defaultBuildOptions.withBundledKotlinNative().copy(
             // For each test in this class, we need to provide an isolated .konan directory,
             // so we create it within each test project folder
             konanDataDir = workingDir.resolve(".konan")
                 .toFile()
-                .apply { mkdirs() }.toPath()
+                .apply { mkdirs() }.toPath(),
         )
 
     @OptIn(EnvironmentalVariablesOverride::class)

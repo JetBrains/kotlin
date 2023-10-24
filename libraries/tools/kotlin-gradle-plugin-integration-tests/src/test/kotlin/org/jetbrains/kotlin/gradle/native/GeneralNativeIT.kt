@@ -834,7 +834,11 @@ class GeneralNativeIT : KGPBaseTest() {
                 }
 
                 // Check that changing K/N version lead to tasks rerun
-                build(compileTasks, "-Porg.jetbrains.kotlin.native.version=${TestVersions.Kotlin.STABLE_RELEASE}") {
+                build(
+                    compileTasks, buildOptions = defaultBuildOptions.copy(
+                        nativeOptions = defaultBuildOptions.nativeOptions.copy(version = TestVersions.Kotlin.STABLE_RELEASE)
+                    )
+                ) {
                     assertTasksExecuted(compileTasks)
                 }
             }

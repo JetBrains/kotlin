@@ -41,7 +41,6 @@ def globalProperties = new java.util.Properties()
 ext.kotlin_root = project.file("../..").absolutePath
 project.logger.info("kotlin_root: $kotlin_root")
 globalProperties.load(new java.io.FileReader(project.file("$kotlin_root/gradle.properties")))
-ext.kotlinNativeVersionInResources = true
 
 def konanDataDir = project.hasProperty('konan.data.dir') ? project.property('konan.data.dir').toString() : null
 def platformManager = new PlatformManager(DistributionKt.buildDistribution(UtilsKt.getKotlinNativeDist(project).path, konanDataDir), false)
