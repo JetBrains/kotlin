@@ -9,5 +9,5 @@ enum class GC(val shortcut: String? = null) {
     NOOP,
     STOP_THE_WORLD_MARK_AND_SWEEP("stwms"),
     PARALLEL_MARK_CONCURRENT_SWEEP("pmcs"),
-    // TODO: Bring back CONCURRENT_MARK_AND_SWEEP when we get concurrent mark
+    CONCURRENT_MARK_AND_SWEEP("cms"),
 }

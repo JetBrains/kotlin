@@ -364,12 +364,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add("same_thread_ms_gc_custom.bc")
                 GC.NOOP -> add("noop_gc_custom.bc")
                 GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add("pmcs_gc_custom.bc")
+                GC.CONCURRENT_MARK_AND_SWEEP -> add("concurrent_ms_gc_custom.bc")
             }
         } else {
             when (gc) {
                 GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add("same_thread_ms_gc.bc")
                 GC.NOOP -> add("noop_gc.bc")
                 GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add("pmcs_gc.bc")
+                GC.CONCURRENT_MARK_AND_SWEEP -> add("concurrent_ms_gc.bc")
             }
         }
         if (shouldCoverLibraries || shouldCoverSources) add("profileRuntime.bc")
