@@ -1349,7 +1349,7 @@ internal abstract class FunctionGenerationContext(
             }
 
             val classInfo = codegen.kotlinObjCClassInfo(irClass)
-            val classPointerGlobal = load(llvm.int8PtrPtrType, structGep(classInfo, KotlinObjCClassInfoGenerator.createdClassFieldIndex))
+            val classPointerGlobal = load(llvm.int8PtrPtrType, structGep2(runtime.kotlinObjCClassInfo, classInfo, KotlinObjCClassInfoGenerator.createdClassFieldIndex))
 
             val storedClass = this.load(llvm.int8PtrType, classPointerGlobal)
 
