@@ -321,7 +321,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("importOptimizer") {
         test(
             AbstractAnalysisApiImportOptimizerTest::class,
-            filter = analysisSessionModeIs(AnalysisSessionMode.Normal),
+            filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and frontendIs(FrontendKind.Fir),
         ) {
             model(it, "analyseImports")
         }
