@@ -36,6 +36,15 @@ public interface KtExpressionInfoProviderMixIn : KtAnalysisSessionMixIn {
      *   else -> 3
      * }
      *
+     * If when-expression has no subject, then else-branch would be reported as missing even if it is explicitly present:
+     *
+     * fun test() {
+     *     when {
+     *         true -> {}
+     *         else -> {}
+     *     }
+     * }
+     *
      * Note that this function returns the same missing cases regardless of the existence of the else branch.
      * If you have to assume that it does not have the missing cases when it has an else branch,
      * you need a separate check whether it has an else branch or not.

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.enumWhenTracker
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus.NotExhaustive
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.reportEnumUsageInWhen
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -43,7 +44,8 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
         )
 
         fun computeAllMissingCases(session: FirSession, whenExpression: FirWhenExpression): List<WhenMissingCase> {
-            val subjectType = getSubjectType(session, whenExpression) ?: return emptyList()
+            val subjectType =
+                getSubjectType(session, whenExpression) ?: return NotExhaustive.NO_ELSE_BRANCH.reasons
             return buildList {
                 for (type in subjectType.unwrapIntersectionType()) {
                     val checkers = getCheckers(type, session)

@@ -59,6 +59,24 @@ public class Fe10IdeNormalAnalysisSourceModuleWhenMissingCasesTestGenerated exte
     }
 
     @Test
+    @TestMetadata("boolean_noSubject.kt")
+    public void testBoolean_noSubject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_noSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("boolean_noSubjectIncorrectCode.kt")
+    public void testBoolean_noSubjectIncorrectCode() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_noSubjectIncorrectCode.kt");
+    }
+
+    @Test
+    @TestMetadata("boolean_noSubject_else.kt")
+    public void testBoolean_noSubject_else() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_noSubject_else.kt");
+    }
+
+    @Test
     @TestMetadata("boolean_partial.kt")
     public void testBoolean_partial() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionInfoProvider/whenMissingCases/boolean_partial.kt");
