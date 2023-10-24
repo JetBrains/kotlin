@@ -11,11 +11,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.k1k2uicomparator.components.UIComparatorFrame
 import org.jetbrains.kotlin.k1k2uicomparator.components.UIComparatorStyle
 import org.jetbrains.kotlin.k1k2uicomparator.support.spawn
-import org.jetbrains.kotlin.test.builders.testRunner
-import org.jetbrains.kotlin.test.initIdeaConfiguration
 import org.jetbrains.kotlin.test.runners.DiagnosticTestGenerated
 import org.jetbrains.kotlin.test.runners.FirLightTreeOldFrontendDiagnosticsTestGenerated
-import org.jetbrains.kotlin.test.services.KotlinTestInfo
+import org.jetbrains.kotlin.test.runners.K1K2UIComparatorApi.compileSourceAndDecorateWithDiagnostics
 import java.awt.EventQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -28,12 +26,6 @@ private val k2Runner = FirLightTreeOldFrontendDiagnosticsTestGenerated()
  * (`forTestsMatching`).
  */
 const val pathForConfigurationImitation = ""
-
-private val emptyKotlinTestInfo = KotlinTestInfo(
-    className = "_undefined_",
-    methodName = "_testUndefined_",
-    tags = emptySet()
-)
 
 val uiComparatorStyleForCompiler = UIComparatorStyle(
     title = "K1/K2 UI Comparator",
@@ -59,15 +51,11 @@ fun main() = EventQueue.invokeLater {
     val isRecalculatingK2 = AtomicBoolean(false)
 
     fun processK1(sourceInitially: String): String {
-        initIdeaConfiguration()
-        k1Runner.initTestInfo(emptyKotlinTestInfo)
-        return testRunner(pathForConfigurationImitation, k1Runner.configuration).runTestSource(sourceInitially)
+        return compileSourceAndDecorateWithDiagnostics(sourceInitially, k1Runner, pathForConfigurationImitation)
     }
 
     fun processK2(sourceInitially: String): String {
-        initIdeaConfiguration()
-        k2Runner.initTestInfo(emptyKotlinTestInfo)
-        return testRunner(pathForConfigurationImitation, k2Runner.configuration).runTestSource(sourceInitially)
+        return compileSourceAndDecorateWithDiagnostics(sourceInitially, k2Runner, pathForConfigurationImitation)
     }
 
     fun recalculate(
