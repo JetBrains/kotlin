@@ -15,10 +15,8 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import testApi.testRunner.dokkaConfiguration
 import kotlin.test.Test
-import utils.JavaCode
 import kotlin.test.assertEquals
 
-@JavaCode
 class JavaVisibilityFilterTest : BaseAbstractTest() {
 
     @Test

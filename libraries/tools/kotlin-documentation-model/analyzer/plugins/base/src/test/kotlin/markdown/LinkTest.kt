@@ -15,10 +15,9 @@ import org.jetbrains.dokka.pages.MemberPageNode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import utils.UsingJDK
 
 class LinkTest : BaseAbstractTest() {
-    @UsingJDK
+
     @Test
     fun linkToClassLoader() {
         val configuration = dokkaConfiguration {

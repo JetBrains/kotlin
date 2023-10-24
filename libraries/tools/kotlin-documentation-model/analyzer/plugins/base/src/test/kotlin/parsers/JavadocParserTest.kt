@@ -17,9 +17,7 @@ import utils.text
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import utils.JavaCode
 
-@JavaCode
 class JavadocParserTest : BaseAbstractTest() {
 
     private val configuration = dokkaConfiguration {

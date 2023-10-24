@@ -10,13 +10,12 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.InheritedMember
 import org.jetbrains.dokka.model.IsVar
 import org.jetbrains.dokka.model.KotlinVisibility
+import utils.OnlyDescriptors
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import utils.JavaCode
 
-@JavaCode
 class DescriptorSuperPropertiesTest : BaseAbstractTest() {
 
     private val commonTestConfiguration = dokkaConfiguration {
@@ -145,6 +144,7 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
     }
 
     @Test
+    @OnlyDescriptors("Incorrect test, see https://github.com/Kotlin/dokka/issues/3128")
     fun `should have special getter and setter names for boolean property inherited from java`() {
         testInline(
             """
@@ -179,7 +179,7 @@ class DescriptorSuperPropertiesTest : BaseAbstractTest() {
         }
     }
 
-    // incorrect test https://github.com/Kotlin/dokka/issues/3128
+    @OnlyDescriptors("Incorrect test, see https://github.com/Kotlin/dokka/issues/3128")
     @Test
     fun `kotlin inheriting java should not append anything since field is public api`() {
         val configuration = dokkaConfiguration {
