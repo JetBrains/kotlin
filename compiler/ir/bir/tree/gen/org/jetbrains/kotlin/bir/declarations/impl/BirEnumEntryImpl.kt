@@ -9,7 +9,9 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirEnumEntry
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -122,6 +124,11 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     init {
         initChild(_initializerExpression)
         initChild(_correspondingClass)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        _initializerExpression?.acceptLite(visitor)
+        _correspondingClass?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

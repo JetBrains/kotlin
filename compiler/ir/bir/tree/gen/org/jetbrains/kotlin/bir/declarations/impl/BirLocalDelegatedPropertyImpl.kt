@@ -9,7 +9,9 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirLocalDelegatedProperty
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.declarations.BirVariable
@@ -170,6 +172,12 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
         initChild(_delegate)
         initChild(_getter)
         initChild(_setter)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        _delegate.acceptLite(visitor)
+        _getter.acceptLite(visitor)
+        _setter?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
