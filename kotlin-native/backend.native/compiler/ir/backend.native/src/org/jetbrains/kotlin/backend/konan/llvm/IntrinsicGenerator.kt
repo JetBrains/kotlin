@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import kotlinx.cinterop.cValuesOf
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.MemoryModel
@@ -581,8 +580,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
         val structType = llvm.structType(llvm.int8PtrType, llvm.int8PtrType)
         val ptr = alloca(structType)
-        store(receiver, structGep2(structType, ptr, 0, ""))
-        store(superClass, structGep2(structType, ptr, 1, ""))
+        store(receiver, structGep(structType, ptr, 0, ""))
+        store(superClass, structGep(structType, ptr, 1, ""))
         return bitcast(llvm.int8PtrType, ptr)
     }
 
