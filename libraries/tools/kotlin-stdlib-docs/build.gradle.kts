@@ -134,15 +134,32 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 displayName.set("JS")
                 dependsOn("common")
 
-                // list src subdirectories except 'generated' as it should be taken from js-ir/src
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/generated")
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
+                // kotlinx and org.w3c might become excluded in future
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlinx")
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/org.w3c")
 
-                sourceRoots.from("$kotlin_stdlib_dir/js-ir/builtins")
-                sourceRoots.from("$kotlin_stdlib_dir/js-ir/runtime/kotlinHacks.kt")
-                sourceRoots.from("$kotlin_stdlib_dir/js-ir/runtime/long.kt")
-                sourceRoots.from("$kotlin_stdlib_dir/js-ir/src")
+                sourceRoots.from("$kotlin_stdlib_dir/js/builtins")
+
+                // builtin sources that are copied from common builtins during JS stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "Any.kt",
+                    "Array.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Iterator.kt",
+                    "Nothing.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_root/core/builtins/native/kotlin/$it") }
+
+                listOf(
+                    "annotation/Annotations.kt",
+                    "Function.kt",
+                    "internal/InternalAnnotations.kt",
+                    "Unit.kt",
+                ).forEach { sourceRoots.from("$kotlin_root/core/builtins/src/kotlin/$it") }
 
                 perPackageOption("org.w3c") {
                     reportUndocumented.set(false)
