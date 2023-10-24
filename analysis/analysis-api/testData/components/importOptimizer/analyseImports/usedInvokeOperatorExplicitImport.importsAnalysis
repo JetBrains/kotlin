@@ -1,11 +1,5 @@
 USED DECLARATIONS:
 
-Declaration: <local>.m
-By names: [m]
-
-Declaration: <local>.str
-By names: [str]
-
 Declaration: dependency.invoke
 By names: [invoke]
 

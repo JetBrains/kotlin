@@ -54,6 +54,8 @@ internal fun KtTypeNullability.toConeNullability() = when (this) {
  * @return An [FqName] by which this symbol can be imported (if it is possible)
  */
 internal fun FirCallableSymbol<*>.computeImportableName(useSiteSession: FirSession): FqName? {
+    if (callableId.isLocal) return null
+
     // if classId == null, callable is topLevel
     val containingClassId = callableId.classId
         ?: return callableId.asSingleFqName()

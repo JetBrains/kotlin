@@ -1,8 +1,5 @@
 USED DECLARATIONS:
 
-Declaration: <local>.<destruct>
-By names: [<destruct>]
-
 Declaration: dependency.foo
 By names: [foo]
 
