@@ -22,7 +22,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.contextReceivers = from.contextReceivers
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disablePhases = from.disablePhases?.copyOf()
-    to.disableUltraLightClasses = from.disableUltraLightClasses
     to.dontWarnOnErrorSuppression = from.dontWarnOnErrorSuppression
     to.dumpDirectory = from.dumpDirectory
     to.dumpOnlyFqName = from.dumpOnlyFqName

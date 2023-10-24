@@ -543,16 +543,6 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
-        value = "-Xdisable-ultra-light-classes",
-        description = "Don't use ultra-light classes."
-    )
-    var disableUltraLightClasses = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xuse-mixed-named-arguments",
         description = "Allow mixing named and unnamed arguments when the arguments appear in their default order."
     )
