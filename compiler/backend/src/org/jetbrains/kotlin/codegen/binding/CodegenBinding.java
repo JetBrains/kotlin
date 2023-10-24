@@ -99,12 +99,9 @@ public class CodegenBinding {
         for (KtFile file : allFilesInPackages(state.getBindingContext(), files)) {
             file.accept(visitor);
             if (file instanceof KtCodeFragment) {
-                PsiElement context = file.getContext();
-                if (context != null) {
-                    PsiFile contextFile = context.getContainingFile();
-                    if (contextFile != null) {
-                        contextFile.accept(visitor);
-                    }
+                PsiFile contextFile = ((KtCodeFragment) file).getContextContainingFile();
+                if (contextFile != null) {
+                    contextFile.accept(visitor);
                 }
             }
         }
