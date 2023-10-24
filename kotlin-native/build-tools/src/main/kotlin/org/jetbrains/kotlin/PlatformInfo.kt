@@ -53,12 +53,9 @@ object PlatformInfo {
 
     @JvmStatic
     fun isK2(project: Project): Boolean {
-        return project.globalTestArgs.contains("-language-version") &&
-                // Enough future versions are specified until K1 will be stopped to test
-                (project.globalTestArgs.contains("2.0")
-                        || project.globalTestArgs.contains("2.1")
-                        || project.globalTestArgs.contains("2.2")
-                        )
+        val idx = project.globalTestArgs.indexOf("-language-version")
+        if (idx == -1) return true
+        return project.globalTestArgs[idx + 1].toDouble() >= 2.0
     }
 
     @JvmStatic
