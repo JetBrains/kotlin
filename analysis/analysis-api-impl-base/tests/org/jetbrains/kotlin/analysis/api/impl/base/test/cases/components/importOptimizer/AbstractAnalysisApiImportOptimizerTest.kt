@@ -19,17 +19,6 @@ abstract class AbstractAnalysisApiImportOptimizerTest : AbstractAnalysisApiBased
             analyseImports(mainKtFile)
         }
 
-        @Suppress("DEPRECATION")
-        val unusedImports = importsAnalysis.unusedImports
-
-        val unusedImportPaths = unusedImports
-            .map { it.importPath ?: error("Import $it should have an import path, instead was ${it.text}") }
-            .sortedBy { it.toString() } // for stable results
-
-        val actualUnusedImports = buildString {
-            unusedImportPaths.forEach(::appendLine)
-        }
-
         val importAnalysisRendered = buildString {
             val sortedUsedDeclarations = importsAnalysis.usedDeclarations
                 .toSortedMap(compareBy { importPath -> importPath.toString() })
@@ -50,7 +39,6 @@ abstract class AbstractAnalysisApiImportOptimizerTest : AbstractAnalysisApiBased
             sortedUnresolvedNames.forEach(::appendLine)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(actualUnusedImports, extension = ".imports")
         testServices.assertions.assertEqualsToTestDataFileSibling(importAnalysisRendered, extension = ".importsAnalysis")
     }
 }
