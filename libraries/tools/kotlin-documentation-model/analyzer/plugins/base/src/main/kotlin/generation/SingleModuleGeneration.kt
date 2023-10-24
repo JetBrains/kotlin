@@ -4,10 +4,7 @@
 
 package org.jetbrains.dokka.base.generation
 
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaException
@@ -66,7 +63,7 @@ public class SingleModuleGeneration(private val context: DokkaContext) : Generat
     /**
      * Implementation note: it runs in a separated single thread due to existing support of coroutines (see #2936)
      */
-    @OptIn(DelicateCoroutinesApi::class)
+    @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     public fun createDocumentationModels(): List<DModule> = newSingleThreadContext("Generating documentable model").use { coroutineContext -> // see https://github.com/Kotlin/dokka/issues/3151
         runBlocking(coroutineContext) {
             context.configuration.sourceSets.parallelMap { sourceSet -> translateSources(sourceSet, context) }.flatten()
