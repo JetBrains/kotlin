@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
-import org.jetbrains.kotlin.bir.backend.lower.BirJvmStaticInObjectLowering
-import org.jetbrains.kotlin.bir.backend.lower.BirProvisionalFunctionExpressionLowering
-import org.jetbrains.kotlin.bir.backend.lower.BirRepeatedAnnotationLowering
-import org.jetbrains.kotlin.bir.backend.lower.BirTypeAliasAnnotationMethodsLowering
+import org.jetbrains.kotlin.bir.backend.lower.*
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
@@ -27,6 +24,7 @@ private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirRepeatedAnnotationLowering,
     ::BirTypeAliasAnnotationMethodsLowering,
     ::BirProvisionalFunctionExpressionLowering,
+    ::BirJvmOverloadsAnnotationLowering,
 )
 
 private val excludedStandardPhases = setOf<String>()
