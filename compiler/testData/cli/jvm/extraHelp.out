@@ -155,7 +155,6 @@ where advanced options include:
   -Xallow-any-scripts-in-source-roots
                              Allow compiling scripts along with regular Kotlin sources.
   -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
-  -Xallow-result-return-type Allow compiling code when 'kotlin.Result' is used as a return type.
   -Xbuiltins-from-sources    Compile built-ins from sources.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcheck-sticky-phase-conditions

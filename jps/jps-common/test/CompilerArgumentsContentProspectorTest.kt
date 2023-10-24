@@ -93,7 +93,6 @@ class CompilerArgumentsContentProspectorTest {
             CommonCompilerArguments::readDeserializedContracts,
             CommonCompilerArguments::properIeee754Comparisons,
             CommonCompilerArguments::reportPerf,
-            CommonCompilerArguments::allowResultReturnType,
             CommonCompilerArguments::listPhases,
             CommonCompilerArguments::profilePhases,
             CommonCompilerArguments::checkPhaseConditions,

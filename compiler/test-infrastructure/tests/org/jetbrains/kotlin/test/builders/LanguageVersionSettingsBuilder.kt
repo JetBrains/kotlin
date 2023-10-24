@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
-import org.jetbrains.kotlin.test.services.DefaultsDsl
 import org.jetbrains.kotlin.test.services.AbstractEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.DefaultsDsl
 import org.jetbrains.kotlin.test.util.LANGUAGE_FEATURE_PATTERN
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -100,7 +100,6 @@ class LanguageVersionSettingsBuilder {
         val analysisFlags = listOfNotNull(
             analysisFlag(AnalysisFlags.optIn, directives[LanguageSettingsDirectives.OPT_IN].takeIf { it.isNotEmpty() }),
             analysisFlag(AnalysisFlags.ignoreDataFlowInAssert, trueOrNull(LanguageSettingsDirectives.IGNORE_DATA_FLOW_IN_ASSERT in directives)),
-            analysisFlag(AnalysisFlags.allowResultReturnType, trueOrNull(LanguageSettingsDirectives.ALLOW_RESULT_RETURN_TYPE in directives)),
             analysisFlag(AnalysisFlags.explicitApiMode, directives.singleOrZeroValue(LanguageSettingsDirectives.EXPLICIT_API_MODE)),
             analysisFlag(AnalysisFlags.allowKotlinPackage, trueOrNull(LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in directives)),
             analysisFlag(AnalysisFlags.muteExpectActualClassesWarning, trueOrNull(LanguageSettingsDirectives.ENABLE_EXPECT_ACTUAL_CLASSES_WARNING in directives) != true),

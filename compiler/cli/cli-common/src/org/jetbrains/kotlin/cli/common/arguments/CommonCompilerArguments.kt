@@ -342,16 +342,6 @@ They should be a subset of sources passed as free arguments."""
         }
 
     @Argument(
-        value = "-Xallow-result-return-type",
-        description = "Allow compiling code when 'kotlin.Result' is used as a return type."
-    )
-    var allowResultReturnType = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xlist-phases",
         description = "List backend phases."
     )
@@ -810,7 +800,6 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
             put(AnalysisFlags.optIn, useExperimentalFqNames + optIn?.toList().orEmpty())
             put(AnalysisFlags.skipExpectedActualDeclarationChecker, metadataKlib)
             put(AnalysisFlags.explicitApiVersion, apiVersion != null)
-            put(AnalysisFlags.allowResultReturnType, allowResultReturnType)
             ExplicitApiMode.fromString(explicitApi)?.also { put(AnalysisFlags.explicitApiMode, it) } ?: collector.report(
                 CompilerMessageSeverity.ERROR,
                 "Unknown value for parameter -Xexplicit-api: '$explicitApi'. Value should be one of ${ExplicitApiMode.availableValues()}"

@@ -20,7 +20,6 @@ const val OPT_IN_DIRECTIVE = "OPT_IN"
 const val IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE = "IGNORE_DATA_FLOW_IN_ASSERT"
 const val JVM_DEFAULT_MODE = "JVM_DEFAULT_MODE"
 const val SKIP_METADATA_VERSION_CHECK = "SKIP_METADATA_VERSION_CHECK"
-const val ALLOW_RESULT_RETURN_TYPE = "ALLOW_RESULT_RETURN_TYPE"
 const val INHERIT_MULTIFILE_PARTS = "INHERIT_MULTIFILE_PARTS"
 const val SANITIZE_PARENTHESES = "SANITIZE_PARENTHESES"
 const val ENABLE_JVM_PREVIEW = "ENABLE_JVM_PREVIEW"
@@ -66,7 +65,6 @@ fun parseLanguageVersionSettings(
         analysisFlag(JvmAnalysisFlags.jvmDefaultMode, directives[JVM_DEFAULT_MODE]?.let { JvmDefaultMode.fromStringOrNull(it) }),
         analysisFlag(AnalysisFlags.ignoreDataFlowInAssert, if (IGNORE_DATA_FLOW_IN_ASSERT_DIRECTIVE in directives) true else null),
         analysisFlag(AnalysisFlags.skipMetadataVersionCheck, if (SKIP_METADATA_VERSION_CHECK in directives) true else null),
-        analysisFlag(AnalysisFlags.allowResultReturnType, if (ALLOW_RESULT_RETURN_TYPE in directives) true else null),
         analysisFlag(JvmAnalysisFlags.inheritMultifileParts, if (INHERIT_MULTIFILE_PARTS in directives) true else null),
         analysisFlag(JvmAnalysisFlags.sanitizeParentheses, if (SANITIZE_PARENTHESES in directives) true else null),
         analysisFlag(JvmAnalysisFlags.enableJvmPreview, if (ENABLE_JVM_PREVIEW in directives) true else null),

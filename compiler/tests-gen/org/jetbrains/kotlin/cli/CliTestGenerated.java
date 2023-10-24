@@ -630,11 +630,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firVsClassicAnnotation.args");
         }
 
-        @TestMetadata("flagAllowingResultAsReturnType.args")
-        public void testFlagAllowingResultAsReturnType() throws Exception {
-            runTest("compiler/testData/cli/jvm/flagAllowingResultAsReturnType.args");
-        }
-
         @TestMetadata("forbidKotlinPackageK1.args")
         public void testForbidKotlinPackageK1() throws Exception {
             runTest("compiler/testData/cli/jvm/forbidKotlinPackageK1.args");

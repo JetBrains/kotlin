@@ -31,9 +31,6 @@ object AnalysisFlags {
     val ignoreDataFlowInAssert by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val allowResultReturnType by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val explicitApiMode by AnalysisFlag.Delegates.ApiModeDisabledByDefault
 
     @JvmStatic
