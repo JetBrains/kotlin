@@ -200,9 +200,21 @@ class BirChildElementList<E : BirElement?>(
     }
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        for (i in 0..<_size) {
+        val elementArray = elementArray
+        for (i in 0..<size) {
             val element = elementArray[i]
             element?.accept(data, visitor)
+        }
+    }
+
+    internal fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        val elementArray = elementArray
+        val scope = BirElementVisitorScopeLite(visitor)
+        for (i in 0..<_size) {
+            val element = elementArray[i]
+            if (element != null) {
+                visitor.invoke(scope, element)
+            }
         }
     }
 

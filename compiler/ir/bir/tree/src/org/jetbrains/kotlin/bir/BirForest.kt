@@ -24,9 +24,9 @@ class BirForest {
         // element's parent has changed
         elementIndexInvalidated(element)
 
-        element.accept {
-            attachElement(it as BirElementBase)
             it.walkIntoChildren()
+        element.acceptLite {
+            attachElement(it)
         }
     }
 
@@ -46,9 +46,9 @@ class BirForest {
         // element's parent has changed
         elementIndexInvalidated(element)
 
-        element.accept {
-            detachElement(it as BirElementBase)
             it.walkIntoChildren()
+        element.acceptLite {
+            detachElement(it)
         }
     }
 
@@ -130,8 +130,8 @@ class BirForest {
     fun reindexAllElements() {
         possiblyRootElements.retainAll { it.root === this && it.parent == null }
         for (root in possiblyRootElements) {
-            root.accept { element ->
-                addElementToIndex(element as BirElementBase)
+            root.acceptLite { element ->
+                addElementToIndex(element)
                 element.walkIntoChildren()
             }
         }

@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.expressions.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirConstantArray
@@ -64,6 +65,10 @@ class BirConstantArrayImpl(
 
     override val elements: BirChildElementList<BirConstantValue> = BirChildElementList(this,
             1)
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        elements.acceptChildrenLite(visitor)
+    }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {

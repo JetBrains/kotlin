@@ -8,9 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.BirSimpleType
@@ -309,6 +307,12 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     init {
         initChild(_thisReceiver)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        typeParameters.acceptChildrenLite(visitor)
+        declarations.acceptChildrenLite(visitor)
+        _thisReceiver?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

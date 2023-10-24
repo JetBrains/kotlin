@@ -8,9 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirDynamicOperatorExpression
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -97,6 +95,11 @@ class BirDynamicOperatorExpressionImpl(
     override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1)
     init {
         initChild(_receiver)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        _receiver.acceptLite(visitor)
+        arguments.acceptChildrenLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

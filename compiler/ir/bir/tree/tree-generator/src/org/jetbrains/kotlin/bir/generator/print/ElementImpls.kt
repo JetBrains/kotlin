@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.bir.generator.print
 
 import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.bir.generator.BirTree.rootElement
+import org.jetbrains.kotlin.bir.generator.Packages
 import org.jetbrains.kotlin.bir.generator.childElementList
 import org.jetbrains.kotlin.bir.generator.elementBaseType
 import org.jetbrains.kotlin.bir.generator.model.ListField
@@ -122,32 +123,30 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 
             primaryConstructor(ctor.build())
 
-            /*if (element.allChildren.isNotEmpty()) {
+            if (element.allChildren.isNotEmpty()) {
                 addFunction(
                     FunSpec
-                        .builder("acceptChildren")
+                        .builder("acceptChildrenLite")
                         .addModifiers(KModifier.OVERRIDE)
-                        .addTypeVariable(TypeVariableName("D"))
-                        .addParameter("visitor", elementVisitor.parameterizedBy(TypeVariableName("D")))
-                        .addParameter("data", TypeVariableName("D"))
+                        .addParameter("visitor", elementVisitorLite)
                         .apply {
                             element.allChildren.forEach { child ->
                                 when (child) {
                                     is SingleField -> {
                                         addCode(child.backingFieldName)
                                         if (child.nullable) addCode("?")
-                                        addCode(".%M(data, visitor)\n", elementAccept)
+                                        addCode(".%M(visitor)\n", elementAcceptLite)
                                     }
                                     is ListField -> {
                                         addCode(child.name)
-                                        addCode(".acceptChildren(visitor, data)\n")
+                                        addCode(".acceptChildrenLite(visitor)\n")
                                     }
                                 }
                             }
                         }
                         .build()
                 )
-            }*/
+            }
 
             addFunction(
                 FunSpec
@@ -196,6 +195,5 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 }
 
 private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")
-/*
-private val elementVisitor = ClassName(Packages.tree, "BirElementVisitor")
-private val elementAccept = MemberName(Packages.tree, "accept", true)*/
+private val elementVisitorLite = ClassName(Packages.tree, "BirElementVisitorLite")
+private val elementAcceptLite = MemberName(Packages.tree, "acceptLite", true)

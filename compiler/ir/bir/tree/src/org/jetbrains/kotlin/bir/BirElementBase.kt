@@ -50,6 +50,7 @@ abstract class BirElementBase : BirElement {
 
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
+    internal open fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
 
     internal fun initChild(new: BirElement?) {
         new as BirElementBase?

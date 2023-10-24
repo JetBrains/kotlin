@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.expressions.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirVararg
@@ -79,6 +80,10 @@ class BirVarargImpl(
 
     override val elements: BirChildElementList<BirVarargElement> = BirChildElementList(this,
             1)
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        elements.acceptChildrenLite(visitor)
+    }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {

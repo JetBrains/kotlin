@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirDeclaration
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
@@ -74,6 +75,10 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate()
             }
         }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        declarations.acceptChildrenLite(visitor)
+    }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {

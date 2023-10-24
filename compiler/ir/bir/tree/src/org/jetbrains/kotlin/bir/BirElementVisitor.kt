@@ -59,3 +59,34 @@ inline fun BirElement.acceptChildren(noinline visitor: BirElementVisitorVoid) {
         walkIntoChildren()
     }
 }
+
+internal typealias BirElementVisitorLite = BirElementVisitorScopeLite.(element: BirElementBase) -> Unit
+/*internal fun interface BirElementVisitorLite {
+    context(BirElementVisitorScopeLite)
+    operator fun invoke(element: BirElementBase): Unit
+}*/
+
+@JvmInline
+internal value class BirElementVisitorScopeLite(
+    @PublishedApi internal val currentVisitor: BirElementVisitorLite,
+) {
+    inline fun BirElementBase.walkInto() {
+        currentVisitor(this)
+    }
+
+    inline fun BirElementBase.walkIntoChildren() {
+        acceptChildrenLite(currentVisitor)
+    }
+}
+
+internal inline fun BirElementBase.acceptLite(noinline visitor: BirElementVisitorLite) {
+    val scope = BirElementVisitorScopeLite(visitor)
+    visitor(scope, this@acceptLite)
+}
+
+internal inline fun BirElementBase.acceptChildrenLite(noinline visitor: BirElementVisitorLite) {
+    val scope = BirElementVisitorScopeLite(visitor)
+    with(scope) {
+        walkIntoChildren()
+    }
+}

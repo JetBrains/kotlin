@@ -9,7 +9,9 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirAnonymousInitializer
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -103,6 +105,10 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     init {
         initChild(_body)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        _body.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

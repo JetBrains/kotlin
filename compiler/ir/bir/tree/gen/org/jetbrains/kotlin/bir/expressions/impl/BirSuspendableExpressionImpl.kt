@@ -9,7 +9,9 @@
 package org.jetbrains.kotlin.bir.expressions.impl
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirSuspendableExpression
@@ -95,6 +97,11 @@ class BirSuspendableExpressionImpl(
     init {
         initChild(_suspensionPointId)
         initChild(_result)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        _suspensionPointId.acceptLite(visitor)
+        _result.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
