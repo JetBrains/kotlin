@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -174,7 +171,10 @@ class MemberScopeTowerLevel(
             empty = false
             if (candidate.hasConsistentExtensionReceiver(givenExtensionReceiverOptions)) {
                 val fir = candidate.fir
-                if ((fir as? FirConstructor)?.isInner == false) {
+                // Calls on a dispatch receiver cannot be:
+                // - a constructor call unless it's an inner class
+                // - a SAM constructor call
+                if ((fir as? FirConstructor)?.isInner == false || fir.origin == FirDeclarationOrigin.SamConstructor) {
                     return@processScopeMembers
                 }
                 result += MemberWithBaseScope(candidate, this)
