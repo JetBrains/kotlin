@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.wasmDecamelizedDefaultNameOrNul
 import org.jetbrains.kotlin.gradle.utils.decamelize
 import org.jetbrains.kotlin.gradle.utils.libsDirectory
 
-internal val KotlinJsKlibTargetArtifact = KotlinTargetArtifact { target, apiElements, runtimeElements ->
+internal val KotlinJsKlibArtifact = KotlinTargetArtifact { target, apiElements, runtimeElements ->
     if (target !is KotlinJsIrTarget) return@KotlinTargetArtifact
 
     val jsKlibTask = target.createArtifactsTask {

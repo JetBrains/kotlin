@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVaria
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 
-internal val KotlinTargetMetadataArtifact = KotlinTargetArtifact { target, apiElements, _ ->
+internal val KotlinMetadataArtifact = KotlinTargetArtifact { target, apiElements, _ ->
     if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled) return@KotlinTargetArtifact
 
     apiElements.attributes.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))

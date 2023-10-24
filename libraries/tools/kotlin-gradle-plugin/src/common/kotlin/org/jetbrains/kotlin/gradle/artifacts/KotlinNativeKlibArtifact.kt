@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.File
 
-internal val KotlinNativeKlibTargetArtifact = KotlinTargetArtifact { target, apiElements, _ ->
+internal val KotlinNativeKlibArtifact = KotlinTargetArtifact { target, apiElements, _ ->
     if (target !is KotlinNativeTarget) return@KotlinTargetArtifact
     /* Just registering a dummy placeholder that other tasks can use as umbrella */
     val artifactsTask = target.project.registerTask<DefaultTask>(target.artifactsTaskName) {

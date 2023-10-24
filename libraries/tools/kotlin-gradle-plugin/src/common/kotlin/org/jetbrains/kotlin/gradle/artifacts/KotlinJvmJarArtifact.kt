@@ -9,7 +9,7 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition.JAR_TYPE
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
-internal val KotlinJvmJarTargetArtifact = KotlinTargetArtifact { target, apiElements, runtimeElements ->
+internal val KotlinJvmJarArtifact = KotlinTargetArtifact { target, apiElements, runtimeElements ->
     if (target !is KotlinJvmTarget) return@KotlinTargetArtifact
     val mainCompilation = target.compilations.getByName(MAIN_COMPILATION_NAME)
 

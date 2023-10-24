@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.artifacts.*
-import org.jetbrains.kotlin.gradle.artifacts.KotlinJsKlibTargetArtifact
-import org.jetbrains.kotlin.gradle.artifacts.KotlinJvmJarTargetArtifact
+import org.jetbrains.kotlin.gradle.artifacts.KotlinJsKlibArtifact
+import org.jetbrains.kotlin.gradle.artifacts.KotlinJvmJarArtifact
 import org.jetbrains.kotlin.gradle.artifacts.KotlinNativeHostSpecificMetadataArtifact
-import org.jetbrains.kotlin.gradle.artifacts.KotlinNativeKlibTargetArtifact
+import org.jetbrains.kotlin.gradle.artifacts.KotlinNativeKlibArtifact
 import org.jetbrains.kotlin.gradle.artifacts.KotlinTargetArtifact
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
@@ -119,12 +119,12 @@ internal fun Project.registerKotlinPluginExtensions() {
     }
 
     KotlinTargetArtifact.extensionPoint.apply {
-        register(project, KotlinTargetMetadataArtifact)
+        register(project, KotlinMetadataArtifact)
         register(project, KotlinLegacyCompatibilityMetadataArtifact)
         register(project, KotlinLegacyMetadataArtifact)
-        register(project, KotlinJvmJarTargetArtifact)
-        register(project, KotlinJsKlibTargetArtifact)
-        register(project, KotlinNativeKlibTargetArtifact)
+        register(project, KotlinJvmJarArtifact)
+        register(project, KotlinJsKlibArtifact)
+        register(project, KotlinNativeKlibArtifact)
         register(project, KotlinNativeHostSpecificMetadataArtifact)
     }
 
