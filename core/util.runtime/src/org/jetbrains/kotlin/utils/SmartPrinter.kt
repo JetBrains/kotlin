@@ -5,49 +5,49 @@
 
 package org.jetbrains.kotlin.utils
 
-class SmartPrinter(appendable: Appendable, indent: String = DEFAULT_INDENT) {
+/**
+ * A wrapper around [Printer] that manages indentation in a smarter way.
+ *
+ * Unlike [Printer], which always prints the indentation unit whenever you call [print] or [println],
+ * [SmartPrinter] only prints the indentation unit at the start of the line.
+ */
+class SmartPrinter private constructor(private val printer: Printer) : IndentingPrinter by printer {
+
+    constructor(appendable: Appendable, indent: String = DEFAULT_INDENT) : this(Printer(appendable, indent))
+
     companion object {
         private const val DEFAULT_INDENT = "    "
     }
 
-    private val printer = Printer(appendable, indent)
-
     private var notFirstPrint: Boolean = false
 
-    fun print(vararg objects: Any) {
+    override fun print(vararg objects: Any?): SmartPrinter {
         if (notFirstPrint) {
             printer.printWithNoIndent(*objects)
         } else {
             printer.print(*objects)
         }
         notFirstPrint = true
+        return this
     }
 
-    fun println(vararg objects: Any) {
+    override fun println(vararg objects: Any?): SmartPrinter {
         if (notFirstPrint) {
             printer.printlnWithNoIndent(*objects)
         } else {
             printer.println(*objects)
         }
         notFirstPrint = false
+        return this
     }
 
-    fun pushIndent() {
-        printer.pushIndent()
+    @Deprecated("Unit-returning method is removed", level = DeprecationLevel.HIDDEN)
+    fun print(objects: Array<Any?>) {
+        print(*objects)
     }
 
-    fun popIndent() {
-        printer.popIndent()
+    @Deprecated("Unit-returning method is removed", level = DeprecationLevel.HIDDEN)
+    fun println(objects: Array<Any?>) {
+        println(*objects)
     }
-
-    fun getCurrentIndentInUnits() = printer.currentIndentLengthInUnits
-    fun getIndentUnit() = printer.indentUnitLength
-
-    override fun toString(): String = printer.toString()
-}
-
-inline fun SmartPrinter.withIndent(block: () -> Unit) {
-    pushIndent()
-    block()
-    popIndent()
 }

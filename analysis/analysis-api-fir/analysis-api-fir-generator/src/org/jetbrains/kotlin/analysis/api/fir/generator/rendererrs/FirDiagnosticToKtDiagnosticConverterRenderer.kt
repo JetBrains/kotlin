@@ -59,7 +59,7 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
     private fun SmartPrinter.printParameter(parameter: HLDiagnosticParameter) {
         val expression = parameter.conversion.convertExpression(
             "firDiagnostic.${parameter.originalParameterName}",
-            ConversionContext(getCurrentIndentInUnits(), getIndentUnit())
+            ConversionContext(currentIndentLengthInUnits, indentUnitLength)
         )
         println("$expression,")
     }

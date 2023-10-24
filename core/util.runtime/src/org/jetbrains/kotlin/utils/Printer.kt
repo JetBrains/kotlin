@@ -25,7 +25,7 @@ open class Printer private constructor(
     private val maxBlankLines: Int,
     private val indentUnit: String,
     private var indent: String
-) {
+) : IndentingPrinter {
     private var blankLineCountIncludingCurrent = 0
     private var withholdIndentOnce = false
     private var length = 0
@@ -52,7 +52,7 @@ open class Printer private constructor(
         }
     }
 
-    fun println(vararg objects: Any?): Printer {
+    override fun println(vararg objects: Any?): Printer {
         print(*objects)
         printLineSeparator()
         return this
@@ -65,7 +65,7 @@ open class Printer private constructor(
         }
     }
 
-    fun print(vararg objects: Any?): Printer {
+    override fun print(vararg objects: Any?): Printer {
         if (withholdIndentOnce) {
             withholdIndentOnce = false
         } else if (objects.isNotEmpty()) {
@@ -98,12 +98,12 @@ open class Printer private constructor(
         return this
     }
 
-    fun pushIndent(): Printer {
+    override fun pushIndent(): Printer {
         indent += indentUnit
         return this
     }
 
-    fun popIndent(): Printer {
+    override fun popIndent(): Printer {
         check(indent.length >= indentUnit.length) { "No indentation to pop" }
         indent = indent.substring(indentUnit.length)
         return this
@@ -137,10 +137,10 @@ open class Printer private constructor(
         return out.toString()
     }
 
-    val currentIndentLengthInUnits: Int
+    override val currentIndentLengthInUnits: Int
         get() = indent.length / indentUnit.length
 
-    val indentUnitLength: Int
+    override val indentUnitLength: Int
         get() = indentUnit.length
 
     companion object {
