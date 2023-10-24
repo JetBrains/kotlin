@@ -14,8 +14,11 @@ import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class JvmBirBuiltInSymbols(irSymbols: JvmSymbols, converter: Ir2BirConverter) : BirBuiltInSymbols(irSymbols, converter) {
+    private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
+
     val singleArgumentInlineFunction: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.singleArgumentInlineFunction)
     val checkExpressionValueIsNotNull: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.checkExpressionValueIsNotNull)
     val checkNotNullExpressionValue: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.checkNotNullExpressionValue)
@@ -82,4 +85,11 @@ class JvmBirBuiltInSymbols(irSymbols: JvmSymbols, converter: Ir2BirConverter) : 
     val objectCloneFunction: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.objectCloneFunction)
     val runSuspendFunction: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.runSuspendFunction)
     val repeatableContainer: BirClassSymbol = converter.remapSymbol(irSymbols.repeatableContainer)
+
+    private val jvmSuspendFunctionClasses = storageManager.createMemoizedFunction { n: Int ->
+        converter.remapSymbol<_, BirClassSymbol>(irSymbols.getJvmSuspendFunctionClass(n))
+    }
+
+    fun getJvmSuspendFunctionClass(parameterCount: Int): BirClassSymbol =
+        jvmSuspendFunctionClasses(parameterCount)
 }
