@@ -4,7 +4,6 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinTargetWithNodeJsDsl
@@ -50,10 +49,7 @@ val builtinsDir = "${rootDir}/core/builtins"
 val builtinsSrcDir = "${buildDir}/src/builtin-sources"
 
 val jsDir = "${projectDir}/js"
-
-// for js-ir
-val jsIrMainSources = "${buildDir}/src/jsMainSources"
-lateinit var jsIrTarget: KotlinJsTargetDsl
+val jsBuiltinsSrcDir = "${buildDir}/src/js-builtin-sources"
 
 val commonOptIns = listOf(
     "kotlin.ExperimentalMultiplatform",
@@ -188,7 +184,7 @@ kotlin {
             }
         }
     }
-    jsIrTarget = js(IR) {
+    js(IR) {
         if (!kotlinBuildProperties.isTeamcityBuild) {
             browser {}
         }
@@ -388,7 +384,7 @@ kotlin {
                     }
                 }
 
-                into(jsIrMainSources)
+                into(jsBuiltinsSrcDir)
 
 // Required to compile native builtins with the rest of runtime
                 val builtInsHeader = """@file:Suppress(
@@ -658,11 +654,11 @@ tasks {
                 include("Comparable.kt")
                 include("Enum.kt")
             }
-            from("$jsIrMainSources/core/builtins/native") {
+            from("$jsBuiltinsSrcDir/core/builtins/native") {
                 exclude("kotlin/Comparable.kt")
             }
-            from("$jsIrMainSources/core/builtins/src")
-            from("$jsIrMainSources/libraries/stdlib/js/src")
+            from("$jsBuiltinsSrcDir/core/builtins/src")
+            from("$jsBuiltinsSrcDir/libraries/stdlib/js/src")
             from("$jsDir/builtins") {
                 into("kotlin")
                 exclude("Enum.kt")
