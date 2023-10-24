@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.bir.util.ancestors
 import java.lang.AutoCloseable
+import java.util.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 class BirForest {
-    private val possiblyRootElements = mutableSetOf<BirElementBase>()
+    private val possiblyRootElements = mutableListOf<BirElementBase>()
 
     private val elementIndexSlots = arrayOfNulls<ElementsIndexSlot>(256)
     private var elementIndexSlotCount = 0
@@ -19,14 +24,20 @@ class BirForest {
     private var bufferedElementWithInvalidatedIndex: BirElementBase? = null
     private var elementCurrentlyBeingClassified: BirElementBase? = null
 
+    private var isInsideSubtreeShuffleTransaction = false
+    private val dirtyElementsInsideSubtreeShuffleTransaction = mutableListOf<BirElementBase>()
 
     internal fun elementAttached(element: BirElementBase) {
-        // element's parent has changed
-        elementIndexInvalidated(element)
+        if (!isInsideSubtreeShuffleTransaction) {
+            // element's parent has changed
+            elementIndexInvalidated(element)
 
-            it.walkIntoChildren()
         element.acceptLite {
             attachElement(it)
+                it.walkIntoChildren()
+            }
+        } else {
+            markElementDirtyInSubtreeShuffleTransaction(element)
         }
     }
 
@@ -43,12 +54,16 @@ class BirForest {
     }
 
     internal fun elementDetached(element: BirElementBase) {
-        // element's parent has changed
-        elementIndexInvalidated(element)
+        if (!isInsideSubtreeShuffleTransaction) {
+            // element's parent has changed
+            elementIndexInvalidated(element)
 
-            it.walkIntoChildren()
         element.acceptLite {
             detachElement(it)
+                it.walkIntoChildren()
+            }
+        } else {
+            markElementDirtyInSubtreeShuffleTransaction(element)
         }
     }
 
@@ -56,8 +71,50 @@ class BirForest {
         element.root = null
     }
 
+    private fun markElementDirtyInSubtreeShuffleTransaction(element: BirElementBase) {
+        if (!element.hasFlag(BirElementBase.FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION)) {
+            element.setFlag(BirElementBase.FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION, true)
+            dirtyElementsInsideSubtreeShuffleTransaction += element
+        }
+    }
+
+    /**
+     * Allows to efficiently move around big BIR subtrees within the forest.
+     */
+    @OptIn(ExperimentalContracts::class)
+    fun subtreeShuffleTransaction(block: () -> Unit) {
+        contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+
+        require(!isInsideSubtreeShuffleTransaction)
+        isInsideSubtreeShuffleTransaction = true
+        block()
+        isInsideSubtreeShuffleTransaction = false
+
+        for (element in dirtyElementsInsideSubtreeShuffleTransaction) {
+            element.setFlag(BirElementBase.FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION, false)
+
+            val realRoot = element.findRealRoot()
+            val previousRoot = element.root
+            if (realRoot === this) {
+                if (previousRoot !== this) {
+                    elementAttached(element)
+                }
+            } else {
+                if (previousRoot === this) {
+                    elementDetached(element)
+                }
+            }
+        }
+        dirtyElementsInsideSubtreeShuffleTransaction.clear()
+    }
+
+    private fun BirElementBase.findRealRoot(): BirForest? {
+        return ancestors(true).firstNotNullOfOrNull { (it as BirElementBase).root }
+    }
+
 
     private fun addElementToIndex(element: BirElementBase) {
+        if (element.root !== this) return
         val classifier = elementClassifier ?: return
 
         assert(elementCurrentlyBeingClassified == null)
@@ -128,7 +185,9 @@ class BirForest {
     }
 
     fun reindexAllElements() {
-        possiblyRootElements.retainAll { it.root === this && it.parent == null }
+        val rootElementSet = IdentityHashMap<BirElementBase, Unit>()
+        possiblyRootElements.retainAll { it.root === this && it.parent == null && rootElementSet.put(it, Unit) == null }
+
         for (root in possiblyRootElements) {
             root.acceptLite { element ->
                 addElementToIndex(element)
