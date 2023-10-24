@@ -9557,6 +9557,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("delegateWithAnnotationOnAccessorWithExplicitType.kt")
+            public void testDelegateWithAnnotationOnAccessorWithExplicitType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/delegateWithAnnotationOnAccessorWithExplicitType.kt");
+            }
+
+            @Test
+            @TestMetadata("delegateWithAnnotationOnAccessorWithImplicitType.kt")
+            public void testDelegateWithAnnotationOnAccessorWithImplicitType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/delegateWithAnnotationOnAccessorWithImplicitType.kt");
+            }
+
+            @Test
             @TestMetadata("delegatedPropertyOverridedInTrait.kt")
             public void testDelegatedPropertyOverridedInTrait() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/delegatedPropertyOverridedInTrait.kt");

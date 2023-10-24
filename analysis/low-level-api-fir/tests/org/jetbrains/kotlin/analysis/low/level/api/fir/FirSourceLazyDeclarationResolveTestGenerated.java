@@ -896,6 +896,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("delegateWithAnnotationOnAccessor.kt")
+        public void testDelegateWithAnnotationOnAccessor() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/delegateWithAnnotationOnAccessor.kt");
+        }
+
+        @Test
+        @TestMetadata("delegateWithAnnotationOnAccessorWithExplicitType.kt")
+        public void testDelegateWithAnnotationOnAccessorWithExplicitType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/delegateWithAnnotationOnAccessorWithExplicitType.kt");
+        }
+
+        @Test
         @TestMetadata("getterWithDelegation.kt")
         public void testGetterWithDelegation() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/getterWithDelegation.kt");
