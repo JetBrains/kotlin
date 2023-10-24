@@ -14,11 +14,14 @@ import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 
 internal class IdSignatureSource(
     val lib: KotlinLibraryFile,
-    val srcIrFile: IrFile,
+    private val fileSignatureProvider: FileSignatureProvider,
     val symbol: IrSymbol
 ) {
-    val src: KotlinSourceFile
-        get() = KotlinSourceFile(srcIrFile)
+    val irFile: IrFile
+        get() = fileSignatureProvider.irFile
+
+    val srcFile: KotlinSourceFile
+        get() = fileSignatureProvider.srcFile
 }
 
 internal fun addParentSignatures(
@@ -31,7 +34,7 @@ internal fun addParentSignatures(
 
     fun addAllParents(sig: IdSignature) {
         val signatureSrc = idSignatureToFile[sig] ?: return
-        if (signatureSrc.lib == importerLibFile && signatureSrc.src == importerSrcFile) {
+        if (signatureSrc.lib == importerLibFile && signatureSrc.srcFile == importerSrcFile) {
             return
         }
         if (allSignatures.add(sig)) {
@@ -100,12 +103,12 @@ private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSym
     }
 }
 
-internal sealed class FileSignatureProvider(val irFile: IrFile) {
+internal sealed class FileSignatureProvider(val irFile: IrFile, val srcFile: KotlinSourceFile) {
     abstract fun getSignatureToIndexMapping(): Map<IdSignature, Int>
     abstract fun getReachableSignatures(): Set<IdSignature>
     abstract fun getImplementedSymbols(): Map<IdSignature, IrSymbol>
 
-    class DeserializedFromKlib(private val fileDeserializer: IrFileDeserializer) : FileSignatureProvider(fileDeserializer.file) {
+    class DeserializedFromKlib(private val fileDeserializer: IrFileDeserializer, srcFile: KotlinSourceFile) : FileSignatureProvider(fileDeserializer.file, srcFile) {
         override fun getSignatureToIndexMapping(): Map<IdSignature, Int> {
             return fileDeserializer.symbolDeserializer.signatureDeserializer.signatureToIndexMapping()
         }
@@ -127,7 +130,7 @@ internal sealed class FileSignatureProvider(val irFile: IrFile) {
         }
     }
 
-    class GeneratedFunctionTypeInterface(file: IrFile) : FileSignatureProvider(file) {
+    class GeneratedFunctionTypeInterface(file: IrFile, srcFile: KotlinSourceFile) : FileSignatureProvider(file, srcFile) {
         private val allSignatures = run {
             val topLevelSymbols = buildMap {
                 for (declaration in irFile.declarations) {

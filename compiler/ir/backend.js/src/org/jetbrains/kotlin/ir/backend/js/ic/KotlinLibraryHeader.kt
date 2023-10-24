@@ -66,10 +66,11 @@ internal class KotlinLoadedLibraryHeader(
 
     private val sourceFiles by lazy(LazyThreadSafetyMode.NONE) {
         val extReg = ExtensionRegistryLite.newInstance()
-        Array(library.fileCount()) {
+        val sources = (0 until library.fileCount()).map {
             val fileProto = IrFile.parseFrom(library.file(it).codedInputStream, extReg)
-            KotlinSourceFile(fileProto.fileEntry.name)
+            fileProto.fileEntry.name
         }
+        KotlinSourceFile.fromSources(sources)
     }
 }
 

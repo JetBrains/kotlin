@@ -86,7 +86,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
     private fun KotlinSourceFile.getCacheFile(suffix: String): File {
         val pathHash = path.cityHash64String()
-        return File(cacheDir, "${File(path).name}.$pathHash.$suffix")
+        return File(cacheDir, "${File(path).name}.$id.$pathHash.$suffix")
     }
 
     fun buildAndCommitCacheArtifact(

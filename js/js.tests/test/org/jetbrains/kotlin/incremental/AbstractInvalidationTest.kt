@@ -242,7 +242,7 @@ abstract class AbstractInvalidationTest(
                 for ((srcFile, dirtyStats) in updateStatus) {
                     for (dirtyStat in dirtyStats) {
                         if (dirtyStat != DirtyFileState.NON_MODIFIED_IR) {
-                            got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(File(srcFile.path).name)
+                            got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(srcFile.toString())
                         }
                     }
                 }

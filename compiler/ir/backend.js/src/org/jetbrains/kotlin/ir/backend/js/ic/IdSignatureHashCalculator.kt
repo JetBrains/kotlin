@@ -88,7 +88,7 @@ internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
         }
 
     private fun IrSymbol.calculateSymbolHash(): ICHash {
-        var srcIrFile = signature?.let { sig -> idSignatureSources[sig]?.srcIrFile }
+        var srcIrFile = signature?.let { sig -> idSignatureSources[sig]?.irFile }
         if (srcIrFile == null) {
             var parentDeclaration = (owner as? IrDeclaration)?.parent
             while (parentDeclaration is IrDeclaration) {

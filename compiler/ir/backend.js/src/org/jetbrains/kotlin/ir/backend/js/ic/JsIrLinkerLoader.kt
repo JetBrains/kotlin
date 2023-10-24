@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -42,21 +43,25 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 internal data class LoadedJsIr(
     val loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
     private val linker: JsIrLinker,
-    private val functionTypeInterfacePackages: FunctionTypeInterfacePackages
+    private val functionTypeInterfacePackages: FunctionTypeInterfacePackages,
 ) {
     private val signatureProvidersImpl = hashMapOf<KotlinLibraryFile, List<FileSignatureProvider>>()
 
-    private fun collectSignatureProviders(irModule: IrModuleFragment): List<FileSignatureProvider> {
+    private val irFileSourceNames = hashMapOf<IrModuleFragment, Map<IrFile, KotlinSourceFile>>()
+
+    private fun collectSignatureProviders(lib: KotlinLibraryFile, irModule: IrModuleFragment): List<FileSignatureProvider> {
         val moduleDeserializer = linker.moduleDeserializer(irModule.descriptor)
         val deserializers = moduleDeserializer.fileDeserializers()
         val providers = ArrayList<FileSignatureProvider>(deserializers.size)
+        val sourceFiles = getIrFileNames(irModule)
 
         for (fileDeserializer in deserializers) {
             val irFile = fileDeserializer.file
+            val sourceFile = sourceFiles[irFile] ?: notFoundIcError("source file name", lib, irFile)
             if (functionTypeInterfacePackages.isFunctionTypeInterfacePackageFile(irFile)) {
-                providers += FileSignatureProvider.GeneratedFunctionTypeInterface(irFile)
+                providers += FileSignatureProvider.GeneratedFunctionTypeInterface(irFile, sourceFile)
             } else {
-                providers += FileSignatureProvider.DeserializedFromKlib(fileDeserializer)
+                providers += FileSignatureProvider.DeserializedFromKlib(fileDeserializer, sourceFile)
             }
         }
 
@@ -66,7 +71,7 @@ internal data class LoadedJsIr(
     fun getSignatureProvidersForLib(lib: KotlinLibraryFile): List<FileSignatureProvider> {
         return signatureProvidersImpl.getOrPut(lib) {
             val irFragment = loadedFragments[lib] ?: notFoundIcError("loaded fragment", lib)
-            collectSignatureProviders(irFragment)
+            collectSignatureProviders(lib, irFragment)
         }
     }
 
@@ -81,6 +86,17 @@ internal data class LoadedJsIr(
     fun collectSymbolsReplacedWithStubs(): Set<IrSymbol> {
         return linker.partialLinkageSupport.collectAllStubbedSymbols()
     }
+
+    fun getIrFileNames(fragment: IrModuleFragment): Map<IrFile, KotlinSourceFile> {
+        return irFileSourceNames.getOrPut(fragment) {
+            val files = linker.getDeserializedFilesInKlibOrder(fragment)
+            val names = files.map { it.fileEntry.name }
+            val sourceFiles = KotlinSourceFile.fromSources(names)
+            files.indices.associate {
+                files[it] to sourceFiles[it]
+            }
+        }
+    }
 }
 
 internal class JsIrLinkerLoader(
@@ -88,7 +104,7 @@ internal class JsIrLinkerLoader(
     private val dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
     private val mainModuleFriends: Collection<KotlinLibrary>,
     private val irFactory: IrFactory,
-    private val stubbedSignatures: Set<IdSignature>
+    private val stubbedSignatures: Set<IdSignature>,
 ) {
     private val mainLibrary = dependencyGraph.keys.lastOrNull() ?: notFoundIcError("main library")
 
@@ -97,7 +113,7 @@ internal class JsIrLinkerLoader(
         val symbolTable: SymbolTable,
         val typeTranslator: TypeTranslatorImpl,
         val irBuiltIns: IrBuiltInsOverDescriptors,
-        val linker: JsIrLinker
+        val linker: JsIrLinker,
     ) {
         val functionTypeInterfacePackages = FunctionTypeInterfacePackages()
 
@@ -183,9 +199,9 @@ internal class JsIrLinkerLoader(
                 module == mainLibrary -> DeserializationStrategy.ALL
                 else -> DeserializationStrategy.EXPLICITLY_EXPORTED
             }
-            val modified = modifiedFiles[libraryFile] ?: emptyMap()
+            val modified = modifiedFiles[libraryFile]?.keys?.mapTo(hashSetOf()) { it.path } ?: emptySet()
             libraryFile to linkerContext.linker.deserializeIrModuleHeader(descriptor, module, {
-                when (KotlinSourceFile(it)) {
+                when (it) {
                     in modified -> modifiedStrategy
                     else -> DeserializationStrategy.WITH_INLINE_BODIES
                 }

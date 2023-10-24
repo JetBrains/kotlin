@@ -26,18 +26,45 @@ value class KotlinLibraryFile(val path: String) {
     override fun toString(): String = File(path).name
 }
 
-@JvmInline
-value class KotlinSourceFile(val path: String) {
-    constructor(irFile: IrFile) : this(irFile.fileEntry.name)
+class KotlinSourceFile private constructor(val path: String, val id: Int) {
+    fun toProtoStream(out: CodedOutputStream) {
+        out.writeStringNoTag(path)
+        out.writeInt32NoTag(id)
+    }
 
-    fun toProtoStream(out: CodedOutputStream) = out.writeStringNoTag(path)
+    override fun hashCode(): Int {
+        return path.hashCode() xor id
+    }
 
-    companion object {
-        fun fromProtoStream(input: CodedInputStream) = KotlinSourceFile(input.readString())
+    override fun equals(other: Any?): Boolean {
+        return other is KotlinSourceFile && other.path == path && other.id == id
     }
 
     // for debugging purposes only
-    override fun toString(): String = File(path).name
+    override fun toString(): String = "${File(path).name}${if (id != 0) ".$id" else ""}"
+
+    companion object {
+        fun fromProtoStream(input: CodedInputStream): KotlinSourceFile {
+            val path = input.readString()
+            val fileIndex = input.readInt32()
+            return KotlinSourceFile(path, fileIndex)
+        }
+
+        /**
+         * Source file paths in one module may clash;
+         * for example, common and platform parts of the module could have files with the same root paths.
+         * @param sources is a list of the module sources and must be in the same order as they appear in the klib.
+         * @return a list of [KotlinSourceFile] containing the file path and the unique id in case of a clash
+         */
+        fun fromSources(sources: List<String>): List<KotlinSourceFile> {
+            val counters = hashMapOf<String, Int>()
+            return sources.map { fileName ->
+                val id = counters[fileName] ?: 0
+                counters[fileName] = id + 1
+                KotlinSourceFile(fileName, id)
+            }
+        }
+    }
 }
 
 open class KotlinSourceFileMap<out T>(files: Map<KotlinLibraryFile, Map<KotlinSourceFile, T>>) :
@@ -54,7 +81,7 @@ open class KotlinSourceFileMap<out T>(files: Map<KotlinLibraryFile, Map<KotlinSo
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE") // K2 warning suppression, TODO: KT-62472
 class KotlinSourceFileMutableMap<T>(
-    private val files: MutableMap<KotlinLibraryFile, MutableMap<KotlinSourceFile, T>> = hashMapOf()
+    private val files: MutableMap<KotlinLibraryFile, MutableMap<KotlinSourceFile, T>> = hashMapOf(),
 ) : KotlinSourceFileMap<T>(files) {
 
     operator fun set(libFile: KotlinLibraryFile, sourceFile: KotlinSourceFile, data: T) = getOrPutFiles(libFile).put(sourceFile, data)
@@ -126,7 +153,7 @@ internal class DirtyFileExports : KotlinSourceFileExports() {
 
 internal class DirtyFileMetadata(
     val maybeImportedSignatures: Collection<IdSignature>,
-    val oldDirectDependencies: KotlinSourceFileMap<*>
+    val oldDirectDependencies: KotlinSourceFileMap<*>,
 ) : KotlinSourceFileMetadata() {
     override val inverseDependencies: KotlinSourceFileMutableMap<MutableSet<IdSignature>> = KotlinSourceFileMutableMap()
     override val directDependencies: KotlinSourceFileMutableMap<MutableMap<IdSignature, ICHash>> = KotlinSourceFileMutableMap()
@@ -161,7 +188,7 @@ internal class UpdatedDependenciesMetadata(oldMetadata: KotlinSourceFileMetadata
 }
 
 internal fun KotlinSourceFileMutableMap<UpdatedDependenciesMetadata>.addNewMetadata(
-    libFile: KotlinLibraryFile, srcFile: KotlinSourceFile, oldMetadata: KotlinSourceFileMetadata
+    libFile: KotlinLibraryFile, srcFile: KotlinSourceFile, oldMetadata: KotlinSourceFileMetadata,
 ) = this[libFile, srcFile] ?: UpdatedDependenciesMetadata(oldMetadata).also {
     this[libFile, srcFile] = it
 }
