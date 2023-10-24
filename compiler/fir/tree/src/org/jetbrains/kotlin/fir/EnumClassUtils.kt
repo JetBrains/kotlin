@@ -39,7 +39,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
     packageFqName: FqName,
     classFqName: FqName,
     makeExpect: Boolean = false,
-    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Synthetic.EnumStaticMember
 ) {
     val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
@@ -81,7 +81,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
     packageFqName: FqName,
     classFqName: FqName,
     makeExpect: Boolean = false,
-    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Synthetic.EnumStaticMember
 ) {
     val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
@@ -138,7 +138,7 @@ fun FirRegularClassBuilder.generateEntriesGetter(
     packageFqName: FqName,
     classFqName: FqName,
     makeExpect: Boolean = false,
-    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Synthetic.EnumStaticMember
 ) {
     val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildProperty {
