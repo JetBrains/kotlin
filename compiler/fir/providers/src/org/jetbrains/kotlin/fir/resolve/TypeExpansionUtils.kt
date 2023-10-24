@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
@@ -189,4 +190,11 @@ private fun mapTypeAliasArguments(
  */
 fun FirTypeAlias.fullyExpandedConeType(useSiteSession: FirSession): ConeClassLikeType? {
     return expandedConeType?.fullyExpandedType(useSiteSession)
+}
+
+/**
+ * @see fullyExpandedType
+ */
+fun FirTypeAlias.fullyExpandedClass(session: FirSession): FirClassLikeDeclaration? {
+    return fullyExpandedConeType(session)?.toSymbol(session)?.fir
 }

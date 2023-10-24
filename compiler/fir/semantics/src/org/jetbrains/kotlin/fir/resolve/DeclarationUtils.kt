@@ -57,10 +57,9 @@ fun isValidTypeParameterFromOuterDeclaration(
                 return containsTypeParameter(session.symbolProvider.getClassLikeSymbolByClassId(containingClassId)?.fir)
             } else if (currentDeclaration is FirClass) {
                 for (superTypeRef in currentDeclaration.superTypeRefs) {
-                    val superClassFir = superTypeRef.firClassLike(session)
-                    if (superClassFir == null || superClassFir is FirRegularClass && containsTypeParameter(superClassFir)) {
-                        return true
-                    }
+                    val superClassFir = superTypeRef.firClassLike(session) ?: return true
+                    if (superClassFir is FirRegularClass && containsTypeParameter(superClassFir)) return true
+                    if (superClassFir is FirTypeAlias && containsTypeParameter(superClassFir.fullyExpandedClass(session))) return true
                 }
             }
         }

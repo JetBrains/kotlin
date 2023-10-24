@@ -35257,6 +35257,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("kt62099.kt")
+            public void testKt62099() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/kt62099.kt");
+            }
+
+            @Test
             @TestMetadata("localTypeAlias.kt")
             public void testLocalTypeAlias() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/localTypeAlias.kt");
