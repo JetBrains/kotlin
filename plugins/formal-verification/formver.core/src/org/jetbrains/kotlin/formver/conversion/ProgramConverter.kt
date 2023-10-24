@@ -247,12 +247,15 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             CustomSetter(embedFunction(symbol))
         }
 
-    private fun processCallable(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): CallableEmbedding =
-        if (symbol.isInline) {
-            InlineNamedFunction(signature, symbol)
+    @OptIn(SymbolInternals::class)
+    private fun processCallable(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): CallableEmbedding {
+        val body = symbol.fir.body
+        return if (symbol.isInline && body != null) {
+            InlineNamedFunction(signature, symbol, body)
         } else {
             NonInlineNamedFunction(signature)
         }
+    }
 
     private fun convertMethodWithBody(declaration: FirSimpleFunction, signature: FullNamedFunctionSignature): Method {
         val body = declaration.body?.let {
