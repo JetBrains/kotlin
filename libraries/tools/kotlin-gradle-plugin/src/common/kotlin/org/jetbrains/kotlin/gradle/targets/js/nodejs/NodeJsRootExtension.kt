@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
@@ -26,7 +26,7 @@ import java.io.File
 
 open class NodeJsRootExtension(
     val project: Project,
-) : ConfigurationPhaseAware<NodeJsEnv>() {
+) : AbstractSettings<NodeJsEnv>() {
 
     init {
         check(project.rootProject == project)
@@ -54,18 +54,42 @@ open class NodeJsRootExtension(
         project.logger.kotlinInfo("Storing cached files in $it")
     }
 
-    var installationDir by Property(gradleHome.resolve("nodejs"))
+    override var installationDir by Property(gradleHome.resolve("nodejs"))
 
-    var download by Property(true)
+    override var download by Property(true)
 
-    var nodeDownloadBaseUrl by Property("https://nodejs.org/dist")
+    // deprecate after bootstrap
+//    @Deprecated("Use downloadBaseUrl instead", ReplaceWith("downloadBaseUrl"))
+    var nodeDownloadBaseUrl
+        get() = downloadBaseUrl
+        set(value) {
+            downloadBaseUrl = value
+        }
+
+    override var downloadBaseUrl: String? by Property("https://nodejs.org/dist")
+
+    // deprecate after bootstrap
+//    @Deprecated("Use version instead", ReplaceWith("version"))
+    var nodeVersion
+        get() = version
+        set(value) {
+            version = value
+        }
 
     // Release schedule: https://github.com/nodejs/Release
     // Actual LTS and Current versions: https://nodejs.org/en/download/
     // Older versions and more information, e.g. V8 version inside: https://nodejs.org/en/download/releases/
-    var nodeVersion by Property("18.12.1")
+    override var version by Property("18.12.1")
 
-    var nodeCommand by Property("node")
+    override var command by Property("node")
+
+    // deprecate after bootstrap
+//    @Deprecated("Use command instead", ReplaceWith("command"))
+    var nodeCommand
+        get() = command
+        set(value) {
+            command = value
+        }
 
     var packageManager: NpmApi by Property(Yarn())
 
@@ -107,9 +131,10 @@ open class NodeJsRootExtension(
         }
 
         return NodeJsEnv(
+            download = download,
             cleanableStore = cleanableStore,
             rootPackageDir = rootPackageDir,
-            nodeDir = nodeDir,
+            dir = nodeDir,
             nodeBinDir = nodeBinDir,
             nodeExecutable = getExecutable("node", nodeCommand, "exe"),
             platformName = name,

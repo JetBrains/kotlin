@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.jetbrains.kotlin.gradle.targets.js.AbstractEnv
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
 
 data class YarnEnv(
-    val downloadUrl: String,
+    override val download: Boolean,
+    override val downloadBaseUrl: String?,
     val cleanableStore: CleanableStore,
-    val home: File,
+    override val dir: File,
     val executable: String,
-    val ivyDependency: String,
+    override val ivyDependency: String,
     val standalone: Boolean,
     val ignoreScripts: Boolean,
     val yarnLockMismatchReport: YarnLockMismatchReport,
     val reportNewYarnLock: Boolean,
     val yarnLockAutoReplace: Boolean,
     val yarnResolutions: List<YarnResolution>
-)
+) : AbstractEnv

@@ -7,14 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
@@ -24,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.ST
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 
 open class YarnPlugin : Plugin<Project> {
@@ -44,6 +42,9 @@ open class YarnPlugin : Plugin<Project> {
 
         val setupTask = registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
             it.dependsOn(nodeJsTaskProviders.nodeJsSetupTaskProvider)
+
+            it.group = NodeJsRootPlugin.TASKS_GROUP_NAME
+            it.description = "Download and install a local yarn version"
 
             it.configuration = provider {
                 this.project.configurations.detachedConfiguration(this.project.dependencies.create(it.ivyDependency))
@@ -131,7 +132,7 @@ open class YarnPlugin : Plugin<Project> {
     // https://youtrack.jetbrains.com/issue/KT-48241
     private fun configureRequiresNpmDependencies(
         project: Project,
-        rootPackageJson: TaskProvider<RootPackageJsonTask>
+        rootPackageJson: TaskProvider<RootPackageJsonTask>,
     ) {
         val fn: (Project) -> Unit = {
             it.tasks.implementing(RequiresNpmDependencies::class)

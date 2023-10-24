@@ -5,109 +5,30 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.gradle.api.DefaultTask
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.*
-import org.gradle.internal.hash.FileHasher
+import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
-import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.targets.js.extractWithUpToDate
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
+import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
 import java.io.File
-import java.net.URI
-import javax.inject.Inject
 
 @DisableCachingByDefault
-abstract class YarnSetupTask : DefaultTask() {
+abstract class YarnSetupTask : AbstractSetupTask<YarnEnv, YarnRootExtension>() {
     @Transient
-    private val settings = project.yarn
-    private val env by lazy { settings.requireConfigured() }
+    @Internal
+    override val settings = project.yarn
 
-    private val shouldDownload = settings.download
-
-    @get:Inject
-    internal abstract val archiveOperations: ArchiveOperations
-
-    @get:Inject
-    internal abstract val fileHasher: FileHasher
-
-    @get:Inject
-    internal abstract val fs: FileSystemOperations
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    val downloadUrl
-        @Input get() = env.downloadUrl
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    val destination: File
-        @OutputDirectory get() = env.home
-
-    val destinationHashFile: File
-        @OutputFile get() = destination.parentFile.resolve("${destination.name}.hash")
-
-    init {
-        group = NodeJsRootPlugin.TASKS_GROUP_NAME
-        description = "Download and install a local yarn version"
-    }
-
-    val ivyDependency: String
-        @Input get() = env.ivyDependency
-
-    @Transient
     @get:Internal
-    internal lateinit var configuration: Provider<Configuration>
+    override val artifactPattern: String
+        get() = "v[revision]/[artifact](-v[revision]).[ext]"
 
-    @get:Classpath
-    @get:Optional
-    val yarnDist: File? by lazy {
-        if (shouldDownload) {
-            val repo = project.repositories.ivy { repo ->
-                repo.name = "Yarn Distributions at ${downloadUrl}"
-                repo.url = URI(downloadUrl)
-                repo.patternLayout {
-                    it.artifact("v[revision]/[artifact](-v[revision]).[ext]")
-                }
-                repo.metadataSources { it.artifact() }
-                repo.content { it.includeModule("com.yarnpkg", "yarn") }
-            }
-            val startDownloadTime = System.currentTimeMillis()
-            val dist = configuration.get().files.single()
-            val downloadDuration = System.currentTimeMillis() - startDownloadTime
-            if (downloadDuration > 0) {
-                KotlinBuildStatsService.getInstance()
-                    ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, dist.length() * 1000 / downloadDuration)
-            }
-            project.repositories.remove(repo)
-            dist
-        } else null
-    }
+    @get:Internal
+    override val artifactModule: String
+        get() = "com.yarnpkg"
 
-    init {
-        onlyIf {
-            shouldDownload
-        }
-    }
+    @get:Internal
+    override val artifactName: String
+        get() = "yarn"
 
-    @TaskAction
-    fun setup() {
-        if (!shouldDownload) return
-        logger.kotlinInfo("Using yarn distribution from '$yarnDist'")
-
-        extractWithUpToDate(
-            destination,
-            destinationHashFile,
-            yarnDist!!,
-            fileHasher,
-            ::extract
-        )
-    }
-
-    private fun extract(archive: File, destination: File) {
+    override fun extract(archive: File, destination: File) {
         val dirInTar = archive.name.removeSuffix(".tar.gz")
         fs.copy {
             it.from(archiveOperations.tarTree(archive))

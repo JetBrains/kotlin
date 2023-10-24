@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.targets.js.AbstractSettings
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.Platform
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
@@ -17,7 +17,7 @@ import java.io.File
 
 open class YarnRootExtension(
     val project: Project
-) : ConfigurationPhaseAware<YarnEnv>() {
+) : AbstractSettings<YarnEnv>() {
     init {
         check(project == project.rootProject)
     }
@@ -26,14 +26,14 @@ open class YarnRootExtension(
         project.logger.kotlinInfo("Storing cached files in $it")
     }
 
-    var installationDir by Property(gradleHome.resolve("yarn"))
+    override var installationDir by Property(gradleHome.resolve("yarn"))
 
-    var downloadBaseUrl by Property("https://github.com/yarnpkg/yarn/releases/download")
-    var version by Property("1.22.17")
+    override var downloadBaseUrl: String? by Property("https://github.com/yarnpkg/yarn/releases/download")
+    override var version by Property("1.22.17")
 
-    var command by Property("yarn")
+    override var command by Property("yarn")
 
-    var download by Property(true)
+    override var download by Property(true)
     var lockFileName by Property("yarn.lock")
     var lockFileDirectory: File by Property(project.rootDir.resolve("kotlin-js-store"))
 
@@ -88,9 +88,10 @@ open class YarnRootExtension(
                 finalCommand
         }
         return YarnEnv(
-            downloadUrl = downloadBaseUrl,
+            download = download,
+            downloadBaseUrl = downloadBaseUrl,
             cleanableStore = cleanableStore,
-            home = home,
+            dir = home,
             executable = getExecutable("yarn", command, "cmd"),
             standalone = !download,
             ivyDependency = "com.yarnpkg:yarn:$version@tar.gz",

@@ -1782,4 +1782,75 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("test FAIL_ON_PROJECT_REPOS using custom repository")
+    @GradleTest
+    fun testFailOnProjectReposUsingCustomRepo(gradleVersion: GradleVersion) {
+        project("js-project-repos", gradleVersion) {
+            settingsGradleKts.modify {
+                it + """
+                    
+                    dependencyResolutionManagement {
+                        repositories {
+                            ivy {
+                                name = "Node.JS dist"
+                                url = URI("https://nodejs.org/dist")
+                                patternLayout {
+                                    artifact("v[revision]/[artifact](-v[revision]-[classifier]).[ext]")
+                                }
+                                metadataSources {
+                                    artifact()
+                                }
+                                content {
+                                    includeModule("org.nodejs", "node")
+                                }
+                            }
+                            ivy {
+                                name = "Yarn dist"
+                                url = URI("https://github.com/yarnpkg/yarn/releases/download")
+                                patternLayout {
+                                    artifact("v[revision]/[artifact](-v[revision]).[ext]")
+                                }
+                                metadataSources {
+                                    artifact()
+                                }
+                                content {
+                                    includeModule("com.yarnpkg", "yarn")
+                                }
+                            }
+                        }
+                    }
+                """.trimIndent()
+            }
+
+            build("kotlinNodeJsSetup", "kotlinYarnSetup") {
+                assertTasksExecuted(":kotlinNodeJsSetup")
+                assertTasksExecuted(":kotlinYarnSetup")
+            }
+        }
+    }
+
+    @DisplayName("test FAIL_ON_PROJECT_REPOS no download")
+    @GradleTest
+    fun testFailOnProjectReposNoDownload(gradleVersion: GradleVersion) {
+        project("js-project-repos", gradleVersion) {
+            buildGradleKts.modify {
+                it + """
+                    
+                    rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
+                        rootProject.the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>().download = false
+                    }
+
+                    rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin> {
+                        rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().download = false
+                    }
+                """.trimIndent()
+            }
+
+            build("kotlinNodeJsSetup", "kotlinYarnSetup") {
+                assertTasksSkipped(":kotlinNodeJsSetup")
+                assertTasksSkipped(":kotlinYarnSetup")
+            }
+        }
+    }
 }

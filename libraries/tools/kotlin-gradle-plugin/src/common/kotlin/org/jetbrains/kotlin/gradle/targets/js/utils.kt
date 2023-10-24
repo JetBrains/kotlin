@@ -37,42 +37,6 @@ fun ByteArray.toHex(): String {
     return String(result)
 }
 
-fun extractWithUpToDate(
-    destination: File,
-    destinationHashFile: File,
-    dist: File,
-    fileHasher: FileHasher,
-    extract: (File, File) -> Unit
-) {
-    var distHash: String? = null
-    val upToDate = destinationHashFile.let { file ->
-        if (file.exists()) {
-            file.useLines { seq ->
-                val list = seq.first().split(" ")
-                list.size == 2 &&
-                        list[0] == fileHasher.calculateDirHash(destination) &&
-                        list[1] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
-            }
-        } else false
-    }
-
-    if (upToDate) {
-        return
-    }
-
-    if (destination.isDirectory) {
-        destination.deleteRecursively()
-    }
-
-    extract(dist, destination.parentFile)
-
-    destinationHashFile.writeText(
-        fileHasher.calculateDirHash(destination)!! +
-                " " +
-                (distHash ?: fileHasher.hash(dist).toByteArray().toHex())
-    )
-}
-
 fun FileHasher.calculateDirHash(
     dir: File
 ): String? {
