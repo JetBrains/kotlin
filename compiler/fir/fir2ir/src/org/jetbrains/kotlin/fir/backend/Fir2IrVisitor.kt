@@ -95,7 +95,8 @@ class Fir2IrVisitor(
 
     override fun visitField(field: FirField, data: Any?): IrField = whileAnalysing(session, field) {
         if (field.isSynthetic) {
-            return declarationStorage.getCachedIrDelegateOrBackingField(field)!!.apply {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            return declarationStorage.getCachedIrDelegateOrBackingFieldSymbol(field)!!.owner.apply {
                 // If this is a property backing field, then it has no separate initializer,
                 // so we shouldn't convert it
                 if (correspondingPropertySymbol == null) {

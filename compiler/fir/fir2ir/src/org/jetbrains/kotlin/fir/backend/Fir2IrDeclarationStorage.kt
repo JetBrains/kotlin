@@ -147,11 +147,11 @@ class Fir2IrDeclarationStorage(
 
     private val delegatedReverseCache: ConcurrentHashMap<IrSymbol, FirDeclaration> = ConcurrentHashMap()
 
-    private val fieldCache: ConcurrentHashMap<FirField, IrField> = ConcurrentHashMap()
+    private val fieldCache: ConcurrentHashMap<FirField, IrFieldSymbol> = ConcurrentHashMap()
 
     private data class FieldStaticOverrideKey(val lookupTag: ConeClassLikeLookupTag, val name: Name)
 
-    private val fieldStaticOverrideCache: ConcurrentHashMap<FieldStaticOverrideKey, IrField> = ConcurrentHashMap()
+    private val fieldStaticOverrideCache: ConcurrentHashMap<FieldStaticOverrideKey, IrFieldSymbol> = ConcurrentHashMap()
 
     private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
 
@@ -609,11 +609,12 @@ class Fir2IrDeclarationStorage(
         val fir = firFieldSymbol.fir
         val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(fir, fakeOverrideOwnerLookupTag)
         if (staticFakeOverrideKey == null) {
-            fieldCache[fir]?.let { return it }
+            fieldCache[fir]?.ownerIfBound()?.let { return it }
         } else {
             generateLazyFakeOverrides(fir.name, fakeOverrideOwnerLookupTag)
             // Lazy static fake override should always exist
-            return fieldStaticOverrideCache[staticFakeOverrideKey]!!
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            return fieldStaticOverrideCache[staticFakeOverrideKey]!!.owner
         }
         // In case of type parameters from the parent as the field's return type, find the parent ahead to cache type parameters.
         val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag)
@@ -628,11 +629,11 @@ class Fir2IrDeclarationStorage(
     // TODO: there is a mess with methods for fields
     //   we have three (!) different functions to getOrCreate field in different circumstances
     fun getOrCreateIrField(field: FirField, irParent: IrDeclarationParent?): IrField {
-        getCachedIrField(field, irParent)?.let { return it }
+        getCachedIrFieldSymbol(field, irParent)?.ownerIfBound()?.let { return it }
         return createAndCacheIrField(field, irParent)
     }
 
-    private fun getCachedIrField(field: FirField, irParent: IrDeclarationParent?): IrField? {
+    private fun getCachedIrFieldSymbol(field: FirField, irParent: IrDeclarationParent?): IrFieldSymbol? {
         val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
         val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
         return if (staticFakeOverrideKey == null) {
@@ -667,11 +668,11 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getCachedIrDelegateOrBackingField(field: FirField): IrField? {
+    fun getCachedIrDelegateOrBackingFieldSymbol(field: FirField): IrFieldSymbol? {
         return fieldCache[field]
     }
 
-    fun getCachedIrFieldStaticFakeOverrideByDeclaration(field: FirField): IrField? {
+    fun getCachedIrFieldStaticFakeOverrideSymbolByDeclaration(field: FirField): IrFieldSymbol? {
         val ownerLookupTag = field.containingClassLookupTag() ?: return null
         return fieldStaticOverrideCache[FieldStaticOverrideKey(ownerLookupTag, field.name)]
     }
@@ -688,7 +689,7 @@ class Fir2IrDeclarationStorage(
                 if (constructorProperty != null) {
                     val irProperty = getOrCreateIrProperty(constructorProperty, irClass)
                     val backingField = irProperty.backingField!!
-                    fieldCache[field] = backingField
+                    fieldCache[field] = backingField.symbol
                     return backingField
                 }
             }
@@ -711,9 +712,9 @@ class Fir2IrDeclarationStorage(
         val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
         val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
         if (staticFakeOverrideKey == null) {
-            fieldCache[field] = irField
+            fieldCache[field] = irField.symbol
         } else {
-            fieldStaticOverrideCache[staticFakeOverrideKey] = irField
+            fieldStaticOverrideCache[staticFakeOverrideKey] = irField.symbol
         }
         return irField
     }
