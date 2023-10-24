@@ -90,21 +90,18 @@ class Fir2IrVisitor(
     }
 
     override fun visitElement(element: FirElement, data: Any?): IrElement {
-        TODO("Should not be here: ${element::class} ${element.render()}")
+        error("Should not be here: ${element::class} ${element.render()}")
     }
 
     override fun visitField(field: FirField, data: Any?): IrField = whileAnalysing(session, field) {
-        if (field.isSynthetic) {
-            @OptIn(UnsafeDuringIrConstructionAPI::class)
-            return declarationStorage.getCachedIrDelegateOrBackingFieldSymbol(field)!!.owner.apply {
-                // If this is a property backing field, then it has no separate initializer,
-                // so we shouldn't convert it
-                if (correspondingPropertySymbol == null) {
-                    memberGenerator.convertFieldContent(this, field)
-                }
+        require(field.isSynthetic) { "Non-synthetic field found during traversal of FIR tree: ${field.render()}" }
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        return declarationStorage.getCachedIrDelegateOrBackingFieldSymbol(field)!!.owner.apply {
+            // If this is a property backing field, then it has no separate initializer,
+            // so we shouldn't convert it
+            if (correspondingPropertySymbol == null) {
+                memberGenerator.convertFieldContent(this, field)
             }
-        } else {
-            throw AssertionError("Unexpected field: ${field.render()}")
         }
     }
 
@@ -266,7 +263,7 @@ class Fir2IrVisitor(
                             statement is FirProperty && statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
                                 // Generating the result property only for expressions with a meaningful result type
                                 // otherwise skip the property and convert the expression into the statement
-                                if (statement.returnTypeRef.let { (it.isUnit || it.isNothing || it.isNullableNothing) } == true) {
+                                if (statement.returnTypeRef.let { (it.isUnit || it.isNothing || it.isNullableNothing) }) {
                                     statement.initializer!!.toIrStatement()
                                 } else {
                                     (statement.accept(this@Fir2IrVisitor, null) as? IrDeclaration)?.also {

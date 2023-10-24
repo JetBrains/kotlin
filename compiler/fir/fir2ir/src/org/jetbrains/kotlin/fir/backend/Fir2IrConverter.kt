@@ -560,7 +560,7 @@ class Fir2IrConverter(
             val firModuleDescriptor = irModuleFragment.descriptor as? FirModuleDescriptor
             val targetPlatform = firModuleDescriptor?.platform
             val languageVersionSettings = firModuleDescriptor?.session?.languageVersionSettings ?: return
-            val intrinsicConstEvaluation = languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation) == true
+            val intrinsicConstEvaluation = languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
 
             val configuration = IrInterpreterConfiguration(
                 platform = targetPlatform,
@@ -572,7 +572,9 @@ class Fir2IrConverter(
 
             components.session.javaElementFinder?.propertyEvaluator = { it.evaluate(components, interpreter, mode) }
 
-            val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(fir2IrConfiguration.diagnosticReporter, languageVersionSettings)
+            val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                fir2IrConfiguration.diagnosticReporter, languageVersionSettings
+            )
             irModuleFragment.files.forEach {
                 it.transformConst(
                     it,
@@ -618,7 +620,7 @@ class Fir2IrConverter(
         }
 
         // TODO: drop this function in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
-        fun friendModulesMap(session: FirSession) = mapOf(
+        private fun friendModulesMap(session: FirSession) = mapOf(
             session.moduleData.name.asStringStripSpecialMarkers() to session.moduleData.friendDependencies.map {
                 it.name.asStringStripSpecialMarkers()
             }
@@ -669,7 +671,8 @@ class Fir2IrConverter(
             )
 
             if (fir2IrConfiguration.useIrFakeOverrideBuilder) {
-                FakeOverrideRebuilder(commonMemberStorage.symbolTable, components.fakeOverrideBuilder).rebuildFakeOverrides(irModuleFragment)
+                val rebuilder = FakeOverrideRebuilder(commonMemberStorage.symbolTable, components.fakeOverrideBuilder)
+                rebuilder.rebuildFakeOverrides(irModuleFragment)
             }
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)

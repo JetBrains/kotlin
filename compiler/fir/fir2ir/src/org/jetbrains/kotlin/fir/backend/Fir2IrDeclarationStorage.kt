@@ -187,7 +187,7 @@ class Fir2IrDeclarationStorage(
         firOrigin: FirDeclarationOrigin,
     ): IrExternalPackageFragment {
         val isBuiltIn = fqName in BUILT_INS_PACKAGE_FQ_NAMES
-        return when(isBuiltIn) {
+        return when (isBuiltIn) {
             true -> getIrBuiltInsPackageFragment(fqName)
             false -> getIrExternalPackageFragment(fqName, moduleData, firOrigin)
         }
@@ -233,12 +233,18 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ functions ------------------------------------
 
-    fun getCachedIrFunctionSymbol(function: FirFunction, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null): IrSimpleFunctionSymbol? {
+    fun getCachedIrFunctionSymbol(
+        function: FirFunction,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
+    ): IrSimpleFunctionSymbol? {
         return if (function is FirSimpleFunction) getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)
         else localStorage.getLocalFunctionSymbol(function)
     }
 
-    fun getCachedIrFunctionSymbol(function: FirSimpleFunction, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null): IrSimpleFunctionSymbol? {
+    fun getCachedIrFunctionSymbol(
+        function: FirSimpleFunction,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
+    ): IrSimpleFunctionSymbol? {
         return getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag) {
             signatureComposer.composeSignature(function, fakeOverrideOwnerLookupTag)
         }
@@ -377,7 +383,7 @@ class Fir2IrDeclarationStorage(
         return getOrCreateIrConstructor(constructor, { irParent }, predefinedOrigin, isLocal)
     }
 
-    fun getOrCreateIrConstructor(
+    private fun getOrCreateIrConstructor(
         constructor: FirConstructor,
         irParent: () -> IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
@@ -395,10 +401,7 @@ class Fir2IrDeclarationStorage(
 
     fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
         val fir = firConstructorSymbol.fir
-        return getOrCreateIrConstructor(
-            fir,
-            { findIrParent(fir, fakeOverrideOwnerLookupTag = null) as IrClass }
-        ).symbol
+        return getOrCreateIrConstructor(fir, { findIrParent(fir, fakeOverrideOwnerLookupTag = null) as IrClass }).symbol
     }
 
 
@@ -451,7 +454,7 @@ class Fir2IrDeclarationStorage(
         return getOrCreateIrProperty(property, { irParent }, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
     }
 
-    fun getOrCreateIrProperty(
+    private fun getOrCreateIrProperty(
         property: FirProperty,
         irParent: () -> IrDeclarationParent?,
         predefinedOrigin: IrDeclarationOrigin? = null,
@@ -526,6 +529,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    @Suppress("DuplicatedCode")
     private fun FirField.toStubProperty(): FirProperty {
         val field = this
         return buildProperty {
