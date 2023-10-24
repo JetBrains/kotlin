@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.*
-import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
-import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
-import org.jetbrains.kotlin.bir.declarations.BirSymbolOwner
-import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
+import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirMemberAccessExpression
@@ -137,7 +134,16 @@ abstract class Ir2BirConverterBase() {
             val ir = collectedIrElementsWithoutParent.removeLast()
             if (bir.parent == null) {
                 if (ir is IrDeclaration) {
-                    remapElement<BirElement>(ir.parent)
+                    val irParent = ir.parent
+                    val birParent = remapElement<BirElement>(irParent)
+
+                    if (bir.parent == null) {
+                        // IrExternalPackageFragment may not always contain its children
+                        if (irParent is IrExternalPackageFragment) {
+                            birParent as BirExternalPackageFragment
+                            birParent.declarations += bir as BirDeclaration
+                        }
+                    }
                 } else if (ir is IrFile) {
                     remapElement<BirModuleFragment>(ir.module)
                 }
