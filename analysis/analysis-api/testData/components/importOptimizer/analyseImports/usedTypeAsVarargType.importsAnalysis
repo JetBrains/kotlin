@@ -3,7 +3,4 @@ USED DECLARATIONS:
 Declaration: dependency.Bar
 By names: [Bar]
 
-Declaration: kotlin.Array
-By names: [Bar]
-
 UNRESOLVED NAMES:

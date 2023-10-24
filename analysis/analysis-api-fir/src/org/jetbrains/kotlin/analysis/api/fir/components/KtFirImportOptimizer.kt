@@ -519,7 +519,14 @@ private sealed interface TypeQualifier {
 
         private val FirResolvedTypeRef.isPresentInSource: Boolean
             get() = when (source?.kind) {
-                is KtRealSourceElementKind -> true
+                is KtRealSourceElementKind -> {
+                    val isArrayFromVararg = delegatedTypeRef?.source?.kind is KtFakeSourceElementKind.ArrayTypeFromVarargParameter;
+
+                    // type ref with delegated type ref with such source kind is NOT directly present in the source, so we ignore it
+                    !isArrayFromVararg
+                }
+
+                // type ref with such source kind is explicitly present in the source, so we want to see it
                 is KtFakeSourceElementKind.ArrayTypeFromVarargParameter -> true
 
                 else -> false
