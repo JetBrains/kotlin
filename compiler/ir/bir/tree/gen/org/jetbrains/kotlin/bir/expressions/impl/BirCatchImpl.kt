@@ -9,7 +9,9 @@
 package org.jetbrains.kotlin.bir.expressions.impl
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.BirCatch
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -65,6 +67,11 @@ class BirCatchImpl(
     init {
         initChild(_catchParameter)
         initChild(_result)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        _catchParameter.acceptLite(visitor)
+        _result.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

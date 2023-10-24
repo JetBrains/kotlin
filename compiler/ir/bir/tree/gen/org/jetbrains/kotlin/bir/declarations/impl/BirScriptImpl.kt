@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirStatement
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirConstructor
 import org.jetbrains.kotlin.bir.declarations.BirScript
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
@@ -203,6 +200,15 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     init {
         initChild(_thisReceiver)
         initChild(_earlierScriptsParameter)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        statements.acceptChildrenLite(visitor)
+        _thisReceiver?.acceptLite(visitor)
+        explicitCallParameters.acceptChildrenLite(visitor)
+        implicitReceiversParameters.acceptChildrenLite(visitor)
+        providedPropertiesParameters.acceptChildrenLite(visitor)
+        _earlierScriptsParameter?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

@@ -9,7 +9,9 @@
 package org.jetbrains.kotlin.bir.declarations.impl
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -210,6 +212,10 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
     init {
         initChild(_defaultValue)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        _defaultValue?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
