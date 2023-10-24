@@ -1,0 +1,15 @@
+USED DECLARATIONS:
+
+Declaration: <local>.<destruct>
+By names: [<destruct>]
+
+Declaration: <local>.target
+By names: [target]
+
+Declaration: dependency.component1
+By names: [component1]
+
+Declaration: dependency.component2
+By names: [component2]
+
+UNRESOLVED NAMES:

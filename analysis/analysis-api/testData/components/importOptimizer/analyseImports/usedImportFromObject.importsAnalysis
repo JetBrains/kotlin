@@ -1,0 +1,12 @@
+USED DECLARATIONS:
+
+Declaration: dependency.Bar.callable
+By names: [callable]
+
+Declaration: dependency.Bar.function
+By names: [function]
+
+Declaration: dependency.Bar.property
+By names: [property]
+
+UNRESOLVED NAMES:

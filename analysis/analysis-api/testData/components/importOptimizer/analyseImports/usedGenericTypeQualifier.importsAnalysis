@@ -1,0 +1,9 @@
+USED DECLARATIONS:
+
+Declaration: dependency.Bar
+By names: [Bar]
+
+Declaration: test.MyClass
+By names: [MyClass]
+
+UNRESOLVED NAMES:

@@ -1,0 +1,15 @@
+USED DECLARATIONS:
+
+Declaration: <local>.<destruct>
+By names: [<destruct>]
+
+Declaration: <local>.holder
+By names: [holder]
+
+Declaration: dependency.Holder
+By names: [Holder]
+
+Declaration: dependency.MyClass
+By names: [MyClass]
+
+UNRESOLVED NAMES:

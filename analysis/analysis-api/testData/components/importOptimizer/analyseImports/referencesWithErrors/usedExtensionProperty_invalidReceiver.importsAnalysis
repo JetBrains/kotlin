@@ -1,0 +1,12 @@
+USED DECLARATIONS:
+
+Declaration: <local>.b
+By names: [b]
+
+Declaration: dependency.fooExtProp
+By names: [fooExtProp]
+
+Declaration: kotlin.Any
+By names: [Any]
+
+UNRESOLVED NAMES:

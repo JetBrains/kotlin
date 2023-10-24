@@ -1,0 +1,12 @@
+USED DECLARATIONS:
+
+Declaration: <local>.b
+By names: [b]
+
+Declaration: dependency.Bar
+By names: [Bar]
+
+Declaration: dependency.fooExt
+By names: [fooExt]
+
+UNRESOLVED NAMES:

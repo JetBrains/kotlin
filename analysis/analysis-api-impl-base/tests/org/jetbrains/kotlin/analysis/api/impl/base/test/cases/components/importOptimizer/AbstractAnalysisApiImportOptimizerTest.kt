@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractAnalysisApiImportOptimizerTest : AbstractAnalysisApiBasedSingleModuleTest(){
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
-        val unusedImports = analyseForTest(mainKtFile) {
-            val results = analyseImports(mainKtFile)
-            @Suppress("DEPRECATION")
-            results.unusedImports
+
+        val importsAnalysis = analyseForTest(mainKtFile) {
+            analyseImports(mainKtFile)
         }
+
+        @Suppress("DEPRECATION")
+        val unusedImports = importsAnalysis.unusedImports
 
         val unusedImportPaths = unusedImports
             .map { it.importPath ?: error("Import $it should have an import path, instead was ${it.text}") }
@@ -28,6 +30,27 @@ abstract class AbstractAnalysisApiImportOptimizerTest : AbstractAnalysisApiBased
             unusedImportPaths.forEach(::appendLine)
         }
 
+        val importAnalysisRendered = buildString {
+            val sortedUsedDeclarations = importsAnalysis.usedDeclarations
+                .toSortedMap(compareBy { importPath -> importPath.toString() })
+                .mapValues { (_, importedNames) -> importedNames.sorted() }
+
+            appendLine("USED DECLARATIONS:")
+            for ((path, elements) in sortedUsedDeclarations) {
+                appendLine()
+                appendLine("Declaration: $path")
+                appendLine("By names: $elements")
+            }
+
+            appendLine()
+
+            val sortedUnresolvedNames = importsAnalysis.unresolvedNames.sorted()
+
+            appendLine("UNRESOLVED NAMES:")
+            sortedUnresolvedNames.forEach(::appendLine)
+        }
+
         testServices.assertions.assertEqualsToTestDataFileSibling(actualUnusedImports, extension = ".imports")
+        testServices.assertions.assertEqualsToTestDataFileSibling(importAnalysisRendered, extension = ".importsAnalysis")
     }
 }

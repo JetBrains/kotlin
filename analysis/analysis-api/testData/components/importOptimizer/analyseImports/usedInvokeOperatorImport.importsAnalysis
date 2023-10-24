@@ -1,0 +1,12 @@
+USED DECLARATIONS:
+
+Declaration: <local>.foo
+By names: [foo]
+
+Declaration: dependency.invoke
+By names: [invoke]
+
+Declaration: kotlin.Int
+By names: [Int]
+
+UNRESOLVED NAMES:
