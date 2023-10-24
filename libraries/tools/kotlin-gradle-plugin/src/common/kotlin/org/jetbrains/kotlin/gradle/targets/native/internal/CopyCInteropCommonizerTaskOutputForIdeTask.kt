@@ -33,7 +33,7 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
         commonizeCInteropTask.map { it.allOutputDirectories }
 
     @get:OutputDirectory
-    override val outputDirectory: File = project.kotlinMetadataDir
+    override val outputDirectory: File = project.kotlinMetadataDir()
         .resolve("commonizer")
         .resolve(project.path.removePrefix(":").replace(":", "/"))
 

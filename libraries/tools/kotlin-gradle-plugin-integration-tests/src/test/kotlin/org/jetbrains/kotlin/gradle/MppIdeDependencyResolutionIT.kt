@@ -191,12 +191,10 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     @GradleTest
     fun `test cinterops - are stored in root gradle folder`(
         gradleVersion: GradleVersion,
-        @TempDir tempDir: Path,
     ) {
         project(
             projectName = "cinteropImport",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(kotlinUserHome = tempDir)
         ) {
             resolveIdeDependencies("dep-with-cinterop") { dependencies ->
 
@@ -205,7 +203,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                     .filter { !it.isNativeDistribution && it.klibExtra?.isInterop == true }
                     .ifEmpty { fail("Expected at least one cinterop on linuxX64Main") }
 
-                val persistentCInteropsCache = tempDir.inProjectsPersistentCache("kotlinCInteropLibraries")
+                val persistentCInteropsCache = projectPersistentCache.resolve("metadata").resolve("kotlinCInteropLibraries")
                 cinterops.forEach { cinterop ->
                     if (cinterop.classpath.isEmpty()) fail("Missing classpath for $cinterop")
                     cinterop.classpath.forEach { cinteropFile ->

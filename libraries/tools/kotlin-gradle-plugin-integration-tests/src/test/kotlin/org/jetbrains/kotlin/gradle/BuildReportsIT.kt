@@ -17,7 +17,6 @@ import kotlin.io.path.*
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
-import org.junit.jupiter.api.io.TempDir
 
 @DisplayName("Build reports")
 @JvmGradlePluginTests
@@ -271,16 +270,14 @@ class BuildReportsIT : KGPBaseTest() {
     @GradleTest
     fun testErrorsFileSmokeTest(
         gradleVersion: GradleVersion,
-        @TempDir tempDir: Path,
     ) {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(kotlinUserHome = tempDir)
         ) {
 
             val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
-            fun kotlinErrorPath() = tempDir.inProjectsPersistentCache("errors")
+            val kotlinErrorPath = projectPersistentCache.resolve("errors")
 
             buildGradle.appendText(
                 """
@@ -293,14 +290,14 @@ class BuildReportsIT : KGPBaseTest() {
             )
 
             build("compileKotlin") {
-                assertTrue { kotlinErrorPath().listDirectoryEntries().isEmpty() }
+                assertTrue { kotlinErrorPath.listDirectoryEntries().isEmpty() }
                 assertOutputDoesNotContain("errors were stored into file")
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
             buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputContains("errors were stored into file")
-                val files = kotlinErrorPath().listDirectoryEntries()
+                val files = kotlinErrorPath.listDirectoryEntries()
                 assertTrue { files.first().exists() }
                 files.first().bufferedReader().use { reader ->
                     val kotlinVersion = reader.readLine()
@@ -324,24 +321,22 @@ class BuildReportsIT : KGPBaseTest() {
     @GradleTest
     fun testErrorsFileWithCompilationError(
         gradleVersion: GradleVersion,
-        @TempDir tempDir: Path,
     ) {
         project(
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(kotlinUserHome = tempDir)
         ) {
-            fun kotlinErrorPath() = tempDir.inProjectsPersistentCache("errors")
+            val kotlinErrorPath = projectPersistentCache.resolve("errors")
 
             build("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputDoesNotContain("errors were stored into file")
-                assertTrue { kotlinErrorPath().listDirectoryEntries().isEmpty() }
+                assertTrue { kotlinErrorPath.listDirectoryEntries().isEmpty() }
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
             buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputDoesNotContain("errors were stored into file")
-                assertTrue { kotlinErrorPath().listDirectoryEntries().isEmpty() }
+                assertTrue { kotlinErrorPath.listDirectoryEntries().isEmpty() }
             }
         }
     }

@@ -8,31 +8,25 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import java.io.File
-import java.security.MessageDigest
-
-private const val PROJECTS_CACHE_NAME = "projects"
-private const val PROJECTS_CACHE_VERSION = 1
-private const val PROJECTS_CACHE_NAME_FULL = "$PROJECTS_CACHE_NAME-$PROJECTS_CACHE_VERSION"
 
 private const val SESSIONS_DIR_NAME = "sessions"
 private const val METADATA_DIR_NAME = "metadata"
 private const val ERRORS_DIR_NAME = "errors"
 
-internal val Project.basePersistentDir
+@Suppress("unused") // will be used in the followup KT-58223 issues
+internal val Project.userKotlinPersistentDir
     get() = kotlinPropertiesProvider.kotlinUserHomeDir?.let { File(it) }
         ?: File(System.getProperty("user.home")).resolve(".kotlin")
 
-internal val Project.kotlinSessionsDir
-    get() = basePersistentDir.resolve(PROJECTS_CACHE_NAME_FULL).resolve(rootDir.absolutePathMd5Hash()).resolve(SESSIONS_DIR_NAME)
+internal fun Project.projectKotlinPersistentDir(compositeRootProject: Project? = null) =
+    kotlinPropertiesProvider.kotlinProjectPersistentDir?.let { File(it) }
+        ?: (compositeRootProject ?: this).rootDir.resolve(".kotlin")
 
-internal val Project.kotlinMetadataDir
-    get() = basePersistentDir.projectSpecificCache(rootDir).resolve(METADATA_DIR_NAME)
+internal val Project.kotlinSessionsDir
+    get() = projectKotlinPersistentDir().resolve(SESSIONS_DIR_NAME)
+
+internal fun Project.kotlinMetadataDir(compositeBuildRootProject: Project? = null) =
+    projectKotlinPersistentDir(compositeBuildRootProject).resolve(METADATA_DIR_NAME)
 
 internal val Project.kotlinErrorsDir
-    get() = basePersistentDir.projectSpecificCache(rootDir).resolve(ERRORS_DIR_NAME)
-
-private val md5Digest by lazy { MessageDigest.getInstance("MD5") }
-
-private fun File.absolutePathMd5Hash(): String = md5Digest.digest(absolutePath.toByteArray()).toHexString()
-
-private fun File.projectSpecificCache(projectRootDir: File) = resolve(PROJECTS_CACHE_NAME_FULL).resolve(projectRootDir.absolutePathMd5Hash())
+    get() = projectKotlinPersistentDir().resolve(ERRORS_DIR_NAME)

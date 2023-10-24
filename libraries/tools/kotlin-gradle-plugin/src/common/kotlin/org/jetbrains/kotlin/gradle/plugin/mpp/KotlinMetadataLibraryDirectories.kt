@@ -19,19 +19,16 @@ internal fun ProjectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(sou
     buildDirectory.get().asFile.resolve(kotlinTransformedMetadataLibraries).resolve(sourceSetName)
 
 internal val Project.kotlinTransformedMetadataLibraryDirectoryForIde: File
-    get() = compositeBuildRootProject
-        .kotlinMetadataDir
+    get() = kotlinMetadataDir(compositeBuildRootProject)
         .resolve(kotlinTransformedMetadataLibraries)
 
 internal fun ProjectLayout.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSetName: String): File =
     buildDirectory.get().asFile.resolve(kotlinTransformedCInteropMetadataLibraries).resolve(sourceSetName)
 
 internal val Project.kotlinCInteropLibraryDirectoryForIde: File
-    get() = compositeBuildRootProject
-        .kotlinMetadataDir
+    get() = kotlinMetadataDir(compositeBuildRootProject)
         .resolve(kotlinCInteropLibraries)
 
 internal val Project.kotlinTransformedCInteropMetadataLibraryDirectoryForIde: File
-    get() = compositeBuildRootProject
-        .kotlinMetadataDir
+    get() = kotlinMetadataDir(compositeBuildRootProject)
         .resolve(kotlinTransformedCInteropMetadataLibraries)

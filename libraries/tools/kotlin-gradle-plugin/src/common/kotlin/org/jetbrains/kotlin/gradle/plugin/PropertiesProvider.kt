@@ -543,7 +543,16 @@ internal class PropertiesProvider private constructor(private val project: Proje
      *
      * If the property is not set, the plugin will use `<user_home>/.kotlin` as default.
      */
-    val kotlinUserHomeDir: String? = get(PropertyNames.KOTLIN_USER_HOME_DIR)
+    val kotlinUserHomeDir: String?
+        get() = get(PropertyNames.KOTLIN_USER_HOME_DIR)
+
+    /**
+     * The directory where Kotlin stores project-specific persistent caches.
+     *
+     * If the property is not set, the plugin will use `<project_dir>/.kotlin` as default.
+     */
+    val kotlinProjectPersistentDir: String?
+        get() = get(PropertyNames.KOTLIN_PROJECT_PERSISTENT_DIR)
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
@@ -636,6 +645,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS =
             property("kotlin.internal.suppress.buildToolsApiVersionConsistencyChecks")
         val KOTLIN_USER_HOME_DIR = property("kotlin.user.home")
+        val KOTLIN_PROJECT_PERSISTENT_DIR = property("kotlin.project.persistent.dir")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used
