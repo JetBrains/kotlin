@@ -26,7 +26,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dumpDirectory = from.dumpDirectory
     to.dumpOnlyFqName = from.dumpOnlyFqName
     to.dumpPerf = from.dumpPerf
-    to.effectSystem = from.effectSystem
     to.enableBuilderInference = from.enableBuilderInference
     to.enableSignatureClashChecks = from.enableSignatureClashChecks
     to.expectActualClasses = from.expectActualClasses
@@ -64,8 +63,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.pluginOptions = from.pluginOptions?.copyOf()
     to.profilePhases = from.profilePhases
     to.progressiveMode = from.progressiveMode
-    to.properIeee754Comparisons = from.properIeee754Comparisons
-    to.readDeserializedContracts = from.readDeserializedContracts
     to.relativePathBases = from.relativePathBases?.copyOf()
     to.renderInternalDiagnosticNames = from.renderInternalDiagnosticNames
     to.reportOutputFiles = from.reportOutputFiles
@@ -82,7 +79,6 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.useFirLT = from.useFirLT
     to.useIrFakeOverrideBuilder = from.useIrFakeOverrideBuilder
     to.useK2 = from.useK2
-    to.useMixedNamedArguments = from.useMixedNamedArguments
     to.verbosePhases = from.verbosePhases?.copyOf()
 
     return to

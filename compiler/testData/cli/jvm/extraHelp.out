@@ -170,7 +170,6 @@ where advanced options include:
   -Xdump-directory           Dump the backend state into this directory.
   -Xdump-fqname              Dump the declaration with the given FqName.
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
-  -Xeffect-system            Enable experimental language feature: effect system.
   -Xenable-builder-inference Use builder inference by default for all calls with lambdas that can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
   -Xklib-enable-signature-clash-checks
@@ -213,8 +212,6 @@ where advanced options include:
   -Xcompiler-plugin=<path1>,<path2>:<optionName>=<value>,<optionName>=<value>
                              Register a compiler plugin.
   -Xprofile-phases           Profile backend phases.
-  -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types.
-  -Xread-deserialized-contracts Enable reading contracts from metadata.
   -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
   -Xrender-internal-diagnostic-names
                              Render the internal names of warnings and errors.
@@ -233,7 +230,6 @@ where advanced options include:
   -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
   -Xuse-ir-fake-override-builder Generate fake overrides via IR. See KT-61514
   -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
-  -Xuse-mixed-named-arguments Allow mixing named and unnamed arguments when the arguments appear in their default order.
   -Xverbose-phases           Be verbose while performing the given backend phases.
 
 Advanced options are non-standard and may be changed or removed without any notice.

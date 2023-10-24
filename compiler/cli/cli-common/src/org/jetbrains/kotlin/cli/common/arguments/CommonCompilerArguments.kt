@@ -251,26 +251,6 @@ progressive mode enabled may cause compilation errors in progressive mode."""
             field = value
         }
 
-    @Argument(
-        value = "-Xeffect-system",
-        description = "Enable experimental language feature: effect system."
-    )
-    var effectSystem = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xread-deserialized-contracts",
-        description = "Enable reading contracts from metadata."
-    )
-    var readDeserializedContracts = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @IDEAPluginsCompatibilityAPI(
         IDEAPlatforms._212, // maybe 211 AS used it too
         IDEAPlatforms._213,
@@ -286,16 +266,6 @@ progressive mode enabled may cause compilation errors in progressive mode."""
         plugins = "Android"
     )
     var useExperimental: Array<String>? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xproper-ieee754-comparisons",
-        description = "Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types."
-    )
-    var properIeee754Comparisons = false
         set(value) {
             checkFrozen()
             field = value
@@ -537,16 +507,6 @@ They should be a subset of sources passed as free arguments."""
         description = "Generate fake overrides via IR. See KT-61514"
     )
     var useIrFakeOverrideBuilder = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
-        value = "-Xuse-mixed-named-arguments",
-        description = "Allow mixing named and unnamed arguments when the arguments appear in their default order."
-    )
-    var useMixedNamedArguments = false
         set(value) {
             checkFrozen()
             field = value
@@ -838,23 +798,6 @@ The corresponding calls' declarations may not be marked with @BuilderInference."
 
             if (legacySmartCastAfterTry) {
                 put(LanguageFeature.SoundSmartCastsAfterTry, LanguageFeature.State.DISABLED)
-            }
-
-            if (effectSystem) {
-                put(LanguageFeature.UseCallsInPlaceEffect, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.UseReturnsEffect, LanguageFeature.State.ENABLED)
-            }
-
-            if (readDeserializedContracts) {
-                put(LanguageFeature.ReadDeserializedContracts, LanguageFeature.State.ENABLED)
-            }
-
-            if (properIeee754Comparisons) {
-                put(LanguageFeature.ProperIeee754Comparisons, LanguageFeature.State.ENABLED)
-            }
-
-            if (useMixedNamedArguments) {
-                put(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition, LanguageFeature.State.ENABLED)
             }
 
             if (inferenceCompatibility) {
