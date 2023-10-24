@@ -32,7 +32,6 @@ class BirForest {
 
     private fun attachElement(element: BirElementBase) {
         element.root = this
-        element.updateLevel()
     }
 
     fun attachRootElement(element: BirElementBase) {
@@ -55,7 +54,6 @@ class BirForest {
 
     private fun detachElement(element: BirElementBase) {
         element.root = null
-        element.updateLevel()
     }
 
 
