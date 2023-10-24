@@ -7,7 +7,7 @@
 
 #include <memory>
 
-#include "ConcurrentMarkAndSweep.hpp"
+#include "ParallelMarkConcurrentSweep.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
 #include "MarkAndSweepUtils.hpp"

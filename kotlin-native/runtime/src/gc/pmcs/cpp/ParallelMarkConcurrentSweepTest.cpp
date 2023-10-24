@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "ConcurrentMarkAndSweep.hpp"
+#include "ParallelMarkConcurrentSweep.hpp"
 
 #include <condition_variable>
 #include <future>
@@ -30,7 +30,7 @@
 
 using namespace kotlin;
 
-// These tests can only work if `GC` is `ConcurrentMarkAndSweep`.
+// These tests can only work if `GC` is `ParallelMarkConcurrentSweep`.
 
 namespace {
 
@@ -201,10 +201,10 @@ struct ParallelismOptions {
     std::size_t auxGCThreads;
 };
 
-class ConcurrentMarkAndSweepTest : public testing::TestWithParam<ParallelismOptions> {
+class ParallelMarkConcurrentSweepTest : public testing::TestWithParam<ParallelismOptions> {
 public:
 
-    ConcurrentMarkAndSweepTest() {
+    ParallelMarkConcurrentSweepTest() {
         if (supportedConfiguration()) {
             mm::GlobalData::Instance().gc().impl().gc().reconfigure(GetParam().maxParallelism,
                                                                     GetParam().cooperativeMutators,
@@ -218,7 +218,7 @@ public:
         }
     }
 
-    ~ConcurrentMarkAndSweepTest() {
+    ~ParallelMarkConcurrentSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::SpecialRefRegistry::instance().clearForTests();
         mm::GlobalData::Instance().gc().ClearForTests();
@@ -237,7 +237,7 @@ private:
 
 } // namespace
 
-TEST_P(ConcurrentMarkAndSweepTest, RootSet) {
+TEST_P(ParallelMarkConcurrentSweepTest, RootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global1{threadData};
         GlobalObjectArrayHolder global2{threadData};
@@ -272,7 +272,7 @@ TEST_P(ConcurrentMarkAndSweepTest, RootSet) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, InterconnectedRootSet) {
+TEST_P(ParallelMarkConcurrentSweepTest, InterconnectedRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global1{threadData};
         GlobalObjectArrayHolder global2{threadData};
@@ -318,7 +318,7 @@ TEST_P(ConcurrentMarkAndSweepTest, InterconnectedRootSet) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, FreeObjects) {
+TEST_P(ParallelMarkConcurrentSweepTest, FreeObjects) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         auto& object2 = AllocateObject(threadData);
@@ -333,7 +333,7 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjects) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
+TEST_P(ParallelMarkConcurrentSweepTest, FreeObjectsWithFinalizers) {
     RunInNewThread([this](mm::ThreadData& threadData) {
         auto& object1 = AllocateObjectWithFinalizer(threadData);
         auto& object2 = AllocateObjectWithFinalizer(threadData);
@@ -350,7 +350,7 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
+TEST_P(ParallelMarkConcurrentSweepTest, FreeObjectWithFreeWeak) {
     RunInNewThread([this](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         auto& weak1 = ([&threadData, &object1]() -> test_support::RegularWeakReferenceImpl& {
@@ -370,7 +370,7 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithHoldedWeak) {
+TEST_P(ParallelMarkConcurrentSweepTest, FreeObjectWithHoldedWeak) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         StackObjectHolder stack{threadData};
@@ -389,7 +389,7 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithHoldedWeak) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, ObjectReferencedFromRootSet) {
+TEST_P(ParallelMarkConcurrentSweepTest, ObjectReferencedFromRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -429,7 +429,7 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectReferencedFromRootSet) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCycles) {
+TEST_P(ParallelMarkConcurrentSweepTest, ObjectsWithCycles) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -478,7 +478,7 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCycles) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
+TEST_P(ParallelMarkConcurrentSweepTest, ObjectsWithCyclesAndFinalizers) {
     RunInNewThread([this](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -529,7 +529,7 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
+TEST_P(ParallelMarkConcurrentSweepTest, ObjectsWithCyclesIntoRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -557,7 +557,7 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, RunGCTwice) {
+TEST_P(ParallelMarkConcurrentSweepTest, RunGCTwice) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -607,7 +607,7 @@ TEST_P(ConcurrentMarkAndSweepTest, RunGCTwice) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, PermanentObjects) {
+TEST_P(ParallelMarkConcurrentSweepTest, PermanentObjects) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalPermanentObjectHolder global1{threadData};
         GlobalObjectHolder global2{threadData};
@@ -629,7 +629,7 @@ TEST_P(ConcurrentMarkAndSweepTest, PermanentObjects) {
     });
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, SameObjectInRootSet) {
+TEST_P(ParallelMarkConcurrentSweepTest, SameObjectInRootSet) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack(*global);
@@ -715,7 +715,7 @@ private:
 
 } // namespace
 
-TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
+TEST_P(ParallelMarkConcurrentSweepTest, MultipleMutatorsCollect) {
     std::vector<Mutator> mutators(kDefaultThreadCount);
     std::vector<ObjHeader*> globals(kDefaultThreadCount);
     std::vector<ObjHeader*> locals(kDefaultThreadCount);
@@ -772,7 +772,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
     }
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
+TEST_P(ParallelMarkConcurrentSweepTest, MultipleMutatorsAllCollect) {
     std::vector<Mutator> mutators(kDefaultThreadCount);
     std::vector<ObjHeader*> globals(kDefaultThreadCount);
     std::vector<ObjHeader*> locals(kDefaultThreadCount);
@@ -834,7 +834,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
     }
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRequested) {
+TEST_P(ParallelMarkConcurrentSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRequested) {
     std::vector<Mutator> mutators(kDefaultThreadCount);
     std::vector<ObjHeader*> globals(kDefaultThreadCount);
     std::vector<ObjHeader*> locals(kDefaultThreadCount);
@@ -905,7 +905,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
     }
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, CrossThreadReference) {
+TEST_P(ParallelMarkConcurrentSweepTest, CrossThreadReference) {
     std::vector<Mutator> mutators(kDefaultThreadCount);
     std::vector<ObjHeader*> globals(kDefaultThreadCount);
     std::vector<ObjHeader*> locals(kDefaultThreadCount);
@@ -972,7 +972,7 @@ TEST_P(ConcurrentMarkAndSweepTest, CrossThreadReference) {
     }
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
+TEST_P(ParallelMarkConcurrentSweepTest, MultipleMutatorsWeaks) {
     std::vector<Mutator> mutators(kDefaultThreadCount);
     ObjHeader* globalRoot = nullptr;
     test_support::RegularWeakReferenceImpl* weak = nullptr;
@@ -1026,7 +1026,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     }
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeakNewObj) {
+TEST_P(ParallelMarkConcurrentSweepTest, MultipleMutatorsWeakNewObj) {
     std::vector<Mutator> mutators(kDefaultThreadCount);
 
     // Make sure all mutators are initialized.
@@ -1072,7 +1072,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeakNewObj) {
     }
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
+TEST_P(ParallelMarkConcurrentSweepTest, NewThreadsWhileRequestingCollection) {
     std::vector<Mutator> mutators(kDefaultThreadCount);
     std::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
     std::vector<ObjHeader*> locals(2 * kDefaultThreadCount);
@@ -1172,7 +1172,7 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     EXPECT_THAT(mutators[0].Alive(), testing::UnorderedElementsAreArray(expectedAlive));
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
+TEST_P(ParallelMarkConcurrentSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     std::vector<Mutator> mutators(2);
     std::atomic<test_support::Object<Payload>*> object1 = nullptr;
     std::atomic<test_support::RegularWeakReferenceImpl*> weak = nullptr;
@@ -1215,7 +1215,7 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
 }
 
 INSTANTIATE_TEST_SUITE_P(,
-    ConcurrentMarkAndSweepTest,
+    ParallelMarkConcurrentSweepTest,
     testing::Values(
             ParallelismOptions{kDefaultThreadCount * 3, false, 0},
             ParallelismOptions{kDefaultThreadCount * 3, true, 0}

@@ -7,7 +7,7 @@
 
 #include "GC.hpp"
 
-#include "ConcurrentMarkAndSweep.hpp"
+#include "ParallelMarkConcurrentSweep.hpp"
 
 namespace kotlin {
 namespace gc {
@@ -17,20 +17,20 @@ public:
     Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler) noexcept :
         gc_(allocator, gcScheduler, compiler::gcMutatorsCooperate(), compiler::auxGCThreads()) {}
 
-    ConcurrentMarkAndSweep& gc() noexcept { return gc_; }
+    ParallelMarkConcurrentSweep& gc() noexcept { return gc_; }
 
 private:
-    ConcurrentMarkAndSweep gc_;
+    ParallelMarkConcurrentSweep gc_;
 };
 
 class GC::ThreadData::Impl : private Pinned {
 public:
     Impl(GC& gc, mm::ThreadData& threadData) noexcept : gc_(gc.impl_->gc(), threadData) {}
 
-    ConcurrentMarkAndSweep::ThreadData& gc() noexcept { return gc_; }
+    ParallelMarkConcurrentSweep::ThreadData& gc() noexcept { return gc_; }
 
 private:
-    ConcurrentMarkAndSweep::ThreadData gc_;
+    ParallelMarkConcurrentSweep::ThreadData gc_;
 };
 
 } // namespace gc

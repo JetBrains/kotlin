@@ -305,8 +305,8 @@ bitcode {
             compilerArgs.add("-DCUSTOM_ALLOCATOR")
         }
 
-        module("concurrent_ms_gc") {
-            srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
+        module("pmcs_gc") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp", "src/alloc/legacy/cpp"))
             sourceSets {
                 main {}
@@ -314,8 +314,8 @@ bitcode {
             }
         }
 
-        module("concurrent_ms_gc_custom") {
-            srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
+        module("pmcs_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/pmcs"))
             headersDirs.from(files("src/alloc/common/cpp", "src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp", "src/alloc/custom/cpp"))
             sourceSets {
                 main {}
@@ -387,16 +387,16 @@ bitcode {
             testSupportModules.addAll("main", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
         }
 
-        testsGroup("experimentalMM_cms_mimalloc_runtime_tests") {
-            testedModules.addAll("main", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "concurrent_ms_gc", "mimalloc", "mimalloc_alloc", "legacy_alloc", "objc")
+        testsGroup("experimentalMM_pmcs_mimalloc_runtime_tests") {
+            testedModules.addAll("main", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "pmcs_gc", "mimalloc", "mimalloc_alloc", "legacy_alloc", "objc")
         }
 
-        testsGroup("experimentalMM_cms_std_alloc_runtime_tests") {
-            testedModules.addAll("main", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "concurrent_ms_gc", "std_alloc", "legacy_alloc", "objc")
+        testsGroup("experimentalMM_pmcs_std_alloc_runtime_tests") {
+            testedModules.addAll("main", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "pmcs_gc", "std_alloc", "legacy_alloc", "objc")
         }
 
-        testsGroup("experimentalMM_cms_custom_alloc_runtime_tests") {
-            testedModules.addAll("mm", "concurrent_ms_gc_custom")
+        testsGroup("experimentalMM_pmcs_custom_alloc_runtime_tests") {
+            testedModules.addAll("mm", "pmcs_gc_custom")
             testSupportModules.addAll("main", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
         }
 

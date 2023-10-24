@@ -29,12 +29,11 @@ namespace kotlin {
 namespace gc {
 
 // Stop-the-world parallel mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
-// TODO: Also make marking run concurrently with Kotlin threads.
-class ConcurrentMarkAndSweep : private Pinned {
+class ParallelMarkConcurrentSweep : private Pinned {
 public:
     class ThreadData : private Pinned {
     public:
-        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
+        explicit ThreadData(ParallelMarkConcurrentSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
         ~ThreadData() = default;
 
         void OnSuspendForGC() noexcept;
@@ -53,8 +52,8 @@ public:
         mm::ThreadData& commonThreadData() const;
 
     private:
-        friend ConcurrentMarkAndSweep;
-        ConcurrentMarkAndSweep& gc_;
+        friend ParallelMarkConcurrentSweep;
+        ParallelMarkConcurrentSweep& gc_;
         mm::ThreadData& threadData_;
         BarriersThreadData barriers_;
 
@@ -62,9 +61,9 @@ public:
         std::atomic<bool> published_ = false;
     };
 
-    ConcurrentMarkAndSweep(
+    ParallelMarkConcurrentSweep(
             alloc::Allocator& allocator, gcScheduler::GCScheduler& scheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
-    ~ConcurrentMarkAndSweep();
+    ~ParallelMarkConcurrentSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;
     void StopFinalizerThreadIfRunning() noexcept;
