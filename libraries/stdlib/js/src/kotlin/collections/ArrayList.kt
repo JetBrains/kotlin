@@ -52,8 +52,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     @PublishedApi
     internal fun build(): List<E> {
         checkIsMutable()
-        isReadOnly = true
-        return if (size > 0) this else Empty
+        return asReadonly()
     }
 
     /** Does nothing in this ArrayList implementation. */
@@ -192,5 +191,10 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
 
     private fun insertionRangeCheck(index: Int) = index.apply {
         AbstractList.checkPositionIndex(index, size)
+    }
+
+    internal fun asReadonly(): List<E> {
+        isReadOnly = true
+        return if (size > 0) this else Empty
     }
 }

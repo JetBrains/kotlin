@@ -125,9 +125,8 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker() {
                         declaration.isInline -> "value class"
                         else -> null
                     }
-                    else -> if (context.isInsideInterface) {
-                        "${if (declaration.status.isCompanion) "companion object" else "nested/inner declaration"} inside exported interface"
-                    } else null
+                    else -> if (!context.isInsideInterface || declaration.status.isCompanion) null
+                            else "nested/inner declaration inside exported interface"
                 }
 
                 if (wrongDeclaration != null) {

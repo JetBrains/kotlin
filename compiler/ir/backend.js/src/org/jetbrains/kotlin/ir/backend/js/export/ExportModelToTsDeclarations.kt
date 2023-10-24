@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -482,7 +479,7 @@ class ExportModelToTsDeclarations {
     }
 
     private fun ExportedClass.couldBeProperty(): Boolean {
-        return this is ExportedObject && nestedClasses.all {
+        return this is ExportedObject && !ir.parentAsClass.isInterface && nestedClasses.all {
             it.couldBeProperty() && it.ir.visibility != DescriptorVisibilities.PROTECTED
         }
     }

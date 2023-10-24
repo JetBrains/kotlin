@@ -10,7 +10,8 @@
     "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
     "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
     "WRONG_MODIFIER_TARGET",
-    "EXPOSED_FUNCTION_RETURN_TYPE"
+    "EXPOSED_FUNCTION_RETURN_TYPE",
+    "EXPOSED_PARAMETER_TYPE"
 )
 /*
  * Copyright 2010-2015 JetBrains s.r.o.
@@ -199,6 +200,10 @@ public interface List<out E> : Collection<E> {
 
     @ExperimentalJsExport
     public fun asJsArrayView() = createJsArrayImmutableViewFrom(this)
+
+    companion object Factory {
+        fun <E> fromJsArray(array: JsImmutableArray<E>): List<E> = createListFrom(array)
+    }
 }
 
 /**
@@ -269,6 +274,10 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
 
     @ExperimentalJsExport
     public fun asJsArrayMutableView() = createJsArrayMutableViewFrom(this)
+
+    companion object Factory {
+        fun <E> fromJsArray(array: JsImmutableArray<E>): MutableList<E> = createMutableListFrom(array)
+    }
 }
 
 /**
@@ -293,6 +302,10 @@ public interface Set<out E> : Collection<E> {
 
     @ExperimentalJsExport
     public fun asJsSetView() = createJsSetImmutableViewFrom(this)
+
+    companion object Factory {
+        fun <E> fromJsSet(set: JsImmutableSet<E>): Set<E> = createSetFrom(set)
+    }
 }
 
 /**
@@ -327,6 +340,10 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     @ExperimentalJsExport
     public fun asJsSetMutableView() = createJsSetMutableViewFrom(this)
+
+    companion object Factory {
+        fun <E> fromJsSet(set: JsImmutableSet<E>): MutableSet<E> = createMutableSetFrom(set)
+    }
 }
 
 /**
@@ -398,6 +415,10 @@ public interface Map<K, out V> {
 
     @ExperimentalJsExport
     public fun asJsMapView() = createJsMapImmutableViewFrom(this)
+
+    companion object Factory {
+        fun <K, V> fromJsMap(map: JsImmutableMap<K, V>): Map<K, V> = createMapFrom(map)
+    }
 }
 
 /**
@@ -463,4 +484,8 @@ public interface MutableMap<K, V> : Map<K, V> {
 
     @ExperimentalJsExport
     public fun asJsMapMutableView() = createJsMapMutableViewFrom(this)
+
+    companion object Factory {
+        fun <K, V> fromJsMap(map: JsImmutableMap<K, V>): MutableMap<K, V> = createMutableMapFrom(map)
+    }
 }

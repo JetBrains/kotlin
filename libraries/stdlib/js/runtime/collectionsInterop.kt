@@ -9,6 +9,24 @@ private class JsArrayView<E> : JsMutableArray<E>()
 
 private fun UNSUPPORTED_OPERATION() { throw UnsupportedOperationException() }
 
+internal fun <E> createListFrom(array: JsImmutableArray<E>): List<E> =
+    ArrayList<E>(array.asDynamic().slice().unsafeCast<Array<Any?>>()).asReadonly()
+
+internal fun <E> createMutableListFrom(array: JsImmutableArray<E>): MutableList<E> =
+    ArrayList<E>(array.asDynamic().slice().unsafeCast<Array<Any?>>())
+
+internal fun <E> createSetFrom(set: JsImmutableSet<E>): Set<E> =
+    buildSetInternal { forEach({ _, value, _ -> add(value) }, set) }
+
+internal fun <E> createMutableSetFrom(set: JsImmutableSet<E>): MutableSet<E> =
+    LinkedHashSet<E>().apply { forEach({ _, value, _ -> add(value) }, set) }
+
+internal fun <K, V> createMapFrom(map: JsImmutableMap<K, V>): Map<K, V> =
+    buildMapInternal { forEach({ key, value, _ -> put(key, value) }, map) }
+
+internal fun <K, V> createMutableMapFrom(map: JsImmutableMap<K, V>): MutableMap<K, V> =
+    LinkedHashMap<K, V>().apply { forEach({ key, value, _ -> put(key, value) }, map) }
+
 internal fun <E> createJsArrayImmutableViewFrom(list: List<E>): JsImmutableArray<E> =
     createJsArrayMutableViewWith(
         listSize = { list.size },

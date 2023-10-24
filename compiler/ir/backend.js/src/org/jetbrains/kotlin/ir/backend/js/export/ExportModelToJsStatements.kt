@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 class ExportModelToJsStatements(
@@ -151,7 +152,25 @@ class ExportModelToJsStatements(
             }
 
             is ExportedRegularClass -> {
-                if (declaration.isInterface) return emptyList()
+                if (declaration.isInterface) {
+                    if (declaration.nestedClasses.isEmpty()) return emptyList()
+                    val interfaceNamespaceName = JsName(declaration.name, true)
+                    val (interfaceNamespace, interfaceNamespaceDeclaration) = when {
+                        namespace != null -> {
+                            val newNamespace = jsElementAccess(interfaceNamespaceName, namespace)
+                            newNamespace to jsAssignment(newNamespace, JsObjectLiteral(false)).makeStmt()
+                        }
+                        else -> interfaceNamespaceName.makeRef() to JsVars(JsVars.JsVar(interfaceNamespaceName, JsObjectLiteral(false)))
+                    }
+                    return listOfNotNull(
+                        interfaceNamespaceDeclaration,
+                        runIf(namespace == null) {
+                            JsExport(
+                                interfaceNamespaceName.makeRef(),
+                                alias = JsName(declaration.name, false)
+                            )
+                        }) + declaration.nestedClasses.flatMap { generateDeclarationExport(it, interfaceNamespace, esModules) }
+                }
                 val (name, classInitialization) = declaration.getNameAndInitialization()
                 val newNameSpace = when {
                     namespace != null -> jsElementAccess(declaration.name, namespace)

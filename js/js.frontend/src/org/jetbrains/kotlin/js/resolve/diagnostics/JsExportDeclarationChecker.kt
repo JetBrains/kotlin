@@ -130,9 +130,8 @@ object JsExportDeclarationChecker : DeclarationChecker {
                         descriptor.isInlineClass() -> "${if (descriptor.isInline) "inline " else ""}${if (descriptor.isValue) "value " else ""}class"
                         else -> null
                     }
-                    else -> if (descriptor.isInsideInterface) {
-                        "${if (descriptor.isCompanionObject) "companion object" else "nested/inner declaration"} inside exported interface"
-                    } else null
+                    else -> if (!descriptor.isInsideInterface || descriptor.isCompanionObject) null
+                            else "nested/inner declaration inside exported interface"
                 }
 
                 if (wrongDeclaration != null) {

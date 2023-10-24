@@ -1,3 +1,9 @@
+import KtList = JS_TESTS.kotlin.collections.KtList;
+import KtMutableList = JS_TESTS.kotlin.collections.KtMutableList;
+import KtSet = JS_TESTS.kotlin.collections.KtSet;
+import KtMutableSet = JS_TESTS.kotlin.collections.KtMutableSet;
+import KtMap = JS_TESTS.kotlin.collections.KtMap;
+import KtMutableMap = JS_TESTS.kotlin.collections.KtMutableMap;
 import provideList = JS_TESTS.provideList;
 import consumeList = JS_TESTS.consumeList;
 import provideMutableList = JS_TESTS.provideMutableList;
@@ -43,9 +49,12 @@ function testImmutableList() {
     assert(listArrayView[0] == 1, "Problem with accessing of element in immutable list array view")
     assert(listArrayView.map(x => x + 1).join("") == "234", "Problem with immutable list array view")
     assert(consumeList(list), "Problem with consumption of a Kotlin list")
+
     assertThrow(() => { (listArrayView as Array<number>)[1] = 4 }, "Immutable list array view have ability to mutate the list by direct set")
     assertThrow(() => { (listArrayView as Array<number>).push(4) }, "Immutable list array view have ability to mutate the list by 'push'")
     assertThrow(() => { (listArrayView as Array<number>).pop() }, "Immutable list array view have ability to mutate the list by 'pop'")
+
+    assert(consumeList(KtList.Factory.fromJsArray([1, 2, 3])), "Problem with array to list conversion for Kotlin list")
 }
 
 function testMutableList() {
@@ -85,6 +94,9 @@ function testMutableList() {
     mutableListMutableView[3] = 4
 
     assert(mutableListMutableView.map(x => x + 1).join("") == "67854", "Problem with mutable list mutable array view after the view is mutated")
+
+    assert(consumeList(KtMutableList.Factory.fromJsArray([1, 2, 3])), "Problem with array to list conversion for Kotlin mutable list")
+    assert(consumeMutableList(KtMutableList.Factory.fromJsArray([4, 5, 6])), "Problem with array to mutable list conversion for Kotlin mutable list")
 }
 
 function testImmutableSet() {
@@ -97,6 +109,8 @@ function testImmutableSet() {
     assertThrow(() => { (setView as Set<number>).add(4) }, "Immutable set view have ability to mutate the set by 'add'")
     assertThrow(() => { (setView as Set<number>).delete(4) }, "Immutable set view have ability to mutate the set by 'delete'")
     assertThrow(() => { (setView as Set<number>).clear() }, "Immutable set view have ability to mutate the set by 'clear'")
+
+    assert(consumeSet(KtSet.Factory.fromJsSet(new Set([1, 2, 3]))), "Problem with set to set conversion for Kotlin set")
 }
 
 function testMutableSet() {
@@ -128,6 +142,9 @@ function testMutableSet() {
     mutableSetMutableView.clear()
 
     assert(joinSetOrMap(mutableSetMutableView) == "", "Problem with mutable set mutable view after the view is mutated")
+
+    assert(consumeSet(KtMutableSet.Factory.fromJsSet(new Set([1, 2, 3]))), "Problem with set to set conversion for Kotlin mutable set")
+    assert(consumeMutableSet(KtMutableSet.Factory.fromJsSet(new Set([4, 5, 6]))), "Problem with set to mutable set conversion for Kotlin mutable set")
 }
 
 function testImmutableMap() {
@@ -141,6 +158,7 @@ function testImmutableMap() {
     assertThrow(() => { (mapView as Map<string, number>).set("d", 4) }, "Immutable map view have ability to mutate the map by 'set'")
     assertThrow(() => { (mapView as Map<string, number>).delete("a") }, "Immutable map view have ability to mutate the map by 'delete'")
     assertThrow(() => { (mapView as Map<string, number>).clear() }, "Immutable map view have ability to mutate the map by 'clear'")
+    assert(consumeMap(KtMap.Factory.fromJsMap(new Map([["a", 1], ["b", 2], ["c", 3]]))), "Problem with map to map conversion for Kotlin map")
 }
 
 function testMutableMap() {
@@ -174,6 +192,8 @@ function testMutableMap() {
     mutableMapMutableView.clear()
 
     assert(joinSetOrMap(mutableMapMutableView) == "", "Problem with mutable map mutable view after the view is mutated")
+    assert(consumeMap(KtMutableMap.Factory.fromJsMap(new Map([["a", 1], ["b", 2], ["c", 3]]))), "Problem with map to map conversion for Kotlin mutable map")
+    assert(consumeMutableMap(KtMutableMap.Factory.fromJsMap(new Map([["d", 4], ["e", 5], ["f", 6]]))), "Problem with map to mutable map conversion for Kotlin mutable map")
 }
 
 function joinSetOrMap(setOrMap: ReadonlySet<number> | ReadonlyMap<string, number>): string {
