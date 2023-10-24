@@ -20,7 +20,6 @@ abstract class BirElementBase : BirElement {
     internal var root: BirForest? = null
     private var _parent: BirElementBase? = null
     private var dynamicProperties: Array<Any?>? = null
-    private var level: UByte = 0u
     internal var containingListId: Byte = 0
     internal var indexSlot: UByte = 0u
     private var dependentIndexedElements: Any? = null // null | BirElementBase | Array<BirElementBase?>
@@ -34,28 +33,15 @@ abstract class BirElementBase : BirElement {
     val attachedToTree
         get() = root != null
 
-    internal fun updateLevel() {
-        val parent = _parent
-        level = if (parent != null) {
-            val parentLevel = parent.level
-            if (parentLevel == UByte.MAX_VALUE) UByte.MAX_VALUE else (parentLevel + 1u).toUByte()
-        } else 0u
-    }
 
     fun isAncestorOf(other: BirElementBase): Boolean {
-        // fixme: ensure level is tracked for of-the-tree cases
         if (root !== other.root) {
             return false
         }
 
-        val distance = other.level.toInt() - level.toInt()
-        if (distance < 0 || (distance == 0 && level != UByte.MAX_VALUE)) {
-            return false
-        }
-
         var n = other
-        repeat(distance.toInt()) {
-            n = n._parent ?: return false
+        while (true) {
+            n = n._parent ?: break
             if (n === this) return true
         }
 
