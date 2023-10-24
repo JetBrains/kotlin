@@ -69,6 +69,9 @@ class JvmBirBuiltInSymbols(irSymbols: JvmSymbols, converter: Ir2BirConverter) : 
     val jvmName: BirClassSymbol = converter.remapSymbol(irSymbols.jvmName)
     val kClassJava: BirPropertySymbol = converter.remapSymbol(irSymbols.kClassJava)
     val spreadBuilder: BirClassSymbol = converter.remapSymbol(irSymbols.spreadBuilder)
+    val primitiveSpreadBuilders = irSymbols.primitiveSpreadBuilders.entries.associate {
+        converter.remapType(it.key) to converter.remapSymbol<_, BirClassSymbol>(it.value)
+    }
     val arraysClass: BirClassSymbol = converter.remapSymbol(irSymbols.arraysClass)
     val compareUnsignedInt: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.compareUnsignedInt)
     val divideUnsignedInt: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.divideUnsignedInt)
@@ -85,6 +88,7 @@ class JvmBirBuiltInSymbols(irSymbols: JvmSymbols, converter: Ir2BirConverter) : 
     val objectCloneFunction: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.objectCloneFunction)
     val runSuspendFunction: BirSimpleFunctionSymbol = converter.remapSymbol(irSymbols.runSuspendFunction)
     val repeatableContainer: BirClassSymbol = converter.remapSymbol(irSymbols.repeatableContainer)
+
 
     private val jvmSuspendFunctionClasses = storageManager.createMemoizedFunction { n: Int ->
         converter.remapSymbol<_, BirClassSymbol>(irSymbols.getJvmSuspendFunctionClass(n))
