@@ -238,6 +238,7 @@ val BirTypeParametersContainer.classIfConstructor get() = if (this is BirConstru
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun BirValueParameter.copyTo(
     targetFunction: BirFunction,
+    index: Int = this.index,
     remapTypeMap: Map<BirTypeParameter, BirTypeParameter> = emptyMap(),
     type: BirType = this.type.remapTypeParameters(
         (parent as BirTypeParametersContainer).classIfConstructor,
