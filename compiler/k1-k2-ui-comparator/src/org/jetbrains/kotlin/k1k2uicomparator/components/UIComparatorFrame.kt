@@ -48,7 +48,7 @@ class UIComparatorFrame(style: UIComparatorStyle = UIComparatorStyle()) : JFrame
     private val scrollPaneSynchronizer = ScrollPaneSynchronizer()
 
     init {
-        setTitle(title)
+        setTitle(style.title)
         defaultCloseOperation = EXIT_ON_CLOSE
         setSize(style.defaultWidth, style.defaultHeight)
 
