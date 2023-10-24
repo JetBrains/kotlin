@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !SKIP_JAVAC
 // !LANGUAGE: +InlineClasses
 // ALLOW_KOTLIN_PACKAGE
@@ -18,6 +19,7 @@ class A {
         fun f4(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> a: Foo) {}
 
         val g = fun (<!USELESS_VARARG_ON_PARAMETER!><!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> v: Foo<!>) {}
+        fun (<!USELESS_VARARG_ON_PARAMETER!><!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> v: Foo<!>) {}
     }
 }
 

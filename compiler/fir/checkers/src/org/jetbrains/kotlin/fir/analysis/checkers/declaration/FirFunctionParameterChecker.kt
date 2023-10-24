@@ -62,7 +62,11 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
         }
 
         for (varargParameter in varargParameters) {
-            val varargParameterType = varargParameter.returnTypeRef.coneType.arrayElementType() ?: continue
+            val coneType = varargParameter.returnTypeRef.coneType
+            val varargParameterType = when (function) {
+                is FirAnonymousFunction -> coneType
+                else -> coneType.arrayElementType()
+            } ?: continue
             // LUB is checked to ensure varargParameterType may
             // never be anything except `Nothing` or `Nothing?`
             // in case it is a complex type that quantifies
