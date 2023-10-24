@@ -16,12 +16,17 @@
 
 package org.jetbrains.kotlin.bir
 
+import kotlin.experimental.and
+import kotlin.experimental.inv
+import kotlin.experimental.or
+
 abstract class BirElementBase : BirElement {
     internal var root: BirForest? = null
     private var _parent: BirElementBase? = null
     private var dynamicProperties: Array<Any?>? = null
     internal var containingListId: Byte = 0
     internal var indexSlot: UByte = 0u
+    private var flags: Byte = 0
     private var dependentIndexedElements: Any? = null // null | BirElementBase | Array<BirElementBase?>
 
     final override val parent: BirElementBase?
@@ -29,6 +34,13 @@ abstract class BirElementBase : BirElement {
             recordPropertyRead()
             return _parent
         }
+
+    internal fun hasFlag(flag: Byte): Boolean =
+        (flags and flag).toInt() != 0
+
+    internal fun setFlag(flag: Byte, value: Boolean) {
+        flags = if (value) flags or flag else flags and flag.inv()
+    }
 
     val attachedToTree
         get() = root != null
@@ -128,6 +140,7 @@ abstract class BirElementBase : BirElement {
 
 
     internal fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
+        recordPropertyRead()
         @Suppress("UNCHECKED_CAST")
         return dynamicProperties?.get(token.key.index) as T?
     }
@@ -243,11 +256,24 @@ abstract class BirElementBase : BirElement {
             }
         }
     }
+
+    fun unsafeDispose() {
+        acceptChildrenLite {
+            it._parent = null
+            childDetached(it)
+        }
+        // todo: mark as disposed
+    }
+
+    companion object {
+        const val FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION: Byte = (1 shl 0).toByte()
+    }
 }
 
 fun BirElement.replaceWith(new: BirElement?) {
     this as BirElementBase
 
+    // maybe allow also roots?
     val parent = parent
     require(parent != null && attachedToTree) { "Element is not attached to a tree" }
 
