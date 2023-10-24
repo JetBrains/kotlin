@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
@@ -193,28 +190,29 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
         }
     }
 
-    fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunction {
+    fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunctionSymbol {
         val irTarget = when (val firTarget = expression.target.labeledElement) {
-            is FirConstructor -> declarationStorage.getCachedIrConstructorSymbol(firTarget)?.ownerIfBound()
+            is FirConstructor -> declarationStorage.getCachedIrConstructorSymbol(firTarget)
             is FirPropertyAccessor -> {
-                var answer: IrFunction? = null
+                var answer: IrFunctionSymbol? = null
                 for ((property, firProperty) in propertyStack.asReversed()) {
                     if (firProperty?.getter === firTarget) {
-                        answer = property.getter
+                        answer = property.getter?.symbol
                     } else if (firProperty?.setter === firTarget) {
-                        answer = property.setter
+                        answer = property.setter?.symbol
                     }
                 }
                 answer
             }
-            else -> declarationStorage.getCachedIrFunctionSymbol(firTarget)?.ownerIfBound()
+            else -> declarationStorage.getCachedIrFunctionSymbol(firTarget)
         }
         for (potentialTarget in functionStack.asReversed()) {
-            if (potentialTarget == irTarget) {
-                return potentialTarget
+            val targetSymbol = potentialTarget.symbol
+            if (targetSymbol == irTarget) {
+                return targetSymbol
             }
         }
-        return functionStack.last()
+        return functionStack.last().symbol
     }
 
     fun parent(): IrDeclarationParent? = parentStack.lastOrNull()
