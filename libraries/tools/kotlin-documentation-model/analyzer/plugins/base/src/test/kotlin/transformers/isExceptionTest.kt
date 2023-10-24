@@ -9,11 +9,8 @@ import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DTypeAlias
 import utils.AbstractModelTest
 import kotlin.test.Test
-import utils.JavaCode
-import utils.UsingJDK
 
 class IsExceptionKotlinTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "classes") {
-    @UsingJDK
     @Test
     fun `isException should work for kotlin exception`(){
         inlineModelTest(
@@ -27,7 +24,6 @@ class IsExceptionKotlinTest : AbstractModelTest("/src/main/kotlin/classes/Test.k
         }
     }
 
-    @UsingJDK
     @Test
     fun `isException should work for java exceptions`(){
         inlineModelTest(
@@ -41,7 +37,6 @@ class IsExceptionKotlinTest : AbstractModelTest("/src/main/kotlin/classes/Test.k
         }
     }
 
-    @UsingJDK
     @Test
     fun `isException should work for RuntimeException`(){
         inlineModelTest(
@@ -55,7 +50,6 @@ class IsExceptionKotlinTest : AbstractModelTest("/src/main/kotlin/classes/Test.k
         }
     }
 
-    @UsingJDK
     @Test
     fun `isException should work if exception is typealiased`(){
         inlineModelTest(
@@ -69,7 +63,6 @@ class IsExceptionKotlinTest : AbstractModelTest("/src/main/kotlin/classes/Test.k
         }
     }
 
-    @UsingJDK
     @Test
     fun `isException should work if exception is extending a typaliased class`(){
         inlineModelTest(
@@ -111,7 +104,6 @@ class IsExceptionKotlinTest : AbstractModelTest("/src/main/kotlin/classes/Test.k
     }
 }
 
-@JavaCode
 class IsExceptionJavaTest: AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
     @Test
     fun `isException should work for java exceptions`(){

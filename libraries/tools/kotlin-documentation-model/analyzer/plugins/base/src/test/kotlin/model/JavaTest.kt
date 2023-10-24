@@ -15,12 +15,10 @@ import utils.AbstractModelTest
 import utils.assertContains
 import utils.assertNotNull
 import utils.name
-import utils.JavaCode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-@JavaCode
 class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
     val configuration = dokkaConfiguration {
         sourceSets {

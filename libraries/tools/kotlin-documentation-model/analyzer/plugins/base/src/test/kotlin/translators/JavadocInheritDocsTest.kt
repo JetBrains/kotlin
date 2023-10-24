@@ -12,9 +12,7 @@ import org.jetbrains.dokka.model.doc.Text
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import utils.JavaCode
 
-@JavaCode
 class JavadocInheritDocsTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         sourceSets {
@@ -217,7 +215,6 @@ class JavadocInheritDocsTest : BaseAbstractTest() {
     }
 
 
-    @JavaCode
     @Test
     fun `work with multiple supertypes`() {
         testInline(

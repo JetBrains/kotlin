@@ -8,10 +8,8 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import utils.JavaCode
 
 class Bug1341 : BaseAbstractTest() {
-    @JavaCode
     @Test
     fun `reproduce bug #1341`() {
         val configuration = dokkaConfiguration {
