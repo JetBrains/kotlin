@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -39,7 +40,7 @@ fun BirAnonymousInitializer.Companion.build(init: BirAnonymousInitializerImpl.()
 fun BirConstructor.Companion.build(init: BirConstructorImpl.() -> Unit): BirConstructorImpl =
     BirConstructorImpl(
         sourceSpan = SourceSpan.UNDEFINED,
-        name = UninitializedName,
+        name = SpecialNames.INIT,
         descriptor = null,
         origin = IrDeclarationOrigin.DEFINED,
         annotations = emptyList(),
