@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerJvmCheckers
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
-import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -87,7 +85,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         sessionProvider: FirProjectSessionProvider,
         javaSourcesScope: AbstractProjectFileSearchScope,
         projectEnvironment: AbstractProjectEnvironment,
-        incrementalCompilationContext: IncrementalCompilationContext?,
+        createIncrementalCompilationSymbolProviders: (FirSession) -> FirJvmIncrementalCompilationSymbolProviders?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
@@ -114,45 +112,21 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             },
             registerExtraCheckers = { it.registerJvmCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider(::wrapScopeWithJvmMapped) },
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
-                var symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider? = null
-                var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
-                incrementalCompilationContext?.let {
-                    if (it.precompiledBinariesPackagePartProvider != null && it.precompiledBinariesFileScope != null) {
-                        val moduleDataProvider = SingleModuleDataProvider(moduleData)
-                        symbolProviderForBinariesFromIncrementalCompilation =
-                            JvmClassFileBasedSymbolProvider(
-                                session,
-                                moduleDataProvider,
-                                kotlinScopeProvider,
-                                it.precompiledBinariesPackagePartProvider,
-                                projectEnvironment.getKotlinClassFinder(it.precompiledBinariesFileScope),
-                                projectEnvironment.getFirJavaFacade(session, moduleData, it.precompiledBinariesFileScope),
-                                defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
-                            )
-                        optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation =
-                            OptionalAnnotationClassesProvider(
-                                session,
-                                moduleDataProvider,
-                                kotlinScopeProvider,
-                                it.precompiledBinariesPackagePartProvider,
-                                defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
-                            )
-                    }
-                }
-
+            createProviders = { session, _, symbolProvider, generatedSymbolsProvider, dependencies ->
                 val javaSymbolProvider =
                     JavaSymbolProvider(session, projectEnvironment.getFirJavaFacade(session, moduleData, javaSourcesScope))
                 session.register(JavaSymbolProvider::class, javaSymbolProvider)
 
+                val incrementalCompilationSymbolProviders = createIncrementalCompilationSymbolProviders(session)
+
                 listOfNotNull(
                     symbolProvider,
-                    *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
-                    symbolProviderForBinariesFromIncrementalCompilation,
+                    *(incrementalCompilationSymbolProviders?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
+                    incrementalCompilationSymbolProviders?.symbolProviderForBinariesFromIncrementalCompilation,
                     generatedSymbolsProvider,
                     javaSymbolProvider,
                     *dependencies.toTypedArray(),
-                    optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
+                    incrementalCompilationSymbolProviders?.optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,
                 )
             }
         ).also {

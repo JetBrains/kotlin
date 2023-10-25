@@ -75,7 +75,7 @@ object FirSessionFactoryHelper {
             sessionProvider,
             javaSourcesScope,
             projectEnvironment,
-            incrementalCompilationContext,
+            { incrementalCompilationContext?.createSymbolProviders(it, mainModuleData, projectEnvironment) },
             extensionRegistrars,
             languageVersionSettings,
             lookupTracker,

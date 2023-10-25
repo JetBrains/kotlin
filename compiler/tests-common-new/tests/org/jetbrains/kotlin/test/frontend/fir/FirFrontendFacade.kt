@@ -362,7 +362,7 @@ open class FirFrontendFacade(
                     sessionProvider,
                     PsiBasedProjectFileSearchScope(TopDownAnalyzerFacadeForJVM.newModuleSearchScope(project, ktFiles)),
                     projectEnvironment!!,
-                    incrementalCompilationContext = null,
+                    createIncrementalCompilationSymbolProviders = { null },
                     extensionRegistrars,
                     languageVersionSettings,
                     predefinedJavaComponents = predefinedJavaComponents,
