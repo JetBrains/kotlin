@@ -6,24 +6,25 @@
 package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementBase
 
 internal class BirElementAncestorsIterator(
-    initial: BirElement?,
-) : Iterator<BirElement> {
-    private var next: BirElement? = initial
+    initial: BirElementBase?,
+) : Iterator<BirElementBase> {
+    private var next: BirElementBase? = initial
 
     override fun hasNext(): Boolean = next != null
 
-    override fun next(): BirElement {
+    override fun next(): BirElementBase {
         val n = next!!
         next = n.parent
         return n
     }
 }
 
-internal class BirElementAncestorsSequence(private val element: BirElement?) : Sequence<BirElement> {
-    override fun iterator(): Iterator<BirElement> = BirElementAncestorsIterator(element)
+internal class BirElementAncestorsSequence(private val element: BirElementBase?) : Sequence<BirElementBase> {
+    override fun iterator(): Iterator<BirElementBase> = BirElementAncestorsIterator(element)
 }
 
-fun BirElement.ancestors(includeSelf: Boolean = false): Sequence<BirElement> =
-    BirElementAncestorsSequence(if (includeSelf) this else parent)
+fun BirElement.ancestors(includeSelf: Boolean = false): Sequence<BirElementBase> =
+    BirElementAncestorsSequence(if (includeSelf) this as BirElementBase else parent)

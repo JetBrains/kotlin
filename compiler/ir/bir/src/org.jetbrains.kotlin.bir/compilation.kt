@@ -16,6 +16,10 @@ import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.transformFlat
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+import kotlin.system.exitProcess
 import kotlin.time.DurationUnit
 import kotlin.time.measureTimedValue
 
@@ -60,11 +64,6 @@ fun lowerWithBir(
         birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
     )
 
-    /*newPhases.add(
-        newPhases.indexOfFirst { (it as AnyNamedPhase).name == "FileClass" } + 1,
-        CompilerPhase("Terminate", "Goodbay", lower = )
-    )*/
-
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
         enabled += compoundPhase.toPhaseMap().values.toSet()
@@ -101,6 +100,12 @@ private fun reconstructPhases(
             val filePhases = topPhase.getNamedSubphases()
                 .filter { it.first == 1 }
                 .map { it.second as NamedCompilerPhase<JvmBackendContext, IrFile> }
+                .toMutableList()
+
+            filePhases.add(
+                filePhases.indexOfFirst { (it as AnyNamedPhase).name == "ArrayConstructor" } + 1,
+                terminateProcessPhase
+            )
 
             val lower = CustomPerFileAggregateLoweringPhase(filePhases, profile)
             listOf(NamedCompilerPhase(topPhase.name, topPhase.description, lower = lower))
@@ -176,7 +181,9 @@ class CustomPerFileAggregateLoweringPhase(
     }
 }
 
+@OptIn(ExperimentalContracts::class)
 private fun <R> invokePhaseMeasuringTime(profile: Boolean, name: String, block: () -> R): R {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     val (result, time) = measureTimedValue(block)
     println("Phase $name: ${time.toString(DurationUnit.MILLISECONDS, 2)}")
     return result
@@ -200,29 +207,24 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
             }
         }
 
-        val birContext = JvmBirBackendContext(
-            context,
-            input.descriptor,
-            compiledBir,
-            ir2BirConverter,
-            dynamicPropertyManager,
-            birPhases,
-        )
+        val birContext: JvmBirBackendContext
+        val birModule: BirModuleFragment
+        invokePhaseMeasuringTime(profile, "!BIR - convert IR to BIR") {
+            birContext = JvmBirBackendContext(
+                context,
+                input.descriptor,
+                compiledBir,
+                ir2BirConverter,
+                dynamicPropertyManager,
+                birPhases,
+            )
 
-        val birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
+            birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
+        }
 
-        warmupLowerings(birModule)
+        birModule.countAllDescendants()
 
         return BirCompilationBundle(birModule, birContext, input, profile)
-    }
-
-    private fun warmupLowerings(root: BirElement): Int {
-        var count = 0
-        root.accept {
-            count++
-            it.walkIntoChildren()
-        }
-        return count
     }
 
     override fun outputIfNotEnabled(
@@ -252,6 +254,9 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         val compiledBir = input.backendContext.compiledBir
         val profile = input.profile
 
+        invokePhaseMeasuringTime(profile, "!BIR - baseline tree traversal") {
+            input.birModule.countAllDescendants()
+        }
         invokePhaseMeasuringTime(profile, "!BIR - applyNewRegisteredIndices") {
             compiledBir.applyNewRegisteredIndices()
         }
@@ -284,3 +289,24 @@ private class ConvertBirToIrPhase(name: String, description: String) :
         return input.originalIrModuleFragment
     }
 }
+
+private fun BirElement.countAllDescendants(): Int {
+    var count = 0
+    accept {
+        count++
+        it.walkIntoChildren()
+    }
+    return count
+}
+
+private val terminateProcessPhase =
+    NamedCompilerPhase("Terminate", "Goodbay", lower = object : SameTypeCompilerPhase<JvmBackendContext, IrFile> {
+        override fun invoke(
+            phaseConfig: PhaseConfigurationService,
+            phaserState: PhaserState<IrFile>,
+            context: JvmBackendContext,
+            input: IrFile,
+        ): IrFile {
+            exitProcess(0)
+        }
+    })

@@ -15,7 +15,7 @@ sealed interface BirElementOrChildList {
 
 interface BirElement : BirElementOrChildList {
     val sourceSpan: SourceSpan
-    val parent: BirElement?
+    val parent: BirElementBase?
 }
 
 
