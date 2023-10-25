@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Z(s: (Int) -> Int) {
 
 }

@@ -132,7 +132,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             reporter: DiagnosticReporter,
         ) {
             if (context.isContractBody) return
-            val calledFunctionSymbol = targetSymbol as? FirNamedFunctionSymbol ?: return
+            val calledFunctionSymbol = targetSymbol as? FirFunctionSymbol ?: return
             val argumentMapping = functionCall.resolvedArgumentMapping ?: return
             for ((wrappedArgument, valueParameter) in argumentMapping) {
                 val argument = wrappedArgument.unwrapArgument()
