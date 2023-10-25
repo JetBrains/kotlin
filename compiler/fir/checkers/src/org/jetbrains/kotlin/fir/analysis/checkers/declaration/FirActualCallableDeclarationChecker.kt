@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.areCompatibleExpectActualTypes
 import org.jetbrains.kotlin.fir.types.createExpectActualTypeParameterSubstitutor
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 
 object FirActualCallableDeclarationChecker : FirCallableDeclarationChecker() {
@@ -60,7 +61,7 @@ object FirActualCallableDeclarationChecker : FirCallableDeclarationChecker() {
                 callableDeclaration.source,
                 FirErrors.ACTUAL_WITHOUT_EXPECT,
                 actualFunctionSymbol,
-                actualFunctionSymbol.expectForActual as Map<ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
+                actualFunctionSymbol.expectForActual as Map<ExpectActualMatchingCompatibility, Collection<FirBasedSymbol<*>>>,
                 context
             )
         }

@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.callableId
@@ -20,8 +22,8 @@ import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import java.io.File
 
 /**
@@ -219,11 +221,10 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
         actualSymbols: List<IrSymbol>,
         context: MatchingContext
     ) {
-        AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+        AbstractExpectActualMatcher.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
             expectSymbol,
             actualSymbols,
             context,
-            checkClassScopesCompatibility = true
         )
     }
 
@@ -260,7 +261,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
 
         override fun onMismatchedOrIncompatibleMembersFromClassScope(
             expectSymbol: DeclarationSymbolMarker,
-            actualSymbolsByIncompatibility: Map<out ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
+            actualSymbolsByIncompatibility: Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker>>,
             containingExpectClassSymbol: RegularClassSymbolMarker?,
             containingActualClassSymbol: RegularClassSymbolMarker?,
         ) {

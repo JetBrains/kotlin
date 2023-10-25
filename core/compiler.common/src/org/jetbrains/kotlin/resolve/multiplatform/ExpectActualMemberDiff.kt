@@ -56,16 +56,7 @@ data class ExpectActualMemberDiff<out M, out C>(val kind: Kind, val actualMember
     }
 }
 
-fun ExpectActualCompatibility.MismatchOrIncompatible<*>.toMemberDiffKind(): ExpectActualMemberDiff.Kind? = when (this) {
-    ExpectActualMatchingCompatibility.CallableKind,
-    ExpectActualMatchingCompatibility.ParameterCount,
-    ExpectActualMatchingCompatibility.ParameterShape,
-    ExpectActualMatchingCompatibility.ParameterTypes,
-    ExpectActualMatchingCompatibility.FunctionTypeParameterCount,
-    ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds,
-        // It's an awful API. It will be fixed in KT-62752
-    -> error("It's not allowed to call this function with receiver: $this")
-
+fun ExpectActualCheckingCompatibility.Incompatible<*>.toMemberDiffKind(): ExpectActualMemberDiff.Kind? = when (this) {
     ExpectActualCheckingCompatibility.ReturnType -> ExpectActualMemberDiff.Kind.ReturnTypeChangedInOverride
     ExpectActualCheckingCompatibility.ClassTypeParameterCount -> error("Not applicable because ExpectActualMemberDiff is about members")
     ExpectActualCheckingCompatibility.ClassTypeParameterUpperBounds -> error("Not applicable because ExpectActualMemberDiff is about members")
