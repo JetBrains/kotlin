@@ -124,6 +124,7 @@ val irCompilerModulesForIDE = arrayOf(
     ":compiler:ir.serialization.js", // used in IJ android plugin in `ComposeIrGenerationExtension`
     ":compiler:ir.backend.common",
     ":compiler:ir.interpreter",
+    ":compiler:ir.objcinterop",
 ).also { extra["irCompilerModulesForIDE"] = it }
 
 val commonCompilerModules = arrayOf(
