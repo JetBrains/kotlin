@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.interpreter.correspondingProperty
+import org.jetbrains.kotlin.ir.interpreter.isConst
 import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.types.classOrFail
 
@@ -64,6 +65,6 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
 
     fun IrField.hasConstantValue(): Boolean {
         val implicitConst = isFinal && isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && initializer != null
-        return implicitConst || property?.isConst == true
+        return implicitConst || property.isConst
     }
 }

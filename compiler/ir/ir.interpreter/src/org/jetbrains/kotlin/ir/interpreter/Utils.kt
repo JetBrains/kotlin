@@ -367,3 +367,6 @@ internal val IrField.property: IrProperty?
 
 internal val IrCall.correspondingProperty: IrProperty?
     get() = this.symbol.owner.correspondingPropertySymbol?.owner
+
+internal val IrProperty?.isConst: Boolean
+    get() = this?.isConst == true

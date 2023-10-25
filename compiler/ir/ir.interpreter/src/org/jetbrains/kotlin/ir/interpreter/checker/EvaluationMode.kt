@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
+import org.jetbrains.kotlin.ir.interpreter.isConst
 import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
@@ -59,7 +60,7 @@ enum class EvaluationMode {
         ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
 
         override fun canEvaluateFunction(function: IrFunction): Boolean {
-            if (function.property?.isConst == true) return true
+            if (function.property.isConst) return true
 
             val returnType = function.returnType
             if (!returnType.isPrimitiveType() && !returnType.isString() && !returnType.isUnsignedType()) return false

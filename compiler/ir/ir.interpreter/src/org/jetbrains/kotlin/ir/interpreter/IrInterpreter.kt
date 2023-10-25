@@ -378,12 +378,12 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                     else -> callInterceptor.interceptJavaStaticField(expression)
                 }
             }
-            field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.property?.isConst == true -> {
+            field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.property.isConst -> {
                 callStack.pushCompoundInstruction(field.initializer?.expression)
             }
             expression.accessesTopLevelOrObjectField() -> {
                 val propertyOwner = field.property
-                val isConst = propertyOwner?.isConst == true ||
+                val isConst = propertyOwner.isConst ||
                         propertyOwner?.backingField?.initializer?.expression is IrConst<*> ||
                         propertyOwner?.parentClassOrNull?.hasAnnotation(compileTimeAnnotation) == true // check if object is marked as compile time
                 verify(isConst) { "Cannot interpret get method on top level non const properties" }

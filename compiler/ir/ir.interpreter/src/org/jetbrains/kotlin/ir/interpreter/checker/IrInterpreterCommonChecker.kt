@@ -59,7 +59,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     }
 
     private fun IrCall.isGetterToConstVal(): Boolean {
-        return correspondingProperty?.isConst == true
+        return correspondingProperty.isConst
     }
 
     override fun visitCall(expression: IrCall, data: IrInterpreterCheckerData): Boolean {
@@ -189,8 +189,8 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
                 //  its type is flexible (so its not primitive) and there is no initializer at backing field
                 fqName == "java.lang.Boolean.FALSE" || fqName == "java.lang.Boolean.TRUE" -> true
                 isJavaStaticWithPrimitiveOrString() -> owner.initializer?.accept(this, data) == true
-                expression.receiver == null -> property?.isConst == true && owner.initializer?.accept(this, data) == true
-                owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property?.isConst == true -> {
+                expression.receiver == null -> property.isConst && owner.initializer?.accept(this, data) == true
+                owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property.isConst -> {
                     val receiverComputable = (expression.receiver?.accept(this, data) ?: true)
                             || expression.receiver.isAccessToNotNullableObject()
                     val initializerComputable = owner.initializer?.accept(this, data) ?: false

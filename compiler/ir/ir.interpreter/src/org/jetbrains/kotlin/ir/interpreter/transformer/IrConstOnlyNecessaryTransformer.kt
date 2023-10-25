@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
+import org.jetbrains.kotlin.ir.interpreter.isConst
 import org.jetbrains.kotlin.ir.interpreter.property
 
 /**
@@ -35,7 +36,7 @@ internal class IrConstOnlyNecessaryTransformer(
     interpreter, irFile, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
 ) {
     override fun visitCall(expression: IrCall, data: Data): IrElement {
-        val isConstGetter = expression.symbol.owner.property?.isConst == true
+        val isConstGetter = expression.symbol.owner.property.isConst
         if (!data.inAnnotation && !isConstGetter) {
             expression.transformChildren(this, data)
             return expression
@@ -44,7 +45,7 @@ internal class IrConstOnlyNecessaryTransformer(
     }
 
     override fun visitGetField(expression: IrGetField, data: Data): IrExpression {
-        val isConst = expression.symbol.owner.property?.isConst == true
+        val isConst = expression.symbol.owner.property.isConst
         if (!data.inAnnotation && !isConst) return expression
         return super.visitGetField(expression, data)
     }
@@ -58,7 +59,7 @@ internal class IrConstOnlyNecessaryTransformer(
     }
 
     override fun visitField(declaration: IrField, data: Data): IrStatement {
-        val isConst = declaration.property?.isConst == true
+        val isConst = declaration.property.isConst
         if (!isConst) {
             declaration.transformChildren(this, data)
             return declaration
