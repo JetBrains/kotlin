@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
 import org.jetbrains.kotlin.types.model.safeSubstitute
@@ -105,14 +106,22 @@ class PostponedArgumentsAnalyzer(
             return ReturnArgumentsAnalysisResult(lambda.returnStatements, inferenceSession = null)
         }
 
-        val additionalBinding =
+        val additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>? =
             (resolutionContext.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.let { builderInferenceSession ->
-                lambda.receiver?.let { builderInferenceSession.fixVariablesForMemberScope(it, candidate.system) }
                 // TODO: context receivers
+                buildMap {
+                    lambda.receiver
+                        ?.let { builderInferenceSession.fixVariablesForMemberScope(it, candidate.system) }
+                        ?.let(this::plus)
+
+                    for (parameterType in lambda.parameters) {
+                        builderInferenceSession.fixVariablesForMemberScope(parameterType, candidate.system)?.let(this::plus)
+                    }
+                }
             }
 
         val unitType = components.session.builtinTypes.unitType.type
-        val currentSubstitutor = c.buildCurrentSubstitutor(additionalBinding?.let { mapOf(it) } ?: emptyMap()) as ConeSubstitutor
+        val currentSubstitutor = c.buildCurrentSubstitutor(additionalBindings ?: emptyMap()) as ConeSubstitutor
 
         fun substitute(type: ConeKotlinType) = (currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType).independentInstance()
 
@@ -133,11 +142,7 @@ class PostponedArgumentsAnalyzer(
         val notFixedTypeVariablesInInputTypes =
             lambda.inputTypes
                 .flatMap {
-                    with(c) {
-                        it.extractTypeVariables(
-                            includeTypeItself = resolutionContext.bodyResolveContext.inferenceSession is FirBuilderInferenceSession2
-                        )
-                    }
+                    with(c) { it.extractTypeVariables() }
                 }.filterTo(mutableSetOf()) { it in c.notFixedTypeVariables }
 
         val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
