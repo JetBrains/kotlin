@@ -896,6 +896,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("constructorParameter.kt")
+        public void testConstructorParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/constructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorParameterWithImplicitParameterAnnotation.kt")
+        public void testConstructorParameterWithImplicitParameterAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/constructorParameterWithImplicitParameterAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("delegateWithAnnotationOnAccessor.kt")
         public void testDelegateWithAnnotationOnAccessor() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/delegateWithAnnotationOnAccessor.kt");
@@ -905,6 +917,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         @TestMetadata("delegateWithAnnotationOnAccessorWithExplicitType.kt")
         public void testDelegateWithAnnotationOnAccessorWithExplicitType() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/delegateWithAnnotationOnAccessorWithExplicitType.kt");
+        }
+
+        @Test
+        @TestMetadata("generatedPropertyFromParameter.kt")
+        public void testGeneratedPropertyFromParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/generatedPropertyFromParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("generatedPropertyFromParameterWithImplicitAnnotation.kt")
+        public void testGeneratedPropertyFromParameterWithImplicitAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/generatedPropertyFromParameterWithImplicitAnnotation.kt");
         }
 
         @Test

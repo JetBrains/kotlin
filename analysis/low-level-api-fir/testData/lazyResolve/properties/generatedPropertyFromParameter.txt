@@ -1,0 +1,454 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] generatedPropertyFromParameter.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] get(): Int
+            @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) value: Int): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] get(): Int
+            @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) value: Int): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Sub] get(): Int
+            @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Sub] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) value: Int): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class Sub : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Sub] get(): Int
+            @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Sub] set([ResolvedTo(COMPANION_GENERATION)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) value: Int): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] class Sub : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @PROPERTY:Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [IsFromPrimaryConstructor=true] var prop: Int = R|<local>/prop|
+            @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Sub] get(): Int
+            @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Sub] set([ResolvedTo(SUPER_TYPES)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) value: Int): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(TYPES)] class Sub : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Sub] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Sub.prop] @FieldAnnotation[Unresolved](LAZY_EXPRESSION) @CONSTRUCTOR_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) prop: Int): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|Anno|[Types](LAZY_EXPRESSION) @R|FieldAnnotation|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] [ContainingClassKey=Sub] set([ResolvedTo(TYPES)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|Anno|[Types](LAZY_EXPRESSION) @R|FieldAnnotation|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|Anno|[Types](LAZY_EXPRESSION) @R|FieldAnnotation|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Sub] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|Anno|[Types](LAZY_EXPRESSION) @R|FieldAnnotation|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Sub] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FieldAnnotation.i] i: Int): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FieldAnnotation] get(): Int
+
+    }
+    @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @PROPERTY:R|Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|Anno|[Types](LAZY_EXPRESSION) @R|FieldAnnotation|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val konstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? const [ResolvedTo(RAW_FIR)] val stringConstant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/FieldAnnotation.i] i: R|kotlin/Int|): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=FieldAnnotation] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @PROPERTY:R|Anno|[Types](s = <strcat>(String(property), R|/stringConstant|)) field:@FIELD:R|Anno|[Types](s = <strcat>(String(field), R|/stringConstant|)) @R|FieldAnnotation|[Types](i = R|/konstant|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](s = <strcat>(String(get), R|/stringConstant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](s = <strcat>(String(set), R|/stringConstant|)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Sub] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](s = <strcat>(String(setparam), R|/stringConstant|)) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val stringConstant: R|kotlin/String| = <strcat>(String(str ), Int(1))
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] generatedPropertyFromParameter.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/FieldAnnotation.i] i: R|kotlin/Int|): R|FieldAnnotation| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=FieldAnnotation] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(STATUS)] class Sub : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Sub] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) prop: R|kotlin/Int|): R|Sub| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @PROPERTY:R|Anno|[Types](s = <strcat>(String(property), R|/stringConstant|)) field:@FIELD:R|Anno|[Types](s = <strcat>(String(field), R|/stringConstant|)) @R|FieldAnnotation|[Types](i = R|/konstant|) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](s = <strcat>(String(get), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](s = <strcat>(String(set), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = <strcat>(String(setparam), R|/stringConstant|)) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val stringConstant: R|kotlin/String| = <strcat>(String(str ), Int(1))
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] generatedPropertyFromParameter.kt
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class FieldAnnotation : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FieldAnnotation] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/FieldAnnotation.i] i: R|kotlin/Int|): R|FieldAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FieldAnnotation] get(): R|kotlin/Int|
+
+    }
+    @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Sub : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Sub.prop] @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = <strcat>(String(param), R|/stringConstant|)) prop: R|kotlin/Int|): R|Sub| {
+            super<R|kotlin/Any|>()
+        }
+
+        @PROPERTY:R|Anno|[Types](s = <strcat>(String(property), R|/stringConstant|)) field:@FIELD:R|Anno|[Types](s = <strcat>(String(field), R|/stringConstant|)) @R|FieldAnnotation|[Types](i = R|/konstant|) public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] var prop: R|kotlin/Int| = R|<local>/prop|
+            @PROPERTY_GETTER:R|Anno|[Types](s = <strcat>(String(get), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] get(): R|kotlin/Int|
+            @PROPERTY_SETTER:R|Anno|[Types](s = <strcat>(String(set), R|/stringConstant|)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Sub] set([ResolvedTo(BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](s = <strcat>(String(setparam), R|/stringConstant|)) value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public final const [ResolvedTo(BODY_RESOLVE)] val konstant: R|kotlin/Int| = Int(0)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final const [ResolvedTo(BODY_RESOLVE)] val stringConstant: R|kotlin/String| = <strcat>(String(str ), Int(1))
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
