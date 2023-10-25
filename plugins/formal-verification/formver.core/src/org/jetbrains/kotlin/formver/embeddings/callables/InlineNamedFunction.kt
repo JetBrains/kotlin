@@ -17,7 +17,7 @@ class InlineNamedFunction(
     val signature: FullNamedFunctionSignature,
     val symbol: FirFunctionSymbol<*>,
     val body: FirBlock,
-) : CallableEmbedding, FullNamedFunctionSignature by signature {
+) : ViperAwareCallableEmbedding, FullNamedFunctionSignature by signature {
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
         ctx: StmtConversionContext<ResultTrackingContext>,
@@ -26,4 +26,6 @@ class InlineNamedFunction(
         val paramNames = symbol.valueParameterSymbols.map { it.name }
         return ctx.insertInlineFunctionCall(signature, paramNames, args, body)
     }
+
+    override fun toViperMethod(): Nothing? = null
 }

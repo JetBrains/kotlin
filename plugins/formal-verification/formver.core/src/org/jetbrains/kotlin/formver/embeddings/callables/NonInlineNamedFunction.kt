@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.conversion.withResult
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
+import org.jetbrains.kotlin.formver.viper.ast.Method
 
 class NonInlineNamedFunction(
     val signature: FullNamedFunctionSignature,
-) : CallableEmbedding, FullNamedFunctionSignature by signature {
+    val source: KtSourceElement?,
+) : ViperAwareCallableEmbedding, FullNamedFunctionSignature by signature {
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
         ctx: StmtConversionContext<ResultTrackingContext>,
@@ -24,4 +26,6 @@ class NonInlineNamedFunction(
             addStatement(toMethodCall(args, resultCtx.resultVar, source.asPosition))
             resultExp
         }
+
+    override fun toViperMethod(): Method = signature.toViperMethod(null, source.asPosition)
 }

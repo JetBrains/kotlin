@@ -75,8 +75,9 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     override fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding =
         methods.getOrPut(symbol.embedName(this)) {
             val signature = embedFullSignature(symbol)
-            val embedding = UserFunctionEmbedding(processCallable(symbol, signature))
-            embedding.viperMethod = convertMethodWithoutBody(symbol, signature)
+            val callable = processCallable(symbol, signature)
+            val embedding = UserFunctionEmbedding(callable)
+            embedding.viperMethod = callable.toViperMethod()
             embedding
         }
 
@@ -248,12 +249,12 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         }
 
     @OptIn(SymbolInternals::class)
-    private fun processCallable(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): CallableEmbedding {
+    private fun processCallable(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): ViperAwareCallableEmbedding {
         val body = symbol.fir.body
         return if (symbol.isInline && body != null) {
             InlineNamedFunction(signature, symbol, body)
         } else {
-            NonInlineNamedFunction(signature)
+            NonInlineNamedFunction(signature, symbol.source)
         }
     }
 
@@ -284,11 +285,6 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
 
         return signature.toViperMethod(body, declaration.source.asPosition)
     }
-
-    private fun convertMethodWithoutBody(symbol: FirFunctionSymbol<*>, signature: FullNamedFunctionSignature): Method? =
-        symbol.isInline.ifFalse {
-            signature.toViperMethod(null, symbol.source.asPosition)
-        }
 
     private fun unimplementedTypeEmbedding(type: ConeKotlinType): TypeEmbedding =
         when (config.behaviour) {
