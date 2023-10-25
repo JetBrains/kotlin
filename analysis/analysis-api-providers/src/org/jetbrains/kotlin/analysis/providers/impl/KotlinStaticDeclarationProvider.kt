@@ -19,6 +19,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
+import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInsVirtualFileProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
@@ -302,22 +304,8 @@ public class KotlinStaticDeclarationProviderFactory(
                 VfsUtilCore.visitChildrenRecursively(additionalRoot, object : VirtualFileVisitor<Void>() {
                     override fun visitFile(file: VirtualFile): Boolean {
                         if (!file.isDirectory) {
-                            val fileContent = FileContentImpl.createByFile(file)
-                            when {
-                                binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) &&
-                                        file.fileType == JavaClassFileType.INSTANCE -> {
-                                    (KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl)?.let { stubs.put(file, it) }
-                                }
-                                file.fileType == KotlinBuiltInFileType
-                                        && file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
-                                    (builtInDecompiler.stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl)?.let {
-                                        stubs.put(
-                                            file,
-                                            it
-                                        )
-                                    }
-                                }
-                            }
+                            val stub = buildStubByVirtualFile(file, binaryClassCache) ?: return true
+                            stubs.put(file, stub)
                         }
                         return true
                     }
@@ -339,6 +327,23 @@ public class KotlinStaticDeclarationProviderFactory(
         files.forEach {
             it.accept(recorder)
         }
+    }
+
+    private fun buildStubByVirtualFile(file: VirtualFile, binaryClassCache: ClsKotlinBinaryClassCache): KotlinFileStubImpl? {
+        val fileContent = FileContentImpl.createByFile(file)
+        val fileType = file.fileType
+        val stubBuilder = when {
+            binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content) && fileType == JavaClassFileType.INSTANCE -> {
+                KotlinClsStubBuilder()
+            }
+            fileType == KotlinBuiltInFileType
+                    && file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
+                builtInDecompiler.stubBuilder
+            }
+
+            else -> return null
+        }
+        return stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl
     }
 
     override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider {
