@@ -338,6 +338,7 @@ internal abstract class IrExpectActualMatchingContext(
         expectType: KotlinTypeMarker?,
         actualType: KotlinTypeMarker?,
         parameterOfAnnotationComparisonMode: Boolean,
+        dynamicTypesEqualToAnything: Boolean
     ): Boolean {
         if (expectType == null) return actualType == null
         if (actualType == null) return false

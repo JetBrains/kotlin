@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCom
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
@@ -304,13 +303,23 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val TypeParameterSymbolMarker.isReified: Boolean
         get() = asSymbol().isReified
 
+    // Copy-pasted to org.jetbrains.kotlin.fir.types.ExpectActualUtilsKt.areCompatibleExpectActualTypes
     override fun areCompatibleExpectActualTypes(
         expectType: KotlinTypeMarker?,
         actualType: KotlinTypeMarker?,
         parameterOfAnnotationComparisonMode: Boolean,
+        dynamicTypesEqualToAnything: Boolean
     ): Boolean {
         if (expectType == null) return actualType == null
         if (actualType == null) return false
+
+        if (!dynamicTypesEqualToAnything) {
+            val isExpectedDynamic = expectType is ConeDynamicType
+            val isActualDynamic = actualType is ConeDynamicType
+            if (isExpectedDynamic && !isActualDynamic || !isExpectedDynamic && isActualDynamic) {
+                return false
+            }
+        }
 
         if (parameterOfAnnotationComparisonMode && expectType is ConeClassLikeType && expectType.isArrayType &&
             actualType is ConeClassLikeType && actualType.isArrayType
@@ -323,7 +332,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         }
 
         return AbstractTypeChecker.equalTypes(
-            createTypeCheckerState(),
+            actualSession.typeContext,
             expectType,
             actualType
         )

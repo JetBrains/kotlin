@@ -372,7 +372,8 @@ object AbstractExpectActualChecker {
             if (!areCompatibleExpectActualTypes(
                     substitutor.safeSubstitute(expectDeclaration.returnType),
                     actualDeclaration.returnType,
-                    parameterOfAnnotationComparisonMode = insideAnnotationClass
+                    parameterOfAnnotationComparisonMode = insideAnnotationClass,
+                    dynamicTypesEqualToAnything = false
                 )
             ) {
                 return ExpectActualCheckingCompatibility.ReturnType
