@@ -35,9 +35,6 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     val innerClassesCapturesOuterTypeParameters: Boolean
         get() = true
 
-    val enumConstructorsAreAlwaysCompatible: Boolean
-        get() = false
-
     // Try to drop it once KT-61105 is fixed
     val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
 
