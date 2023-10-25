@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 
 /**
@@ -19,12 +17,6 @@ import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
  */
 abstract class BirFunctionAccessExpression : BirMemberAccessExpression<BirFunctionSymbol>() {
     abstract var contextReceiversCount: Int
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        dispatchReceiver?.accept(data, visitor)
-        extensionReceiver?.accept(data, visitor)
-        valueArguments.acceptChildren(visitor, data)
-    }
 
     companion object
 }
