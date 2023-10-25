@@ -8,9 +8,6 @@
 // CHECK-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
 
 // CHECK-OPT: call %struct.ObjHeader* @"kfun:kotlin#<UByteArray-unbox>(kotlin.Any?){}kotlin.UByteArray?"
-// CHECK-AAPCS-DEBUG: call i1 @"kfun:kotlin.Any#equals(kotlin.Any?){}kotlin.Boolean-trampoline"
-// CHECK-DEFAULTABI-DEBUG: call zeroext i1 @"kfun:kotlin.Any#equals(kotlin.Any?){}kotlin.Boolean-trampoline"
-// CHECK-WINDOWSX64-DEBUG: call zeroext i1 @"kfun:kotlin.Any#equals(kotlin.Any?){}kotlin.Boolean-trampoline"
 
 // CHECK-LABEL: epilogue:
 

@@ -11,13 +11,9 @@ import kotlinx.cinterop.*
 
 // CHECK-OPT-LABEL: epilogue:
 
-
+// This test is useless in debug mode.
+// TODO(KT-59288): add ability to ignore tests in debug mode
 // CHECK-DEBUG-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
-
-// CHECK-DEBUG: [[result:%[0-9]+]] = icmp eq i8*
-// CHECK-DEBUG: store i1 [[result]], i1* %isEqual
-
-// CHECK-DEBUG-LABEL: epilogue:
 
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String {

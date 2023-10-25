@@ -8,11 +8,9 @@ import kotlinx.cinterop.*
 // CHECK-WINDOWSX64-OPT-LABEL: define zeroext i1 @"kfun:kotlin.native.internal.NonNullNativePtr#equals(kotlin.Any?){}kotlin.Boolean"(i8* %0, %struct.ObjHeader* %1)
 // CHECK-OPT: call i8* @"kfun:kotlin.native.internal#<NonNullNativePtr-unbox>(kotlin.Any?){}kotlin.native.internal.NonNullNativePtr?"
 
+// This test is useless in debug mode.
+// TODO(KT-59288): add ability to ignore tests in debug mode
 // CHECK-DEBUG-LABEL: define %struct.ObjHeader* @"kfun:#box(){}kotlin.String"
-// CHECK-AAPCS-DEBUG: invoke i1 @"kfun:kotlin.Any#equals(kotlin.Any?){}kotlin.Boolean-trampoline"
-// CHECK-DEFAULTABI-DEBUG: invoke zeroext i1 @"kfun:kotlin.Any#equals(kotlin.Any?){}kotlin.Boolean-trampoline"
-// CHECK-WINDOWSX64-DEBUG: invoke zeroext i1 @"kfun:kotlin.Any#equals(kotlin.Any?){}kotlin.Boolean-trampoline"
-// CHECK-DEBUG-LABEL: epilogue:
 
 @kotlinx.cinterop.ExperimentalForeignApi
 fun box(): String = memScoped {
