@@ -32,6 +32,7 @@ import kotlin.collections.set
 abstract class Ir2BirConverterBase() {
     var appendElementAsForestRoot: (IrElement, BirElement) -> BirForest? = { _, _ -> null }
     var copyAncestorsForOrphanedElements = false
+    var copyDescriptors = false
 
     private val collectedBirElementsWithoutParent = mutableListOf<BirElement>()
     private val collectedIrElementsWithoutParent = mutableListOf<IrElement>()
@@ -246,8 +247,8 @@ abstract class Ir2BirConverterBase() {
     protected val IrMemberAccessExpression<*>.typeArguments: List<IrType?>
         get() = List(typeArgumentsCount) { getTypeArgument(it) }
 
-    protected fun <D : DeclarationDescriptor> mapDescriptor(readDescriptor: () -> D): D {
-        return readDescriptor()
+    protected fun <D : DeclarationDescriptor> mapDescriptor(readDescriptor: () -> D?): D? {
+        return if (copyDescriptors) readDescriptor() else null
     }
 
     fun remapType(irType: IrType): BirType = when (irType) {
