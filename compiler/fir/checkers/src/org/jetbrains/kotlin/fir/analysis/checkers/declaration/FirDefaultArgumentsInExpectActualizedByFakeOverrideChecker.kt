@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
+import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
+// TODO KT-62913 create one more ExpectActualCheckingCompatibility incompatibility, and replace this checker with this incompatibility
 internal object FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) ||
@@ -37,6 +39,12 @@ internal object FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker : Fir
         // We want to report errors even if a candidate is incompatible, but it's single
         val expectedSingleCandidate = actualClassSymbol.getSingleExpectForActualOrNull() ?: return
         val expectClassSymbol = expectedSingleCandidate as FirRegularClassSymbol
+
+        val expectActualMatchingContext = context.session.expectActualMatchingContextFactory.create(
+            context.session, context.scopeSession,
+            allowedWritingMemberExpectForActualMapping = true,
+        )
+        AbstractExpectActualMatcher.recursivelyMatchClassScopes(expectClassSymbol, actualClassSymbol, expectActualMatchingContext)
 
         val matchingContext = context.session.expectActualMatchingContextFactory.create(context.session, context.scopeSession)
         val problematicExpectMembers = with(matchingContext) { findProblematicExpectMembers(expectClassSymbol, actualClassSymbol) }
