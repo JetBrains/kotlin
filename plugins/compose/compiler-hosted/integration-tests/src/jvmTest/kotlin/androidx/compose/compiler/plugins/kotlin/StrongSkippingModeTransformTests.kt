@@ -150,24 +150,6 @@ class StrongSkippingModeTransformTests(useFir: Boolean) :
     )
 
     @Test
-    fun testDontMemoizeLambdasInMarkedFunction() = comparisonPropagation(
-        """
-            @Composable fun A(x: Int = 0, y: Int = 0): Int { return 10 }
-            class Foo(var value: Int = 0)
-        """.trimIndent(),
-        """
-            import androidx.compose.runtime.DontMemoize
-
-            @Composable
-            @DontMemoize
-            fun Test() {
-                val foo = Foo(0)
-                val lambda = { foo }
-            }
-        """
-    )
-
-    @Test
     fun testDontMemoizeLambda() = comparisonPropagation(
         """
             @Composable fun A(x: Int = 0, y: Int = 0): Int { return 10 }
