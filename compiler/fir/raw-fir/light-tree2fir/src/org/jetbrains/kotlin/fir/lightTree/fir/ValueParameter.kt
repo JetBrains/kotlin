@@ -137,6 +137,7 @@ class ValueParameter(
                 isActual = modifiers.hasActual()
                 isOverride = modifiers.hasOverride()
                 isConst = modifiers.hasConst()
+                isLateInit = modifiers.hasLateinit()
             }
 
             val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
@@ -150,7 +151,7 @@ class ValueParameter(
                 returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 isVar = isVar,
                 propertySymbol = symbol,
-                status = status.copy(),
+                status = status.copy(isLateInit = false),
             )
 
             annotations += modifiers.annotations.filter {

@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.types.*
 
@@ -62,6 +64,18 @@ object FirInapplicableLateinitChecker : FirPropertyChecker() {
 
         if ((declaration.hasGetter() || declaration.hasSetter()) && declaration.delegate == null) {
             reporter.reportError(declaration.source, "is not allowed on properties with a custom getter or setter", context)
+        }
+
+        if (declaration.isExtension) {
+            reporter.reportError(declaration.source, "is not allowed on extension properties", context)
+        }
+
+        if (declaration.contextReceivers.isNotEmpty()) {
+            reporter.reportError(declaration.source, "is not allowed on properties with context receivers", context)
+        }
+
+        if (declaration.isAbstract) {
+            reporter.reportError(declaration.source, "is not allowed on abstract properties", context)
         }
 
         if (declaration.returnTypeRef.coneType.isSingleFieldValueClass(context.session)) {

@@ -687,6 +687,7 @@ open class PsiRawFirBuilder(
                 isActual = hasActualModifier()
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
                 isConst = hasModifier(CONST_KEYWORD)
+                isLateInit = hasModifier(LATEINIT_KEYWORD)
             }
 
             val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
@@ -732,7 +733,7 @@ open class PsiRawFirBuilder(
                     returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     isVar = isVar,
                     propertySymbol = symbol,
-                    status = status.copy(),
+                    status = status.copy(isLateInit = false),
                 )
 
                 this.status = status
