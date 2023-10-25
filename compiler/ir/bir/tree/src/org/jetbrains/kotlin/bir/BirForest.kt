@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.util.ancestors
 import java.lang.AutoCloseable
-import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-class BirForest {
+class BirForest : BirElementParent() {
     private val possiblyRootElements = mutableListOf<BirElementBase>()
 
     private val elementIndexSlots = arrayOfNulls<ElementsIndexSlot>(256)
@@ -29,12 +28,11 @@ class BirForest {
 
     internal fun elementAttached(element: BirElementBase) {
         if (!isInsideSubtreeShuffleTransaction) {
-            // element's parent has changed
-            elementIndexInvalidated(element)
-
-        element.acceptLite {
-            attachElement(it)
-                it.walkIntoChildren()
+            element.acceptLite {
+                if (it.root !== this@BirForest) {
+                    attachElement(it)
+                    it.walkIntoChildren()
+                }
             }
         } else {
             markElementDirtyInSubtreeShuffleTransaction(element)
@@ -43,23 +41,28 @@ class BirForest {
 
     private fun attachElement(element: BirElementBase) {
         element.root = this
+        addElementToIndex(element)
     }
 
     fun attachRootElement(element: BirElementBase) {
-        require(element.parent == null)
+        require(element._parent == null)
         require(element.root == null || element.root === this)
 
         possiblyRootElements += element
+        element.setParentWithInvalidation(this)
         elementAttached(element)
     }
 
     internal fun elementDetached(element: BirElementBase) {
         if (!isInsideSubtreeShuffleTransaction) {
-            // element's parent has changed
-            elementIndexInvalidated(element)
+            if (element._parent === this) {
+                element.setParentWithInvalidation(null)
+            } else {
+                assert(element._parent !is BirForest)
+            }
 
-        element.acceptLite {
-            detachElement(it)
+            element.acceptLite {
+                detachElement(it)
                 it.walkIntoChildren()
             }
         } else {
@@ -69,6 +72,7 @@ class BirForest {
 
     private fun detachElement(element: BirElementBase) {
         element.root = null
+        removeElementFromIndex(element)
     }
 
     private fun markElementDirtyInSubtreeShuffleTransaction(element: BirElementBase) {
@@ -93,7 +97,7 @@ class BirForest {
         for (element in dirtyElementsInsideSubtreeShuffleTransaction) {
             element.setFlag(BirElementBase.FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION, false)
 
-            val realRoot = element.findRealRoot()
+            val realRoot = element.findRealRootFromAncestors()
             val previousRoot = element.root
             if (realRoot === this) {
                 if (previousRoot !== this) {
@@ -108,14 +112,15 @@ class BirForest {
         dirtyElementsInsideSubtreeShuffleTransaction.clear()
     }
 
-    private fun BirElementBase.findRealRoot(): BirForest? {
-        return ancestors(true).firstNotNullOfOrNull { (it as BirElementBase).root }
+    private fun BirElementBase.findRealRootFromAncestors(): BirForest? {
+        return ancestors(false).firstNotNullOfOrNull { it.root }
+            ?: _parent as? BirForest
     }
 
 
     private fun addElementToIndex(element: BirElementBase) {
-        if (element.root !== this) return
         val classifier = elementClassifier ?: return
+        if (element.root !== this) return
 
         assert(elementCurrentlyBeingClassified == null)
         elementCurrentlyBeingClassified = element
@@ -173,6 +178,8 @@ class BirForest {
     }
 
     fun applyNewRegisteredIndices() {
+        require(!isInsideSubtreeShuffleTransaction)
+
         if (registeredElementIndexSlotCount != elementIndexSlotCount) {
             elementIndexSlotCount = registeredElementIndexSlotCount
 
@@ -185,8 +192,9 @@ class BirForest {
     }
 
     fun reindexAllElements() {
-        val rootElementSet = IdentityHashMap<BirElementBase, Unit>()
-        possiblyRootElements.retainAll { it.root === this && it.parent == null && rootElementSet.put(it, Unit) == null }
+        require(!isInsideSubtreeShuffleTransaction)
+
+        possiblyRootElements.retainAll { it._parent === this }
 
         for (root in possiblyRootElements) {
             root.acceptLite { element ->
@@ -197,6 +205,8 @@ class BirForest {
     }
 
     fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): Iterator<E> {
+        require(!isInsideSubtreeShuffleTransaction)
+
         val cacheSlotIndex = key.index
         require(cacheSlotIndex == currentIndexSlot + 1)
 
@@ -269,6 +279,7 @@ class BirForest {
         var mainListIdx = 0
             private set
         private var next: BirElementBase? = null
+        private var prev: BirElementBase? = null
 
         override fun hasNext(): Boolean {
             if (next != null) return true
@@ -291,12 +302,16 @@ class BirForest {
             val array = slot.array
 
             while (true) {
+                prev?.let {
+                    addElementToIndex(it)
+                }
+
                 val idx = mainListIdx
                 var element: BirElementBase? = null
                 while (idx < slot.size) {
                     element = array[idx]!!
                     if (element.indexSlot.toInt() == slot.index) {
-                        deregisterElement(array, idx)
+                        array[idx] = null
                         break
                     } else {
                         val lastIdx = slot.size - 1
@@ -312,6 +327,7 @@ class BirForest {
 
                 if (element != null) {
                     mainListIdx++
+                    prev = element
                     return element
                 } else {
                     mainListIdx = 0
@@ -321,19 +337,17 @@ class BirForest {
             }
         }
 
-        private fun deregisterElement(array: Array<BirElementBase?>, index: Int) {
-            val last = array[index]!!
-            array[index] = null
-            last.indexSlot = 0u
-            addElementToIndex(last)
-        }
-
         override fun close() {
-            for (i in mainListIdx..<slot.size) {
-                deregisterElement(slot.array, i)
+            val array = slot.array
+            for (i in maxOf(0, mainListIdx - 1)..<slot.size) {
+                val element = array[i]!!
+                array[i] = null
+                addElementToIndex(element)
             }
 
             slot.size = 0
+            next = null
+            prev = null
             canceled = true
         }
     }

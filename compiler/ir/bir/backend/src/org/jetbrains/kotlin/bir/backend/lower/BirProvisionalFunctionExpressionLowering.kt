@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.bir.backend.lower
 
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.builders.build
@@ -40,8 +39,6 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
             }
         }
 
-        val function = expression.function
-
         compiledBir.subtreeShuffleTransaction {
             val block = BirBlock.build {
                 this.sourceSpan = sourceSpan
@@ -50,12 +47,15 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
             }
 
             expression.replaceWith(block)
-            (expression as BirElementBase).unsafeDispose()
+
+            // This expression becomes orphaned :( but its function is still being used,
+            //  so we hook it temporarily.
+            compiledBir.attachRootElement(expression)
 
             block.statements += BirFunctionReferenceImpl(
                 sourceSpan = sourceSpan,
                 type = expression.type,
-                symbol = function,
+                symbol = expression.function,
                 dispatchReceiver = null,
                 extensionReceiver = null,
                 origin = expression.origin,
@@ -65,8 +65,5 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
                 copyAttributes(expression)
             }
         }
-
-        // This function becomes orphaned :( but it is still being used
-        compiledBir.attachRootElement(function)
     }
 }
