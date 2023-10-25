@@ -83,6 +83,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypeReferenceTestGenerated e
     }
 
     @Test
+    @TestMetadata("annotationParameterValue.kt")
+    public void testAnnotationParameterValue() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationParameterValue.kt");
+    }
+
+    @Test
+    @TestMetadata("annotationParameterValueBackingField.kt")
+    public void testAnnotationParameterValueBackingField() throws Exception {
+        runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/annotationParameterValueBackingField.kt");
+    }
+
+    @Test
     @TestMetadata("functionReceiver.kt")
     public void testFunctionReceiver() throws Exception {
         runTest("analysis/analysis-api/testData/components/typeProvider/typeReference/functionReceiver.kt");
