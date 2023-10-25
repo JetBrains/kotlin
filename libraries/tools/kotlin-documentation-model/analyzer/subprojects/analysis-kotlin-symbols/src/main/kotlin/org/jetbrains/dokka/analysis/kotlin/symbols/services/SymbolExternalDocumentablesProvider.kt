@@ -24,10 +24,9 @@ internal class SymbolExternalDocumentablesProvider(val context: DokkaContext) : 
     override fun findClasslike(dri: DRI, sourceSet: DokkaSourceSet): DClasslike? {
         val classId = getClassIdFromDRI(dri)
 
-        val analysisContext = kotlinAnalysis[sourceSet]
-        return analyze(analysisContext.mainModule) {
+        return analyze(kotlinAnalysis.getModule(sourceSet)) {
             val symbol = getClassOrObjectSymbolByClassId(classId) as? KtNamedClassOrObjectSymbol?: return@analyze null
-            val translator = DokkaSymbolVisitor(sourceSet, sourceSet.displayName, analysisContext, logger = context.logger)
+            val translator = DokkaSymbolVisitor(sourceSet, sourceSet.displayName, kotlinAnalysis, logger = context.logger)
 
             val parentDRI = symbol.getContainingSymbol()?.let { getDRIFromSymbol(it) } ?: /* top level */ DRI(dri.packageName)
             with(translator) {

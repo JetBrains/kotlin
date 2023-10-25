@@ -39,7 +39,7 @@ internal class KotlinDocCommentParser(
         }
         val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
         val elementName = element.resolveDocContext.ktElement.name
-        return analyze(kotlinAnalysis[sourceSet].mainModule) {
+        return analyze(kotlinAnalysis.getModule(sourceSet)) {
             parseFromKDocTag(
                 kDocTag = element.comment,
                 externalDri = { link -> resolveKDocLink(link).ifUnresolved { context.logger.logUnresolvedLink(link.getLinkText(), elementName) } },

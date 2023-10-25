@@ -79,7 +79,7 @@ internal class SymbolFullClassHierarchyBuilder(val context: DokkaContext) : Full
             documentable.sources.forEach { (sourceSet, source) ->
                 if (source is KtPsiDocumentableSource) {
                     (source.psi as? KtClassOrObject)?.let { psi ->
-                        analyze(kotlinAnalysis[sourceSet].mainModule) {
+                        analyze(kotlinAnalysis.getModule(sourceSet)) {
                             val type = psi.getNamedClassOrObjectSymbol()?.buildSelfClassType() ?: return@analyze
                             hierarchy[sourceSet]?.let { collectSupertypesFromKtType(documentable.dri to type, it) }
                         }
