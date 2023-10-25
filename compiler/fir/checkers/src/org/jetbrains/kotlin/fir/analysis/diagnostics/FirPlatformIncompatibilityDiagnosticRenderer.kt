@@ -102,7 +102,8 @@ private fun StringBuilder.renderIncompatibilityInformation(
             append(indent)
             append("No actual members are found for expected members listed below:")
             mode.newLine(this)
-            renderIncompatibleClassScopes(compatibility.unfulfilled, indent, mode)
+            renderIncompatibleClassScopes(compatibility.mismatchedMembers, indent, mode)
+            renderIncompatibleClassScopes(compatibility.incompatibleMembers, indent, mode)
         }
     }
 }
