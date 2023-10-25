@@ -185,7 +185,6 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
         } catch (e: Throwable) {
             if (!blind) println(e.message)
             null
-
         }
         library?.libraryFile?.deleteRecursively()
     }
