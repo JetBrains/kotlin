@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.bir.types.utils.typeWith
 import org.jetbrains.kotlin.bir.types.utils.typeWithParameters
 import org.jetbrains.kotlin.bir.util.allParameters
 import org.jetbrains.kotlin.bir.util.constructors
+import org.jetbrains.kotlin.bir.util.getAnnotation
 import org.jetbrains.kotlin.bir.util.isFileClass
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -35,12 +36,15 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.Variance
 
 context(JvmBirBackendContext)
 class BirMainMethodGenerationLowering : BirLoweringPhase() {
+    private val JvmNameAnnotation = birBuiltIns.findClass(DescriptorUtils.JVM_NAME)!!
+
     private val mainishFunctions = registerIndexKey<BirSimpleFunction>(false) { function ->
-        (function.getJvmNameFromAnnotation() ?: function.name.asString()) == "main"
+        function.getJvmName() == "main"
                 && function.returnType.isUnit()
                 && function.typeParameters.isEmpty()
     }
@@ -84,6 +88,9 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
             }
         }
     }
+
+    private fun BirSimpleFunction.getJvmName() =
+        getAnnotation(JvmNameAnnotation)?.let { getJvmNameFromAnnotation(it) } ?: name.asString()
 
     private fun BirSimpleFunction.isParameterizedMainMethod(): Boolean? {
         val parameter = allParameters.singleOrNull()

@@ -176,19 +176,19 @@ val BirClass.classId: ClassId?
 
 
 fun BirConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
+fun BirConstructorCall.isAnnotation(annotationClass: BirClassSymbol) = symbol.owner.parentAsClass == annotationClass
 
 fun BirAnnotationContainer.getAnnotation(name: FqName): BirConstructorCall? =
     annotations.find { it.isAnnotation(name) }
 
-fun BirAnnotationContainer.hasAnnotation(name: FqName) =
-    annotations.any {
-        it.symbol.owner.parentAsClass.hasEqualFqName(name)
-    }
+fun BirAnnotationContainer.getAnnotation(annotationClass: BirClassSymbol): BirConstructorCall? =
+    annotations.find { it.isAnnotation(annotationClass) }
 
-fun BirAnnotationContainer.hasAnnotation(symbol: BirClassSymbol) =
-    annotations.any {
-        it.symbol.owner.parentAsClass == symbol
-    }
+fun BirAnnotationContainer.hasAnnotation(name: FqName) =
+    getAnnotation(name) != null
+
+fun BirAnnotationContainer.hasAnnotation(annotationClass: BirClassSymbol) =
+    getAnnotation(annotationClass) != null
 
 fun BirValueParameter.getIndex(): Int {
     val list = getContainingList()
