@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 
 internal class KtFirMultiplatformInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -31,7 +31,10 @@ internal class KtFirMultiplatformInfoProvider(
         }
         if (status?.isActual != true) return emptyList()
 
-        val expectsForActual = firSymbol.expectForActual?.get(ExpectActualCompatibility.Compatible) ?: return emptyList()
-        return expectsForActual.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KtDeclarationSymbol }
+        return firSymbol.expectForActual.orEmpty().asSequence()
+            .filter { it.key.isCompatibleOrWeaklyIncompatible }
+            .flatMap { it.value }
+            .map { analysisSession.firSymbolBuilder.buildSymbol(it) as KtDeclarationSymbol }
+            .toList()
     }
 }

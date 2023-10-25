@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
-import org.jetbrains.kotlin.resolve.multiplatform.K1ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
 
 internal class KtFe10MultiplatformInfoProvider(
     override val analysisSession: KtFe10AnalysisSession,
@@ -25,11 +25,10 @@ internal class KtFe10MultiplatformInfoProvider(
         if (actual.psiSafe<KtDeclaration>()?.hasActualModifier() != true) return emptyList()
         val memberDescriptor = (getSymbolDescriptor(actual) as? MemberDescriptor)?.takeIf { it.isActual } ?: return emptyList()
 
-        val expectedCompatibilityMap =
-            ExpectedActualResolver.findExpectedForActual(memberDescriptor) ?: return emptyList()
-
-        val expectsForActual = (expectedCompatibilityMap[K1ExpectActualCompatibility.Compatible]
-            ?: expectedCompatibilityMap.values.flatten())
-        return expectsForActual.map { it.toKtSymbol(analysisContext) as KtDeclarationSymbol }
+        return ExpectedActualResolver.findExpectedForActual(memberDescriptor).orEmpty().asSequence()
+            .filter { it.key.isCompatibleOrWeaklyIncompatible }
+            .flatMap { it.value }
+            .map { it.toKtSymbol(analysisContext) as KtDeclarationSymbol }
+            .toList()
     }
 }

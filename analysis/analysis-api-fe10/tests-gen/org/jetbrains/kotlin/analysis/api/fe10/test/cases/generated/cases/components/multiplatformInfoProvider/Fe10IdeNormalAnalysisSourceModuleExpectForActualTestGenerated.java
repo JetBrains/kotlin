@@ -53,6 +53,12 @@ public class Fe10IdeNormalAnalysisSourceModuleExpectForActualTestGenerated exten
     }
 
     @Test
+    @TestMetadata("matchingButIncompatibleExpect.kt")
+    public void testMatchingButIncompatibleExpect() throws Exception {
+        runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/matchingButIncompatibleExpect.kt");
+    }
+
+    @Test
     @TestMetadata("multipleExpects.kt")
     public void testMultipleExpects() throws Exception {
         runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/multipleExpects.kt");
