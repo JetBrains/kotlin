@@ -71,30 +71,32 @@ fun printElements(generationPath: File, model: Model) = sequence {
                 }.build())
             }
 
-            if (element.allChildren.isNotEmpty()) {
-                addFunction(
-                    FunSpec
-                        .builder("acceptChildren")
-                        .addModifiers(KModifier.OVERRIDE)
-                        .addTypeVariable(TypeVariableName("D"))
-                        .addParameter("visitor", elementVisitor.parameterizedBy(TypeVariableName("D")))
-                        .addParameter("data", TypeVariableName("D"))
-                        .apply {
-                            element.allChildren.forEach { child ->
-                                addCode(child.name)
-                                when (child) {
-                                    is SingleField -> {
-                                        if (child.nullable) addCode("?")
-                                        addCode(".%M(data, visitor)\n", elementAccept)
-                                    }
-                                    is ListField -> {
-                                        addCode(".acceptChildren(visitor, data)\n")
+            if (element.isLeaf) {
+                if (element.allChildren.isNotEmpty()) {
+                    addFunction(
+                        FunSpec
+                            .builder("acceptChildren")
+                            .addModifiers(KModifier.OVERRIDE)
+                            .addTypeVariable(TypeVariableName("D"))
+                            .addParameter("visitor", elementVisitor.parameterizedBy(TypeVariableName("D")))
+                            .addParameter("data", TypeVariableName("D"))
+                            .apply {
+                                element.allChildren.forEach { child ->
+                                    addCode(child.name)
+                                    when (child) {
+                                        is SingleField -> {
+                                            if (child.nullable) addCode("?")
+                                            addCode(".%M(data, visitor)\n", elementAccept)
+                                        }
+                                        is ListField -> {
+                                            addCode(".acceptChildren(visitor, data)\n")
+                                        }
                                     }
                                 }
                             }
-                        }
-                        .build()
-                )
+                            .build()
+                    )
+                }
             }
 
             generateElementKDoc(element)
