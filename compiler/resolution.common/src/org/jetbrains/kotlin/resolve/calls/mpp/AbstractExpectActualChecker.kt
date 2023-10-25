@@ -362,22 +362,20 @@ object AbstractExpectActualChecker {
         val expectedValueParameters = expectDeclaration.valueParameters
         val actualValueParameters = actualDeclaration.valueParameters
 
-        if (shouldCheckReturnTypesOfCallables) {
-            val substitutor = createExpectActualTypeParameterSubstitutor(
-                (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
-                    ?: error("expect/actual type parameters sizes are checked earlier"),
-                parentSubstitutor
-            )
+        val substitutor = createExpectActualTypeParameterSubstitutor(
+            (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
+                ?: error("expect/actual type parameters sizes are checked earlier"),
+            parentSubstitutor
+        )
 
-            if (!areCompatibleExpectActualTypes(
-                    substitutor.safeSubstitute(expectDeclaration.returnType),
-                    actualDeclaration.returnType,
-                    parameterOfAnnotationComparisonMode = insideAnnotationClass,
-                    dynamicTypesEqualToAnything = false
-                )
-            ) {
-                return ExpectActualCheckingCompatibility.ReturnType
-            }
+        if (!areCompatibleExpectActualTypes(
+                substitutor.safeSubstitute(expectDeclaration.returnType),
+                actualDeclaration.returnType,
+                parameterOfAnnotationComparisonMode = insideAnnotationClass,
+                dynamicTypesEqualToAnything = false
+            )
+        ) {
+            return ExpectActualCheckingCompatibility.ReturnType
         }
 
         if (actualDeclaration.hasStableParameterNames && !equalsBy(expectedValueParameters, actualValueParameters) { it.name }) {

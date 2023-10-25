@@ -43,9 +43,6 @@ class FirExpectActualMatchingContextImpl private constructor(
     private val scopeSession: ScopeSession,
     private val allowedWritingMemberExpectForActualMapping: Boolean,
 ) : FirExpectActualMatchingContext, TypeSystemContext by actualSession.typeContext {
-    override val shouldCheckReturnTypesOfCallables: Boolean
-        get() = false
-
     override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
         get() = true
 
@@ -303,7 +300,6 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val TypeParameterSymbolMarker.isReified: Boolean
         get() = asSymbol().isReified
 
-    // Copy-pasted to org.jetbrains.kotlin.fir.types.ExpectActualUtilsKt.areCompatibleExpectActualTypes
     override fun areCompatibleExpectActualTypes(
         expectType: KotlinTypeMarker?,
         actualType: KotlinTypeMarker?,

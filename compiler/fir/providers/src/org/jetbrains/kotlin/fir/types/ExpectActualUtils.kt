@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 fun createExpectActualTypeParameterSubstitutor(
     expectActualTypeParameters: List<Pair<FirTypeParameterSymbol, FirTypeParameterSymbol>>,
@@ -28,29 +27,4 @@ fun createExpectActualTypeParameterSubstitutor(
         return substitutor
     }
     return substitutor.chain(parentSubstitutor)
-}
-
-// Copy-pasted to org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatchingContextImpl.areCompatibleExpectActualTypes
-fun areCompatibleExpectActualTypes(
-    expectedType: ConeKotlinType?,
-    actualType: ConeKotlinType?,
-    actualSession: FirSession,
-    dynamicTypesEqualToAnything: Boolean = true
-): Boolean {
-    if (expectedType == null) return actualType == null
-    if (actualType == null) return false
-
-    if (!dynamicTypesEqualToAnything) {
-        val isExpectedDynamic = expectedType is ConeDynamicType
-        val isActualDynamic = actualType is ConeDynamicType
-        if (isExpectedDynamic && !isActualDynamic || !isExpectedDynamic && isActualDynamic) {
-            return false
-        }
-    }
-
-    return AbstractTypeChecker.equalTypes(
-        actualSession.typeContext,
-        expectedType,
-        actualType
-    )
 }
