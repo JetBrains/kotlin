@@ -127,4 +127,61 @@ class StringNumberConversionNativeTest {
         assertFailsWith<NumberFormatException> { "\uDC0012".toFloat() }
         assertFailsWith<NumberFormatException> { "12\uD800".toFloat() }
     }
+
+    @Test
+    fun byteToString() {
+        assertEquals("13", 13.toByte().toString())
+        assertEquals("-1", (-1).toByte().toString())
+        assertEquals("-128", Byte.MIN_VALUE.toString())
+        assertEquals("127", Byte.MAX_VALUE.toString())
+    }
+
+    @Test
+    fun shortToString() {
+        assertEquals("239", 239.toShort().toString())
+        assertEquals("-32768", Short.MIN_VALUE.toString())
+        assertEquals("32767", Short.MAX_VALUE.toString())
+    }
+
+    @Test
+    fun intToString() {
+        assertEquals("1122334455", 1122334455.toString())
+        assertEquals("-2147483648", Int.MIN_VALUE.toString())
+        assertEquals("2147483647", Int.MAX_VALUE.toString())
+    }
+
+    @Test
+    fun longToString() {
+        assertEquals("112233445566778899", 112233445566778899L.toString())
+        assertEquals("-9223372036854775808", Long.MIN_VALUE.toString())
+        assertEquals("9223372036854775807", Long.MAX_VALUE.toString())
+    }
+
+    @Test
+    fun floatToString() {
+        assertEquals("1.0E27", 1e27.toFloat().toString())
+        assertEquals("1.4E-45", Float.MIN_VALUE.toString())
+        assertEquals("3.4028235E38", Float.MAX_VALUE.toString())
+        assertEquals("-Infinity", Float.NEGATIVE_INFINITY.toString())
+        assertEquals("Infinity", Float.POSITIVE_INFINITY.toString())
+        assertEquals("NaN", Float.NaN.toString())
+    }
+
+    @Test
+    fun doubleToString() {
+        assertEquals("3.14159265358", 3.14159265358.toString())
+        assertEquals("1.0E7", 1e7.toString())
+        assertEquals("1.0E-300", 1e-300.toDouble().toString())
+        assertEquals("4.9E-324", Double.MIN_VALUE.toString())
+        assertEquals("1.7976931348623157E308", Double.MAX_VALUE.toString())
+        assertEquals("-Infinity", Double.NEGATIVE_INFINITY.toString())
+        assertEquals("Infinity", Double.POSITIVE_INFINITY.toString())
+        assertEquals("NaN", Double.NaN.toString())
+    }
+
+    @Test
+    fun booleanToString() {
+        assertEquals("true", true.toString())
+        assertEquals("false", false.toString())
+    }
 }

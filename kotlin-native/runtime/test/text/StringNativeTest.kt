@@ -151,4 +151,10 @@ class StringNativeTest {
         assertEquals(expected = "\u1FFFString", actual = "\u00A0  \u1FFFString".trim(),
                 message = "Trim special whitespace but should left a unicode symbol")
     }
+
+    @Test
+    fun subSequence() {
+        assertEquals("ello", "Hello world".subSequence(1, 5).toString())
+        assertEquals("", "Hello world".subSequence(1, 1).toString())
+    }
 }

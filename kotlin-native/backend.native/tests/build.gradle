@@ -577,16 +577,8 @@ standaloneTest("runtime_basic_exit") {
     expectedExitStatus = 42
 }
 
-tasks.register("runtime_random", KonanLocalTest) {
-    source = "runtime/basic/random.kt"
-}
-
-tasks.register("runtime_basic_simd", KonanLocalTest) {
-    source = "runtime/basic/simd.kt"
-}
-
-tasks.register("runtime_worker_random", KonanLocalTest) {
-    source = "runtime/basic/worker_random.kt"
+tasks.register("codegen_vector_default_argument", KonanLocalTest) {
+    source = "codegen/vector/default_argument.kt"
 }
 
 tasks.register("hello0", KonanLocalTest) {
@@ -721,35 +713,6 @@ standaloneTest("readline1") {
     useGoldenData = true
     useTestData = true
     source = "runtime/basic/readline1.kt"
-}
-
-tasks.register("tostring0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/tostring0.kt"
-}
-
-tasks.register("tostring1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/tostring1.kt"
-}
-
-tasks.register("tostring2", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/tostring2.kt"
-}
-
-tasks.register("tostring3", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/tostring3.kt"
-}
-
-tasks.register("tostring4", KonanLocalTest) {
-    source = "runtime/basic/tostring4.kt"
-}
-
-tasks.register("empty_substring", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/empty_substring.kt"
 }
 
 standaloneTest("cleaner_basic") {
@@ -2244,20 +2207,6 @@ tasks.register("interface0", KonanLocalTest) {
     source = "runtime/basic/interface0.kt"
 }
 
-tasks.register("hash0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/hash0.kt"
-}
-
-tasks.register("ieee754", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/ieee754.kt"
-}
-
-standaloneTest("hypotenuse") {
-    source = "runtime/basic/hypot.kt"
-}
-
 tasks.register("listof1", KonanLocalTest) {
     enabled = false
     useGoldenData = true
@@ -2624,10 +2573,6 @@ tasks.register("main_exception", KonanLocalTest) {
     outputChecker = { s -> s.contains("kotlin.Error: Hello!") }
     expectedExitStatus = 1
     source = "runtime/basic/main_exception.kt"
-}
-
-tasks.register("runtime_basic_standard", KonanLocalTest) {
-    source = "runtime/basic/standard.kt"
 }
 
 standaloneTest("runtime_basic_assert_failed") {

@@ -118,4 +118,11 @@ class CharNativeTest {
         assertTrue('_'      in CharCategory.CONNECTOR_PUNCTUATION)
         assertTrue('$'      in CharCategory.CURRENCY_SYMBOL)
     }
+
+    @Test
+    fun testToString() {
+        assertEquals("A", 'A'.toString())
+        assertEquals("Ё", 'Ё'.toString())
+        assertEquals("ト", 'ト'.toString())
+    }
 }

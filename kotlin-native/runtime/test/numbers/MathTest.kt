@@ -138,4 +138,8 @@ class FloatMathNativeTest {
         assertTrue(2.0f.IEEErem(0.0f).isNaN())
         assertEquals(PI.toFloat(), PI.toFloat().IEEErem(Float.NEGATIVE_INFINITY))
     }
+
+    @Test fun maxValue() {
+        assertEquals(Float.MAX_VALUE, Float.MAX_VALUE + 42)
+    }
 }
