@@ -16800,6 +16800,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("manyArgsDifferentYields.kt")
+                public void testManyArgsDifferentYields() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/manyArgsDifferentYields.kt");
+                }
+
+                @Test
                 @TestMetadata("multiLambdaRestriction.kt")
                 public void testMultiLambdaRestriction() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/multiLambdaRestriction.kt");
@@ -42599,6 +42605,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("kt38667.kt")
                 public void testKt38667() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt38667.kt");
+                }
+
+                @Test
+                @TestMetadata("kt38667Simplified.kt")
+                public void testKt38667Simplified() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt38667Simplified.kt");
                 }
 
                 @Test
