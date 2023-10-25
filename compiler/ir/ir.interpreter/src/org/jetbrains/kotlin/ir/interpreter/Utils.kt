@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.state.*
+import org.jetbrains.kotlin.ir.interpreter.state.Common
+import org.jetbrains.kotlin.ir.interpreter.state.Primitive
+import org.jetbrains.kotlin.ir.interpreter.state.State
+import org.jetbrains.kotlin.ir.interpreter.state.isSubtypeOf
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -318,7 +321,7 @@ internal fun IrExpression?.isAccessToNotNullableObject(): Boolean {
 }
 
 internal fun IrFunction.isAccessorOfPropertyWithBackingField(): Boolean {
-    return this is IrSimpleFunction && this.correspondingPropertySymbol?.owner?.backingField?.initializer != null
+    return property?.backingField?.initializer != null
 }
 
 internal fun State.unsignedToString(): String {
@@ -359,3 +362,8 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
 internal val IrFunction.property: IrProperty?
     get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
 
+internal val IrField.property: IrProperty?
+    get() = this.correspondingPropertySymbol?.owner
+
+internal val IrCall.correspondingProperty: IrProperty?
+    get() = this.symbol.owner.correspondingPropertySymbol?.owner

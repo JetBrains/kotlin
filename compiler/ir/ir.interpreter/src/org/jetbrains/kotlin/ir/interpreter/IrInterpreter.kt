@@ -378,11 +378,11 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                     else -> callInterceptor.interceptJavaStaticField(expression)
                 }
             }
-            field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.correspondingPropertySymbol?.owner?.isConst == true -> {
+            field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.property?.isConst == true -> {
                 callStack.pushCompoundInstruction(field.initializer?.expression)
             }
             expression.accessesTopLevelOrObjectField() -> {
-                val propertyOwner = field.correspondingPropertySymbol?.owner
+                val propertyOwner = field.property
                 val isConst = propertyOwner?.isConst == true ||
                         propertyOwner?.backingField?.initializer?.expression is IrConst<*> ||
                         propertyOwner?.parentClassOrNull?.hasAnnotation(compileTimeAnnotation) == true // check if object is marked as compile time

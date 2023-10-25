@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
+import org.jetbrains.kotlin.ir.interpreter.correspondingProperty
 import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.isAccessToNotNullableObject
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor.Companion.isEnumName
@@ -57,7 +59,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     }
 
     private fun IrCall.isGetterToConstVal(): Boolean {
-        return symbol.owner.correspondingPropertySymbol?.owner?.isConst == true
+        return correspondingProperty?.isConst == true
     }
 
     override fun visitCall(expression: IrCall, data: IrInterpreterCheckerData): Boolean {
@@ -171,7 +173,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
 
     override fun visitGetField(expression: IrGetField, data: IrInterpreterCheckerData): Boolean {
         val owner = expression.symbol.owner
-        val property = owner.correspondingPropertySymbol?.owner
+        val property = owner.property
         val fqName = owner.fqName
         fun isJavaStaticWithPrimitiveOrString(): Boolean {
             return owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic && owner.isFinal &&
@@ -206,7 +208,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     override fun visitSetField(expression: IrSetField, data: IrInterpreterCheckerData): Boolean {
         if (expression.accessesTopLevelOrObjectField()) return false
         //todo check receiver?
-        val property = expression.symbol.owner.correspondingPropertySymbol?.owner
+        val property = expression.symbol.owner.property
         val declarations = expression.symbol.owner.parent.getInnerDeclarations()
         val setter = declarations.filterIsInstance<IrProperty>().single { it == property }.setter ?: return false
         return visitedStack.contains(setter) && expression.value.accept(this, data)

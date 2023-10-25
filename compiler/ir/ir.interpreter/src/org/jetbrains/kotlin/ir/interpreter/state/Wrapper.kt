@@ -139,7 +139,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             val methodType = irFunction.getMethodType()
             val methodName = when (irFunction) {
                 is IrSimpleFunction -> {
-                    val property = irFunction.correspondingPropertySymbol?.owner
+                    val property = irFunction.property
                     when {
                         property?.getter == irFunction -> "get${property.name.asString().capitalizeAsciiOnly()}"
                         property?.setter == irFunction -> "set${property.name.asString().capitalizeAsciiOnly()}"

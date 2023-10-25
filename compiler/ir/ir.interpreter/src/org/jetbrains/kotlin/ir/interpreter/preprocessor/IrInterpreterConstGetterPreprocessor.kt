@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
+import org.jetbrains.kotlin.ir.interpreter.correspondingProperty
+import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.types.classOrFail
 
 class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
@@ -24,7 +26,7 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
     }
 
     override fun visitCall(expression: IrCall, data: IrInterpreterPreprocessorData): IrElement {
-        val field = expression.symbol.owner.correspondingPropertySymbol?.owner?.backingField ?: return super.visitCall(expression, data)
+        val field = expression.correspondingProperty?.backingField ?: return super.visitCall(expression, data)
         return expression.lowerConstRead(field, data) ?: super.visitCall(expression, data)
     }
 
@@ -62,6 +64,6 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
 
     fun IrField.hasConstantValue(): Boolean {
         val implicitConst = isFinal && isStatic && origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && initializer != null
-        return implicitConst || correspondingPropertySymbol?.owner?.isConst == true
+        return implicitConst || property?.isConst == true
     }
 }
