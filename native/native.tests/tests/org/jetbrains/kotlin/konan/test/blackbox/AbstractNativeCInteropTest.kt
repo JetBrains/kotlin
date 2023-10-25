@@ -78,8 +78,8 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
         val includeFolder = testDataDir.resolve("include")
         val defFile = testPathFull.resolve(defFileName)
         val defContents = defFile.readText().split("\n").map { it.trim() }
-        val defHasObjC = defContents.any { it.endsWith("Objective-C") }
-        Assumptions.assumeFalse(defHasObjC && !targets.testTarget.family.isAppleFamily)
+
+        muteCInteropTestIfNecessary(defFile, targets.testTarget)
 
         val defHasHeaders = defContents.any { it.startsWith("headers") }
         Assumptions.assumeFalse(fmodules && defHasHeaders)
@@ -156,3 +156,21 @@ abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
         return testPathFull.resolve("contents.gold.${goldenFilePart}.txt")
     }
 }
+
+internal fun muteCInteropTestIfNecessary(defFile: File, target: KonanTarget) {
+    if (target.family.isAppleFamily) return
+
+    defFile.readLines().forEach { line ->
+        if (line.startsWith("---")) return
+
+        val parts = line.split('=')
+        if (parts.size == 2
+            && parts[0].trim().equals("language", ignoreCase = true)
+            && parts[1].trim().equals("Objective-C", ignoreCase = true)
+        ) {
+            Assumptions.abort<Nothing>("C-interop tests with Objective-C are not supported at non-Apple targets, def file: $defFile")
+        }
+    }
+}
+//Assumptions.assumeFalse(defHasObjC && !targets.testTarget.family.isAppleFamily)
+

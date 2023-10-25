@@ -1,0 +1,5 @@
+imported_from_cinterop.main/Derived.<init>|-5645683436151566731[0]
+imported_from_cinterop.main/Derived.overriddenFunction|6590605551359912218[0]
+imported_from_cinterop.main/Derived.overriddenProperty|2151635420542149228[0]
+imported_from_cinterop.main/Derived.setOverriddenProperty|8045446846177614528[0]
+imported_from_cinterop.main/Derived|null[0]

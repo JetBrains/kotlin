@@ -44,6 +44,16 @@ internal fun TestCompilationArtifact.KLIB.dumpIr(
     /* signatureVersion= */ signatureVersion?.let { getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion) }
 )
 
+internal fun TestCompilationArtifact.KLIB.dumpMetadataSignatures(
+    kotlinNativeClassLoader: ClassLoader,
+    signatureVersion: KotlinIrSignatureVersion,
+): String = invokeKlibTool(
+    kotlinNativeClassLoader = kotlinNativeClassLoader,
+    klibFile = klibFile,
+    functionName = "dumpMetadataSignatures",
+    /* signatureVersion= */ getSignatureVersionForIsolatedClassLoader(kotlinNativeClassLoader, signatureVersion)
+)
+
 internal fun TestCompilationArtifact.KLIB.dumpIrSignatures(
     kotlinNativeClassLoader: ClassLoader,
     signatureVersion: KotlinIrSignatureVersion,
