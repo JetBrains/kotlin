@@ -71,21 +71,20 @@ class FirBuilderInferenceSession2(
         resolutionMode: ResolutionMode,
         completionMode: ConstraintSystemCompletionMode
     ) where T : FirResolvable, T : FirStatement {
-        if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !resolutionMode.isReceiverOrTopLevel) return
-
         if (call is FirExpression) {
             call.updateReturnTypeWithCurrentSubstitutor(resolutionMode)
         }
 
-        if (!resolutionMode.isReceiverOrTopLevel) return
-
         val candidate = call.candidate() ?: return
         if (!candidate.isNotTrivial()) return
+
+        currentCommonSystem.replaceContentWith(candidate.system.currentStorage())
+
+        if (!resolutionMode.isReceiverOrTopLevel) return
 
         outerCandidate.postponedCalls += call
 
         (resolutionMode as? ResolutionMode.ContextIndependent.ForDeclaration)?.declaration?.let(outerCandidate.updateDeclarations::add)
-        currentCommonSystem.addOtherSystem(candidate.system.currentStorage(), isAddingOuter = false)
     }
 
     fun integrateChildSession(

@@ -331,7 +331,11 @@ class NewConstraintSystemImpl(
         addOtherSystem(otherSystem, isAddingOuter = false)
     }
 
-    fun addOtherSystem(otherSystem: ConstraintStorage, isAddingOuter: Boolean) {
+    fun replaceContentWith(otherSystem: ConstraintStorage) {
+        addOtherSystem(otherSystem, isAddingOuter = false, clearNotFixedTypeVariables = true)
+    }
+
+    private fun addOtherSystem(otherSystem: ConstraintStorage, isAddingOuter: Boolean, clearNotFixedTypeVariables: Boolean = false) {
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
                 transactionRegisterVariable(it.value)
@@ -339,6 +343,11 @@ class NewConstraintSystemImpl(
             storage.allTypeVariables.putAll(otherSystem.allTypeVariables)
             notProperTypesCache.clear()
         }
+
+        if (clearNotFixedTypeVariables) {
+            notFixedTypeVariables.clear()
+        }
+
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
             notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
         }
