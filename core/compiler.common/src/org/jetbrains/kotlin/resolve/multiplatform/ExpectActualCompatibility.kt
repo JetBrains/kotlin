@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility.Mismatch
+
 private const val TYPE_PARAMETER_COUNT = "number of type parameters is different"
 
 // Note that the reason is used in the diagnostic output, see PlatformIncompatibilityDiagnosticRenderer
@@ -82,7 +84,8 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object FunInterfaceModifier : Incompatible<Nothing>("actual declaration for fun expect interface is not a functional interface")
     object Supertypes : Incompatible<Nothing>("some supertypes are missing in the actual declaration")
     class ClassScopes<D>(
-        val unfulfilled: List<Pair<D, Map<out ExpectActualCompatibility.MismatchOrIncompatible<D>, Collection<D>>>>
+        val mismatchedMembers: List<Pair</* expect */ D, Map<Mismatch, /* actuals */ Collection<D>>>>,
+        val incompatibleMembers: List<Pair</* expect */ D, Map<Incompatible<D>, /* actuals */ Collection<D>>>>,
     ) : Incompatible<D>("some expected members have no actual ones")
     object EnumEntries : Incompatible<Nothing>("some entries from expected enum are missing in the actual enum")
 

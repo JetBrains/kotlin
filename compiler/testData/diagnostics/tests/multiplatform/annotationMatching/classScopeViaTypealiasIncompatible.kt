@@ -18,6 +18,7 @@ class WeakIncompatibilityImpl {
     fun foo(differentName: String) {}
 }
 
+// TODO: Duplicated diagnostic will be fixed in KT-62559
 actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT, NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>WeakIncompatibility<!> = WeakIncompatibilityImpl
 
 class StrongIncompatibilityImpl {
