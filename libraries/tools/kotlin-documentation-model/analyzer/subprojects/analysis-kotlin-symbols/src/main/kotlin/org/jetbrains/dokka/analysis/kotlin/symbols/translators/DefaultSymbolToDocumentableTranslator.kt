@@ -11,7 +11,6 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.java.JavaAnalysisPlugin
 import org.jetbrains.dokka.analysis.java.parsers.JavadocParser
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.getGeneratedKDocDocumentationFrom
-import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.AnalysisContext
 import org.jetbrains.dokka.analysis.kotlin.symbols.services.KtPsiDocumentableSource
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.getJavaDocDocumentationFrom
 import org.jetbrains.dokka.analysis.kotlin.symbols.kdoc.getKDocDocumentationFrom
@@ -59,7 +58,7 @@ internal class DefaultSymbolToDocumentableTranslator(context: DokkaContext) : As
         sourceSet: DokkaConfiguration.DokkaSourceSet,
         context: DokkaContext
     ): DModule {
-        val analysisContext = kotlinAnalysis[sourceSet]
+        val analysisContext = kotlinAnalysis
         @Suppress("unused")
         return DokkaSymbolVisitor(
             sourceSet = sourceSet,
@@ -84,7 +83,7 @@ internal fun <T : Bound> T.wrapWithVariance(variance: org.jetbrains.kotlin.types
 internal class DokkaSymbolVisitor(
     private val sourceSet: DokkaConfiguration.DokkaSourceSet,
     private val moduleName: String,
-    private val analysisContext: AnalysisContext,
+    private val analysisContext: KotlinAnalysis,
     private val logger: DokkaLogger,
     private val javadocParser: JavadocParser? = null
 ) {
@@ -118,9 +117,10 @@ internal class DokkaSymbolVisitor(
     }
 
     fun visitModule(): DModule {
-        val ktFiles = analysisContext.analysisSession.modulesWithFiles.entries.single().value.filterIsInstance<KtFile>()
+        val sourceModule = analysisContext.getModule(sourceSet)
+        val ktFiles = analysisContext.modulesWithFiles[sourceModule]?.filterIsInstance<KtFile>() ?: throw IllegalStateException("No source files for a source module ${sourceModule.moduleName} of source set ${sourceSet.sourceSetID}")
         val processedPackages: MutableSet<FqName> = mutableSetOf()
-        return analyze(analysisContext.mainModule) {
+        return analyze(sourceModule) {
             val packageSymbols: List<DPackage> = ktFiles
                 .mapNotNull {
                     if (processedPackages.contains(it.packageFqName))

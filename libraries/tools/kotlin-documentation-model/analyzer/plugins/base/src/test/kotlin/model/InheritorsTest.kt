@@ -60,15 +60,22 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
     fun multiplatform() {
         val configuration = dokkaConfiguration {
             sourceSets {
+                val commonSourceSet = sourceSet {
+                    name = "common"
+                    sourceRoots = listOf("common/src/")
+                    analysisPlatform = "common"
+                }
                 sourceSet {
                     name = "jvm"
-                    sourceRoots = listOf("common/src/", "jvm/src/")
+                    sourceRoots = listOf("jvm/src/")
                     analysisPlatform = "jvm"
+                    dependentSourceSets =  setOf(commonSourceSet.value.sourceSetID)
                 }
                 sourceSet {
                     name = "js"
-                    sourceRoots = listOf("common/src/", "js/src/")
+                    sourceRoots = listOf("js/src/")
                     analysisPlatform = "js"
+                    dependentSourceSets =  setOf(commonSourceSet.value.sourceSetID)
                 }
             }
         }

@@ -103,7 +103,7 @@ internal fun KtAnalysisSession.getDRIFromSymbol(symbol: KtSymbol): DRI =
         is KtFunctionLikeSymbol -> getDRIFromFunctionLike(symbol)
         is KtClassLikeSymbol -> getDRIFromClassLike(symbol)
         is KtPackageSymbol -> getDRIFromPackage(symbol)
-        else -> throw IllegalStateException("Unknown symbol while creating DRI ")
+        else -> throw IllegalStateException("Unknown symbol while creating DRI $symbol")
     }
 
 private fun KtAnalysisSession.getDRIFromNonCallablePossibleLocalSymbol(symbol: KtSymbol): DRI {

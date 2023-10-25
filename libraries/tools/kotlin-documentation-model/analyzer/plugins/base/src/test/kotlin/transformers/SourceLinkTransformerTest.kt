@@ -9,7 +9,6 @@ import org.jetbrains.dokka.SourceLinkDefinitionImpl
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jsoup.nodes.Element
 import signatures.renderedContent
-import utils.OnlyDescriptorsMPP
 import utils.TestOutputWriterPlugin
 import java.net.URL
 import kotlin.test.Test
@@ -71,7 +70,6 @@ class SourceLinkTransformerTest : BaseAbstractTest() {
         }
     }
 
-    @OnlyDescriptorsMPP
     @Test
     fun `source link should be for actual typealias`() {
         val mppConfiguration = dokkaConfiguration {
