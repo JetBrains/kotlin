@@ -36,11 +36,9 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     ) {
         target.runKotlinCompilationSideEffects()
         target.runKotlinTargetSideEffects()
-        configureBuild(target)
         configurePlatformSpecificModel(target)
     }
 
-    fun configureBuild(target: KotlinTargetType)
     fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
 }
 
@@ -49,33 +47,6 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
     protected open val runtimeIncludesCompilationOutputs = true
-
-    override fun configureBuild(target: KotlinTargetType) {
-        val project = target.project
-
-        val buildNeeded = project.tasks.named(JavaBasePlugin.BUILD_NEEDED_TASK_NAME)
-        val buildDependent = project.tasks.named(JavaBasePlugin.BUILD_DEPENDENTS_TASK_NAME)
-
-        if (createTestCompilation) {
-            val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
-            if (testCompilation is KotlinCompilationToRunnableFiles) {
-                addDependsOnTaskInOtherProjects(project, buildNeeded, true, testCompilation.runtimeDependencyConfigurationName)
-                addDependsOnTaskInOtherProjects(project, buildDependent, false, testCompilation.runtimeDependencyConfigurationName)
-            }
-        }
-    }
-
-    private fun addDependsOnTaskInOtherProjects(
-        project: Project,
-        taskProvider: TaskProvider<*>,
-        useDependedOn: Boolean,
-        configurationName: String,
-    ) {
-        val configuration = project.configurations.getByName(configurationName)
-        taskProvider.configure { task ->
-            task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, taskProvider.name))
-        }
-    }
 
     companion object {
         const val testTaskNameSuffix = "test"
