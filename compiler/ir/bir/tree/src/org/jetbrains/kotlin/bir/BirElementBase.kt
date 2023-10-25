@@ -20,20 +20,39 @@ import kotlin.experimental.and
 import kotlin.experimental.inv
 import kotlin.experimental.or
 
-abstract class BirElementBase : BirElement {
+abstract class BirElementBase : BirElementParent(), BirElement {
+    /**
+     * It may get out-of-sync only inside [BirForest.subtreeShuffleTransaction]
+     */
     internal var root: BirForest? = null
-    private var _parent: BirElementBase? = null
-    private var dynamicProperties: Array<Any?>? = null
+    internal var _parent: BirElementParent? = null
     internal var containingListId: Byte = 0
-    internal var indexSlot: UByte = 0u
     private var flags: Byte = 0
+    internal var indexSlot: UByte = 0u
     private var dependentIndexedElements: Any? = null // null | BirElementBase | Array<BirElementBase?>
+    private var dynamicProperties: Array<Any?>? = null
 
     final override val parent: BirElementBase?
         get() {
             recordPropertyRead()
-            return _parent
+            return _parent as? BirElementBase
         }
+
+    internal fun getParentRecordingRead(): BirElementParent? {
+        recordPropertyRead()
+        return _parent
+    }
+
+    internal fun setParentWithInvalidation(new: BirElementParent?) {
+        if (_parent !== new) {
+            _parent = new
+            invalidate()
+        }
+    }
+
+    val attachedToTree
+        get() = root != null
+
 
     internal fun hasFlag(flag: Byte): Boolean =
         (flags and flag).toInt() != 0
@@ -42,9 +61,9 @@ abstract class BirElementBase : BirElement {
         flags = if (value) flags or flag else flags and flag.inv()
     }
 
-    val attachedToTree
-        get() = root != null
 
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
+    internal open fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
 
     fun isAncestorOf(other: BirElementBase): Boolean {
         if (root !== other.root) {
@@ -53,7 +72,7 @@ abstract class BirElementBase : BirElement {
 
         var n = other
         while (true) {
-            n = n._parent ?: break
+            n = n.parent ?: break
             if (n === this) return true
         }
 
@@ -61,16 +80,13 @@ abstract class BirElementBase : BirElement {
     }
 
 
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
-    internal open fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
-
     internal fun initChild(new: BirElement?) {
         new as BirElementBase?
 
         new?.checkCanBeAttachedAsChild(this)
 
         if (new != null) {
-            new._parent = this
+            new.setParentWithInvalidation(this)
             childAttached(new)
         }
     }
@@ -82,11 +98,11 @@ abstract class BirElementBase : BirElement {
         new?.checkCanBeAttachedAsChild(this)
 
         if (old != null) {
-            old._parent = null
+            old.setParentWithInvalidation(null)
             childDetached(old)
         }
         if (new != null) {
-            new._parent = this
+            new.setParentWithInvalidation(this)
             childAttached(new)
         }
     }
@@ -123,7 +139,7 @@ abstract class BirElementBase : BirElement {
     internal fun getContainingList(): BirChildElementList<*>? {
         val containingListId = containingListId.toInt()
         return if (containingListId == 0) null
-        else _parent?.getChildrenListById(containingListId)
+        else (parent as? BirElementBase)?.getChildrenListById(containingListId)
     }
 
     internal fun removeFromList(list: BirChildElementList<BirElement?>) {
@@ -257,9 +273,10 @@ abstract class BirElementBase : BirElement {
         }
     }
 
+
     fun unsafeDispose() {
         acceptChildrenLite {
-            it._parent = null
+            it.setParentWithInvalidation(null)
             childDetached(it)
         }
         // todo: mark as disposed
