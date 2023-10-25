@@ -24,6 +24,7 @@ import kotlin.time.DurationUnit
 import kotlin.time.measureTimedValue
 
 private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
+    ::BirJvmNameLowering,
     ::BirJvmStaticInObjectLowering,
     ::BirRepeatedAnnotationLowering,
     ::BirTypeAliasAnnotationMethodsLowering,

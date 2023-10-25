@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
-import org.jetbrains.kotlin.bir.backend.jvm.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.bir.backend.utils.int
 import org.jetbrains.kotlin.bir.builders.build
 import org.jetbrains.kotlin.bir.builders.setCall
@@ -20,13 +19,13 @@ import org.jetbrains.kotlin.bir.expressions.BirCall
 import org.jetbrains.kotlin.bir.expressions.BirConst
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.impl.*
+import org.jetbrains.kotlin.bir.get
 import org.jetbrains.kotlin.bir.types.*
 import org.jetbrains.kotlin.bir.types.utils.defaultType
 import org.jetbrains.kotlin.bir.types.utils.typeWith
 import org.jetbrains.kotlin.bir.types.utils.typeWithParameters
 import org.jetbrains.kotlin.bir.util.allParameters
 import org.jetbrains.kotlin.bir.util.constructors
-import org.jetbrains.kotlin.bir.util.getAnnotation
 import org.jetbrains.kotlin.bir.util.isFileClass
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -36,15 +35,14 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.Variance
 
 context(JvmBirBackendContext)
 class BirMainMethodGenerationLowering : BirLoweringPhase() {
-    private val JvmNameAnnotation = birBuiltIns.findClass(DescriptorUtils.JVM_NAME)!!
+    private val jvmNameKey = acquireProperty(BirJvmNameLowering.JvmName)
 
     private val mainishFunctions = registerIndexKey<BirSimpleFunction>(false) { function ->
-        function.getJvmName() == "main"
+        function.getJvmName().asString() == "main"
                 && function.returnType.isUnit()
                 && function.typeParameters.isEmpty()
     }
@@ -90,7 +88,7 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
     }
 
     private fun BirSimpleFunction.getJvmName() =
-        getAnnotation(JvmNameAnnotation)?.let { getJvmNameFromAnnotation(it) } ?: name.asString()
+        this[jvmNameKey] ?: name
 
     private fun BirSimpleFunction.isParameterizedMainMethod(): Boolean? {
         val parameter = allParameters.singleOrNull()
