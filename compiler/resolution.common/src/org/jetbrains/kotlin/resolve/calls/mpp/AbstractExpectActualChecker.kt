@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.enumMapOf
 import org.jetbrains.kotlin.utils.addToStdlib.enumSetOf
-import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
 import java.util.*
 
@@ -66,15 +65,15 @@ object AbstractExpectActualChecker {
         result as ExpectActualCheckingCompatibility<T>
     }
 
-    fun <T : DeclarationSymbolMarker> checkSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+    fun <T : DeclarationSymbolMarker> checkSingleExpectTopLevelDeclarationAgainstMatchedActual(
         expectDeclaration: DeclarationSymbolMarker,
-        actualDeclarations: List<DeclarationSymbolMarker>,
+        actualDeclaration: DeclarationSymbolMarker,
         context: ExpectActualMatchingContext<T>,
     ) {
         with(context) {
-            checkSingleExpectAgainstPotentialActuals(
+            checkSingleExpectAgainstMatchedActual(
                 expectDeclaration,
-                actualDeclarations,
+                actualDeclaration,
                 substitutor = null,
                 expectClassSymbol = null,
                 actualClassSymbol = null,
@@ -235,9 +234,9 @@ object AbstractExpectActualChecker {
             )
 
             if (matched != null) {
-                checkSingleExpectAgainstPotentialActuals(
+                checkSingleExpectAgainstMatchedActual(
                     expectMember,
-                    listOf(matched), // todo convert vector to scalar
+                    matched,
                     substitutor,
                     expectClassSymbol,
                     actualClassSymbol,
@@ -262,42 +261,38 @@ object AbstractExpectActualChecker {
     }
 
     context(ExpectActualMatchingContext<*>)
-    private fun checkSingleExpectAgainstPotentialActuals(
+    private fun checkSingleExpectAgainstMatchedActual(
         expectMember: DeclarationSymbolMarker,
-        actualMembers: List<DeclarationSymbolMarker>,
+        actualMember: DeclarationSymbolMarker,
         substitutor: TypeSubstitutorMarker?,
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
         incompatibleMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>?,
     ) {
-        val mapping = actualMembers.keysToMap { actualMember ->
-            when (expectMember) {
-                is CallableSymbolMarker -> getCallablesCompatibility(
-                    expectMember,
-                    actualMember as CallableSymbolMarker,
-                    substitutor,
-                    expectClassSymbol,
-                    actualClassSymbol
-                )
+        val compatibility = when (expectMember) {
+            is CallableSymbolMarker -> getCallablesCompatibility(
+                expectMember,
+                actualMember as CallableSymbolMarker,
+                substitutor,
+                expectClassSymbol,
+                actualClassSymbol
+            )
 
-                is RegularClassSymbolMarker -> {
-                    val parentSubstitutor = substitutor?.takeIf { !innerClassesCapturesOuterTypeParameters }
-                    getClassifiersCompatibility(
-                        expectMember,
-                        actualMember as ClassLikeSymbolMarker,
-                        parentSubstitutor,
-                    )
-                }
-                else -> error("Unsupported declaration: $expectMember ($actualMembers)")
+            is RegularClassSymbolMarker -> {
+                val parentSubstitutor = substitutor?.takeIf { !innerClassesCapturesOuterTypeParameters }
+                getClassifiersCompatibility(
+                    expectMember,
+                    actualMember as ClassLikeSymbolMarker,
+                    parentSubstitutor,
+                )
             }
+            else -> error("Unsupported declaration: $expectMember ($actualMember)")
         }
 
         val incompatibilityMap = mutableMapOf<ExpectActualCheckingCompatibility.Incompatible<*>, MutableList<DeclarationSymbolMarker>>()
-        for ((actualMember, compatibility) in mapping) {
-            when (compatibility) {
-                ExpectActualCheckingCompatibility.Compatible -> return
-                is ExpectActualCheckingCompatibility.Incompatible<*> -> incompatibilityMap.getOrPut(compatibility) { SmartList() }.add(actualMember)
-            }
+        when (compatibility) {
+            ExpectActualCheckingCompatibility.Compatible -> return
+            is ExpectActualCheckingCompatibility.Incompatible<*> -> incompatibilityMap.getOrPut(compatibility) { SmartList() }.add(actualMember)
         }
 
         incompatibleMembers?.add(expectMember to incompatibilityMap)
