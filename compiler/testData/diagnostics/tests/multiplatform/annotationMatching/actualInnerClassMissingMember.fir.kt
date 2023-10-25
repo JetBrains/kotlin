@@ -2,8 +2,8 @@
 // FILE: common.kt
 annotation class Ann
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class A {
-    <!INCOMPATIBLE_MATCHING{JVM}!>class B {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class A {
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>class B {
         @Ann
         fun foo()
         <!NO_ACTUAL_FOR_EXPECT{JVM}!>fun missingOnActual()<!>

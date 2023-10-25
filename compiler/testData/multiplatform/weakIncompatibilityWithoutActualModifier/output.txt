@@ -5,6 +5,6 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/common.kt:1:1: error: expect declaration `Foo` doesn't match actual `Foo` because class kinds are different (class, interface, object, enum, annotation)
+compiler/testData/multiplatform/weakIncompatibilityWithoutActualModifier/common.kt:1:1: error: expect declaration `Foo` is incompatible with actual `Foo` because class kinds are different (class, interface, object, enum, annotation)
 expect class Foo
 ^

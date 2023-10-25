@@ -2,13 +2,13 @@
 // FILE: common.kt
 annotation class Ann
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class WeakIncompatibility {
-    <!INCOMPATIBLE_MATCHING{JVM}!>@Ann
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class WeakIncompatibility {
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>@Ann
     fun foo(p: String)<!>
 }<!>
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class StrongIncompatibility {
-    <!INCOMPATIBLE_MATCHING{JVM}!>@Ann
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class StrongIncompatibility {
+    <!EXPECT_ACTUAL_MISMATCH{JVM}!>@Ann
     fun foo(p: Int)<!>
 }<!>
 

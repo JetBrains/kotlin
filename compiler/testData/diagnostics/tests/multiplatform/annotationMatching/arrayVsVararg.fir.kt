@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!INCOMPATIBLE_MATCHING{JVM}("A; A; some expected members have no actual ones")!>expect annotation class A<!INCOMPATIBLE_MATCHING{JVM}("<init>; <init>; some value parameter is vararg in one declaration and non-vararg in the other")!>(vararg val x: String)<!><!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect annotation class A<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>(vararg val x: String)<!><!>
 
 @A("abc", "foo", "bar")
 fun test() {}

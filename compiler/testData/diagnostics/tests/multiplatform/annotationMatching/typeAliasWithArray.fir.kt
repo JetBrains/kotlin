@@ -3,7 +3,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-<!INCOMPATIBLE_MATCHING{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class Mode {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class Mode {
     Throughput, AverageTime
 }<!>
 

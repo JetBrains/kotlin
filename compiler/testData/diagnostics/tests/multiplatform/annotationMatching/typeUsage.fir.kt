@@ -19,9 +19,9 @@ interface I2
 
 expect fun <T> severalBounds() where T : I1, T : @Ann I2
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect fun <T> severalBoundsDifferentOrder() where T : I2, T : @Ann I1<!>
+<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun <T> severalBoundsDifferentOrder() where T : I2, T : @Ann I1<!>
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect fun <T> lessTypeParamBoundsOnActual() where T : I1, T : @Ann I2<!>
+<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun <T> lessTypeParamBoundsOnActual() where T : I1, T : @Ann I2<!>
 
 expect fun @Ann Any.onReceiver()
 
@@ -51,7 +51,7 @@ expect fun qualifierPartsMatching(arg: WithNested<String>.Nested<@Ann String>)
 
 expect fun qualifierPartsNonMatching(arg: WithNested<String>.Nested<@Ann String>)
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect fun funTypeVsUserType(arg: () -> @Ann String)<!>
+<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun funTypeVsUserType(arg: () -> @Ann String)<!>
 
 expect fun funcTypeReturnType(arg: () -> @Ann Any)
 

@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class Foo {
-    <!INCOMPATIBLE_MATCHING{JVM}!>fun foo(param: Int = 1)<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Foo {
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>fun foo(param: Int = 1)<!>
 }<!>
 
 // MODULE: m2-jvm()()(m1-common)

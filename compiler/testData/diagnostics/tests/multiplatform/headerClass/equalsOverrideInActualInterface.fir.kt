@@ -1,5 +1,5 @@
 // MODULE: m1-common
-<!INCOMPATIBLE_MATCHING{JVM}, INCOMPATIBLE_MATCHING{JVM}!>expect interface Base<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect interface Base<!>
 
 // MODULE: m1-jvm()()(m1-common)
 actual interface Base {
