@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.utils.mapOrTakeThisIfIdentity
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import java.util.*
-import kotlin.collections.MutableMap
-import kotlin.collections.emptyList
-import kotlin.collections.plusAssign
 import kotlin.collections.set
 
 fun <E : BirElement> E.deepCopy(
@@ -296,7 +293,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, valueParameters, mustProduceNewCopy) {
             val new = BirValueParameterImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
@@ -313,7 +309,7 @@ open class BirTreeDeepCopier {
             new.copyAuxData(old)
             deferInitialization(old, new) { old, new ->
                 new.defaultValue = old.defaultValue?.let { copyElementPossiblyUnfinished(it) }
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
                 new.type = remapType(old.type)
                 new.varargElementType = old.varargElementType?.let { remapType(it) }
             }
@@ -323,7 +319,6 @@ open class BirTreeDeepCopier {
     open fun copyClass(old: BirClass, mustProduceNewCopy: Boolean): BirElement = copyReferencedElement(old, classes, mustProduceNewCopy) {
         val new = BirClassImpl(
             sourceSpan = old.sourceSpan,
-            annotations = emptyList(),
             descriptor = old.descriptor,
             origin = old.origin,
             visibility = old.visibility,
@@ -350,7 +345,7 @@ open class BirTreeDeepCopier {
             new.thisReceiver = old.thisReceiver?.let { copyElementPossiblyUnfinished(it) }
             new.typeParameters.copyElementsPossiblyUnfinished(old.typeParameters)
             new.declarations.copyElementsPossiblyUnfinished(old.declarations)
-            new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+            new.annotations.copyElementsPossiblyUnfinished(old.annotations)
             new.superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
             new.valueClassRepresentation = old.valueClassRepresentation?.mapUnderlyingType { remapType(it) as BirSimpleType }
         }
@@ -360,7 +355,6 @@ open class BirTreeDeepCopier {
     open fun copyAnonymousInitializer(old: BirAnonymousInitializer): BirElement {
         val new = BirAnonymousInitializerImpl(
             sourceSpan = old.sourceSpan,
-            annotations = emptyList(),
             descriptor = old.descriptor,
             origin = old.origin,
             isStatic = old.isStatic,
@@ -369,10 +363,7 @@ open class BirTreeDeepCopier {
         )
         new.copyAuxData(old)
         deferInitialization(old, new) { old, new ->
-            new.annotations =
-                old.annotations.memoryOptimizedMap {
-                    copyElementPossiblyUnfinished(it)
-                }
+            new.annotations.copyElementsPossiblyUnfinished(old.annotations)
         }
         return new
     }
@@ -381,7 +372,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, typeParameters, mustProduceNewCopy) {
             val new = BirTypeParameterImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
@@ -393,7 +383,7 @@ open class BirTreeDeepCopier {
             )
             new.copyAuxData(old)
             deferInitialization(old, new) { old, new ->
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
                 new.superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
             }
             new
@@ -403,7 +393,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, constructors, mustProduceNewCopy) {
             val new = BirConstructorImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 visibility = old.visibility,
@@ -426,7 +415,7 @@ open class BirTreeDeepCopier {
                 new.valueParameters.copyElementsPossiblyUnfinished(old.valueParameters)
                 new.body = old.body?.let { copyElementPossiblyUnfinished(it) }
                 new.typeParameters.copyElementsPossiblyUnfinished(old.typeParameters)
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
                 new.returnType = remapType(old.returnType)
             }
             new
@@ -436,7 +425,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, enumEntries, mustProduceNewCopy) {
             val new = BirEnumEntryImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
@@ -448,7 +436,7 @@ open class BirTreeDeepCopier {
             deferInitialization(old, new) { old, new ->
                 new.initializerExpression = old.initializerExpression?.let { copyElementPossiblyUnfinished(it) }
                 new.correspondingClass = old.correspondingClass?.let { copyElementPossiblyUnfinished(it) }
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
             }
             new
         }
@@ -456,17 +444,13 @@ open class BirTreeDeepCopier {
     open fun copyErrorDeclaration(old: BirErrorDeclaration): BirElement {
         val new = BirErrorDeclarationImpl(
             sourceSpan = old.sourceSpan,
-            annotations = emptyList(),
             descriptor = old.descriptor,
             origin = old.origin,
             signature = old.signature,
         )
         new.copyAuxData(old)
         deferInitialization(old, new) { old, new ->
-            new.annotations =
-                old.annotations.memoryOptimizedMap {
-                    copyElementPossiblyUnfinished(it)
-                }
+            new.annotations.copyElementsPossiblyUnfinished(old.annotations)
         }
         return new
     }
@@ -474,7 +458,6 @@ open class BirTreeDeepCopier {
     open fun copyField(old: BirField, mustProduceNewCopy: Boolean): BirElement = copyReferencedElement(old, fields, mustProduceNewCopy) {
         val new = BirFieldImpl(
             sourceSpan = old.sourceSpan,
-            annotations = emptyList(),
             descriptor = old.descriptor,
             origin = old.origin,
             visibility = old.visibility,
@@ -491,7 +474,7 @@ open class BirTreeDeepCopier {
         deferInitialization(old, new) { old, new ->
             new.initializer = old.initializer?.let { copyElementPossiblyUnfinished(it) }
             new.correspondingPropertySymbol = old.correspondingPropertySymbol?.let { remapSymbol(it) }
-            new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+            new.annotations.copyElementsPossiblyUnfinished(old.annotations)
             new.type = remapType(old.type)
         }
         new
@@ -501,7 +484,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, localDelegatedProperties, mustProduceNewCopy) {
             val new = BirLocalDelegatedPropertyImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
@@ -515,7 +497,7 @@ open class BirTreeDeepCopier {
             new.copyAuxData(old)
             deferInitialization(old, new) { old, new ->
                 new.setter = old.setter?.let { copyElementPossiblyUnfinished(it) }
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
                 new.type = remapType(old.type)
             }
 
@@ -540,7 +522,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, properties, mustProduceNewCopy) {
             val new = BirPropertyImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
@@ -566,7 +547,7 @@ open class BirTreeDeepCopier {
                 new.getter = old.getter?.let { copyElementPossiblyUnfinished(it) }
                 new.setter = old.setter?.let { copyElementPossiblyUnfinished(it) }
                 new.overriddenSymbols = old.overriddenSymbols.memoryOptimizedMap { remapSymbol(it) }
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
             }
             new
         }
@@ -574,7 +555,6 @@ open class BirTreeDeepCopier {
     open fun copyScript(old: BirScript, mustProduceNewCopy: Boolean): BirElement = copyReferencedElement(old, scripts, mustProduceNewCopy) {
         val new = BirScriptImpl(
             sourceSpan = old.sourceSpan,
-            annotations = emptyList(),
             descriptor = old.descriptor as ScriptDescriptor,
             origin = old.origin,
             name = old.name,
@@ -603,7 +583,7 @@ open class BirTreeDeepCopier {
             new.targetClass = old.targetClass?.let { remapSymbol(it) }
             new.constructor = old.constructor?.let { remapElementPossiblyUnfinished(it) }
             new.statements.copyElementsPossiblyUnfinished(old.statements)
-            new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+            new.annotations.copyElementsPossiblyUnfinished(old.annotations)
             new.baseClass = old.baseClass?.let { remapType(it) }
         }
         new
@@ -613,7 +593,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, functions, mustProduceNewCopy) {
             val new = BirSimpleFunctionImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 visibility = old.visibility,
@@ -646,7 +625,7 @@ open class BirTreeDeepCopier {
                 new.typeParameters.copyElementsPossiblyUnfinished(old.typeParameters)
                 new.overriddenSymbols = old.overriddenSymbols.memoryOptimizedMap { remapSymbol(it) }
                 new.correspondingPropertySymbol = old.correspondingPropertySymbol?.let { remapSymbol(it) }
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
                 new.returnType = remapType(old.returnType)
             }
             new
@@ -656,7 +635,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, typeAliases, mustProduceNewCopy) {
             val new = BirTypeAliasImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
@@ -668,7 +646,7 @@ open class BirTreeDeepCopier {
             new.copyAuxData(old)
             deferInitialization(old, new) { old, new ->
                 new.typeParameters.copyElementsPossiblyUnfinished(old.typeParameters)
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
                 new.expandedType = remapType(old.expandedType)
             }
             new
@@ -678,7 +656,6 @@ open class BirTreeDeepCopier {
         copyReferencedElement(old, variables, mustProduceNewCopy) {
             val new = BirVariableImpl(
                 sourceSpan = old.sourceSpan,
-                annotations = emptyList(),
                 descriptor = old.descriptor,
                 origin = old.origin,
                 name = old.name,
@@ -693,7 +670,7 @@ open class BirTreeDeepCopier {
             new.copyAuxData(old)
             deferInitialization(old, new) { old, new ->
                 new.initializer = old.initializer?.let { copyElementPossiblyUnfinished(it) }
-                new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+                new.annotations.copyElementsPossiblyUnfinished(old.annotations)
                 new.type = remapType(old.type)
             }
             new
@@ -721,14 +698,13 @@ open class BirTreeDeepCopier {
             sourceSpan = old.sourceSpan,
             descriptor = old.descriptor,
             packageFqName = old.packageFqName,
-            annotations = emptyList(),
             fileEntry = old.fileEntry,
             signature = old.signature,
         )
         new.copyAuxData(old)
         deferInitialization(old, new) { old, new ->
             new.declarations.copyElementsPossiblyUnfinished(old.declarations)
-            new.annotations = old.annotations.memoryOptimizedMap { copyElementPossiblyUnfinished(it) }
+            new.annotations.copyElementsPossiblyUnfinished(old.annotations)
         }
         new
     }

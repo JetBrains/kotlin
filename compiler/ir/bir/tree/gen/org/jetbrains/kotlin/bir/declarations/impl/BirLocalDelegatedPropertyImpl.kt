@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirLocalDelegatedProperty
 import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.declarations.BirVariable
@@ -28,7 +25,6 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptorWithAccessors?,
     signature: IdSignature?,
-    override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     name: Name,
     type: BirType,
@@ -67,6 +63,9 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate()
             }
         }
+
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 1)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -175,6 +174,7 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
         _delegate.acceptLite(visitor)
         _getter.acceptLite(visitor)
         _setter?.acceptLite(visitor)
@@ -187,5 +187,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             this._setter === old -> this.setter = new as BirSimpleFunction
             else -> throwChildForReplacementNotFound(old)
         }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        1 -> this.annotations
+        else -> throwChildrenListWithIdNotFound(id)
     }
 }

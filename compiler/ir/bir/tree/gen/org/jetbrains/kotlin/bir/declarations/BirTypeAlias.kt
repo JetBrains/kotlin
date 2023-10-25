@@ -30,6 +30,7 @@ abstract class BirTypeAlias : BirElementBase(), BirDeclaration, BirDeclarationWi
     abstract var expandedType: BirType
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         typeParameters.acceptChildren(visitor, data)
     }
 

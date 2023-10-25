@@ -70,6 +70,7 @@ abstract class BirValueParameter : BirValueDeclaration(), BirDeclaration,
     abstract var defaultValue: BirExpressionBody?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         defaultValue?.accept(data, visitor)
     }
 

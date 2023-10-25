@@ -27,7 +27,6 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassConstructorDescriptor?,
     signature: IdSignature?,
-    override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     name: Name,
     isExternal: Boolean,
@@ -71,6 +70,9 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate()
             }
         }
+
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 1)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -129,7 +131,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 2)
 
     private var _isInline: Boolean = isInline
 
@@ -204,7 +206,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var valueParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this, 2)
+            BirChildElementList(this, 3)
 
     private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
 
@@ -255,6 +257,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
         typeParameters.acceptChildrenLite(visitor)
         _dispatchReceiverParameter?.acceptLite(visitor)
         _extensionReceiverParameter?.acceptLite(visitor)
@@ -274,8 +277,9 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.typeParameters
-        2 -> this.valueParameters
+        1 -> this.annotations
+        2 -> this.typeParameters
+        3 -> this.valueParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

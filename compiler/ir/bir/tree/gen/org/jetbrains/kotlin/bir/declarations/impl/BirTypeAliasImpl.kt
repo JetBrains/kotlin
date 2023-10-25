@@ -28,7 +28,6 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: TypeAliasDescriptor?,
     signature: IdSignature?,
-    override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     name: Name,
     visibility: DescriptorVisibility,
@@ -65,6 +64,9 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate()
             }
         }
+
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 1)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -109,7 +111,7 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 2)
 
     private var _isActual: Boolean = isActual
 
@@ -140,6 +142,7 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
         typeParameters.acceptChildrenLite(visitor)
     }
 
@@ -150,7 +153,8 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.typeParameters
+        1 -> this.annotations
+        2 -> this.typeParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }
