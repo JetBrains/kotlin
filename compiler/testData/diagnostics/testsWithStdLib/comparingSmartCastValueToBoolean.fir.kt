@@ -9,7 +9,7 @@ fun foo(a: Any) {
         }
 
         when (a) {
-            <!CONFUSING_BRANCH_CONDITION_ERROR, EQUALITY_NOT_APPLICABLE_WARNING, INCOMPATIBLE_TYPES!>a == 1<!> -> print("1")
+            <!CONFUSING_BRANCH_CONDITION_ERROR, EQUALITY_NOT_APPLICABLE_WARNING, INCOMPATIBLE_TYPES_WARNING!>a == 1<!> -> print("1")
         }
 
         if (<!EQUALITY_NOT_APPLICABLE!>(a <!USELESS_CAST!>as A<!>) == (<!EQUALITY_NOT_APPLICABLE_WARNING!>a == 1<!>)<!>) {
