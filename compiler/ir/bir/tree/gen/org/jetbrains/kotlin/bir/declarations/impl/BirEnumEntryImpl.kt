@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirEnumEntry
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -27,7 +24,6 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor?,
     signature: IdSignature?,
-    override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     name: Name,
     initializerExpression: BirExpressionBody?,
@@ -63,6 +59,9 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate()
             }
         }
+
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 1)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -127,6 +126,7 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
         _initializerExpression?.acceptLite(visitor)
         _correspondingClass?.acceptLite(visitor)
     }
@@ -138,5 +138,10 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
             this._correspondingClass === old -> this.correspondingClass = new as BirClass
             else -> throwChildForReplacementNotFound(old)
         }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        1 -> this.annotations
+        else -> throwChildrenListWithIdNotFound(id)
     }
 }

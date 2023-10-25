@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAnonymousInitializer
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -25,7 +22,6 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor?,
     signature: IdSignature?,
-    override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     isStatic: Boolean,
     body: BirBlockBody,
@@ -60,6 +56,9 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate()
             }
         }
+
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 1)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -108,6 +107,7 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
         _body.acceptLite(visitor)
     }
 
@@ -116,5 +116,10 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
             this._body === old -> this.body = new as BirBlockBody
             else -> throwChildForReplacementNotFound(old)
         }
+    }
+
+    override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
+        1 -> this.annotations
+        else -> throwChildrenListWithIdNotFound(id)
     }
 }

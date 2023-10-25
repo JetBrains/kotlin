@@ -229,7 +229,7 @@ object BirTree : AbstractTreeBuilder() {
     val annotationContainerElement: ElementConfig by element(Declaration) {
         parent(type(Packages.declarations, "BirAnnotationContainer"))
 
-        +listField("annotations", constructorCall, mutability = Var) { // shouldn't those be child elements? rather not ref
+        +listField("annotations", constructorCall, mutability = Var, isChild = true) { // shouldn't those be child elements? rather not ref
             generationCallback = {
                 addModifiers(KModifier.OVERRIDE)
             }

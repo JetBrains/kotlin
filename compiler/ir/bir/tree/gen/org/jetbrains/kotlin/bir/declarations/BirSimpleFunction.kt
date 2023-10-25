@@ -35,6 +35,7 @@ abstract class BirSimpleFunction : BirOverridableDeclaration<BirSimpleFunctionSy
     abstract override var overriddenSymbols: List<BirSimpleFunctionSymbol>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         typeParameters.acceptChildren(visitor, data)
         dispatchReceiverParameter?.accept(data, visitor)
         extensionReceiverParameter?.accept(data, visitor)

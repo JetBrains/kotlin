@@ -38,6 +38,7 @@ abstract class BirLocalDelegatedProperty : BirElementBase(), BirDeclaration,
     abstract var setter: BirSimpleFunction?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         delegate.accept(data, visitor)
         getter.accept(data, visitor)
         setter?.accept(data, visitor)
