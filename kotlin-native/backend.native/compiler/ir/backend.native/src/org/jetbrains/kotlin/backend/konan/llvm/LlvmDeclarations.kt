@@ -87,6 +87,8 @@ internal data class ClassBodyAndAlignmentInfo(
 
 private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
+    val packed = context.config.packFields ||
+        fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
     val alignment = maxOf(runtime.objectAlignment, fields.maxOfOrNull { it.alignment } ?: 0)
     val indices = mutableMapOf<IrFieldSymbol, Int>()
 
@@ -98,17 +100,19 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
         }
         addAndCount(runtime.objHeaderType)
         for (field in fields) {
-            val offset = (currentOffset % field.alignment).toInt()
-            if (offset != 0) {
-                val toInsert = field.alignment - offset
-                addAndCount(LLVMArrayType(llvm.int8Type, toInsert)!!)
+            if (packed) {
+                val offset = (currentOffset % field.alignment).toInt()
+                if (offset != 0) {
+                    val toInsert = field.alignment - offset
+                    addAndCount(LLVMArrayType(llvm.int8Type, toInsert)!!)
+                }
+                require(currentOffset % field.alignment == 0L)
             }
-            require(currentOffset % field.alignment == 0L)
             indices[field.irFieldSymbol] = this.size
             addAndCount(field.type.toLLVMType(llvm))
         }
     }
-    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, 1)
+    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, if (packed) 1 else 0)
 
     context.logMultiple {
         +"$name has following fields:"
@@ -234,7 +238,12 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     private fun createClassDeclarations(declaration: IrClass): ClassLlvmDeclarations {
         val internalName = qualifyInternalName(declaration)
 
-        val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", packFields(declaration))
+        val fields =
+            if (context.config.packFields)
+                packFields(declaration)
+            else
+                context.getLayoutBuilder(declaration).getFields(llvm)
+        val (bodyType, alignment, fieldIndices) = createClassBody("kclassbody:$internalName", fields)
 
         require(alignment == runtime.objectAlignment) {
             "Over-aligned objects are not supported yet: expected alignment for ${declaration.fqNameWhenAvailable} is $alignment"
