@@ -41,33 +41,38 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
             targetPlatform = NativePlatforms.unspecifiedNativePlatform
             dependencyKind = DependencyKind.Source
         }
-
-        defaultDirectives {
-            +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
-            +ConfigurationDirectives.WITH_STDLIB
-        }
-
-        enableMetaInfoHandler()
-
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::NativeEnvironmentConfigurator,
-        )
-
-        useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
-        useAdditionalSourceProviders(
-            ::AdditionalDiagnosticsSourceFilesProvider,
-            ::CoroutineHelpersSourceFilesProvider,
-        )
-
-        facadeStep(frontend)
-
+        baseNativeDiagnosticTestConfiguration(frontend)
         handlersSetup(this)
+    }
+}
 
-        forTestsMatching("testData/diagnostics/nativeTests/*") {
-            defaultDirectives {
-                +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-            }
+fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativeDiagnosticTestConfiguration(
+    frontendFacade: Constructor<FrontendFacade<R>>,
+) {
+    defaultDirectives {
+        +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+        +ConfigurationDirectives.WITH_STDLIB
+    }
+
+    enableMetaInfoHandler()
+
+    useConfigurators(
+        ::CommonEnvironmentConfigurator,
+        ::NativeEnvironmentConfigurator,
+    )
+
+    useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)
+    useAdditionalSourceProviders(
+        ::AdditionalDiagnosticsSourceFilesProvider,
+        ::CoroutineHelpersSourceFilesProvider,
+    )
+
+    facadeStep(frontendFacade)
+
+
+    forTestsMatching("testData/diagnostics/nativeTests/*") {
+        defaultDirectives {
+            +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
         }
     }
 }
@@ -98,16 +103,7 @@ abstract class AbstractFirNativeDiagnosticsTestBase(val parser: FirParser) : Abs
         get() = ::FirFrontendFacade
 
     override fun handlersSetup(builder: TestConfigurationBuilder) {
-        builder.firHandlersStep {
-            useHandlers(
-                ::FirDiagnosticsHandler,
-                ::FirDumpHandler,
-                ::FirCfgDumpHandler,
-                ::FirCfgConsistencyHandler,
-                ::FirResolvedTypesVerifier,
-                ::FirScopeDumpHandler,
-            )
-        }
+        builder.baseFirNativeDiagnosticTestConfiguration()
     }
 
     override fun configure(builder: TestConfigurationBuilder) {
@@ -122,6 +118,20 @@ abstract class AbstractFirNativeDiagnosticsTestBase(val parser: FirParser) : Abs
         }
     }
 }
+
+fun TestConfigurationBuilder.baseFirNativeDiagnosticTestConfiguration() {
+    firHandlersStep {
+        useHandlers(
+            ::FirDiagnosticsHandler,
+            ::FirDumpHandler,
+            ::FirCfgDumpHandler,
+            ::FirCfgConsistencyHandler,
+            ::FirResolvedTypesVerifier,
+            ::FirScopeDumpHandler,
+        )
+    }
+}
+
 
 abstract class AbstractFirPsiNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.LightTree)
