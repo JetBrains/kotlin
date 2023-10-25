@@ -665,6 +665,19 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object DuplicateSourceSetsError : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(duplicatedSourceSets: Map<String, List<String>>): ToolingDiagnostic {
+            val duplicatesGroupsString = duplicatedSourceSets
+                .map { entry -> entry.value.joinToString(", ") }
+                .joinToString("], [", "[", "]")
+            return build(
+                "Duplicate Kotlin source sets have been detected: $duplicatesGroupsString." +
+                        " Keep in mind that source set names are case-insensitive," +
+                        " which means that `srcMain` and `sRcMain` are considered the same source set."
+            )
+        }
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
