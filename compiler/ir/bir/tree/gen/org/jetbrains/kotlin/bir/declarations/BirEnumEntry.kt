@@ -31,6 +31,7 @@ abstract class BirEnumEntry : BirElementBase(), BirDeclaration, BirDeclarationWi
     abstract var correspondingClass: BirClass?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         initializerExpression?.accept(data, visitor)
         correspondingClass?.accept(data, visitor)
     }
