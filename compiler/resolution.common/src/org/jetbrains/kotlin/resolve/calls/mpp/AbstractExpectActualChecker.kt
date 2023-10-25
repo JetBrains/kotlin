@@ -88,20 +88,7 @@ object AbstractExpectActualChecker {
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
-    ): ExpectActualCheckingCompatibility<*> = getClassifiersIncompatibility(
-        expectClassSymbol,
-        actualClassLikeSymbol,
-        parentSubstitutor,
-    )
-        ?: ExpectActualCheckingCompatibility.Compatible
-
-    context(ExpectActualMatchingContext<*>)
-    @Suppress("warnings")
-    private fun getClassifiersIncompatibility(
-        expectClassSymbol: RegularClassSymbolMarker,
-        actualClassLikeSymbol: ClassLikeSymbolMarker,
-        parentSubstitutor: TypeSubstitutorMarker?,
-    ): ExpectActualCheckingCompatibility.Incompatible<*>? {
+    ): ExpectActualCheckingCompatibility<*> {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         require(expectClassSymbol.name == actualClassLikeSymbol.name) {
             "This function should be invoked only for declarations with the same name: $expectClassSymbol, $actualClassLikeSymbol"
@@ -110,7 +97,7 @@ object AbstractExpectActualChecker {
         val actualClass = when (actualClassLikeSymbol) {
             is RegularClassSymbolMarker -> actualClassLikeSymbol
             is TypeAliasSymbolMarker -> actualClassLikeSymbol.expandToRegularClass()
-                ?: return null // do not report extra error on erroneous typealias
+                ?: return ExpectActualCheckingCompatibility.Compatible // do not report extra error on erroneous typealias
             else -> error("Incorrect actual classifier for $expectClassSymbol: $actualClassLikeSymbol")
         }
 
@@ -157,7 +144,7 @@ object AbstractExpectActualChecker {
 
         getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor)?.let { return it }
 
-        return null
+        return ExpectActualCheckingCompatibility.Compatible
     }
 
     context(ExpectActualMatchingContext<*>)
@@ -313,26 +300,7 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.Compatible
         }
 
-        val annotationMode = expectContainingClass?.classKind == ClassKind.ANNOTATION_CLASS
-        return getCallablesCheckingIncompatibility(
-            expectDeclaration,
-            actualDeclaration,
-            annotationMode,
-            parentSubstitutor,
-            expectContainingClass,
-            actualContainingClass,
-        ) ?: ExpectActualCheckingCompatibility.Compatible
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun getCallablesCheckingIncompatibility(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        insideAnnotationClass: Boolean,
-        parentSubstitutor: TypeSubstitutorMarker?,
-        expectContainingClass: RegularClassSymbolMarker?,
-        actualContainingClass: RegularClassSymbolMarker?,
-    ): ExpectActualCheckingCompatibility.Incompatible<*>? {
+        val insideAnnotationClass = expectContainingClass?.classKind == ClassKind.ANNOTATION_CLASS
         val expectedTypeParameters = expectDeclaration.typeParameters
         val actualTypeParameters = actualDeclaration.typeParameters
         val expectedValueParameters = expectDeclaration.valueParameters
@@ -425,7 +393,7 @@ object AbstractExpectActualChecker {
             else -> error("Unsupported declarations: $expectDeclaration, $actualDeclaration")
         }
 
-        return null
+        return ExpectActualCheckingCompatibility.Compatible
     }
 
     context(ExpectActualMatchingContext<*>)
