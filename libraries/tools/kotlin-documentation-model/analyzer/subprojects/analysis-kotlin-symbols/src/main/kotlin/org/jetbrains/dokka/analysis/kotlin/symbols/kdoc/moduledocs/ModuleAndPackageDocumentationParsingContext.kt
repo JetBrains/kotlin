@@ -36,8 +36,8 @@ internal fun ModuleAndPackageDocumentationParsingContext(
     if (kotlinAnalysis == null || sourceSet == null) {
         MarkdownParser(externalDri = { null }, sourceLocation)
     } else {
-        val analysisContext = kotlinAnalysis[sourceSet]
-        val contextPsi = analyze(analysisContext.mainModule) {
+        val sourceModule = kotlinAnalysis.getModule(sourceSet)
+        val contextPsi = analyze(sourceModule) {
             val contextSymbol = when (fragment.classifier) {
                 Module -> ROOT_PACKAGE_SYMBOL
                 Package -> getPackageSymbolIfPackageExists(FqName(fragment.name))
@@ -46,7 +46,7 @@ internal fun ModuleAndPackageDocumentationParsingContext(
         }
         MarkdownParser(
             externalDri = { link ->
-                analyze(analysisContext.mainModule) {
+                analyze(sourceModule) {
                     resolveKDocTextLink(
                         link,
                         contextPsi
