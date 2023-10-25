@@ -36,15 +36,18 @@ data class Program(
     fun toShort(): Program = Program(
         domains.filter { it.includeInShortDump },
         fields.filter { it.includeInShortDump },
-        functions.filter { it.includeInShortDump },
-        predicates,
+        functions.filter { it.includeInDumpPolicy != IncludeInDumpPolicy.ONLY_IN_FULL_DUMP },
+        predicates.filter { it.includeInDumpPolicy != IncludeInDumpPolicy.ONLY_IN_FULL_DUMP },
         methods.filter { it.includeInShortDump },
         pos,
         info,
         trafos,
     )
 
-    fun withoutPredicates(): Program = copy(predicates = emptyList())
+    fun withoutPredicates(): Program = copy(
+        predicates = predicates.filter { it.includeInDumpPolicy == IncludeInDumpPolicy.ALWAYS },
+        functions = functions.filter { it.includeInDumpPolicy == IncludeInDumpPolicy.ALWAYS }
+    )
 
     fun toDebugOutput(): String = toSilver().toString()
 }

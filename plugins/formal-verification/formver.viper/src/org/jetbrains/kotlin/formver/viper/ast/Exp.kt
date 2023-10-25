@@ -400,6 +400,18 @@ sealed interface Exp : IntoSilver<viper.silver.ast.Exp> {
         }
     }
 
+    data class Unfolding(
+        val predicateAccess: PredicateAccess,
+        val body: Exp,
+        val pos: Position = Position.NoPosition,
+        val info: Info = Info.NoInfo,
+        val trafos: Trafos = Trafos.NoTrafos,
+    ) : Exp {
+        override val type = body.type
+        override fun toSilver(): viper.silver.ast.Unfolding =
+            Unfolding(predicateAccess.toSilver(), body.toSilver(), pos.toSilver(), info.toSilver(), trafos.toSilver())
+    }
+
     // We can't pass all the available position, info, and trafos information here.
     // Living with that seems fine for the moment.
     fun fieldAccess(

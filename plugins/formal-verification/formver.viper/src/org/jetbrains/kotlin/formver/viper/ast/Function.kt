@@ -13,7 +13,7 @@ abstract class Function(
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
 ) : IntoSilver<viper.silver.ast.Function> {
-    abstract val includeInShortDump: Boolean
+    abstract val includeInDumpPolicy: IncludeInDumpPolicy
     abstract val formalArgs: List<Declaration.LocalVarDecl>
     abstract val retType: Type
     open val pres: List<Exp> = listOf()
@@ -40,5 +40,5 @@ abstract class BuiltinFunction(
     info: Info = Info.NoInfo,
     trafos: Trafos = Trafos.NoTrafos,
 ) : Function(name, pos, info, trafos) {
-    override val includeInShortDump: Boolean = false
+    override val includeInDumpPolicy: IncludeInDumpPolicy = IncludeInDumpPolicy.ONLY_IN_FULL_DUMP
 }

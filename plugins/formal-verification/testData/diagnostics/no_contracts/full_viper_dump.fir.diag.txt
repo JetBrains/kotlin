@@ -292,11 +292,18 @@ field class_Foo$member_x: Int
 
 field special$function_object_call_counter: Int
 
+function T_class_global$class_Foo$get$class_Foo$member_x(special$get$function$subject: Ref): Int
+  requires acc(T_class_global$class_Foo(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_global$class_Foo(special$get$function$subject), write) in
+    special$get$function$subject.class_Foo$member_x)
+}
+
 function special$duplicable(anonymous$0: Ref): Bool
 
 
-predicate T_class_global$class_Foo(class$predicate$subject: Ref) {
-  acc(class$predicate$subject.class_Foo$member_x, wildcard)
+predicate T_class_global$class_Foo(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.class_Foo$member_x, wildcard)
 }
 
 method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(local$x: Int)

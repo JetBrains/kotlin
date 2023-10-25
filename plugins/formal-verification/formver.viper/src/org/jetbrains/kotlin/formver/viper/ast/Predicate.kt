@@ -14,6 +14,7 @@ class Predicate(
     val name: MangledName,
     val formalArgs: List<Declaration.LocalVarDecl>,
     val body: Exp,
+    val includeInDumpPolicy: IncludeInDumpPolicy = IncludeInDumpPolicy.PREDICATE_DUMP,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,

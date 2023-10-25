@@ -52,7 +52,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
             fields = SpecialFields.all + classes.values.flatMap { it.flatMapUniqueFields { _, field -> listOf(field.toViper()) } }
                 .distinctBy { it.name },
-            functions = SpecialFunctions.all,
+            functions = SpecialFunctions.all + classes.values.flatMap { it.getterFunctions() }.distinctBy { it.name },
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.toList(),
             predicates = classes.values.map { it.predicate }
         )

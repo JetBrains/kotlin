@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.conversion.SpecialFields
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableSignatureData
+import org.jetbrains.kotlin.formver.embeddings.callables.FieldAccessFunction
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
@@ -233,6 +234,9 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
     val superTypes: List<TypeEmbedding>
         get() = _superTypes ?: throw IllegalStateException("Super types of $className have not been initialised yet.")
 
+    private val classSuperTypes: List<ClassTypeEmbedding>
+        get() = superTypes.filterIsInstance<ClassTypeEmbedding>()
+
     fun initSuperTypes(newSuperTypes: List<TypeEmbedding>) {
         if (_superTypes != null) throw IllegalStateException("Super types of $className are already initialised.")
         _superTypes = newSuperTypes
@@ -268,6 +272,26 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
 
         val body = (accessFields + accessFieldPredicates + accessSuperTypesPredicates).toConjunction()
         return Predicate(name, listOf(subjectEmbedding.toLocalVarDecl()), body)
+    }
+
+    // Note: This is a preparation for upcoming pull requests, functions for predicates unfolding are just declared and not used.
+    fun getterFunctions(): List<FieldAccessFunction> {
+        val receiver = VariableEmbedding(GetterFunctionSubjectName, this)
+        val getPropertyFunctions = fields.values
+            .filter { field -> field.accessPolicy != AccessPolicy.ALWAYS_INHALE_EXHALE }
+            .map { field -> FieldAccessFunction(name, field, FieldAccess(receiver, field).toViper()) }
+        val getSuperPropertyFunctions = classSuperTypes.flatMap {
+            it.flatMapUniqueFields { _, field ->
+                if (field.accessPolicy != AccessPolicy.ALWAYS_INHALE_EXHALE) {
+                    val unfoldingBody =
+                        Exp.FuncApp(GetterFunctionName(it.name, field.name), listOf(receiver.toViper()), field.type.viperType)
+                    listOf(FieldAccessFunction(name, field, unfoldingBody))
+                } else {
+                    listOf()
+                }
+            }
+        }
+        return getPropertyFunctions + getSuperPropertyFunctions
     }
 
     override val runtimeType = TypeDomain.classType(className)

@@ -7,58 +7,175 @@ field class_Foo$member_y: Int
 
 field class_Rec$member_next: dom$Nullable[Ref]
 
-field special$size: Int
-
-predicate T_class_global$class_Bar(class$predicate$subject: Ref) {
-  acc(class$predicate$subject.class_Bar$member_foo, wildcard) &&
-  acc(T_class_global$class_Foo(class$predicate$subject.class_Bar$member_foo), write) &&
-  acc(T_class_global$class_Baz(class$predicate$subject), write)
+function T_class_global$class_Bar$get$class_Bar$member_foo(special$get$function$subject: Ref): Ref
+  requires acc(T_class_global$class_Bar(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_global$class_Bar(special$get$function$subject), write) in
+    special$get$function$subject.class_Bar$member_foo)
 }
 
-predicate T_class_global$class_Baz(class$predicate$subject: Ref) {
+function T_class_global$class_Foo$get$class_Foo$member_x(special$get$function$subject: Ref): Int
+  requires acc(T_class_global$class_Foo(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_global$class_Foo(special$get$function$subject), write) in
+    special$get$function$subject.class_Foo$member_x)
+}
+
+function T_class_global$class_Rec$get$class_Rec$member_next(special$get$function$subject: Ref): dom$Nullable[Ref]
+  requires acc(T_class_global$class_Rec(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_global$class_Rec(special$get$function$subject), write) in
+    special$get$function$subject.class_Rec$member_next)
+}
+
+predicate T_class_global$class_Bar(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.class_Bar$member_foo, wildcard) &&
+  acc(T_class_global$class_Foo(special$class$predicate$subject.class_Bar$member_foo), write) &&
+  acc(T_class_global$class_Baz(special$class$predicate$subject), write)
+}
+
+predicate T_class_global$class_Baz(special$class$predicate$subject: Ref) {
   true
 }
 
-predicate T_class_global$class_Foo(class$predicate$subject: Ref) {
-  acc(class$predicate$subject.class_Foo$member_x, wildcard)
+predicate T_class_global$class_Foo(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.class_Foo$member_x, wildcard)
 }
 
-predicate T_class_global$class_Rec(class$predicate$subject: Ref) {
-  acc(class$predicate$subject.class_Rec$member_next, wildcard) &&
-  (class$predicate$subject.class_Rec$member_next !=
+predicate T_class_global$class_Rec(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.class_Rec$member_next, wildcard) &&
+  (special$class$predicate$subject.class_Rec$member_next !=
   (dom$Nullable$null(): dom$Nullable[Ref]) ==>
-  acc(T_class_global$class_Rec((dom$Casting$cast(class$predicate$subject.class_Rec$member_next,
+  acc(T_class_global$class_Rec((dom$Casting$cast(special$class$predicate$subject.class_Rec$member_next,
   dom$Type$global$class_Rec()): Ref)), write))
 }
 
-predicate T_class_pkg$kotlin$collections$global$class_Collection(class$predicate$subject: Ref) {
-  acc(class$predicate$subject.special$size, write) &&
-  class$predicate$subject.special$size >= 0 &&
-  acc(T_class_pkg$kotlin$collections$global$class_Iterable(class$predicate$subject), write)
-}
-
-predicate T_class_pkg$kotlin$collections$global$class_Iterable(class$predicate$subject: Ref) {
-  true
-}
-
-predicate T_class_pkg$kotlin$collections$global$class_List(class$predicate$subject: Ref) {
-  acc(T_class_pkg$kotlin$collections$global$class_Collection(class$predicate$subject), write)
-}
-
-method global$fun_useFoo$fun_take$T_class_global$class_Bar$T_class_global$class_Rec$T_class_pkg$kotlin$collections$global$class_List$return$T_Unit(local$bar: Ref,
-  local$rec: Ref, local$l: Ref)
+method global$fun_useFoo$fun_take$T_class_global$class_Bar$T_class_global$class_Rec$return$T_Unit(local$bar: Ref,
+  local$rec: Ref)
   returns (ret: dom$Unit)
   requires acc(local$bar.class_Bar$member_foo, wildcard)
   requires acc(local$rec.class_Rec$member_next, wildcard)
-  requires acc(local$l.special$size, write)
-  requires local$l.special$size >= 0
   ensures acc(local$bar.class_Bar$member_foo, wildcard)
   ensures acc(local$rec.class_Rec$member_next, wildcard)
-  ensures acc(local$l.special$size, write)
-  ensures local$l.special$size >= 0
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$bar): dom$Type), dom$Type$global$class_Bar())
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$rec): dom$Type), dom$Type$global$class_Rec())
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
+  label label$ret$0
+}
+
+/predicates.kt:(249,271): info: Generated Viper text for three_layers_hierarchy:
+field class_A$member_x: Int
+
+field class_A$member_y: Int
+
+function T_class_global$class_A$get$class_A$member_x(special$get$function$subject: Ref): Int
+  requires acc(T_class_global$class_A(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_global$class_A(special$get$function$subject), write) in
+    special$get$function$subject.class_A$member_x)
+}
+
+function T_class_global$class_B$get$class_A$member_x(special$get$function$subject: Ref): Int
+  requires acc(T_class_global$class_B(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_global$class_B(special$get$function$subject), write) in
+    T_class_global$class_A$get$class_A$member_x(special$get$function$subject))
+}
+
+function T_class_global$class_C$get$class_A$member_x(special$get$function$subject: Ref): Int
+  requires acc(T_class_global$class_C(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_global$class_C(special$get$function$subject), write) in
+    T_class_global$class_B$get$class_A$member_x(special$get$function$subject))
+}
+
+predicate T_class_global$class_A(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.class_A$member_x, wildcard)
+}
+
+predicate T_class_global$class_B(special$class$predicate$subject: Ref) {
+  acc(T_class_global$class_A(special$class$predicate$subject), write)
+}
+
+predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
+  acc(T_class_global$class_B(special$class$predicate$subject), write)
+}
+
+method global$fun_three_layers_hierarchy$fun_take$T_class_global$class_C$return$T_Unit(local$c: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$c.class_A$member_x, wildcard)
+  ensures acc(local$c.class_A$member_x, wildcard)
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$c): dom$Type), dom$Type$global$class_C())
+  label label$ret$0
+}
+
+/predicates.kt:(287,301): info: Generated Viper text for list_hierarchy:
+field special$size: Int
+
+function T_class_pkg$kotlin$collections$global$class_Collection$get$special$size(special$get$function$subject: Ref): Int
+  requires acc(T_class_pkg$kotlin$collections$global$class_Collection(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_pkg$kotlin$collections$global$class_Collection(special$get$function$subject), write) in
+    special$get$function$subject.special$size)
+}
+
+function T_class_pkg$kotlin$collections$global$class_List$get$special$size(special$get$function$subject: Ref): Int
+  requires acc(T_class_pkg$kotlin$collections$global$class_List(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_pkg$kotlin$collections$global$class_List(special$get$function$subject), write) in
+    T_class_pkg$kotlin$collections$global$class_Collection$get$special$size(special$get$function$subject))
+}
+
+function T_class_pkg$kotlin$collections$global$class_MutableCollection$get$special$size(special$get$function$subject: Ref): Int
+  requires acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$get$function$subject), write) in
+    T_class_pkg$kotlin$collections$global$class_Collection$get$special$size(special$get$function$subject))
+}
+
+function T_class_pkg$kotlin$collections$global$class_MutableList$get$special$size(special$get$function$subject: Ref): Int
+  requires acc(T_class_pkg$kotlin$collections$global$class_MutableList(special$get$function$subject), write)
+{
+  (unfolding acc(T_class_pkg$kotlin$collections$global$class_MutableList(special$get$function$subject), write) in
+    T_class_pkg$kotlin$collections$global$class_List$get$special$size(special$get$function$subject))
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject: Ref) {
+  acc(special$class$predicate$subject.special$size, write) &&
+  special$class$predicate$subject.special$size >= 0 &&
+  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), write)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject: Ref) {
+  true
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), write)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_Collection(special$class$predicate$subject), write) &&
+  acc(T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject), write)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_MutableIterable(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_Iterable(special$class$predicate$subject), write)
+}
+
+predicate T_class_pkg$kotlin$collections$global$class_MutableList(special$class$predicate$subject: Ref) {
+  acc(T_class_pkg$kotlin$collections$global$class_List(special$class$predicate$subject), write) &&
+  acc(T_class_pkg$kotlin$collections$global$class_MutableCollection(special$class$predicate$subject), write)
+}
+
+method global$fun_list_hierarchy$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$xs: Ref)
+  returns (ret: dom$Unit)
+  requires acc(local$xs.special$size, write)
+  requires local$xs.special$size >= 0
+  ensures acc(local$xs.special$size, write)
+  ensures local$xs.special$size >= 0
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$xs): dom$Type), dom$Type$pkg$kotlin$collections$global$class_MutableList())
   label label$ret$0
 }

@@ -31,14 +31,17 @@ data object ThisReceiverName : MangledName {
         get() = "this"
 }
 
-data object ClassPredicateSubjectName : MangledName {
-    override val mangled: String
-        get() = "class\$predicate\$subject"
+abstract class SpecialNameBase(name: String) : MangledName {
+    override val mangled: String = "special\$$name"
 }
 
-data class SpecialName(val name: String) : MangledName {
+data class SpecialName(val name: String) : SpecialNameBase(name)
+data object GetterFunctionSubjectName : SpecialNameBase("get\$function\$subject")
+data object ClassPredicateSubjectName : SpecialNameBase("class\$predicate\$subject")
+
+data class GetterFunctionName(val className: MangledName, val fieldName: MangledName) : MangledName {
     override val mangled: String
-        get() = "special\$$name"
+        get() = "${className.mangled}\$get\$${fieldName.mangled}"
 }
 
 abstract class NumberedLabelName(kind: String, n: Int) : MangledName {
