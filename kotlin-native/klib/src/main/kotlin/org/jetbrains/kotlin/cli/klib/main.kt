@@ -131,7 +131,6 @@ open class ModuleDeserializer(val library: ByteArray) {
 
     val packageFragmentNameList: List<String>
         get() = moduleHeader.packageFragmentNameList
-
 }
 
 class Library(val libraryNameOrPath: String, val requestedRepository: String?, val target: String) {
