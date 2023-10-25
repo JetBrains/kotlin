@@ -103,9 +103,10 @@ class FirBuilderInferenceSession2(
         val additionalBindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
         val system = (this as? FirResolvable)?.candidate()?.system ?: currentCommonSystem
 
-        if (resolutionMode is ResolutionMode.ReceiverResolution) {
-            fixVariablesForMemberScope(resolvedType, system)?.let { additionalBindings += it }
-        }
+        resolutionMode.hashCode()
+//        if (resolutionMode is ResolutionMode.ReceiverResolution) {
+//            fixVariablesForMemberScope(resolvedType, system)?.let { additionalBindings += it }
+//        }
 
         val substitutor = system.buildCurrentSubstitutor(additionalBindings) as ConeSubstitutor
         val updatedType = substitutor.substituteOrNull(resolvedType)
