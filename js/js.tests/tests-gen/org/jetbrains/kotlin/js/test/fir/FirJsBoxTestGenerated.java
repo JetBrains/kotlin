@@ -957,6 +957,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         }
 
         @Test
+        @TestMetadata("suspendInvokeWithSuspendKlassRef.kt")
+        public void testSuspendInvokeWithSuspendKlassRef() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendInvokeWithSuspendKlassRef.kt");
+        }
+
+        @Test
         @TestMetadata("suspendMethodWithSuperCall.kt")
         public void testSuspendMethodWithSuperCall() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendMethodWithSuperCall.kt");

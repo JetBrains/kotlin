@@ -49,7 +49,7 @@ fun <T : JsNode> IrWhen.toJsNode(
     tr: BaseIrElementToJsNodeTransformer<T, JsGenerationContext>,
     context: JsGenerationContext,
     node: (JsExpression, T, T?) -> T,
-    implicitElse: T? = null
+    implicitElse: T? = null,
 ): T? =
     branches.foldRight(implicitElse) { br, n ->
         val body = br.result.accept(tr, context)
@@ -142,15 +142,21 @@ private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean
 
     if (call.origin === JsStatementOrigins.EXPLICIT_INVOKE) return false
 
-    return simpleFunction.name == OperatorNameConventions.INVOKE
-            && receiverType.isFunctionTypeOrSubtype()
-            && (!receiverType.isSuspendFunctionTypeOrSubtype() || receiverType.isSuspendFunction())
+    val isInvokeFun = simpleFunction.name == OperatorNameConventions.INVOKE
+    if (!isInvokeFun) return false
+
+    val isNonSuspendFunction = receiverType.isFunctionTypeOrSubtype() && !receiverType.isSuspendFunctionTypeOrSubtype()
+    val isSuspendFunction = receiverType.isSuspendFunction()
+
+    // Dce can eliminate Function parent of SuspendFunctionN
+    // So we need to check them separately
+    return isNonSuspendFunction || isSuspendFunction
 }
 
 fun translateCall(
     expression: IrCall,
     context: JsGenerationContext,
-    transformer: IrElementToJsExpressionTransformer
+    transformer: IrElementToJsExpressionTransformer,
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
     val currentDispatchReceiver = context.currentFunction?.parentClassOrNull
@@ -387,7 +393,7 @@ fun translateCallArguments(
     expression: IrMemberAccessExpression<IrFunctionSymbol>,
     context: JsGenerationContext,
     transformer: IrElementToJsExpressionTransformer,
-    allowDropTailVoids: Boolean = true
+    allowDropTailVoids: Boolean = true,
 ): List<JsExpression> {
     val size = expression.valueArgumentsCount
 
@@ -450,7 +456,7 @@ object JsAstUtils {
     fun newJsIf(
         ifExpression: JsExpression,
         thenStatement: JsStatement,
-        elseStatement: JsStatement? = null
+        elseStatement: JsStatement? = null,
     ): JsIf {
         return JsIf(ifExpression, deBlockIfPossible(thenStatement), elseStatement?.let { deBlockIfPossible(it) })
     }
@@ -543,7 +549,7 @@ internal fun <T : JsNode> T.withSource(
     node: IrElement,
     context: JsGenerationContext,
     useNameOf: IrDeclarationWithName? = null,
-    container: IrDeclaration? = null
+    container: IrDeclaration? = null,
 ): T {
     addSourceInfoIfNeed(node, context, useNameOf, container)
     return this
@@ -554,7 +560,7 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(
     node: IrElement,
     context: JsGenerationContext,
     useNameOf: IrDeclarationWithName?,
-    container: IrDeclaration?
+    container: IrDeclaration?,
 ) {
     val sourceMapsInfo = context.staticContext.backendContext.sourceMapsInfo ?: return
     val originalName = useNameOf?.originalNameForUseInSourceMap(sourceMapsInfo.namesPolicy)
@@ -588,7 +594,7 @@ private inline fun <T : JsNode> T.addSourceInfoIfNeed(
 
 private fun JsLocation.withEmbeddedSource(
     @Suppress("UNUSED_PARAMETER")
-    context: JsGenerationContext
+    context: JsGenerationContext,
 ): JsLocationWithEmbeddedSource {
     // FIXME: fileIdentity is used to distinguish between different files with the same paths.
     // For now we use the file's path to read its content, which makes fileIdentity useless.
