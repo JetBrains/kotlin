@@ -83,7 +83,6 @@ internal object FirDefaultArgumentsInExpectActualizedByFakeOverrideChecker : Fir
     ): FirNamedFunctionSymbol? {
         val potentialExpects = findPotentialExpectClassMembersForActual(
             expectSymbol, actualSymbol, actualMember,
-            checkClassScopesCompatibility = false
         )
         val expectMember: DeclarationSymbolMarker = potentialExpects.entries
             .singleOrNull { it.value == ExpectActualMatchingCompatibility.MatchedSuccessfully }?.key

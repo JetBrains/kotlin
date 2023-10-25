@@ -523,7 +523,6 @@ class FirExpectActualMatchingContextImpl private constructor(
         expectClass: RegularClassSymbolMarker,
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
-        checkClassScopesCompatibility: Boolean,
     ): Map<FirBasedSymbol<*>, ExpectActualMatchingCompatibility> {
         val mapping = actualClass.asSymbol().fir.memberExpectForActual
         return mapping?.get(actualMember to expectClass) ?: emptyMap()

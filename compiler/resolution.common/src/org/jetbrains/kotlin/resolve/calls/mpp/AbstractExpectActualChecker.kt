@@ -33,7 +33,6 @@ object AbstractExpectActualChecker {
     fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
-        checkClassScopesCompatibility: Boolean,
         context: ExpectActualMatchingContext<T>,
     ): ExpectActualCheckingCompatibility<T> {
         val result = with(context) {
@@ -41,7 +40,6 @@ object AbstractExpectActualChecker {
                 expectClassSymbol,
                 actualClassLikeSymbol,
                 parentSubstitutor = null,
-                checkClassScopesCompatibility,
             )
         }
         @Suppress("UNCHECKED_CAST")
@@ -74,7 +72,6 @@ object AbstractExpectActualChecker {
         expectDeclaration: DeclarationSymbolMarker,
         actualDeclarations: List<DeclarationSymbolMarker>,
         context: ExpectActualMatchingContext<T>,
-        checkClassScopesCompatibility: Boolean,
     ) {
         with(context) {
             checkSingleExpectAgainstPotentialActuals(
@@ -84,7 +81,6 @@ object AbstractExpectActualChecker {
                 expectClassSymbol = null,
                 actualClassSymbol = null,
                 incompatibleMembers = null,
-                checkClassScopesCompatibility = checkClassScopesCompatibility,
             )
         }
     }
@@ -95,12 +91,10 @@ object AbstractExpectActualChecker {
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
-        checkClassScopes: Boolean,
     ): ExpectActualCheckingCompatibility<*> = getClassifiersIncompatibility(
         expectClassSymbol,
         actualClassLikeSymbol,
         parentSubstitutor,
-        checkClassScopes,
     )
         ?: ExpectActualCheckingCompatibility.Compatible
 
@@ -110,7 +104,6 @@ object AbstractExpectActualChecker {
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
-        checkClassScopesCompatibility: Boolean,
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
         // Can't check FQ names here because nested expected class may be implemented via actual typealias's expansion with the other FQ name
         require(expectClassSymbol.name == actualClassLikeSymbol.name) {
@@ -165,9 +158,7 @@ object AbstractExpectActualChecker {
             return ExpectActualCheckingCompatibility.Supertypes
         }
 
-        if (checkClassScopesCompatibility) {
-            getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor)?.let { return it }
-        }
+        getClassScopesIncompatibility(expectClassSymbol, actualClass, substitutor)?.let { return it }
 
         return null
     }
@@ -256,7 +247,6 @@ object AbstractExpectActualChecker {
                     expectClassSymbol,
                     actualClassSymbol,
                     incompatibleMembers,
-                    checkClassScopesCompatibility = true,
                 )
             }
         }
@@ -284,7 +274,6 @@ object AbstractExpectActualChecker {
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
         incompatibleMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>?,
-        checkClassScopesCompatibility: Boolean,
     ) {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
@@ -302,7 +291,6 @@ object AbstractExpectActualChecker {
                         expectMember,
                         actualMember as ClassLikeSymbolMarker,
                         parentSubstitutor,
-                        checkClassScopesCompatibility,
                     )
                 }
                 else -> error("Unsupported declaration: $expectMember ($actualMembers)")
@@ -358,62 +346,6 @@ object AbstractExpectActualChecker {
             expectContainingClass,
             actualContainingClass,
         ) ?: ExpectActualCheckingCompatibility.Compatible
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun getCallablesStrongIncompatibility(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        insideAnnotationClass: Boolean,
-        parentSubstitutor: TypeSubstitutorMarker?,
-    ): ExpectActualMatchingCompatibility.Mismatch? {
-        if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
-            return ExpectActualMatchingCompatibility.CallableKind
-        }
-
-        val expectedReceiverType = expectDeclaration.extensionReceiverType
-        val actualReceiverType = actualDeclaration.extensionReceiverType
-        if ((expectedReceiverType != null) != (actualReceiverType != null)) {
-            return ExpectActualMatchingCompatibility.ParameterShape
-        }
-
-        val expectedValueParameters = expectDeclaration.valueParameters
-        val actualValueParameters = actualDeclaration.valueParameters
-        if (!valueParametersCountCompatible(expectDeclaration, actualDeclaration, expectedValueParameters, actualValueParameters)) {
-            return ExpectActualMatchingCompatibility.ParameterCount
-        }
-
-        val expectedTypeParameters = expectDeclaration.typeParameters
-        val actualTypeParameters = actualDeclaration.typeParameters
-        if (expectedTypeParameters.size != actualTypeParameters.size) {
-            return ExpectActualMatchingCompatibility.FunctionTypeParameterCount
-        }
-
-        val substitutor = createExpectActualTypeParameterSubstitutor(
-            (expectedTypeParameters zipIfSizesAreEqual actualTypeParameters)
-                ?: error("expect/actual type parameters sizes are checked earlier"),
-            parentSubstitutor
-        )
-
-        if (
-            !areCompatibleTypeLists(
-                expectedValueParameters.toTypeList(substitutor),
-                actualValueParameters.toTypeList(createEmptySubstitutor()),
-                insideAnnotationClass
-            ) || !areCompatibleExpectActualTypes(
-                expectedReceiverType?.let { substitutor.safeSubstitute(it) },
-                actualReceiverType,
-                parameterOfAnnotationComparisonMode = false
-            )
-        ) {
-            return ExpectActualMatchingCompatibility.ParameterTypes
-        }
-
-        if (!areCompatibleTypeParameterUpperBounds(expectedTypeParameters, actualTypeParameters, substitutor)) {
-            return ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds
-        }
-
-        return null
     }
 
     context(ExpectActualMatchingContext<*>)
@@ -519,22 +451,6 @@ object AbstractExpectActualChecker {
         }
 
         return null
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun valueParametersCountCompatible(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        expectValueParameters: List<ValueParameterSymbolMarker>,
-        actualValueParameters: List<ValueParameterSymbolMarker>,
-    ): Boolean {
-        if (expectValueParameters.size == actualValueParameters.size) return true
-
-        return if (expectDeclaration.isAnnotationConstructor() && actualDeclaration.isAnnotationConstructor()) {
-            expectValueParameters.isEmpty() && actualValueParameters.all { it.hasDefaultValue }
-        } else {
-            false
-        }
     }
 
     context(ExpectActualMatchingContext<*>)
@@ -719,11 +635,6 @@ object AbstractExpectActualChecker {
     }
 
     // ---------------------------------------- Utils ----------------------------------------
-
-    context(ExpectActualMatchingContext<*>)
-    private fun List<ValueParameterSymbolMarker>.toTypeList(substitutor: TypeSubstitutorMarker): List<KotlinTypeMarker> {
-        return this.map { substitutor.safeSubstitute(it.returnType) }
-    }
 
     private inline fun <T, K> equalsBy(first: List<T>, second: List<T>, selector: (T) -> K): Boolean {
         for (i in first.indices) {
