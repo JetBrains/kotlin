@@ -34,6 +34,12 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
         }
 
         @Test
+        @TestMetadata("definedExternally.kt")
+        public void testDefinedExternally() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/definedExternally.kt");
+        }
+
+        @Test
         @TestMetadata("dynamicUnsupported.kt")
         public void testDynamicUnsupported() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/dynamicUnsupported.kt");

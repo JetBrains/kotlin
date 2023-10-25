@@ -6,6 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.wasm.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
+import org.jetbrains.kotlin.fir.analysis.wasm.checkers.expression.FirWasmDefinedExternallyCallChecker
 
 object WasmExpressionCheckers : ExpressionCheckers() {
+    override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
+        get() = setOf(
+            FirWasmDefinedExternallyCallChecker,
+        )
 }

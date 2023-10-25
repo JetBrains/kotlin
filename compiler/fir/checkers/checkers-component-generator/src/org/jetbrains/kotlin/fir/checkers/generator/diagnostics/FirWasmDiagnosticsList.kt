@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.diagnostics.error1
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.util.PrivateForInline
 
 @Suppress("ClassName", "unused")
@@ -23,5 +22,6 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
         val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("superType")
         }
+        val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION by error<PsiElement>()
     }
 }

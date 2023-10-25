@@ -53,6 +53,6 @@ fun <T> fooGeneric(x: T): T { return x }
 
 @WasmExport("a")
 fun fooDeafultAndVararg(
-a: Int = definedExternally,
+a: Int = <!CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>,
 vararg b: Int
 ): Unit { b.toString() }
