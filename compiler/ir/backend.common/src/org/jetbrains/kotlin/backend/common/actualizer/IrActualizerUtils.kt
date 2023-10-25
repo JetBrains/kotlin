@@ -45,7 +45,7 @@ internal fun collectActualCallablesMatchingToSpecificExpect(
             matchingActuals += actualSymbol
         }
     }
-    AbstractExpectActualChecker.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+    AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstPotentialActuals(
         expectSymbol,
         actualSymbols,
         context,

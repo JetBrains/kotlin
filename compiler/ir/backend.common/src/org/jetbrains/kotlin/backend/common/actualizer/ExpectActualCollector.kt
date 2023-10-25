@@ -219,7 +219,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
         actualSymbols: List<IrSymbol>,
         context: MatchingContext
     ) {
-        AbstractExpectActualChecker.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+        AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstPotentialActuals(
             expectSymbol,
             actualSymbols,
             context,
@@ -260,7 +260,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
 
         override fun onMismatchedOrIncompatibleMembersFromClassScope(
             expectSymbol: DeclarationSymbolMarker,
-            actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
+            actualSymbolsByIncompatibility: Map<out ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
             containingExpectClassSymbol: RegularClassSymbolMarker?,
             containingActualClassSymbol: RegularClassSymbolMarker?,
         ) {

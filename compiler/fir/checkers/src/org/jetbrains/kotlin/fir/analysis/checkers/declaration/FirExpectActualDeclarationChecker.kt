@@ -163,10 +163,13 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                             actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
                 }
 
-                val nonTrivialUnfulfilled = singleIncompatibility.unfulfilled.filterNot(::hasSingleActualSuspect)
+                val nonTrivialIncompatibleMembers = singleIncompatibility.incompatibleMembers.filterNot(::hasSingleActualSuspect)
+                val nonTrivialMismatchedMembers = singleIncompatibility.mismatchedMembers.filterNot(::hasSingleActualSuspect)
 
-                if (nonTrivialUnfulfilled.isNotEmpty()) {
-                    reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialUnfulfilled, context)
+                if (nonTrivialIncompatibleMembers.isNotEmpty()) {
+                    reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialIncompatibleMembers, context)
+                } else if (nonTrivialMismatchedMembers.isNotEmpty()) {
+                    reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialMismatchedMembers, context)
                 }
             }
 

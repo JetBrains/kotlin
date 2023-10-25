@@ -67,20 +67,20 @@ object AbstractExpectActualChecker {
         result as ExpectActualCompatibility<T>
     }
 
-    fun <T : DeclarationSymbolMarker> matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+    fun <T : DeclarationSymbolMarker> checkSingleExpectTopLevelDeclarationAgainstPotentialActuals(
         expectDeclaration: DeclarationSymbolMarker,
         actualDeclarations: List<DeclarationSymbolMarker>,
         context: ExpectActualMatchingContext<T>,
         checkClassScopesCompatibility: Boolean,
     ) {
         with(context) {
-            matchSingleExpectAgainstPotentialActuals(
+            checkSingleExpectAgainstPotentialActuals(
                 expectDeclaration,
                 actualDeclarations,
                 substitutor = null,
                 expectClassSymbol = null,
                 actualClassSymbol = null,
-                unfulfilled = null,
+                incompatibleMembers = null,
                 checkClassScopesCompatibility = checkClassScopesCompatibility,
             )
         }
@@ -216,7 +216,10 @@ object AbstractExpectActualChecker {
         actualClassSymbol: RegularClassSymbolMarker,
         substitutor: TypeSubstitutorMarker,
     ): ExpectActualCheckingCompatibility.Incompatible<*>? {
-        val unfulfilled = arrayListOf<Pair<DeclarationSymbolMarker, Map<MismatchOrIncompatible<*>, List<DeclarationSymbolMarker?>>>>()
+        val mismatchedMembers =
+            arrayListOf<Pair<DeclarationSymbolMarker, Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker?>>>>()
+        val incompatibleMembers =
+            arrayListOf<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>()
 
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { it.name }
 
@@ -228,15 +231,26 @@ object AbstractExpectActualChecker {
                         expectMember is RegularClassSymbolMarker && actualMember is RegularClassSymbolMarker
             }.orEmpty()
 
-            matchSingleExpectAgainstPotentialActuals(
+            val matched = AbstractExpectActualMatcher.matchSingleExpectAgainstPotentialActuals(
                 expectMember,
                 actualMembers,
                 substitutor,
                 expectClassSymbol,
                 actualClassSymbol,
-                unfulfilled,
-                checkClassScopesCompatibility = true,
+                mismatchedMembers,
             )
+
+            if (matched != null) {
+                checkSingleExpectAgainstPotentialActuals(
+                    expectMember,
+                    listOf(matched), // todo convert vector to scalar
+                    substitutor,
+                    expectClassSymbol,
+                    actualClassSymbol,
+                    incompatibleMembers,
+                    checkClassScopesCompatibility = true,
+                )
+            }
         }
 
         if (expectClassSymbol.classKind == ClassKind.ENUM_CLASS) {
@@ -248,19 +262,20 @@ object AbstractExpectActualChecker {
 
         // TODO: check static scope?
 
-        if (unfulfilled.isEmpty()) return null
-
-        return ExpectActualCheckingCompatibility.ClassScopes(unfulfilled)
+        return when (mismatchedMembers.isNotEmpty() || incompatibleMembers.isNotEmpty()) {
+            true -> ExpectActualCheckingCompatibility.ClassScopes(mismatchedMembers, incompatibleMembers)
+            false -> null
+        }
     }
 
     context(ExpectActualMatchingContext<*>)
-    private fun matchSingleExpectAgainstPotentialActuals(
+    private fun checkSingleExpectAgainstPotentialActuals(
         expectMember: DeclarationSymbolMarker,
         actualMembers: List<DeclarationSymbolMarker>,
         substitutor: TypeSubstitutorMarker?,
         expectClassSymbol: RegularClassSymbolMarker?,
         actualClassSymbol: RegularClassSymbolMarker?,
-        unfulfilled: MutableList<Pair<DeclarationSymbolMarker, Map<MismatchOrIncompatible<*>, List<DeclarationSymbolMarker?>>>>?,
+        incompatibleMembers: MutableList<Pair<DeclarationSymbolMarker, Map<ExpectActualCheckingCompatibility.Incompatible<*>, List<DeclarationSymbolMarker?>>>>?,
         checkClassScopesCompatibility: Boolean,
     ) {
         val mapping = actualMembers.keysToMap { actualMember ->
@@ -286,7 +301,7 @@ object AbstractExpectActualChecker {
             }
         }
 
-        val incompatibilityMap = mutableMapOf<MismatchOrIncompatible<*>, MutableList<DeclarationSymbolMarker>>()
+        val mismatchedOrIncompatibleMap = mutableMapOf<MismatchOrIncompatible<*>, MutableList<DeclarationSymbolMarker>>()
         for ((actualMember, compatibility) in mapping) {
             when (compatibility) {
                 is ExpectActualCompatibility.MatchedOrCompatible<*> -> {
@@ -294,12 +309,19 @@ object AbstractExpectActualChecker {
                     return
                 }
 
-                is MismatchOrIncompatible<*> -> incompatibilityMap.getOrPut(compatibility) { SmartList() }.add(actualMember)
+                is MismatchOrIncompatible<*> -> mismatchedOrIncompatibleMap.getOrPut(compatibility) { SmartList() }.add(actualMember)
             }
         }
 
-        unfulfilled?.add(expectMember to incompatibilityMap)
-        onMismatchedOrIncompatibleMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
+        // todo it's temporary code. KT-62590 in progress
+        val incompatibilities = mismatchedOrIncompatibleMap
+            .mapNotNull { (key, value) ->
+                (key as? ExpectActualCheckingCompatibility.Incompatible)?.let { it to value }
+            }
+            .toMap()
+
+        incompatibleMembers?.add(expectMember to incompatibilities)
+        onMismatchedOrIncompatibleMembersFromClassScope(expectMember, mismatchedOrIncompatibleMap, expectClassSymbol, actualClassSymbol)
     }
 
     context(ExpectActualMatchingContext<*>)

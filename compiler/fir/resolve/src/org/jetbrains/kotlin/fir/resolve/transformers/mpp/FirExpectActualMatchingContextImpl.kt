@@ -469,7 +469,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override fun onMismatchedOrIncompatibleMembersFromClassScope(
         expectSymbol: DeclarationSymbolMarker,
-        actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
+        actualSymbolsByIncompatibility: Map<out ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?
     ) {
