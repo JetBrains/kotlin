@@ -7,4 +7,4 @@ annotation class Ann
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual fun <T : <!UNRESOLVED_REFERENCE!>Unresolved<!>> foo() {}
+actual fun <T : <!UNRESOLVED_REFERENCE!>Unresolved<!>> <!ACTUAL_WITHOUT_EXPECT!>foo<!>() {}

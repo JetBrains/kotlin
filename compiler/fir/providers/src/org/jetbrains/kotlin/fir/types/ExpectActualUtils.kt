@@ -30,6 +30,7 @@ fun createExpectActualTypeParameterSubstitutor(
     return substitutor.chain(parentSubstitutor)
 }
 
+// Copy-pasted to org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatchingContextImpl.areCompatibleExpectActualTypes
 fun areCompatibleExpectActualTypes(
     expectedType: ConeKotlinType?,
     actualType: ConeKotlinType?,
