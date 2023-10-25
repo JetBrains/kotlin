@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession2
 import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -43,14 +42,16 @@ class CandidateFactory private constructor(
                 }
             }
 
-            if (subsystems.any { it.usesOuterCs }) {
-                system.addOuterSystem(
-                    (context.bodyResolveContext.inferenceSession as? FirBuilderInferenceSession2)?.currentCommonSystem?.currentStorage()
-                        ?: ConstraintStorage.Empty
-                )
+            val lastSubsystemWithOuterCs = subsystems.lastOrNull { it.usesOuterCs }
+            if (lastSubsystemWithOuterCs != null) {
+                system.setBaseSystem(lastSubsystemWithOuterCs)
             }
 
-            subsystems.forEach(system::addOtherSystem)
+            subsystems.forEach {
+                if (!it.usesOuterCs) {
+                    system.addOtherSystem(it)
+                }
+            }
 
             return system.asReadOnlyStorage()
         }
