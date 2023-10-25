@@ -15,7 +15,7 @@ import kotlin.test.assertEquals
 
 class ModuleAndPackageDocumentationTransformerFunctionalTest : BaseAbstractTest() {
 
-    @OnlyDescriptorsMPP
+    @OnlyDescriptorsMPP("#3238")
     @Test
     fun `multiplatform project`(@TempDir tempDir: Path) {
         val include = tempDir.resolve("include.md").toFile()

@@ -15,6 +15,6 @@ import org.jetbrains.dokka.plugability.querySingle
 internal class KotlinAnalysisProjectProvider : ProjectProvider {
     override fun getProject(sourceSet: DokkaConfiguration.DokkaSourceSet, context: DokkaContext): Project {
         val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
-        return kotlinAnalysis[sourceSet].project
+        return kotlinAnalysis.getModule(sourceSet).project
     }
 }

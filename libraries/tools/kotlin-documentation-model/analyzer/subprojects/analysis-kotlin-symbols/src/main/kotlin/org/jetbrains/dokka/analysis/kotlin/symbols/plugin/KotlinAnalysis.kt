@@ -5,11 +5,14 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.plugin
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
+import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.Platform
+import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.standalone.KtAlwaysAccessibleLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder
@@ -30,10 +33,10 @@ internal fun Platform.toTargetPlatform() = when (this) {
     Platform.jvm -> JvmPlatforms.defaultJvmPlatform
 }
 
-private fun getJdkHomeFromSystemProperty(): File? {
+private fun getJdkHomeFromSystemProperty(logger: DokkaLogger): File? {
     val javaHome = File(System.getProperty("java.home"))
     if (!javaHome.exists()) {
-        // messageCollector.report(CompilerMessageSeverity.WARNING, "Set existed java.home to use JDK")
+        logger.error("Set existed java.home to use JDK")
         return null
     }
     return javaHome
@@ -56,58 +59,117 @@ internal fun getLanguageVersionSettings(
     )
 }
 
-// it should be changed after https://github.com/Kotlin/dokka/issues/3114
 @OptIn(KtAnalysisApiInternals::class)
 internal fun createAnalysisSession(
-    classpath: List<File>,
-    sourceRoots: Set<File>,
-    analysisPlatform: Platform,
-    languageVersion: String?,
-    apiVersion: String?,
-    applicationDisposable: Disposable,
-    projectDisposable: Disposable
-): Pair<StandaloneAnalysisAPISession, KtSourceModule> {
+    sourceSets: List<DokkaConfiguration.DokkaSourceSet>,
+    logger: DokkaLogger,
+    applicationDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.application"),
+    projectDisposable: Disposable = Disposer.newDisposable("StandaloneAnalysisAPISession.project"),
+    isSampleProject: Boolean = false
+): KotlinAnalysis {
+    val sourcesModule = mutableMapOf<DokkaConfiguration.DokkaSourceSet, KtSourceModule>()
 
-    var sourceModule: KtSourceModule? = null
     val analysisSession = buildStandaloneAnalysisAPISession(
         applicationDisposable = applicationDisposable,
         projectDisposable = projectDisposable,
         withPsiDeclarationFromBinaryModuleProvider = false
     ) {
         registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
-        val targetPlatform = analysisPlatform.toTargetPlatform()
+
+        val sortedSourceSets = topologicalSortByDependantSourceSets(sourceSets, logger)
+
+        val sourcesModuleBySourceSetId = mutableMapOf<DokkaSourceSetID, KtSourceModule>()
 
         buildKtModuleProvider {
-            val libraryRoots = classpath
-            fun KtModuleBuilder.addModuleDependencies(moduleName: String) {
+            val jdkModule = getJdkHomeFromSystemProperty(logger)?.let { jdkHome ->
+                buildKtSdkModule {
+                    this.platform = Platform.jvm.toTargetPlatform()
+                    addBinaryRootsFromJdkHome(jdkHome.toPath(), isJre = true)
+                    sdkName = "JDK"
+                }
+            }
+
+            fun KtModuleBuilder.addModuleDependencies(sourceSet: DokkaConfiguration.DokkaSourceSet) {
+                val targetPlatform = sourceSet.analysisPlatform.toTargetPlatform()
                 addRegularDependency(
                     buildKtLibraryModule {
                         this.platform = targetPlatform
-                        addBinaryRoots(libraryRoots.map { it.toPath() })
-                        libraryName = "Library for $moduleName"
+                        addBinaryRoots(sourceSet.classpath.map { it.toPath() })
+                        libraryName = "Library for ${sourceSet.displayName}"
                     }
                 )
-                getJdkHomeFromSystemProperty()?.let { jdkHome ->
+                if (sourceSet.analysisPlatform == Platform.jvm) {
+                    jdkModule?.let { addRegularDependency(it) }
+                }
+                sourceSet.dependentSourceSets.forEach {
                     addRegularDependency(
-                        buildKtSdkModule {
-                            this.platform = targetPlatform
-                            addBinaryRootsFromJdkHome(jdkHome.toPath(), isJre = true)
-                            sdkName = "JDK for $moduleName"
-                        }
+                        sourcesModuleBySourceSetId[it]
+                            ?: error("There is no source module for $it")
                     )
                 }
             }
-            sourceModule = buildKtSourceModule {
-                languageVersionSettings = getLanguageVersionSettings(languageVersion, apiVersion)
-                platform = targetPlatform
-                moduleName = "<module>"
-                // TODO: We should handle (virtual) file changes announced via LSP with the VFS
-                addSourceRoots(sourceRoots.map { it.toPath() })
-                addModuleDependencies(moduleName)
+
+            for (sourceSet in sortedSourceSets) {
+                val targetPlatform = sourceSet.analysisPlatform.toTargetPlatform()
+                val sourceModule = buildKtSourceModule {
+                    languageVersionSettings =
+                        getLanguageVersionSettings(sourceSet.languageVersion, sourceSet.apiVersion)
+                    platform = targetPlatform
+                    moduleName = "<module ${sourceSet.displayName}>"
+                    if (isSampleProject)
+                        addSourceRoots(sourceSet.samples.map { it.toPath() })
+                    else
+                        addSourceRoots(sourceSet.sourceRoots.map { it.toPath() })
+                    addModuleDependencies(
+                        sourceSet,
+                    )
+                }
+                sourcesModule[sourceSet] = sourceModule
+                sourcesModuleBySourceSetId[sourceSet.sourceSetID] = sourceModule
+                addModule(sourceModule)
             }
-            platform = targetPlatform
-            addModule(sourceModule!!)
+            platform = sourceSets.map { it.analysisPlatform }.distinct().singleOrNull()?.toTargetPlatform()
+                ?: Platform.common.toTargetPlatform()
         }
     }
-    return Pair(analysisSession, sourceModule ?: throw IllegalStateException())
+    return KotlinAnalysis(sourcesModule, analysisSession, applicationDisposable, projectDisposable)
+}
+
+private enum class State {
+    UNVISITED,
+    VISITING,
+    VISITED;
+}
+
+internal fun topologicalSortByDependantSourceSets(
+    sourceSets: List<DokkaConfiguration.DokkaSourceSet>,
+    logger: DokkaLogger
+): List<DokkaConfiguration.DokkaSourceSet> {
+    val result = mutableListOf<DokkaConfiguration.DokkaSourceSet>()
+
+    val verticesAssociatedWithState = sourceSets.associateWithTo(mutableMapOf()) { State.UNVISITED }
+    fun dfs(souceSet: DokkaConfiguration.DokkaSourceSet) {
+        when (verticesAssociatedWithState[souceSet]) {
+            State.VISITED -> return
+            State.VISITING -> {
+                logger.error("Detected cycle in source set graph")
+                return
+            }
+
+            else -> {
+                val dependentSourceSets =
+                    souceSet.dependentSourceSets.mapNotNull { dependentSourceSetId ->
+                        sourceSets.find { it.sourceSetID == dependentSourceSetId }
+                        // just skip
+                            ?: null.also { logger.error("Unknown source set Id $dependentSourceSetId in dependencies of ${souceSet.sourceSetID}") }
+                    }
+                verticesAssociatedWithState[souceSet] = State.VISITING
+                dependentSourceSets.forEach(::dfs)
+                verticesAssociatedWithState[souceSet] = State.VISITED
+                result += souceSet
+            }
+        }
+    }
+    sourceSets.forEach(::dfs)
+    return result
 }

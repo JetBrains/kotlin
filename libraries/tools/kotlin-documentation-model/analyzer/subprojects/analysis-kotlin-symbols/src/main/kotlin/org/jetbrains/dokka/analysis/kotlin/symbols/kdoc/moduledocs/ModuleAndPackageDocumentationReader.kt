@@ -38,7 +38,7 @@ private class ContextModuleAndPackageDocumentationReader(
     ): SourceSetDependent<DocumentationNode> {
         return sourceSets.associateWithNotNull { sourceSet ->
             val fragments = documentationFragments[sourceSet].orEmpty().filter(predicate)
-            kotlinAnalysis[sourceSet] // test: to throw exception for unknown sourceSet
+            kotlinAnalysis.getModule(sourceSet)// test: to throw exception for unknown sourceSet
             val documentations = fragments.map { fragment ->
                 parseModuleAndPackageDocumentation(
                     context = ModuleAndPackageDocumentationParsingContext(context.logger, kotlinAnalysis, sourceSet),
