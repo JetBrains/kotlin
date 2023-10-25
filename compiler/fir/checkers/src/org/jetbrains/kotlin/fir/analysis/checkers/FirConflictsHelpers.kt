@@ -152,7 +152,7 @@ class FirDeclarationCollector<D : FirBasedSymbol<*>>(
 
 fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirRegularClassSymbol) {
     val otherDeclarations = mutableMapOf<String, MutableList<FirBasedSymbol<*>>>()
-    val functionDeclarations = mutableMapOf<String, MutableList<FirBasedSymbol<*>>>()
+    val functionDeclarations = mutableMapOf<String, MutableList<FirFunctionSymbol<*>>>()
     val declaredMemberScope = klass.declaredMemberScope(context)
     val unsubstitutedScope = klass.unsubstitutedScope(context)
 
@@ -277,10 +277,10 @@ fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContex
     return inspector.declarationConflictingSymbols
 }
 
-private fun <D : FirBasedSymbol<*>> FirDeclarationCollector<D>.collect(
-    declaration: D,
+private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
+    declaration: S,
     representation: String,
-    map: MutableMap<String, MutableList<D>>,
+    map: MutableMap<String, MutableList<S>>,
 ) {
     map.getOrPut(representation, ::mutableListOf).also {
         it.add(declaration)
