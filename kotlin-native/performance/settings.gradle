@@ -22,6 +22,7 @@ include ':numerical'
 include ':videoplayer'
 include ':framework'
 include ':startup'
+include ':logging'
 if (System.getProperty("os.name") == "Mac OS X") {
     include ':objcinterop'
     include ':swiftinterop'
