@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.resolve.calls.mpp
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.mpp.*
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -93,10 +91,7 @@ object AbstractExpectActualMatcher {
         outer@ for (expectMember in expectClassSymbol.collectAllMembers(isActualDeclaration = false)) {
             if (expectMember is CallableSymbolMarker && expectMember.shouldSkipMatching(expectClassSymbol)) continue
 
-            val actualMembers = actualMembersByName[expectMember.name]?.filter { actualMember ->
-                expectMember is CallableSymbolMarker && actualMember is CallableSymbolMarker ||
-                        expectMember is RegularClassSymbolMarker && actualMember is RegularClassSymbolMarker
-            }.orEmpty()
+            val actualMembers = getPossibleActualsByExpectName(expectMember, actualMembersByName)
 
             matchSingleExpectAgainstPotentialActuals(
                 expectMember,
@@ -169,22 +164,9 @@ object AbstractExpectActualMatcher {
         expectContainingClass: RegularClassSymbolMarker?,
         actualContainingClass: RegularClassSymbolMarker?,
     ): ExpectActualMatchingCompatibility {
-        require(
-            (expectDeclaration is ConstructorSymbolMarker && actualDeclaration is ConstructorSymbolMarker) ||
-                    expectDeclaration.callableId.callableName == actualDeclaration.callableId.callableName
-        ) {
-            "This function should be invoked only for declarations with the same name: $expectDeclaration, $actualDeclaration"
-        }
-        require((expectDeclaration.dispatchReceiverType == null) == (actualDeclaration.dispatchReceiverType == null)) {
-            "This function should be invoked only for declarations in the same kind of container (both members or both top level): $expectDeclaration, $actualDeclaration"
-        }
+        checkCallablesInvariants(expectDeclaration, actualDeclaration)
 
-        if (
-            expectContainingClass?.classKind == ClassKind.ENUM_CLASS &&
-            actualContainingClass?.classKind == ClassKind.ENUM_CLASS &&
-            expectDeclaration is ConstructorSymbolMarker &&
-            actualDeclaration is ConstructorSymbolMarker
-        ) {
+        if (areEnumConstructors(expectDeclaration, actualDeclaration, expectContainingClass, actualContainingClass)) {
             return ExpectActualMatchingCompatibility.MatchedSuccessfully
         }
 
@@ -265,56 +247,7 @@ object AbstractExpectActualMatcher {
         }
     }
 
-    context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleTypeLists(
-        expectedTypes: List<KotlinTypeMarker?>,
-        actualTypes: List<KotlinTypeMarker?>,
-        insideAnnotationClass: Boolean,
-    ): Boolean {
-        for (i in expectedTypes.indices) {
-            if (!areCompatibleExpectActualTypes(
-                    expectedTypes[i], actualTypes[i], parameterOfAnnotationComparisonMode = insideAnnotationClass
-                )
-            ) {
-                return false
-            }
-        }
-        return true
-    }
-
-    context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleTypeParameterUpperBounds(
-        expectTypeParameterSymbols: List<TypeParameterSymbolMarker>,
-        actualTypeParameterSymbols: List<TypeParameterSymbolMarker>,
-        substitutor: TypeSubstitutorMarker,
-    ): Boolean {
-        for (i in expectTypeParameterSymbols.indices) {
-            val expectBounds = expectTypeParameterSymbols[i].bounds
-            val actualBounds = actualTypeParameterSymbols[i].bounds
-            if (
-                expectBounds.size != actualBounds.size ||
-                !areCompatibleTypeLists(expectBounds.map { substitutor.safeSubstitute(it) }, actualBounds, insideAnnotationClass = false)
-            ) {
-                return false
-            }
-        }
-
-        return true
-    }
-
     // ---------------------------------------- Utils ----------------------------------------
-
-    context(ExpectActualMatchingContext<*>)
-    private val DeclarationSymbolMarker.name: Name
-        get() = when (this) {
-            is ConstructorSymbolMarker -> SpecialNames.INIT
-            is ValueParameterSymbolMarker -> parameterName
-            is CallableSymbolMarker -> callableId.callableName
-            is RegularClassSymbolMarker -> classId.shortClassName
-            is TypeAliasSymbolMarker -> classId.shortClassName
-            is TypeParameterSymbolMarker -> parameterName
-            else -> error("Unsupported declaration: $this")
-        }
 
     context(ExpectActualMatchingContext<*>)
     private fun List<ValueParameterSymbolMarker>.toTypeList(substitutor: TypeSubstitutorMarker): List<KotlinTypeMarker> {
