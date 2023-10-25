@@ -21,7 +21,7 @@ class BuildSessionLogger(
     private val maxFileSize: Long = DEFAULT_MAX_PROFILE_FILE_SIZE,
     private val maxFileAge: Long = DEFAULT_MAX_FILE_AGE,
     private val forceValuesValidation: Boolean = false,
-) : IStatisticsValuesConsumer {
+) : StatisticsValuesConsumer {
 
     companion object {
         const val STATISTICS_FOLDER_NAME = "kotlin-profile"

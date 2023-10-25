@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.gradle.plugin.UsesBuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.internal.UsesBuildIdProviderService
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -60,6 +60,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     UsesClassLoadersCachingBuildService,
     UsesKotlinToolingDiagnostics,
     UsesBuildIdProviderService,
+    UsesBuildFusService,
     BaseKotlinCompile {
 
     init {
@@ -201,6 +202,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                     classLoadersCachingService,
                                     buildFinishedListenerService,
                                     buildIdService,
+                                    buildFusService.orNull?.fusMetricsConsumer
                                 )
                             }
                     }
@@ -247,7 +249,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         val buildMetrics = metrics.get()
         buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
         buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
-            KotlinBuildStatsService.applyIfInitialised {
+            buildFusService.orNull?.reportFusMetrics {
                 if (name.contains("Test"))
                     it.report(BooleanMetrics.TESTS_EXECUTED, true)
                 else
@@ -289,13 +291,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     }
 
     private fun collectCommonCompilerStats() {
-        KotlinBuildStatsService.getInstance()?.apply {
-            report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
+        buildFusService.orNull?.reportFusMetrics {
+            it.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
             compilerOptions.apiVersion.orNull?.also { v ->
-                report(StringMetrics.KOTLIN_API_VERSION, v.version)
+                it.report(StringMetrics.KOTLIN_API_VERSION, v.version)
             }
             compilerOptions.languageVersion.orNull?.also { v ->
-                report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
+                it.report(StringMetrics.KOTLIN_LANGUAGE_VERSION, v.version)
             }
         }
     }

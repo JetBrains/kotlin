@@ -10,14 +10,14 @@ import org.gradle.api.tasks.*
 import org.gradle.internal.hash.FileHasher
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.net.URI
 import javax.inject.Inject
 
 @DisableCachingByDefault
-abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<Env>> : DefaultTask() {
+abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<Env>> : DefaultTask(), UsesBuildFusService {
     @get:Internal
     protected abstract val settings: Settings
 
@@ -77,8 +77,9 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Settings : AbstractSettings<
             configuration!!.get().files.single().also {
                 val downloadDuration = System.currentTimeMillis() - startDownloadTime
                 if (downloadDuration > 0) {
-                    KotlinBuildStatsService.getInstance()
-                        ?.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, it.length() * 1000 / downloadDuration)
+                    buildFusService.orNull?.reportFusMetrics { metricsConsumer ->
+                        metricsConsumer.report(NumericalMetrics.ARTIFACTS_DOWNLOAD_SPEED, it.length() * 1000 / downloadDuration)
+                    }
                 }
             }
         }

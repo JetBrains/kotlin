@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -39,7 +39,7 @@ abstract class KotlinJsIrLink @Inject constructor(
     objectFactory.newInstance(KotlinJsCompilerOptionsDefault::class.java).configureExperimentalTryK2(project),
     objectFactory,
     workerExecutor
-) {
+), UsesBuildFusService {
 
     init {
         // Not check sources, only klib module
@@ -117,7 +117,7 @@ abstract class KotlinJsIrLink @Inject constructor(
     }
 
     override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
-        KotlinBuildStatsService.applyIfInitialised {
+        buildFusService.orNull?.reportFusMetrics {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
             val newArgs = K2JSCompilerArguments()
             parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)

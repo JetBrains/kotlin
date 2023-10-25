@@ -10,7 +10,7 @@ import org.gradle.api.flow.*
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.Input
-import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFlowService
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildScanExtensionHolder
 import javax.inject.Inject
@@ -32,10 +32,7 @@ internal abstract class StatisticsBuildFlowManager @Inject constructor(
         }
     }
 
-    fun subscribeForBuildScan(project: Project) {
-        val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
-        val buildScanHolder = buildScanExtension?.let { BuildScanExtensionHolder(it) }
-
+    fun subscribeForBuildScan(buildScanHolder: BuildScanExtensionHolder) {
         flowScope.always(
             BuildScanFlowAction::class.java
         ) { spec ->
@@ -47,10 +44,10 @@ internal abstract class StatisticsBuildFlowManager @Inject constructor(
 internal class BuildScanFlowAction : FlowAction<BuildScanFlowAction.Parameters> {
     interface Parameters : FlowParameters {
         @get:ServiceReference
-        val buildMetricService: Property<BuildMetricsService?>
+        val buildMetricService: Property<BuildMetricsService>
 
         @get: Input
-        val buildScanExtensionHolder: Property<BuildScanExtensionHolder?>
+        val buildScanExtensionHolder: Property<BuildScanExtensionHolder>
     }
 
     override fun execute(parameters: Parameters) {
@@ -61,7 +58,7 @@ internal class BuildScanFlowAction : FlowAction<BuildScanFlowAction.Parameters> 
 internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Parameters> {
     interface Parameters : FlowParameters {
         @get:ServiceReference
-        val buildFlowServiceProperty: Property<BuildFlowService>
+        val buildFusServiceProperty: Property<BuildFusService>
 
         @get:Input
         val action: Property<String?>
@@ -72,7 +69,7 @@ internal class BuildFinishFlowAction : FlowAction<BuildFinishFlowAction.Paramete
     }
 
     override fun execute(parameters: Parameters) {
-        parameters.buildFlowServiceProperty.get().recordBuildFinished(
+        parameters.buildFusServiceProperty.orNull?.recordBuildFinished(
             parameters.action.orNull, parameters.buildFailed.get()
         )
     }

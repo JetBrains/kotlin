@@ -16,7 +16,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.util.*
 
-class MetricsContainer(private val forceValuesValidation: Boolean = false) : IStatisticsValuesConsumer {
+class MetricsContainer(private val forceValuesValidation: Boolean = false) : StatisticsValuesConsumer {
     data class MetricDescriptor(val name: String, val projectHash: String?) : Comparable<MetricDescriptor> {
         override fun compareTo(other: MetricDescriptor): Int {
             val compareNames = name.compareTo(other.name)

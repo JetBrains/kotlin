@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Contri
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
-import org.jetbrains.kotlin.gradle.utils.existsCompat
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
@@ -60,6 +59,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinJsCompilerOptions>,
     UsesLibraryFilterCachingService,
+    UsesBuildFusService,
     KotlinJsCompile,
     K2MultiplatformCompilationTask {
 
@@ -82,14 +82,14 @@ abstract class Kotlin2JsCompile @Inject constructor(
             PRODUCE_JS in freeArgs -> false
 
             PRODUCE_UNZIPPED_KLIB in freeArgs -> {
-                KotlinBuildStatsService.applyIfInitialised {
+                buildFusService.orNull?.reportFusMetrics {
                     it.report(BooleanMetrics.JS_KLIB_INCREMENTAL, incrementalJsKlib)
                 }
                 incrementalJsKlib
             }
 
             PRODUCE_ZIPPED_KLIB in freeArgs -> {
-                KotlinBuildStatsService.applyIfInitialised {
+                buildFusService.orNull?.reportFusMetrics {
                     it.report(BooleanMetrics.JS_KLIB_INCREMENTAL, incrementalJsKlib)
                 }
                 incrementalJsKlib

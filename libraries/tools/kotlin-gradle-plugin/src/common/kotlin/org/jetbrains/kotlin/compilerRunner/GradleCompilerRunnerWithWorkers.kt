@@ -17,6 +17,7 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import java.io.File
 import javax.inject.Inject
 
@@ -29,7 +30,8 @@ internal class GradleCompilerRunnerWithWorkers(
     compilerExecutionSettings: CompilerExecutionSettings,
     buildMetrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     private val workerExecutor: WorkerExecutor,
-) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics) {
+    fusMetricsConsumer: StatisticsValuesConsumer?,
+) : GradleCompilerRunner(taskProvider, jdkToolsJar, compilerExecutionSettings, buildMetrics, fusMetricsConsumer) {
     override fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
         taskOutputsBackup: TaskOutputsBackup?,

@@ -17,10 +17,10 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 private const val SOURCE_CODE_RELATIVE_PATH =
-    "libraries/tools/kotlin-gradle-statistics/src/main/kotlin/org/jetbrains/kotlin/statistics"
-private const val BOOLEAN_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/metrics/BooleanMetrics.kt"
-private const val STRING_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/metrics/StringMetrics.kt"
-private const val NUMERICAL_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/metrics/NumericalMetrics.kt"
+    "libraries/tools/kotlin-gradle-statistics/src/main/kotlin/org/jetbrains/kotlin/statistics/metrics"
+private const val BOOLEAN_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/BooleanMetrics.kt"
+private const val STRING_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/StringMetrics.kt"
+private const val NUMERICAL_METRICS_RELATIVE_PATH = "$SOURCE_CODE_RELATIVE_PATH/NumericalMetrics.kt"
 
 private val STRING_METRICS_EXPECTED_VERSION_AND_HASH = Pair(1, "90347332db2ce54b51e7daa64595371e")
 private val BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH = Pair(3, "3c8c4ca636adee168e99862244a22520")
@@ -30,7 +30,7 @@ private val SOURCE_FOLDER_EXPECTED_VERSION_AND_HASH =
         STRING_METRICS_EXPECTED_VERSION_AND_HASH.first +
                 BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH.first +
                 NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH.first,
-        "ce47debcab820f23e0ea1333d4124e9e"
+        "8b845ce616f5bdb9b885ededcdfd812d"
     )
 private const val HASH_ALG = "MD5"
 

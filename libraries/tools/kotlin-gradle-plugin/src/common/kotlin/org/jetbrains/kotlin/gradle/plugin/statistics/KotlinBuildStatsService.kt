@@ -19,11 +19,10 @@ import org.jetbrains.kotlin.gradle.plugin.internal.ConfigurationTimePropertiesAc
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
-import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.STATISTICS_FOLDER_NAME
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import org.jetbrains.kotlin.statistics.metrics.IStatisticsValuesConsumer
+import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.Closeable
@@ -46,7 +45,7 @@ interface KotlinBuildStatsMXBean {
     fun reportString(name: String, value: String, subprojectName: String?, weight: Long?): Boolean
 }
 
-internal abstract class KotlinBuildStatsService internal constructor() : IStatisticsValuesConsumer, Closeable {
+internal abstract class KotlinBuildStatsService internal constructor() : StatisticsValuesConsumer, Closeable {
     companion object {
         // Property name for disabling saving statistical information
         private const val ENABLE_STATISTICS_PROPERTY_NAME = "enable_kotlin_performance_profile"
@@ -188,21 +187,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : IStatis
 
     override fun close() {
     }
-
-    /**
-     * Collects metrics at the end of a build
-     */
-    open fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: List<MetricContainer>) {}
-
-    /**
-     * Collect project's configuration metrics
-     */
-    open fun collectProjectConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean): MetricContainer = MetricContainer()
-
-    /**
-     * Collect general configuration metrics
-     */
-    open fun collectGeneralConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean, buildReportOutputs: List<BuildReportType>): MetricContainer = MetricContainer()
+    open fun recordBuildFinish(action: String?, buildFailed: Boolean, metric: NonSynchronizedMetricsContainer) {}
 
     open fun recordProjectsEvaluated(gradle: Gradle) {}
 }
@@ -314,14 +299,7 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         report(StringMetrics.valueOf(name), value, subprojectName, weight)
 
     //only one jmx bean service should report global metrics
-    override fun recordBuildFinish(action: String?, buildFailed: Boolean, configurationTimeMetrics: List<MetricContainer>) {
-        KotlinBuildStatHandler().reportGlobalMetrics(sessionLogger)
-        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, configurationTimeMetrics)
+    override fun recordBuildFinish(action: String?, buildFailed: Boolean, metrics: NonSynchronizedMetricsContainer) {
+        KotlinBuildStatHandler().reportBuildFinished(sessionLogger, action, buildFailed, metrics)
     }
-
-    override fun collectProjectConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean) =
-        KotlinBuildStatHandler().collectProjectConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled)
-
-    override fun collectGeneralConfigurationMetrics(project: Project, isProjectIsolationEnabled: Boolean, buildReportOutputs: List<BuildReportType>) =
-        KotlinBuildStatHandler().collectGeneralConfigurationTimeMetrics(project, sessionLogger, isProjectIsolationEnabled, buildReportOutputs)
 }

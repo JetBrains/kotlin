@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.statistics.metrics
 
-interface IStatisticsValuesConsumer {
+interface StatisticsValuesConsumer {
     fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String? = null, weight: Long? = null): Boolean
 
     fun report(metric: NumericalMetrics, value: Long, subprojectName: String? = null, weight: Long? = null): Boolean

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.report
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService.Companion.getStartParameters
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.gradle.tasks.withType
@@ -42,7 +40,9 @@ import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.plugin.StatisticsBuildFlowManager
 import org.jetbrains.kotlin.gradle.plugin.internal.isConfigurationCacheRequested
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
 import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
@@ -63,6 +63,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         val projectName: Property<String>
         val kotlinVersion: Property<String>
         val buildConfigurationTags: ListProperty<StatTag>
+        val fusService: Property<BuildFusService>
     }
 
     private val log = Logging.getLogger(this.javaClass)
@@ -114,9 +115,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         taskExecutionResult?.buildMetrics?.also {
             buildMetrics.addAll(it)
 
-            KotlinBuildStatsService.applyIfInitialised { collector ->
+            parameters.fusService.orNull?.reportFusMetrics { collector ->
                 collector.report(NumericalMetrics.COMPILATION_DURATION, totalTimeMs)
                 collector.report(BooleanMetrics.KOTLIN_COMPILATION_FAILED, event.result is FailureResult)
+                collector.report(NumericalMetrics.COMPILATIONS_COUNT, 1)
+
                 val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
 
                 val linesOfCode = metricsMap[GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER]
@@ -130,7 +133,6 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                         collector.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, value, null, linesOfCode)
                     }
                 }
-                collector.report(NumericalMetrics.COMPILATIONS_COUNT, 1)
                 collector.report(
                     NumericalMetrics.INCREMENTAL_COMPILATIONS_COUNT,
                     if (taskExecutionResult.buildMetrics.buildAttributes.asMap().isEmpty()) 1 else 0
@@ -188,6 +190,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
 
         private fun registerIfAbsentImpl(
             project: Project,
+            fusService: Provider<BuildFusService>
         ): Provider<BuildMetricsService>? {
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
@@ -221,6 +224,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 it.parameters.projectDir.set(project.rootProject.layout.projectDirectory)
                 //init gradle tags for build scan and http reports
                 it.parameters.buildConfigurationTags.value(setupTags(project))
+                it.parameters.fusService.set(fusService)
             }.also {
                 subscribeForTaskEvents(project, it)
             }
@@ -281,18 +285,21 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
 
                     })
                 }
-                else -> {}//do nothing, BuildScanFlowAction is used
-            }
-        }
-
-        fun registerIfAbsent(project: Project) = registerIfAbsentImpl(project)?.also { serviceProvider ->
-            SingleActionPerProject.run(project, UsesBuildMetricsService::class.java.name) {
-                project.tasks.withType<UsesBuildMetricsService>().configureEach { task ->
-                    task.buildMetricsService.value(serviceProvider).disallowChanges()
-                    task.usesService(serviceProvider)
+                else -> {
+                    StatisticsBuildFlowManager.getInstance(project).subscribeForBuildScan(buildScanHolder)
                 }
             }
         }
+
+        fun registerIfAbsent(project: Project, fusService: Provider<BuildFusService>) =
+            registerIfAbsentImpl(project, fusService)?.also { serviceProvider ->
+                SingleActionPerProject.run(project, UsesBuildMetricsService::class.java.name) {
+                    project.tasks.withType<UsesBuildMetricsService>().configureEach { task ->
+                        task.buildMetricsService.value(serviceProvider).disallowChanges()
+                        task.usesService(serviceProvider)
+                    }
+                }
+            }
 
         private fun setupTags(project: Project): ArrayList<StatTag> {
             val gradle = project.gradle

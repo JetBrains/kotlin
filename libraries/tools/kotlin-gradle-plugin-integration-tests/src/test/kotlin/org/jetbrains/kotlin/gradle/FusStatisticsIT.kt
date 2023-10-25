@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
@@ -175,12 +176,14 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         project(
             "incrementalMultiproject", gradleVersion,
         ) {
-            //after KT-58768 and KT-62616 are done it will be possible to check build metrics also
-            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
+            //Collect metrics from BuildMetricsService also
+            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath",
+                  buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))) {
                 assertFileContains(
                     fusStatisticsPath,
                     "CONFIGURATION_IMPLEMENTATION_COUNT=2",
                     "NUMBER_OF_SUBPROJECTS=2",
+                    "COMPILATIONS_COUNT=2"
                 )
             }
         }
