@@ -87,7 +87,6 @@ internal data class ClassBodyAndAlignmentInfo(
 
 private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutBuilder.FieldInfo>): ClassBodyAndAlignmentInfo {
     val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
-    val packed = fields.any { LLVMABIAlignmentOfType(runtime.targetData, it.type.toLLVMType(llvm)) != it.alignment }
     val alignment = maxOf(runtime.objectAlignment, fields.maxOfOrNull { it.alignment } ?: 0)
     val indices = mutableMapOf<IrFieldSymbol, Int>()
 
@@ -99,19 +98,17 @@ private fun ContextUtils.createClassBody(name: String, fields: List<ClassLayoutB
         }
         addAndCount(runtime.objHeaderType)
         for (field in fields) {
-            if (packed) {
-                val offset = (currentOffset % field.alignment).toInt()
-                if (offset != 0) {
-                    val toInsert = field.alignment - offset
-                    addAndCount(LLVMArrayType(llvm.int8Type, toInsert)!!)
-                }
-                require(currentOffset % field.alignment == 0L)
+            val offset = (currentOffset % field.alignment).toInt()
+            if (offset != 0) {
+                val toInsert = field.alignment - offset
+                addAndCount(LLVMArrayType(llvm.int8Type, toInsert)!!)
             }
+            require(currentOffset % field.alignment == 0L)
             indices[field.irFieldSymbol] = this.size
             addAndCount(field.type.toLLVMType(llvm))
         }
     }
-    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, if (packed) 1 else 0)
+    LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, 1)
 
     context.logMultiple {
         +"$name has following fields:"
