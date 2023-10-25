@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -78,12 +76,18 @@ object AbstractExpectActualMatcher {
         ExpectActualMatchingCompatibility.MatchedSuccessfully
     }
 
-    context(ExpectActualMatchingContext<*>)
-    private fun matchClassScopes(
+    fun recursivelyMatchClassScopes( // todo drop KT-62913
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassSymbol: RegularClassSymbolMarker,
-        substitutor: TypeSubstitutorMarker,
-    ) {
+        context: ExpectActualMatchingContext<*>,
+    ): Unit = with(context) {
+        val expectTypeParameterSymbols = expectClassSymbol.typeParameters
+        val actualTypeParameterSymbols = actualClassSymbol.typeParameters
+        val substitutor = createExpectActualTypeParameterSubstitutor(
+            (expectTypeParameterSymbols zipIfSizesAreEqual actualTypeParameterSymbols) ?: return,
+            parentSubstitutor = null,
+        )
+
         val actualMembersByName = actualClassSymbol.collectAllMembers(isActualDeclaration = true).groupBy { it.name }
 
         outer@ for (expectMember in expectClassSymbol.collectAllMembers(isActualDeclaration = false)) {

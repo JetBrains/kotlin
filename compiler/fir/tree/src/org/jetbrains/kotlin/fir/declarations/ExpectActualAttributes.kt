@@ -94,4 +94,5 @@ typealias MemberExpectForActualData =
  *
  * See `/docs/fir/k2_kmp.md`
  */
+// TODO this cache is questionable. Maybe we want to drop it KT-62913
 var FirRegularClass.memberExpectForActual: MemberExpectForActualData? by FirDeclarationDataRegistry.data(MemberExpectForActualAttributeKey)
