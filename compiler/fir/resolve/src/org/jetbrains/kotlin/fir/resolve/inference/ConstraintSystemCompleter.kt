@@ -174,6 +174,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             if (areThereAppearedProperConstraintsForSomeVariable)
                 continue
 
+            if (completionMode == ConstraintSystemCompletionMode.PARTIAL_BI) {
+                // Complete all lambdas, maybe with semi-fixing type variables used as top-level input types
+                if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments, analyze))
+                    continue
+            }
+
             // Stage 8: report "not enough information" for uninferred type variables
             reportNotEnoughTypeInformation(
                 completionMode, topLevelAtoms, topLevelType, postponedArguments
@@ -235,18 +241,18 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
         // We assume useBuilderInferenceWithoutAnnotation = true for FIR
 
-        // var anyAnalyzed = false
+        var anyAnalyzed = false
         for (argument in lambdaArguments) {
-//            val notFixedInputTypeVariables = argument.inputTypes
-//                .flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
-//
-//            if (notFixedInputTypeVariables.isEmpty()) continue
+            val notFixedInputTypeVariables = argument.inputTypes
+                .flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
+
+            if (notFixedInputTypeVariables.isEmpty()) continue
             analyze(argument)
 
-//            anyAnalyzed = true
+            anyAnalyzed = true
         }
 
-        return true
+        return anyAnalyzed
     }
 
     private fun transformToAtomWithNewFunctionExpectedType(

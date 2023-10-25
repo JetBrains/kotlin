@@ -284,6 +284,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.extractTypeVariables(includeTypeItself: Boolean = false): Set<TypeVariableTypeConstructorMarker> =
         buildSet {
+            // TODO: Drop parameter
             if (includeTypeItself) {
                 addIfNotNull(typeConstructor() as? TypeVariableTypeConstructorMarker)
             }
