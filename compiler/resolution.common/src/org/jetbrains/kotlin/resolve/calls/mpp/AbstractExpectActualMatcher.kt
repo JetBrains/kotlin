@@ -180,7 +180,6 @@ object AbstractExpectActualMatcher {
         }
 
         if (
-            enumConstructorsAreAlwaysCompatible &&
             expectContainingClass?.classKind == ClassKind.ENUM_CLASS &&
             actualContainingClass?.classKind == ClassKind.ENUM_CLASS &&
             expectDeclaration is ConstructorSymbolMarker &&
