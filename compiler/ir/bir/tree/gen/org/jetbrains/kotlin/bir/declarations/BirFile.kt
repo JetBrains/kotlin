@@ -23,6 +23,7 @@ abstract class BirFile : BirPackageFragment(), BirAnnotationContainerElement,
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         declarations.acceptChildren(visitor, data)
+        annotations.acceptChildren(visitor, data)
     }
 
     companion object

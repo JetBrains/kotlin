@@ -29,7 +29,6 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: DeclarationDescriptor?,
     signature: IdSignature?,
-    override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     name: Name,
     thisReceiver: BirValueParameter?,
@@ -73,6 +72,9 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 1)
+
     private var _origin: IrDeclarationOrigin = origin
 
     override var origin: IrDeclarationOrigin
@@ -101,7 +103,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 1)
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 2)
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
 
@@ -133,13 +135,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var explicitCallParameters: BirChildElementList<BirVariable> =
-            BirChildElementList(this, 2)
-
-    override var implicitReceiversParameters: BirChildElementList<BirValueParameter> =
             BirChildElementList(this, 3)
 
-    override var providedPropertiesParameters: BirChildElementList<BirValueParameter> =
+    override var implicitReceiversParameters: BirChildElementList<BirValueParameter> =
             BirChildElementList(this, 4)
+
+    override var providedPropertiesParameters: BirChildElementList<BirValueParameter> =
+            BirChildElementList(this, 5)
 
     private var _resultProperty: BirPropertySymbol? = resultProperty
 
@@ -203,6 +205,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
         statements.acceptChildrenLite(visitor)
         _thisReceiver?.acceptLite(visitor)
         explicitCallParameters.acceptChildrenLite(visitor)
@@ -221,10 +224,11 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.statements
-        2 -> this.explicitCallParameters
-        3 -> this.implicitReceiversParameters
-        4 -> this.providedPropertiesParameters
+        1 -> this.annotations
+        2 -> this.statements
+        3 -> this.explicitCallParameters
+        4 -> this.implicitReceiversParameters
+        5 -> this.providedPropertiesParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

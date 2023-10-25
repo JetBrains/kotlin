@@ -24,7 +24,6 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor?,
     signature: IdSignature?,
-    override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     name: Name,
     isExternal: Boolean,
@@ -73,6 +72,9 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate()
             }
         }
+
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 1)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -131,10 +133,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 2)
 
     override val declarations: BirChildElementList<BirDeclaration> =
-            BirChildElementList(this, 2)
+            BirChildElementList(this, 3)
 
     private var _attributeOwnerId: BirAttributeContainer = this
 
@@ -310,6 +312,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
         typeParameters.acceptChildrenLite(visitor)
         declarations.acceptChildrenLite(visitor)
         _thisReceiver?.acceptLite(visitor)
@@ -323,8 +326,9 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.typeParameters
-        2 -> this.declarations
+        1 -> this.annotations
+        2 -> this.typeParameters
+        3 -> this.declarations
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

@@ -127,7 +127,6 @@ class Ir2BirConverter(
     private fun copyValueParameter(old: IrValueParameter): BirValueParameter = copyReferencedElement(old, valueParameters, {
         BirValueParameterImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             name = old.name,
@@ -143,7 +142,7 @@ class Ir2BirConverter(
         )
     }) { new ->
         new.defaultValue = old.defaultValue?.let { copyElement(it) }
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.type = remapType(old.type)
         new.varargElementType = old.varargElementType?.let { remapType(it) }
         new.copyDynamicProperties(old)
@@ -152,7 +151,6 @@ class Ir2BirConverter(
     private fun copyClass(old: IrClass): BirClass = copyReferencedElement(old, classes, {
         BirClassImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             visibility = old.visibility,
@@ -178,7 +176,7 @@ class Ir2BirConverter(
         new.thisReceiver = old.thisReceiver?.let { copyElement<BirValueParameter>(it) }
         new.typeParameters.copyElements(old.typeParameters)
         new.declarations.copyElements(old.declarations)
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
         new.valueClassRepresentation = old.valueClassRepresentation?.mapUnderlyingType { remapType(it) as BirSimpleType }
         new.copyDynamicProperties(old)
@@ -187,7 +185,6 @@ class Ir2BirConverter(
     private fun copyAnonymousInitializer(old: IrAnonymousInitializer): BirAnonymousInitializer = copyNotReferencedElement(old) {
         val new = BirAnonymousInitializerImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = old.annotations.memoryOptimizedMap { copyElement(it) },
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             isStatic = old.isStatic,
@@ -195,13 +192,13 @@ class Ir2BirConverter(
             signature = old.symbol.signature,
         )
         new.copyDynamicProperties(old)
+        new.annotations.copyElements(old.annotations)
         new
     }
 
     private fun copyTypeParameter(old: IrTypeParameter): BirTypeParameter = copyReferencedElement(old, typeParameters, {
         BirTypeParameterImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             name = old.name,
@@ -212,7 +209,7 @@ class Ir2BirConverter(
             signature = old.symbol.signature,
         )
     }) { new ->
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
         new.copyDynamicProperties(old)
     }
@@ -220,7 +217,6 @@ class Ir2BirConverter(
     private fun copyConstructor(old: IrConstructor): BirConstructor = copyReferencedElement(old, constructors, {
         BirConstructorImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             visibility = old.visibility,
@@ -242,7 +238,7 @@ class Ir2BirConverter(
         new.valueParameters.copyElements(old.valueParameters)
         new.body = old.body?.let { copyElement(it) }
         new.typeParameters.copyElements(old.typeParameters)
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.returnType = remapType(old.returnType)
         new.copyDynamicProperties(old)
     }
@@ -250,7 +246,6 @@ class Ir2BirConverter(
     private fun copyEnumEntry(old: IrEnumEntry): BirEnumEntry = copyReferencedElement(old, enumEntries, {
         BirEnumEntryImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             name = old.name,
@@ -261,26 +256,25 @@ class Ir2BirConverter(
     }) { new ->
         new.initializerExpression = old.initializerExpression?.let { copyElement(it) }
         new.correspondingClass = old.correspondingClass?.let { copyElement(it) }
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.copyDynamicProperties(old)
     }
 
     private fun copyErrorDeclaration(old: IrErrorDeclaration): BirErrorDeclaration = copyNotReferencedElement(old) {
         val new = BirErrorDeclarationImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = old.annotations.memoryOptimizedMap { copyElement(it) },
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             signature = old.symbol.signature,
         )
         new.copyDynamicProperties(old)
+        new.annotations.copyElements(old.annotations)
         new
     }
 
     private fun copyField(old: IrField): BirField = copyReferencedElement(old, fields, {
         BirFieldImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             visibility = old.visibility,
@@ -296,7 +290,7 @@ class Ir2BirConverter(
     }) { new ->
         new.initializer = old.initializer?.let { copyElement(it) }
         new.correspondingPropertySymbol = old.correspondingPropertySymbol?.let { remapSymbol(it) }
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.type = remapType(old.type)
         new.copyDynamicProperties(old)
     }
@@ -305,8 +299,7 @@ class Ir2BirConverter(
         copyReferencedElement(old, localDelegatedProperties, {
             BirLocalDelegatedPropertyImpl(
                 sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-                annotations = emptyList(),
-                descriptor = mapDescriptor { old.descriptor },
+                    descriptor = mapDescriptor { old.descriptor },
                 origin = old.origin,
                 name = old.name,
                 type = BirUninitializedType,
@@ -318,7 +311,7 @@ class Ir2BirConverter(
             )
         }) { new ->
             new.setter = old.setter?.let { copyElement(it) }
-            new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+            new.annotations.copyElements(old.annotations)
             new.type = remapType(old.type)
             new.copyDynamicProperties(old)
         }
@@ -337,7 +330,6 @@ class Ir2BirConverter(
     private fun copyProperty(old: IrProperty): BirProperty = copyReferencedElement(old, properties, {
         BirPropertyImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             name = old.name,
@@ -362,14 +354,13 @@ class Ir2BirConverter(
         new.getter = old.getter?.let { copyElement(it) }
         new.setter = old.setter?.let { copyElement(it) }
         new.overriddenSymbols = old.overriddenSymbols.memoryOptimizedMap { remapSymbol(it) }
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.copyDynamicProperties(old)
     }
 
     private fun copyScript(old: IrScript): BirScript = copyReferencedElement(old, scripts, {
         BirScriptImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor as ScriptDescriptor },
             origin = old.origin,
             name = old.name,
@@ -392,7 +383,7 @@ class Ir2BirConverter(
         new.earlierScriptsParameter = old.earlierScriptsParameter?.let { copyElement(it) }
         new.constructor = old.constructor?.let { remapElement(it) }
         new.statements.copyElements(old.statements)
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.baseClass = old.baseClass?.let { remapType(it) }
         new.copyDynamicProperties(old)
     }
@@ -400,7 +391,6 @@ class Ir2BirConverter(
     private fun copySimpleFunction(old: IrSimpleFunction): BirSimpleFunction = copyReferencedElement(old, functions, {
         BirSimpleFunctionImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             visibility = old.visibility,
@@ -432,7 +422,7 @@ class Ir2BirConverter(
         new.typeParameters.copyElements(old.typeParameters)
         new.overriddenSymbols = old.overriddenSymbols.memoryOptimizedMap { remapSymbol(it) }
         new.correspondingPropertySymbol = old.correspondingPropertySymbol?.let { remapSymbol(it) }
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.returnType = remapType(old.returnType)
         new.copyDynamicProperties(old)
     }
@@ -440,7 +430,6 @@ class Ir2BirConverter(
     private fun copyTypeAlias(old: IrTypeAlias): BirTypeAlias = copyReferencedElement(old, typeAliases, {
         BirTypeAliasImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             name = old.name,
@@ -451,7 +440,7 @@ class Ir2BirConverter(
         )
     }) { new ->
         new.typeParameters.copyElements(old.typeParameters)
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.expandedType = remapType(old.expandedType)
         new.copyDynamicProperties(old)
     }
@@ -459,7 +448,6 @@ class Ir2BirConverter(
     private fun copyVariable(old: IrVariable): BirVariable = copyReferencedElement(old, variables, {
         BirVariableImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            annotations = emptyList(),
             descriptor = mapDescriptor { old.descriptor },
             origin = old.origin,
             name = old.name,
@@ -473,7 +461,7 @@ class Ir2BirConverter(
         )
     }) { new ->
         new.initializer = old.initializer?.let { copyElement(it) }
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.type = remapType(old.type)
         new.copyDynamicProperties(old)
     }
@@ -497,13 +485,12 @@ class Ir2BirConverter(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
             descriptor = mapDescriptor { old.packageFragmentDescriptor },
             packageFqName = old.packageFqName,
-            annotations = emptyList(),
             fileEntry = old.fileEntry,
             signature = old.symbol.signature,
         )
     }) { new ->
         new.declarations.copyElements(old.declarations)
-        new.annotations = old.annotations.memoryOptimizedMap { copyElement(it) }
+        new.annotations.copyElements(old.annotations)
         new.copyDynamicProperties(old)
     }
 

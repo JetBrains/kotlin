@@ -225,7 +225,6 @@ fun BirFunction.copyReceiverParametersFrom(from: BirFunction, substitutionMap: M
             isAssignable = isAssignable,
             descriptor = descriptor,
             defaultValue = null,
-            annotations = emptyList(),
             signature = signature,
             index = index,
         )
@@ -250,7 +249,6 @@ fun BirValueParameter.copyTo(
     val defaultValueCopy = defaultValue?.deepCopy()
     return BirValueParameterImpl(
         sourceSpan = sourceSpan,
-        annotations = annotations.memoryOptimizedMap { it.deepCopy() },
         descriptor = descriptor,
         origin = origin,
         name = name,
@@ -263,7 +261,9 @@ fun BirValueParameter.copyTo(
         defaultValue = defaultValueCopy,
         signature = signature,
         index = index,
-    )
+    ).apply {
+        annotations += copyAnnotations()
+    }
 }
 
 /*fun BirAnnotationContainer.copyAnnotationsFrom(source: BirAnnotationContainer) {
@@ -331,7 +331,6 @@ fun BirTypeParameter.copyWithoutSuperTypes(
     name = name,
     variance = variance,
     isReified = isReified,
-    annotations = emptyList(),
     descriptor = descriptor,
     superTypes = emptyList(),
     index = index,

@@ -64,6 +64,7 @@ abstract class BirClass : BirElementBase(), BirDeclaration, BirPossiblyExternalD
     abstract var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         typeParameters.acceptChildren(visitor, data)
         declarations.acceptChildren(visitor, data)
         thisReceiver?.accept(data, visitor)

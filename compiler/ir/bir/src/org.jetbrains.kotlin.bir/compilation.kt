@@ -223,6 +223,7 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
         }
 
         birModule.countAllDescendants()
+        //measureElementDistribution(birModule)
 
         return BirCompilationBundle(birModule, birContext, input, profile)
     }

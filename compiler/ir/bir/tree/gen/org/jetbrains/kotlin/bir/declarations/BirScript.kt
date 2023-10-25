@@ -50,6 +50,7 @@ abstract class BirScript : BirElementBase(), BirDeclaration, BirDeclarationWithN
     abstract var constructor: BirConstructor?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         statements.acceptChildren(visitor, data)
         thisReceiver?.accept(data, visitor)
         explicitCallParameters.acceptChildren(visitor, data)

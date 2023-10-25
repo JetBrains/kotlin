@@ -31,7 +31,6 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     @property:ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor?,
     signature: IdSignature?,
-    override var annotations: List<BirConstructorCall>,
     origin: IrDeclarationOrigin,
     name: Name,
     isExternal: Boolean,
@@ -82,6 +81,9 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
                 invalidate()
             }
         }
+
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 1)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -140,7 +142,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 2)
 
     private var _isInline: Boolean = isInline
 
@@ -215,7 +217,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var valueParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this, 2)
+            BirChildElementList(this, 3)
 
     private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
 
@@ -364,6 +366,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
         typeParameters.acceptChildrenLite(visitor)
         _dispatchReceiverParameter?.acceptLite(visitor)
         _extensionReceiverParameter?.acceptLite(visitor)
@@ -383,8 +386,9 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
-        1 -> this.typeParameters
-        2 -> this.valueParameters
+        1 -> this.annotations
+        2 -> this.typeParameters
+        3 -> this.valueParameters
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

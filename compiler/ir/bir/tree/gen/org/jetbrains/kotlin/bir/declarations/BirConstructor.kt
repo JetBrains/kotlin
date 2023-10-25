@@ -27,6 +27,7 @@ abstract class BirConstructor : BirElementBase(), BirFunction, BirConstructorSym
     abstract var isPrimary: Boolean
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         typeParameters.acceptChildren(visitor, data)
         dispatchReceiverParameter?.accept(data, visitor)
         extensionReceiverParameter?.accept(data, visitor)

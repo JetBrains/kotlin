@@ -33,6 +33,7 @@ abstract class BirVariable : BirValueDeclaration(), BirDeclaration, BirVariableS
     abstract var initializer: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         initializer?.accept(data, visitor)
     }
 

@@ -31,6 +31,7 @@ abstract class BirAnonymousInitializer : BirElementBase(), BirDeclaration,
     abstract var body: BirBlockBody
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         body.accept(data, visitor)
     }
 

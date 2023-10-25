@@ -39,6 +39,7 @@ abstract class BirField : BirElementBase(), BirDeclaration, BirPossiblyExternalD
     abstract var correspondingPropertySymbol: BirPropertySymbol?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
+        annotations.acceptChildren(visitor, data)
         initializer?.accept(data, visitor)
     }
 

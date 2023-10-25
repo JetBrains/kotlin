@@ -27,7 +27,6 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
     override val descriptor: PackageFragmentDescriptor?,
     signature: IdSignature?,
     packageFqName: FqName,
-    override var annotations: List<BirConstructorCall>,
     fileEntry: IrFileEntry,
 ) : BirFile() {
     override val owner: BirFileImpl
@@ -78,6 +77,9 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
+    override var annotations: BirChildElementList<BirConstructorCall> =
+            BirChildElementList(this, 2)
+
     private var _fileEntry: IrFileEntry = fileEntry
 
     override var fileEntry: IrFileEntry
@@ -94,6 +96,7 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         declarations.acceptChildrenLite(visitor)
+        annotations.acceptChildrenLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
@@ -104,6 +107,7 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
         1 -> this.declarations
+        2 -> this.annotations
         else -> throwChildrenListWithIdNotFound(id)
     }
 }

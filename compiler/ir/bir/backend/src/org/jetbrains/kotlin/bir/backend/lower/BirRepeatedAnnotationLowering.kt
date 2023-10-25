@@ -55,7 +55,10 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
 
     override fun invoke(module: BirModuleFragment) {
         compiledBir.getElementsWithIndex(annotatedElements).forEach { element ->
-            element.annotations = transformAnnotations(element.annotations)
+            transformAnnotations(element.annotations)?.let {
+                element.annotations.clear()
+                element.annotations += it
+            }
         }
 
         compiledBir.getElementsWithIndex(repeatableAnnotationDeclarations).forEach { annotationClass ->
@@ -65,12 +68,12 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
         }
     }
 
-    private fun transformAnnotations(annotations: List<BirConstructorCall>): List<BirConstructorCall> {
-        if (!generationState.classBuilderMode.generateBodies) return annotations
-        if (annotations.size < 2) return annotations
+    private fun transformAnnotations(annotations: List<BirConstructorCall>): List<BirConstructorCall>? {
+        if (!generationState.classBuilderMode.generateBodies) return null
+        if (annotations.size < 2) return null
 
         val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.symbol.owner.constructedClass }
-        if (annotationsByClass.values.none { it.size > 1 }) return annotations
+        if (annotationsByClass.values.none { it.size > 1 }) return null
 
         val result = mutableListOf<BirConstructorCall>()
         for (annotation in annotations) {
@@ -175,7 +178,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
             }
         }
 
-        containerClass.annotations = annotationClass.annotations
+        containerClass.annotations += annotationClass.annotations
             .filter {
                 it.isAnnotationWithEqualFqName(StandardNames.FqNames.retention) ||
                         it.isAnnotationWithEqualFqName(StandardNames.FqNames.target)
