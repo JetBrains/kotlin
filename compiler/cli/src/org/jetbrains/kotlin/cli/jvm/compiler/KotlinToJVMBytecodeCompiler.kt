@@ -512,7 +512,11 @@ fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: F
         val commonSources = getBuildFilePaths(buildFile, module.getCommonSourceFiles()).toSet()
 
         for (path in getBuildFilePaths(buildFile, module.getSourceFiles())) {
-            addKotlinSourceRoot(path, isCommon = path in commonSources, hmppCliModuleStructure?.getModuleNameForSource(path))
+            addKotlinSourceRoot(
+                path,
+                isCommon = hmppCliModuleStructure?.isFromCommonModule(path) ?: (path in commonSources),
+                hmppCliModuleStructure?.getModuleNameForSource(path)
+            )
         }
     }
 
