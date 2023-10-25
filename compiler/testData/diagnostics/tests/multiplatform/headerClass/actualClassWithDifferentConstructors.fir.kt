@@ -5,9 +5,9 @@ expect class Foo1
 expect class Foo2
 expect class Foo3
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class Bar1<!INCOMPATIBLE_MATCHING{JVM}!>()<!><!>
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class Bar2<!INCOMPATIBLE_MATCHING{JVM}!>()<!><!>
-<!INCOMPATIBLE_MATCHING{JVM}!>expect class Bar3<!INCOMPATIBLE_MATCHING{JVM}!>()<!><!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Bar1<!EXPECT_ACTUAL_MISMATCH{JVM}!>()<!><!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Bar2<!EXPECT_ACTUAL_MISMATCH{JVM}!>()<!><!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect class Bar3<!EXPECT_ACTUAL_MISMATCH{JVM}!>()<!><!>
 expect class Bar4()
 expect class Bar5()
 expect class Bar6()

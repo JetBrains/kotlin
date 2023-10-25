@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
+import org.jetbrains.kotlin.resolve.multiplatform.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -109,15 +107,30 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(
     )
 }
 
-internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportIncompatibleExpectActual(
+internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportExpectActualIncompatibility(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
-    incompatibility: ExpectActualCompatibility.MismatchOrIncompatible<*>
+    incompatibility: ExpectActualCheckingCompatibility.Incompatible<*>,
 ) {
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     at(expectDeclaration).report(
-        CommonBackendErrors.INCOMPATIBLE_MATCHING,
+        CommonBackendErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
+        expectDeclaration.getNameWithAssert().asString(),
+        actualDeclaration.getNameWithAssert().asString(),
+        incompatibility
+    )
+}
+
+internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportExpectActualMismatch(
+    expectSymbol: IrSymbol,
+    actualSymbol: IrSymbol,
+    incompatibility: ExpectActualMatchingCompatibility.Mismatch,
+) {
+    val expectDeclaration = expectSymbol.owner as IrDeclaration
+    val actualDeclaration = actualSymbol.owner as IrDeclaration
+    at(expectDeclaration).report(
+        CommonBackendErrors.EXPECT_ACTUAL_MISMATCH,
         expectDeclaration.getNameWithAssert().asString(),
         actualDeclaration.getNameWithAssert().asString(),
         incompatibility

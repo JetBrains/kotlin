@@ -1,13 +1,13 @@
 // MODULE: m1-common
 // FILE: common.kt
 // TODO: .fir.kt version is just a stub.
-<!INCOMPATIBLE_MATCHING{JVM}!>expect interface My {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect interface My {
     open fun openFunPositive()
-    <!INCOMPATIBLE_MATCHING{JVM}!>open fun openFunNegative()<!>
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>open fun openFunNegative()<!>
     abstract fun abstractFun()
 
     open val openValPositive: Int
-    <!INCOMPATIBLE_MATCHING{JVM}!>open val openValNegative: Int<!>
+    <!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>open val openValNegative: Int<!>
     abstract val abstractVal: Int
 }<!>
 

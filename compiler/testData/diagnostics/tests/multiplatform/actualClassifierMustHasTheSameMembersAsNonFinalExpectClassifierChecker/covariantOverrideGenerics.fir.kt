@@ -5,7 +5,7 @@ open class Base<R> {
     open fun foo(): R = null!!
 }
 
-<!INCOMPATIBLE_MATCHING{JVM}, INCOMPATIBLE_MATCHING{JVM}!>expect open class Foo<R, T : R> : Base<R> {
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect open class Foo<R, T : R> : Base<R> {
 }<!>
 
 // MODULE: m2-jvm()()(m1-common)

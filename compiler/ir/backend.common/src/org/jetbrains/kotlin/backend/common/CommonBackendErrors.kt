@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.backend.common
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.DECLARATION_NAME
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.INCOMPATIBILITY
-import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.MISMATCH
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.*
@@ -24,11 +25,13 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 object CommonBackendErrors {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>()
-    val INCOMPATIBLE_MATCHING by error3<PsiElement, String, String, ExpectActualCompatibility.MismatchOrIncompatible<*>>()
+    val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>()
+    val EXPECT_ACTUAL_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>()
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<PsiElement, IrSymbol, IrSymbol, ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>>()
     val EVALUATION_ERROR by error1<PsiElement, String>()
     val ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE by error1<PsiElement, IrValueParameter>()
@@ -47,8 +50,15 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
             MODULE_WITH_PLATFORM,
         )
         map.put(
-            CommonBackendErrors.INCOMPATIBLE_MATCHING,
+            CommonBackendErrors.EXPECT_ACTUAL_MISMATCH,
             "Expect declaration `{0}` doesn''t match actual `{1}` because {2}",
+            STRING,
+            STRING,
+            MISMATCH
+        )
+        map.put(
+            CommonBackendErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
+            "Expect declaration `{0}` is incompatible with actual `{1}` because {2}",
             STRING,
             STRING,
             INCOMPATIBILITY
@@ -75,7 +85,10 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
 }
 
 object BackendDiagnosticRenderers {
-    val INCOMPATIBILITY = Renderer<ExpectActualCompatibility.MismatchOrIncompatible<*>> {
+    val MISMATCH = Renderer<ExpectActualMatchingCompatibility.Mismatch> {
+        it.reason ?: "<unknown>"
+    }
+    val INCOMPATIBILITY = Renderer<ExpectActualCheckingCompatibility.Incompatible<*>> {
         it.reason ?: "<unknown>"
     }
     val SYMBOL_OWNER_DECLARATION_FQ_NAME = Renderer<IrSymbol> {
