@@ -20,9 +20,6 @@ sealed interface ExpectActualCompatibility<out D> {
     sealed interface MismatchOrIncompatible<out D> : ExpectActualCompatibility<D> {
         val reason: String?
     }
-
-    // It's temporary class. KT-62590 is in progress
-    sealed interface MatchedOrCompatible<out D> : ExpectActualCompatibility<D>
 }
 
 /**
@@ -41,7 +38,7 @@ sealed class ExpectActualMatchingCompatibility : ExpectActualCompatibility<Nothi
     object FunctionTypeParameterCount : Mismatch(TYPE_PARAMETER_COUNT)
     object ParameterTypes : Mismatch("parameter types are different")
     object FunctionTypeParameterUpperBounds : Mismatch("upper bounds of type parameters are different")
-    object MatchedSuccessfully : ExpectActualMatchingCompatibility(), ExpectActualCompatibility.MatchedOrCompatible<Nothing>
+    object MatchedSuccessfully : ExpectActualMatchingCompatibility()
 }
 
 /**
@@ -96,16 +93,5 @@ sealed class ExpectActualCheckingCompatibility<out D> : ExpectActualCompatibilit
     object ClassTypeParameterUpperBounds : Incompatible<Nothing>(ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds.reason)
     object TypeParameterVariance : Incompatible<Nothing>("declaration-site variances of type parameters are different")
     object TypeParameterReified : Incompatible<Nothing>("some type parameter is reified in one declaration and non-reified in the other")
-    object Compatible : ExpectActualCheckingCompatibility<Nothing>(), ExpectActualCompatibility.MatchedOrCompatible<Nothing>
+    object Compatible : ExpectActualCheckingCompatibility<Nothing>()
 }
-
-val ExpectActualCompatibility<*>.isCompatibleOrWeaklyIncompatible: Boolean
-    get() = this is ExpectActualCompatibility.MatchedOrCompatible || this is ExpectActualCheckingCompatibility
-
-val ExpectActualCompatibility<*>.compatible: Boolean
-    get() = this is ExpectActualCompatibility.MatchedOrCompatible
-
-// It's temporary function. KT-62590 is in progress
-fun <T, R> Map<ExpectActualCompatibility<R>, List<T>>.getMatchedAndChecked(): List<T>? =
-    (get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty() + get(ExpectActualCheckingCompatibility.Compatible).orEmpty())
-        .takeIf { it.isNotEmpty() }

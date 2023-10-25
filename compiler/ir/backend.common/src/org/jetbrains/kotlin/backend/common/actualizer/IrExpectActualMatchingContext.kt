@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCom
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -480,7 +480,7 @@ internal abstract class IrExpectActualMatchingContext(
             }
         }
 
-    override fun onMatchedOrCompatibleMembers(
+    override fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
@@ -558,7 +558,7 @@ internal abstract class IrExpectActualMatchingContext(
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
         checkClassScopesCompatibility: Boolean,
-    ): Map<out DeclarationSymbolMarker, ExpectActualCompatibility<*>> = error("Should not be called")
+    ): Map<out DeclarationSymbolMarker, ExpectActualMatchingCompatibility> = error("Should not be called")
 
     // It's a stub, because not needed anywhere
     private object IrSourceElementStub : SourceElementMarker

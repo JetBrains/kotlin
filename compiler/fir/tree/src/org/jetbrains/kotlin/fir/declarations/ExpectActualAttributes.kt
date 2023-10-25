@@ -10,12 +10,11 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
-import org.jetbrains.kotlin.resolve.multiplatform.isCompatibleOrWeaklyIncompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
 private object ExpectForActualAttributeKey : FirDeclarationDataKey()
 
-typealias ExpectForActualData = Map<ExpectActualCompatibility<FirBasedSymbol<*>>, List<FirBasedSymbol<*>>>
+typealias ExpectForActualMatchingData = Map<ExpectActualMatchingCompatibility, List<FirBasedSymbol<*>>>
 
 /**
  * Actual declaration -> (many) expect declaration mapping. For top-level declarations.
@@ -27,7 +26,7 @@ typealias ExpectForActualData = Map<ExpectActualCompatibility<FirBasedSymbol<*>>
  * See `/docs/fir/k2_kmp.md`
  */
 @SymbolInternals
-var FirDeclaration.expectForActual: ExpectForActualData? by FirDeclarationDataRegistry.data(ExpectForActualAttributeKey)
+var FirDeclaration.expectForActual: ExpectForActualMatchingData? by FirDeclarationDataRegistry.data(ExpectForActualAttributeKey)
 
 /**
  * @see expectForActual
@@ -38,17 +37,13 @@ fun FirFunctionSymbol<*>.getSingleExpectForActualOrNull(): FirFunctionSymbol<*>?
 /**
  * @see expectForActual
  */
-fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(): FirBasedSymbol<*>? {
-    val expectForActual = expectForActual ?: return null
-    val compatibleOrWeakCompatible: List<FirBasedSymbol<*>> =
-        expectForActual.entries.singleOrNull { it.key.isCompatibleOrWeaklyIncompatible }?.value ?: return null
-    return compatibleOrWeakCompatible.singleOrNull()
-}
+fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(): FirBasedSymbol<*>? =
+    expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)?.singleOrNull()
 
 /**
  * @see expectForActual
  */
-val FirBasedSymbol<*>.expectForActual: ExpectForActualData?
+val FirBasedSymbol<*>.expectForActual: ExpectForActualMatchingData?
     get() {
         lazyResolveToPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         return fir.expectForActual
@@ -61,7 +56,7 @@ private object MemberExpectForActualAttributeKey : FirDeclarationDataKey()
 // in case when two `actual typealias` point to the same class.
 typealias MemberExpectForActualData =
         Map<Pair</* actual member */ FirBasedSymbol<*>, /* expect class */ FirRegularClassSymbol>,
-                Map</* expect member */ FirBasedSymbol<*>, ExpectActualCompatibility<*>>>
+                Map</* expect member */ FirBasedSymbol<*>, ExpectActualMatchingCompatibility>>
 
 /**
  * Actual class + expect class + actual member declaration -> (many) expect member declaration mapping.
