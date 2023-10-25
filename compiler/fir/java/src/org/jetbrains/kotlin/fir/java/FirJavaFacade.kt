@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.impl.light.LightRecordCanonicalConstructor
+import com.intellij.psi.util.JavaPsiRecordUtil
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -449,7 +451,8 @@ abstract class FirJavaFacade(
         }
 
         /**
-         * It is possible that JavaClass already has a synthetic primary constructor ([LightRecordCanonicalConstructor])
+         * It is possible that JavaClass already has a synthetic primary constructor ([LightRecordCanonicalConstructor]) or a
+         * canonical constructor ([JavaPsiRecordUtil.isCanonicalConstructor]).
          * Such behavior depends on a platform version and psi providers
          * (e.g., in IntelliJ plugin Java class can have additional declarations)
          */
@@ -649,7 +652,8 @@ abstract class FirJavaFacade(
                 hasStableParameterNames = false
             }
             this.visibility = visibility
-            isPrimary = javaConstructor == null || source?.psi is LightRecordCanonicalConstructor
+            // TODO get rid of dependency on PSI KT-63046
+            isPrimary = javaConstructor == null || source?.psi.let { it is PsiMethod && JavaPsiRecordUtil.isCanonicalConstructor(it) }
             returnTypeRef = buildResolvedTypeRef {
                 type = ownerClassBuilder.buildSelfTypeRef()
             }

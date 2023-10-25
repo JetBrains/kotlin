@@ -36566,6 +36566,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("javaRecordWithCanonicalConstructor.kt")
+                public void testJavaRecordWithCanonicalConstructor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/javaRecordWithCanonicalConstructor.kt");
+                }
+
+                @Test
                 @TestMetadata("javaRecordWithExplicitComponent.kt")
                 public void testJavaRecordWithExplicitComponent() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/javaRecordWithExplicitComponent.kt");
