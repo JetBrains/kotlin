@@ -6,7 +6,7 @@ Output:
 Exit code: COMPILATION_ERROR
 Output:
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:1:12: error: 'actual fun f1(): String' has no corresponding expected declaration
-The following declaration is incompatible:
+The following declaration is incompatible because return type is different:
     expect fun f1(): Unit
 
 actual fun f1(): String = ""

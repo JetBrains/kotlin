@@ -92,9 +92,6 @@ internal abstract class IrExpectActualMatchingContext(
 
     private inline fun <reified T : IrDeclaration> DeclarationSymbolMarker.safeAsIr(): T? = (this as IrSymbol).owner as? T
 
-    override val shouldCheckReturnTypesOfCallables: Boolean
-        get() = true
-
     override val innerClassesCapturesOuterTypeParameters: Boolean
         get() = false
 
