@@ -1,0 +1,2 @@
+expected symbols:
+Common.kt : fun foo()
