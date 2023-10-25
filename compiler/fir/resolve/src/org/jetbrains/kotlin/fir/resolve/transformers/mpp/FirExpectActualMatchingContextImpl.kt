@@ -46,9 +46,6 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val shouldCheckAbsenceOfDefaultParamsInActual: Boolean
         get() = true
 
-    override val enumConstructorsAreAlwaysCompatible: Boolean
-        get() = true
-
     override val allowClassActualizationWithWiderVisibility: Boolean
         get() = true
 
