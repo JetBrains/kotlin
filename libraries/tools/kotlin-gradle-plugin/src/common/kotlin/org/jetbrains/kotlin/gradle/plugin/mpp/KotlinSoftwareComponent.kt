@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext.PublishOnlyIf
 import org.jetbrains.kotlin.gradle.targets.metadata.*
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.markResolvable
@@ -136,9 +137,7 @@ abstract class KotlinSoftwareComponent(
         }
     }
 
-    // This property is declared in the parent type to allow the usages to reference it without forcing the subtypes to load,
-    // which is needed for compatibility with older Gradle versions
-    var publicationDelegate: MavenPublication? = null
+    val publicationDelegate: MavenPublication? get() = project.kotlinMultiplatformRootPublication.lenient.getOrNull()
 }
 
 class KotlinSoftwareComponentWithCoordinatesAndPublication(project: Project, name: String, kotlinTargets: Iterable<KotlinTarget>) :

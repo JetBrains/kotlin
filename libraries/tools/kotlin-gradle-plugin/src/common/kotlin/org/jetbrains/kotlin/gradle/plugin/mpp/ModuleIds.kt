@@ -12,13 +12,13 @@ import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.utils.currentBuild
+import org.jetbrains.kotlin.gradle.utils.future
 
 internal object ModuleIds {
     fun fromDependency(dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
-        is ProjectDependency -> idOfRootModule(dependency.dependencyProject)
+        is ProjectDependency -> @Suppress("DEPRECATION") idOfRootModule(dependency.dependencyProject)
         else -> ModuleDependencyIdentifier(dependency.group, dependency.name)
     }
 
@@ -39,9 +39,13 @@ internal object ModuleIds {
         else
             fromComponentId(thisProject, component.id)
 
-    fun idOfRootModule(project: Project): ModuleDependencyIdentifier =
+    // TODO KT-62911: Replace unsafe idOfRootModule with suspendable version idRootModule
+    @Deprecated("Use suspendable version if possible", replaceWith = ReplaceWith("idOfRootModuleSafe(project)"))
+    fun idOfRootModule(project: Project): ModuleDependencyIdentifier = project.future { idOfRootModuleSafe(project) }.getOrThrow()
+
+    suspend fun idOfRootModuleSafe(project: Project): ModuleDependencyIdentifier =
         if (project.multiplatformExtensionOrNull != null) {
-            val rootPublication = project.multiplatformExtension.rootSoftwareComponent.publicationDelegate
+            val rootPublication = project.kotlinMultiplatformRootPublication.await()
             val group = rootPublication?.groupId ?: project.group.toString()
             val name = rootPublication?.artifactId ?: project.name
             ModuleDependencyIdentifier(group, name)
@@ -53,5 +57,6 @@ internal object ModuleIds {
         ModuleDependencyIdentifier(null, name)
 
     private fun idOfRootModuleByProjectPath(thisProject: Project, projectPath: String): ModuleDependencyIdentifier =
+        @Suppress("DEPRECATION")
         idOfRootModule(thisProject.project(projectPath))
 }
