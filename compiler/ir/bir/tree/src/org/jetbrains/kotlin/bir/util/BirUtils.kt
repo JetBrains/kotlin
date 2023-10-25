@@ -121,11 +121,11 @@ val BirClass.defaultType: BirSimpleType
 val BirConstructor.constructedClass
     get() = this.parent as BirClass
 
-private val BirConstructorCall.annotationClass
+val BirConstructorCall.constructedClass
     get() = this.symbol.owner.constructedClass
 
 fun BirConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
-    annotationClass.hasEqualFqName(fqName)
+    constructedClass.hasEqualFqName(fqName)
 
 val BirClass.packageFqName: FqName?
     get() = signature?.packageFqName() ?: ancestors().firstNotNullOfOrNull { (it as? BirPackageFragment)?.packageFqName }

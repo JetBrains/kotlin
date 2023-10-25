@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.bir.builders.build
 import org.jetbrains.kotlin.bir.builders.setCall
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirCall
+import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.impl.BirBlockBodyImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirDelegatingConstructorCallImpl
@@ -26,16 +27,16 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 context(JvmBirBackendContext)
 class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
-    private val jvmOverloadsAnnotation = birBuiltIns.findClass(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)!!
+    private val JvmOverloadsAnnotation = birBuiltIns.findClass(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)!!
 
-    private val overloadsAnnotatedFunctions = registerIndexKey<BirFunction>(false) {
-        it.hasAnnotation(jvmOverloadsAnnotation)
+    private val overloadsAnnotations = registerIndexKey<BirConstructorCall>(false) {
+        it.constructedClass == JvmOverloadsAnnotation
     }
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(overloadsAnnotatedFunctions).forEach { function ->
-            val parentClass = function.parent as? BirClass
-                ?: return@forEach
+        compiledBir.getElementsWithIndex(overloadsAnnotations).forEach { annotation ->
+            val function = annotation.parent as? BirFunction ?: return@forEach
+            val parentClass = function.parent as? BirClass ?: return@forEach
 
             generateWrappers(function, parentClass)
         }
