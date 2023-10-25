@@ -21,7 +21,7 @@ fun String.removeLlFirDivergenceDirective(trimLines: Boolean): String {
     return if (findDirectiveInLines(iterator)) {
         // `trimStart` ensures that the `LL_FIR_DIVERGENCE` directive can be separated from the rest of the file by blank lines.
         iterator.asSequence().concatLines(trimLines).trimStart()
-    } else this
+    } else this.trim() // Trim start and end newlines in file if directive not found
 }
 
 private fun Sequence<String>.concatLines(trimLines: Boolean): String =

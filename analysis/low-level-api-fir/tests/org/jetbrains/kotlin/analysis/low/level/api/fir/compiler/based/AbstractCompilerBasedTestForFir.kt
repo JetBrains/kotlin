@@ -59,7 +59,13 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
 
         useMetaTestConfigurators(::LLFirMetaTestConfigurator)
         useAfterAnalysisCheckers(::LLFirIdenticalChecker)
-        useAfterAnalysisCheckers(::LLFirDivergenceCommentChecker)
+
+        // For multiplatform tests it's expected that LL and FIR diverge,
+        // because IR actualizer doesn't run in IDE mode tests.
+        forTestsNotMatching("compiler/testData/diagnostics/tests/multiplatform/*") {
+            useAfterAnalysisCheckers(::LLFirDivergenceCommentChecker)
+        }
+
         useAfterAnalysisCheckers(::LLFirTestSuppressor)
     }
 
