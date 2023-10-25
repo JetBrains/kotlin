@@ -1,0 +1,1 @@
+[DuplicateSourceSetsError | FATAL] Duplicate Kotlin source sets have been detected: [linUXMain, linuxMain], [linUXTest, linuxTest]. Keep in mind that source set names are case-insensitive, which means that `srcMain` and `sRcMain` are considered the same source set.

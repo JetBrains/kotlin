@@ -116,6 +116,7 @@ internal interface KotlinGradleProjectChecker {
             KotlinTargetAlreadyDeclaredChecker,
             InternalGradlePropertiesUsageChecker,
             WasmSourceSetsNotFoundChecker,
+            DuplicateSourceSetChecker,
         )
     }
 }
