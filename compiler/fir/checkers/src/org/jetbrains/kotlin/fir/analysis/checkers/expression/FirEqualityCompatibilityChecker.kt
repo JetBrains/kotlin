@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -38,8 +35,8 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         val arguments = expression.argumentList.arguments
         require(arguments.size == 2) { "Equality operator call with non-2 arguments" }
 
-        val l = arguments[0].toArgumentInfo(context)
-        val r = arguments[1].toArgumentInfo(context)
+        val l = arguments[0].unwrapToMoreUsefulExpression().toArgumentInfo(context)
+        val r = arguments[1].unwrapToMoreUsefulExpression().toArgumentInfo(context)
 
         checkSenselessness(l.smartCastType, r.smartCastType, context, expression, reporter)
 
@@ -79,6 +76,11 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
                 l.userType, r.userType, context,
             )
         }
+    }
+
+    private fun FirExpression.unwrapToMoreUsefulExpression() = when (this) {
+        is FirWhenSubjectExpression -> whenRef.value.subject ?: this
+        else -> this
     }
 
     private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {

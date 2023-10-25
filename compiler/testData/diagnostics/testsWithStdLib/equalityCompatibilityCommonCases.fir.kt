@@ -53,7 +53,7 @@ fun incompatibleTypes(a: Int) = when(a) {
 fun incompatibleTypesSmartCast(a: Any?) {
     if (a is Int) {
         when(a) {
-            <!INCOMPATIBLE_TYPES!>C(10)<!> -> 1
+            <!INCOMPATIBLE_TYPES_WARNING!>C(10)<!> -> 1
             else -> 2
         }
     }
