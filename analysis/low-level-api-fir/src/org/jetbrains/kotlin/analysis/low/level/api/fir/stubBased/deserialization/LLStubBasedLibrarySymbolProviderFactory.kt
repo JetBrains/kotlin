@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -142,6 +145,14 @@ private class StubBasedBuiltInsSymbolProvider(
         session,
         moduleData,
         kotlinScopeProvider
+    )
+
+    override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider(
+        session,
+        listOf(
+            LLFirKotlinSymbolNamesProvider(declarationProvider, allowKotlinPackage),
+            syntheticFunctionInterfaceProvider.symbolNamesProvider,
+        ),
     )
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
