@@ -14,7 +14,7 @@ class BirElementDynamicPropertyManager {
 
         refreshKeysFromAncestors(classData)
         classData.keys += key
-        classData.keyCount++
+        classData.keyCount = classData.keys.size
         if (key.index == -1) {
             key.index = classData.keyCount - 1
         }
@@ -58,7 +58,7 @@ class BirElementDynamicPropertyManager {
         if (element.lastSeenTotalTokenRegistrations < totalTokenRegistrations) {
             for (ancestor in element.ancestorElements!!) {
                 element.keys += ancestor.keys
-                element.keyCount += ancestor.keyCount
+                element.keyCount = element.keys.size
             }
             element.lastSeenTotalTokenRegistrations = totalTokenRegistrations
         }
