@@ -7,6 +7,18 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.KtList": unique symbol;
             };
         }
+        namespace KtList {
+            abstract class Factory extends _objects_.kotlin$collections$KtList$Factory {
+                private constructor();
+            }
+        }
+    }
+    namespace _objects_ {
+        const kotlin$collections$KtList$Factory: {
+            fromJsArray<E>(array: ReadonlyArray<E>): kotlin.collections.KtList<E>;
+        } & {
+            new(): any;
+        };
     }
     namespace foo {
         interface SomeExternalInterface {

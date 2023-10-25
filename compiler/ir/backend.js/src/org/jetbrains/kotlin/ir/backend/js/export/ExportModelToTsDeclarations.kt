@@ -479,7 +479,7 @@ class ExportModelToTsDeclarations {
     }
 
     private fun ExportedClass.couldBeProperty(): Boolean {
-        return this is ExportedObject && !ir.parentAsClass.isInterface && nestedClasses.all {
+        return this is ExportedObject && ir.parentClassOrNull?.isInterface != true && nestedClasses.all {
             it.couldBeProperty() && it.ir.visibility != DescriptorVisibilities.PROTECTED
         }
     }
