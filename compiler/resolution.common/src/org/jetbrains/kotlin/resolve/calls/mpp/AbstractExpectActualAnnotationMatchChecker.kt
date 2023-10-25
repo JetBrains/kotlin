@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType as IncompatibilityType
 
 object AbstractExpectActualAnnotationMatchChecker {
@@ -316,7 +317,7 @@ object AbstractExpectActualAnnotationMatchChecker {
                 checkClassScopesCompatibility = false,
             )
             val expectMember = expectToCompatibilityMap
-                .filter { it.value is ExpectActualCompatibility.MatchedOrCompatible }.keys.singleOrNull()
+                .filter { it.value == ExpectActualMatchingCompatibility.MatchedSuccessfully }.keys.singleOrNull()
             // Check also incompatible members if only one is found
                 ?: expectToCompatibilityMap.keys.singleOrNull()
                 ?: continue

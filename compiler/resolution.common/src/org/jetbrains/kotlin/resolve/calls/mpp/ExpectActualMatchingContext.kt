@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
@@ -165,7 +165,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     val CallableSymbolMarker.hasStableParameterNames: Boolean
 
-    fun onMatchedOrCompatibleMembers(
+    fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
@@ -174,7 +174,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     fun onMismatchedOrIncompatibleMembersFromClassScope(
         expectSymbol: DeclarationSymbolMarker,
-        actualSymbolsByIncompatibility: Map<out ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
+        actualSymbolsByIncompatibility: Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker>>,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?,
     ) {}
@@ -217,7 +217,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
         checkClassScopesCompatibility: Boolean,
-    ): Map<out DeclarationSymbolMarker, ExpectActualCompatibility<*>>
+    ): Map<out DeclarationSymbolMarker, ExpectActualMatchingCompatibility>
 
     fun DeclarationSymbolMarker.getSourceElement(): SourceElementMarker
 

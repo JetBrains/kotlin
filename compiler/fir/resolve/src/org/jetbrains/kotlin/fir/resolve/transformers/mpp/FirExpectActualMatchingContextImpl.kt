@@ -451,7 +451,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             return symbol.source == null && symbol.origin !is FirDeclarationOrigin.Plugin
         }
 
-    override fun onMatchedOrCompatibleMembers(
+    override fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
@@ -469,7 +469,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override fun onMismatchedOrIncompatibleMembersFromClassScope(
         expectSymbol: DeclarationSymbolMarker,
-        actualSymbolsByIncompatibility: Map<out ExpectActualCompatibility.MismatchOrIncompatible<*>, List<DeclarationSymbolMarker>>,
+        actualSymbolsByIncompatibility: Map<ExpectActualMatchingCompatibility.Mismatch, List<DeclarationSymbolMarker>>,
         containingExpectClassSymbol: RegularClassSymbolMarker?,
         containingActualClassSymbol: RegularClassSymbolMarker?
     ) {
@@ -489,7 +489,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     private fun FirRegularClassSymbol.addMemberExpectForActualMapping(
         expectMember: FirBasedSymbol<*>, actualMember: FirBasedSymbol<*>,
-        expectClassSymbol: FirRegularClassSymbol, compatibility: ExpectActualCompatibility<*>,
+        expectClassSymbol: FirRegularClassSymbol, compatibility: ExpectActualMatchingCompatibility,
     ) {
         check(allowedWritingMemberExpectForActualMapping) { "Writing memberExpectForActual is not allowed in this context" }
         val fir = fir
@@ -524,7 +524,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
         checkClassScopesCompatibility: Boolean,
-    ): Map<FirBasedSymbol<*>, ExpectActualCompatibility<*>> {
+    ): Map<FirBasedSymbol<*>, ExpectActualMatchingCompatibility> {
         val mapping = actualClass.asSymbol().fir.memberExpectForActual
         return mapping?.get(actualMember to expectClass) ?: emptyMap()
     }
