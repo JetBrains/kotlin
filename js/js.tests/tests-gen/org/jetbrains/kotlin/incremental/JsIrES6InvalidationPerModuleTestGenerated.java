@@ -410,6 +410,12 @@ public class JsIrES6InvalidationPerModuleTestGenerated extends AbstractJsIrES6In
     }
 
     @Test
+    @TestMetadata("multiPlatformClashFileNames")
+    public void testMultiPlatformClashFileNames() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/multiPlatformClashFileNames/");
+    }
+
+    @Test
     @TestMetadata("multiPlatformSimple")
     public void testMultiPlatformSimple() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/multiPlatformSimple/");
