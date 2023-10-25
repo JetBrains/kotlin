@@ -7,7 +7,7 @@ expect fun inMethod(@Ann arg: String)
 
 expect class InConstructor(@Ann arg: String)
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect fun withIncopatibility(@Ann p1: String, @Ann p2: String)<!>
+<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun withIncopatibility(@Ann p1: String, @Ann p2: String)<!>
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt

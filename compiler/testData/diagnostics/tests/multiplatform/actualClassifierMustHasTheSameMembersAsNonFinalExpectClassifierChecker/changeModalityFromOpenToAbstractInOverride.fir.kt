@@ -3,7 +3,7 @@
 interface Base {
     fun foo() {}
 }
-<!INCOMPATIBLE_MATCHING{JVM}, INCOMPATIBLE_MATCHING{JVM}!>expect abstract class Foo() : Base<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}, EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect abstract class Foo() : Base<!>
 
 
 // MODULE: m2-jvm()()(m1-common)

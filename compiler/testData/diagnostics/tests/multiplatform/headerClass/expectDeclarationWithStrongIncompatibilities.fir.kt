@@ -3,12 +3,12 @@
 // FILE: common.kt
 
 expect fun foo1(x: Int)
-<!INCOMPATIBLE_MATCHING{JVM}, INCOMPATIBLE_MATCHING{JVM}!>expect fun foo2(x: Int)<!>
+<!EXPECT_ACTUAL_MISMATCH{JVM}, EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun foo2(x: Int)<!>
 
 expect class NoArgConstructor()
 
-<!INCOMPATIBLE_MATCHING{JVM}!>expect fun foo3(): Int<!>
-<!INCOMPATIBLE_MATCHING{JVM}!>expect fun foo4(): Int<!>
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>expect fun foo3(): Int<!>
+<!EXPECT_ACTUAL_MISMATCH{JVM}!>expect fun foo4(): Int<!>
 
 // MODULE: m2-jvm()()(m1-common)
 

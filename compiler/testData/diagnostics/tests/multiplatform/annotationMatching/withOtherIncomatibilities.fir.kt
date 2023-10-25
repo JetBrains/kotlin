@@ -2,10 +2,10 @@
 // FILE: common.kt
 annotation class Ann
 
-<!INCOMPATIBLE_MATCHING{JVM}!>@Ann
+<!EXPECT_ACTUAL_INCOMPATIBILITY{JVM}!>@Ann
 expect inline fun hasWeakIncompatibility()<!>
 
-<!INCOMPATIBLE_MATCHING{JVM}, INCOMPATIBLE_MATCHING{JVM}!>@Ann
+<!EXPECT_ACTUAL_MISMATCH{JVM}, EXPECT_ACTUAL_MISMATCH{JVM}!>@Ann
 expect fun hasStrongIncompatibility(arg: Int)<!>
 
 expect fun hasStrongIncompatibility(arg: Double)
