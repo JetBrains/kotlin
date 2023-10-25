@@ -41,36 +41,37 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
     private val KotlinRepeatableAnnotation = birBuiltIns.findClass(StandardNames.FqNames.repeatable)!!
     private val JavaRepeatableAnnotation = birBuiltIns.findClass(JvmAnnotationNames.REPEATABLE_ANNOTATION)!!
 
-    private val annotatedElements = registerIndexKey<BirAnnotationContainerElement>(false) {
-        (it is BirFile || it is BirDeclaration) && it.annotations.isNotEmpty()
+    private val elementsWithMultipleAnnotations = registerIndexKey<BirAnnotationContainerElement>(false) {
+        (it is BirFile || it is BirDeclaration) && it.annotations.size >= 2
     }
-    private val repeatableAnnotationDeclarations = registerIndexKey<BirClass>(false) {
-        it.kind == ClassKind.ANNOTATION_CLASS &&
-                it.hasAnnotation(KotlinRepeatableAnnotation) &&
-                !it.hasAnnotation(JavaRepeatableAnnotation)
+    private val repeatedAnnotations = registerIndexKey<BirConstructorCall>(false) {
+        it.constructedClass == KotlinRepeatableAnnotation
     }
 
     private val repeatedAnnotationSyntheticContainerKey = BirElementDynamicPropertyKey<BirClass, BirClass>()
     private val repeatedAnnotationSyntheticContainerToken = acquireProperty(repeatedAnnotationSyntheticContainerKey)
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(annotatedElements).forEach { element ->
-            transformAnnotations(element.annotations)?.let {
+        compiledBir.getElementsWithIndex(elementsWithMultipleAnnotations).forEach { element ->
+            transformMultipleAnnotations(element.annotations)?.let {
                 element.annotations.clear()
                 element.annotations += it
             }
         }
 
-        compiledBir.getElementsWithIndex(repeatableAnnotationDeclarations).forEach { annotationClass ->
+        compiledBir.getElementsWithIndex(repeatedAnnotations).forEach { annotation ->
+            val annotationClass = annotation.parent as? BirClass ?: return@forEach
+            if (annotationClass.kind != ClassKind.ANNOTATION_CLASS) return@forEach
+            if (annotationClass.hasAnnotation(JavaRepeatableAnnotation)) return@forEach
+
             val repeatedAnnotationSyntheticContainer = createRepeatedAnnotationSyntheticContainer(annotationClass)
             annotationClass.declarations += repeatedAnnotationSyntheticContainer
             annotationClass[repeatedAnnotationSyntheticContainerToken] = repeatedAnnotationSyntheticContainer
         }
     }
 
-    private fun transformAnnotations(annotations: List<BirConstructorCall>): List<BirConstructorCall>? {
+    private fun transformMultipleAnnotations(annotations: List<BirConstructorCall>): List<BirConstructorCall>? {
         if (!generationState.classBuilderMode.generateBodies) return null
-        if (annotations.size < 2) return null
 
         val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.symbol.owner.constructedClass }
         if (annotationsByClass.values.none { it.size > 1 }) return null
