@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
@@ -230,9 +229,9 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
             context,
         )
         if (matched != null) {
-            AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstPotentialActuals(
+            AbstractExpectActualChecker.checkSingleExpectTopLevelDeclarationAgainstMatchedActual(
                 expectSymbol,
-                listOf(matched),
+                matched,
                 context,
             )
         }
