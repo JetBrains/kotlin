@@ -17,12 +17,12 @@ pluginManagement {
 ```
 
 Then in `build.gradle.kts`, enable the plugin.  Make sure that you also enable the Maven
-local respository here: it's necessary to find the standard library for the plugin.
+local repository here: it's necessary to find the standard library for the plugin.
 
 ```kotlin
 plugins {
-    id("org.jetbrains.kotlin.jvm") version "1.9.10"
-    id("org.jetbrains.kotlin.plugin.formver") version "1.9.255-SNAPSHOT"
+    id("org.jetbrains.kotlin.jvm") version "2.0.255-SNAPSHOT"
+    id("org.jetbrains.kotlin.plugin.formver") version "2.0.255-SNAPSHOT"
 }
 
 repositories {
@@ -31,7 +31,21 @@ repositories {
 }
 ```
 
-Command-line options can be enabled using the `formver` configuration block:
+Additionally, make sure you set Kotlin to use K2 and increase the stack size of the Kotlin Daemon:
+
+```kotlin
+kotlin {
+    compilerOptions {
+        languageVersion.set(KotlinVersion.KOTLIN_2_0)
+    }
+    // Set stack size to 30mb
+    kotlinDaemonJvmArgs = listOf("-Xss30m")
+}
+```
+
+#### Plugin configuration
+
+Plugin options can be enabled using the `formver` configuration block:
 
 ```kotlin
 formver {
@@ -41,6 +55,17 @@ formver {
 
 However, keep in mind that the Viper is dump is provided as an info message: this message will not be shown
 unless you run `gradle` with the `--info` flag.
+
+#### Annotations
+
+The plugin provides a number of annotations.
+To access these, add a dependency to `kotlin-formver-compiler-plugin.annotations`:
+
+```kotlin
+dependencies {
+    implementation("org.jetbrains.kotlin:kotlin-formver-compiler-plugin.annotations:2.0.255-SNAPSHOT")
+}
+```
 
 ### Running from the command line
 
@@ -53,7 +78,9 @@ dist/kotlinc/bin/kotlinc -language-version 2.0 -Xplugin=dist/kotlinc/lib/formver
 ```
 
 The plugin accepts a number of command line options which can be passed via `-P plugin:org.jetbrains.kotlin.formver:OPTION=SETTING`:
-- Option `log_level`: permitted values `only_warnings`, `full_viper_dump`.
+- Option `log_level`: permitted values `only_warnings`, `short_viper_dump`, `full_viper_dump` (default: `only_warnings`).
+- Options `conversion_targets_selection` and `verification_targets_selection`: permitted values `no_targets`, `targets_with_contract`, `all_targets` (default: `targets_with_contract`).
+- Option `unsupported_feature_behaviour`: permitted values `throw_exception`, `assume_unreachable` (default: `throw_exception`).
 
 ## Z3 dependency
 
