@@ -557,7 +557,6 @@ internal abstract class IrExpectActualMatchingContext(
         expectClass: RegularClassSymbolMarker,
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
-        checkClassScopesCompatibility: Boolean,
     ): Map<out DeclarationSymbolMarker, ExpectActualMatchingCompatibility> = error("Should not be called")
 
     // It's a stub, because not needed anywhere

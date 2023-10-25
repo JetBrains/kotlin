@@ -245,7 +245,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 AbstractExpectActualChecker.getClassifiersCompatibility(
                     expectSymbol,
                     actualSymbol,
-                    checkClassScopesCompatibility = true,
                     context,
                 )
             }
