@@ -333,7 +333,7 @@ object FirErrors {
     val EXPOSED_TYPE_PARAMETER_BOUND by error3<KtTypeReference, EffectiveVisibility, FirBasedSymbol<*>, EffectiveVisibility>()
 
     // Modifiers
-    val INAPPLICABLE_INFIX_MODIFIER by error0<PsiElement>()
+    val INAPPLICABLE_INFIX_MODIFIER by error0<PsiElement>(SourceElementPositioningStrategies.INFIX_MODIFIER)
     val REPEATED_MODIFIER by error1<PsiElement, KtModifierKeywordToken>()
     val REDUNDANT_MODIFIER by warning2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val DEPRECATED_MODIFIER by warning2<PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()

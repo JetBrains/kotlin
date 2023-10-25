@@ -473,6 +473,9 @@ object LightTreePositioningStrategies {
     val OPERATOR_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(KtTokens.OPERATOR_KEYWORD)
 
+    val INFIX_MODIFIER: LightTreePositioningStrategy =
+        ModifierSetBasedLightTreePositioningStrategy(KtTokens.INFIX_KEYWORD)
+
     val ENUM_MODIFIER: LightTreePositioningStrategy =
         ModifierSetBasedLightTreePositioningStrategy(KtTokens.ENUM_KEYWORD)
 

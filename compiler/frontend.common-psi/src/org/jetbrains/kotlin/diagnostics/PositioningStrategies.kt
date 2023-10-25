@@ -316,6 +316,10 @@ object PositioningStrategies {
         ModifierSetBasedPositioningStrategy(KtTokens.OPERATOR_KEYWORD)
 
     @JvmField
+    val INFIX_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(KtTokens.INFIX_KEYWORD)
+
+    @JvmField
     val ENUM_MODIFIER: PositioningStrategy<KtModifierListOwner> =
         ModifierSetBasedPositioningStrategy(KtTokens.ENUM_KEYWORD)
 

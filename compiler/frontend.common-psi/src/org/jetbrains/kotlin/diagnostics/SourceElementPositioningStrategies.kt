@@ -340,6 +340,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.OPERATOR_MODIFIER
     )
 
+    val INFIX_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.INFIX_MODIFIER,
+        PositioningStrategies.INFIX_MODIFIER
+    )
+
     val NON_FINAL_MODIFIER_OR_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.NON_FINAL_MODIFIER_OR_NAME,
         PositioningStrategies.NON_FINAL_MODIFIER_OR_NAME

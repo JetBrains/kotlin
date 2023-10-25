@@ -104,6 +104,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     LABEL,
     COMMAS,
     OPERATOR_MODIFIER,
+    INFIX_MODIFIER,
     NON_FINAL_MODIFIER_OR_NAME,
     ENUM_MODIFIER,
     FIELD_KEYWORD,

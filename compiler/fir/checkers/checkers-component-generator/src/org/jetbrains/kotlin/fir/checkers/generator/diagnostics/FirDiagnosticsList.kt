@@ -459,7 +459,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val MODIFIERS by object : DiagnosticGroup("Modifiers") {
-        val INAPPLICABLE_INFIX_MODIFIER by error<PsiElement>()
+        val INAPPLICABLE_INFIX_MODIFIER by error<PsiElement>(PositioningStrategy.INFIX_MODIFIER)
         val REPEATED_MODIFIER by error<PsiElement> {
             parameter<KtModifierKeywordToken>("modifier")
         }
