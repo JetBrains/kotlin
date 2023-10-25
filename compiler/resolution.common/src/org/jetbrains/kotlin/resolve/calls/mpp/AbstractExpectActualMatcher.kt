@@ -163,18 +163,8 @@ object AbstractExpectActualMatcher {
             return ExpectActualMatchingCompatibility.MatchedSuccessfully
         }
 
-        val annotationMode = expectContainingClass?.classKind == ClassKind.ANNOTATION_CLASS
-        return getCallablesMatchingIncompatibility(expectDeclaration, actualDeclaration, annotationMode, parentSubstitutor)
-            ?: ExpectActualMatchingCompatibility.MatchedSuccessfully
-    }
+        val insideAnnotationClass = expectContainingClass?.classKind == ClassKind.ANNOTATION_CLASS
 
-    context(ExpectActualMatchingContext<*>)
-    private fun getCallablesMatchingIncompatibility(
-        expectDeclaration: CallableSymbolMarker,
-        actualDeclaration: CallableSymbolMarker,
-        insideAnnotationClass: Boolean,
-        parentSubstitutor: TypeSubstitutorMarker?,
-    ): ExpectActualMatchingCompatibility.Mismatch? {
         if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
             return ExpectActualMatchingCompatibility.CallableKind
         }
@@ -221,7 +211,7 @@ object AbstractExpectActualMatcher {
             return ExpectActualMatchingCompatibility.FunctionTypeParameterUpperBounds
         }
 
-        return null
+        return ExpectActualMatchingCompatibility.MatchedSuccessfully
     }
 
     context(ExpectActualMatchingContext<*>)
