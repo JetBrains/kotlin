@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementBase
-import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.symbols.BirPackageFragmentSymbol
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -26,10 +25,6 @@ abstract class BirPackageFragment : BirElementBase(), BirDeclarationContainer,
     abstract override val descriptor: PackageFragmentDescriptor?
 
     abstract var packageFqName: FqName
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        declarations.acceptChildren(visitor, data)
-    }
 
     companion object
 }

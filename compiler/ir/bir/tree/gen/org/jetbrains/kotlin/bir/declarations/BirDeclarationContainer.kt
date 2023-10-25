@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElementVisitor
 
 /**
  * A non-leaf IR tree element.
@@ -18,10 +17,6 @@ import org.jetbrains.kotlin.bir.BirElementVisitor
  */
 interface BirDeclarationContainer : BirDeclarationParent {
     val declarations: BirChildElementList<BirDeclaration>
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        declarations.acceptChildren(visitor, data)
-    }
 
     companion object
 }

@@ -9,7 +9,6 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
@@ -22,10 +21,6 @@ abstract class BirContainerExpression : BirExpression(), BirStatementContainer {
     abstract var origin: IrStatementOrigin?
 
     abstract override val statements: BirChildElementList<BirStatement>
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        statements.acceptChildren(visitor, data)
-    }
 
     companion object
 }

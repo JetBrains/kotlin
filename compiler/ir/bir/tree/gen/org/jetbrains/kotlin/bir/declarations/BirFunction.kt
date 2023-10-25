@@ -9,8 +9,6 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirBody
 import org.jetbrains.kotlin.bir.symbols.BirFunctionSymbol
 import org.jetbrains.kotlin.bir.types.BirType
@@ -44,14 +42,6 @@ interface BirFunction : BirDeclaration, BirPossiblyExternalDeclaration,
     var contextReceiverParametersCount: Int
 
     var body: BirBody?
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        typeParameters.acceptChildren(visitor, data)
-        dispatchReceiverParameter?.accept(data, visitor)
-        extensionReceiverParameter?.accept(data, visitor)
-        valueParameters.acceptChildren(visitor, data)
-        body?.accept(data, visitor)
-    }
 
     companion object
 }

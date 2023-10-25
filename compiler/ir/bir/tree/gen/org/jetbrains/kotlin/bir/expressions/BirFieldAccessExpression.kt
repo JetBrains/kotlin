@@ -8,8 +8,6 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElementVisitor
-import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirFieldSymbol
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -27,10 +25,6 @@ abstract class BirFieldAccessExpression : BirDeclarationReference() {
     abstract var receiver: BirExpression?
 
     abstract var origin: IrStatementOrigin?
-
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        receiver?.accept(data, visitor)
-    }
 
     companion object
 }
