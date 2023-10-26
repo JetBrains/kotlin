@@ -259,7 +259,7 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         invokePhaseMeasuringTime(profile, "!BIR - applyNewRegisteredIndices") {
             compiledBir.applyNewRegisteredIndices()
         }
-        repeat(10) {
+        repeat(1) {
             invokePhaseMeasuringTime(profile, "!BIR - baseline tree traversal") {
                 input.birModule.countAllDescendants()
             }
@@ -267,7 +267,7 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
             invokePhaseMeasuringTime(profile, "!BIR - reindexAllElements") {
                 compiledBir.reindexAllElements()
             }
-            Thread.sleep(100)
+            //Thread.sleep(100)
         }
         //exitProcess(0)
 
