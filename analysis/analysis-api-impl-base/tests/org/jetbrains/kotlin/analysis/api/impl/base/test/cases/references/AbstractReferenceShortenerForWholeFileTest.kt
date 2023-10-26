@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
-import org.jetbrains.kotlin.analysis.api.components.ShortenOption
+import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.ShorteningResultsRenderer.renderShorteningResults
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
@@ -20,7 +20,7 @@ abstract class AbstractReferenceShortenerForWholeFileTest : AbstractAnalysisApiB
 
         val shortenings = executeOnPooledThreadInReadAction {
             analyseForTest(file) {
-                ShortenOption.values().map { option ->
+                ShortenStrategy.values().map { option ->
                     val shorteningsForOption = collectPossibleReferenceShortenings(file, file.textRange, { option }, { option })
 
                     Pair(option.name, shorteningsForOption)
