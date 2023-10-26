@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 
-class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMultiArtifactCache<JsPerModuleCache.CachedModuleInfo>() {
+class JsPerModuleCache(
+    private val moduleKind: ModuleKind,
+    private val moduleArtifacts: List<ModuleArtifact>
+) : JsMultiArtifactCache<JsPerModuleCache.CachedModuleInfo>() {
     companion object {
         private const val JS_MODULE_HEADER = "js.module.header.bin"
         private const val CACHED_MODULE_JS = "module.js"
@@ -73,8 +77,15 @@ class JsPerModuleCache(private val moduleArtifacts: List<ModuleArtifact>) : JsMu
         } ?: compilationOutputs
 
     override fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {
+        val mainModule = moduleArtifacts.last()
         return moduleArtifacts.map { artifact ->
-            fun loadModuleInfo() = CachedModuleInfo(artifact, artifact.loadJsIrModule().makeModuleHeader())
+            fun loadModuleInfo() = CachedModuleInfo(
+                artifact,
+                artifact
+                    .loadJsIrModule(mainModule.moduleSafeName.takeIf { moduleKind !== ModuleKind.ES && artifact !== mainModule })
+                    .makeModuleHeader()
+            )
+
             val actualInfo = when {
                 artifact.forceRebuildJs -> loadModuleInfo()
                 artifact.fileArtifacts.any { it.isModified() } -> loadModuleInfo()

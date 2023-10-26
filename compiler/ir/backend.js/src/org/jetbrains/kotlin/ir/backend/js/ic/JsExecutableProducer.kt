@@ -29,7 +29,7 @@ class JsExecutableProducer(
     fun buildExecutable(granularity: JsGenerationGranularity, outJsProgram: Boolean) =
         when (granularity) {
             JsGenerationGranularity.WHOLE_PROGRAM -> buildSingleModuleExecutable(outJsProgram)
-            JsGenerationGranularity.PER_MODULE -> buildMultiArtifactExecutable(outJsProgram, JsPerModuleCache(caches))
+            JsGenerationGranularity.PER_MODULE -> buildMultiArtifactExecutable(outJsProgram, JsPerModuleCache(moduleKind, caches))
             JsGenerationGranularity.PER_FILE -> buildMultiArtifactExecutable(outJsProgram, JsPerFileCache(caches))
         }
 

@@ -32,11 +32,11 @@ class ModuleArtifact(
     val moduleSafeName = moduleName.safeModuleName
     val moduleExternalName = externalModuleName ?: moduleSafeName
 
-    fun loadJsIrModule(): JsIrModule {
+    fun loadJsIrModule(reexportedInModuleWithName: String? = null): JsIrModule {
         val fragments = fileArtifacts.sortedBy { it.srcFilePath }.flatMap {
             val fragments = it.loadJsIrFragments()
             listOfNotNull(fragments?.mainFragment, fragments?.exportFragment)
         }
-        return JsIrModule(moduleSafeName, moduleExternalName, fragments)
+        return JsIrModule(moduleSafeName, moduleExternalName, fragments, reexportedInModuleWithName)
     }
 }
