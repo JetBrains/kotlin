@@ -15,6 +15,7 @@ import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.parser.Tokens
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.JCTree.*
+import com.sun.tools.javac.tree.TreeMaker
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
@@ -84,6 +85,8 @@ internal class Kapt4StubGenerator {
         private val JAVA_KEYWORDS = Tokens.TokenKind.values()
             .filter { JAVA_KEYWORD_FILTER_REGEX.matches(it.toString().orEmpty()) }
             .mapTo(hashSetOf(), Any::toString)
+
+        private val treeMakerImportMethod = TreeMaker::class.java.declaredMethods.single { it.name == "Import" }
     }
 
     private val strictMode = options[KaptFlag.STRICT]
@@ -260,13 +263,15 @@ internal class Kapt4StubGenerator {
             if (!isValidQualifiedName(importedFqName)) continue
             val importedExpr = treeMaker.FqName(importedFqName.asString())
             imports += if (importDirective.isAllUnder) {
-                treeMaker.Import(treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false)
+                treeMakerImportMethod.invoke(
+                    treeMaker, treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false
+                ) as JCImport
             } else {
                 if (!importedShortNames.add(importedFqName.shortName().asString())) {
                     continue
                 }
 
-                treeMaker.Import(importedExpr, false)
+                treeMakerImportMethod.invoke(treeMaker, importedExpr, false) as JCImport
             }
         }
 

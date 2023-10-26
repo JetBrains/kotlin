@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt3.base.javac
 
 import com.sun.tools.javac.tree.JCTree
+import com.sun.tools.javac.tree.JCTree.JCImport
 import com.sun.tools.javac.util.*
 import com.sun.tools.javac.util.JCDiagnostic.DiagnosticType
 import org.jetbrains.kotlin.kapt3.base.KaptContext
@@ -54,6 +55,8 @@ class KaptJavaLog(
         get() = _reportedDiagnostics
 
     private val _reportedDiagnostics = mutableListOf<JCDiagnostic>()
+
+    private val jcImportQualidField = JCImport::class.java.declaredFields.single { it.name == "qualid" }
 
     override fun flush(kind: WriterKind?) {
         super.flush(kind)
@@ -197,7 +200,7 @@ class KaptJavaLog(
         val visitor = object : JCTree.Visitor() {
             override fun visitImport(that: JCTree.JCImport) {
                 super.visitImport(that)
-                if (!found) that.qualid.accept(this)
+                if (!found) (jcImportQualidField.get(that) as JCTree).accept(this)
             }
 
             override fun visitSelect(that: JCTree.JCFieldAccess) {
