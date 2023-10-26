@@ -42,7 +42,7 @@ class BirRepeatedAnnotationLowering : BirLoweringPhase() {
     private val JavaRepeatableAnnotation = birBuiltIns.findClass(JvmAnnotationNames.REPEATABLE_ANNOTATION)!!
 
     private val elementsWithMultipleAnnotations = registerIndexKey<BirAnnotationContainerElement>(false) {
-        (it is BirFile || it is BirDeclaration) && it.annotations.size >= 2
+        it.annotations.size >= 2
     }
     private val repeatedAnnotations = registerIndexKey<BirConstructorCall>(false) {
         it.constructedClass == KotlinRepeatableAnnotation
