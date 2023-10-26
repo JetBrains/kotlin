@@ -6,13 +6,16 @@ fun <T : Any> test2() = T::class
 val <T> <!KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE!>test3<!> = T::class
 val <T> <!KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE!>test4<!> get() = T::class
 
-fun <T> test5() = listOf(T::class)
+fun <T> <!KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE!>test5<!>() = listOf(T::class)
 
 fun <T> test6(): kotlin.reflect.KClass<<!UPPER_BOUND_VIOLATED!>T<!>> = T::class
 fun <T> test7(): kotlin.reflect.KClass<*> = T::class
 fun test8() = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
 
 fun <T> test9() where T : Any?, T : Comparable<T> = T::class
+
+fun <T, K> mapOf(e: T, b: K): Map<T, K> = null!!
+fun <T, K> <!KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE!>test10<!>() = mapOf(T::class, K::class)
 
 fun <T> listOf(e: T): List<T> = null!!
 

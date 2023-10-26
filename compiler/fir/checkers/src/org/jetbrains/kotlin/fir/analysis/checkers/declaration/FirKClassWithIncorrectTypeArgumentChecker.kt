@@ -29,12 +29,21 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
-        val returnType = declaration.returnTypeRef.coneType
-        if (!returnType.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext)) return
+        val typeArgumentsWithWrongType = mutableListOf<ConeKotlinType>()
 
-        val typeArgument = (returnType.typeArguments[0] as ConeKotlinTypeProjection).type
-        typeArgument.typeParameterFromError?.let {
-            reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, it, context)
+        val returnType = declaration.returnTypeRef.coneType
+        if (returnType.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext)) typeArgumentsWithWrongType.add(returnType)
+
+        returnType.typeArguments.forEach {
+            val type = it.type ?: return@forEach
+            if (type.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext))
+                typeArgumentsWithWrongType.add(type)
+        }
+
+        if (typeArgumentsWithWrongType.isEmpty()) return
+        typeArgumentsWithWrongType.forEach {
+            val typeParameterFromError = (it.typeArguments[0] as? ConeKotlinTypeProjection)?.type?.typeParameterFromError ?: return@forEach
+            reporter.reportOn(source, FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE, typeParameterFromError, context)
         }
     }
 
