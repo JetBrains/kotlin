@@ -340,7 +340,7 @@ public class KotlinStaticDeclarationProviderFactory(
                     && file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION -> {
                 builtInDecompiler.stubBuilder
             }
-
+            fileType == KlibMetaFileType -> K2KotlinNativeMetadataDecompiler().stubBuilder
             else -> return null
         }
         return stubBuilder.buildFileStub(fileContent) as? KotlinFileStubImpl

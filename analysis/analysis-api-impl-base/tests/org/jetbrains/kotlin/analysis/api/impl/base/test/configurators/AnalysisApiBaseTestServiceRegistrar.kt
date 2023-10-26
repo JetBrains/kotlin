@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetim
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
+import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInDefinitionFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
@@ -104,5 +105,6 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, "kotlin_builtins")
         testServices.environmentManager.getApplicationEnvironment().registerFileType(KotlinBuiltInFileType, "kotlin_metadata")
+        testServices.environmentManager.getApplicationEnvironment().registerFileType(KlibMetaFileType, "knm")
     }
 }
