@@ -1,0 +1,4 @@
+FILE: test.kt
+    public final fun test(): R|java/util/HashMap<kotlin/String, kotlin/String>| {
+        ^test R|java/util/HashMap.HashMap|<R|kotlin/String|, R|kotlin/String|>()
+    }

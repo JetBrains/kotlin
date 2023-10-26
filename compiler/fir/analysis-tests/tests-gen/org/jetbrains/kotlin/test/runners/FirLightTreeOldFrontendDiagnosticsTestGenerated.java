@@ -42629,6 +42629,22 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             public void testSameNameClassesFromSupertypes() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/sameNameClassesFromSupertypes.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences")
+            @TestDataPath("$PROJECT_ROOT")
+            public class AmbiguousTypeReferences {
+                @Test
+                public void testAllFilesPresentInAmbiguousTypeReferences() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("constructorCase.kt")
+                public void testConstructorCase() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/constructorCase.kt");
+                }
+            }
         }
 
         @Nested
