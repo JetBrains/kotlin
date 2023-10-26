@@ -25,7 +25,7 @@ external interface GoodInterface
 
 @JsExport
 interface InterfaceWithCompanion {
-    companion <!WRONG_EXPORTED_DECLARATION("companion object inside exported interface")!>object<!> {
+    companion object {
         fun foo() = 42
     }
 }
