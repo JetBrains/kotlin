@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.codegen.configureModernJavaTest
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
@@ -47,9 +48,9 @@ class SerializationRuntimeClasspathJvmProvider(testServices: TestServices) : Run
     }
 }
 
-class SerializationRuntimeClasspathJsProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
+class SerializationRuntimeClasspathJsProvider(testServices: TestServices) : RuntimeClasspathJsProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        return listOf(
+        return super.runtimeClassPaths(module) + listOf(
             File(System.getProperty("serialization.core.path")!!),
             File(System.getProperty("serialization.json.path")!!),
         )

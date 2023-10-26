@@ -53,22 +53,6 @@ FILE: enums.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<WithNames>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|WithNames|): R|kotlin/Unit|
-
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|WithNames|
-
-            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
-                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
-
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
-
-            private constructor(): R|WithNames.$serializer| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
     }
     @R|kotlinx/serialization/Serializable|() public final class Holder : R|kotlin/Any| {
         public constructor(p: R|Plain|, w: R|WithNames|): R|Holder| {

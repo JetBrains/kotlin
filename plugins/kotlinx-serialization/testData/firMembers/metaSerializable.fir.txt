@@ -378,22 +378,6 @@ FILE: metaSerializable.kt
 
         }
 
-        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<TestEnum>| {
-            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|TestEnum|): R|kotlin/Unit|
-
-            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|TestEnum|
-
-            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
-                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
-
-            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
-
-            private constructor(): R|TestEnum.$serializer| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
     }
     @R|MySerializableWithInfo|(value = Int(123), kclass = <getClass>(Q|kotlin/String|)) public final object TestObject : R|kotlin/Any| {
         private constructor(): R|TestObject| {

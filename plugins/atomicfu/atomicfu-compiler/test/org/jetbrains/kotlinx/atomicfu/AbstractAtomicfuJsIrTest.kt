@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.atomicfu.compiler.extensions.AtomicfuLoweringExtension
@@ -41,8 +42,8 @@ class AtomicfuEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
 class AtomicfuJsRuntimeClasspathProvider(
     testServices: TestServices
-) : RuntimeClasspathProvider(testServices) {
+) : RuntimeClasspathJsProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        return listOf(atomicfuJsCompileDependency, atomicfuJsIrRuntime).map { File(it) }
+        return super.runtimeClassPaths(module) + listOf(atomicfuJsCompileDependency, atomicfuJsIrRuntime).map { File(it) }
     }
 }
