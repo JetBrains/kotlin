@@ -22,13 +22,14 @@ data class WhenEntry(
     val shouldBindSubject: Boolean = false,
 ) {
     fun toFirWhenCondition(): FirExpression {
-        require(conditions.isNotEmpty())
-        return buildBalancedOrExpressionTree(conditions).guardedBy(guard)
+        require(conditions.isNotEmpty() || guard != null)
+        return toFirWhenConditionWithoutSubject()
     }
 
     fun toFirWhenConditionWithoutSubject(): FirExpression {
-        return when (conditions.size) {
-            0 -> buildErrorExpression(null, ConeSyntaxDiagnostic("No expression in condition with expression"))
+        return when {
+            conditions.isEmpty() ->
+                guard ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No expression in condition with expression"))
             else -> buildBalancedOrExpressionTree(conditions).guardedBy(guard)
         }
     }

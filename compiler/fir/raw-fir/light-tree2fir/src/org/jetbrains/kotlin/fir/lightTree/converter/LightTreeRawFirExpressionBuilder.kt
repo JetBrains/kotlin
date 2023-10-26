@@ -871,7 +871,7 @@ class LightTreeRawFirExpressionBuilder(
             }
         }
 
-        return WhenEntry(conditions, guard, firBlock, whenEntry, isElse, shouldBindSubject)
+        return WhenEntry(conditions, guard, firBlock, whenEntry, isElse && guard == null, shouldBindSubject)
     }
 
     private fun convertWhenConditionExpression(

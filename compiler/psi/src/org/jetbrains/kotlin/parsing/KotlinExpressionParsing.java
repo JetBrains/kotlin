@@ -910,6 +910,10 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (at(ELSE_KEYWORD)) {
             advance(); // ELSE_KEYWORD
 
+            if(at(IF_KEYWORD)) {
+                parseWhenEntryGuard();
+            }
+
             if (!at(ARROW)) {
                 errorUntil("Expecting '->'", TokenSet.create(ARROW, LBRACE, RBRACE, EOL_OR_SEMICOLON));
             }
