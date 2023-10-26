@@ -78,7 +78,7 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
         get() = dir.resolve(DIST_FOLDER)
 
     val main: String
-        get() = "$DIST_FOLDER${File.separator}$name$extension"
+        get() = "${DIST_FOLDER}/$name$extension"
 
     val publicPackageJsonTaskName: String
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
