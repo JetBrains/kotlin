@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
+import org.jetbrains.kotlin.bir.backend.builders.BirConst
+import org.jetbrains.kotlin.bir.backend.builders.build
+import org.jetbrains.kotlin.bir.backend.builders.setCall
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
-import org.jetbrains.kotlin.bir.backend.utils.int
-import org.jetbrains.kotlin.bir.builders.build
-import org.jetbrains.kotlin.bir.builders.setCall
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.BirSimpleFunctionImpl
 import org.jetbrains.kotlin.bir.expressions.BirCall
-import org.jetbrains.kotlin.bir.expressions.BirConst
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.impl.*
 import org.jetbrains.kotlin.bir.get
@@ -212,7 +211,7 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
                     emptyList(),
                     0
                 ).apply {
-                    valueArguments += BirConst.int(value = 0)
+                    valueArguments += BirConst(0)
                 }
 
                 if (args != null) {
