@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.ConeTypeCompatibilityChecker.isCompatible
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
@@ -96,36 +98,7 @@ internal class KtFirTypeProvider(
     }
 
     override fun getKtType(ktTypeReference: KtTypeReference): KtType {
-        val parent = ktTypeReference.parent
-        val fir = when {
-            parent is KtParameter && parent.ownerFunction != null && parent.typeReference === ktTypeReference -> parent.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(
-                firResolveSession, FirResolvePhase.TYPES
-            )?.fir?.returnTypeRef
-            parent is KtCallableDeclaration && (parent is KtNamedFunction || parent is KtProperty) && (parent.receiverTypeReference === ktTypeReference || parent.typeReference === ktTypeReference) -> {
-                val firCallable = parent.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
-                    firResolveSession, FirResolvePhase.TYPES
-                )?.fir
-                if (parent.receiverTypeReference === ktTypeReference) firCallable?.receiverParameter?.typeRef else firCallable?.returnTypeRef
-            }
-            parent is KtConstructorCalleeExpression && parent.parent is KtAnnotationEntry -> {
-                fun FirMemberDeclaration.findAnnotationTypeRef(annotationEntry: KtAnnotationEntry) = annotations.find {
-                    it.psi === annotationEntry
-                }?.annotationTypeRef
-
-                val annotationEntry = parent.parent as KtAnnotationEntry
-                val firDeclaration = getFirDeclaration(annotationEntry, ktTypeReference)
-                if (firDeclaration != null) {
-                    firDeclaration.findAnnotationTypeRef(annotationEntry) ?: (firDeclaration as? FirProperty)?.run {
-                        backingField?.findAnnotationTypeRef(annotationEntry)
-                            ?: getter?.findAnnotationTypeRef(annotationEntry)
-                            ?: setter?.findAnnotationTypeRef(annotationEntry)
-                    }
-                } else {
-                    ktTypeReference.getOrBuildFir(firResolveSession)
-                }
-            }
-            else -> ktTypeReference.getOrBuildFir(firResolveSession)
-        }
+        val fir = ktTypeReference.getFirBySymbols() ?: ktTypeReference.getOrBuildFirOfType<FirElement>(firResolveSession)
         return when (fir) {
             is FirResolvedTypeRef -> fir.coneType.asKtType()
             is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKtType()
@@ -139,23 +112,62 @@ internal class KtFirTypeProvider(
         }
     }
 
-    private fun getFirDeclaration(annotationEntry: KtAnnotationEntry, ktTypeReference: KtTypeReference): FirMemberDeclaration? {
-        if (annotationEntry.typeReference !== ktTypeReference) return null
-        val declaration = annotationEntry.parent?.parent as? KtNamedDeclaration ?: return null
+    /**
+     * Try to get fir element for type reference through symbols.
+     * When the type is declared in compiled code this is faster than building FIR from decompiled text.
+     */
+    private fun KtTypeReference.getFirBySymbols(): FirElement? {
+        val parent = parent
         return when {
-            declaration is KtClassOrObject -> declaration.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(
-                firResolveSession, FirResolvePhase.TYPES
-            )?.fir
-            declaration is KtParameter && declaration.ownerFunction != null ->
-                declaration.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(
+            parent is KtParameter && parent.ownerFunction != null && parent.typeReference === this ->
+                parent.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(firResolveSession, FirResolvePhase.TYPES)?.fir?.returnTypeRef
+
+            parent is KtCallableDeclaration && (parent is KtNamedFunction || parent is KtProperty)
+                    && (parent.receiverTypeReference === this || parent.typeReference === this) -> {
+                val firCallable = parent.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
                     firResolveSession, FirResolvePhase.TYPES
                 )?.fir
-            declaration is KtCallableDeclaration && (declaration is KtNamedFunction || declaration is KtProperty) -> {
-                declaration.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
-                    firResolveSession, FirResolvePhase.TYPES
-                )?.fir
+                if (parent.receiverTypeReference === this) {
+                    firCallable?.receiverParameter?.typeRef
+                } else firCallable?.returnTypeRef
             }
-            else -> return null
+
+            parent is KtConstructorCalleeExpression && parent.parent is KtAnnotationEntry -> {
+                fun getFirDeclaration(annotationEntry: KtAnnotationEntry, ktTypeReference: KtTypeReference): FirMemberDeclaration? {
+                    if (annotationEntry.typeReference !== ktTypeReference) return null
+                    val declaration = annotationEntry.parent?.parent as? KtNamedDeclaration ?: return null
+                    return when {
+                        declaration is KtClassOrObject -> declaration.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(
+                            firResolveSession, FirResolvePhase.TYPES
+                        )?.fir
+                        declaration is KtParameter && declaration.ownerFunction != null ->
+                            declaration.resolveToFirSymbolOfTypeSafe<FirValueParameterSymbol>(
+                                firResolveSession, FirResolvePhase.TYPES
+                            )?.fir
+                        declaration is KtCallableDeclaration && (declaration is KtNamedFunction || declaration is KtProperty) -> {
+                            declaration.resolveToFirSymbolOfTypeSafe<FirCallableSymbol<*>>(
+                                firResolveSession, FirResolvePhase.TYPES
+                            )?.fir
+                        }
+                        else -> return null
+                    }
+                }
+
+                fun FirMemberDeclaration.findAnnotationTypeRef(annotationEntry: KtAnnotationEntry) = annotations.find {
+                    it.psi === annotationEntry
+                }?.annotationTypeRef
+
+                val annotationEntry = parent.parent as KtAnnotationEntry
+                val firDeclaration = getFirDeclaration(annotationEntry, this)
+                if (firDeclaration != null) {
+                    firDeclaration.findAnnotationTypeRef(annotationEntry) ?: (firDeclaration as? FirProperty)?.run {
+                        backingField?.findAnnotationTypeRef(annotationEntry)
+                            ?: getter?.findAnnotationTypeRef(annotationEntry)
+                            ?: setter?.findAnnotationTypeRef(annotationEntry)
+                    }
+                } else null
+            }
+            else -> null
         }
     }
 
