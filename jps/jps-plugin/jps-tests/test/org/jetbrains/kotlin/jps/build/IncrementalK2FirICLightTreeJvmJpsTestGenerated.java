@@ -252,6 +252,11 @@ public class IncrementalK2FirICLightTreeJvmJpsTestGenerated extends AbstractIncr
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/functionReferencingClass/");
         }
 
+        @TestMetadata("genericContextReceiver")
+        public void testGenericContextReceiver() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/genericContextReceiver/");
+        }
+
         @TestMetadata("independentClasses")
         public void testIndependentClasses() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/independentClasses/");

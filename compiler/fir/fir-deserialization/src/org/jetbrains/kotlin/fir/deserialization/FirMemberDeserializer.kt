@@ -468,7 +468,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 else -> null
             }
 
-            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
+            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) { loadContextReceiver(it, local) }
         }.apply {
             initializer?.replaceConeTypeOrNull(returnTypeRef.type)
             this.versionRequirements = versionRequirements
@@ -479,8 +479,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
-    private fun loadContextReceiver(proto: ProtoBuf.Type): FirContextReceiver {
-        val typeRef = proto.toTypeRef(c)
+    private fun loadContextReceiver(proto: ProtoBuf.Type, context: FirDeserializationContext): FirContextReceiver {
+        val typeRef = proto.toTypeRef(context)
         return buildContextReceiver {
             val type = typeRef.coneType
             this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
@@ -489,7 +489,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     }
 
     internal fun createContextReceiversForClass(classProto: ProtoBuf.Class): List<FirContextReceiver> =
-        classProto.contextReceiverTypes(c.typeTable).map(::loadContextReceiver)
+        classProto.contextReceiverTypes(c.typeTable).map { loadContextReceiver(it, c) }
 
     fun loadFunction(
         proto: ProtoBuf.Function,
@@ -559,7 +559,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false, versionRequirements)
             this.containerSource = c.containerSource
 
-            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)
+            proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers) { loadContextReceiver(it, local) }
         }.apply {
             this.versionRequirements = versionRequirements
             setLazyPublishedVisibility(c.session)
