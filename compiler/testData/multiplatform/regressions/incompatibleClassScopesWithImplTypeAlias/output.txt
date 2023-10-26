@@ -11,8 +11,6 @@ compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeA
 
     The following declaration is incompatible because visibility is different:
         constructor(): Writer
-    The following declaration is incompatible because number of value parameters is different:
-        constructor(p0: Any!): Writer
 
 actual typealias Writer = java.io.Writer
                  ^
