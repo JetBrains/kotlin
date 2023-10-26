@@ -1,6 +1,9 @@
 // IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE, WASM
 // !LANGUAGE: +MultiPlatformProjects
 
+// Ignore until KT-62926 is fixed
+// IGNORE_BACKEND_K2: ANY
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: commonMain.kt
