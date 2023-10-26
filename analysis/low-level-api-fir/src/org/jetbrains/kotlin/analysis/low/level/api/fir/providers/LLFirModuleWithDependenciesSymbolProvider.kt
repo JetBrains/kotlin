@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubDeserializedBuiltInsContainerSource
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
@@ -182,7 +183,14 @@ internal class LLFirDependenciesSymbolProvider(
     }
 
     private fun FirCallableSymbol<*>.jvmClassName(): JvmClassName? {
-        val jvmPackagePartSource = fir.containerSource as? FacadeClassSource ?: return null
-        return jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
+        val containerSource = fir.containerSource
+
+        return when (containerSource) {
+            is JvmStubDeserializedBuiltInsContainerSource -> containerSource.facadeClassName
+
+            is FacadeClassSource -> containerSource.facadeClassName ?: containerSource.className
+
+            else -> null
+        }
     }
 }
