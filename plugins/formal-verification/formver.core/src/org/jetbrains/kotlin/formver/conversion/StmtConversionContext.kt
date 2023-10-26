@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
+import org.jetbrains.kotlin.formver.linearization.SeqnBuildContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.formver.viper.ast.Stmt

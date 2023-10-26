@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.*
+import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
