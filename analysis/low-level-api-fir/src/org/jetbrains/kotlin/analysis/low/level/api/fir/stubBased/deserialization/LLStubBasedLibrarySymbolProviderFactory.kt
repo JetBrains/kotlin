@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtFile
 
 @LLFirInternals
 class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
@@ -107,7 +108,6 @@ private class StubBasedBuiltInsSymbolProvider(
     kotlinScopeProvider,
     project,
     createBuiltInsScope(project),
-    FirDeclarationOrigin.BuiltIns
 ) {
     private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
         session,
@@ -118,6 +118,11 @@ private class StubBasedBuiltInsSymbolProvider(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return super.getClassLikeSymbolByClassId(classId)
             ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
+    }
+
+    override fun getDeclarationOriginFor(file: KtFile): FirDeclarationOrigin {
+        // this provider operates only on builtins files, no need to check anything
+        return FirDeclarationOrigin.BuiltIns
     }
 }
 
