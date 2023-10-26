@@ -17,4 +17,4 @@ fun test() =
     // Ok in both K1 & K2.
     // K1 resolves this to kotlin.collections.HashMap.
     // K2 resolves this to java.util.HashMap
-    <!DEBUG_INFO_CALL("fqName: kotlin.collections.HashMap.<init>; typeCall: function")!>HashMap<String, String>()<!>
+    <!DEBUG_INFO_CALL("fqName: java.util.HashMap.HashMap; typeCall: function")!>HashMap<String, String>()<!>
