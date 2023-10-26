@@ -40,6 +40,25 @@ abstract class BirLoweringPhase {
     }
 
 
+    protected inline fun <reified E : BirElement> registerBackReferencesKey(
+        crossinline block: context(BirElementBackReferenceRecorderScope) (E) -> Unit,
+    ): BirElementBackReferencesKey<E> = registerBackReferencesKey<E>(object : BirElementBackReferenceRecorder {
+        context(BirElementBackReferenceRecorderScope)
+        override fun recordBackReferences(element: BirElementBase) {
+            block(this@BirElementBackReferenceRecorderScope, element as E)
+        }
+    }, E::class.java)
+
+    protected fun <E : BirElement> registerBackReferencesKey(
+        block: BirElementBackReferenceRecorder,
+        elementClass: Class<*>,
+    ): BirElementBackReferencesKey<E> {
+        val key = BirElementBackReferencesKey<E>(block, elementClass)
+        compiledBir.registerElementBackReferencesKey(key)
+        return key
+    }
+
+
     protected fun <E : BirElement, T> acquireProperty(property: BirElementDynamicPropertyKey<E, T>): BirElementDynamicPropertyToken<E, T> {
         return dynamicPropertyManager.acquireProperty(property)
     }
