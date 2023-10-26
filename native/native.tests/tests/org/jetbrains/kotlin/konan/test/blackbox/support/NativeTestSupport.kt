@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox.support
 
+import com.google.common.util.concurrent.AtomicDouble
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
@@ -605,4 +606,37 @@ private object NativeTestSupport {
 
     private inline fun <reified T : Any> ExtensionContext.testClassKeyFor(): String =
         enclosingTestClass.name + "#" + T::class.java.name
+}
+
+val cumulativeCompileTime = AtomicDouble(0.0)
+var cumulativeCompileTimeNonAtomic = 0.0
+val cumulativeLock = "cumulativeLock"
+val globalPhaseTimes = mutableMapOf<String, Double>()
+
+fun updateCumulativeCompileTime(inc: Double) {
+    synchronized(cumulativeLock) {
+        println("updateCumulativeCompileTime START inc=$inc cur=$cumulativeCompileTime, curNA=$cumulativeCompileTimeNonAtomic")
+        val oldc = cumulativeCompileTime.getAndAdd(inc)
+        cumulativeCompileTimeNonAtomic += inc
+        println("updateCumulativeCompileTime END.. inc=$inc old=$oldc, new=$cumulativeCompileTime curNA=$cumulativeCompileTimeNonAtomic")
+    }
+}
+
+//@AfterAll
+//public static void cleanUp(){
+//    System.out.println("After All cleanUp() method called");
+//    printCumulativeCompileTime();
+//}
+
+// to run it, add above code to FirNativeCodegenBoxTestGenerated
+fun printCumulativeCompileTime() {
+    println("cumulativeCompileTime=$cumulativeCompileTime")
+    println("cumulativeCompileTimeNonAtomic=$cumulativeCompileTimeNonAtomic")
+
+    val toList = globalPhaseTimes.toList()
+    println("MachineryTiming.phaseTimes toList size=${toList.size} $toList")
+    val total = toList.filter { !it.first.contains(".") }.map { it.second.toString().toDouble() }.sum()
+    val sorted = toList.sortedBy { -it.second.toString().toDouble() }
+    println("MachineryTiming.phaseTimes total=$total sorted size=${sorted.size} $sorted")
+    println("MachineryTiming.phaseTimes total=$total sorted size=${sorted.size} ${sorted.map { it.first to it.second.toString().toDouble()/total}}")
 }

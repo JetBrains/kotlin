@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
 import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
 import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentModuleGenerator
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.MachineryTiming
 import org.jetbrains.kotlin.utils.SmartList
 
 fun interface Psi2IrPostprocessingStep {
@@ -87,27 +88,44 @@ class Psi2IrTranslator(
         fragmentInfo: EvaluatorFragmentInfo? = null
     ): IrModuleFragment {
 
+        val startTime = System.nanoTime()
         val moduleGenerator = fragmentInfo?.let {
             FragmentModuleGenerator(context, it)
         } ?: ModuleGenerator(context)
 
         val irModule = moduleGenerator.generateModuleFragment(ktFiles)
+        val time1 = System.nanoTime()
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.", time1 - startTime)
 
         val deserializers = irProviders.filterIsInstance<IrDeserializer>()
         deserializers.forEach { it.init(irModule, linkerExtensions) }
+        val time2 = System.nanoTime()
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.deserializers.init", time2 - time1)
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+        val time3 = System.nanoTime()
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.generateUnboundSymbolsAsDependencies", time3 - time2)
 
         deserializers.forEach { it.postProcess(inOrAfterLinkageStep = true) }
+        val time4 = System.nanoTime()
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.deserializers.postprocess", time4 - time3)
         context.checkNoUnboundSymbols { "after generation of IR module ${irModule.name.asString()}" }
 
         postprocessingSteps.forEach { it.invoke(irModule) }
 //        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
+        val time5 = System.nanoTime()
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.checkNoUnboundSymbols+postprocessingSteps", time5 - time4)
 
         // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+        val time6 = System.nanoTime()
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.generateUnboundSymbolsAsDependencies", time6 - time5)
         deserializers.forEach { it.postProcess(inOrAfterLinkageStep = true) }
+        val time7 = System.nanoTime()
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.deserializers.postProcess", time7 - time6)
         context.checkNoUnboundSymbols { "after applying all post-processing steps for the generated IR module ${irModule.name.asString()}" }
+        val time8 = System.nanoTime()
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.checkNoUnboundSymbols", time8 - time7)
 
         return irModule
     }

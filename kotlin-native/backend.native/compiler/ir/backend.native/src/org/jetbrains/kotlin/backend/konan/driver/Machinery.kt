@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -17,6 +16,9 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.utils.MachineryTiming
+import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 /**
  * Context is a set of resources that is shared between different phases. PhaseContext is a "minimal context",
@@ -136,7 +138,11 @@ internal class PhaseEngine<C : PhaseContext>(
             return phase.outputIfNotEnabled(phaseConfig, phaserState.changePhaserStateType(), context, input)
         }
         // We lose sticky postconditions here, but it should be ok, since type is changed.
-        return phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
+        return measureTimedValue {
+            phase.invoke(phaseConfig, phaserState.changePhaserStateType(), context, input)
+        }.also {
+            MachineryTiming.submit(phase.name, it.duration)
+        }.value
     }
 
 

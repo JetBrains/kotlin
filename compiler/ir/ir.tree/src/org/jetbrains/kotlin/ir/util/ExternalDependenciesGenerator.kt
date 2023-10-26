@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.utils.MachineryTiming
+import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 class ExternalDependenciesGenerator(
     private val symbolTable: SymbolTable,
@@ -30,16 +33,25 @@ class ExternalDependenciesGenerator(
 
         // Deserializing a reference may lead to new unbound references, so we loop until none are left.
         var unbound = emptySet<IrSymbol>()
-        do {
-            val prevUnbound = unbound
-            unbound = symbolTable.descriptorExtension.allUnboundSymbols
-            for (symbol in unbound) {
-                // Symbol could get bound as a side effect of deserializing other symbols.
-                if (!symbol.isBound) {
-                    irProviders.firstNotNullOfOrNull { provider -> provider.getDeclaration(symbol) }
+        val time = measureTime {
+            do {
+                val prevUnbound = unbound
+                unbound = symbolTable.descriptorExtension.allUnboundSymbols
+                for (symbol in unbound) {
+                    // Symbol could get bound as a side effect of deserializing other symbols.
+                    if (!symbol.isBound) {
+                        irProviders.firstNotNullOfOrNull { provider ->
+                            measureTimedValue {
+                                provider.getDeclaration(symbol)
+                            }.also {
+                                MachineryTiming.submit("Psi2Ir.generateModuleFragment.generateUnboundSymbolsAsDependencies.getDeclaration", it.duration)
+                            }.value
+                        }
+                    }
                 }
-            }
-            // We wait for the unbound to stabilize on fake overrides.
-        } while (unbound != prevUnbound)
+                // We wait for the unbound to stabilize on fake overrides.
+            } while (unbound != prevUnbound)
+        }
+        MachineryTiming.submit("Psi2Ir.generateModuleFragment.generateUnboundSymbolsAsDependencies.do_while", time)
     }
 }

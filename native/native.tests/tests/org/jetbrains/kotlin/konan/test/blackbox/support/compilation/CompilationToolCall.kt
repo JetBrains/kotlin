@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.konan.test.blackbox.support.globalPhaseTimes
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.test.blackbox.support.updateCumulativeCompileTime
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -31,6 +33,9 @@ internal fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: 
     val compilerXmlOutput: ByteArrayOutputStream
     val exitCode: ExitCode
 
+//    val nanosStartThread = ManagementFactory.getThreadMXBean().getThreadCpuTime(Thread.currentThread().getId())
+    val nanosStart = System.nanoTime()
+
     @OptIn(ExperimentalTime::class)
     val duration = measureTime {
         val servicesClass = Class.forName(Services::class.java.canonicalName, true, kotlinNativeClassLoader)
@@ -50,6 +55,22 @@ internal fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: 
             ExitCode.valueOf(result.toString())
         }
     }
+    val machineryTimingClass = Class.forName("org.jetbrains.kotlin.utils.MachineryTiming", true, kotlinNativeClassLoader)
+    val getPhaseTimezz = machineryTimingClass.getMethod("getPhaseTimezz",)
+    val phaseTimes = getPhaseTimezz.invoke(machineryTimingClass.kotlin.objectInstance) as Map<*, *>
+
+    synchronized(globalPhaseTimes) {
+        phaseTimes.forEach {
+            val key = it.key.toString()
+            val value = it.value as Double
+            globalPhaseTimes[key] = value + (globalPhaseTimes[key] ?: 0.0)
+        }
+    }
+
+//    val nanosEndThread = ManagementFactory.getThreadMXBean().getThreadCpuTime(Thread.currentThread().getId())
+    val nanosEnd = System.nanoTime()
+    val d = (nanosEnd - nanosStart) / 1000000000.0
+    updateCumulativeCompileTime(d)
 
     val messageCollector: MessageCollector
     val compilerOutput: String
