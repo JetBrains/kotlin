@@ -150,37 +150,39 @@ tasks.register<Delete>("cleanUserHomeKonanDir") {
 
 tasks.register<Copy>("prepareNativeBundleForGradleIT") {
 
-    description = "This task adds depenecy on :kotlin-native:bundle and then copying built bundle into the tests' konan dir"
+    description = "This task adds dependency on :kotlin-native:bundle and then copying built bundle into the tests' konan dir"
 
-    // 1. Build full Kotlin Native bundle
-    dependsOn(":kotlin-native:bundle")
+    if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
+        // 1. Build full Kotlin Native bundle
+        dependsOn(":kotlin-native:bundle")
 
-    // 2. Coping and extracting k/n artifacts from the 1st step to tests' konan data directory
-    val (extension, unzipFunction) = when (HostManager.host) {
-        KonanTarget.MINGW_X64 -> Pair("zip", ::zipTree)
-        else -> Pair("tar.gz", ::tarTree)
-    }
+        // 2. Coping and extracting k/n artifacts from the 1st step to tests' konan data directory
+        val (extension, unzipFunction) = when (HostManager.host) {
+            KonanTarget.MINGW_X64 -> Pair("zip", ::zipTree)
+            else -> Pair("tar.gz", ::tarTree)
+        }
 
-    val kotlinNativeRootDir = rootProject.findProject(":kotlin-native")?.projectDir
-        ?: throw IllegalStateException("The path to kotlin-native module is undefined.")
+        val kotlinNativeRootDir = rootProject.findProject(":kotlin-native")?.projectDir
+            ?: throw IllegalStateException("The path to kotlin-native module is undefined.")
 
-    from(
-        unzipFunction(
-            kotlinNativeRootDir.resolve("kotlin-native-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
+        from(
+            unzipFunction(
+                kotlinNativeRootDir.resolve("kotlin-native-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
+            )
         )
-    )
-    from(
-        unzipFunction(
-            kotlinNativeRootDir.resolve("kotlin-native-prebuilt-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
+        from(
+            unzipFunction(
+                kotlinNativeRootDir.resolve("kotlin-native-prebuilt-${HostManager.platformName()}-${project.kotlinBuildProperties.defaultSnapshotVersion}.$extension")
+            )
         )
-    )
 
-    into(
-        konanDataDir
-    )
+        into(
+            konanDataDir
+        )
 
-    doFirst {
-        delete(konanDataDir)
+        doFirst {
+            delete(konanDataDir)
+        }
     }
 }
 
