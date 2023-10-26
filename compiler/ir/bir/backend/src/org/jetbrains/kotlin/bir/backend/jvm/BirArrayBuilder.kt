@@ -5,21 +5,33 @@
 
 package org.jetbrains.kotlin.bir.backend.jvm
 
-import org.jetbrains.kotlin.bir.builders.build
-import org.jetbrains.kotlin.bir.builders.setCall
-import org.jetbrains.kotlin.bir.expressions.*
+import org.jetbrains.kotlin.bir.backend.builders.BirStatementBuilderScope
+import org.jetbrains.kotlin.bir.backend.builders.birBlock
+import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
+import org.jetbrains.kotlin.bir.expressions.BirExpression
+import org.jetbrains.kotlin.bir.expressions.BirFunctionAccessExpression
+import org.jetbrains.kotlin.bir.expressions.BirGetValue
 import org.jetbrains.kotlin.bir.types.BirType
+import org.jetbrains.kotlin.bir.types.utils.classOrNull
 import org.jetbrains.kotlin.bir.types.utils.getArrayElementType
+import org.jetbrains.kotlin.bir.types.utils.isBoxedArray
+import org.jetbrains.kotlin.bir.util.constructors
+import org.jetbrains.kotlin.bir.util.functions
+import org.jetbrains.kotlin.bir.util.getProperty
+import org.jetbrains.kotlin.bir.util.getSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 
-/*inline fun irArray(arrayType: BirType, block: BirArrayBuilder.() -> Unit): BirExpression =
-    BirArrayBuilder(arrayType).apply { block() }.build()
+context(BirStatementBuilderScope, JvmBirBackendContext)
+inline fun birArray(arrayType: BirType, block: BirArrayBuilder.() -> Unit): BirExpression =
+    BirArrayBuilder(arrayType).apply(block).build()
 
-fun irArrayOf(arrayType: BirType, elements: List<BirExpression> = listOf()): BirExpression =
-    irArray(arrayType) { elements.forEach { +it } }*/
+context(BirStatementBuilderScope, JvmBirBackendContext)
+fun birArrayOf(arrayType: BirType, elements: List<BirExpression>): BirExpression =
+    birArray(arrayType) { elements.forEach { +it } }
 
 private class BirArrayElement(val expression: BirExpression, val isSpread: Boolean)
 
-context(JvmBirBackendContext)
+context(BirStatementBuilderScope, JvmBirBackendContext)
 class BirArrayBuilder(val arrayType: BirType) {
     // We build unboxed arrays for inline classes (UIntArray, etc) by first building
     // an unboxed array of the underlying primitive type, then coercing the result
@@ -43,7 +55,7 @@ class BirArrayBuilder(val arrayType: BirType) {
 
     fun addSpread(expression: BirExpression) = elements.add(BirArrayElement(expression, true))
 
-    /*fun build(): BirExpression {
+    fun build(): BirExpression {
         val array = when {
             elements.isEmpty() -> newArray(0)
             !hasSpread -> buildSimpleArray()
@@ -51,116 +63,111 @@ class BirArrayBuilder(val arrayType: BirType) {
             else -> buildComplexArray()
         }
         return coerce(array, arrayType)
-    }*/
+    }
 
     // Construct a new array of the specified size
-    /*private fun newArray(size: Int) = newArray(BirConst.int(value = size))
+    private fun newArray(size: Int) = newArray(birConst(size))
 
     private fun newArray(size: BirExpression): BirExpression {
         val arrayConstructor = if (unwrappedArrayType.isBoxedArray)
             builtInSymbols.arrayOfNulls
         else
-            unwrappedArrayType.classOrNull!!.constructors.single { it.owner.valueParameters.size == 1 }
+            unwrappedArrayType.classOrNull!!.owner.constructors.single { it.owner.valueParameters.size == 1 }
 
-        return builder.irCall(arrayConstructor, unwrappedArrayType).apply {
-            if (typeArguments.size != 0)
-                putTypeArgument(0, elementType)
-            putValueArgument(0, size)
+        return birCallFunctionOrConstructor(arrayConstructor, unwrappedArrayType) {
+            if (typeArguments.isNotEmpty())
+                typeArguments = listOf(elementType)
+            valueArguments[0] = size
         }
     }
 
     // Build an array without spreads
-    private fun buildSimpleArray(): BirExpression =
-        builder.irBlock {
-            val result = irTemporary(newArray(elements.size))
+    private fun buildSimpleArray(): BirExpression = birBlock {
+        val result = +birTemporaryVariable(newArray(elements.size))
 
-            val set = unwrappedArrayType.classOrNull!!.functions.single {
-                it.owner.name.asString() == "set"
+        val set = unwrappedArrayType.classOrNull!!.owner.getSimpleFunction("set")!!
+
+        for ((index, element) in elements.withIndex()) {
+            +birCall(set) {
+                dispatchReceiver = birGet(result)
+                valueArguments[0] = birConst(index)
+                valueArguments[1] = coerce(element.expression, elementType)
             }
-
-            for ((index, element) in elements.withIndex()) {
-                +irCall(set).apply {
-                    dispatchReceiver = irGet(result)
-                    putValueArgument(0, irInt(index))
-                    putValueArgument(1, coerce(element.expression, elementType))
-                }
-            }
-
-            +irGet(result)
         }
+
+        +birGet(result)
+    }
+
+
     // Copy a single spread expression, unless it refers to a newly constructed array.
     private fun copyArray(spread: BirExpression): BirExpression {
         if (spread is BirConstructorCall ||
-            (spread is BirFunctionAccessExpression && spread.symbol == birBuiltIns.arrayOfNulls))
-            return spread
+            (spread is BirFunctionAccessExpression && spread.symbol == birBuiltIns.arrayOfNulls)
+        ) return spread
 
-        return builder.irBlock {
-            val spreadVar = if (spread is BirGetValue) spread.symbol.owner else irTemporary(spread)
-            val size = unwrappedArrayType.classOrNull!!.getPropertyGetter("size")!!
-            val arrayCopyOf = birBuiltIns.getArraysCopyOfFunction(unwrappedArrayType as BirSimpleType)
-            // TODO consider using System.arraycopy if the requested array type is non-generic.
-            +irCall(arrayCopyOf).apply {
-                putValueArgument(0, coerce(irGet(spreadVar), unwrappedArrayType))
-                putValueArgument(1, irCall(size).apply { dispatchReceiver = irGet(spreadVar) })
+        return birBlock {
+            val spreadVar = if (spread is BirGetValue) spread.symbol.owner else +birTemporaryVariable(spread)
+            val size = unwrappedArrayType.classOrNull!!.owner.getProperty("size")!!
+            val arrayCopyOf = builtInSymbols.arraysClass.owner.functions
+                .single { it.name.asString() == "copyOf" && it.valueParameters.getOrNull(0)?.type?.classOrNull?.owner == unwrappedArrayType.classOrNull!! }
+            +birCall(arrayCopyOf) {
+                valueArguments[0] = coerce(birGet(spreadVar), unwrappedArrayType)
+                valueArguments[1] = birCallGetter(size) { dispatchReceiver = birGet(spreadVar) }
             }
         }
     }
-*/
 
-/*
-     // Build an array containing spread expressions.
-     private fun buildComplexArray(): BirExpression {
-         val spreadBuilder = if (unwrappedArrayType.isBoxedArray)
-             builtInSymbols.spreadBuilder.owner
-         else
-             builtInSymbols.primitiveSpreadBuilders.getValue(elementType).owner
+    // Build an array containing spread expressions.
+    private fun buildComplexArray(): BirExpression {
+        val spreadBuilder = if (unwrappedArrayType.isBoxedArray)
+            builtInSymbols.spreadBuilder.owner
+        else
+            builtInSymbols.primitiveSpreadBuilders.getValue(elementType).owner
 
-         val addElement = spreadBuilder.functions.single { it.owner.name.asString() == "add" }
-         val addSpread = spreadBuilder.functions.single { it.owner.name.asString() == "addSpread" }
-         val toArray = spreadBuilder.functions.single { it.owner.name.asString() == "toArray" }
+        val addElement = spreadBuilder.getSimpleFunction("add")!!
+        val addSpread = spreadBuilder.getSimpleFunction("addSpread")!!
+        val toArray = spreadBuilder.getSimpleFunction("toArray")!!
 
-        return builder.irBlock {
-             val spreadBuilderVar = irTemporary(irCallConstructor(spreadBuilder.constructors.single(), listOf()).apply {
-                 putValueArgument(0, irInt(elements.size))
-             })
+        return birBlock {
+            val spreadBuilderVar = +birTemporaryVariable(
+                birCall(spreadBuilder.constructors.single(), typeArguments = emptyList()) {
+                    valueArguments[0] = birConst(elements.size)
+                }
+            )
 
-             for (element in elements) {
-                 +irCall(if (element.isSpread) addSpread else addElement).apply {
-                     dispatchReceiver = irGet(spreadBuilderVar)
-                     putValueArgument(0, coerce(element.expression, if (element.isSpread) unwrappedArrayType else elementType))
-                 }
-             }
+            for (element in elements) {
+                +birCall(if (element.isSpread) addSpread else addElement) {
+                    dispatchReceiver = birGet(spreadBuilderVar)
+                    valueArguments[0] = coerce(element.expression, if (element.isSpread) unwrappedArrayType else elementType)
+                }
+            }
 
-             val toArrayCall = irCall(toArray).apply {
-                 dispatchReceiver = irGet(spreadBuilderVar)
-                 if (unwrappedArrayType.isBoxedArray) {
-                     val size = spreadBuilder.functions.single { it.owner.name.asString() == "size" }
-                     putValueArgument(0, irCall(birBuiltIns.arrayOfNulls, arrayType).apply {
-                         putTypeArgument(0, elementType)
-                         putValueArgument(0, irCall(size).apply {
-                             dispatchReceiver = irGet(spreadBuilderVar)
-                         })
-                     })
-                 }
-             }
+            val toArrayCall = birCall(toArray) {
+                dispatchReceiver = birGet(spreadBuilderVar)
+                if (unwrappedArrayType.isBoxedArray) {
+                    val size = spreadBuilder.functions.single { it.owner.name.asString() == "size" }
+                    valueArguments[0] = birCall(birBuiltIns.arrayOfNulls, arrayType, listOf(elementType)) {
+                        valueArguments[0] = birCall(size) {
+                            dispatchReceiver = birGet(spreadBuilderVar)
+                        }
+                    }
+                }
+            }
 
-             if (unwrappedArrayType.isBoxedArray)
-                 +builder.irImplicitCast(toArrayCall, unwrappedArrayType)
-             else
-                 +toArrayCall
-         }
-     }*/
+            if (unwrappedArrayType.isBoxedArray)
+                +birCast(toArrayCall, unwrappedArrayType, IrTypeOperator.IMPLICIT_CAST)
+            else
+                +toArrayCall
+        }
+    }
 
 
     // Coerce expression to irType if we are working with an inline class array type
     private fun coerce(expression: BirExpression, irType: BirType): BirExpression =
         if (isUnboxedInlineClassArray)
-            BirCall.build {
-                setCall(builtInSymbols.unsafeCoerceIntrinsic!!.owner)
-                type = irType
-                typeArguments += expression.type
-                typeArguments += irType
-                valueArguments += expression
+            birCall(builtInSymbols.unsafeCoerceIntrinsic!!.owner, irType) {
+                typeArguments = listOf(expression.type, irType)
+                valueArguments[0] = expression
             }
         else expression
 }

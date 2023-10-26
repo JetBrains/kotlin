@@ -33,6 +33,7 @@ private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirMainMethodGenerationLowering,
     ::BirAnnotationLowering,
     ::BirPolymorphicSignatureLowering,
+    ::BirVarargLowering,
 )
 
 private val excludedStandardPhases = setOf<String>()
