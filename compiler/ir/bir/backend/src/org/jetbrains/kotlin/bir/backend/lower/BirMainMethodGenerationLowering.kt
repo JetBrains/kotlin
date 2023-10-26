@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.bir.types.*
 import org.jetbrains.kotlin.bir.types.utils.defaultType
 import org.jetbrains.kotlin.bir.types.utils.typeWith
 import org.jetbrains.kotlin.bir.types.utils.typeWithParameters
-import org.jetbrains.kotlin.bir.util.allParameters
 import org.jetbrains.kotlin.bir.util.constructors
 import org.jetbrains.kotlin.bir.util.isFileClass
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -42,9 +41,11 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
     private val jvmNameKey = acquireProperty(BirJvmNameLowering.JvmName)
 
     private val mainishFunctions = registerIndexKey<BirSimpleFunction>(false) { function ->
-        function.getJvmName().asString() == "main"
-                && function.returnType.isUnit()
+        function.extensionReceiverParameter == null
+                && function.valueParameters.size <= 1
                 && function.typeParameters.isEmpty()
+                && function.getJvmName().asString() == "main"
+                && function.returnType.isUnit()
     }
 
     override fun invoke(module: BirModuleFragment) {
@@ -57,8 +58,6 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
 
             var newMainMethod: BirSimpleFunction? = null
             if (isParametrized) {
-                if (!(mainMethod.extensionReceiverParameter == null && mainMethod.valueParameters.isEmpty())) return@forEach
-
                 if (mainMethod.isSuspend) {
                     newMainMethod = generateMainMethod()
                     newMainMethod.body = BirBlockBodyImpl(SourceSpan.UNDEFINED).apply {
@@ -91,7 +90,7 @@ class BirMainMethodGenerationLowering : BirLoweringPhase() {
         this[jvmNameKey] ?: name
 
     private fun BirSimpleFunction.isParameterizedMainMethod(): Boolean? {
-        val parameter = allParameters.singleOrNull()
+        val parameter = valueParameters.singleOrNull()
         if (parameter != null) {
             if (!parameter.type.isArray() && !parameter.type.isNullableArray()) return null
             val argType = (parameter.type as BirSimpleType).arguments.first()
