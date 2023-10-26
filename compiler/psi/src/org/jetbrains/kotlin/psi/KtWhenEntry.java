@@ -52,6 +52,9 @@ public class KtWhenEntry extends KtElementImpl {
         return findChildrenByClass(KtWhenCondition.class);
     }
 
+    @Nullable
+    public KtWhenEntryGuard getGuard() { return findChildByClass(KtWhenEntryGuard.class); }
+
     public PsiElement getTrailingComma() {
         return KtPsiUtilKt.getTrailingCommaByClosingElement(getArrow());
     }

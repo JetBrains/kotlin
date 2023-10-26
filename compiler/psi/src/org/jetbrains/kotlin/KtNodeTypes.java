@@ -153,6 +153,7 @@ public interface KtNodeTypes {
 
     IElementType WHEN                      = new KtNodeType("WHEN", KtWhenExpression.class);
     IElementType WHEN_ENTRY                = new KtNodeType("WHEN_ENTRY", KtWhenEntry.class);
+    IElementType WHEN_ENTRY_GUARD          = new KtNodeType("WHEN_ENTRY_GUARD", KtWhenEntryGuard.class);
 
     IElementType WHEN_CONDITION_IN_RANGE   = new KtNodeType("WHEN_CONDITION_IN_RANGE", KtWhenConditionInRange.class);
     IElementType WHEN_CONDITION_IS_PATTERN = new KtNodeType("WHEN_CONDITION_IS_PATTERN", KtWhenConditionIsPattern.class);

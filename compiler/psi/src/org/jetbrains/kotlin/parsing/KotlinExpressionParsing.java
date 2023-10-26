@@ -948,9 +948,13 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             parseWhenCondition();
             if (!at(COMMA)) break;
             advance(); // COMMA
-            if (at(ARROW)) {
+            if (at(ARROW) || at(IF_KEYWORD)) {
                 break;
             }
+        }
+
+        if(at(IF_KEYWORD)) {
+            parseWhenEntryGuard();
         }
 
         expect(ARROW, "Expecting '->'", WHEN_CONDITION_RECOVERY_SET);
@@ -1013,6 +1017,19 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 condition.done(WHEN_CONDITION_EXPRESSION);
                 break;
         }
+        myBuilder.restoreNewlinesState();
+    }
+
+    private void parseWhenEntryGuard() {
+        assert _at(IF_KEYWORD);
+
+        PsiBuilder.Marker guard = mark();
+        myBuilder.disableNewlines();
+
+        advance();
+        parseExpression();
+        guard.done(WHEN_ENTRY_GUARD);
+
         myBuilder.restoreNewlinesState();
     }
 

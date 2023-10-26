@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.lightTree.fir
 
 import com.intellij.lang.LighterASTNode
-import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.fir.builder.buildBalancedOrExpressionTree
+import org.jetbrains.kotlin.fir.builder.guardedBy
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
 
 data class WhenEntry(
     val conditions: List<FirExpression>,
+    val guard: FirExpression?,
     val firBlock: FirBlock,
     val node: LighterASTNode,
     val isElse: Boolean = false,
@@ -22,13 +23,13 @@ data class WhenEntry(
 ) {
     fun toFirWhenCondition(): FirExpression {
         require(conditions.isNotEmpty())
-        return buildBalancedOrExpressionTree(conditions)
+        return buildBalancedOrExpressionTree(conditions).guardedBy(guard)
     }
 
     fun toFirWhenConditionWithoutSubject(): FirExpression {
         return when (conditions.size) {
             0 -> buildErrorExpression(null, ConeSyntaxDiagnostic("No expression in condition with expression"))
-            else -> buildBalancedOrExpressionTree(conditions)
+            else -> buildBalancedOrExpressionTree(conditions).guardedBy(guard)
         }
     }
 }

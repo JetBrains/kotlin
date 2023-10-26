@@ -847,6 +847,7 @@ class LightTreeRawFirExpressionBuilder(
         var isElse = false
         var firBlock: FirBlock = buildEmptyExpressionBlock()
         val conditions = mutableListOf<FirExpression>()
+        var guard: FirExpression? = null
         var shouldBindSubject = false
         whenEntry.forEachChildren {
             when (it.tokenType) {
@@ -861,13 +862,16 @@ class LightTreeRawFirExpressionBuilder(
                     conditions += condition
                     shouldBindSubject = shouldBindSubject || shouldBind
                 }
+                WHEN_ENTRY_GUARD -> {
+                    guard = getAsFirExpression(it.getFirstChildExpressionUnwrapped())
+                }
                 ELSE_KEYWORD -> isElse = true
                 BLOCK -> firBlock = declarationBuilder.convertBlock(it)
                 else -> if (it.isExpression()) firBlock = declarationBuilder.convertBlock(it)
             }
         }
 
-        return WhenEntry(conditions, firBlock, whenEntry, isElse, shouldBindSubject)
+        return WhenEntry(conditions, guard, firBlock, whenEntry, isElse, shouldBindSubject)
     }
 
     private fun convertWhenConditionExpression(
