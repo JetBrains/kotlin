@@ -11,6 +11,7 @@ import org.jetbrains.dokka.model.ClassValue
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
+import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -34,12 +35,16 @@ internal class AnnotationTranslator {
         annotated.annotations.map { toDokkaAnnotation(it) }
 
     /**
-     * @return direct annotations and file-level annotations
+     * The examples of annotations from backing field are [JvmField], [JvmSynthetic].
+     *
+     * @return direct annotations, annotations from backing field and file-level annotations
      */
     fun KtAnalysisSession.getAllAnnotationsFrom(annotated: KtAnnotated): List<Annotations.Annotation> {
         val directAnnotations = getDirectAnnotationsFrom(annotated)
-        val fileLevelAnnotations = (annotated as? KtSymbol)?.let { getFileLevelAnnotationsFrom(it) } ?: emptyList()
-        return directAnnotations + fileLevelAnnotations
+        val backingFieldAnnotations =
+            (annotated as? KtPropertySymbol)?.backingFieldSymbol?.let { getDirectAnnotationsFrom(it) }.orEmpty()
+        val fileLevelAnnotations = (annotated as? KtSymbol)?.let { getFileLevelAnnotationsFrom(it) }.orEmpty()
+        return directAnnotations + backingFieldAnnotations + fileLevelAnnotations
     }
 
     private fun KtAnnotationApplication.isNoExistedInSource() = psi == null

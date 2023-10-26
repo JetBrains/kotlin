@@ -92,6 +92,7 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
     internal val symbolAnalyzerImpl by extending {
         plugin<InternalKotlinAnalysisPlugin>().documentableSourceLanguageParser providing { KotlinDocumentableSourceLanguageParser() }
     }
+
     internal val symbolFullClassHierarchyBuilder by extending {
         plugin<InternalKotlinAnalysisPlugin>().fullClassHierarchyBuilder providing ::SymbolFullClassHierarchyBuilder
     }
@@ -104,14 +105,14 @@ public class SymbolsAnalysisPlugin : DokkaPlugin() {
         plugin<InternalKotlinAnalysisPlugin>().moduleAndPackageDocumentationReader providing ::ModuleAndPackageDocumentationReader
     }
 
-    /* internal val kotlinToJavaMapper by extending {
-         plugin<InternalKotlinAnalysisPlugin>().kotlinToJavaService providing { DescriptorKotlinToJavaMapper() }
+    internal val kotlinToJavaMapper by extending {
+         plugin<InternalKotlinAnalysisPlugin>().kotlinToJavaService providing { SymbolKotlinToJavaMapper() }
      }
 
-     intern val descriptorInheritanceBuilder by extending {
-         plugin<InternalKotlinAnalysisPlugin>().inheritanceBuilder providing { DescriptorInheritanceBuilder() }
+    internal val symbolInheritanceBuilder by extending {
+         plugin<InternalKotlinAnalysisPlugin>().inheritanceBuilder providing ::SymbolInheritanceBuilder
      }
-    */
+
     internal val symbolExternalDocumentablesProvider by extending {
         plugin<InternalKotlinAnalysisPlugin>().externalDocumentablesProvider providing ::SymbolExternalDocumentablesProvider
     }
