@@ -439,12 +439,6 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
         }
 
         @Test
-        @TestMetadata("kt45308.kt")
-        public void testKt45308() throws Exception {
-            runTest("compiler/testData/ir/irText/declarations/kt45308.kt");
-        }
-
-        @Test
         @TestMetadata("kt47527.kt")
         public void testKt47527() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/kt47527.kt");
