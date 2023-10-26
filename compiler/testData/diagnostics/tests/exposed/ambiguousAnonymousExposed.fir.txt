@@ -48,3 +48,21 @@ FILE: ambiguousAnonymousExposed.fir.kt
         }
         )
     }
+    private final inline fun bazBaz(): R|My<out I1>| {
+        ^bazBaz R|/My.My|<R|<anonymous>|>(object : R|I1|, R|I2| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+    }
+    private final inline fun bazBazBaz(): R|My<out I1>| {
+        ^bazBazBaz R|/My.My|<R|<anonymous>|>(object : R|I1| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+        )
+    }
