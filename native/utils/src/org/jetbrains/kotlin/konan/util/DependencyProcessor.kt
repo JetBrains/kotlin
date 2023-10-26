@@ -295,14 +295,16 @@ class DependencyProcessor(
         if (remoteDependencies.isEmpty()) { return }
 
         synchronized(lock) {
-            RandomAccessFile(lockFile, "rw").channel.lock().use {
-                remoteDependencies.forEach { (dependency, candidate) ->
-                    val baseUrl = when (candidate) {
-                        DependencySource.Remote.Public -> dependenciesUrl
-                        DependencySource.Remote.Internal -> InternalServer.url
+            RandomAccessFile(lockFile, "rw").use {
+                it.channel.lock().use {
+                    remoteDependencies.forEach { (dependency, candidate) ->
+                        val baseUrl = when (candidate) {
+                            DependencySource.Remote.Public -> dependenciesUrl
+                            DependencySource.Remote.Internal -> InternalServer.url
+                        }
+                        // TODO: consider using different caches for different remotes.
+                        downloadDependency(dependency, baseUrl)
                     }
-                    // TODO: consider using different caches for different remotes.
-                    downloadDependency(dependency, baseUrl)
                 }
             }
         }
