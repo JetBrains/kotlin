@@ -1,0 +1,11 @@
+FILE: test.kt
+    public final fun foo(): R|kotlin/Any?| {
+        ^foo Null(null)
+    }
+    @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST))) public final fun test(): <ERROR TYPE REF: Ambiguity: HashMap, [java/util/HashMap, some/HashMap]> {
+        ^test (R|/foo|() as <ERROR TYPE REF: Ambiguity: HashMap, [java/util/HashMap, some/HashMap]>)
+    }
+    public final val bar: <ERROR TYPE REF: Ambiguity: HashMap, [java/util/HashMap, some/HashMap]> = Null(null)
+        public get(): <ERROR TYPE REF: Ambiguity: HashMap, [java/util/HashMap, some/HashMap]>
+    public final val baz: R|kotlin/Boolean| = (R|/foo|() is <ERROR TYPE REF: Ambiguity: HashMap, [java/util/HashMap, some/HashMap]>)
+        public get(): R|kotlin/Boolean|

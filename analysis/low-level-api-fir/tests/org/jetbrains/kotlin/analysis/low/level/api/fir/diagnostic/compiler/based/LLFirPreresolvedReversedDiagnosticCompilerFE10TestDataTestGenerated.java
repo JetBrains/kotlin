@@ -44772,6 +44772,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 public void testConstructorCaseSpace() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/constructorCaseSpace.kt");
                 }
+
+                @Test
+                @TestMetadata("typeCase.kt")
+                public void testTypeCase() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/typeCase.kt");
+                }
             }
         }
 
