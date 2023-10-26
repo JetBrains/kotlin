@@ -73,7 +73,7 @@ internal fun createStubBasedFirSymbolProviderForScopeLimitedByFiles(
         project, baseScope, fileFilter,
         symbolProviderFactory = { reducedScope: GlobalSearchScope ->
             StubBasedFirDeserializedSymbolProvider(
-                session, moduleDataProvider, kotlinScopeProvider, project, reducedScope, FirDeclarationOrigin.Library,
+                session, moduleDataProvider, kotlinScopeProvider, project, reducedScope,
             )
         }
     )
