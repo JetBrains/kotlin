@@ -13,65 +13,86 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 class BirElementsIndexKey<E : BirElement>(
-    val condition: BirElementIndexMatcher, // todo: use it
+    val condition: BirElementIndexMatcher,
     val elementClass: Class<*>,
-    val includeOtherModules: Boolean,
-) {
+    val includeOtherModules: Boolean, // todo: use it
+) : BirElementGeneralIndexerKey {
     internal var index = -1
 }
 
-fun interface BirElementIndexMatcher {
+fun interface BirElementIndexMatcher : BirElementGeneralIndexer {
     fun matches(element: BirElementBase): Boolean
 }
 
-fun interface BirElementIndexClassifier {
-    fun classify(element: BirElementBase, minimumIndex: Int): Int
+internal fun interface BirElementIndexClassifier {
+    fun classify(element: BirElementBase, minimumIndex: Int, backReferenceRecorder: BirForest.BackReferenceRecorder): Int
 }
 
-object BirElementIndexClassifierFunctionGenerator {
+
+class BirElementBackReferencesKey<E : BirElement>(
+    val recorder: BirElementBackReferenceRecorder,
+    val elementClass: Class<*>,
+) : BirElementGeneralIndexerKey
+
+fun interface BirElementBackReferenceRecorder : BirElementGeneralIndexer {
+    context(BirElementBackReferenceRecorderScope)
+    fun recordBackReferences(element: BirElementBase)
+}
+
+interface BirElementBackReferenceRecorderScope {
+    fun recordReference(forwardRef: BirElement?)
+}
+
+
+sealed interface BirElementGeneralIndexerKey
+
+sealed interface BirElementGeneralIndexer
+
+
+internal object BirElementIndexClassifierFunctionGenerator {
     private val nextClassifierFunctionClassIdx = AtomicInteger(0)
-    private val classifierFunctionClassCache = ConcurrentHashMap<Set<MatcherCacheKey>, Class<*>>()
-    private val staticConditionLambdasInitializationBuffers = ConcurrentHashMap<String, Array<BirElementIndexMatcher?>>()
+    private val staticIndexerFunctionsInitializationBuffers = ConcurrentHashMap<String, Array<BirElementGeneralIndexer?>>()
     private val generatedFunctionClassLoader by lazy { ByteArrayFunctionClassLoader(BirElement::class.java.classLoader) }
+    private val classifierFunctionClassCache = ConcurrentHashMap<Set<IndexerCacheKey>, Class<*>>()
 
-    private val BirElementIndexClassifierMatchFunctionName by lazy {
-        // in case of using some kotlin features, like inline classes, compiler might obfuscate the name,
-        //   so it does not exactly match the source name
-        BirElementIndexMatcher::class.java.declaredMethods.single { it.name.startsWith("matches") }.name
-    }
+    private data class IndexerCacheKey(val conditionClass: Class<*>, val elementClass: Class<*>, val index: Int)
 
-    class Matcher(val condition: BirElementIndexMatcher, val elementClass: Class<*>, val index: Int)
+    class Indexer(
+        val indexerFunction: BirElementGeneralIndexer,
+        val elementClass: Class<*>,
+        val index: Int,
+    )
 
-    fun createClassifierFunction(matchers: List<Matcher>): BirElementIndexClassifier {
-        val matchersMaxIndex = matchers.maxOf { it.index }
-        val conditionsArray = arrayOfNulls<BirElementIndexMatcher>(matchersMaxIndex + 1)
-        for (matcher in matchers) {
-            conditionsArray[matcher.index] = matcher.condition
+    fun createClassifierFunction(indexers: List<Indexer>): BirElementIndexClassifier {
+        val matchersMaxIndex = indexers.maxOf { it.index }
+        val indexersFunctions = arrayOfNulls<BirElementGeneralIndexer>(matchersMaxIndex + 1)
+        for (matcher in indexers) {
+            indexersFunctions[matcher.index] = matcher.indexerFunction
         }
 
-        val clazz = getOrCreateClassifierFunctionClass(matchers, conditionsArray)
-        val instance = clazz.declaredConstructors.single().newInstance(conditionsArray)
+        val clazz = getOrCreateClassifierFunctionClass(indexers, indexersFunctions)
+        val instance = clazz.declaredConstructors.single().newInstance(indexersFunctions)
         return instance as BirElementIndexClassifier
     }
 
     private fun getOrCreateClassifierFunctionClass(
-        matchers: List<Matcher>,
-        conditionsArray: Array<BirElementIndexMatcher?>,
+        indexers: List<Indexer>,
+        indexersFunctions: Array<BirElementGeneralIndexer?>,
     ): Class<*> {
-        val key = matchers.map { MatcherCacheKey(it.condition.javaClass, it.elementClass, it.index) }.toHashSet()
+        val key = indexers.map { IndexerCacheKey(it.indexerFunction.javaClass, it.elementClass, it.index) }.toHashSet()
         return classifierFunctionClassCache.computeIfAbsent(key) { _ ->
-            val clazzNode = generateClassifierFunctionClass(matchers)
+            val clazzNode = generateClassifierFunctionClass(indexers)
             val cw = ClassWriter(ClassWriter.COMPUTE_FRAMES)
             clazzNode.accept(cw)
             val binary = cw.toByteArray()
             val binaryName = clazzNode.name.replace('/', '.')
 
-            staticConditionLambdasInitializationBuffers[clazzNode.name] = conditionsArray
+            staticIndexerFunctionsInitializationBuffers[clazzNode.name] = indexersFunctions
             generatedFunctionClassLoader.defineClass(binaryName, binary)
         }
     }
 
-    private fun generateClassifierFunctionClass(matchers: List<Matcher>): ClassNode {
+    private fun generateClassifierFunctionClass(indexers: List<Indexer>): ClassNode {
         val clazz = ClassNode().apply {
             version = Opcodes.V1_8
             access = Opcodes.ACC_PUBLIC
@@ -81,7 +102,7 @@ object BirElementIndexClassifierFunctionGenerator {
             interfaces.add(Type.getInternalName(BirElementIndexClassifier::class.java))
         }
 
-        val capturedMatcherInstancesCache = generateClassifyMethod(clazz, matchers)
+        val capturedMatcherInstancesCache = generateClassifyMethod(clazz, indexers)
         generateConstructor(clazz, capturedMatcherInstancesCache)
         generateStaticConstructor(clazz, capturedMatcherInstancesCache)
 
@@ -90,34 +111,59 @@ object BirElementIndexClassifierFunctionGenerator {
 
     private fun generateClassifyMethod(
         clazz: ClassNode,
-        matchers: List<Matcher>,
-    ): Map<Matcher, FieldNode> {
+        indexers: List<Indexer>,
+    ): Map<Indexer, FieldNode> {
         val classifyMethod = MethodNode().apply {
             access = Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL
             name = "classify"
-            desc = Type.getMethodDescriptor(Type.INT_TYPE, Type.getType(BirElementBase::class.java), Type.INT_TYPE)
+            desc = Type.getMethodDescriptor(
+                Type.INT_TYPE,
+                Type.getType(BirElementBase::class.java),
+                Type.INT_TYPE,
+                Type.getType(BirForest.BackReferenceRecorder::class.java)
+            )
         }
 
-        val topLevelElementClassNodes = buildClassMatchingTree(matchers)
+        val topLevelElementClassNodes = buildClassMatchingTree(indexers)
 
-        val capturedMatcherInstances = mutableMapOf<Matcher, FieldNode>()
-        for (matcher in matchers) {
-            val conditionFunctionClass = matcher.condition.javaClass
+        val capturedIndexerInstances = mutableMapOf<Indexer, FieldNode>()
+        for (indexer in indexers) {
+            val conditionFunctionClass = indexer.indexerFunction.javaClass
 
             val cacheInstanceInStaticField = conditionFunctionClass.declaredFields.isEmpty()
-            val fieldIdx = capturedMatcherInstances.size
+            val fieldIdx = capturedIndexerInstances.size
             val field = FieldNode(
                 Opcodes.ACC_PRIVATE + Opcodes.ACC_FINAL + if (cacheInstanceInStaticField) Opcodes.ACC_STATIC else 0,
-                "matcher$fieldIdx",
-                Type.getDescriptor(BirElementIndexMatcher::class.java),
+                "indexer$fieldIdx",
+                Type.getDescriptor(
+                    when (indexer.indexerFunction) {
+                        is BirElementIndexMatcher -> BirElementIndexMatcher::class.java
+                        is BirElementBackReferenceRecorder -> BirElementBackReferenceRecorder::class.java
+                    }
+                ),
                 null,
                 null,
             )
             clazz.fields.add(field)
-            capturedMatcherInstances[matcher] = field
+            capturedIndexerInstances[indexer] = field
         }
 
+
+        /*val indexSlotResultVar = LocalVariableNode(
+            "indexSlotResult",
+            Type.INT_TYPE.descriptor,
+            null,
+            null, null,
+            4,
+        )VarInsnNode(0, indexSlotResultVar.index)
+         */
+
         val il = classifyMethod.instructions
+
+        // result variable
+        il.add(InsnNode(Opcodes.ICONST_0))
+        il.add(VarInsnNode(Opcodes.ISTORE, 4))
+
         fun generateClassBranch(
             node: ElementClassNode,
             descendantNodes: Sequence<ElementClassNode>,
@@ -133,9 +179,9 @@ object BirElementIndexClassifierFunctionGenerator {
                 generateClassBranch(subNode, descendantNodesAndSelf, notInstanceOfLabel)
             }
 
-            val allMatchers = descendantNodesAndSelf.flatMap { it.matchers }.sortedBy { it.index }
-            for (matcher in allMatchers) {
-                generateMatchCase(il, matcher, capturedMatcherInstances.getValue(matcher), clazz)
+            val allIndexers = descendantNodesAndSelf.flatMap { it.indexers }.sortedBy { it.index }
+            for (indexer in allIndexers) {
+                generateIndexerCase(il, indexer, capturedIndexerInstances.getValue(indexer), clazz)
             }
 
             il.add(JumpInsnNode(Opcodes.GOTO, isInstanceButNoMatchesLabel))
@@ -148,48 +194,75 @@ object BirElementIndexClassifierFunctionGenerator {
         }
 
         il.add(endLabel)
-        il.add(InsnNode(Opcodes.ICONST_0))
+        il.add(VarInsnNode(Opcodes.ILOAD, 4))
         il.add(InsnNode(Opcodes.IRETURN))
 
         clazz.methods.add(classifyMethod)
 
-        return capturedMatcherInstances
+        return capturedIndexerInstances
     }
 
-    private fun generateMatchCase(il: InsnList, matcher: Matcher, matcherField: FieldNode, clazz: ClassNode) {
+    private fun generateIndexerCase(il: InsnList, indexer: Indexer, indexerField: FieldNode, clazz: ClassNode) {
         val matcherLabel = LabelNode()
-        il.add(IntInsnNode(Opcodes.SIPUSH, matcher.index))
+        il.add(IntInsnNode(Opcodes.SIPUSH, indexer.index))
         il.add(VarInsnNode(Opcodes.ILOAD, 2))
         il.add(JumpInsnNode(Opcodes.IF_ICMPLT, matcherLabel))
 
-        if ((matcherField.access and Opcodes.ACC_STATIC) != 0) {
-            il.add(FieldInsnNode(Opcodes.GETSTATIC, clazz.name, matcherField.name, matcherField.desc))
-        } else {
-            il.add(VarInsnNode(Opcodes.ALOAD, 0))
-            il.add(FieldInsnNode(Opcodes.GETFIELD, clazz.name, matcherField.name, matcherField.desc))
+        if (indexer.indexerFunction is BirElementIndexMatcher) {
+            // skip if already got result
+            il.add(VarInsnNode(Opcodes.ILOAD, 4))
+            il.add(JumpInsnNode(Opcodes.IFNE, matcherLabel))
         }
 
-        il.add(VarInsnNode(Opcodes.ALOAD, 1))
-        il.add(
-            MethodInsnNode(
-                Opcodes.INVOKEINTERFACE,
-                Type.getInternalName(BirElementIndexMatcher::class.java),
-                BirElementIndexClassifierMatchFunctionName,
-                Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getType(BirElementBase::class.java))
-            )
-        )
-        il.add(JumpInsnNode(Opcodes.IFEQ, matcherLabel))
+        if ((indexerField.access and Opcodes.ACC_STATIC) != 0) {
+            il.add(FieldInsnNode(Opcodes.GETSTATIC, clazz.name, indexerField.name, indexerField.desc))
+        } else {
+            il.add(VarInsnNode(Opcodes.ALOAD, 0))
+            il.add(FieldInsnNode(Opcodes.GETFIELD, clazz.name, indexerField.name, indexerField.desc))
+        }
 
-        il.add(IntInsnNode(Opcodes.SIPUSH, matcher.index))
-        il.add(InsnNode(Opcodes.IRETURN))
+        when (indexer.indexerFunction) {
+            is BirElementIndexMatcher -> {
+                il.add(VarInsnNode(Opcodes.ALOAD, 1))
+                il.add(
+                    MethodInsnNode(
+                        Opcodes.INVOKEINTERFACE,
+                        Type.getInternalName(BirElementIndexMatcher::class.java),
+                        "matches",
+                        Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getType(BirElementBase::class.java))
+                    )
+                )
+                il.add(JumpInsnNode(Opcodes.IFEQ, matcherLabel))
+
+                il.add(IntInsnNode(Opcodes.SIPUSH, indexer.index))
+                il.add(VarInsnNode(Opcodes.ISTORE, 4))
+            }
+            is BirElementBackReferenceRecorder -> {
+                il.add(VarInsnNode(Opcodes.ALOAD, 3))
+                il.add(VarInsnNode(Opcodes.ALOAD, 1))
+                il.add(
+                    MethodInsnNode(
+                        Opcodes.INVOKEINTERFACE,
+                        Type.getInternalName(BirElementBackReferenceRecorder::class.java),
+                        "recordBackReferences",
+                        Type.getMethodDescriptor(
+                            Type.VOID_TYPE,
+                            Type.getType(BirElementBackReferenceRecorderScope::class.java),
+                            Type.getType(BirElementBase::class.java)
+                        )
+                    )
+                )
+            }
+        }
+
         il.add(matcherLabel)
     }
 
-    private fun buildClassMatchingTree(matchers: List<Matcher>): MutableList<ElementClassNode> {
+    private fun buildClassMatchingTree(indexers: List<Indexer>): MutableList<ElementClassNode> {
         val elementClassNodes = mutableMapOf<Class<*>, ElementClassNode>()
-        for (matcher in matchers) {
-            val node: ElementClassNode = elementClassNodes.computeIfAbsent(matcher.elementClass) { ElementClassNode(matcher.elementClass) }
-            node.matchers += matcher
+        for (indexer in indexers) {
+            val node: ElementClassNode = elementClassNodes.computeIfAbsent(indexer.elementClass) { ElementClassNode(indexer.elementClass) }
+            node.indexers += indexer
         }
 
         val topLevelElementClassNodes = elementClassNodes.values.toMutableList()
@@ -231,24 +304,24 @@ object BirElementIndexClassifierFunctionGenerator {
     }
 
     private class ElementClassNode(val elementClass: Class<*>) {
-        val matchers = mutableListOf<Matcher>()
+        val indexers = mutableListOf<Indexer>()
         val subNodes = mutableListOf<ElementClassNode>()
     }
 
     private fun generateConstructor(
         clazz: ClassNode,
-        capturedMatcherInstances: Map<Matcher, FieldNode>,
+        capturedIndexerInstances: Map<Indexer, FieldNode>,
     ) {
         val ctor = MethodNode().apply {
             access = Opcodes.ACC_PUBLIC
             name = "<init>"
-            desc = "([${Type.getDescriptor(BirElementIndexMatcher::class.java)})V"
+            desc = "([${Type.getDescriptor(BirElementGeneralIndexer::class.java)})V"
         }
 
         val il = ctor.instructions
         il.add(VarInsnNode(Opcodes.ALOAD, 0))
         il.add(MethodInsnNode(Opcodes.INVOKESPECIAL, "java/lang/Object", "<init>", "()V", false))
-        capturedMatcherInstances.forEach { (matcher, field) ->
+        capturedIndexerInstances.forEach { (matcher, field) ->
             val isStatic = (field.access and Opcodes.ACC_STATIC) != 0
             if (!isStatic) {
                 il.add(VarInsnNode(Opcodes.ALOAD, 0))
@@ -266,7 +339,7 @@ object BirElementIndexClassifierFunctionGenerator {
 
     private fun generateStaticConstructor(
         clazz: ClassNode,
-        capturedMatcherInstances: Map<Matcher, FieldNode>,
+        capturedIndexerInstances: Map<Indexer, FieldNode>,
     ) {
         val ctor = MethodNode().apply {
             access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC
@@ -280,12 +353,12 @@ object BirElementIndexClassifierFunctionGenerator {
             MethodInsnNode(
                 Opcodes.INVOKESTATIC,
                 Type.getInternalName(BirElementIndexClassifierFunctionGenerator::class.java),
-                "retrieveStaticConditionLambdasInitializationBuffer\$bir_tree",
-                Type.getMethodDescriptor(Type.getType(Array<BirElementIndexMatcher>::class.java), Type.getType(String::class.java))
+                "retrieveStaticIndexerFunctionsInitializationBuffer\$bir_tree",
+                Type.getMethodDescriptor(Type.getType(Array<BirElementGeneralIndexer>::class.java), Type.getType(String::class.java))
             )
         )
 
-        capturedMatcherInstances.forEach { (matcher, field) ->
+        capturedIndexerInstances.forEach { (matcher, field) ->
             val isStatic = (field.access and Opcodes.ACC_STATIC) != 0
             if (isStatic) {
                 il.add(InsnNode(Opcodes.DUP))
@@ -304,11 +377,9 @@ object BirElementIndexClassifierFunctionGenerator {
 
     @JvmStatic
     @Suppress("unused") // used by generated code
-    internal fun retrieveStaticConditionLambdasInitializationBuffer(className: String): Array<BirElementIndexMatcher?> {
-        return staticConditionLambdasInitializationBuffers.remove(className)!!
+    internal fun retrieveStaticIndexerFunctionsInitializationBuffer(className: String): Array<BirElementGeneralIndexer?> {
+        return staticIndexerFunctionsInitializationBuffers.remove(className)!!
     }
-
-    private data class MatcherCacheKey(val conditionClass: Class<*>, val elementClass: Class<*>, val index: Int)
 
     private class ByteArrayFunctionClassLoader(parent: ClassLoader) : ClassLoader(parent) {
         fun defineClass(name: String, binary: ByteArray): Class<*> {
