@@ -149,7 +149,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library-1"), compileLibrary("library-2")))
     }
 
-    // KT-60778 K2: implement MISSING_DEPENDENCY_CLASS(_SUPERCLASS) errors
+    // KT-62900 K2: Expected expression to be resolved during Fir2Ir
     fun testMissingEnumReferencedInAnnotationArgument() = muteForK2 {
         doTestBrokenLibrary("library", "a/E.class")
     }

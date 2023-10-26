@@ -92,6 +92,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirAnnotationsPlatformSpecificSupportComponent::class, FirAnnotationsPlatformSpecificSupportComponent.Default)
     register(FirPrimaryConstructorSuperTypeCheckerPlatformComponent::class, FirPrimaryConstructorSuperTypeCheckerPlatformComponent.Default)
     register(FirGenericArrayClassLiteralSupport::class, FirGenericArrayClassLiteralSupport.Disabled)
+    register(FirMissingDependencyStorage::class, FirMissingDependencyStorage(this))
 }
 
 @OptIn(SessionConfiguration::class)

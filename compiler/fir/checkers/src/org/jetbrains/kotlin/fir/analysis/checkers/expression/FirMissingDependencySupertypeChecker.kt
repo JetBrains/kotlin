@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.collectUpperBounds
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
@@ -36,13 +35,13 @@ object FirMissingDependencySupertypeChecker {
     object ForDeclarations : FirBasicDeclarationChecker() {
         override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
             if (declaration is FirClass) {
-                checkSupertypes(declaration.symbol, declaration.source, reporter, context)
+                checkSuperTypes(declaration.symbol, declaration.source, reporter, context)
             }
 
             if (declaration is FirTypeParameterRefsOwner) {
                 for (typeParameter in declaration.typeParameters) {
                     for (upperBound in typeParameter.toConeType().collectUpperBounds()) {
-                        checkSupertypes(upperBound, typeParameter.source, reporter, context)
+                        checkSuperTypes(upperBound, typeParameter.source, reporter, context)
                     }
                 }
             }
@@ -57,30 +56,30 @@ object FirMissingDependencySupertypeChecker {
             if (symbol == null) {
                 val receiverType = expression.explicitReceiver?.resolvedType
                     ?.lowerBoundIfFlexible()?.originalIfDefinitelyNotNullable()?.fullyExpandedType(context.session)
-                checkSupertypes(receiverType, source, reporter, context)
+                checkSuperTypes(receiverType, source, reporter, context)
                 return
             }
 
-            val missingSupertype = checkSupertypes(symbol.dispatchReceiverType, source, reporter, context)
+            val missingSupertype = checkSuperTypes(symbol.dispatchReceiverType, source, reporter, context)
 
             val eagerChecksAllowed = context.languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)
             val unresolvedLazySupertypesByDefault = symbol is FirConstructorSymbol || symbol is FirAnonymousFunctionSymbol
 
             if (eagerChecksAllowed || !unresolvedLazySupertypesByDefault && !missingSupertype) {
-                checkSupertypes(symbol.getOwnerLookupTag()?.toSymbol(context.session), source, reporter, context)
-                checkSupertypes(symbol.resolvedReceiverTypeRef?.coneTypeOrNull, source, reporter, context)
+                checkSuperTypes(symbol.getOwnerLookupTag()?.toSymbol(context.session), source, reporter, context)
+                checkSuperTypes(symbol.resolvedReceiverTypeRef?.coneTypeOrNull, source, reporter, context)
             }
         }
     }
 
-    fun checkSupertypes(
+    fun checkSuperTypes(
         classifierType: ConeKotlinType?,
         source: KtSourceElement?,
         reporter: DiagnosticReporter,
         context: CheckerContext,
-    ): Boolean = checkSupertypes(classifierType?.toSymbol(context.session), source, reporter, context)
+    ): Boolean = checkSuperTypes(classifierType?.toSymbol(context.session), source, reporter, context)
 
-    fun checkSupertypes(
+    fun checkSuperTypes(
         declaration: FirBasedSymbol<*>?,
         source: KtSourceElement?,
         reporter: DiagnosticReporter,
@@ -88,38 +87,17 @@ object FirMissingDependencySupertypeChecker {
     ): Boolean {
         if (declaration !is FirClassSymbol<*>) return false
 
-        var missingSupertype = false
-        val superTypes = declaration.collectSuperTypes(context.session)
-        for (superType in superTypes) {
-            if (superType is ConeErrorType || superType is ConeDynamicType) continue // Ignore types which are already errors.
-
-            val superTypeSymbol = superType.toSymbol(context.session)
-            if (superTypeSymbol == null) {
-                missingSupertype = true
-
-                reporter.reportOn(
-                    source,
-                    FirErrors.MISSING_DEPENDENCY_SUPERCLASS,
-                    superType.withArguments(emptyArray()).withNullability(ConeNullability.NOT_NULL, context.session.typeContext),
-                    declaration.constructType(emptyArray(), false),
-                    context
-                )
-            }
+        val missingSuperTypes = context.session.missingDependencyStorage.getMissingSuperTypes(declaration)
+        for (superType in missingSuperTypes) {
+            reporter.reportOn(
+                source,
+                FirErrors.MISSING_DEPENDENCY_SUPERCLASS,
+                superType.withArguments(emptyArray()).withNullability(ConeNullability.NOT_NULL, context.session.typeContext),
+                declaration.constructType(emptyArray(), false),
+                context
+            )
         }
 
-        return missingSupertype
-    }
-
-    private fun FirClassSymbol<*>.collectSuperTypes(session: FirSession): Set<ConeKotlinType> {
-        val superTypes = mutableSetOf<ConeKotlinType>()
-        fun collect(symbol: FirClassSymbol<*>) {
-            for (superType in symbol.resolvedSuperTypes) {
-                if (superTypes.add(superType)) {
-                    (superType.toSymbol(session) as? FirClassSymbol<*>)?.let(::collect)
-                }
-            }
-        }
-        collect(this)
-        return superTypes
+        return missingSuperTypes.isNotEmpty()
     }
 }
