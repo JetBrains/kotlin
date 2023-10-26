@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt3.test.*
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -22,6 +23,10 @@ open class AbstractKotlinKapt4ContextTest : AbstractKotlinKapt4ContextTestBase(T
 abstract class AbstractKotlinKapt4ContextTestBase(
     targetBackend: TargetBackend
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
+    init {
+        doOpenInternalPackagesIfRequired()
+    }
+
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR

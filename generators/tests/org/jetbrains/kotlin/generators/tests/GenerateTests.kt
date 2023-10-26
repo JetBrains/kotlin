@@ -392,7 +392,7 @@ fun main(args: Array<String>) {
                 model("kotlinRunner")
             }
 
-            testClass<AbstractIrKotlinKaptContextTest>(annotations = annotations) {
+            testClass<AbstractIrKotlinKaptContextTest> {
                 model("kotlinRunner")
             }
 

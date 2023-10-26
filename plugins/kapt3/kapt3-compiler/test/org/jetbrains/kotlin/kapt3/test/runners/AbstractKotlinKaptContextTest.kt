@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.kapt3.test.runners
 
+import org.jetbrains.kotlin.kapt3.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt3.test.*
 import org.jetbrains.kotlin.kapt3.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
 import org.jetbrains.kotlin.kapt3.test.handlers.KaptContextHandler
@@ -20,6 +21,10 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 abstract class AbstractKotlinKaptContextTestBase(
     targetBackend: TargetBackend
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
+    init {
+        doOpenInternalPackagesIfRequired()
+    }
+
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.ClassicFrontend
