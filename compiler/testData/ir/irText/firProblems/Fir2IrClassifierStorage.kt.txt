@@ -18,6 +18,9 @@ interface Fir2IrComponents {
   abstract val classifierStorage: Fir2IrClassifierStorage
     abstract get
 
+  abstract val Int.components: Int
+    abstract get
+
 }
 
 class Fir2IrComponentsStorage : Fir2IrComponents {
@@ -34,6 +37,11 @@ class Fir2IrComponentsStorage : Fir2IrComponents {
   override lateinit var classifierStorage: Fir2IrClassifierStorage
     override get
     open set
+
+  override val Int.components: Int
+    override get(): Int {
+      return <this>
+    }
 
 }
 
@@ -56,6 +64,11 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
   override val session: FirSession
     override get(): FirSession {
       return <this>.#components.<get-session>()
+    }
+
+  override val Int.components: Int
+    override get(): Int {
+      return (<this>.#components, <this>).<get-components>()
     }
 
   private val name: String

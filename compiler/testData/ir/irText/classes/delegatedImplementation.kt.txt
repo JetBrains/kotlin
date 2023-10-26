@@ -1,9 +1,25 @@
 interface IBase {
   abstract fun foo(x: Int, s: String)
 
+  abstract fun foo(x: Int)
+
+  abstract fun foo(x: String)
+
+  abstract fun <T : Any?> foo(t: T)
+
+  abstract fun <S : Any?, T : Any?> foo(s: S, t: T)
+
+  abstract fun <T : IBase> foo(t: T)
+
+  abstract fun <T> foo(t: T) where T : IBase, T : IOther
+
   abstract fun bar(): Int
 
   abstract fun String.qux()
+
+  abstract fun String.qux(s: String)
+
+  abstract fun Int.foo()
 
 }
 
@@ -17,11 +33,35 @@ object BaseImpl : IBase {
   override fun foo(x: Int, s: String) {
   }
 
+  override fun foo(x: Int) {
+  }
+
+  override fun foo(x: String) {
+  }
+
+  override fun <T : Any?> foo(t: T) {
+  }
+
+  override fun <S : Any?, T : Any?> foo(s: S, t: T) {
+  }
+
+  override fun <T : IBase> foo(t: T) {
+  }
+
+  override fun <T> foo(t: T) where T : IBase, T : IOther {
+  }
+
   override fun bar(): Int {
     return 42
   }
 
   override fun String.qux() {
+  }
+
+  override fun String.qux(s: String) {
+  }
+
+  override fun Int.foo() {
   }
 
 }
@@ -40,6 +80,15 @@ interface IOther {
   abstract var Byte.z2: Int
     abstract get
     abstract set
+
+  abstract val <T : Any?> T.z3: Int
+    abstract get
+
+  abstract val <T : IBase> T.z3: Int
+    abstract get
+
+  abstract val <T> T.z3: Int
+    abstract get
 
 }
 
@@ -73,6 +122,21 @@ fun otherImpl(x0: String, y0: Int): IOther {
         override set(value: Int) {
         }
 
+      override val <T : Any?> T.z3: Int
+        override get(): Int {
+          return 0
+        }
+
+      override val <T : IBase> T.z3: Int
+        override get(): Int {
+          return 0
+        }
+
+      override val <T> T.z3: Int
+        override get(): Int where T : IBase, T : IOther {
+          return 0
+        }
+
     }
 
     <no name provided>()
@@ -91,12 +155,44 @@ class Test1 : IBase {
     return <this>.#$$delegate_0.bar()
   }
 
+  override fun <S : Any?, T : Any?> foo(s: S, t: T) {
+    <this>.#$$delegate_0.foo<S, T>(s = s, t = t)
+  }
+
+  override fun <T : IBase> foo(t: T) {
+    <this>.#$$delegate_0.foo<T>(t = t)
+  }
+
+  override fun <T : Any?> foo(t: T) {
+    <this>.#$$delegate_0.foo<T>(t = t)
+  }
+
+  override fun <T> foo(t: T) where T : IBase, T : IOther {
+    <this>.#$$delegate_0.foo<T>(t = t)
+  }
+
+  override fun foo(x: Int) {
+    <this>.#$$delegate_0.foo(x = x)
+  }
+
   override fun foo(x: Int, s: String) {
     <this>.#$$delegate_0.foo(x = x, s = s)
   }
 
+  override fun foo(x: String) {
+    <this>.#$$delegate_0.foo(x = x)
+  }
+
+  override fun Int.foo() {
+    (<this>.#$$delegate_0, <this>).foo()
+  }
+
   override fun String.qux() {
     (<this>.#$$delegate_0, <this>).qux()
+  }
+
+  override fun String.qux(s: String) {
+    (<this>.#$$delegate_0, <this>).qux(s = s)
   }
 
 }
@@ -113,12 +209,44 @@ class Test2 : IBase, IOther {
     return <this>.#$$delegate_0.bar()
   }
 
+  override fun <S : Any?, T : Any?> foo(s: S, t: T) {
+    <this>.#$$delegate_0.foo<S, T>(s = s, t = t)
+  }
+
+  override fun <T : IBase> foo(t: T) {
+    <this>.#$$delegate_0.foo<T>(t = t)
+  }
+
+  override fun <T : Any?> foo(t: T) {
+    <this>.#$$delegate_0.foo<T>(t = t)
+  }
+
+  override fun <T> foo(t: T) where T : IBase, T : IOther {
+    <this>.#$$delegate_0.foo<T>(t = t)
+  }
+
+  override fun foo(x: Int) {
+    <this>.#$$delegate_0.foo(x = x)
+  }
+
   override fun foo(x: Int, s: String) {
     <this>.#$$delegate_0.foo(x = x, s = s)
   }
 
+  override fun foo(x: String) {
+    <this>.#$$delegate_0.foo(x = x)
+  }
+
+  override fun Int.foo() {
+    (<this>.#$$delegate_0, <this>).foo()
+  }
+
   override fun String.qux() {
     (<this>.#$$delegate_0, <this>).qux()
+  }
+
+  override fun String.qux(s: String) {
+    (<this>.#$$delegate_0, <this>).qux(s = s)
   }
 
   private /* final field */ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
@@ -146,6 +274,21 @@ class Test2 : IBase, IOther {
     }
     override set(<set-?>: Int) {
       (<this>.#$$delegate_1, <this>).<set-z2>(<set-?> = <set-?>)
+    }
+
+  override val <T : IBase> T.z3: Int
+    override get(): Int {
+      return (<this>.#$$delegate_1, <this>).<get-z3><T>()
+    }
+
+  override val <T : Any?> T.z3: Int
+    override get(): Int {
+      return (<this>.#$$delegate_1, <this>).<get-z3><T>()
+    }
+
+  override val <T> T.z3: Int
+    override get(): Int where T : IBase, T : IOther {
+      return (<this>.#$$delegate_1, <this>).<get-z3><T>()
     }
 
 }

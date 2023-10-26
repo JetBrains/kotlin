@@ -19,16 +19,64 @@ class Test1 : IBase {
   override fun bar(): Int
 
   // CHECK:
+  //   Mangled name: Test1#foo@kotlin.Int(){}
+  //   Public signature: /Test1.foo|4521317896132265411[0]
+  //   Public signature debug description: foo@kotlin.Int(){}
+  override fun Int.foo(): Unit
+
+  // CHECK:
+  //   Mangled name: Test1#foo(kotlin.Int){}
+  //   Public signature: /Test1.foo|-104159190164110731[0]
+  //   Public signature debug description: foo(kotlin.Int){}
+  override fun foo(x: Int): Unit
+
+  // CHECK:
   //   Mangled name: Test1#foo(kotlin.Int;kotlin.String){}
   //   Public signature: /Test1.foo|2507695683462765192[0]
   //   Public signature debug description: foo(kotlin.Int;kotlin.String){}
   override fun foo(x: Int, s: String): Unit
 
   // CHECK:
+  //   Mangled name: Test1#foo(kotlin.String){}
+  //   Public signature: /Test1.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(x: String): Unit
+
+  // CHECK:
+  //   Mangled name: Test1#foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}
+  //   Public signature: /Test1.foo|-4743145484674476506[0]
+  //   Public signature debug description: foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}
+  override fun <S : Any?, T : Any?> foo(s: S, t: T): Unit
+
+  // CHECK:
+  //   Mangled name: Test1#foo(0:0){0§<IBase>}
+  //   Public signature: /Test1.foo|-191489885694835112[0]
+  //   Public signature debug description: foo(0:0){0§<IBase>}
+  override fun <T : IBase> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: Test1#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /Test1.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  override fun <T : Any?> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: Test1#foo(0:0){0§<IBase&IOther>}
+  //   Public signature: /Test1.foo|-3747508013408334090[0]
+  //   Public signature debug description: foo(0:0){0§<IBase&IOther>}
+  override fun <T> foo(t: T): Unit where T : IBase, T : IOther
+
+  // CHECK:
   //   Mangled name: Test1#qux@kotlin.String(){}
   //   Public signature: /Test1.qux|7892261924686331851[0]
   //   Public signature debug description: qux@kotlin.String(){}
   override fun String.qux(): Unit
+
+  // CHECK:
+  //   Mangled name: Test1#qux@kotlin.String(kotlin.String){}
+  //   Public signature: /Test1.qux|3146178582912047072[0]
+  //   Public signature debug description: qux@kotlin.String(kotlin.String){}
+  override fun String.qux(s: String): Unit
 
 }
 
@@ -53,16 +101,64 @@ class Test2 : IBase, IOther {
   override fun bar(): Int
 
   // CHECK:
+  //   Mangled name: Test2#foo@kotlin.Int(){}
+  //   Public signature: /Test2.foo|4521317896132265411[0]
+  //   Public signature debug description: foo@kotlin.Int(){}
+  override fun Int.foo(): Unit
+
+  // CHECK:
+  //   Mangled name: Test2#foo(kotlin.Int){}
+  //   Public signature: /Test2.foo|-104159190164110731[0]
+  //   Public signature debug description: foo(kotlin.Int){}
+  override fun foo(x: Int): Unit
+
+  // CHECK:
   //   Mangled name: Test2#foo(kotlin.Int;kotlin.String){}
   //   Public signature: /Test2.foo|2507695683462765192[0]
   //   Public signature debug description: foo(kotlin.Int;kotlin.String){}
   override fun foo(x: Int, s: String): Unit
 
   // CHECK:
+  //   Mangled name: Test2#foo(kotlin.String){}
+  //   Public signature: /Test2.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(x: String): Unit
+
+  // CHECK:
+  //   Mangled name: Test2#foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}
+  //   Public signature: /Test2.foo|-4743145484674476506[0]
+  //   Public signature debug description: foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}
+  override fun <S : Any?, T : Any?> foo(s: S, t: T): Unit
+
+  // CHECK:
+  //   Mangled name: Test2#foo(0:0){0§<IBase>}
+  //   Public signature: /Test2.foo|-191489885694835112[0]
+  //   Public signature debug description: foo(0:0){0§<IBase>}
+  override fun <T : IBase> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: Test2#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /Test2.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  override fun <T : Any?> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: Test2#foo(0:0){0§<IBase&IOther>}
+  //   Public signature: /Test2.foo|-3747508013408334090[0]
+  //   Public signature debug description: foo(0:0){0§<IBase&IOther>}
+  override fun <T> foo(t: T): Unit where T : IBase, T : IOther
+
+  // CHECK:
   //   Mangled name: Test2#qux@kotlin.String(){}
   //   Public signature: /Test2.qux|7892261924686331851[0]
   //   Public signature debug description: qux@kotlin.String(){}
   override fun String.qux(): Unit
+
+  // CHECK:
+  //   Mangled name: Test2#qux@kotlin.String(kotlin.String){}
+  //   Public signature: /Test2.qux|3146178582912047072[0]
+  //   Public signature debug description: qux@kotlin.String(kotlin.String){}
+  override fun String.qux(s: String): Unit
 
   // CHECK:
   //   Mangled name: Test2{}x
@@ -134,6 +230,51 @@ class Test2 : IBase, IOther {
     //   Public signature debug description: <set-z2>@kotlin.Byte(kotlin.Int){}
     override set(<set-?>: Int): Unit
 
+  // CHECK:
+  //   Mangled name: Test2@0:0{0§<IBase>}z3
+  //   Public signature: /Test2.z3|7152826124581297913[0]
+  //   Public signature debug description: @0:0{0§<IBase>}z3
+  override val <T : IBase> T.z3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-z3>@0:0(){0§<IBase>}kotlin.Int
+    //   Public signature: /Test2.z3.<get-z3>|4839251312824646556[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<IBase>}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-z3>@0:0(){0§<IBase>}
+    //   Public signature: /Test2.z3.<get-z3>|-5406611470894814669[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<IBase>}
+    override get(): Int
+
+  // CHECK:
+  //   Mangled name: Test2@0:0{0§<kotlin.Any?>}z3
+  //   Public signature: /Test2.z3|-1043163784034213069[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}z3
+  override val <T : Any?> T.z3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-z3>@0:0(){0§<kotlin.Any?>}kotlin.Int
+    //   Public signature: /Test2.z3.<get-z3>|-5154221223033297527[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<kotlin.Any?>}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-z3>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Test2.z3.<get-z3>|7562607529286218145[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<kotlin.Any?>}
+    override get(): Int
+
+  // CHECK:
+  //   Mangled name: Test2@0:0{0§<IBase&IOther>}z3
+  //   Public signature: /Test2.z3|-8201912757050396717[0]
+  //   Public signature debug description: @0:0{0§<IBase&IOther>}z3
+  override val <T> T.z3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Test2#<get-z3>@0:0(){0§<IBase&IOther>}kotlin.Int
+    //   Public signature: /Test2.z3.<get-z3>|1229386750599836506[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<IBase&IOther>}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Test2#<get-z3>@0:0(){0§<IBase&IOther>}
+    //   Public signature: /Test2.z3.<get-z3>|-6340268622709053777[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<IBase&IOther>}
+    override get(): Int where T : IBase, T : IOther
+
 }
 
 // CHECK:
@@ -151,16 +292,64 @@ interface IBase {
   abstract fun bar(): Int
 
   // CHECK:
+  //   Mangled name: IBase#foo@kotlin.Int(){}
+  //   Public signature: /IBase.foo|4521317896132265411[0]
+  //   Public signature debug description: foo@kotlin.Int(){}
+  abstract fun Int.foo(): Unit
+
+  // CHECK:
+  //   Mangled name: IBase#foo(kotlin.Int){}
+  //   Public signature: /IBase.foo|-104159190164110731[0]
+  //   Public signature debug description: foo(kotlin.Int){}
+  abstract fun foo(x: Int): Unit
+
+  // CHECK:
   //   Mangled name: IBase#foo(kotlin.Int;kotlin.String){}
   //   Public signature: /IBase.foo|2507695683462765192[0]
   //   Public signature debug description: foo(kotlin.Int;kotlin.String){}
   abstract fun foo(x: Int, s: String): Unit
 
   // CHECK:
+  //   Mangled name: IBase#foo(kotlin.String){}
+  //   Public signature: /IBase.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  abstract fun foo(x: String): Unit
+
+  // CHECK:
+  //   Mangled name: IBase#foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}
+  //   Public signature: /IBase.foo|-4743145484674476506[0]
+  //   Public signature debug description: foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}
+  abstract fun <S : Any?, T : Any?> foo(s: S, t: T): Unit
+
+  // CHECK:
+  //   Mangled name: IBase#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /IBase.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  abstract fun <T : Any?> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: IBase#foo(0:0){0§<IBase>}
+  //   Public signature: /IBase.foo|-191489885694835112[0]
+  //   Public signature debug description: foo(0:0){0§<IBase>}
+  abstract fun <T : IBase> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: IBase#foo(0:0){0§<IBase&IOther>}
+  //   Public signature: /IBase.foo|-3747508013408334090[0]
+  //   Public signature debug description: foo(0:0){0§<IBase&IOther>}
+  abstract fun <T> foo(t: T): Unit where T : IBase, T : IOther
+
+  // CHECK:
   //   Mangled name: IBase#qux@kotlin.String(){}
   //   Public signature: /IBase.qux|7892261924686331851[0]
   //   Public signature debug description: qux@kotlin.String(){}
   abstract fun String.qux(): Unit
+
+  // CHECK:
+  //   Mangled name: IBase#qux@kotlin.String(kotlin.String){}
+  //   Public signature: /IBase.qux|3146178582912047072[0]
+  //   Public signature debug description: qux@kotlin.String(kotlin.String){}
+  abstract fun String.qux(s: String): Unit
 
 }
 
@@ -238,6 +427,51 @@ interface IOther {
     //   Public signature debug description: <set-z2>@kotlin.Byte(kotlin.Int){}
     abstract set
 
+  // CHECK:
+  //   Mangled name: IOther@0:0{0§<kotlin.Any?>}z3
+  //   Public signature: /IOther.z3|-1043163784034213069[0]
+  //   Public signature debug description: @0:0{0§<kotlin.Any?>}z3
+  abstract val <T : Any?> T.z3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IOther#<get-z3>@0:0(){0§<kotlin.Any?>}kotlin.Int
+    //   Public signature: /IOther.z3.<get-z3>|-5154221223033297527[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<kotlin.Any?>}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IOther#<get-z3>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /IOther.z3.<get-z3>|7562607529286218145[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<kotlin.Any?>}
+    abstract get
+
+  // CHECK:
+  //   Mangled name: IOther@0:0{0§<IBase>}z3
+  //   Public signature: /IOther.z3|7152826124581297913[0]
+  //   Public signature debug description: @0:0{0§<IBase>}z3
+  abstract val <T : IBase> T.z3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IOther#<get-z3>@0:0(){0§<IBase>}kotlin.Int
+    //   Public signature: /IOther.z3.<get-z3>|4839251312824646556[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<IBase>}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IOther#<get-z3>@0:0(){0§<IBase>}
+    //   Public signature: /IOther.z3.<get-z3>|-5406611470894814669[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<IBase>}
+    abstract get
+
+  // CHECK:
+  //   Mangled name: IOther@0:0{0§<IBase&IOther>}z3
+  //   Public signature: /IOther.z3|-8201912757050396717[0]
+  //   Public signature debug description: @0:0{0§<IBase&IOther>}z3
+  abstract val <T> T.z3: Int
+    // CHECK JVM_IR:
+    //   Mangled name: IOther#<get-z3>@0:0(){0§<IBase&IOther>}kotlin.Int
+    //   Public signature: /IOther.z3.<get-z3>|1229386750599836506[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<IBase&IOther>}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: IOther#<get-z3>@0:0(){0§<IBase&IOther>}
+    //   Public signature: /IOther.z3.<get-z3>|-6340268622709053777[0]
+    //   Public signature debug description: <get-z3>@0:0(){0§<IBase&IOther>}
+    abstract get
+
 }
 
 // CHECK:
@@ -261,16 +495,64 @@ object BaseImpl : IBase {
   override fun bar(): Int
 
   // CHECK:
+  //   Mangled name: BaseImpl#foo@kotlin.Int(){}
+  //   Public signature: /BaseImpl.foo|4521317896132265411[0]
+  //   Public signature debug description: foo@kotlin.Int(){}
+  override fun Int.foo(): Unit
+
+  // CHECK:
+  //   Mangled name: BaseImpl#foo(kotlin.Int){}
+  //   Public signature: /BaseImpl.foo|-104159190164110731[0]
+  //   Public signature debug description: foo(kotlin.Int){}
+  override fun foo(x: Int): Unit
+
+  // CHECK:
   //   Mangled name: BaseImpl#foo(kotlin.Int;kotlin.String){}
   //   Public signature: /BaseImpl.foo|2507695683462765192[0]
   //   Public signature debug description: foo(kotlin.Int;kotlin.String){}
   override fun foo(x: Int, s: String): Unit
 
   // CHECK:
+  //   Mangled name: BaseImpl#foo(kotlin.String){}
+  //   Public signature: /BaseImpl.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(x: String): Unit
+
+  // CHECK:
+  //   Mangled name: BaseImpl#foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}
+  //   Public signature: /BaseImpl.foo|-4743145484674476506[0]
+  //   Public signature debug description: foo(0:0;0:1){0§<kotlin.Any?>;1§<kotlin.Any?>}
+  override fun <S : Any?, T : Any?> foo(s: S, t: T): Unit
+
+  // CHECK:
+  //   Mangled name: BaseImpl#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /BaseImpl.foo|-6838606926256314363[0]
+  //   Public signature debug description: foo(0:0){0§<kotlin.Any?>}
+  override fun <T : Any?> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: BaseImpl#foo(0:0){0§<IBase>}
+  //   Public signature: /BaseImpl.foo|-191489885694835112[0]
+  //   Public signature debug description: foo(0:0){0§<IBase>}
+  override fun <T : IBase> foo(t: T): Unit
+
+  // CHECK:
+  //   Mangled name: BaseImpl#foo(0:0){0§<IBase&IOther>}
+  //   Public signature: /BaseImpl.foo|-3747508013408334090[0]
+  //   Public signature debug description: foo(0:0){0§<IBase&IOther>}
+  override fun <T> foo(t: T): Unit where T : IBase, T : IOther
+
+  // CHECK:
   //   Mangled name: BaseImpl#qux@kotlin.String(){}
   //   Public signature: /BaseImpl.qux|7892261924686331851[0]
   //   Public signature debug description: qux@kotlin.String(){}
   override fun String.qux(): Unit
+
+  // CHECK:
+  //   Mangled name: BaseImpl#qux@kotlin.String(kotlin.String){}
+  //   Public signature: /BaseImpl.qux|3146178582912047072[0]
+  //   Public signature debug description: qux@kotlin.String(kotlin.String){}
+  override fun String.qux(s: String): Unit
 
 }
 
@@ -283,4 +565,3 @@ object BaseImpl : IBase {
 //   Public signature: /otherImpl|4856050071539374055[0]
 //   Public signature debug description: otherImpl(kotlin.String;kotlin.Int){}
 fun otherImpl(x0: String, y0: Int): IOther
-

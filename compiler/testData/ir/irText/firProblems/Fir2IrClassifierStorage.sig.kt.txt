@@ -54,6 +54,21 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
     override get(): Fir2IrClassifierStorage
 
   // CHECK:
+  //   Mangled name: Fir2IrClassifierStorage@kotlin.Int{}components
+  //   Public signature: /Fir2IrClassifierStorage.components|4502334917308373986[0]
+  //   Public signature debug description: @kotlin.Int{}components
+  override val Int.components: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Fir2IrClassifierStorage#<get-components>@kotlin.Int(){}kotlin.Int
+    //   Public signature: /Fir2IrClassifierStorage.components.<get-components>|-1873523107628536525[0]
+    //   Public signature debug description: <get-components>@kotlin.Int(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Fir2IrClassifierStorage#<get-components>@kotlin.Int(){}
+    //   Public signature: /Fir2IrClassifierStorage.components.<get-components>|-7907964831001347351[0]
+    //   Public signature debug description: <get-components>@kotlin.Int(){}
+    override get(): Int
+
+  // CHECK:
   //   Mangled name: Fir2IrClassifierStorage{}session
   //   Public signature: /Fir2IrClassifierStorage.session|5876162548717009254[0]
   //   Public signature debug description: {}session
@@ -115,6 +130,21 @@ class Fir2IrComponentsStorage : Fir2IrComponents {
   //   Public signature debug description: <init>(FirSession){}
   constructor(session: FirSession) /* primary */
 
+  // CHECK:
+  //   Mangled name: Fir2IrComponentsStorage@kotlin.Int{}components
+  //   Public signature: /Fir2IrComponentsStorage.components|4502334917308373986[0]
+  //   Public signature debug description: @kotlin.Int{}components
+  override val Int.components: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Fir2IrComponentsStorage#<get-components>@kotlin.Int(){}kotlin.Int
+    //   Public signature: /Fir2IrComponentsStorage.components.<get-components>|-1873523107628536525[0]
+    //   Public signature debug description: <get-components>@kotlin.Int(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Fir2IrComponentsStorage#<get-components>@kotlin.Int(){}
+    //   Public signature: /Fir2IrComponentsStorage.components.<get-components>|-7907964831001347351[0]
+    //   Public signature debug description: <get-components>@kotlin.Int(){}
+    override get(): Int
+
 }
 
 // CHECK:
@@ -164,6 +194,21 @@ interface Fir2IrComponents {
     abstract get
 
   // CHECK:
+  //   Mangled name: Fir2IrComponents@kotlin.Int{}components
+  //   Public signature: /Fir2IrComponents.components|4502334917308373986[0]
+  //   Public signature debug description: @kotlin.Int{}components
+  abstract val Int.components: Int
+    // CHECK JVM_IR:
+    //   Mangled name: Fir2IrComponents#<get-components>@kotlin.Int(){}kotlin.Int
+    //   Public signature: /Fir2IrComponents.components.<get-components>|-1873523107628536525[0]
+    //   Public signature debug description: <get-components>@kotlin.Int(){}kotlin.Int
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Fir2IrComponents#<get-components>@kotlin.Int(){}
+    //   Public signature: /Fir2IrComponents.components.<get-components>|-7907964831001347351[0]
+    //   Public signature debug description: <get-components>@kotlin.Int(){}
+    abstract get
+
+  // CHECK:
   //   Mangled name: Fir2IrComponents{}session
   //   Public signature: /Fir2IrComponents.session|5876162548717009254[0]
   //   Public signature debug description: {}session
@@ -179,4 +224,3 @@ interface Fir2IrComponents {
     abstract get
 
 }
-

@@ -9,15 +9,14 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -115,55 +114,70 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
 
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
-        subClassScope.processAllFunctions { functionSymbol ->
-            val unwrapped =
-                functionSymbol.unwrapDelegateTarget(subClassLookupTag, firField)
-                    ?: return@processAllFunctions
+        val callables = mutableListOf<FirCallableSymbol<*>>()
+        subClassScope.processAllCallables(callables::add)
+        callables.sortWith(compareBy(FirCallableDeclarationComparator) { it.fir })
 
-            val delegateToSymbol = findDelegateToSymbol(
-                unwrapped.unwrapSubstitutionOverrides().symbol,
-                delegateToScope::processFunctionsByName,
-                delegateToScope::processOverriddenFunctions
-            ) ?: return@processAllFunctions
-
-            val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull()
-                ?: return@processAllFunctions
-
-            val irSubFunction = generateDelegatedFunction(
-                subClass, firSubClass, functionSymbol.fir
-            )
-
-            bodiesInfo += DeclarationBodyInfo(irSubFunction, irField, delegateToSymbol, delegateToLookupTag)
-            declarationStorage.cacheDelegationFunction(functionSymbol.fir, irSubFunction)
+        for (callable in callables) {
+            when (callable) {
+                is FirPropertySymbol -> {
+                    generateDelegatedCallable(
+                        callable,
+                        subClassLookupTag,
+                        firField,
+                        irField,
+                        delegateToScope::processPropertiesByName,
+                        delegateToScope::processOverriddenProperties,
+                        { generateDelegatedProperty(subClass, firSubClass, callable.fir) },
+                        declarationStorage::cacheDelegatedProperty,
+                    )
+                }
+                is FirNamedFunctionSymbol -> {
+                    generateDelegatedCallable(
+                        callable,
+                        subClassLookupTag,
+                        firField,
+                        irField,
+                        delegateToScope::processFunctionsByName,
+                        delegateToScope::processOverriddenFunctions,
+                        { generateDelegatedFunction(subClass, firSubClass, callable.fir) },
+                        declarationStorage::cacheDelegationFunction,
+                    )
+                }
+            }
         }
+    }
 
-        subClassScope.processAllProperties { propertySymbol ->
-            if (propertySymbol !is FirPropertySymbol) return@processAllProperties
+    private inline fun <reified TFirSymbol, reified TFirDeclaration, TIrDeclaration> generateDelegatedCallable(
+        callable: TFirSymbol,
+        subClassLookupTag: ConeClassLikeLookupTag,
+        firField: FirField,
+        irField: IrField,
+        crossinline processDeclarationsByName: (Name, (FirCallableSymbol<*>) -> Unit) -> Unit,
+        crossinline processOverridden: (base: TFirSymbol, processor: (TFirSymbol) -> ProcessorAction) -> ProcessorAction,
+        crossinline generateDelegatedMember: () -> TIrDeclaration,
+        crossinline cacheDelegatedDeclaration: (TFirDeclaration, TIrDeclaration) -> Unit,
+    ) where TFirSymbol : FirCallableSymbol<TFirDeclaration>,
+            TFirDeclaration : FirCallableDeclaration,
+            TIrDeclaration : IrDeclaration {
+        val unwrapped = callable.unwrapDelegateTarget(subClassLookupTag, firField) ?: return
 
-            val unwrapped =
-                propertySymbol.unwrapDelegateTarget(subClassLookupTag, firField)
-                    ?: return@processAllProperties
+        val delegateToSymbol = findDelegateToSymbol(
+            unwrapped.unwrapSubstitutionOverrides().symbol as TFirSymbol,
+            { name, processor ->
+                processDeclarationsByName(name) {
+                    if (it !is TFirSymbol) return@processDeclarationsByName
+                    processor(it)
+                }
+            },
+            processOverridden,
+        ) ?: return
 
-            val delegateToSymbol = findDelegateToSymbol(
-                unwrapped.unwrapSubstitutionOverrides().symbol,
-                { name, processor ->
-                    delegateToScope.processPropertiesByName(name) {
-                        if (it !is FirPropertySymbol) return@processPropertiesByName
-                        processor(it)
-                    }
-                },
-                delegateToScope::processOverriddenProperties
-            ) ?: return@processAllProperties
+        val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull() ?: return
 
-            val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull()
-                ?: return@processAllProperties
-
-            val irSubProperty = generateDelegatedProperty(
-                subClass, firSubClass, propertySymbol.fir
-            )
-            bodiesInfo += DeclarationBodyInfo(irSubProperty, irField, delegateToSymbol, delegateToLookupTag)
-            declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubProperty)
-        }
+        val irSubDeclaration = generateDelegatedMember()
+        bodiesInfo += DeclarationBodyInfo(irSubDeclaration, irField, delegateToSymbol, delegateToLookupTag)
+        cacheDelegatedDeclaration(callable.fir, irSubDeclaration)
     }
 
     private inline fun <reified S : FirCallableSymbol<*>> findDelegateToSymbol(

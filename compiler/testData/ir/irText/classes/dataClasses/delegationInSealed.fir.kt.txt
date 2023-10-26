@@ -16,6 +16,11 @@ sealed class A : CharSequence {
       field = c
       get
 
+    override val length: Int
+      override get(): Int {
+        return <this>.#c.<get-length>()
+      }
+
     override operator fun get(index: Int): Char {
       return <this>.#c.get(index = index)
     }
@@ -23,11 +28,6 @@ sealed class A : CharSequence {
     override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
       return <this>.#c.subSequence(startIndex = startIndex, endIndex = endIndex)
     }
-
-    override val length: Int
-      override get(): Int {
-        return <this>.#c.<get-length>()
-      }
 
     operator fun component1(): CharSequence {
       return <this>.#c

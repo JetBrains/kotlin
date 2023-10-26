@@ -9,18 +9,6 @@ class Test : J {
     field = j
     private get
 
-  override fun takeNotNull(@NotNull x: @EnhancedNullability String) {
-    <this>.#j.takeNotNull(x = x)
-  }
-
-  override fun takeNullable(@Nullable x: String?) {
-    <this>.#j.takeNullable(x = x)
-  }
-
-  override fun takeFlexible(x: @FlexibleNullability String?) {
-    <this>.#j.takeFlexible(x = x)
-  }
-
   @NotNull
   override fun returnNotNull(): @EnhancedNullability String {
     return <this>.#j.returnNotNull() /*!! String */
@@ -33,6 +21,18 @@ class Test : J {
 
   override fun returnsFlexible(): @FlexibleNullability String? {
     return <this>.#j.returnsFlexible()
+  }
+
+  override fun takeFlexible(x: @FlexibleNullability String?) {
+    <this>.#j.takeFlexible(x = x)
+  }
+
+  override fun takeNotNull(@NotNull x: @EnhancedNullability String) {
+    <this>.#j.takeNotNull(x = x)
+  }
+
+  override fun takeNullable(@Nullable x: String?) {
+    <this>.#j.takeNullable(x = x)
   }
 
 }
