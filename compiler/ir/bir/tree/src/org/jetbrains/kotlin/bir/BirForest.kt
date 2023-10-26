@@ -16,7 +16,7 @@ class BirForest : BirElementParent() {
 
     private val elementIndexSlots = arrayOfNulls<ElementsIndexSlot>(256)
     private var elementIndexSlotCount = 0
-    private var registeredElementIndexSlotCount = 0
+    private val registeredIndexers = mutableListOf<BirElementGeneralIndexerKey>()
     private var elementClassifier: BirElementIndexClassifier? = null
     private var currentElementsIndexSlotIterator: ElementsIndexSlotIterator<*>? = null
     private var currentIndexSlot = 0
@@ -122,9 +122,11 @@ class BirForest : BirElementParent() {
         val classifier = elementClassifier ?: return
         if (element.root !== this) return
 
+        val backReferenceRecorder = BackReferenceRecorder()
+
         assert(elementCurrentlyBeingClassified == null)
         elementCurrentlyBeingClassified = element
-        val i = classifier.classify(element, currentIndexSlot + 1)
+        val i = classifier.classify(element, currentIndexSlot + 1, backReferenceRecorder)
         elementCurrentlyBeingClassified = null
 
         if (i != 0) {
@@ -136,6 +138,26 @@ class BirForest : BirElementParent() {
             }
         } else {
             removeElementFromIndex(element)
+        }
+
+        val recordedRef = backReferenceRecorder.recordedRef
+        if (recordedRef != null && recordedRef.root === this) {
+            recordedRef.registerBackReference(element)
+        }
+    }
+
+    internal class BackReferenceRecorder() : BirElementBackReferenceRecorderScope {
+        var recordedRef: BirElementBase? = null
+
+        override fun recordReference(forwardRef: BirElement?) {
+            if (forwardRef == null) return
+
+            if (recordedRef == null) {
+                recordedRef = forwardRef as BirElementBase
+            } else {
+                if (recordedRef !== forwardRef)
+                    TODO("multiple forward refs for element")
+            }
         }
     }
 
@@ -169,25 +191,35 @@ class BirForest : BirElementParent() {
         }
     }
 
-
     fun registerElementIndexingKey(key: BirElementsIndexKey<*>) {
-        val i = ++registeredElementIndexSlotCount
-        val slot = ElementsIndexSlot(i, key.condition, key.elementClass)
-        elementIndexSlots[i] = slot
-        key.index = i
+        registeredIndexers += key
+    }
+
+    fun registerElementBackReferencesKey(key: BirElementBackReferencesKey<*>) {
+        registeredIndexers += key
     }
 
     fun applyNewRegisteredIndices() {
         require(!isInsideSubtreeShuffleTransaction)
 
-        if (registeredElementIndexSlotCount != elementIndexSlotCount) {
-            elementIndexSlotCount = registeredElementIndexSlotCount
-
-            val matchers = List(elementIndexSlotCount) {
-                val slot = elementIndexSlots[it + 1]!!
-                BirElementIndexClassifierFunctionGenerator.Matcher(slot.condition, slot.elementClass, it + 1)
+        if (registeredIndexers.size != elementIndexSlotCount) {
+            val indexers = registeredIndexers.mapIndexed { i, indexer ->
+                val index = i + 1
+                when (indexer) {
+                    is BirElementsIndexKey<*> -> {
+                        indexer.index = index
+                        val slot = ElementsIndexSlot(index, indexer.condition, indexer.elementClass)
+                        elementIndexSlots[index] = slot
+                        BirElementIndexClassifierFunctionGenerator.Indexer(indexer.condition, indexer.elementClass, index)
+                    }
+                    is BirElementBackReferencesKey<*> -> {
+                        BirElementIndexClassifierFunctionGenerator.Indexer(indexer.recorder, indexer.elementClass, index)
+                    }
+                }
             }
-            elementClassifier = BirElementIndexClassifierFunctionGenerator.createClassifierFunction(matchers)
+
+            elementClassifier = BirElementIndexClassifierFunctionGenerator.createClassifierFunction(indexers)
+            elementIndexSlotCount = registeredIndexers.size
         }
     }
 
@@ -207,17 +239,18 @@ class BirForest : BirElementParent() {
     fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): Iterator<E> {
         require(!isInsideSubtreeShuffleTransaction)
 
-        val cacheSlotIndex = key.index
-        require(cacheSlotIndex == currentIndexSlot + 1)
-
         flushElementsWithInvalidatedIndexBuffer()
 
         currentElementsIndexSlotIterator?.let { iterator ->
             cancelElementsIndexSlotIterator(iterator)
         }
 
-        currentIndexSlot++
+        while (elementIndexSlots[++currentIndexSlot] == null) {
+            // nothing
+        }
 
+        val cacheSlotIndex = key.index
+        require(cacheSlotIndex == currentIndexSlot)
         val slot = elementIndexSlots[cacheSlotIndex]!!
 
         val iter = ElementsIndexSlotIterator<E>(slot)
@@ -247,7 +280,7 @@ class BirForest : BirElementParent() {
 
             if (array.isEmpty()) {
                 for (i in 1..<currentIndexSlot) {
-                    val slot = elementIndexSlots[i]!!
+                    val slot = elementIndexSlots[i] ?: continue
                     if (slot.array.size > size) {
                         // Steal a nice, preallocated and nulled-out array from some previous slot.
                         // It won't use it anyway.

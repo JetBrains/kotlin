@@ -104,7 +104,7 @@ private fun reconstructPhases(
                 .toMutableList()
 
             filePhases.add(
-                filePhases.indexOfFirst { (it as AnyNamedPhase).name == "ArrayConstructor" } + 1,
+                filePhases.indexOfFirst { (it as AnyNamedPhase).name == "SuspendLambda" } + 1,
                 terminateProcessPhase
             )
 
@@ -186,7 +186,7 @@ class CustomPerFileAggregateLoweringPhase(
 private fun <R> invokePhaseMeasuringTime(profile: Boolean, name: String, block: () -> R): R {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
     val (result, time) = measureTimedValue(block)
-    println("Phase $name: ${time.toString(DurationUnit.MILLISECONDS, 2)}")
+    println("Phase $name: ${time.toString(DurationUnit.MILLISECONDS, 2).removeSuffix("ms")}")
     return result
 }
 
@@ -256,15 +256,20 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         val compiledBir = input.backendContext.compiledBir
         val profile = input.profile
 
-        invokePhaseMeasuringTime(profile, "!BIR - baseline tree traversal") {
-            input.birModule.countAllDescendants()
-        }
         invokePhaseMeasuringTime(profile, "!BIR - applyNewRegisteredIndices") {
             compiledBir.applyNewRegisteredIndices()
         }
-        invokePhaseMeasuringTime(profile, "!BIR - reindexAllElements") {
-            compiledBir.reindexAllElements()
+        repeat(10) {
+            invokePhaseMeasuringTime(profile, "!BIR - baseline tree traversal") {
+                input.birModule.countAllDescendants()
+            }
+
+            invokePhaseMeasuringTime(profile, "!BIR - reindexAllElements") {
+                compiledBir.reindexAllElements()
+            }
+            Thread.sleep(100)
         }
+        //exitProcess(0)
 
         for (phase in input.backendContext.loweringPhases) {
             invokePhaseMeasuringTime(profile, "!BIR - ${phase.javaClass.simpleName}") {

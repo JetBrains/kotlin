@@ -30,6 +30,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     private var flags: Byte = 0
     internal var indexSlot: UByte = 0u
     private var dependentIndexedElements: Any? = null // null | BirElementBase | Array<BirElementBase?>
+    private var backReferences: Any? = null // null | BirElementBase | Array<BirElementBase?>
     private var dynamicProperties: Array<Any?>? = null
 
     final override val parent: BirElementBase?
@@ -271,6 +272,90 @@ abstract class BirElementBase : BirElementParent(), BirElement {
                 }
             }
         }
+    }
+
+
+    internal fun registerBackReference(backReference: BirElementBase) {
+        val RESIZE_GRADUALITY = 4
+        var elementsOrSingle = backReferences
+        when (elementsOrSingle) {
+            null -> {
+                backReferences = backReference
+            }
+            is BirElementBase -> {
+                if (elementsOrSingle === backReference) {
+                    return
+                }
+
+                val elements = arrayOfNulls<BirElementBase>(RESIZE_GRADUALITY)
+                elements[0] = elementsOrSingle
+                elements[1] = backReference
+                backReferences = elements
+            }
+            else -> {
+                @Suppress("UNCHECKED_CAST")
+                elementsOrSingle as Array<BirElementBase?>
+
+                var newIndex = 0
+                while (newIndex < elementsOrSingle.size) {
+                    val e = elementsOrSingle[newIndex]
+                    if (e == null) {
+                        break
+                    } else if (e === backReference) {
+                        return
+                    }
+                    newIndex++
+                }
+
+                if (newIndex == elementsOrSingle.size) {
+                    elementsOrSingle = elementsOrSingle.copyOf(elementsOrSingle.size + RESIZE_GRADUALITY)
+                    backReferences = elementsOrSingle
+                }
+                elementsOrSingle[newIndex] = backReference
+            }
+        }
+    }
+
+    fun <E : BirElement> getBackReferences(key: BirElementBackReferencesKey<E>): List<E> {
+        require(attachedToTree) { "Element must be attached to tree" }
+
+        val array: Array<BirElementBase?>
+        when (val elementsOrSingle = backReferences) {
+            null -> return emptyList()
+            is BirElementBase -> array = arrayOf(elementsOrSingle)
+            else -> {
+                @Suppress("UNCHECKED_CAST")
+                array = elementsOrSingle as Array<BirElementBase?>
+            }
+        }
+
+        val results = ArrayList<BirElementBase>(array.size)
+        val backReferenceRecorder = BirForest.BackReferenceRecorder()
+        val root = root
+
+        var j = 0
+        for (i in array.indices) {
+            val backRef = array[i] ?: break
+
+            with(backReferenceRecorder) {
+                key.recorder.recordBackReferences(backRef)
+            }
+
+            val recordedRef = backReferenceRecorder.recordedRef
+            backReferenceRecorder.recordedRef = null
+            if (recordedRef != null && recordedRef.root === root) {
+                if (recordedRef === this) {
+                    results += backRef
+                }
+
+                if (i != j) {
+                    array[j] = backRef
+                }
+                j++
+            }
+        }
+
+        return results as List<E>
     }
 
 
