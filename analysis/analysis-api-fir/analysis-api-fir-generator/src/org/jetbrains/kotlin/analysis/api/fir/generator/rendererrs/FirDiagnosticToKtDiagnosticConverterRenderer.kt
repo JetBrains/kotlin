@@ -72,6 +72,7 @@ object FirDiagnosticToKtDiagnosticConverterRenderer : AbstractDiagnosticsDataCla
         "org.jetbrains.kotlin.fir.builder.FirSyntaxErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors",
+        "org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors",
         "org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors",
     )
 }

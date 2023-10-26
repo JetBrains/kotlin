@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.checkers.generator
 
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST
-import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST
+import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.*
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.RegularDiagnosticData
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
 import java.io.File
@@ -25,7 +22,7 @@ fun generateNonSuppressibleErrorNamesFile(generationPath: File, packageName: Str
             println("val FIR_NON_SUPPRESSIBLE_ERROR_NAMES: Set<String> = setOf(")
 
             val combinedDiagnostics =
-                DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST + JS_DIAGNOSTICS_LIST + NATIVE_DIAGNOSTICS_LIST + SYNTAX_DIAGNOSTIC_LIST
+                DIAGNOSTICS_LIST + JVM_DIAGNOSTICS_LIST + JS_DIAGNOSTICS_LIST + NATIVE_DIAGNOSTICS_LIST + WEB_COMMON_DIAGNOSTICS_LIST + SYNTAX_DIAGNOSTIC_LIST
             for (diagnostic in combinedDiagnostics.allDiagnostics) {
                 if (diagnostic is RegularDiagnosticData && diagnostic.severity == Severity.ERROR && !diagnostic.isSuppressible) {
                     println("    \"${diagnostic.name}\",")

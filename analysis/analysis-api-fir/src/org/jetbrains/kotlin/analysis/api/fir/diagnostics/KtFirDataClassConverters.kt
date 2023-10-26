@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -5500,81 +5501,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJsErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER) { firDiagnostic ->
-        ExternalClassConstructorPropertyParameterImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY) { firDiagnostic ->
         ExternalEnumEntryWithBodyImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirJsErrors.EXTERNAL_ANONYMOUS_INITIALIZER) { firDiagnostic ->
-        ExternalAnonymousInitializerImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.EXTERNAL_DELEGATION) { firDiagnostic ->
-        ExternalDelegationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL) { firDiagnostic ->
-        ExternalDelegatedConstructorCallImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION) { firDiagnostic ->
-        WrongBodyOfExternalDeclarationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION) { firDiagnostic ->
-        WrongInitializerOfExternalDeclarationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER) { firDiagnostic ->
-        WrongDefaultValueForExternalFunParameterImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.NESTED_EXTERNAL_DECLARATION) { firDiagnostic ->
-        NestedExternalDeclarationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.WRONG_EXTERNAL_DECLARATION) { firDiagnostic ->
-        WrongExternalDeclarationImpl(
-            firDiagnostic.a,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE) { firDiagnostic ->
-        NestedClassInExternalInterfaceImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE) { firDiagnostic ->
         ExternalTypeExtendsNonExternalTypeImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.INLINE_EXTERNAL_DECLARATION) { firDiagnostic ->
-        InlineExternalDeclarationImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5599,12 +5533,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION) { firDiagnostic ->
         ExtensionFunctionInExternalDeclarationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJsErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE) { firDiagnostic ->
-        NonAbstractMemberOfExternalInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5721,6 +5649,79 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirSyntaxErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
             firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.NESTED_EXTERNAL_DECLARATION) { firDiagnostic ->
+        NestedExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.WRONG_EXTERNAL_DECLARATION) { firDiagnostic ->
+        WrongExternalDeclarationImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE) { firDiagnostic ->
+        NestedClassInExternalInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.INLINE_EXTERNAL_DECLARATION) { firDiagnostic ->
+        InlineExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE) { firDiagnostic ->
+        NonAbstractMemberOfExternalInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER) { firDiagnostic ->
+        ExternalClassConstructorPropertyParameterImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.EXTERNAL_ANONYMOUS_INITIALIZER) { firDiagnostic ->
+        ExternalAnonymousInitializerImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.EXTERNAL_DELEGATION) { firDiagnostic ->
+        ExternalDelegationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL) { firDiagnostic ->
+        ExternalDelegatedConstructorCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION) { firDiagnostic ->
+        WrongBodyOfExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION) { firDiagnostic ->
+        WrongInitializerOfExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirWebCommonErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER) { firDiagnostic ->
+        WrongDefaultValueForExternalFunParameterImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

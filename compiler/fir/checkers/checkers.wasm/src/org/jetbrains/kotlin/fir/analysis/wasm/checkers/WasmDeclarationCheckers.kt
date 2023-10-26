@@ -19,5 +19,6 @@ object WasmDeclarationCheckers : DeclarationCheckers() {
             FirWasmJsInteropTypesChecker,
             FirWasmImportAnnotationChecker,
             FirWasmExportAnnotationChecker,
+            FirWasmExternalChecker,
         )
 }

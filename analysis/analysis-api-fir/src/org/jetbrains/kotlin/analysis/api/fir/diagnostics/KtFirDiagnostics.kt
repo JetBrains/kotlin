@@ -3826,57 +3826,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CallToDefinedExternallyFromNonExternalDeclaration::class
     }
 
-    interface ExternalClassConstructorPropertyParameter : KtFirDiagnostic<KtParameter> {
-        override val diagnosticClass get() = ExternalClassConstructorPropertyParameter::class
-    }
-
     interface ExternalEnumEntryWithBody : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExternalEnumEntryWithBody::class
     }
 
-    interface ExternalAnonymousInitializer : KtFirDiagnostic<KtAnonymousInitializer> {
-        override val diagnosticClass get() = ExternalAnonymousInitializer::class
-    }
-
-    interface ExternalDelegation : KtFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = ExternalDelegation::class
-    }
-
-    interface ExternalDelegatedConstructorCall : KtFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = ExternalDelegatedConstructorCall::class
-    }
-
-    interface WrongBodyOfExternalDeclaration : KtFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = WrongBodyOfExternalDeclaration::class
-    }
-
-    interface WrongInitializerOfExternalDeclaration : KtFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = WrongInitializerOfExternalDeclaration::class
-    }
-
-    interface WrongDefaultValueForExternalFunParameter : KtFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = WrongDefaultValueForExternalFunParameter::class
-    }
-
-    interface NestedExternalDeclaration : KtFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = NestedExternalDeclaration::class
-    }
-
-    interface WrongExternalDeclaration : KtFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = WrongExternalDeclaration::class
-        val classKind: String
-    }
-
-    interface NestedClassInExternalInterface : KtFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = NestedClassInExternalInterface::class
-    }
-
     interface ExternalTypeExtendsNonExternalType : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExternalTypeExtendsNonExternalType::class
-    }
-
-    interface InlineExternalDeclaration : KtFirDiagnostic<KtDeclaration> {
-        override val diagnosticClass get() = InlineExternalDeclaration::class
     }
 
     interface EnumClassInExternalDeclarationWarning : KtFirDiagnostic<KtDeclaration> {
@@ -3893,10 +3848,6 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface ExtensionFunctionInExternalDeclaration : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ExtensionFunctionInExternalDeclaration::class
-    }
-
-    interface NonAbstractMemberOfExternalInterface : KtFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = NonAbstractMemberOfExternalInterface::class
     }
 
     interface NonExternalDeclarationInInappropriateFile : KtFirDiagnostic<KtElement> {
@@ -3979,6 +3930,55 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     interface Syntax : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = Syntax::class
         val message: String
+    }
+
+    interface NestedExternalDeclaration : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = NestedExternalDeclaration::class
+    }
+
+    interface WrongExternalDeclaration : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = WrongExternalDeclaration::class
+        val classKind: String
+    }
+
+    interface NestedClassInExternalInterface : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = NestedClassInExternalInterface::class
+    }
+
+    interface InlineExternalDeclaration : KtFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = InlineExternalDeclaration::class
+    }
+
+    interface NonAbstractMemberOfExternalInterface : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = NonAbstractMemberOfExternalInterface::class
+    }
+
+    interface ExternalClassConstructorPropertyParameter : KtFirDiagnostic<KtParameter> {
+        override val diagnosticClass get() = ExternalClassConstructorPropertyParameter::class
+    }
+
+    interface ExternalAnonymousInitializer : KtFirDiagnostic<KtAnonymousInitializer> {
+        override val diagnosticClass get() = ExternalAnonymousInitializer::class
+    }
+
+    interface ExternalDelegation : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExternalDelegation::class
+    }
+
+    interface ExternalDelegatedConstructorCall : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExternalDelegatedConstructorCall::class
+    }
+
+    interface WrongBodyOfExternalDeclaration : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = WrongBodyOfExternalDeclaration::class
+    }
+
+    interface WrongInitializerOfExternalDeclaration : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = WrongInitializerOfExternalDeclaration::class
+    }
+
+    interface WrongDefaultValueForExternalFunParameter : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = WrongDefaultValueForExternalFunParameter::class
     }
 
 }

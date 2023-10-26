@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrorsDefaultMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrorsDefaultMessages
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.wasm.FirWasmErrorsDefaultMessages
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.web.common.FirWebCommonErrorsDefaultMessages
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrorsDefaultMessages
 import org.jetbrains.kotlin.test.utils.verifyMessages
@@ -25,6 +29,8 @@ class DefaultMessagesTest {
         FirJvmErrorsDefaultMessages.MAP.verifyMessages(FirJvmErrors)
         FirJsErrorsDefaultMessages.MAP.verifyMessages(FirJsErrors)
         FirNativeErrorsDefaultMessages.MAP.verifyMessages(FirNativeErrors)
+        FirWasmErrorsDefaultMessages.MAP.verifyMessages(FirWasmErrors)
+        FirWebCommonErrorsDefaultMessages.MAP.verifyMessages(FirWebCommonErrors)
         FirSyntaxErrorsDefaultMessages.MAP.verifyMessages(FirSyntaxErrors)
     }
 }

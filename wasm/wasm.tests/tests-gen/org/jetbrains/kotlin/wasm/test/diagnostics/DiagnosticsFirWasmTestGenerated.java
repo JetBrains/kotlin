@@ -34,9 +34,33 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
         }
 
         @Test
+        @TestMetadata("anonymousInitializer.kt")
+        public void testAnonymousInitializer() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/anonymousInitializer.kt");
+        }
+
+        @Test
+        @TestMetadata("body.kt")
+        public void testBody() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/body.kt");
+        }
+
+        @Test
         @TestMetadata("definedExternally.kt")
         public void testDefinedExternally() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/definedExternally.kt");
+        }
+
+        @Test
+        @TestMetadata("delegatedConstructorCall.kt")
+        public void testDelegatedConstructorCall() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/delegatedConstructorCall.kt");
+        }
+
+        @Test
+        @TestMetadata("delegation.kt")
+        public void testDelegation() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/delegation.kt");
         }
 
         @Test
@@ -49,6 +73,12 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
         @TestMetadata("external.kt")
         public void testExternal() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/external.kt");
+        }
+
+        @Test
+        @TestMetadata("externalInterfaceNested.kt")
+        public void testExternalInterfaceNested() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/externalInterfaceNested.kt");
         }
 
         @Test
@@ -73,6 +103,18 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
         @TestMetadata("jsFun.kt")
         public void testJsFun() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsFun.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedExternal.kt")
+        public void testNestedExternal() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nestedExternal.kt");
+        }
+
+        @Test
+        @TestMetadata("nonAbstractMembersOfInterface.kt")
+        public void testNonAbstractMembersOfInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/nonAbstractMembersOfInterface.kt");
         }
 
         @Test
