@@ -218,9 +218,17 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
 
     private fun ConeKotlinType.findVisibilityExposure(
         context: CheckerContext,
-        base: EffectiveVisibility
+        base: EffectiveVisibility,
+        visitedTypes: MutableSet<ConeKotlinType> = mutableSetOf(),
     ): Pair<FirBasedSymbol<*>, EffectiveVisibility>? {
-        val type = this as? ConeClassLikeType ?: return null
+        if (!visitedTypes.add(this)) return null
+
+        val type = when (this) {
+            is ConeClassLikeType -> this
+            is ConeFlexibleType -> lowerBound as? ConeClassLikeType ?: return null
+            else -> return null
+        }
+
         val classSymbol = type.fullyExpandedType(context.session).lookupTag.toSymbol(context.session) ?: return null
 
         val effectiveVisibility = when (classSymbol) {
@@ -239,9 +247,14 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
             }
         }
 
-        for (it in type.typeArguments) {
-            (it as? ConeClassLikeType)?.findVisibilityExposure(context, base)?.let {
-                return it
+        for ((index, it) in type.typeArguments.withIndex()) {
+            when (it) {
+                is ConeClassLikeType -> it.findVisibilityExposure(context, base, visitedTypes)?.let { return it }
+                is ConeStarProjection -> type.toRegularClassSymbol(context.session)
+                    ?.typeParameterSymbols?.getOrNull(index)
+                    ?.resolvedBounds?.firstNotNullOfOrNull { it.type.findVisibilityExposure(context, base, visitedTypes) }
+                    ?.let { return it }
+                else -> {}
             }
         }
 

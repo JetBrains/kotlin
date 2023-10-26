@@ -13,5 +13,5 @@ interface Generic<E: <!EXPOSED_TYPE_PARAMETER_BOUND!>My<!>>
 
 interface Our {
     // invalid, Generic<My> is effectively internal
-    fun foo(): Generic<*>
+    fun <!EXPOSED_FUNCTION_RETURN_TYPE!>foo<!>(): Generic<*>
 }

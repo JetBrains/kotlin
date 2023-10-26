@@ -19,9 +19,9 @@ class His {
     // Ok: internal vs package-private in same package
     internal fun internal() = My.foo()
     // Error: protected vs package-private
-    protected fun protected() = My.foo()
+    protected fun <!EXPOSED_FUNCTION_RETURN_TYPE!>protected<!>() = My.foo()
     // Error: public vs package-private
-    fun public() = My.foo()
+    fun <!EXPOSED_FUNCTION_RETURN_TYPE!>public<!>() = My.foo()
 }
 
 // FILE: other/Your.kt
