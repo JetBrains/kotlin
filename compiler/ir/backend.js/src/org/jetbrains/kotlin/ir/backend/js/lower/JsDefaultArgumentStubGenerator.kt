@@ -64,6 +64,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
     }
 
     private fun IrFunction.introduceDefaultResolution(): IrFunction {
+        context.mapping.defaultArgumentsDispatchFunction[this]?.let { return it }
         val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
         val variables = hashMapOf<IrValueParameter, IrValueParameter>()
