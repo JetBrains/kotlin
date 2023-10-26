@@ -98,10 +98,11 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
                 override fun visitEnd() {
                     visitExpression(name, buildArrayLiteral {
-                        guessArrayTypeIfNeeded(name, elements)?.let {
-                            coneTypeOrNull = it.coneTypeOrNull
-                        } ?: elements.firstOrNull()?.resolvedType?.createOutArrayType()?.let {
+                        @OptIn(UnresolvedExpressionTypeAccess::class)
+                        elements.firstOrNull()?.coneTypeOrNull?.createOutArrayType()?.let {
                             coneTypeOrNull = it
+                        } ?: guessArrayTypeIfNeeded(name, elements)?.let {
+                            coneTypeOrNull = it.coneTypeOrNull
                         }
                         argumentList = buildArgumentList {
                             arguments += elements

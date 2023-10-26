@@ -19240,6 +19240,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("StackOverflowInAnnotationLoader.kt")
+        public void testStackOverflowInAnnotationLoader() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/StackOverflowInAnnotationLoader.kt");
+        }
+
+        @Test
         @TestMetadata("staticImportFromEnum.kt")
         public void testStaticImportFromEnum() throws Exception {
             runTest("compiler/testData/codegen/box/fir/staticImportFromEnum.kt");
