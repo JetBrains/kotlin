@@ -21,11 +21,11 @@ abstract class BackingFieldAccess(val field: FieldEmbedding) {
     ) {
         val invariant = field.accessInvariantForAccess(receiver.toViper())
         invariant?.let {
-            ctx.addStatement(Stmt.Inhale(it, source.asPosition))
+            ctx.addStatement(Stmt.Inhale(it.toViper(), source.asPosition))
         }
         ctx.action(FieldAccess(receiver, field, source))
         invariant?.let {
-            ctx.addStatement(Stmt.Exhale(it, source.asPosition))
+            ctx.addStatement(Stmt.Exhale(it.toViper(), source.asPosition))
         }
     }
 }
@@ -40,7 +40,7 @@ class BackingFieldGetter(field: FieldEmbedding) : BackingFieldAccess(field), Get
             access(receiver, this, source) {
                 addStatement(Stmt.assign(resultExp.toViper(), it.toViper(), source.asPosition))
                 field.type.provenInvariants(resultExp.toViper()).forEach { inv ->
-                    addStatement(Stmt.Inhale(inv, source.asPosition))
+                    addStatement(Stmt.Inhale(inv.toViper(), source.asPosition))
                 }
             }
         }

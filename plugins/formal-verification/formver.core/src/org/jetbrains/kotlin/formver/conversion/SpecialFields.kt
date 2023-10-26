@@ -5,12 +5,20 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
+import org.jetbrains.kotlin.formver.embeddings.IntTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.names.SpecialName
-import org.jetbrains.kotlin.formver.viper.ast.BuiltinField
-import org.jetbrains.kotlin.formver.viper.ast.Type
+import org.jetbrains.kotlin.formver.viper.MangledName
+
+class SpecialField(baseName: String, override val type: TypeEmbedding) : FieldEmbedding {
+    override val name: MangledName = SpecialName(baseName)
+    override val accessPolicy: AccessPolicy = AccessPolicy.ALWAYS_WRITEABLE
+    override val includeInShortDump: Boolean = false
+}
 
 object SpecialFields {
-    val FunctionObjectCallCounterField = BuiltinField(SpecialName("function_object_call_counter"), Type.Int)
+    val FunctionObjectCallCounterField = SpecialField("function_object_call_counter", IntTypeEmbedding)
     val all = listOf(
         FunctionObjectCallCounterField,
     )

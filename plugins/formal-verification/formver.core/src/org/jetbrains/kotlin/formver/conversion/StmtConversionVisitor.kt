@@ -277,7 +277,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
             data.addStatement(
                 Stmt.While(
                     condCtx.resultExp.toViper(),
-                    invariants = postconditions,
+                    invariants = postconditions.toViper(),
                     bodyBlock,
                     whileLoop.source.asPosition
                 )
@@ -369,7 +369,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
                 // TODO: this may require special handling of access permissions; we should look into a more systematic solution.
                 resultCtx.resultVar.setValue(argument, this, typeOperatorCall.source)
                 for (invariant in resultCtx.resultVar.accessInvariants()) {
-                    addStatement(Stmt.Inhale(invariant))
+                    addStatement(Stmt.Inhale(invariant.toViper()))
                 }
             }
             FirOperation.SAFE_AS -> data.withResult(conversionType.getNullable()) {
@@ -384,7 +384,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
                     }
 
                     for (invariant in invariants) {
-                        addStatement(Stmt.Inhale(invariant))
+                        addStatement(Stmt.Inhale(invariant.toViper()))
                     }
                 }
                 val elseBlock = withNewScopeToBlock {

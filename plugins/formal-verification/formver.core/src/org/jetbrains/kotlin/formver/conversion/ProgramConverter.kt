@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
-import org.jetbrains.kotlin.utils.addToStdlib.ifFalse
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
@@ -50,8 +49,8 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     val program: Program
         get() = Program(
             domains = listOf(UnitDomain, NullableDomain, CastingDomain, TypeOfDomain, TypeDomain(classes.values.toList()), AnyDomain),
-            fields = SpecialFields.all + classes.values.flatMap { it.flatMapUniqueFields { _, field -> listOf(field.toViper()) } }
-                .distinctBy { it.name },
+            fields = SpecialFields.all.map { it.toViper() } +
+                    classes.values.flatMap { it.flatMapUniqueFields { _, field -> listOf(field.toViper()) } }.distinctBy { it.name },
             functions = SpecialFunctions.all + classes.values.flatMap { it.getterFunctions() }.distinctBy { it.name },
             methods = SpecialMethods.all + methods.values.mapNotNull { it.viperMethod }.toList(),
             predicates = classes.values.map { it.predicate }
@@ -274,7 +273,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
                 // provenInvariants don't contain permissions.
                 arg.provenInvariants().forEach { invariant ->
-                    stmtCtx.addStatement(Stmt.Inhale(invariant, arg.source.asPosition))
+                    stmtCtx.addStatement(Stmt.Inhale(invariant.toViper(), arg.source.asPosition))
                 }
             }
             stmtCtx.addDeclaration(methodCtx.returnLabel.toDecl())

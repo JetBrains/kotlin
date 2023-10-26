@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
+import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.toViper
 import org.jetbrains.kotlin.formver.viper.ast.*
 
 interface FullNamedFunctionSignature : NamedFunctionSignature {
-    val preconditions: List<Exp>
-    val postconditions: List<Exp>
+    val preconditions: List<ExpEmbedding>
+    val postconditions: List<ExpEmbedding>
 }
 
 fun FullNamedFunctionSignature.toViperMethod(
@@ -21,8 +23,8 @@ fun FullNamedFunctionSignature.toViperMethod(
     name,
     formalArgs.map { it.toLocalVarDecl() },
     returnVar.toLocalVarDecl(),
-    preconditions,
-    postconditions,
+    preconditions.toViper(),
+    postconditions.toViper(),
     body,
     position,
     info,

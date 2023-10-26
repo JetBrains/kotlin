@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.formver.embeddings
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.*
+import org.jetbrains.kotlin.formver.embeddings.callables.DuplicableFunction
 import org.jetbrains.kotlin.formver.viper.ast.AccessPredicate
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
@@ -33,6 +34,10 @@ sealed interface ExpEmbedding {
 }
 
 fun List<ExpEmbedding>.toViper(): List<Exp> = map { it.toViper() }
+
+fun List<ExpEmbedding>.toConjunction(): ExpEmbedding =
+    if (isEmpty()) BooleanLit(true)
+    else reduce { l, r -> And(l, r) }
 
 sealed interface IntArithExpression : ExpEmbedding {
     val left: ExpEmbedding
@@ -183,6 +188,13 @@ data class Not(
     override fun toViper() = Exp.Not(exp.toViper(), source.asPosition)
 }
 
+data class Old(
+    val exp: ExpEmbedding,
+    override val source: KtSourceElement? = null,
+) : ExpEmbedding {
+    override val type: TypeEmbedding = exp.type
+    override fun toViper(): Exp = Exp.Old(exp.toViper(), source.asPosition)
+}
 
 data object UnitLit : ExpEmbedding {
     override val type = UnitTypeEmbedding
@@ -194,13 +206,13 @@ data object UnitLit : ExpEmbedding {
 data class IntLit(val value: Int, override val source: KtSourceElement? = null) : ExpEmbedding {
     override val type = IntTypeEmbedding
 
-    override fun toViper() = Exp.IntLit(value)
+    override fun toViper() = Exp.IntLit(value, source.asPosition)
 }
 
 data class BooleanLit(val value: Boolean, override val source: KtSourceElement? = null) : ExpEmbedding {
     override val type = BooleanTypeEmbedding
 
-    override fun toViper() = Exp.BoolLit(value)
+    override fun toViper() = Exp.BoolLit(value, source.asPosition)
 }
 
 data class NullLit(val elemType: TypeEmbedding, override val source: KtSourceElement? = null) : ExpEmbedding {
@@ -225,4 +237,31 @@ data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding, ov
     override fun toViper() = Exp.FieldAccess(receiver.toViper(), field.toViper(), source.asPosition)
     fun getAccessPredicate(perm: PermExp = PermExp.FullPerm()) =
         AccessPredicate.FieldAccessPredicate(toViper(), perm, source.asPosition)
+}
+
+data class DuplicableCall(val exp: ExpEmbedding, override val source: KtSourceElement? = null) : ExpEmbedding {
+    override val type: TypeEmbedding = BooleanTypeEmbedding
+    override fun toViper(): Exp = DuplicableFunction.toFuncApp(listOf(exp.toViper()), source.asPosition)
+}
+
+data class TypeOfCall(val exp: ExpEmbedding, override val source: KtSourceElement? = null) : ExpEmbedding {
+    override val type: TypeEmbedding = TypeInfoTypeEmbedding
+
+    override fun toViper(): Exp = TypeOfDomain.typeOf(exp.toViper(), source.asPosition)
+}
+
+data class IsSubtypeCall(val subtype: ExpEmbedding, val supertype: ExpEmbedding, override val source: KtSourceElement? = null) :
+    ExpEmbedding {
+    override val type: TypeEmbedding = BooleanTypeEmbedding
+
+    override fun toViper(): Exp = TypeDomain.isSubtype(subtype.toViper(), supertype.toViper(), pos = source.asPosition)
+}
+
+/**
+ * Especially when working with type information, there are a number of expressions that do not have a corresponding `ExpEmbedding`.
+ * We will eventually want to solve this somehow, but there are still open design questions there, so for now this wrapper will
+ * do the job.
+ */
+data class ExpWrapper(val value: Exp, override val type: TypeEmbedding, override val source: KtSourceElement? = null) : ExpEmbedding {
+    override fun toViper(): Exp = value
 }

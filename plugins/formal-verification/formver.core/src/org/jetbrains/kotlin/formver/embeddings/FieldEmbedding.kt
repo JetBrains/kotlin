@@ -21,27 +21,34 @@ interface FieldEmbedding {
     val name: MangledName
     val type: TypeEmbedding
     val accessPolicy: AccessPolicy
+    val includeInShortDump: Boolean
 
-    fun toViper(): Field = Field(name, type.viperType)
+    fun toViper(): Field = Field(name, type.viperType, includeInShortDump)
 
-    fun extraAccessInvariantsForParameter(v: Exp): List<Exp> = listOf()
+    fun extraAccessInvariantsForParameter(v: Exp): List<ExpEmbedding> = listOf()
 
-    fun accessInvariantsForParameter(v: Exp): List<Exp> =
+    fun accessInvariantsForParameter(v: Exp): List<ExpEmbedding> =
         when (accessPolicy) {
             AccessPolicy.ALWAYS_INHALE_EXHALE -> listOf()
-            AccessPolicy.ALWAYS_READABLE -> listOf(v.fieldAccessPredicate(toViper(), PermExp.WildcardPerm()))
-            AccessPolicy.ALWAYS_WRITEABLE -> listOf(v.fieldAccessPredicate(toViper(), PermExp.FullPerm()))
+            AccessPolicy.ALWAYS_READABLE -> listOf(
+                ExpWrapper(
+                    v.fieldAccessPredicate(toViper(), PermExp.WildcardPerm()),
+                    BooleanTypeEmbedding
+                )
+            )
+            AccessPolicy.ALWAYS_WRITEABLE -> listOf(ExpWrapper(v.fieldAccessPredicate(toViper(), PermExp.FullPerm()), BooleanTypeEmbedding))
         } + extraAccessInvariantsForParameter(v)
 
-    fun accessInvariantForAccess(v: Exp): Exp? =
+    fun accessInvariantForAccess(v: Exp): ExpEmbedding? =
         when (accessPolicy) {
-            AccessPolicy.ALWAYS_INHALE_EXHALE -> v.fieldAccessPredicate(toViper(), PermExp.FullPerm())
+            AccessPolicy.ALWAYS_INHALE_EXHALE -> ExpWrapper(v.fieldAccessPredicate(toViper(), PermExp.FullPerm()), BooleanTypeEmbedding)
             AccessPolicy.ALWAYS_READABLE, AccessPolicy.ALWAYS_WRITEABLE -> null
         }
 }
 
 class UserFieldEmbedding(override val name: ScopedKotlinName, override val type: TypeEmbedding, readOnly: Boolean) : FieldEmbedding {
     override val accessPolicy: AccessPolicy = if (readOnly) AccessPolicy.ALWAYS_READABLE else AccessPolicy.ALWAYS_INHALE_EXHALE
+    override val includeInShortDump: Boolean = true
 }
 
 object ListSizeFieldEmbedding : FieldEmbedding {
@@ -49,8 +56,9 @@ object ListSizeFieldEmbedding : FieldEmbedding {
     override val type = IntTypeEmbedding
 
     override val accessPolicy = AccessPolicy.ALWAYS_WRITEABLE
-    override fun extraAccessInvariantsForParameter(v: Exp): List<Exp> =
-        listOf(Exp.GeCmp(v.fieldAccess(toViper()), Exp.IntLit(0)))
+    override val includeInShortDump: Boolean = true
+    override fun extraAccessInvariantsForParameter(v: Exp): List<ExpEmbedding> =
+        listOf(GeCmp(ExpWrapper(v.fieldAccess(toViper()), IntTypeEmbedding), IntLit(0)))
 }
 
 fun ScopedKotlinName.specialEmbedding(): FieldEmbedding? =
