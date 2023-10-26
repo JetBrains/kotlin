@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.set
+import kotlin.math.min
 
 internal fun createLlvmDeclarations(generationState: NativeGenerationState, irModule: IrModuleFragment): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(generationState)
@@ -202,24 +203,32 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         var offset1 = -1L
         var offset2 = -1L
         var offset4 = -1L
-        var offset8 = 0L
+        var offset8 = 0L // == size of allocated fields rounded up to multiple of 8 bytes
 
         // Allocates a block of the given size. Sizes smaller than 8 bytes will be rounded up to a power of 2 and
         // aligned according to that size. Other sizes will be rounded up to a multiple of 8 and will be 8 byte aligned.
         fun nextOffset(size: Long): Long = when (size) {
+            /* Algorithm:
+            N -> {
+                if we have a saved block of size N, return it and forget about it
+                else split a block of size 2N in two, return the first, and save the second for later.
+             */
             1L -> {
-                if (offset1 == -1L) nextOffset(2).also { offset1 = it + 1 }
-                else offset1.also { offset1 = -1 }
+                if (offset1 != -1L) offset1.also { offset1 = -1 }
+                else nextOffset(2).also { offset1 = it + 1 }
             }
             2L -> {
-                if (offset2 == -1L) nextOffset(4).also { offset2 = it + 2 }
-                else offset2.also { offset2 = -1 }
+                if (offset2 != -1L) offset2.also { offset2 = -1 }
+                else nextOffset(4).also { offset2 = it + 2 }
             }
-            3L, 4L -> {
-                if (offset4 == -1L) nextOffset(8).also { offset4 = it + 4 }
-                else offset4.also { offset4 = -1 }
+            4L -> {
+                if (offset4 != -1L) offset4.also { offset4 = -1 }
+                else nextOffset(8).also { offset4 = it + 4 }
             }
-            else -> offset8.also { offset8 += (size + 7) / 8 * 8 }
+            /* Base case:
+            else -> the size is big enough that it needs one or more 8-byte blocks by itself.
+             */
+            else -> offset8.also { offset8 += alignTo(size, 8) }
         }
 
         class IndexedField(val offset: Long, val field: ClassLayoutBuilder.FieldInfo)
@@ -227,7 +236,8 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val packedFields = mutableListOf<IndexedField>()
         for (field in fields) {
             val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
-            assert(size == 1L || size == 2L || size == 4L || size % 8 == 0L)
+            check(size == 1L || size == 2L || size == 4L || size % 8 == 0L)
+            check(field.alignment % min(size, 8L) == 0L)
             val offset = nextOffset(size)
             packedFields.add(IndexedField(offset, field))
         }

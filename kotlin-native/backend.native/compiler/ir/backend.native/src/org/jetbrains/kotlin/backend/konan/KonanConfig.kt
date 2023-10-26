@@ -114,7 +114,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.disableAllocatorOverheadEstimate) ?: false
     }
     val packFields: Boolean by lazy {
-        configuration.get(BinaryOptions.packFields) ?: false
+        configuration.get(BinaryOptions.packFields) ?: true
     }
     val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)?.also {
         if (it != WorkerExceptionHandling.USE_HOOK) {
