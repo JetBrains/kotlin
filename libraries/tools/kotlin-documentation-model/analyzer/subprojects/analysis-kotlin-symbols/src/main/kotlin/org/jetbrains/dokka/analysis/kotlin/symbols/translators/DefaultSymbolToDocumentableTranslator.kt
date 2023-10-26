@@ -212,7 +212,15 @@ internal class DokkaSymbolVisitor(
         val isActual = namedClassOrObjectSymbol.isActual
         val documentation = getDocumentation(namedClassOrObjectSymbol)?.toSourceSetDependent() ?: emptyMap()
 
-        val (constructors, functions, properties, classlikes) = getDokkaScopeFrom(namedClassOrObjectSymbol, dri)
+        val (constructors, functions, properties, classlikesWithoutCompanion) = getDokkaScopeFrom(namedClassOrObjectSymbol, dri)
+
+        val companionObject = namedClassOrObjectSymbol.companionObject?.let {
+            visitNamedClassOrObjectSymbol(
+                it,
+                dri
+            )
+        } as? DObject
+        val classlikes = if (companionObject == null) classlikesWithoutCompanion else classlikesWithoutCompanion + companionObject
 
         val generics = namedClassOrObjectSymbol.typeParameters.mapIndexed { index, symbol ->
             visitVariantTypeParameter(
@@ -229,7 +237,6 @@ internal class DokkaSymbolVisitor(
             namedClassOrObjectSymbol.superTypes.filterNot { it.isAny }
                 .map { with(typeTranslator) { toTypeConstructorWithKindFrom(it) } }
                 .toSourceSetDependent()
-
         return@withExceptionCatcher when (namedClassOrObjectSymbol.classKind) {
             KtClassKind.OBJECT, KtClassKind.COMPANION_OBJECT ->
                 DObject(
@@ -268,12 +275,7 @@ internal class DokkaSymbolVisitor(
                 generics = generics,
                 documentation = documentation,
                 modifier = namedClassOrObjectSymbol.getDokkaModality().toSourceSetDependent(),
-                companion = namedClassOrObjectSymbol.companionObject?.let {
-                    visitNamedClassOrObjectSymbol(
-                        it,
-                        dri
-                    )
-                } as? DObject,
+                companion = companionObject,
                 sourceSets = setOf(sourceSet),
                 isExpectActual = (isExpect || isActual),
                 extra = PropertyContainer.withAll(
@@ -296,12 +298,7 @@ internal class DokkaSymbolVisitor(
                 supertypes = supertypes,
                 generics = generics,
                 documentation = documentation,
-                companion = namedClassOrObjectSymbol.companionObject?.let {
-                    visitNamedClassOrObjectSymbol(
-                        it,
-                        dri
-                    )
-                } as? DObject,
+                companion = companionObject,
                 sourceSets = setOf(sourceSet),
                 isExpectActual = (isExpect || isActual),
                 extra = PropertyContainer.withAll(
@@ -322,12 +319,7 @@ internal class DokkaSymbolVisitor(
                 expectPresentInSet = sourceSet.takeIf { isExpect },
                 sourceSets = setOf(sourceSet),
                 isExpectActual = (isExpect || isActual),
-                companion = namedClassOrObjectSymbol.companionObject?.let {
-                    visitNamedClassOrObjectSymbol(
-                        it,
-                        dri
-                    )
-                } as? DObject,
+                companion = companionObject,
                 visibility = namedClassOrObjectSymbol.getDokkaVisibility().toSourceSetDependent(),
                 generics = generics,
                 constructors = constructors,
@@ -401,7 +393,7 @@ internal class DokkaSymbolVisitor(
         val constructors: List<DFunction>,
         val functions: List<DFunction>,
         val properties: List<DProperty>,
-        val classlikes: List<DClasslike>
+        val classlikesWithoutCompanion: List<DClasslike>
     )
 
     /**
@@ -445,13 +437,10 @@ internal class DokkaSymbolVisitor(
                 javaFields.map { visitJavaFieldSymbol(it, dri) }
 
 
-        // hack, by default, compiler adds an empty companion object for enum
-        // TODO check if it is empty
-        fun List<KtNamedClassOrObjectSymbol>.filterOutEnumCompanion() =
-            if (namedClassOrObjectSymbol.classKind == KtClassKind.ENUM_CLASS)
+        fun List<KtNamedClassOrObjectSymbol>.filterOutCompanion() =
                 filterNot {
-                    it.name.asString() == "Companion" && it.classKind == KtClassKind.COMPANION_OBJECT
-                } else this
+                    it.classKind == KtClassKind.COMPANION_OBJECT
+                }
 
         fun List<KtNamedClassOrObjectSymbol>.filterOutAndMarkAlreadyVisited() = filterNot { symbol ->
             visitedNamedClassOrObjectSymbol.contains(symbol.classIdIfNonLocal)
@@ -465,7 +454,7 @@ internal class DokkaSymbolVisitor(
         }
 
         val classlikes = classifiers.filterIsInstance<KtNamedClassOrObjectSymbol>()
-            .filterOutEnumCompanion() // hack to filter out companion for enum
+            .filterOutCompanion() // also, this is a hack to filter out companion for enum
             .filterOutAndMarkAlreadyVisited()
             .map { visitNamedClassOrObjectSymbol(it, dri) }
 
@@ -473,7 +462,7 @@ internal class DokkaSymbolVisitor(
             constructors = constructors,
             functions = functions,
             properties = properties,
-            classlikes = classlikes
+            classlikesWithoutCompanion = classlikes
         )
     }
 
