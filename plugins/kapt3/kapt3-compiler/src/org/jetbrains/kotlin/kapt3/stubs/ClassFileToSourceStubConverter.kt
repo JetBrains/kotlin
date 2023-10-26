@@ -142,6 +142,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private var done = false
 
+    private val treeMakerImportMethod = TreeMaker::class.java.declaredMethods.single { it.name == "Import" }
+
     fun convert(): List<KaptStub> {
         if (kaptContext.logger.isVerbose) {
             dumpDeclarationOrigins()
@@ -313,13 +315,15 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             val importedExpr = treeMaker.FqName(importedFqName.asString())
 
             imports += if (importDirective.isAllUnder) {
-                treeMaker.Import(treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false)
+                treeMakerImportMethod.invoke(
+                    treeMaker, treeMaker.Select(importedExpr, treeMaker.nameTable.names.asterisk), false
+                ) as JCImport
             } else {
                 if (!importedShortNames.add(importedFqName.shortName().asString())) {
                     continue
                 }
 
-                treeMaker.Import(importedExpr, false)
+                treeMakerImportMethod.invoke(treeMaker, importedExpr, false) as JCImport
             }
         }
 
