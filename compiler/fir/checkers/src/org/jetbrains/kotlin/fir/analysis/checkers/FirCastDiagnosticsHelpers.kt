@@ -32,8 +32,8 @@ fun checkCasting(
     isSafeCase: Boolean,
     context: CheckerContext
 ): CastingType {
-    val lhsLowerType = lhsType.lowerBoundIfFlexible()
-    val rhsLowerType = rhsType.lowerBoundIfFlexible()
+    val lhsLowerType = lhsType.lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
+    val rhsLowerType = rhsType.lowerBoundIfFlexible().originalIfDefinitelyNotNullable()
 
     if (lhsLowerType is ConeErrorType || rhsLowerType is ConeErrorType) return CastingType.Possible
 

@@ -5768,6 +5768,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("DefinitelyNotNullTypes.kt")
+                public void testDefinitelyNotNullTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/cast/neverSucceeds/DefinitelyNotNullTypes.kt");
+                }
+
+                @Test
                 @TestMetadata("MappedDirect.kt")
                 public void testMappedDirect() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/cast/neverSucceeds/MappedDirect.kt");
