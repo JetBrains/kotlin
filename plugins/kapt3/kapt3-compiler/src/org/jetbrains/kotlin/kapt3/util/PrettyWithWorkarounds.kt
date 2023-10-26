@@ -50,7 +50,11 @@ private class PrettyWithWorkarounds(
         if (renderMetadata != null && tree.annotationType.toString() == METADATA_FQ_NAME.asString()) {
             print(renderMetadata.invoke(this, tree))
         }
-        super.visitAnnotation(tree)
+        print("@")
+        printExpr(tree.annotationType)
+        print("(")
+        printExprs(tree.args)
+        print(")")
     }
 }
 
