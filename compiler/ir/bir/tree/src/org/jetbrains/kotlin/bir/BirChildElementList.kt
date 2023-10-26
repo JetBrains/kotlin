@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.bir
 class BirChildElementList<E : BirElement?>(
     internal val parent: BirElementBase,
     id: Int,
-) : AbstractMutableList<E>(), BirElementOrChildList {
+) : AbstractList<E>(), MutableList<E>, BirElementOrChildList {
     private var elementArray: Array<BirElementBase?> = EMPTY_ELEMENT_ARRAY
     private var sizeAndId: Int = id shl (32 - ID_BITS)
 
@@ -23,6 +23,7 @@ class BirChildElementList<E : BirElement?>(
             parent.recordPropertyRead()
             return _size
         }
+
 
     internal val id: Int
         get() = sizeAndId.toInt() shr (32 - ID_BITS)
@@ -80,24 +81,45 @@ class BirChildElementList<E : BirElement?>(
         return element
     }
 
+    override fun add(element: E): Boolean {
+        element as BirElementBase?
+
+        val newSize = _size + 1
+        var elementArray = elementArray
+        if (elementArray.size <= newSize) {
+            elementArray = elementArray.copyOf(getNewCapacity(newSize))
+            this.elementArray = elementArray
+        }
+        addChild(element)
+        elementArray[newSize - 1] = element
+        _size = newSize
+        invalidate()
+
+        return true
+    }
+
     override fun add(index: Int, element: E) {
-        checkElementIndex(index, _size + 1)
+        val newSize = _size + 1
+        checkElementIndex(index, newSize)
         element as BirElementBase?
 
         var elementArray = elementArray
-        val newSize = _size + 1
         if (elementArray.size <= newSize) {
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(newSize))
             elementArray.copyInto(newArray, 0, 0, index)
             elementArray.copyInto(newArray, index + 1, index, _size)
             elementArray = newArray
             this.elementArray = elementArray
+        } else {
+            elementArray.copyInto(elementArray, index + 1, index, _size)
         }
         addChild(element)
         elementArray[index] = element
         _size = newSize
         invalidate()
     }
+
+    override fun addAll(elements: Collection<E>): Boolean = addAll(_size, elements)
 
     override fun addAll(index: Int, elements: Collection<E>): Boolean {
         if (elements.isEmpty()) {
@@ -113,6 +135,8 @@ class BirChildElementList<E : BirElement?>(
             elementArray.copyInto(newArray, index + elements.size, index, _size)
             elementArray = newArray
             this.elementArray = elementArray
+        } else {
+            elementArray.copyInto(elementArray, index + elements.size, index, _size)
         }
 
         var i = index
@@ -145,6 +169,14 @@ class BirChildElementList<E : BirElement?>(
         invalidate()
         @Suppress("UNCHECKED_CAST")
         return element as E
+    }
+
+    override fun removeAll(elements: Collection<E>): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun retainAll(elements: Collection<E>): Boolean {
+        TODO("Not yet implemented")
     }
 
     override fun remove(element: E): Boolean {
@@ -199,6 +231,23 @@ class BirChildElementList<E : BirElement?>(
         parent.invalidate()
     }
 
+    override fun iterator(): MutableIterator<E> {
+        parent.recordPropertyRead()
+        return IteratorImpl<E>(this)
+    }
+
+    override fun listIterator(): MutableListIterator<E> {
+        TODO("Not yet implemented")
+    }
+
+    override fun listIterator(index: Int): MutableListIterator<E> {
+        TODO("Not yet implemented")
+    }
+
+    override fun subList(fromIndex: Int, toIndex: Int): MutableList<E> {
+        TODO("Not yet implemented")
+    }
+
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         val elementArray = elementArray
         for (i in 0..<size) {
@@ -218,6 +267,30 @@ class BirChildElementList<E : BirElement?>(
             if (element != null) {
                 visitor.invoke(scope, element)
             }
+        }
+    }
+
+
+    private class IteratorImpl<E : BirElement?>(
+        private val list: BirChildElementList<E>,
+    ) : MutableIterator<E> {
+        private var index: Int = 0
+
+        override fun hasNext(): Boolean {
+            return index < list._size
+        }
+
+        override fun next(): E {
+            val i = index
+
+            @Suppress("UNCHECKED_CAST")
+            val next = list.elementArray[i] as E
+            index = i + 1
+            return next
+        }
+
+        override fun remove() {
+            list.removeAt(--index)
         }
     }
 
