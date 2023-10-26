@@ -12351,6 +12351,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("ambiguousAnonymousExposed.kt")
+            public void testAmbiguousAnonymousExposed() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exposed/ambiguousAnonymousExposed.kt");
+            }
+
+            @Test
             @TestMetadata("delegate.kt")
             public void testDelegate() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/exposed/delegate.kt");
