@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.bir.builders
+package org.jetbrains.kotlin.bir.backend.builders
 
+import org.jetbrains.kotlin.bir.backend.utils.listOfNulls
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.*
-import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.util.parentAsClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.name.Name
@@ -15,24 +15,16 @@ import org.jetbrains.kotlin.name.Name
 fun BirCall.setCall(callee: BirSimpleFunction) {
     this.symbol = callee
     type = callee.returnType
-    repeat(callee.valueParameters.size - valueArguments.size) {
-        valueArguments += null
-    }
+    valueArguments += listOfNulls(callee.valueParameters.size - valueArguments.size)
+    typeArguments += listOfNulls(callee.typeParameters.size - typeArguments.size)
 }
-
 
 fun BirConstructorCall.setCall(callee: BirConstructor, constructedClass: BirClass = callee.owner.parentAsClass) {
     this.symbol = callee
     type = callee.returnType
-    repeat(callee.valueParameters.size - valueArguments.size) {
-        valueArguments += null
-    }
+    valueArguments += listOfNulls(callee.valueParameters.size - valueArguments.size)
+    typeArguments += listOfNulls(callee.owner.typeParameters.size + constructedClass.typeParameters.size - typeArguments.size)
     constructorTypeArgumentsCount = callee.owner.typeParameters.size
-
-    val missingTypeArguments = callee.owner.typeParameters.size + constructedClass.typeParameters.size - typeArguments.size
-    if (missingTypeArguments > 0) {
-        typeArguments += List<BirType?>(missingTypeArguments) { null }
-    }
 }
 
 fun BirVariable.setTemporary(nameHint: String? = null) {

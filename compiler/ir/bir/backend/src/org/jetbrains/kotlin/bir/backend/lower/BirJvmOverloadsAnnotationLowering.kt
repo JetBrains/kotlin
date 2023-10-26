@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.bir.backend.lower
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
+import org.jetbrains.kotlin.bir.backend.builders.build
+import org.jetbrains.kotlin.bir.backend.builders.setCall
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
-import org.jetbrains.kotlin.bir.builders.build
-import org.jetbrains.kotlin.bir.builders.setCall
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.expressions.BirCall
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyKey
 import org.jetbrains.kotlin.bir.BirElementDynamicPropertyToken
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
-import org.jetbrains.kotlin.bir.builders.build
+import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirField
 import org.jetbrains.kotlin.bir.getOrPutDynamicProperty

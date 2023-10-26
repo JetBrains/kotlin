@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.bir.backend.lower
 
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
+import org.jetbrains.kotlin.bir.backend.builders.build
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
-import org.jetbrains.kotlin.bir.builders.build
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.*

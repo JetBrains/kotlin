@@ -150,6 +150,20 @@ class BirChildElementList<E : BirElement?>(
         return true
     }
 
+    internal fun resetWithNulls(count: Int) {
+        clear()
+
+        if (elementArray.size == count) {
+            elementArray.fill(null)
+        } else {
+            elementArray =
+                if (count == 0) EMPTY_ELEMENT_ARRAY
+                else arrayOfNulls(count)
+        }
+        _size = count
+        invalidate()
+    }
+
     fun ensureCapacity(capacity: Int) {
         if (elementArray.size <= capacity) {
             val newArray = arrayOfNulls<BirElementBase?>(getNewCapacity(capacity))
@@ -306,4 +320,8 @@ class BirChildElementList<E : BirElement?>(
             }
         }
     }
+}
+
+fun<E : BirElement> BirChildElementList<E?>.resetWithNulls(count: Int) {
+    resetWithNulls(count)
 }

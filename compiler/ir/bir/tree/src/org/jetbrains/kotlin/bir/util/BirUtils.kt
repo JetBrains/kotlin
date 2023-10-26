@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.bir.types.utils.defaultType
 import org.jetbrains.kotlin.bir.types.utils.isNullable
 import org.jetbrains.kotlin.bir.types.utils.substitute
 import org.jetbrains.kotlin.bir.types.utils.typeOrNull
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
@@ -175,6 +176,7 @@ val BirClass.classId: ClassId?
     }
 
 
+val BirConstructorCall.isAnnotation get() = symbol.owner.parentAsClass.kind == ClassKind.ANNOTATION_CLASS
 fun BirConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
 fun BirConstructorCall.isAnnotation(annotationClass: BirClassSymbol) = symbol.owner.parentAsClass == annotationClass
 
