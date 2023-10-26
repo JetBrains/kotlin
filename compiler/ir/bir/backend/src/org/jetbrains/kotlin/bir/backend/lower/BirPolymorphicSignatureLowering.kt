@@ -17,14 +17,16 @@ import org.jetbrains.kotlin.bir.util.ancestors
 import org.jetbrains.kotlin.bir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.bir.util.dump
 import org.jetbrains.kotlin.bir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
 
 context(JvmBirBackendContext)
 class BirPolymorphicSignatureLowering : BirLoweringPhase() {
-    private val polymorphicCalls = registerIndexKey<BirCall>(false) {
-        it.symbol.owner.hasAnnotation(PolymorphicSignatureCallChecker.polymorphicSignatureFqName)
+    private val PolymorphicSignatureAnnotation = birBuiltIns.findClass(PolymorphicSignatureCallChecker.polymorphicSignatureFqName)
+
+    private val polymorphicCalls = registerIndexKey<BirCall>(false) { call ->
+        PolymorphicSignatureAnnotation?.let { call.symbol.owner.hasAnnotation(it) } == true
     }
 
     override fun invoke(module: BirModuleFragment) {
