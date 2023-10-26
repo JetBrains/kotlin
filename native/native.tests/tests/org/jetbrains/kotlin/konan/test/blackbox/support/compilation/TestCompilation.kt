@@ -539,5 +539,5 @@ private object BinaryOptions {
 internal fun Settings.getStageDependentPipelineType(): PipelineType =
     when (get<TestMode>()) {
         TestMode.ONE_STAGE_MULTI_MODULE -> get<PipelineType>()
-        TestMode.TWO_STAGE_MULTI_MODULE -> PipelineType.K1  // Don't pass "-language_version 2.0" to the second stage
+        TestMode.TWO_STAGE_MULTI_MODULE -> PipelineType.DEFAULT  // Don't pass "-language_version" option to the second stage
     }
