@@ -121,7 +121,10 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field>,
                 override = parentInVisitor != null && visitorSuperType != null,
             )
             if (parentInVisitor != null) {
-                print(" = ", parentInVisitor.visitFunctionName, "(", element.visitorParameterName, ", data)")
+                println(" =")
+                withIndent {
+                    print(parentInVisitor.visitFunctionName, "(", element.visitorParameterName, ", data)")
+                }
             }
             println()
         }
