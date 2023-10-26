@@ -126,6 +126,21 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                         type.name equals "Unit"
                     }
                 }
+
+                with((this.companion).cast<DObject>()) {
+                    name equals "Companion"
+                    children counts 5
+
+                    with((this / "x").cast<DProperty>()) {
+                        name equals "x"
+                    }
+
+                    with((this / "foo").cast<DFunction>()) {
+                        name equals "foo"
+                        parameters counts 0
+                        type.name equals "Unit"
+                    }
+                }
             }
         }
     }

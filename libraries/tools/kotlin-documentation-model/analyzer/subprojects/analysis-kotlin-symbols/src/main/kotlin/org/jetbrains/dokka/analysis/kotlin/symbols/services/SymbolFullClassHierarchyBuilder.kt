@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.analysis.kotlin.symbols.services
 
 import com.intellij.psi.PsiClass
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.analysis.java.util.PsiDocumentableSource
 import org.jetbrains.dokka.analysis.java.util.from
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromClassLike
@@ -17,6 +18,8 @@ import org.jetbrains.dokka.analysis.kotlin.internal.ClassHierarchy
 import org.jetbrains.dokka.analysis.kotlin.internal.FullClassHierarchyBuilder
 import org.jetbrains.dokka.analysis.kotlin.internal.Supertypes
 import org.jetbrains.dokka.analysis.kotlin.symbols.plugin.SymbolsAnalysisPlugin
+import org.jetbrains.dokka.analysis.kotlin.symbols.translators.AnnotationTranslator
+import org.jetbrains.dokka.analysis.kotlin.symbols.translators.TypeTranslator
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
@@ -24,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import java.util.concurrent.ConcurrentHashMap
 
 
-internal class SymbolFullClassHierarchyBuilder(val context: DokkaContext) : FullClassHierarchyBuilder {
+internal class SymbolFullClassHierarchyBuilder(context: DokkaContext) : FullClassHierarchyBuilder {
     private val kotlinAnalysis = context.plugin<SymbolsAnalysisPlugin>().querySingle { kotlinAnalysis }
 
     override suspend fun build(module: DModule): ClassHierarchy {
@@ -38,14 +41,13 @@ internal class SymbolFullClassHierarchyBuilder(val context: DokkaContext) : Full
         supersMap: MutableMap<DRI, Supertypes>
     ) {
         val (dri, kotlinType) = driWithKType
-        val supertypes = kotlinType.getDirectSuperTypes().filterNot { it.isAny }
-        val supertypesDriWithKType = supertypes.mapNotNull { supertype ->
-            supertype.expandedClassSymbol?.let {
-                getDRIFromClassLike(it) to supertype
-            }
-        }
-
         if (supersMap[dri] == null) {
+            val supertypes = kotlinType.getDirectSuperTypes(shouldApproximate = true).filterNot { it.isAny }
+            val supertypesDriWithKType = supertypes.mapNotNull { supertype ->
+                supertype.expandedClassSymbol?.let {
+                    getDRIFromClassLike(it) to supertype
+                }
+            }
             supersMap[dri] = supertypesDriWithKType.map { it.first }
             supertypesDriWithKType.forEach { collectSupertypesFromKtType(it, supersMap) }
         }
@@ -92,4 +94,55 @@ internal class SymbolFullClassHierarchyBuilder(val context: DokkaContext) : Full
         }
     }
 
+    internal class SuperclassesWithKind(
+        val typeConstructorWithKind: TypeConstructorWithKind,
+        val superclasses: List<TypeConstructorWithKind>
+    )
+
+    /**
+     * Currently, it works only for Symbols
+     */
+    internal fun collectKotlinSupertypesWithKind(
+        documentable: Iterable<Documentable>,
+        sourceSet: DokkaConfiguration.DokkaSourceSet
+    ): Map<DRI, SuperclassesWithKind> {
+        val typeTranslator = TypeTranslator(sourceSet, AnnotationTranslator())
+        val hierarchy = mutableMapOf<DRI, SuperclassesWithKind>()
+
+        analyze(kotlinAnalysis.getModule(sourceSet)) {
+            documentable.filterIsInstance<DClasslike>().forEach {
+                val source = it.sources[sourceSet]
+                if (source is KtPsiDocumentableSource) {
+                    (source.psi as? KtClassOrObject)?.let { psi ->
+                        val type = psi.getNamedClassOrObjectSymbol()?.buildSelfClassType() ?: return@analyze
+                        collectSupertypesWithKindFromKtType(typeTranslator, with(typeTranslator) {
+                            toTypeConstructorWithKindFrom(type)
+                        } to type, hierarchy)
+                    }
+                }  // else if (source is PsiDocumentableSource)  TODO val psi = source.psi as? PsiClass
+            }
+        }
+        return hierarchy
+    }
+
+    private fun KtAnalysisSession.collectSupertypesWithKindFromKtType(
+        typeTranslator: TypeTranslator,
+        typeConstructorWithKindWithKType: Pair<TypeConstructorWithKind, KtType>,
+        supersMap: MutableMap<DRI, SuperclassesWithKind>
+    ) {
+        val (typeConstructorWithKind, kotlinType) = typeConstructorWithKindWithKType
+
+        if (supersMap[typeConstructorWithKind.typeConstructor.dri] == null) {
+            val supertypes = kotlinType.getDirectSuperTypes(shouldApproximate = true).filterNot { it.isAny }
+
+            val supertypesDriWithKType = supertypes.map { supertype ->
+                with(typeTranslator) {
+                    toTypeConstructorWithKindFrom(supertype)
+                } to supertype
+            }
+            supersMap[typeConstructorWithKind.typeConstructor.dri] =
+                SuperclassesWithKind(typeConstructorWithKind, supertypesDriWithKType.map { it.first })
+            supertypesDriWithKType.forEach { collectSupertypesWithKindFromKtType(typeTranslator, it, supersMap) }
+        }
+    }
 }

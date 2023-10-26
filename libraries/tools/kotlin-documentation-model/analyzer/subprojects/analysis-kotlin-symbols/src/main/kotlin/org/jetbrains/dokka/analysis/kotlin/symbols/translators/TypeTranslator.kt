@@ -44,7 +44,7 @@ internal class TypeTranslator(
                 typeAlias = GenericTypeConstructor(
                     dri = getDRIFromNonErrorClassType(classType),
                     projections = classType.ownTypeArguments.map { toProjection(it) }),
-                inner = toBoundFrom(classSymbol.expandedType),
+                inner = toBoundFrom(classType.fullyExpandedType),
                 extra = PropertyContainer.withAll(
                     getDokkaAnnotationsFrom(classType)?.toSourceSetDependent()?.toAnnotations()
                 )
