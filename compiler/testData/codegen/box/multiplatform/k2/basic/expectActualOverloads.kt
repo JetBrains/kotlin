@@ -11,11 +11,13 @@ expect fun foo(s: S): S
 
 expect fun foo(i: Int): Int
 
-expect val Int.k: Int
+// Uncomment once KT-62926 is fixed
+//expect val Int.k: Int
 
 expect val String.k: String
 
-expect var Int.l: Int
+// Uncomment once KT-62926 is fixed
+//expect var Int.l: Int
 
 expect var String.l: String
 
@@ -30,13 +32,15 @@ actual fun foo(i: Int) = i
 
 actual fun foo(s: String) = s
 
-actual val Int.k: Int get() = 42
+// Uncomment once KT-62926 is fixed
+//actual val Int.k: Int get() = 42
 
 actual val String.k: String get() = this
 
-actual var Int.l: Int
-    get() = 48
-    set(value) {}
+// Uncomment once KT-62926 is fixed
+//actual var Int.l: Int
+//    get() = 48
+//    set(value) {}
 
 actual var String.l: String
     get() = this
