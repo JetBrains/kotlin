@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.generators.builtins.ProgressionKind
 import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
 import org.jetbrains.kotlin.generators.builtins.areEqualNumbers
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
-import org.jetbrains.kotlin.generators.builtins.hashLong
 import java.io.PrintWriter
 
 class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
@@ -34,7 +33,7 @@ class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 INT -> "=\n" +
                         "        if (isEmpty()) -1 else (31 * first + last)"
                 LONG -> "=\n" +
-                        "        if (isEmpty()) -1 else 31 * (${hashLong("first")} + ${hashLong("last")})"
+                        "        if (isEmpty()) -1 else 31 * first.hashCode() + last.hashCode()"
             }
 
             val toString = "\"\$first..\$last\""
