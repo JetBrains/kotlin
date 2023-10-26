@@ -20,6 +20,20 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtUserType
 
+/**
+ * @property removeThis If set to `true`, reference shortener will detect redundant `this` qualifiers
+ * and will collect them to [ShortenCommand.qualifiersToShorten].
+ */
+public data class ShortenOptions(
+    public val removeThis: Boolean = false,
+) {
+    public companion object {
+        public val DEFAULT: ShortenOptions = ShortenOptions()
+
+        public val ALL_ENABLED: ShortenOptions = ShortenOptions(removeThis = true)
+    }
+}
+
 public enum class ShortenStrategy {
     /** Skip shortening references to this symbol. */
     DO_NOT_SHORTEN,
@@ -78,6 +92,7 @@ public abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
     public abstract fun collectShortenings(
         file: KtFile,
         selection: TextRange,
+        shortenOptions: ShortenOptions,
         classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy
     ): ShortenCommand
@@ -97,6 +112,7 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
     public fun collectPossibleReferenceShortenings(
         file: KtFile,
         selection: TextRange = file.textRange,
+        shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
         classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
         callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
     ): ShortenCommand =
@@ -104,6 +120,7 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
             analysisSession.referenceShortener.collectShortenings(
                 file,
                 selection,
+                shortenOptions,
                 classShortenStrategy,
                 callableShortenStrategy
             )
@@ -120,6 +137,7 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
      */
     public fun collectPossibleReferenceShorteningsInElement(
         element: KtElement,
+        shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
         classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
         callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
     ): ShortenCommand =
@@ -127,6 +145,7 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
             analysisSession.referenceShortener.collectShortenings(
                 element.containingKtFile,
                 element.textRange,
+                shortenOptions,
                 classShortenStrategy,
                 callableShortenStrategy
             )

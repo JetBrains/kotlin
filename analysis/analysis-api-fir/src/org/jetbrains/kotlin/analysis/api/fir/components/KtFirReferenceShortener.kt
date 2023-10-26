@@ -12,6 +12,7 @@ import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
+import org.jetbrains.kotlin.analysis.api.components.ShortenOptions
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
@@ -78,6 +79,7 @@ internal class KtFirReferenceShortener(
     override fun collectShortenings(
         file: KtFile,
         selection: TextRange,
+        shortenOptions: ShortenOptions,
         classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy
     ): ShortenCommand {

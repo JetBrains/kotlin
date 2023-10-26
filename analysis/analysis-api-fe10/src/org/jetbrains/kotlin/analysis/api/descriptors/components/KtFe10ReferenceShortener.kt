@@ -10,6 +10,7 @@ import com.intellij.psi.SmartPointerManager
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.KtReferenceShortener
 import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
+import org.jetbrains.kotlin.analysis.api.components.ShortenOptions
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
@@ -31,6 +32,7 @@ internal class KtFe10ReferenceShortener(
     override fun collectShortenings(
         file: KtFile,
         selection: TextRange,
+        shortenOptions: ShortenOptions,
         classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy,
     ): ShortenCommand {
