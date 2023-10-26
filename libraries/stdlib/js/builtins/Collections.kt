@@ -201,6 +201,7 @@ public interface List<out E> : Collection<E> {
     @ExperimentalJsExport
     public fun asJsArrayView() = createJsArrayImmutableViewFrom(this)
 
+    @ExperimentalJsExport
     companion object Factory {
         fun <E> fromJsArray(array: JsImmutableArray<E>): List<E> = createListFrom(array)
     }
@@ -275,6 +276,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
     @ExperimentalJsExport
     public fun asJsArrayMutableView() = createJsArrayMutableViewFrom(this)
 
+    @ExperimentalJsExport
     companion object Factory {
         fun <E> fromJsArray(array: JsImmutableArray<E>): MutableList<E> = createMutableListFrom(array)
     }
@@ -303,6 +305,7 @@ public interface Set<out E> : Collection<E> {
     @ExperimentalJsExport
     public fun asJsSetView() = createJsSetImmutableViewFrom(this)
 
+    @ExperimentalJsExport
     companion object Factory {
         fun <E> fromJsSet(set: JsImmutableSet<E>): Set<E> = createSetFrom(set)
     }
@@ -341,6 +344,7 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     @ExperimentalJsExport
     public fun asJsSetMutableView() = createJsSetMutableViewFrom(this)
 
+    @ExperimentalJsExport
     companion object Factory {
         fun <E> fromJsSet(set: JsImmutableSet<E>): MutableSet<E> = createMutableSetFrom(set)
     }
@@ -416,6 +420,7 @@ public interface Map<K, out V> {
     @ExperimentalJsExport
     public fun asJsMapView() = createJsMapImmutableViewFrom(this)
 
+    @ExperimentalJsExport
     companion object Factory {
         fun <K, V> fromJsMap(map: JsImmutableMap<K, V>): Map<K, V> = createMapFrom(map)
     }
@@ -485,6 +490,7 @@ public interface MutableMap<K, V> : Map<K, V> {
     @ExperimentalJsExport
     public fun asJsMapMutableView() = createJsMapMutableViewFrom(this)
 
+    @ExperimentalJsExport
     companion object Factory {
         fun <K, V> fromJsMap(map: JsImmutableMap<K, V>): MutableMap<K, V> = createMutableMapFrom(map)
     }

@@ -41,7 +41,7 @@ idePluginDependency {
 
     val shadowJar by task<ShadowJar> {
         configurations = listOf(embedded)
-        duplicatesStrategy = DuplicatesStrategy.FAIL
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         destinationDirectory.set(File(buildDir, "libs"))
         archiveClassifier.set("shadow")
     }

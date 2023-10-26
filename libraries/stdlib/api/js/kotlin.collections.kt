@@ -10426,6 +10426,11 @@ public interface List<out E> : kotlin.collections.Collection<E> {
     public abstract fun listIterator(index: kotlin.Int): kotlin.collections.ListIterator<E>
 
     public abstract fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<E>
+
+    @kotlin.js.ExperimentalJsExport
+    public companion object of List Factory {
+        public final fun <E> fromJsArray(array: kotlin.collections.JsImmutableArray<E>): kotlin.collections.List<E>
+    }
 }
 
 public interface ListIterator<out T> : kotlin.collections.Iterator<T> {
@@ -10474,6 +10479,11 @@ public interface Map<K, out V> {
         public abstract val key: K { get; }
 
         public abstract val value: V { get; }
+    }
+
+    @kotlin.js.ExperimentalJsExport
+    public companion object of Map Factory {
+        public final fun <K, V> fromJsMap(map: kotlin.collections.JsImmutableMap<K, V>): kotlin.collections.Map<K, V>
     }
 }
 
@@ -10530,6 +10540,11 @@ public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections
     public abstract operator fun set(index: kotlin.Int, element: E): E
 
     public abstract override fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E>
+
+    @kotlin.js.ExperimentalJsExport
+    public companion object of MutableList Factory {
+        public final fun <E> fromJsArray(array: kotlin.collections.JsImmutableArray<E>): kotlin.collections.MutableList<E>
+    }
 }
 
 public interface MutableListIterator<T> : kotlin.collections.ListIterator<T>, kotlin.collections.MutableIterator<T> {
@@ -10562,6 +10577,11 @@ public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
 
     public abstract fun remove(key: K): V?
 
+    @kotlin.js.ExperimentalJsExport
+    public companion object of MutableMap Factory {
+        public final fun <K, V> fromJsMap(map: kotlin.collections.JsImmutableMap<K, V>): kotlin.collections.MutableMap<K, V>
+    }
+
     public interface MutableEntry<K, V> : kotlin.collections.Map.Entry<K, V> {
         public abstract fun setValue(newValue: V): V
     }
@@ -10584,6 +10604,11 @@ public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.M
     public abstract override fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public abstract override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
+
+    @kotlin.js.ExperimentalJsExport
+    public companion object of MutableSet Factory {
+        public final fun <E> fromJsSet(set: kotlin.collections.JsImmutableSet<E>): kotlin.collections.MutableSet<E>
+    }
 }
 
 public interface RandomAccess {
@@ -10602,6 +10627,11 @@ public interface Set<out E> : kotlin.collections.Collection<E> {
     public abstract override fun isEmpty(): kotlin.Boolean
 
     public abstract override operator fun iterator(): kotlin.collections.Iterator<E>
+
+    @kotlin.js.ExperimentalJsExport
+    public companion object of Set Factory {
+        public final fun <E> fromJsSet(set: kotlin.collections.JsImmutableSet<E>): kotlin.collections.Set<E>
+    }
 }
 
 public abstract class ShortIterator : kotlin.collections.Iterator<kotlin.Short> {
