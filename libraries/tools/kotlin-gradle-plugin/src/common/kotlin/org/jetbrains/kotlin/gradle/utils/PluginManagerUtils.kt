@@ -10,18 +10,21 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvalu
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 
 /**
- * Executes the given block of code if the Gradle Plugin with [pluginId] is applied to the project. Otherwise,
- * executes another block of code.
+ * Returns true as soon as Gradle plugin with [pluginId] is applied.
+ * Returns false if plugin wasn't applied during
  */
-internal fun <T> Project.withPluginId(
-    pluginId: String,
-    whenApplied: () -> T,
-    whenNotApplied: () -> T,
-): Future<T> {
-    val result = CompletableFuture<T>()
-    pluginManager.withPlugin(pluginId) { result.complete(whenApplied()) }
+internal suspend fun Project.isPluginApplied(pluginId: String): Boolean {
+    val result = CompletableFuture<Boolean>()
+    pluginManager.withPlugin(pluginId) {
+        check(!result.isCompleted) {
+            "Plugin '$pluginId' was applied too late. It was expected to be applied during build script evaluation"
+        }
+        result.complete(true)
+    }
     // All plugins must be applied during evaluation of build script
-    launchInStage(AfterEvaluateBuildscript) { if (!result.isCompleted) result.complete(whenNotApplied()) }
+    launchInStage(AfterEvaluateBuildscript) {
+        if (!result.isCompleted) result.complete(false)
+    }
 
-    return result
+    return result.await()
 }

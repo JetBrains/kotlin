@@ -8,15 +8,17 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.api.ProjectConfigurationException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
 import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.util.buildProject
+import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.util.allCauses
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
-import org.jetbrains.kotlin.gradle.utils.withPluginId
-import kotlin.test.Test
-import kotlin.test.assertTrue
+import org.jetbrains.kotlin.gradle.utils.isPluginApplied
+import kotlin.test.*
 
 class PluginManagerUtilTest {
 
@@ -30,46 +32,48 @@ class PluginManagerUtilTest {
     }
 
     @Test
-    fun `test - withPluginId - when plugin applied`() {
-        val project = buildProject {
+    fun `test - isPluginApplied - when plugin applied`() {
+        val project = buildSampleProject {
             plugins.apply("maven-publish")
         }
-        val future = project.withPluginId(
-            pluginId = "maven-publish",
-            whenApplied = { true },
-            whenNotApplied = { false }
-        )
-
-        assertTrue(future.getOrThrow())
+        project.runLifecycleAwareTest {
+            assertTrue(isPluginApplied("maven-publish"))
+        }
     }
 
     @Test
-    fun `test - withPluginId - call withPluginId before plugin is applied`() {
-        val project = buildProject {}
-        val future = project.withPluginId(
-            pluginId = "maven-publish",
-            whenApplied = { true },
-            whenNotApplied = { false }
-        )
-        project.plugins.apply("maven-publish")
-
-        assertTrue(future.getOrThrow())
+    fun `test - isPluginApplied - call withPluginId before plugin is applied`() {
+        val project = buildSampleProject {}
+        project.runLifecycleAwareTest {
+            launch { assertTrue(isPluginApplied("maven-publish")) }
+            project.plugins.apply("maven-publish")
+        }
     }
 
     @Test
     fun `test - withPluginId - plugin not applied`() {
         val project = buildSampleProject()
 
-        val future = project.withPluginId(
-            pluginId = "some-plugin-id",
-            whenApplied = { false },
-            whenNotApplied = { true },
-        )
-
         project.runLifecycleAwareTest {
-            assertTrue(future.await())
+            assertFalse(isPluginApplied("maven-publish"))
             val currentStage = currentKotlinPluginLifecycle().stage
             assertTrue(currentStage <= AfterEvaluateBuildscript)
         }
+    }
+
+    @Test
+    fun `test - withPluginId - plugin can't be applied after build script evaluation`() {
+        val project = buildSampleProject()
+
+        val error = assertFails {
+            project.runLifecycleAwareTest {
+                launchInStage(AfterEvaluateBuildscript.nextOrLast) { plugins.apply("maven-publish") }
+                isPluginApplied("maven-publish")
+            }
+        }
+
+        val errorMessages = error.allCauses.map { it.message }
+        val expectedErrorMessage = "Plugin 'maven-publish' was applied too late. It was expected to be applied during build script evaluation"
+        if (expectedErrorMessage !in errorMessages) fail("Expected to fail with: $expectedErrorMessage")
     }
 }

@@ -325,19 +325,6 @@ private val Project.allProjectsData: Map<String, GranularMetadataTransformation.
 
 private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransformation.ProjectData> {
     return rootProject.allprojects.associateBy { it.path }.mapValues { (path, currentProject) ->
-
-        /*
-            We're calling into various different projects (Note: This implementation will change with Project Isolation)
-            Since not all projects might have the Kotlin Gradle Plugin applied we do call into 'idOfRootModule' in two different ways:
-
-            1) If KGP is applied, we use the lifecycle APIs to safely get a value after the DSL was finalised.
-            2) If KGP was *not* applied, we create a Future which
-                - creates a lazy once the project is evaluated
-                - only evaluates the lazy once the moduleId is actually accessed
-
-               This double deferral ensures that the value indeed is accessed as late as possible.
-               Unwrapping the lazy before the buildscript is evaluated will fail with 'future not completed'
-             */
         val moduleId = currentProject.future { ModuleIds.idOfRootModuleSafe(currentProject) }.lenient
 
         GranularMetadataTransformation.ProjectData(

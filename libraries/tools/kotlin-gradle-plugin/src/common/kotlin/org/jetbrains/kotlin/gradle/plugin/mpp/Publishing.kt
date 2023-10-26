@@ -26,34 +26,32 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
-import org.jetbrains.kotlin.gradle.utils.withPluginId
 
-private val Project.completableFutureForKotlinMultiplatformRootPublication: CompletableFuture<MavenPublication?>
+private val Project.kotlinMultiplatformRootPublicationImpl: CompletableFuture<MavenPublication?>
         by projectStoredProperty { CompletableFuture() }
 internal val Project.kotlinMultiplatformRootPublication: Future<MavenPublication?>
-    get() = completableFutureForKotlinMultiplatformRootPublication
+    get() = kotlinMultiplatformRootPublicationImpl
 
-internal val MultiplatformPublishingSetupAction = KotlinProjectSetupAction {
-    project.withPluginId(
-        pluginId = "maven-publish",
-        whenApplied = {
-            if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
-                project.extensions.configure(PublishingExtension::class.java) { publishing ->
-                    createRootPublication(project, publishing).also(completableFutureForKotlinMultiplatformRootPublication::complete)
-                    createTargetPublications(project, publishing)
-                }
-            } else {
-                completableFutureForKotlinMultiplatformRootPublication.complete(null)
-            }
+internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
+    if (!project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
+        kotlinMultiplatformRootPublicationImpl.complete(null)
+        return@KotlinProjectSetupCoroutine
+    }
 
-            project.components.add(project.multiplatformExtension.rootSoftwareComponent)
-        },
-        whenNotApplied = { completableFutureForKotlinMultiplatformRootPublication.complete(null) }
-    )
+    if (isPluginApplied("maven-publish")) {
+        project.extensions.configure(PublishingExtension::class.java) { publishing ->
+            createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
+            createTargetPublications(project, publishing)
+        }
+        project.components.add(project.multiplatformExtension.rootSoftwareComponent)
+    } else {
+        kotlinMultiplatformRootPublicationImpl.complete(null)
+    }
 }
 
 /**
