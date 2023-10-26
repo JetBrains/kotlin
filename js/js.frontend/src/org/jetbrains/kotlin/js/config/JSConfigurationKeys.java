@@ -84,7 +84,7 @@ public class JSConfigurationKeys {
             CompilerConfigurationKey.create("generate TypeScript definition file");
 
     public static final CompilerConfigurationKey<Boolean> COMPILE_SUSPEND_AS_JS_GENERATOR =
-            CompilerConfigurationKey.create("force suspend functions compilation int JS generator functions");
+            CompilerConfigurationKey.create("force suspend functions compilation into JS generator functions");
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_REGION_COMMENTS =
             CompilerConfigurationKey.create("generate special comments at the start and the end of each file block, " +
