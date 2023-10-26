@@ -237,7 +237,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         for (field in fields) {
             val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
             check(size == 1L || size == 2L || size == 4L || size % 8 == 0L)
-            check(field.alignment % min(size, 8L) == 0L)
+            check(min(size, 8L) % field.alignment == 0L)
             val offset = nextOffset(size)
             packedFields.add(IndexedField(offset, field))
         }
