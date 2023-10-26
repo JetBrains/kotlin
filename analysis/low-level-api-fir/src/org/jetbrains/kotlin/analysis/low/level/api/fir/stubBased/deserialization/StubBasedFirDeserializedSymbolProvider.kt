@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
@@ -177,7 +179,17 @@ internal open class StubBasedFirDeserializedSymbolProvider(
         }
     }
 
-    private fun getFacadeContainerSource(file: KtFile, origin: KotlinStubOrigin?): JvmStubDeserializedFacadeContainerSource {
+    private fun getContainerSource(file: KtFile, origin: KotlinStubOrigin?): DeserializedContainerSource {
+        if (file.virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+            require(origin is KotlinStubOrigin.Facade) {
+                "Expected builtins file to have Facade origin, got origin=$origin instead"
+            }
+
+            return JvmStubDeserializedBuiltInsContainerSource(
+                facadeClassName = JvmClassName.byInternalName(origin.className)
+            )
+        }
+
         return when (origin) {
             is KotlinStubOrigin.Facade -> {
                 val className = JvmClassName.byInternalName(origin.className)
