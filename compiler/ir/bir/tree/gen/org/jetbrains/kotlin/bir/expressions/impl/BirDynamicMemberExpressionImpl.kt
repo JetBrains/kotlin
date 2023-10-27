@@ -79,12 +79,12 @@ class BirDynamicMemberExpressionImpl(
             }
         }
 
-    private var _receiver: BirExpression = receiver
+    private var _receiver: BirExpression? = receiver
 
     override var receiver: BirExpression
         get() {
             recordPropertyRead()
-            return _receiver
+            return _receiver ?: throwChildElementRemoved("receiver")
         }
         set(value) {
             if (_receiver != value) {
@@ -98,7 +98,7 @@ class BirDynamicMemberExpressionImpl(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _receiver.acceptLite(visitor)
+        _receiver?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

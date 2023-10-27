@@ -8,25 +8,29 @@ package org.jetbrains.kotlin.bir
 class BirChildElementList<E : BirElement?>(
     internal val parent: BirElementBase,
     id: Int,
+    isNullable: Boolean,
 ) : AbstractList<E>(), MutableList<E>, BirElementOrChildList {
     private var elementArray: Array<BirElementBase?> = EMPTY_ELEMENT_ARRAY
-    private var sizeAndId: Int = id shl (32 - ID_BITS)
+    private var compressedData: Int = (if (isNullable) 1 shl SIZE_BITS else 0) or (id shl (SIZE_BITS + FLAG_BITS))
 
     private var _size: Int
-        get() = sizeAndId and SIZE_MASK
-        private set(value) {
-            sizeAndId = value or (sizeAndId and ID_MASK)
+        get() = compressedData and SIZE_MASK
+        set(value) {
+            compressedData = value or (compressedData and SIZE_MASK.inv())
         }
+
+    internal val id: Int
+        get() = compressedData.toInt() shr (SIZE_BITS + FLAG_BITS)
+
+    private val isNullable
+        get() = compressedData and (1 shl SIZE_BITS) != 0
+
 
     override val size: Int
         get() {
             parent.recordPropertyRead()
             return _size
         }
-
-
-    internal val id: Int
-        get() = sizeAndId.toInt() shr (32 - ID_BITS)
 
     override fun get(index: Int): E {
         checkElementIndex(index, _size)
@@ -70,6 +74,7 @@ class BirChildElementList<E : BirElement?>(
 
     override fun set(index: Int, element: E): E {
         checkElementIndex(index, _size)
+        checkNewElement(element)
         element as BirElementBase?
         val old = elementArray[index]
         if (element !== old) {
@@ -82,6 +87,7 @@ class BirChildElementList<E : BirElement?>(
     }
 
     override fun add(element: E): Boolean {
+        checkNewElement(element)
         element as BirElementBase?
 
         val newSize = _size + 1
@@ -101,6 +107,7 @@ class BirChildElementList<E : BirElement?>(
     override fun add(index: Int, element: E) {
         val newSize = _size + 1
         checkElementIndex(index, newSize)
+        checkNewElement(element)
         element as BirElementBase?
 
         var elementArray = elementArray
@@ -141,6 +148,7 @@ class BirChildElementList<E : BirElement?>(
 
         var i = index
         for (element in elements) {
+            checkNewElement(element)
             elementArray[i++] = element as BirElementBase?
             addChild(element)
         }
@@ -151,6 +159,8 @@ class BirChildElementList<E : BirElement?>(
     }
 
     internal fun resetWithNulls(count: Int) {
+        assert(isNullable) { "Cannot reset not-nullable list with nulls" }
+
         clear()
 
         if (elementArray.size == count) {
@@ -228,6 +238,12 @@ class BirChildElementList<E : BirElement?>(
         }
         _size = 0
         invalidate()
+    }
+
+    private fun checkNewElement(new: BirElement?) {
+        if (new == null && !isNullable) {
+            throw IllegalArgumentException("Trying to add null element to a not-nullable list")
+        }
     }
 
     private fun addChild(new: BirElementBase?) {
@@ -310,9 +326,12 @@ class BirChildElementList<E : BirElement?>(
 
     companion object {
         private val EMPTY_ELEMENT_ARRAY = emptyArray<BirElementBase?>()
+
+        private const val SIZE_BITS = 28
+        private const val FLAG_BITS = 1
         private const val ID_BITS = 3
-        private const val SIZE_MASK: Int = (-1 ushr (32 + ID_BITS))
-        private const val ID_MASK: Int = (-1 shl (32 - ID_BITS))
+
+        private const val SIZE_MASK: Int = (-1 ushr (32 - SIZE_BITS))
 
         private fun checkElementIndex(index: Int, size: Int) {
             if (index < 0 || index >= size) {
@@ -322,6 +341,6 @@ class BirChildElementList<E : BirElement?>(
     }
 }
 
-fun<E : BirElement> BirChildElementList<E?>.resetWithNulls(count: Int) {
+fun <E : BirElement> BirChildElementList<E?>.resetWithNulls(count: Int) {
     resetWithNulls(count)
 }

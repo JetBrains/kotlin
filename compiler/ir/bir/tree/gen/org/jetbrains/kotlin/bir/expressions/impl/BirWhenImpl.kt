@@ -79,7 +79,8 @@ class BirWhenImpl(
             }
         }
 
-    override val branches: BirChildElementList<BirBranch> = BirChildElementList(this, 1)
+    override val branches: BirChildElementList<BirBranch> = BirChildElementList(this, 1,
+            false)
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         branches.acceptChildrenLite(visitor)
