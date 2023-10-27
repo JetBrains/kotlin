@@ -112,10 +112,10 @@ class PostponedArgumentsAnalyzer(
                 buildMap {
                     lambda.receiver
                         ?.let { builderInferenceSession.fixVariablesForMemberScope(it, candidate.system) }
-                        ?.let(this::plus)
+                        ?.let(this::plusAssign)
 
                     for (parameterType in lambda.parameters) {
-                        builderInferenceSession.fixVariablesForMemberScope(parameterType, candidate.system)?.let(this::plus)
+                        builderInferenceSession.fixVariablesForMemberScope(parameterType, candidate.system)?.let(this::plusAssign)
                     }
                 }
             }
