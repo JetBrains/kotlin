@@ -60,7 +60,6 @@ class VariableFixationFinder(
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
-        ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER, // proper trivial constraint from arguments, Nothing <: T
         RELATED_TO_ANY_OUTPUT_TYPE,
         FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND,
         READY_FOR_FIXATION_UPPER,
@@ -86,7 +85,6 @@ class VariableFixationFinder(
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
-        allConstraintsTrivialOrNonProper(variable) -> TypeVariableFixationReadiness.ALL_CONSTRAINTS_TRIVIAL_OR_NON_PROPER
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
         variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable) ->
             TypeVariableFixationReadiness.FROM_INCORPORATION_OF_DECLARED_UPPER_BOUND
@@ -128,12 +126,6 @@ class VariableFixationFinder(
                 else -> true
             }
         }
-    }
-
-    private fun Context.allConstraintsTrivialOrNonProper(variable: TypeConstructorMarker): Boolean {
-        return notFixedTypeVariables[variable]?.constraints?.all { constraint ->
-            trivialConstraintTypeInferenceOracle.isNotInterestingConstraint(constraint) || !isProperArgumentConstraint(constraint)
-        } ?: false
     }
 
     private fun Context.variableHasOnlyIncorporatedConstraintsFromDeclaredUpperBound(variable: TypeConstructorMarker): Boolean {
