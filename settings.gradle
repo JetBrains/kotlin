@@ -577,6 +577,10 @@ include ":generators:analysis-api-generator",
         ":prepare:analysis-api-test-framework",
         ":tools:ide-plugin-dependencies-validator"
 
+if (buildProperties.isKotlinNativeEnabled) {
+    include ":generators:analysis-api-generator:generator-kotlin-native"
+}
+
 
 if (buildProperties.inJpsBuildIdeaSync) {
     include ":kotlin-stdlib:jps-build"

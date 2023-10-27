@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.generators.getDefaultSuiteTestClassName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import kotlin.reflect.KClass
 
-internal class AnalysisApiTestGroup(
+class AnalysisApiTestGroup(
     private val generator: AnalysisApiTestGenerator,
     private val groupFilter: TestFilter,
     private val directory: String?,

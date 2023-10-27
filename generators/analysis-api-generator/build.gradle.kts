@@ -30,6 +30,10 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-val generateFrontendApiTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt")
+val generateFrontendApiTests by generator("org.jetbrains.kotlin.generators.tests.analysis.api.GenerateAnalysisApiTestsKt") {
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        dependsOn(":generators:analysis-api-generator:generator-kotlin-native:generateAnalysisApiNativeTests")
+    }
+}
 
 testsJar()
