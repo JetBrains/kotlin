@@ -33,10 +33,7 @@ import org.jetbrains.dokka.base.translators.documentables.DefaultDocumentableToP
 import org.jetbrains.dokka.generation.Generation
 import org.jetbrains.dokka.plugability.*
 import org.jetbrains.dokka.renderers.Renderer
-import org.jetbrains.dokka.transformers.documentation.DocumentableMerger
-import org.jetbrains.dokka.transformers.documentation.DocumentableToPageTranslator
-import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
-import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
+import org.jetbrains.dokka.transformers.documentation.*
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
 @Suppress("unused")
