@@ -283,8 +283,8 @@ fun <Self : ParametrizedTypeRef<Self, PositionTypeParameterRef>> ParametrizedTyp
 
 class TypeVariable(
     name: String,
-    val bounds: List<TypeRef>,
-    val variance: Variance,
+    val bounds: List<TypeRef> = emptyList(),
+    val variance: Variance = Variance.INVARIANT,
 ) : NamedTypeParameterRef(name)
 
 fun <P : TypeParameterRef> KClass<*>.asRef(): ClassRef<P> {
