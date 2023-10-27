@@ -29,8 +29,6 @@ struct ObjectPoolAllocator {
 
     constexpr ObjectPoolAllocator() noexcept = default;
 
-    constexpr ObjectPoolAllocator(const ObjectPoolAllocator&) noexcept = default;
-
     template <typename U>
     constexpr ObjectPoolAllocator(const ObjectPoolAllocator<U>&) noexcept {}
 
