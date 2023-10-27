@@ -195,7 +195,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_dispatchReceiverParameter != value) {
-                replaceChild(_dispatchReceiverParameter, value)
+                childReplaced(_dispatchReceiverParameter, value)
                 _dispatchReceiverParameter = value
                 invalidate()
             }
@@ -210,7 +210,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_extensionReceiverParameter != value) {
-                replaceChild(_extensionReceiverParameter, value)
+                childReplaced(_extensionReceiverParameter, value)
                 _extensionReceiverParameter = value
                 invalidate()
             }
@@ -242,7 +242,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_body != value) {
-                replaceChild(_body, value)
+                childReplaced(_body, value)
                 _body = value
                 invalidate()
             }
@@ -376,11 +376,11 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._dispatchReceiverParameter === old -> this.dispatchReceiverParameter = new as
-                BirValueParameter
-            this._extensionReceiverParameter === old -> this.extensionReceiverParameter = new as
-                BirValueParameter
-            this._body === old -> this.body = new as BirBody
+            this._dispatchReceiverParameter === old -> this._dispatchReceiverParameter = new as
+                BirValueParameter?
+            this._extensionReceiverParameter === old -> this._extensionReceiverParameter = new as
+                BirValueParameter?
+            this._body === old -> this._body = new as BirBody?
             else -> throwChildForReplacementNotFound(old)
         }
     }

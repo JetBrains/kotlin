@@ -44,7 +44,7 @@ class BirCatchImpl(
         }
         set(value) {
             if (_catchParameter != value) {
-                replaceChild(_catchParameter, value)
+                childReplaced(_catchParameter, value)
                 _catchParameter = value
                 invalidate()
             }
@@ -59,7 +59,7 @@ class BirCatchImpl(
         }
         set(value) {
             if (_result != value) {
-                replaceChild(_result, value)
+                childReplaced(_result, value)
                 _result = value
                 invalidate()
             }
@@ -76,8 +76,8 @@ class BirCatchImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._catchParameter === old -> this.catchParameter = new as BirVariable
-            this._result === old -> this.result = new as BirExpression
+            this._catchParameter === old -> this._catchParameter = new as BirVariable?
+            this._result === old -> this._result = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

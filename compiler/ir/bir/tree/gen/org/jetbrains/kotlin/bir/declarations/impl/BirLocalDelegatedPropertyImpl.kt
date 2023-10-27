@@ -132,7 +132,7 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_delegate != value) {
-                replaceChild(_delegate, value)
+                childReplaced(_delegate, value)
                 _delegate = value
                 invalidate()
             }
@@ -147,7 +147,7 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_getter != value) {
-                replaceChild(_getter, value)
+                childReplaced(_getter, value)
                 _getter = value
                 invalidate()
             }
@@ -162,7 +162,7 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_setter != value) {
-                replaceChild(_setter, value)
+                childReplaced(_setter, value)
                 _setter = value
                 invalidate()
             }
@@ -182,9 +182,9 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._delegate === old -> this.delegate = new as BirVariable
-            this._getter === old -> this.getter = new as BirSimpleFunction
-            this._setter === old -> this.setter = new as BirSimpleFunction
+            this._delegate === old -> this._delegate = new as BirVariable?
+            this._getter === old -> this._getter = new as BirSimpleFunction?
+            this._setter === old -> this._setter = new as BirSimpleFunction?
             else -> throwChildForReplacementNotFound(old)
         }
     }

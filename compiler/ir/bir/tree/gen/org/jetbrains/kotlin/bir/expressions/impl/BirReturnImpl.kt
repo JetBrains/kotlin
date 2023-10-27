@@ -75,7 +75,7 @@ class BirReturnImpl(
         }
         set(value) {
             if (_value != value) {
-                replaceChild(_value, value)
+                childReplaced(_value, value)
                 _value = value
                 invalidate()
             }
@@ -104,7 +104,7 @@ class BirReturnImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._value === old -> this.value = new as BirExpression
+            this._value === old -> this._value = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

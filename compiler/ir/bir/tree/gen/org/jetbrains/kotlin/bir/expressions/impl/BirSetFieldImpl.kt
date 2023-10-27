@@ -108,7 +108,7 @@ class BirSetFieldImpl(
         }
         set(value) {
             if (_receiver != value) {
-                replaceChild(_receiver, value)
+                childReplaced(_receiver, value)
                 _receiver = value
                 invalidate()
             }
@@ -137,7 +137,7 @@ class BirSetFieldImpl(
         }
         set(value) {
             if (_value != value) {
-                replaceChild(_value, value)
+                childReplaced(_value, value)
                 _value = value
                 invalidate()
             }
@@ -154,8 +154,8 @@ class BirSetFieldImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._receiver === old -> this.receiver = new as BirExpression
-            this._value === old -> this.value = new as BirExpression
+            this._receiver === old -> this._receiver = new as BirExpression?
+            this._value === old -> this._value = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

@@ -177,7 +177,7 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_initializer != value) {
-                replaceChild(_initializer, value)
+                childReplaced(_initializer, value)
                 _initializer = value
                 invalidate()
             }
@@ -207,7 +207,7 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._initializer === old -> this.initializer = new as BirExpressionBody
+            this._initializer === old -> this._initializer = new as BirExpressionBody?
             else -> throwChildForReplacementNotFound(old)
         }
     }

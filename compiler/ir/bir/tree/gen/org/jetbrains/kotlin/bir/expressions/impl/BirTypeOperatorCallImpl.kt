@@ -90,7 +90,7 @@ class BirTypeOperatorCallImpl(
         }
         set(value) {
             if (_argument != value) {
-                replaceChild(_argument, value)
+                childReplaced(_argument, value)
                 _argument = value
                 invalidate()
             }
@@ -119,7 +119,7 @@ class BirTypeOperatorCallImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._argument === old -> this.argument = new as BirExpression
+            this._argument === old -> this._argument = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

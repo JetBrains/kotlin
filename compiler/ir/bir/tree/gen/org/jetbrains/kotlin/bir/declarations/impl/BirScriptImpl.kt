@@ -115,7 +115,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_thisReceiver != value) {
-                replaceChild(_thisReceiver, value)
+                childReplaced(_thisReceiver, value)
                 _thisReceiver = value
                 invalidate()
             }
@@ -167,7 +167,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_earlierScriptsParameter != value) {
-                replaceChild(_earlierScriptsParameter, value)
+                childReplaced(_earlierScriptsParameter, value)
                 _earlierScriptsParameter = value
                 invalidate()
             }
@@ -217,9 +217,9 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._thisReceiver === old -> this.thisReceiver = new as BirValueParameter
-            this._earlierScriptsParameter === old -> this.earlierScriptsParameter = new as
-                BirValueParameter
+            this._thisReceiver === old -> this._thisReceiver = new as BirValueParameter?
+            this._earlierScriptsParameter === old -> this._earlierScriptsParameter = new as
+                BirValueParameter?
             else -> throwChildForReplacementNotFound(old)
         }
     }

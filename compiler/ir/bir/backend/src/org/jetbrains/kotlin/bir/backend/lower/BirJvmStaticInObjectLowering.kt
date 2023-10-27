@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.expressions.BirMemberAccessExpression
 import org.jetbrains.kotlin.bir.expressions.impl.BirBlockImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirGetFieldImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirTypeOperatorCallImpl
-import org.jetbrains.kotlin.bir.replaceWith
+
 import org.jetbrains.kotlin.bir.util.defaultType
 import org.jetbrains.kotlin.bir.util.hasAnnotation
 import org.jetbrains.kotlin.bir.util.isTrivial

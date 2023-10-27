@@ -16,6 +16,7 @@ sealed interface BirElementOrChildList {
 interface BirElement : BirElementOrChildList {
     val sourceSpan: SourceSpan
     val parent: BirElementBase?
+    fun replaceWith(new: BirElement?)
 }
 
 
@@ -32,4 +33,9 @@ fun <E : BirElement, T> E.getOrPutDynamicProperty(token: BirElementDynamicProper
     return getDynamicProperty(token) ?: compute().also {
         setDynamicProperty(token, it)
     }
+}
+
+
+fun BirElement.remove() {
+    replaceWith(null)
 }

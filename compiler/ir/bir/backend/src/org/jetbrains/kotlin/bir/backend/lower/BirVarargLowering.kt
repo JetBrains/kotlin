@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.bir.backend.lower
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.birBodyScope
-import org.jetbrains.kotlin.bir.backend.builders.constNull
 import org.jetbrains.kotlin.bir.backend.jvm.BirArrayBuilder
 import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.jvm.birArray
 import org.jetbrains.kotlin.bir.backend.jvm.birArrayOf
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.expressions.*
-import org.jetbrains.kotlin.bir.replaceWith
 import org.jetbrains.kotlin.bir.types.utils.makeNotNull
 import org.jetbrains.kotlin.bir.types.utils.substitute
 import org.jetbrains.kotlin.bir.util.*
@@ -64,18 +62,15 @@ class BirVarargLowering : BirLoweringPhase() {
 
     private fun BirArrayBuilder.addVariableArgumentsToArray(vararg: BirVararg) {
         val elements = vararg.elements.toList()
-        vararg.elements.clear()
         for (element in elements) {
             when (element) {
                 is BirExpression -> +element
                 is BirSpreadElement -> {
                     val spread = element.expression
-                    element.expression = BirConst.constNull()
                     if (spread is BirFunctionAccessExpression && spread.symbol.owner in primitiveArrayOfFunctions) {
                         // Skip empty arrays and don't copy immediately created arrays
                         val argument = spread.valueArguments[0] ?: continue
                         if (argument is BirVararg) {
-                            spread.valueArguments[0] = null
                             addVariableArgumentsToArray(argument)
                             continue
                         }

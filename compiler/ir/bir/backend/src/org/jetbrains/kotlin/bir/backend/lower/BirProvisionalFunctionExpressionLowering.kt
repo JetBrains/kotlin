@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.BirFunctionReferenceImpl
-import org.jetbrains.kotlin.bir.replaceWith
+
 import org.jetbrains.kotlin.bir.util.ancestors
 import org.jetbrains.kotlin.bir.util.copyAttributes
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -44,26 +44,24 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
                 this.sourceSpan = sourceSpan
                 type = expression.type
                 origin = expression.origin
+                statements += BirFunctionReferenceImpl(
+                    sourceSpan = sourceSpan,
+                    type = expression.type,
+                    symbol = expression.function,
+                    dispatchReceiver = null,
+                    extensionReceiver = null,
+                    origin = expression.origin,
+                    typeArguments = emptyList(),
+                    reflectionTarget = null,
+                ).apply {
+                    copyAttributes(expression)
+                }
             }
-
             expression.replaceWith(block)
 
             // This expression becomes orphaned :( but its function is still being used,
             //  so we hook it temporarily.
             compiledBir.attachRootElement(expression)
-
-            block.statements += BirFunctionReferenceImpl(
-                sourceSpan = sourceSpan,
-                type = expression.type,
-                symbol = expression.function,
-                dispatchReceiver = null,
-                extensionReceiver = null,
-                origin = expression.origin,
-                typeArguments = emptyList(),
-                reflectionTarget = null,
-            ).apply {
-                copyAttributes(expression)
-            }
         }
     }
 }

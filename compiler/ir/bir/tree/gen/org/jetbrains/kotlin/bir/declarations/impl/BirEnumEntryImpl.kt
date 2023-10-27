@@ -100,7 +100,7 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_initializerExpression != value) {
-                replaceChild(_initializerExpression, value)
+                childReplaced(_initializerExpression, value)
                 _initializerExpression = value
                 invalidate()
             }
@@ -115,7 +115,7 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_correspondingClass != value) {
-                replaceChild(_correspondingClass, value)
+                childReplaced(_correspondingClass, value)
                 _correspondingClass = value
                 invalidate()
             }
@@ -133,9 +133,9 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._initializerExpression === old -> this.initializerExpression = new as
-                BirExpressionBody
-            this._correspondingClass === old -> this.correspondingClass = new as BirClass
+            this._initializerExpression === old -> this._initializerExpression = new as
+                BirExpressionBody?
+            this._correspondingClass === old -> this._correspondingClass = new as BirClass?
             else -> throwChildForReplacementNotFound(old)
         }
     }

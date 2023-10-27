@@ -74,7 +74,7 @@ class BirSuspendableExpressionImpl(
         }
         set(value) {
             if (_suspensionPointId != value) {
-                replaceChild(_suspensionPointId, value)
+                childReplaced(_suspensionPointId, value)
                 _suspensionPointId = value
                 invalidate()
             }
@@ -89,7 +89,7 @@ class BirSuspendableExpressionImpl(
         }
         set(value) {
             if (_result != value) {
-                replaceChild(_result, value)
+                childReplaced(_result, value)
                 _result = value
                 invalidate()
             }
@@ -106,8 +106,8 @@ class BirSuspendableExpressionImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._suspensionPointId === old -> this.suspensionPointId = new as BirExpression
-            this._result === old -> this.result = new as BirExpression
+            this._suspensionPointId === old -> this._suspensionPointId = new as BirExpression?
+            this._result === old -> this._result = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

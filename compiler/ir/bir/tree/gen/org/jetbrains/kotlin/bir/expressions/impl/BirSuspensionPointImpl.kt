@@ -77,7 +77,7 @@ class BirSuspensionPointImpl(
         }
         set(value) {
             if (_suspensionPointIdParameter != value) {
-                replaceChild(_suspensionPointIdParameter, value)
+                childReplaced(_suspensionPointIdParameter, value)
                 _suspensionPointIdParameter = value
                 invalidate()
             }
@@ -92,7 +92,7 @@ class BirSuspensionPointImpl(
         }
         set(value) {
             if (_result != value) {
-                replaceChild(_result, value)
+                childReplaced(_result, value)
                 _result = value
                 invalidate()
             }
@@ -107,7 +107,7 @@ class BirSuspensionPointImpl(
         }
         set(value) {
             if (_resumeResult != value) {
-                replaceChild(_resumeResult, value)
+                childReplaced(_resumeResult, value)
                 _resumeResult = value
                 invalidate()
             }
@@ -126,10 +126,10 @@ class BirSuspensionPointImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._suspensionPointIdParameter === old -> this.suspensionPointIdParameter = new as
-                BirVariable
-            this._result === old -> this.result = new as BirExpression
-            this._resumeResult === old -> this.resumeResult = new as BirExpression
+            this._suspensionPointIdParameter === old -> this._suspensionPointIdParameter = new as
+                BirVariable?
+            this._result === old -> this._result = new as BirExpression?
+            this._resumeResult === old -> this._resumeResult = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }
