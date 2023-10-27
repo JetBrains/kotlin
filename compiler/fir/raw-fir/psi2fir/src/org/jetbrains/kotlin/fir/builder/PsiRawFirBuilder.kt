@@ -2110,6 +2110,7 @@ open class PsiRawFirBuilder(
                     }
                 }
                 dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
+                initializer.extractAnnotationsTo(this)
             }
         }
 

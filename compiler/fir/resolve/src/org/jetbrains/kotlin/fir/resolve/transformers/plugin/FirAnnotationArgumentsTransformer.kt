@@ -207,6 +207,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArguments(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode
     ): FirAnonymousInitializer {
+        anonymousInitializer.transformAnnotations(this, ResolutionMode.ContextIndependent)
         return anonymousInitializer
     }
 
