@@ -12,6 +12,8 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -20,11 +22,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.transformInplace
 
 @OptIn(ResolveStateAccess::class)
 internal class FirAnonymousInitializerImpl(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
@@ -32,8 +36,6 @@ internal class FirAnonymousInitializerImpl(
     override val symbol: FirAnonymousInitializerSymbol,
     override val dispatchReceiverType: ConeClassLikeType?,
 ) : FirAnonymousInitializer() {
-    override val annotations: List<FirAnnotation>
-        get() = emptyList()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
@@ -42,21 +44,26 @@ internal class FirAnonymousInitializerImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         body?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirAnonymousInitializerImpl {
+        transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         body = body?.transform(transformer, data)
         return this
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousInitializerImpl {
+        annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference

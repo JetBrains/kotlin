@@ -43,9 +43,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("hasLazyNestedClassifiers", withGetter = true)
         }
 
-        impl(anonymousInitializer) {
-            defaultEmptyList("annotations")
-        }
+        impl(anonymousInitializer)
 
         impl(anonymousObject)
         impl(danglingModifierList)

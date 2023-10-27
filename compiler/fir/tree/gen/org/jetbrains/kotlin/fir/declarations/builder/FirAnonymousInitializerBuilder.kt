@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override val annotations: MutableList<FirAnnotation> = mutableListOf()
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -40,6 +42,7 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationConta
         return FirAnonymousInitializerImpl(
             source,
             resolvePhase,
+            annotations.toMutableOrEmpty(),
             moduleData,
             origin,
             attributes,
@@ -49,9 +52,6 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationConta
         )
     }
 
-
-    @Deprecated("Modification of 'annotations' has no impact for FirAnonymousInitializerBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
 }
 
 @OptIn(ExperimentalContracts::class)
