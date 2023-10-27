@@ -16,9 +16,9 @@ interface C : A {
 fun test(param: B) {
   when {
     param is C -> { // BLOCK
-      param /*as A */ /*as C */.foo()
-      param /*as A */ /*as B */.bar()
-      param /*as A */ /*as C */.baz()
+      param /*as C */.foo()
+      param.bar()
+      param /*as C */.baz()
     }
   }
 }
