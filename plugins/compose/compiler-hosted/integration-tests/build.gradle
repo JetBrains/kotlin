@@ -58,12 +58,6 @@ androidXMultiplatform {
             }
         }
 
-        androidInstrumentedTest {
-            dependsOn(jvmTest)
-            dependencies {
-            }
-        }
-
         androidUnitTest {
             dependsOn(jvmTest)
             dependencies {
