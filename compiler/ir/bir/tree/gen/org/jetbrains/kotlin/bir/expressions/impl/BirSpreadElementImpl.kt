@@ -42,7 +42,7 @@ class BirSpreadElementImpl(
         }
         set(value) {
             if (_expression != value) {
-                replaceChild(_expression, value)
+                childReplaced(_expression, value)
                 _expression = value
                 invalidate()
             }
@@ -57,7 +57,7 @@ class BirSpreadElementImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._expression === old -> this.expression = new as BirExpression
+            this._expression === old -> this._expression = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

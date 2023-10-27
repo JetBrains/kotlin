@@ -97,7 +97,7 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_body != value) {
-                replaceChild(_body, value)
+                childReplaced(_body, value)
                 _body = value
                 invalidate()
             }
@@ -113,7 +113,7 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._body === old -> this.body = new as BirBlockBody
+            this._body === old -> this._body = new as BirBlockBody?
             else -> throwChildForReplacementNotFound(old)
         }
     }

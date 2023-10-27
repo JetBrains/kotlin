@@ -91,7 +91,7 @@ class BirDoWhileLoopImpl(
         }
         set(value) {
             if (_body != value) {
-                replaceChild(_body, value)
+                childReplaced(_body, value)
                 _body = value
                 invalidate()
             }
@@ -106,7 +106,7 @@ class BirDoWhileLoopImpl(
         }
         set(value) {
             if (_condition != value) {
-                replaceChild(_condition, value)
+                childReplaced(_condition, value)
                 _condition = value
                 invalidate()
             }
@@ -137,8 +137,8 @@ class BirDoWhileLoopImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._body === old -> this.body = new as BirExpression
-            this._condition === old -> this.condition = new as BirExpression
+            this._body === old -> this._body = new as BirExpression?
+            this._condition === old -> this._condition = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

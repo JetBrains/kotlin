@@ -85,7 +85,7 @@ class BirErrorCallExpressionImpl(
         }
         set(value) {
             if (_explicitReceiver != value) {
-                replaceChild(_explicitReceiver, value)
+                childReplaced(_explicitReceiver, value)
                 _explicitReceiver = value
                 invalidate()
             }
@@ -104,7 +104,7 @@ class BirErrorCallExpressionImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._explicitReceiver === old -> this.explicitReceiver = new as BirExpression
+            this._explicitReceiver === old -> this._explicitReceiver = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

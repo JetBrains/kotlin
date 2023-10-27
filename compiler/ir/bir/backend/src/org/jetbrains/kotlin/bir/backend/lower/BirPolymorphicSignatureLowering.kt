@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.bir.declarations.BirSimpleFunction
 import org.jetbrains.kotlin.bir.declarations.BirValueParameter
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.BirCallImpl
-import org.jetbrains.kotlin.bir.replaceWith
+
 import org.jetbrains.kotlin.bir.types.BirType
 import org.jetbrains.kotlin.bir.types.isNullableAny
 import org.jetbrains.kotlin.bir.util.ancestors
