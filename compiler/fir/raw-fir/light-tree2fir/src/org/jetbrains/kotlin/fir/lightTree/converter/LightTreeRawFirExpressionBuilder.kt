@@ -1205,7 +1205,8 @@ class LightTreeRawFirExpressionBuilder(
                             }
                             explicitReceiver = generateResolvedAccessExpression(rangeSource, iteratorVal)
                         },
-                        valueParameter.returnTypeRef
+                        valueParameter.returnTypeRef,
+                        extractedAnnotations = valueParameter.annotations
                     )
                     if (multiDeclaration != null) {
                         statements.addDestructuringStatements(

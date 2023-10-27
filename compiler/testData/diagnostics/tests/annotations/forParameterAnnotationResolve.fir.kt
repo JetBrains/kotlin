@@ -10,5 +10,5 @@ fun foo() {
 
     for (@Ann(3) (x, @Ann(4) y) in bar()) {}
 
-    for (@Err() (x,y) in bar()) {}
+    for (@<!UNRESOLVED_REFERENCE!>Err<!>() (x,y) in bar()) {}
 }
