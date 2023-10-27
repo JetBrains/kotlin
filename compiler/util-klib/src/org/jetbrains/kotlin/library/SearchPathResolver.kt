@@ -1,12 +1,13 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.library.SearchPathResolver.LookupResult
+import org.jetbrains.kotlin.library.SearchPathResolver.SearchRoot
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.impl.isPre_1_4_Library
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
-import org.jetbrains.kotlin.util.suffixIfNot
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
@@ -18,7 +19,78 @@ const val KOTLIN_JS_STDLIB_NAME: String = "kotlin"
 const val KOTLIN_WASM_STDLIB_NAME: String = "kotlin"
 
 interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
-    val searchRoots: List<File>
+    /**
+     * The search root for KLIBs.
+     *
+     * @property searchRootPath The search root path.
+     * @property allowLookupByRelativePath Whether the lookup by relative paths is allowed.
+     *   true - yes, allow to look up by relative path and by library name.
+     *   false - no, allow to look up strictly by library name.
+     * @property isDeprecated Whether this search root is going to be removed in the future
+     *   (and a warning should be displayed when a library was resolved against this root).
+     */
+    class SearchRoot(val searchRootPath: File, val allowLookupByRelativePath: Boolean = false, val isDeprecated: Boolean = false) {
+        fun lookUp(libraryPath: File): LookupResult {
+            if (libraryPath.isAbsolute)
+                return LookupResult.Found(lookUpByAbsolutePath(libraryPath) ?: return LookupResult.NotFound)
+
+            if (!allowLookupByRelativePath && libraryPath.nameSegments.size > 1)
+                return LookupResult.NotFound
+
+            val resolvedLibrary = lookUpByAbsolutePath(File(searchRootPath, libraryPath)) ?: return LookupResult.NotFound
+            return if (isDeprecated)
+                LookupResult.FoundWithWarning(
+                    library = resolvedLibrary,
+                    warningText = "Library '${libraryPath.path}' was found in a custom library repository '${searchRootPath.path}'. " +
+                            "Note, that custom library repositories are deprecated and will be removed in one of the future Kotlin releases. " +
+                            "Please, avoid using '-repo' ('-r') compiler option and specify full paths to libraries in compiler CLI arguments."
+                )
+            else
+                LookupResult.Found(resolvedLibrary)
+        }
+
+        companion object {
+            fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? =
+                when {
+                    absoluteLibraryPath.isFile -> {
+                        // It's a really existing file.
+                        when (absoluteLibraryPath.extension.toLowerCase()) {
+                            KLIB_FILE_EXTENSION -> absoluteLibraryPath
+                            "jar" -> {
+                                // A special workaround for old JS stdlib, that was packed in a JAR file.
+                                absoluteLibraryPath
+                            }
+                            else -> {
+                                // A file with an unexpected extension.
+                                null
+                            }
+                        }
+                    }
+                    absoluteLibraryPath.isDirectory -> {
+                        // It's a really existing directory.
+                        absoluteLibraryPath
+                    }
+                    else -> null
+                }
+        }
+    }
+
+    sealed interface LookupResult {
+        object NotFound : LookupResult
+        data class Found(val library: File) : LookupResult
+        data class FoundWithWarning(val library: File, val warningText: String) : LookupResult
+    }
+
+    /**
+     * The KLIB search roots:
+     * 1. user working dir
+     * 2. custom repositories (deprecated)
+     * 3. the current K/N distribution
+     *
+     * IMPORTANT: The order of search roots actually defines the order of the lookup.
+     */
+    val searchRoots: List<SearchRoot>
+
     fun resolutionSequence(givenPath: String): Sequence<File>
     fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean = false): L?
     fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean = false): L
@@ -59,26 +131,28 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     abstract fun libraryComponentBuilder(file: File, isDefault: Boolean): List<L>
 
     private val directLibraries: List<KotlinLibrary> by lazy {
-        directLibs.mapNotNull { found(File(it)) }.flatMap { libraryComponentBuilder(it, false) }
+        directLibs.mapNotNull { SearchRoot.lookUpByAbsolutePath(File(it)) }.flatMap { libraryComponentBuilder(it, false) }
     }
 
-    // This is the place where we specify the order of library search.
-    override val searchRoots: List<File> by lazy {
-        (listOf(currentDirHead) + repoRoots + listOf(localHead, distHead, distPlatformHead)).filterNotNull()
-    }
+    override val searchRoots: List<SearchRoot> by lazy {
+        val searchRoots = mutableListOf<SearchRoot?>()
 
-    private val files: Set<String> by lazy { searchRoots.flatMap { it.listFilesOrEmpty }.map { it.absolutePath }.toSet() }
+        // Current working dir:
+        searchRoots += currentDirHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true) }
 
-    private fun found(candidate: File): File? {
-        fun check(file: File): Boolean = files.contains(file.absolutePath) || file.exists
+        // Custom repositories (deprecated, to be removed):
+        // TODO: remove after 2.0, KT-61098
+        repositories.mapTo(searchRoots) { SearchRoot(searchRootPath = File(it), allowLookupByRelativePath = true, isDeprecated = true) }
 
-        val noSuffix = File(candidate.path.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT))
-        val withSuffix = File(candidate.path.suffixIfNot(KLIB_FILE_EXTENSION_WITH_DOT))
-        return when {
-            check(withSuffix) -> withSuffix
-            check(noSuffix) -> noSuffix
-            else -> null
-        }
+        // Something likely never unused (deprecated, to be removed):
+        // TODO: remove after 2.0, KT-61098
+        searchRoots += localHead?.let { SearchRoot(searchRootPath = it, allowLookupByRelativePath = true, isDeprecated = true) }
+
+        // Current Kotlin/Native distribution:
+        searchRoots += distHead?.let { SearchRoot(searchRootPath = it) }
+        searchRoots += distPlatformHead?.let { SearchRoot(searchRootPath = it) }
+
+        searchRoots.filterNotNull()
     }
 
     /**
@@ -112,19 +186,26 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     }
 
     override fun resolutionSequence(givenPath: String): Sequence<File> {
-        val given = validFileOrNull(givenPath)
-        val sequence = when {
+        val given: File? = validFileOrNull(givenPath)
+        val sequence: Sequence<File?> = when {
             given == null -> {
                 // The given path can't denote a real file, so just look for such
                 // unique_name among libraries passed to the compiler directly.
                 directLibsSequence(givenPath)
             }
             given.isAbsolute ->
-                sequenceOf(found(given))
+                sequenceOf(SearchRoot.lookUpByAbsolutePath(given))
             else -> {
                 // Search among libraries in repositories by library filename.
-                val repoLibs = searchRoots.asSequence().map {
-                    found(File(it, given))
+                val repoLibs = searchRoots.asSequence().map { searchRoot ->
+                    when (val lookupResult = searchRoot.lookUp(given)) {
+                        is LookupResult.Found -> lookupResult.library
+                        is LookupResult.FoundWithWarning -> {
+                            logger.warning(lookupResult.warningText)
+                            lookupResult.library
+                        }
+                        LookupResult.NotFound -> null
+                    }
                 }
                 // The given path still may denote a unique name of a direct library.
                 directLibsSequence(givenPath) + repoLibs
@@ -172,7 +253,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
 
     override fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean): L {
         return resolveOrNull(unresolved, isDefaultLink)
-            ?: logger.fatal("Could not find \"${unresolved.path}\" in ${searchRoots.map { it.absolutePath }}")
+            ?: logger.fatal("Could not find \"${unresolved.path}\" in ${searchRoots.map { it.searchRootPath.absolutePath }}")
     }
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true

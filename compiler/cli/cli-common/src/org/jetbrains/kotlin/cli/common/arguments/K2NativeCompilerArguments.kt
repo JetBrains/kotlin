@@ -121,7 +121,15 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var produce: String? = null
 
-    @Argument(value = "-repo", shortName = "-r", valueDescription = "<path>", description = "Library search path")
+    // TODO: remove after 2.0, KT-61098
+    @Argument(
+        value = "-repo",
+        shortName = "-r",
+        valueDescription = "<path>",
+        description = "Library search path.\n" +
+                "Note: This option is deprecated and will be removed in one of the future releases.\n" +
+                "Please use library paths instead of library names in all compiler options such as '-library'"
+    )
     var repositories: Array<String>? = null
 
     @Argument(value = "-target", valueDescription = "<target>", description = "Set hardware target")

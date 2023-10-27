@@ -38,6 +38,8 @@ data class File constructor(internal val javaPath: Path) {
         get() = javaPath.fileName.toString().removeSuffixIfPresent(separator) // https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8153248
     val extension: String
         get() = name.substringAfterLast('.', "")
+    val nameSegments: List<String>
+        get() = javaPath.map { it.fileName.toString() }
     val parent: String
         get() = javaPath.parent.toString()
     val parentFile: File
