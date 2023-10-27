@@ -817,6 +817,94 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ThisReference {
+        @Test
+        public void testAllFilesPresentInThisReference() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("this_extensionFunction_fromExtensionFunction.kt")
+        public void testThis_extensionFunction_fromExtensionFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_extensionFunction_fromExtensionFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("this_extensionFunction_fromExtensionFunction_conflictWithLocal.kt")
+        public void testThis_extensionFunction_fromExtensionFunction_conflictWithLocal() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_extensionFunction_fromExtensionFunction_conflictWithLocal.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberFunction_fromMemberFunction.kt")
+        public void testThis_memberFunction_fromMemberFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberFunction_fromMemberFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberFunction_fromMemberFunction_conflictWithLocal.kt")
+        public void testThis_memberFunction_fromMemberFunction_conflictWithLocal() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberFunction_fromMemberFunction_conflictWithLocal.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberProperty_fromInit.kt")
+        public void testThis_memberProperty_fromInit() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberProperty_fromInit.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberProperty_fromInit_conflictWithParameter.kt")
+        public void testThis_memberProperty_fromInit_conflictWithParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberProperty_fromInit_conflictWithParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberProperty_fromMemberFunction.kt")
+        public void testThis_memberProperty_fromMemberFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberProperty_fromMemberFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberProperty_fromMemberFunctionWithContextReceiver.kt")
+        public void testThis_memberProperty_fromMemberFunctionWithContextReceiver() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberProperty_fromMemberFunctionWithContextReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberProperty_fromMemberFunction_conflictWithLocal.kt")
+        public void testThis_memberProperty_fromMemberFunction_conflictWithLocal() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberProperty_fromMemberFunction_conflictWithLocal.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberProperty_fromMemberFunction_conflictWithParameter.kt")
+        public void testThis_memberProperty_fromMemberFunction_conflictWithParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberProperty_fromMemberFunction_conflictWithParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("this_memberProperty_fromMemberFunction_noConflictWithLocal.kt")
+        public void testThis_memberProperty_fromMemberFunction_noConflictWithLocal() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_memberProperty_fromMemberFunction_noConflictWithLocal.kt");
+        }
+
+        @Test
+        @TestMetadata("this_nullableReceiver.kt")
+        public void testThis_nullableReceiver() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_nullableReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("this_safeCall.kt")
+        public void testThis_safeCall() throws Exception {
+            runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/this_safeCall.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeParameters")
     @TestDataPath("$PROJECT_ROOT")
     public class TypeParameters {

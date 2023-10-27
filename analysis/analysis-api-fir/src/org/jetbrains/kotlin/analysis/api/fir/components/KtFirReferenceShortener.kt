@@ -102,6 +102,7 @@ internal class KtFirReferenceShortener(
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
         val collector = ElementsToShortenCollector(
+            shortenOptions,
             context,
             towerContext,
             selection,
@@ -404,6 +405,7 @@ private class ShortenKDocQualifier(
 ) : ElementToShorten()
 
 private class ElementsToShortenCollector(
+    private val shortenOptions: ShortenOptions,
     private val shorteningContext: FirShorteningContext,
     private val towerContextProvider: FirTowerContextProvider,
     private val selection: TextRange,
@@ -1138,11 +1140,13 @@ private class ElementsToShortenCollector(
     }
 
     private fun canBePossibleToDropReceiver(qualifiedAccess: FirQualifiedAccessExpression): Boolean {
-        // we can remove receiver only if it is a qualifier
-        if (qualifiedAccess.explicitReceiver !is FirResolvedQualifier) return false
+        return when {
+            qualifiedAccess.explicitReceiver is FirThisReceiverExpression -> shortenOptions.removeThis
 
-        // if there is no extension receiver necessary, then it can be removed
-        return qualifiedAccess.extensionReceiver == null
+            qualifiedAccess.explicitReceiver is FirResolvedQualifier -> qualifiedAccess.extensionReceiver == null
+
+            else -> false
+        }
     }
 
     private fun findUnambiguousReferencedCallableId(namedReference: FirNamedReference): FirCallableSymbol<*>? {
