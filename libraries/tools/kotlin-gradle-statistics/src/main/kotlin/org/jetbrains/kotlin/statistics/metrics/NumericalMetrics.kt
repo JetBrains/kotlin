@@ -68,6 +68,6 @@ enum class NumericalMetrics(val type: NumberOverridePolicy, val anonymization: N
     BUILD_FINISH_TIME(OVERRIDE, SAFE);
 
     companion object {
-        const val VERSION = 1
+        const val VERSION = 2
     }
 }

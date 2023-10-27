@@ -938,6 +938,10 @@ tasks {
         dependsOn(":repo:codebase-tests:test")
     }
 
+    register("statisticsTests") {
+        dependsOn(":kotlin-gradle-statistics:test")
+    }
+
     register("test") {
         doLast {
             throw GradleException("Don't use directly, use aggregate tasks *-check instead")
