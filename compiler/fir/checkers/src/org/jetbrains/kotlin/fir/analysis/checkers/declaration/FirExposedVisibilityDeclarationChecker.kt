@@ -250,11 +250,11 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
         for ((index, it) in type.typeArguments.withIndex()) {
             when (it) {
                 is ConeClassLikeType -> it.findVisibilityExposure(context, base, visitedTypes)?.let { return it }
+                is ConeKotlinTypeProjection -> it.type.findVisibilityExposure(context, base, visitedTypes)?.let { return it }
                 is ConeStarProjection -> type.toRegularClassSymbol(context.session)
                     ?.typeParameterSymbols?.getOrNull(index)
                     ?.resolvedBounds?.firstNotNullOfOrNull { it.type.findVisibilityExposure(context, base, visitedTypes) }
                     ?.let { return it }
-                else -> {}
             }
         }
 

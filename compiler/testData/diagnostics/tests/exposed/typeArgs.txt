@@ -1,4 +1,8 @@
+// -- Module: <a> --
 package
+
+public fun other(): Wrapper<other.`<no name provided>`>
+public fun </*0*/ T : Inter?> public(/*0*/ a: T & Any): Wrapper<T & Any>
 
 public interface Generic</*0*/ E : My> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -23,6 +27,13 @@ public interface His : kotlin.collections.List<My> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+internal interface Inter {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun foo(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 internal open class My {
     public constructor My()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -37,6 +48,14 @@ public interface Our {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public final class Wrapper</*0*/ T> {
+    public constructor Wrapper</*0*/ T>(/*0*/ it: T)
+    public final val it: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public abstract class Your {
     public constructor Your()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -44,3 +63,9 @@ public abstract class Your {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+// -- Module: <b> --
+package
+
+public fun test(): kotlin.Unit
+
