@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.parcelize.fir.diagnostics
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_QUOTED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.DEPRECATED_ANNOTATION
@@ -136,14 +136,14 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
 
         map.put(
             REDUNDANT_TYPE_PARCELER,
-            "This ''TypeParceler'' is already provided for ''{0}''.",
-            RENDER_CLASS_OR_OBJECT
+            "This ''TypeParceler'' is already provided for {0}.",
+            RENDER_CLASS_OR_OBJECT_QUOTED
         )
 
         map.put(
             CLASS_SHOULD_BE_PARCELIZE,
             "{0} should be annotated with ''@Parcelize''.",
-            RENDER_CLASS_OR_OBJECT
+            RENDER_CLASS_OR_OBJECT_QUOTED
         )
 
         map.put(

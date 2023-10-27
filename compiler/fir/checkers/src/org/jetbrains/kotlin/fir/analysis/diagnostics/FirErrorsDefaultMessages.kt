@@ -33,10 +33,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.MODU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_CONTAINING_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NAME_OF_DECLARATION_OR_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.OPTIONAL_SENTENCE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_QUOTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME_QUOTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_COLLECTION_OF_TYPES
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_ENUM_ENTRY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_ENUM_ENTRY_QUOTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.REQUIRE_KOTLIN_VERSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
@@ -1189,7 +1189,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION, "Redundant spread (*) operator.")
         map.put(REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION, "Redundant spread (*) operator.")
         map.put(INFERENCE_UNSUCCESSFUL_FORK, "Unsuccessful inference fork at position ''{0}''.", TO_STRING)
-        map.put(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, "Nested {0} accessed via instance reference", RENDER_CLASS_OR_OBJECT_NAME)
+        map.put(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, "Nested {0} accessed via instance reference", RENDER_CLASS_OR_OBJECT_NAME_QUOTED)
         map.put(
             INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION,
             "Type argument for type parameter ''{0}'' cannot be inferred because it has incompatible upper bounds: {1} ({2}{3}).",
@@ -1302,20 +1302,20 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         val wrongNumberOfTypeArguments = "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected"
         map.put(
             WRONG_NUMBER_OF_TYPE_ARGUMENTS,
-            "$wrongNumberOfTypeArguments for ''{1}''.",
+            "$wrongNumberOfTypeArguments for {1}.",
             null,
-            RENDER_CLASS_OR_OBJECT_NAME
+            RENDER_CLASS_OR_OBJECT_NAME_QUOTED
         )
         map.put(
             NO_TYPE_ARGUMENTS_ON_RHS,
-            "$wrongNumberOfTypeArguments. Use ''{1}'' if you don''t intend to pass type arguments.",
+            "$wrongNumberOfTypeArguments. Use {1} if you don''t intend to pass type arguments.",
             null,
-            RENDER_CLASS_OR_OBJECT_NAME
+            RENDER_CLASS_OR_OBJECT_NAME_QUOTED
         )
         map.put(
             OUTER_CLASS_ARGUMENTS_REQUIRED,
-            "Type arguments should be specified for outer type ''{0}''. Use the full class name to specify them.",
-            RENDER_CLASS_OR_OBJECT_NAME
+            "Type arguments should be specified for outer {0}. Use the full class name to specify them.",
+            RENDER_CLASS_OR_OBJECT_NAME_QUOTED
         )
         map.put(TYPE_PARAMETERS_IN_OBJECT, "Type parameters are prohibited for objects.")
         map.put(TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT, "Type parameters for anonymous objects are deprecated.")
@@ -1602,19 +1602,19 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED,
             "{0} is not abstract and does not implement abstract member ''{1}''.",
-            RENDER_CLASS_OR_OBJECT,
+            RENDER_CLASS_OR_OBJECT_QUOTED,
             DECLARATION_NAME
         )
         map.put(
             ABSTRACT_MEMBER_NOT_IMPLEMENTED_BY_ENUM_ENTRY,
             "{0} does not implement abstract members: {1}.",
-            RENDER_ENUM_ENTRY,
+            RENDER_ENUM_ENTRY_QUOTED,
             SYMBOLS,
         )
         map.put(
             ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED,
             "{0} is not abstract and does not implement abstract base class member ''{1}''.",
-            RENDER_CLASS_OR_OBJECT,
+            RENDER_CLASS_OR_OBJECT_QUOTED,
             DECLARATION_NAME
         )
         map.put(
@@ -1627,13 +1627,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
             "{0} must override ''{1}'' because it inherits multiple implementations for it.",
-            RENDER_CLASS_OR_OBJECT,
+            RENDER_CLASS_OR_OBJECT_QUOTED,
             DECLARATION_NAME
         )
         map.put(
             MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
             "{0} must override ''{1}'' because it inherits multiple interface methods for it.",
-            RENDER_CLASS_OR_OBJECT,
+            RENDER_CLASS_OR_OBJECT_QUOTED,
             DECLARATION_NAME
         )
 
@@ -1665,7 +1665,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             VAR_IMPLEMENTED_BY_INHERITED_VAL,
             "{0} overrides ''var'' property ''{1}'' with inherited ''val'' property ''{2}''.",
-            RENDER_CLASS_OR_OBJECT,
+            RENDER_CLASS_OR_OBJECT_QUOTED,
             DECLARATION_NAME,
             FQ_NAMES_IN_TYPES
         )

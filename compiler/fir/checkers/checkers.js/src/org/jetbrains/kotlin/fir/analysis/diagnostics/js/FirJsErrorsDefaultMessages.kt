@@ -183,9 +183,9 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JS_EXTERNAL_INHERITORS_ONLY,
-            "External ''{0}'' cannot be a parent of non-external ''{1}''.",
-            FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME,
-            FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME
+            "External {0} cannot be a parent of non-external {1}.",
+            FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME_QUOTED,
+            FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME_QUOTED
         )
         map.put(
             JS_EXTERNAL_ARGUMENT,
