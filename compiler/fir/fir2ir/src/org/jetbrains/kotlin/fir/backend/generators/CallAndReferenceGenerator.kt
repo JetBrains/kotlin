@@ -1276,13 +1276,10 @@ class CallAndReferenceGenerator(
                             // NB: for FE 1.0, this type cast is added by InterfaceObjectCallsLowering
                             // However, it doesn't work for FIR due to different f/o structure
                             // (FIR calls Any method directly, but FE 1.0 calls its interface f/o instead)
-                            IrTypeOperatorCallImpl(
-                                baseDispatchReceiver.startOffset,
-                                baseDispatchReceiver.endOffset,
+                            implicitCast(
+                                baseDispatchReceiver,
                                 irBuiltIns.anyType,
-                                IrTypeOperator.IMPLICIT_CAST,
-                                irBuiltIns.anyType,
-                                baseDispatchReceiver
+                                IrTypeOperator.IMPLICIT_CAST
                             )
                         }
                 }

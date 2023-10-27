@@ -329,14 +329,7 @@ class Fir2IrImplicitCastInserter(
                 IrTypeOperator.IMPLICIT_CAST
             }
 
-            return IrTypeOperatorCallImpl(
-                original.startOffset,
-                original.endOffset,
-                castType,
-                typeOperator,
-                castType,
-                original
-            )
+            return implicitCast(original, castType, typeOperator)
         }
 
         internal fun coerceToUnitIfNeeded(original: IrExpression, irBuiltIns: IrBuiltIns): IrExpression {
