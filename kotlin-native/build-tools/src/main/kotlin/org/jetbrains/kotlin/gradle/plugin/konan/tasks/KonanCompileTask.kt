@@ -180,13 +180,11 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         if (platformConfiguration.files.isNotEmpty()) {
             platformConfiguration.files.filter { it.name.endsWith(".klib") }.forEach {
                 // The library's directory is added in libraries.repos.
-                addArg("-library", it.nameWithoutExtension)
+                addArg("-library", it.absolutePath)
             }
         }
-        addFileArgs("-library", libraries.files)
-        addArgs("-library", libraries.namedKlibs)
-        // The library's directory is added in libraries.repos.
-        addArgs("-library", libraries.artifacts.map { it.artifact.nameWithoutExtension })
+        addFileArgs("-library", libraries.klibFiles)
+        addArgs("-library", libraries.artifacts.map { it.artifact.canonicalPath })
 
         addArgIfNotNull("-target", konanTarget.visibleName)
         addArgIfNotNull("-language-version", languageVersion)

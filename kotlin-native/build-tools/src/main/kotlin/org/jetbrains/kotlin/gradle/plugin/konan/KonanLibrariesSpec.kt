@@ -23,9 +23,7 @@ open class KonanLibrariesSpec(
         @Internal val project: Project
 ) {
 
-    @InputFiles @PathSensitive(PathSensitivity.RELATIVE) val files = mutableSetOf<FileCollection>()
-
-    @Input val namedKlibs = mutableSetOf<String>()
+    @InputFiles @PathSensitive(PathSensitivity.RELATIVE) val klibFiles = mutableSetOf<FileCollection>()
 
     @Internal val artifacts = mutableListOf<KonanBuildingTask>()
 
@@ -57,14 +55,9 @@ open class KonanLibrariesSpec(
     // DSL Methods
 
     /** Absolute path */
-    fun file(file: Any)                   = files.add(project.files(file))
-    fun files(vararg files: Any)          = this.files.addAll(files.map { project.files(it) })
-    fun files(collection: FileCollection) = this.files.add(collection)
-
-    /** The compiler with search the library in repos */
-    fun klib(lib: String)             = namedKlibs.add(lib)
-    fun klibs(vararg libs: String)    = namedKlibs.addAll(libs)
-    fun klibs(libs: Iterable<String>) = namedKlibs.addAll(libs)
+    fun klibFile(file: Any)                   { klibFiles.add(project.files(file)) }
+    fun klibFiles(vararg files: Any)          { klibFiles.addAll(files.map { project.files(it) }) }
+    fun klibFiles(collection: FileCollection) { klibFiles.add(collection) }
 
     private fun klibInternal(lib: KonanBuildingConfig<*>, friend: Boolean) {
         if (!(lib is KonanLibrary || lib is KonanInteropLibrary)) {
@@ -134,20 +127,5 @@ open class KonanLibrariesSpec(
 
     private fun Project.evaluationDependsOn(another: Project) {
         if (this != another) { evaluationDependsOn(another.path) }
-    }
-
-    fun asFiles(): List<File> = asFiles(
-        defaultResolver(
-            repos.map { it.absolutePath },
-            task.konanTarget,
-            Distribution(project.konanHome)
-        )
-    )
-
-    fun asFiles(resolver: SearchPathResolver<*>): List<File> = mutableListOf<File>().apply {
-        files.flatMapTo(this) { it.files }
-        addAll(artifactFiles)
-        addAll(task.platformConfiguration.files)
-        namedKlibs.mapTo(this) { project.file(resolver.resolve(it).libraryFile.absolutePath) }
     }
 }

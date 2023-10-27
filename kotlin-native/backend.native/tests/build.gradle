@@ -225,7 +225,7 @@ Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
                 // Build an executable with library
                 program(name, targets: [targetName]) {
                     libraries {
-                        klib lib
+                        klibFile file("$testOutputLocal/$name/$targetName/${lib}.klib")
                     }
                     baseDir  "$testOutputLocal/$name"
                     srcFiles  task.getSources()
@@ -3949,7 +3949,7 @@ Task interopTestBase(String name, boolean multiFile, boolean interop2ForMainOnly
                         artifact interopLib
                         if (interopLib2 != null) artifact interopLib2
                         if (hasIntermediateLib)
-                            klib lib
+                            klibFile file("$testOutputLocal/$name/$targetName/${lib}.klib")
                     }
                     srcFiles multiFile ? fileTree(task.source) { include '**/*.kt' } : task.getSources()
                     baseDir "$testOutputLocal/$name"
@@ -5025,7 +5025,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                         fr.libraries.forEach { library ->
                             dependsOn konanArtifacts[library].getByTarget(target.name)
                             libraries {
-                                file konanArtifacts[library].getArtifactByTarget(target.name)
+                                klibFile konanArtifacts[library].getArtifactByTarget(target.name)
                             }
                             linkerOpts "-L$buildDir"
                             UtilsKt.dependsOnKonanBuildingTask(task, library, target)

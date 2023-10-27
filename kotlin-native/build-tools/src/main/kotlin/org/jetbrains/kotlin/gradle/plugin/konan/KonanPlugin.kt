@@ -207,11 +207,10 @@ internal fun dumpProperties(task: Task) {
             println("artifact           : ${artifact.canonicalPath}")
             println("srcFiles         : ${srcFiles.dump()}")
             println("produce            : $produce")
-            println("libraries          : ${libraries.files.dump()}")
+            println("klibFiles          : ${libraries.klibFiles.dump()}")
             println("                   : ${libraries.artifacts.map {
                 it.artifact.canonicalPath
             }.dump()}")
-            println("                   : ${libraries.namedKlibs.dump()}")
             println("nativeLibraries    : ${nativeLibraries.dump()}")
             println("linkerOpts         : $linkerOpts")
             println("enableDebug        : $enableDebug")
@@ -233,11 +232,10 @@ internal fun dumpProperties(task: Task) {
             println("Stub generation task: $name")
             println("destinationDir     : $destinationDir")
             println("artifact           : $artifact")
-            println("libraries          : ${libraries.files.dump()}")
+            println("klibFiles          : ${libraries.klibFiles.dump()}")
             println("                   : ${libraries.artifacts.map {
                 it.artifact.canonicalPath
             }.dump()}")
-            println("                   : ${libraries.namedKlibs.dump()}")
             println("defFile            : $defFile")
             println("target             : $target")
             println("packageName        : $packageName")
