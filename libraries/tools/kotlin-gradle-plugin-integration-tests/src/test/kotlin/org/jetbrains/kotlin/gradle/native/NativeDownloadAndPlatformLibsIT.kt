@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion.Maturity.*
+import org.jetbrains.kotlin.tooling.core.buildNumber
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -368,13 +371,12 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
         )
 
     private fun mavenUrl(): String {
-        val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
-        val (_, _, _, metaString, build) = versionPattern.matchEntire(currentCompilerVersion)?.destructured
-            ?: error("Unable to parse version $currentCompilerVersion")
+        val kotlinToolingVersion = KotlinToolingVersion(currentCompilerVersion)
+        val maturity = kotlinToolingVersion.maturity
+        val buildNumber = kotlinToolingVersion.buildNumber
         return when {
-            metaString == "dev" || build.isNotEmpty() -> KOTLIN_SPACE_DEV
-            metaString in listOf("RC", "RC2", "Beta") || metaString.isEmpty() -> MAVEN_CENTRAL
-            else -> throw IllegalStateException("Not a published version $currentCompilerVersion")
+            maturity == DEV || buildNumber != null -> KOTLIN_SPACE_DEV
+            else -> MAVEN_CENTRAL
         }
     }
 

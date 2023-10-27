@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGene
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import java.io.File
 import java.nio.file.Files
 
@@ -113,12 +114,10 @@ class NativeCompilerDownloader(
     }
 
     private val repoUrl by lazy {
-        val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
-        val (_, _, _, buildType, _) = versionPattern.matchEntire(compilerVersion)?.destructured
-            ?: error("Unable to parse version $compilerVersion")
+        val maturity = KotlinToolingVersion(compilerVersion).maturity
         buildString {
             append("${kotlinProperties.nativeBaseDownloadUrl}/")
-            append(if (buildType in listOf("RC", "RC2", "Beta") || buildType.isEmpty()) "releases/" else "dev/")
+            append(if (maturity == KotlinToolingVersion.Maturity.DEV) "dev/" else "releases/")
             append("$compilerVersion/")
             append(simpleOsName)
         }
