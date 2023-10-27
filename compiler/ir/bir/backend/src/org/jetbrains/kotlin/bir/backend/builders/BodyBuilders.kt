@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
     return body
 }*/
 
-context(BirBackendContext)
+/*context(BirBackendContext)
 inline fun birBlockBody(
     crossinline builder: context(BirStatementBuilderScope) BirBlockBodyBuilderScope.() -> Unit,
 ): BirBlockBody {
@@ -35,7 +35,7 @@ inline fun birBlockBody(
         val body: BirBlockBodyBuilderScope.() -> Unit = { builder(statementsBuilder, this) }
         return birBlockBody(body)
     }
-}
+}*/
 
 context(BirStatementBuilderScope)
 fun birBlockBody(
