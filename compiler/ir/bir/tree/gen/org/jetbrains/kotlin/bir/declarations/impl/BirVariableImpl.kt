@@ -174,7 +174,7 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_initializer != value) {
-                replaceChild(_initializer, value)
+                childReplaced(_initializer, value)
                 _initializer = value
                 invalidate()
             }
@@ -190,7 +190,7 @@ class BirVariableImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._initializer === old -> this.initializer = new as BirExpression
+            this._initializer === old -> this._initializer = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

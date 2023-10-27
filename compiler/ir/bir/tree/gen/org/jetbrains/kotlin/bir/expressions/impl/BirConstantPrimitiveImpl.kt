@@ -73,7 +73,7 @@ class BirConstantPrimitiveImpl(
         }
         set(value) {
             if (_value != value) {
-                replaceChild(_value, value)
+                childReplaced(_value, value)
                 _value = value
                 invalidate()
             }
@@ -88,7 +88,7 @@ class BirConstantPrimitiveImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._value === old -> this.value = new as BirConst<*>
+            this._value === old -> this._value = new as BirConst<*>?
             else -> throwChildForReplacementNotFound(old)
         }
     }

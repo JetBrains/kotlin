@@ -287,7 +287,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_thisReceiver != value) {
-                replaceChild(_thisReceiver, value)
+                childReplaced(_thisReceiver, value)
                 _thisReceiver = value
                 invalidate()
             }
@@ -320,7 +320,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._thisReceiver === old -> this.thisReceiver = new as BirValueParameter
+            this._thisReceiver === old -> this._thisReceiver = new as BirValueParameter?
             else -> throwChildForReplacementNotFound(old)
         }
     }

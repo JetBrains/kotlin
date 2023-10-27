@@ -72,7 +72,7 @@ class BirTryImpl(
         }
         set(value) {
             if (_tryResult != value) {
-                replaceChild(_tryResult, value)
+                childReplaced(_tryResult, value)
                 _tryResult = value
                 invalidate()
             }
@@ -89,7 +89,7 @@ class BirTryImpl(
         }
         set(value) {
             if (_finallyExpression != value) {
-                replaceChild(_finallyExpression, value)
+                childReplaced(_finallyExpression, value)
                 _finallyExpression = value
                 invalidate()
             }
@@ -107,8 +107,8 @@ class BirTryImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._tryResult === old -> this.tryResult = new as BirExpression
-            this._finallyExpression === old -> this.finallyExpression = new as BirExpression
+            this._tryResult === old -> this._tryResult = new as BirExpression?
+            this._finallyExpression === old -> this._finallyExpression = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

@@ -80,44 +80,40 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         return false
     }
 
-
-    internal fun initChild(new: BirElement?) {
-        new as BirElementBase?
-
-        new?.checkCanBeAttachedAsChild(this)
-
-        if (new != null) {
-            new.setParentWithInvalidation(this)
-            childAttached(new)
-        }
+    protected fun throwChildElementRemoved(propertyName: String): Nothing {
+        throw IllegalStateException("The child property $propertyName has been removed from this element $this")
     }
 
-    internal fun replaceChild(old: BirElement?, new: BirElement?) {
-        old as BirElementBase?
-        new as BirElementBase?
 
-        new?.checkCanBeAttachedAsChild(this)
+    protected fun initChild(new: BirElement?) {
+        childReplaced(null, new)
+    }
 
+    internal fun childReplaced(old: BirElement?, new: BirElement?) {
         if (old != null) {
+            old as BirElementBase
+
             old.setParentWithInvalidation(null)
-            childDetached(old)
+            root?.elementDetached(old)
         }
+
         if (new != null) {
-            new.setParentWithInvalidation(this)
-            childAttached(new)
+            new as BirElementBase
+
+            val oldParent = new._parent
+            if (oldParent != null) {
+                new.replacedWithInternal(null)
+                new.setParentWithInvalidation(this)
+                if (oldParent is BirElementBase) {
+                    oldParent.invalidate()
+                }
+
+                root?.elementMoved(new, oldParent)
+            } else {
+                new.setParentWithInvalidation(this)
+                root?.elementAttached(new)
+            }
         }
-    }
-
-    private fun childDetached(childElement: BirElementBase) {
-        root?.elementDetached(childElement)
-    }
-
-    private fun childAttached(childElement: BirElementBase) {
-        root?.elementAttached(childElement)
-    }
-
-    internal fun checkCanBeAttachedAsChild(newParent: BirElement) {
-        require(_parent == null) { "Cannot attach element $this as a child of $newParent as it is already a child of $_parent." }
     }
 
 
@@ -137,22 +133,44 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         throw IllegalStateException("The element $this does not have a children list with id $id")
     }
 
+
+    override fun replaceWith(new: BirElement?) {
+        if (this === new) return
+
+        val parent = replacedWithInternal(new as BirElementBase?)
+        if (parent is BirElementBase) {
+            parent.childReplaced(this, new)
+            parent.invalidate()
+        }
+    }
+
+    private fun replacedWithInternal(new: BirElementBase?): BirElementParent? {
+        val parent = _parent
+        if (parent is BirElementBase) {
+            val list = getContainingList()
+            if (list != null) {
+                val found = if (new == null && !list.isNullable) {
+                    list.removeInternal(this)
+                } else {
+                    @Suppress("UNCHECKED_CAST")
+                    list as BirChildElementList<BirElementBase?>
+                    list.replaceInternal(this, new as BirElementBase?)
+                }
+
+                if (!found) {
+                    list.parent.throwChildForReplacementNotFound(this)
+                }
+            } else {
+                parent.replaceChildProperty(this, new)
+            }
+        }
+        return parent
+    }
+
     internal fun getContainingList(): BirChildElementList<*>? {
         val containingListId = containingListId.toInt()
         return if (containingListId == 0) null
         else (parent as? BirElementBase)?.getChildrenListById(containingListId)
-    }
-
-    internal fun removeFromList(list: BirChildElementList<BirElement?>) {
-        if (!list.remove(this)) {
-            list.parent.throwChildForReplacementNotFound(this)
-        }
-    }
-
-    internal fun replaceInsideList(list: BirChildElementList<BirElement?>, new: BirElement?) {
-        if (!list.replace(this, new)) {
-            list.parent.throwChildForReplacementNotFound(this)
-        }
     }
 
 
@@ -362,43 +380,12 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     fun unsafeDispose() {
         acceptChildrenLite {
             it.setParentWithInvalidation(null)
-            childDetached(it)
+            //childDetached(it)
         }
         // todo: mark as disposed
     }
 
     companion object {
         const val FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION: Byte = (1 shl 0).toByte()
-    }
-}
-
-fun BirElement.replaceWith(new: BirElement?) {
-    this as BirElementBase
-
-    // maybe allow also roots?
-    val parent = parent
-    require(parent != null && attachedToTree) { "Element is not attached to a tree" }
-
-    val list = getContainingList()
-    if (list != null) {
-        @Suppress("UNCHECKED_CAST")
-        replaceInsideList(list as BirChildElementList<BirElement?>, new)
-    } else {
-        parent.replaceChildProperty(this, new)
-    }
-}
-
-fun BirElement.remove() {
-    this as BirElementBase
-
-    val parent = parent
-    require(parent != null && attachedToTree) { "Element is not attached to a tree" }
-
-    val list = getContainingList()
-    if (list != null) {
-        @Suppress("UNCHECKED_CAST")
-        removeFromList(list as BirChildElementList<BirElement?>)
-    } else {
-        parent.replaceChildProperty(this, null)
     }
 }
