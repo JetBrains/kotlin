@@ -9,10 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.plugins.BasePlugin
-import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -23,8 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
-import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRunFactory
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRunFactory
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -202,14 +199,18 @@ internal suspend fun getHostSpecificMainSharedSourceSets(project: Project): Set<
 abstract class KotlinNativeTargetWithTests<T : KotlinNativeBinaryTestRun>(
     project: Project,
     konanTarget: KonanTarget,
-) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, T> {
-
-    override lateinit var testRuns: NamedDomainObjectContainer<T>
-        internal set
-}
+) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, T>
 
 abstract class KotlinNativeTargetWithHostTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
-    KotlinNativeTargetWithTests<KotlinNativeHostTestRun>(project, konanTarget)
+    KotlinNativeTargetWithTests<KotlinNativeHostTestRun>(project, konanTarget) {
+    override val testRuns: NamedDomainObjectContainer<KotlinNativeHostTestRun> by lazy {
+        project.container(KotlinNativeHostTestRun::class.java, KotlinNativeHostTestRunFactory(this))
+    }
+}
 
 abstract class KotlinNativeTargetWithSimulatorTests @Inject constructor(project: Project, konanTarget: KonanTarget) :
-    KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>(project, konanTarget)
+    KotlinNativeTargetWithTests<KotlinNativeSimulatorTestRun>(project, konanTarget) {
+    override val testRuns: NamedDomainObjectContainer<KotlinNativeSimulatorTestRun> by lazy {
+        project.container(KotlinNativeSimulatorTestRun::class.java, KotlinNativeSimulatorTestRunFactory(this))
+    }
+}

@@ -51,7 +51,9 @@ abstract class KotlinJvmTarget @Inject constructor(
 ) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
     KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {
 
-    override lateinit var testRuns: NamedDomainObjectContainer<KotlinJvmTestRun>
+    override val testRuns: NamedDomainObjectContainer<KotlinJvmTestRun> by lazy {
+        project.container(KotlinJvmTestRun::class.java, KotlinJvmTestRunFactory(this))
+    }
 
     internal val mainRun: Future<KotlinJvmRunDslImpl?> = project.future { registerMainRunTask() }
 

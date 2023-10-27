@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTestRunFactory
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
@@ -54,8 +55,10 @@ constructor(
     KotlinWasmSubTargetContainerDsl {
 
     private val propertiesProvider = PropertiesProvider(project)
-    override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
-        internal set
+
+    override val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun> by lazy {
+        project.container(KotlinJsReportAggregatingTestRun::class.java, KotlinJsTestRunFactory(this))
+    }
 
     open var isMpp: Boolean? = null
         internal set

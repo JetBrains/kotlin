@@ -43,55 +43,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     createTestCompilation = true
 ) {
 
-    // region Task creation.
-    private fun Project.createLinkTask(binary: NativeBinary) {
-        // workaround for too late compilation compilerOptions creation
-        // which leads to not able run project.afterEvaluate because of wrong context
-        // this afterEvaluate comes from NativeCompilerOptions
-        val compilationCompilerOptions = binary.compilation.compilerOptions
-        val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
-        val xcodeVersionTask = XcodeVersionTask.locateOrRegister(project)
-        val linkTask = registerTask<KotlinNativeLink>(
-            binary.linkTaskName, listOf(binary)
-        ) {
-            val target = binary.target
-            it.group = BasePlugin.BUILD_GROUP
-            it.description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
-            it.enabled = binary.konanTarget.enabledOnCurrentHost
-            it.konanPropertiesService.set(konanPropertiesBuildService)
-            it.usesService(konanPropertiesBuildService)
-            it.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
-            it.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
-            it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
-            it.xcodeVersion.set(xcodeVersionTask.version)
-        }
-
-
-        if (binary !is TestExecutable) {
-            tasks.named(binary.compilation.target.artifactsTaskName).dependsOn(linkTask)
-            locateOrRegisterTask<Task>(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(linkTask)
-        }
-
-        if (binary is Framework) {
-            createFrameworkArtifact(binary, linkTask)
-        }
-    }
-
-    private fun Project.createRunTask(binary: Executable) {
-        val taskName = binary.runTaskName ?: return
-        registerTask<Exec>(taskName) { exec ->
-            exec.group = RUN_GROUP
-            exec.description = "Executes Kotlin/Native executable ${binary.name} for target ${binary.target.name}"
-
-            exec.enabled = binary.konanTarget.isCurrentHost
-
-            exec.executable = binary.outputFile.absolutePath
-            exec.workingDir = project.projectDir
-
-            exec.onlyIf { binary.outputFile.exists() }
-            exec.dependsOn(binary.linkTaskName)
-        }
-    }
 
     // FIXME support creating interop tasks for PM20
     private fun Project.createCInteropTasks(
@@ -162,7 +113,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
     // region Configuration.
     override fun configurePlatformSpecificModel(target: T) {
-        configureBinaries(target)
         configureFrameworkExport(target)
         configureCInterops(target)
 
@@ -185,51 +135,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         }
     }
 
-    protected fun configureBinaries(target: KotlinNativeTarget) {
-        val project = target.project
-        // Create link and run tasks.
-        target.binaries.all {
-            project.createLinkTask(it)
-        }
 
-        target.binaries.withType(Executable::class.java).all {
-            project.createRunTask(it)
-        }
-
-        target.binaries.prefixGroups.all { prefixGroup ->
-            val linkGroupTask = project.locateOrRegisterTask<Task>(prefixGroup.linkTaskName) {
-                it.group = BasePlugin.BUILD_GROUP
-                it.description = "Links all binaries for target '${target.name}'."
-            }
-            prefixGroup.binaries.all {
-                linkGroupTask.dependsOn(it.linkTaskName)
-            }
-        }
-
-        // Create an aggregate link task for each compilation.
-        target.compilations.all {
-            project.registerTask<DefaultTask>(it.binariesTaskName) { task ->
-                task.group = BasePlugin.BUILD_GROUP
-                task.description = "Links all binaries for compilation '${it.name}' of target '${it.target.name}'."
-            }
-        }
-
-        project.whenEvaluated {
-            target.binaries.forEach { binary ->
-                project.tasks.named(binary.compilation.binariesTaskName).configure { binariesTask ->
-                    binariesTask.dependsOn(binary.linkTaskName)
-                }
-            }
-        }
-
-        /**
-         * We create test binaries for all platforms but test runs only for:
-         *  - host platforms: macosX64, linuxX64, mingwX64;
-         *  - simulated platforms: iosX64, tvosX64, watchosX64.
-         * See more in [KotlinNativeTargetWithTestsConfigurator] and its subclasses.
-         */
-        target.binaries.test(listOf(NativeBuildType.DEBUG)) { }
-    }
 
     fun configureFrameworkExport(target: KotlinNativeTarget) {
         val project = target.project
@@ -320,99 +226,3 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     }
 }
 
-abstract class KotlinNativeTargetWithTestsConfigurator<
-        TargetType : KotlinNativeTargetWithTests<TestRunType>,
-        TestRunType : KotlinNativeBinaryTestRun,
-        TaskType : KotlinNativeTest,
-        >(
-) : KotlinNativeTargetConfigurator<TargetType>(),
-    KotlinTargetWithTestsConfigurator<TestRunType, TargetType> {
-
-    abstract val testTaskClass: Class<TaskType>
-
-    abstract fun isTestTaskEnabled(target: TargetType): Boolean
-
-    protected open fun configureTestTask(target: TargetType, testTask: TaskType) {
-        testTask.group = LifecycleBasePlugin.VERIFICATION_GROUP
-        testTask.description = "Executes Kotlin/Native unit tests for target ${target.name}."
-        testTask.targetName = target.name
-
-        testTask.enabled = isTestTaskEnabled(target)
-
-        testTask.workingDir = target.project.projectDir.absolutePath
-
-        testTask.configureConventions()
-    }
-
-    protected open fun configureTestRun(target: TargetType, testRun: AbstractKotlinNativeTestRun<TaskType>) {
-        with(testRun) {
-            val project = target.project
-
-            val testTaskOrProvider = project.registerTask(testTaskName, testTaskClass) { testTask ->
-                configureTestTask(target, testTask)
-            }
-
-            executionTask = testTaskOrProvider
-
-            setExecutionSourceFrom(target.binaries.getTest(NativeBuildType.DEBUG))
-
-            project.kotlinTestRegistry.registerTestTask(testTaskOrProvider)
-        }
-    }
-}
-
-class KotlinNativeTargetWithHostTestsConfigurator() :
-    KotlinNativeTargetWithTestsConfigurator<
-            KotlinNativeTargetWithHostTests,
-            KotlinNativeHostTestRun,
-            KotlinNativeHostTest>() {
-
-    override val testTaskClass: Class<KotlinNativeHostTest>
-        get() = KotlinNativeHostTest::class.java
-
-    override val testRunClass: Class<KotlinNativeHostTestRun>
-        get() = KotlinNativeHostTestRun::class.java
-
-    override fun isTestTaskEnabled(target: KotlinNativeTargetWithHostTests): Boolean =
-        target.konanTarget.isCurrentHost
-
-    override fun createTestRun(
-        name: String,
-        target: KotlinNativeTargetWithHostTests,
-    ): KotlinNativeHostTestRun =
-        DefaultHostTestRun(name, target).apply { configureTestRun(target, this) }
-}
-
-class KotlinNativeTargetWithSimulatorTestsConfigurator :
-    KotlinNativeTargetWithTestsConfigurator<
-            KotlinNativeTargetWithSimulatorTests,
-            KotlinNativeSimulatorTestRun,
-            KotlinNativeSimulatorTest>() {
-
-    override val testTaskClass: Class<KotlinNativeSimulatorTest>
-        get() = KotlinNativeSimulatorTest::class.java
-
-    override val testRunClass: Class<KotlinNativeSimulatorTestRun>
-        get() = KotlinNativeSimulatorTestRun::class.java
-
-    override fun isTestTaskEnabled(target: KotlinNativeTargetWithSimulatorTests): Boolean =
-        HostManager.hostIsMac && HostManager.host.architecture == target.konanTarget.architecture
-
-    override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: KotlinNativeSimulatorTest) {
-        super.configureTestTask(target, testTask)
-        if (isTestTaskEnabled(target)) {
-            val deviceIdProvider = testTask.project.provider {
-                XcodeUtils.getDefaultTestDeviceId(target.konanTarget)
-                    ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
-            }
-            testTask.device.convention(deviceIdProvider).finalizeValueOnRead()
-        }
-        testTask.standalone.convention(true).finalizeValueOnRead()
-    }
-
-    override fun createTestRun(
-        name: String,
-        target: KotlinNativeTargetWithSimulatorTests,
-    ): KotlinNativeSimulatorTestRun =
-        DefaultSimulatorTestRun(name, target).apply { configureTestRun(target, this) }
-}
