@@ -1533,6 +1533,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/simpleUnaryOperators.kt");
         }
 
+        @TestMetadata("smartCastAside.kt")
+        public void testSmartCastAside() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/smartCastAside.kt");
+        }
+
         @TestMetadata("smartCasts.kt")
         public void testSmartCasts() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/smartCasts.kt");

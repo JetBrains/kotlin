@@ -1757,6 +1757,12 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
         }
 
         @Test
+        @TestMetadata("smartCastAside.kt")
+        public void testSmartCastAside() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/smartCastAside.kt");
+        }
+
+        @Test
         @TestMetadata("smartCasts.kt")
         public void testSmartCasts() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/smartCasts.kt");

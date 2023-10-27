@@ -1,0 +1,24 @@
+interface A {
+  abstract fun foo()
+
+}
+
+interface B : A {
+  abstract fun bar()
+
+}
+
+interface C : A {
+  abstract fun baz()
+
+}
+
+fun test(param: B) {
+  when {
+    param is C -> { // BLOCK
+      param.foo()
+      param.bar()
+      param /*as C */.baz()
+    }
+  }
+}
