@@ -19,6 +19,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.util.disableLegacyWarning
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -225,6 +226,46 @@ class MppPublicationTest {
             val sourcesElements = project.configurations.getByName(it.sourcesElementsConfigurationName)
             if (sourcesElements.isCanBeConsumed) fail("Configuration '${it.sourcesElementsConfigurationName}' should not be consumable")
         }
+    }
+
+    @Test
+    fun `test creation of default publications can be disabled`() {
+        val project = buildProject { }
+        project.propertiesExtension.set("kotlin.internal.mpp.createDefaultMultiplatformPublications", "false")
+        project.plugins.apply("kotlin-multiplatform")
+        project.plugins.apply("maven-publish")
+
+        project.kotlin {
+            jvm()
+            linuxArm64()
+        }
+
+        project.evaluate()
+
+        val publishing = project.extensions.getByType(PublishingExtension::class.java)
+        val actualPublications = publishing.publications.names
+        if (actualPublications.isNotEmpty()) fail("Expected no default publications to be created")
+
+        // Even though creation of default publications are disabled
+        // it is still important that components and everything else needed for publishing are still present
+        val components = project.components.names
+        assertEquals(setOf("kotlin"), components)
+
+        val expectedSourcesJarTasks = setOf("sourcesJar", "metadataSourcesJar", "jvmSourcesJar", "linuxArm64SourcesJar")
+        val missingSourcesJarTasks = expectedSourcesJarTasks - project.tasks.names
+        if (missingSourcesJarTasks.isNotEmpty()) fail("Following sources jar tasks are not created: $missingSourcesJarTasks")
+
+        val expectedConfigurations = setOf(
+            "jvmApiElements",
+            "jvmApiElements-published",
+            "jvmRuntimeElements",
+            "jvmRuntimeElements-published",
+            "jvmSourcesElements",
+            "jvmSourcesElements-published",
+            "metadataApiElements",
+        )
+        val missingConfigurations = expectedConfigurations - project.configurations.names
+        if (missingConfigurations.isNotEmpty()) fail("Following configurations are not created: $missingConfigurations")
     }
 
     private fun SoftwareComponent.attributesOfUsageContext(usageContextName: String): AttributeContainer {

@@ -38,15 +38,14 @@ internal val Project.kotlinMultiplatformRootPublication: Future<MavenPublication
     get() = kotlinMultiplatformRootPublicationImpl
 
 internal val MultiplatformPublishingSetupAction = KotlinProjectSetupCoroutine {
-    if (!project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
-        kotlinMultiplatformRootPublicationImpl.complete(null)
-        return@KotlinProjectSetupCoroutine
-    }
-
     if (isPluginApplied("maven-publish")) {
-        project.extensions.configure(PublishingExtension::class.java) { publishing ->
-            createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
-            createTargetPublications(project, publishing)
+        if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
+            project.extensions.configure(PublishingExtension::class.java) { publishing ->
+                createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
+                createTargetPublications(project, publishing)
+            }
+        } else {
+            kotlinMultiplatformRootPublicationImpl.complete(null)
         }
         project.components.add(project.multiplatformExtension.rootSoftwareComponent)
     } else {
