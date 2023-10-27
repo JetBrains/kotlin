@@ -36,23 +36,19 @@ private val Project.kotlinMultiplatformRootPublicationImpl: CompletableFuture<Ma
 internal val Project.kotlinMultiplatformRootPublication: Future<MavenPublication?>
     get() = kotlinMultiplatformRootPublicationImpl
 
-internal fun configurePublishingWithMavenPublish(project: Project) {
-    if (!project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
-        project.kotlinMultiplatformRootPublicationImpl.complete(null)
-        return
-    }
-
-    project.launch {
-        if (project.isPluginApplied("maven-publish")) {
-            project.extensions.configure(PublishingExtension::class.java) { publishing ->
-                val rootPublication = createRootPublication(project, publishing)
-                project.kotlinMultiplatformRootPublicationImpl.complete(rootPublication)
+internal suspend fun Project.configurePublishingWithMavenPublish() {
+    if (isPluginApplied("maven-publish")) {
+        if (kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
+            extensions.configure(PublishingExtension::class.java) { publishing ->
+                createRootPublication(project, publishing).also(kotlinMultiplatformRootPublicationImpl::complete)
                 createTargetPublications(project, publishing)
             }
-            project.components.add(project.multiplatformExtension.rootSoftwareComponent)
         } else {
-            project.kotlinMultiplatformRootPublicationImpl.complete(null)
+            kotlinMultiplatformRootPublicationImpl.complete(null)
         }
+        components.add(project.multiplatformExtension.rootSoftwareComponent)
+    } else {
+        kotlinMultiplatformRootPublicationImpl.complete(null)
     }
 }
 
