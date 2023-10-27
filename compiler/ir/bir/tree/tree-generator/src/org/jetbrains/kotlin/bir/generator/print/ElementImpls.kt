@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.bir.generator.BirTree.rootElement
 import org.jetbrains.kotlin.bir.generator.Packages
 import org.jetbrains.kotlin.bir.generator.childElementList
 import org.jetbrains.kotlin.bir.generator.elementBaseType
+import org.jetbrains.kotlin.bir.generator.model.ElementOrRef
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
 import org.jetbrains.kotlin.bir.generator.model.SingleField
@@ -69,7 +70,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         initializer("BirChildElementList(this, %L, %L)", childrenLists.indexOf(field) + 1, (field.elementType as ElementOrRef).nullable)
                     } else if (field is SingleField && field.isMutable) {
                         addProperty(
-                            PropertySpec.builder(field.backingFieldName, poetType)
+                            PropertySpec.builder(field.backingFieldName, if (field.isChild) poetType.copy(nullable = true) else poetType)
                                 .mutable(true)
                                 .addModifiers(KModifier.PRIVATE)
                                 .apply {
@@ -92,6 +93,9 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                                 .apply {
                                     addCode("recordPropertyRead()\n")
                                     addCode("return ${field.backingFieldName}")
+                                    if (field.isChild && !field.nullable) {
+                                        addCode(" ?: throwChildElementRemoved(%S)", field.name)
+                                    }
                                 }.build()
                         )
                         setter(
@@ -100,7 +104,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                                 .apply {
                                     addCode("if (${field.backingFieldName} != value) {\n")
                                     if (field.isChild) {
-                                        addCode("    replaceChild(${field.backingFieldName}, value)\n")
+                                        addCode("    childReplaced(${field.backingFieldName}, value)\n")
                                     }
                                     addCode("    ${field.backingFieldName} = value\n")
                                     addCode("    invalidate()\n")
@@ -134,7 +138,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                                 when (child) {
                                     is SingleField -> {
                                         addCode(child.backingFieldName)
-                                        if (child.nullable) addCode("?")
+                                        addCode("?")
                                         addCode(".%M(visitor)\n", elementAcceptLite)
                                     }
                                     is ListField -> {
@@ -160,7 +164,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                             if (field is SingleField) {
                                 addCode(
                                     "    this.%N === old -> this.%N = new as %T\n",
-                                    field.backingFieldName, field.name, field.typeRef.toPoet()
+                                    field.backingFieldName, field.backingFieldName, field.typeRef.toPoet().copy(nullable = true)
                                 )
                             }
                         }

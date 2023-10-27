@@ -89,7 +89,7 @@ class BirFunctionExpressionImpl(
         }
         set(value) {
             if (_function != value) {
-                replaceChild(_function, value)
+                childReplaced(_function, value)
                 _function = value
                 invalidate()
             }
@@ -104,7 +104,7 @@ class BirFunctionExpressionImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._function === old -> this.function = new as BirSimpleFunction
+            this._function === old -> this._function = new as BirSimpleFunction?
             else -> throwChildForReplacementNotFound(old)
         }
     }

@@ -75,6 +75,10 @@ class BirForest : BirElementParent() {
         removeElementFromIndex(element)
     }
 
+    internal fun elementMoved(element: BirElementBase, oldParent: BirElementParent) {
+        // Currently there is nothing to do here. So... yay :)
+    }
+
     private fun markElementDirtyInSubtreeShuffleTransaction(element: BirElementBase) {
         if (!element.hasFlag(BirElementBase.FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION)) {
             element.setFlag(BirElementBase.FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION, true)

@@ -88,7 +88,7 @@ class BirDynamicMemberExpressionImpl(
         }
         set(value) {
             if (_receiver != value) {
-                replaceChild(_receiver, value)
+                childReplaced(_receiver, value)
                 _receiver = value
                 invalidate()
             }
@@ -103,7 +103,7 @@ class BirDynamicMemberExpressionImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._receiver === old -> this.receiver = new as BirExpression
+            this._receiver === old -> this._receiver = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

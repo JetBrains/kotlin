@@ -93,7 +93,7 @@ class BirCallImpl(
         }
         set(value) {
             if (_dispatchReceiver != value) {
-                replaceChild(_dispatchReceiver, value)
+                childReplaced(_dispatchReceiver, value)
                 _dispatchReceiver = value
                 invalidate()
             }
@@ -108,7 +108,7 @@ class BirCallImpl(
         }
         set(value) {
             if (_extensionReceiver != value) {
-                replaceChild(_extensionReceiver, value)
+                childReplaced(_extensionReceiver, value)
                 _extensionReceiver = value
                 invalidate()
             }
@@ -171,8 +171,8 @@ class BirCallImpl(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._dispatchReceiver === old -> this.dispatchReceiver = new as BirExpression
-            this._extensionReceiver === old -> this.extensionReceiver = new as BirExpression
+            this._dispatchReceiver === old -> this._dispatchReceiver = new as BirExpression?
+            this._extensionReceiver === old -> this._extensionReceiver = new as BirExpression?
             else -> throwChildForReplacementNotFound(old)
         }
     }

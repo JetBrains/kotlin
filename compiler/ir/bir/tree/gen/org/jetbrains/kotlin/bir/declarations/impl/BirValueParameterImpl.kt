@@ -204,7 +204,7 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
         }
         set(value) {
             if (_defaultValue != value) {
-                replaceChild(_defaultValue, value)
+                childReplaced(_defaultValue, value)
                 _defaultValue = value
                 invalidate()
             }
@@ -220,7 +220,7 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
         when {
-            this._defaultValue === old -> this.defaultValue = new as BirExpressionBody
+            this._defaultValue === old -> this._defaultValue = new as BirExpressionBody?
             else -> throwChildForReplacementNotFound(old)
         }
     }
