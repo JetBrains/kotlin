@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.conversion.SpecialFields
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.names.AnonymousName
 import org.jetbrains.kotlin.formver.names.SpecialName
 import org.jetbrains.kotlin.formver.viper.ast.BuiltInMethod
@@ -22,8 +23,8 @@ object InvokeFunctionObjectMethod : BuiltInMethod(SpecialName("invoke_function_o
 
     override val formalArgs: List<Declaration.LocalVarDecl> = listOf(thisArg.toLocalVarDecl())
     override val formalReturns: List<Declaration.LocalVarDecl> = listOf()
-    override val pres: List<Exp> = thisArg.accessInvariants().toViper()
-    override val posts: List<Exp> = (thisArg.accessInvariants() + listOf(calls)).toViper()
+    override val pres: List<Exp> = thisArg.accessInvariants().pureToViper()
+    override val posts: List<Exp> = (thisArg.accessInvariants() + listOf(calls)).pureToViper()
 }
 
 object SpecialMethods {

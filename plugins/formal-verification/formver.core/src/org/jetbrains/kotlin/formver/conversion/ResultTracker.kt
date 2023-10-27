@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.UnitLit
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.withType
+import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
 interface ResultTrackingContext {
@@ -40,7 +42,7 @@ class VarResultTrackerFactory(val resultVar: VariableEmbedding) : ResultTrackerF
     override fun build(ctx: StmtConversionContext<VarResultTrackingContext>): VarResultTrackingContext =
         object : VarResultTrackingContext(resultVar) {
             override fun capture(exp: ExpEmbedding) {
-                ctx.addStatement(Stmt.assign(resultExp.toViper(), exp.withType(resultVar.type).toViper()))
+                ctx.addStatement(Stmt.assign(resultExp.pureToViper(), exp.withType(resultVar.type).pureToViper()))
             }
         }
 }

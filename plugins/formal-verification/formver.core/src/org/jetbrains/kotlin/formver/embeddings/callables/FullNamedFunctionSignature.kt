@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.toViper
+import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.ast.*
 
 interface FullNamedFunctionSignature : NamedFunctionSignature {
@@ -23,8 +23,8 @@ fun FullNamedFunctionSignature.toViperMethod(
     name,
     formalArgs.map { it.toLocalVarDecl() },
     returnVar.toLocalVarDecl(),
-    preconditions.toViper(),
-    postconditions.toViper(),
+    preconditions.pureToViper(),
+    postconditions.pureToViper(),
     body,
     position,
     info,

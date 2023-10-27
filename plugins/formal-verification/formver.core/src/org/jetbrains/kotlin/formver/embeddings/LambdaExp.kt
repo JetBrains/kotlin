@@ -14,18 +14,19 @@ import org.jetbrains.kotlin.formver.conversion.insertInlineFunctionCall
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.asData
+import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
 class LambdaExp(
     val signature: FunctionSignature,
     val function: FirAnonymousFunction,
     private val parentCtx: MethodConversionContext,
-    override val source: KtSourceElement?,
 ) : CallableEmbedding, ExpEmbedding,
     FunctionSignature by signature {
     override val type: TypeEmbedding = FunctionTypeEmbedding(signature.asData)
 
-    override fun toViper(): Exp = TODO("create new function object with counter, duplicable (requires toViper restructuring)")
+    override fun toViper(ctx: LinearizationContext): Exp =
+        TODO("create new function object with counter, duplicable (requires toViper restructuring)")
 
     override fun insertCallImpl(
         args: List<ExpEmbedding>,

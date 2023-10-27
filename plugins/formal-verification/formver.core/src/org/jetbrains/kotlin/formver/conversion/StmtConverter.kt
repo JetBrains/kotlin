@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.withPosition
 import org.jetbrains.kotlin.formver.linearization.SeqnBuildContext
 import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
 import org.jetbrains.kotlin.formver.names.BreakLabelName
@@ -42,10 +43,12 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
     override val resultCtx: RTC
         get() = resultCtxFactory.build(this)
 
-    override fun convert(stmt: FirStatement): ExpEmbedding = stmt.accept(StmtConversionVisitorExceptionWrapper, this)
+    override fun convert(stmt: FirStatement): ExpEmbedding =
+        stmt.accept(StmtConversionVisitorExceptionWrapper, this).withPosition(stmt.source)
+
     override fun store(exp: ExpEmbedding): VariableEmbedding =
-        when (exp) {
-            is VariableEmbedding -> exp
+        when (val inner = exp.ignoringMetaNodes()) {
+            is VariableEmbedding -> inner
             else -> withResult(exp.type) { capture(exp) }
         }
 

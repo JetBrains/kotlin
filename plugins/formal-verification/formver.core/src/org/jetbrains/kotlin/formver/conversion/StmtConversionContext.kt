@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.linearization.SeqnBuildContext
+import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -61,7 +62,7 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
 fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.nonDeterministically(action: StmtConversionContext<RTC>.() -> Unit) {
     val branchVar = freshAnonVar(BooleanTypeEmbedding)
     addDeclaration(branchVar.toLocalVarDecl())
-    addStatement(Stmt.If(branchVar.toViper(), withNewScopeToBlock(action), Stmt.Seqn()))
+    addStatement(Stmt.If(branchVar.pureToViper(), withNewScopeToBlock(action), Stmt.Seqn()))
 }
 
 fun StmtConversionContext<ResultTrackingContext>.convertAndStore(exp: FirExpression): VariableEmbedding = store(convert(exp))
@@ -77,7 +78,7 @@ fun StmtConversionContext<ResultTrackingContext>.declareLocal(
     pos: KtSourceElement? = null
 ): VariableEmbedding {
     registerLocalPropertyName(name)
-    val varEmb = VariableEmbedding(resolveLocalPropertyName(name), type, pos)
+    val varEmb = VariableEmbedding(resolveLocalPropertyName(name), type)
     addDeclaration(varEmb.toLocalVarDecl())
     initializer?.let { varEmb.setValue(it, this, pos) }
     return varEmb
@@ -123,7 +124,7 @@ fun <RTC : ResultTrackingContext, R> StmtConversionContext<RTC>.withNewScope(act
 fun StmtConversionContext<ResultTrackingContext>.getInlineFunctionCallArgs(
     args: List<ExpEmbedding>,
 ): List<ExpEmbedding> = args.map { exp ->
-    when (exp) {
+    when (exp.ignoringMetaNodes()) {
         is VariableEmbedding -> exp
         is LambdaExp -> exp
         else -> withResult(exp.type) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.linearization
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Declaration
@@ -21,10 +22,9 @@ class PureLinearizerError(val offendingFunction: String) : IllegalStateException
  * processing preconditions, postconditions, and invariants. In those cases, generating statements
  * would be an error.
  */
-class PureLinearizer(override val source: KtSourceElement) : LinearizationContext {
-    override fun withPosition(newPosition: KtSourceElement, action: LinearizationContext.() -> Unit) {
-        PureLinearizer(newPosition).action()
-    }
+class PureLinearizer(override val source: KtSourceElement?) : LinearizationContext {
+    override fun <R> withPosition(newSource: KtSourceElement, action: LinearizationContext.() -> R): R =
+        PureLinearizer(newSource).action()
 
     override fun newVar(type: TypeEmbedding): VariableEmbedding {
         throw PureLinearizerError("newVar")
@@ -49,3 +49,15 @@ class PureLinearizer(override val source: KtSourceElement) : LinearizationContex
     override val block: Stmt.Seqn
         get() = throw PureLinearizerError("block")
 }
+
+fun ExpEmbedding.pureToViper(source: KtSourceElement? = null): Exp {
+    try {
+        return toViper(PureLinearizer(source))
+    } catch (e: PureLinearizerError) {
+        val msg =
+            "PureLinearizer used to convert non-pure ExpEmbedding $this; operation ${e.offendingFunction} is not supported in a pure context."
+        throw IllegalStateException(msg)
+    }
+}
+
+fun List<ExpEmbedding>.pureToViper(source: KtSourceElement? = null): List<Exp> = map { it.pureToViper(source) }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
-import org.jetbrains.kotlin.formver.embeddings.toViper
+import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.names.FunctionKotlinName
 import org.jetbrains.kotlin.formver.names.ScopedKotlinName
 import org.jetbrains.kotlin.formver.viper.MangledName
@@ -32,4 +32,4 @@ fun NamedFunctionSignature.toMethodCall(
     pos: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
     trafos: Trafos = Trafos.NoTrafos,
-) = Stmt.MethodCall(name, parameters.toViper(), listOf(targetVar.toViper()), pos, info, trafos)
+) = Stmt.MethodCall(name, parameters.pureToViper(), listOf(targetVar.toLocalVarUse()), pos, info, trafos)

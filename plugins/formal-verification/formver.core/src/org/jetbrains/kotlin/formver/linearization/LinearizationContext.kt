@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
  * of statements. We call this process linearization.
  */
 interface LinearizationContext : SeqnBuildContext {
-    val source: KtSourceElement
+    val source: KtSourceElement?
 
     fun newVar(type: TypeEmbedding): VariableEmbedding
 
     fun inhaleForThisStatement(assumption: Exp)
     fun withNewScope(action: LinearizationContext.() -> Unit): Stmt.Seqn
-    fun withPosition(newPosition: KtSourceElement, action: LinearizationContext.() -> Unit)
+    fun <R> withPosition(newSource: KtSourceElement, action: LinearizationContext.() -> R): R
 }
 
 fun <R> LinearizationContext.withNewVar(type: TypeEmbedding, action: (v: VariableEmbedding) -> R): R = action(newVar(type))

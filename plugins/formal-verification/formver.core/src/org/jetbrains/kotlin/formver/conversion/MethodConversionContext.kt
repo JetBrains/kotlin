@@ -34,7 +34,7 @@ interface MethodConversionContext : ProgramConversionContext {
 }
 
 fun MethodConversionContext.embedLocalProperty(symbol: FirPropertySymbol): VariableEmbedding =
-    VariableEmbedding(resolveLocalPropertyName(symbol.name), embedType(symbol.resolvedReturnType), symbol.source)
+    VariableEmbedding(resolveLocalPropertyName(symbol.name), embedType(symbol.resolvedReturnType))
 
 fun MethodConversionContext.embedLocalSymbol(symbol: FirBasedSymbol<*>): ExpEmbedding =
     when (symbol) {

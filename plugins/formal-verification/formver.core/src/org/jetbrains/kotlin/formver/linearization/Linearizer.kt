@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
 data class Linearizer(
     val state: SharedLinearizationState,
     val seqnBuilder: SeqnBuilder,
-    override val source: KtSourceElement,
+    override val source: KtSourceElement?,
 ) : LinearizationContext {
     override fun newVar(type: TypeEmbedding): VariableEmbedding = state.freshVar(type)
 
@@ -36,9 +36,8 @@ data class Linearizer(
         return newBuilder.block
     }
 
-    override fun withPosition(newPosition: KtSourceElement, action: LinearizationContext.() -> Unit) {
-        copy(source = newPosition).action()
-    }
+    override fun <R> withPosition(newSource: KtSourceElement, action: LinearizationContext.() -> R): R =
+        copy(source = newSource).action()
 
     override fun addStatement(stmt: Stmt) {
         state.assumptionTracker.forEachForwards { seqnBuilder.addStatement(Stmt.Inhale(it, source.asPosition)) }

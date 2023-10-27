@@ -31,7 +31,7 @@ class RootParameterResolver(
     override val resolvedReturnLabelName: ReturnLabelName,
 ) : ParameterResolver {
     override fun tryEmbedParameter(symbol: FirValueParameterSymbol): ExpEmbedding =
-        VariableEmbedding(symbol.embedName(), ctx.embedType(symbol.resolvedReturnType), symbol.source)
+        VariableEmbedding(symbol.embedName(), ctx.embedType(symbol.resolvedReturnType))
 
     override val resolvedReturnVarName: MangledName = ReturnVariableName
 }

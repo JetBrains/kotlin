@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.names.ClassKotlinName
 import org.jetbrains.kotlin.formver.names.GlobalScope
 import org.jetbrains.kotlin.formver.names.ScopedKotlinName
@@ -103,7 +104,7 @@ object KotlinIntDivFunctionImplementation : KotlinIntSpecialFunction() {
         ctx: StmtConversionContext<ResultTrackingContext>,
         source: KtSourceElement?,
     ): ExpEmbedding {
-        ctx.addStatement(Stmt.Inhale(NeCmp(args[1], IntLit(0)).toViper()))
+        ctx.addStatement(Stmt.Inhale(NeCmp(args[1], IntLit(0)).pureToViper()))
         return Div(args[0], args[1])
     }
 }
@@ -141,7 +142,7 @@ object KotlinRunSpecialFunction : SpecialKotlinFunction {
         ctx: StmtConversionContext<ResultTrackingContext>,
         source: KtSourceElement?
     ): ExpEmbedding {
-        val lambda = when (val arg = args[0].ignoringCasts()) {
+        val lambda = when (val arg = args[0].ignoringCastsAndMetaNodes()) {
             is LambdaExp -> arg
             else -> throw IllegalStateException("kotlin.run must be called with a lambda argument at the moment")
         }

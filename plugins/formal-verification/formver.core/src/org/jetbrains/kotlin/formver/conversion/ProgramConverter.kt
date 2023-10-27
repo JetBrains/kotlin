@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.*
 import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
+import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
@@ -161,9 +162,9 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val receiverType = symbol.receiverType
         return object : FunctionSignature {
             override val receiver =
-                receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it), symbol.receiverParameter?.source) }
+                receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
             override val params = symbol.valueParameterSymbols.map {
-                VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType), it.source)
+                VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
             }
             override val returnType = embedType(retType)
         }
@@ -274,7 +275,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
                 // provenInvariants don't contain permissions.
                 arg.provenInvariants().forEach { invariant ->
-                    stmtCtx.addStatement(Stmt.Inhale(invariant.toViper(), arg.source.asPosition))
+                    stmtCtx.addStatement(Stmt.Inhale(invariant.pureToViper()))
                 }
             }
             stmtCtx.addDeclaration(methodCtx.returnLabel.toDecl())
