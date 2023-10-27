@@ -329,20 +329,37 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
     }
 
     private fun generateCFunction(declaration: IrFunction, names: Names = Names(declaration)): CCode.Declaration? = CCode.build {
-        declare(function(
-                returnType = declaration.returnType.mapTypeToC() ?: return null,
-                name = names.c,
-                arguments = declaration.explicitParameters.map {
-                    variable(it.type.mapTypeToC() ?: return null, it.name.identifierOrNullIfSpecial)
-                } + listOfNotNull(variable(void.pointer, "returnSlot").takeIf { declaration.hasObjectHolderParameter }),
-                attributes = listOf(asm(names.symbol))
-        ))
+        when (declaration) {
+            is IrConstructor -> declare(function(
+                    returnType = void,
+                    name = names.c,
+                    arguments = listOf(variable(void.pointer, "this")) + declaration.explicitParameters.map {
+                        variable(it.type.mapTypeToC() ?: return null, it.name.identifierOrNullIfSpecial)
+                    },
+                    attributes = listOf(asm(names.symbol))
+            ))
+            else -> declare(function(
+                    returnType = declaration.returnType.mapTypeToC() ?: return null,
+                    name = names.c,
+                    arguments = declaration.explicitParameters.map {
+                        variable(it.type.mapTypeToC() ?: return null, it.name.identifierOrNullIfSpecial)
+                    } + listOfNotNull(variable(void.pointer, "returnSlot").takeIf { declaration.hasObjectHolderParameter }),
+                    attributes = listOf(asm(names.symbol))
+            ))
+        }
     }
 
     private fun generateSwiftFunction(declaration: IrFunction, names: Names = Names(declaration)): SwiftCode.Declaration.Function? = SwiftCode.build {
-        fun SwiftCode.ListBuilder<SwiftCode.Statement>.generateFunctionBody(parameterBridges: List<Pair<String, Bridge>>, returnTypeBridge: Bridge) {
+        fun SwiftCode.ListBuilder<SwiftCode.Statement>.generateFunctionBody(parameterBridges: List<Pair<String, Bridge>>, returnTypeBridge: Bridge?) {
+            val isInit = declaration is IrConstructor
+            val resultBridge = returnTypeBridge ?: Bridge.AsIs(
+                    "UnsafeMutableRawPointer".type,
+                    CCode.build { void.pointer }
+            )
+
             +INIT_RUNTIME_IF_NEEDED.identifier.call()
             +SWITCH_THREAD_STATE_TO_RUNNABLE.identifier.call()
+            +defer { +SWITCH_THREAD_STATE_TO_NATIVE.identifier.call() }
 
             val call = let {
                 val bridgeDelegate = object : BridgeCodeGenDelegate {
@@ -359,21 +376,20 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
                     "withUnsafeSlots".identifier.call(
                             "count" of bridgeDelegate.slotsCount.literal,
                             "body" of closure(parameters = listOf(closureParameter("slots"))) {
-                                +returnTypeBridge.from(names.c.identifier.call(parameters), bridgeDelegate)
+                                +resultBridge.from(names.c.identifier.call(parameters), bridgeDelegate)
                             }
                     )
                 } else {
-                    returnTypeBridge.from(names.c.identifier.call(parameters), bridgeDelegate)
+                    resultBridge.from(names.c.identifier.call(parameters), bridgeDelegate)
                 }
             }
 
-            val result = +let(
-                    "result",
-                    type = returnTypeBridge.swiftType,
-                    value = call
-            )
-            +SWITCH_THREAD_STATE_TO_NATIVE.identifier.call()
-            +`return`(result.name.identifier)
+            if (isInit) {
+                +"super".identifier.access("init").call()
+                +call
+            } else {
+                +`return`(call)
+            }
         }
 
         fun parameterName(valueParameter: IrValueParameter): String = valueParameter.name.identifierOrNullIfSpecial
@@ -386,9 +402,10 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         val parameterBridges: List<Pair<String, Bridge>>
         val argumentBridges: List<Pair<String, Bridge>>
 
-        if (declaration.dispatchReceiverParameter != null || declaration.extensionReceiverParameter != null) {
-            parameterBridges = bridges.drop(1)
-            argumentBridges = listOf(
+        when {
+            declaration.dispatchReceiverParameter != null || declaration.extensionReceiverParameter != null -> {
+                parameterBridges = bridges.drop(1)
+                argumentBridges = listOf(
                     "self" to bridges
                             .first()
                             .let {
@@ -397,10 +414,18 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
                                 else
                                     Bridge.Self.Value(it.second.cType)
                             }
-            ) + parameterBridges
-        } else {
-            parameterBridges = bridges
-            argumentBridges = bridges
+                ) + parameterBridges
+            }
+
+            declaration is IrConstructor -> {
+                parameterBridges = bridges
+                argumentBridges = listOf("self" to Bridge.Self.Reference) + parameterBridges
+            }
+
+            else -> {
+                parameterBridges = bridges
+                argumentBridges = bridges
+            }
         }
 
         when {
@@ -409,8 +434,7 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
                     isOverride = parameterBridges.isEmpty(),
                     visibility = public
             ) {
-                // FIXME: properly create an instance when the runtime support for that arrives
-                +"fatalError".identifier.call()
+                generateFunctionBody(argumentBridges, null)
             }
 
             declaration.dispatchReceiverParameter != null || declaration.extensionReceiverParameter != null -> method(
@@ -542,7 +566,7 @@ private val IrType.isClass: Boolean
 
 private fun CCode.Builder.asm(name: String) = rawAttribute("asm".identifier.call(name.literal))
 
-private val IrFunction.hasObjectHolderParameter get() = this.returnType.isClass && !this.returnType.isUnit() && !this.returnType.isVoidAsReturnType()
+private val IrFunction.hasObjectHolderParameter get() = this !is IrConstructor && this.returnType.isClass && !this.returnType.isUnit() && !this.returnType.isVoidAsReturnType()
 
 private fun IrType.mapTypeToC(): CCode.Type? = CCode.build {
     when {

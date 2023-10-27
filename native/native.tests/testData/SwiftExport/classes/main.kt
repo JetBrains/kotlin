@@ -1,7 +1,7 @@
 package classes
 
 class Foo {
-    class FooClass {
+    class FooClass(val value: Int) {
 
     }
 
