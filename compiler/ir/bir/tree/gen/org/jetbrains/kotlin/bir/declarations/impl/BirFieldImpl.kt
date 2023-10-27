@@ -68,7 +68,7 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 

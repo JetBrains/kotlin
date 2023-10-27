@@ -47,7 +47,7 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override val declarations: BirChildElementList<BirDeclaration> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, false)
 
     private var _signature: IdSignature? = signature
 
@@ -78,7 +78,7 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 2)
+            BirChildElementList(this, 2, false)
 
     private var _fileEntry: IrFileEntry = fileEntry
 

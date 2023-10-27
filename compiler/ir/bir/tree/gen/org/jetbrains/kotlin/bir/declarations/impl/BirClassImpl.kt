@@ -74,7 +74,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -133,10 +133,10 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 2)
+            BirChildElementList(this, 2, false)
 
     override val declarations: BirChildElementList<BirDeclaration> =
-            BirChildElementList(this, 3)
+            BirChildElementList(this, 3, false)
 
     private var _attributeOwnerId: BirAttributeContainer = this
 

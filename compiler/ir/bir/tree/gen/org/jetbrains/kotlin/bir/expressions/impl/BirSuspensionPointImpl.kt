@@ -67,12 +67,13 @@ class BirSuspensionPointImpl(
             }
         }
 
-    private var _suspensionPointIdParameter: BirVariable = suspensionPointIdParameter
+    private var _suspensionPointIdParameter: BirVariable? = suspensionPointIdParameter
 
     override var suspensionPointIdParameter: BirVariable
         get() {
             recordPropertyRead()
-            return _suspensionPointIdParameter
+            return _suspensionPointIdParameter ?:
+                    throwChildElementRemoved("suspensionPointIdParameter")
         }
         set(value) {
             if (_suspensionPointIdParameter != value) {
@@ -82,12 +83,12 @@ class BirSuspensionPointImpl(
             }
         }
 
-    private var _result: BirExpression = result
+    private var _result: BirExpression? = result
 
     override var result: BirExpression
         get() {
             recordPropertyRead()
-            return _result
+            return _result ?: throwChildElementRemoved("result")
         }
         set(value) {
             if (_result != value) {
@@ -97,12 +98,12 @@ class BirSuspensionPointImpl(
             }
         }
 
-    private var _resumeResult: BirExpression = resumeResult
+    private var _resumeResult: BirExpression? = resumeResult
 
     override var resumeResult: BirExpression
         get() {
             recordPropertyRead()
-            return _resumeResult
+            return _resumeResult ?: throwChildElementRemoved("resumeResult")
         }
         set(value) {
             if (_resumeResult != value) {
@@ -118,9 +119,9 @@ class BirSuspensionPointImpl(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _suspensionPointIdParameter.acceptLite(visitor)
-        _result.acceptLite(visitor)
-        _resumeResult.acceptLite(visitor)
+        _suspensionPointIdParameter?.acceptLite(visitor)
+        _result?.acceptLite(visitor)
+        _resumeResult?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

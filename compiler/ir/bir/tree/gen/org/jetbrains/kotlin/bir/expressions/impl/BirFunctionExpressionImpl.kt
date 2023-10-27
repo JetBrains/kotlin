@@ -80,12 +80,12 @@ class BirFunctionExpressionImpl(
             }
         }
 
-    private var _function: BirSimpleFunction = function
+    private var _function: BirSimpleFunction? = function
 
     override var function: BirSimpleFunction
         get() {
             recordPropertyRead()
-            return _function
+            return _function ?: throwChildElementRemoved("function")
         }
         set(value) {
             if (_function != value) {
@@ -99,7 +99,7 @@ class BirFunctionExpressionImpl(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _function.acceptLite(visitor)
+        _function?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

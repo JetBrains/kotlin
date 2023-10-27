@@ -61,7 +61,8 @@ class BirBlockImpl(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 1)
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 1,
+            false)
 
     private var _origin: IrStatementOrigin? = origin
 

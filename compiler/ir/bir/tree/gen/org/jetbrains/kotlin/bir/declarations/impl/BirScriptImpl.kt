@@ -73,7 +73,7 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -103,7 +103,8 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 2)
+    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 2,
+            false)
 
     private var _thisReceiver: BirValueParameter? = thisReceiver
 
@@ -135,13 +136,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var explicitCallParameters: BirChildElementList<BirVariable> =
-            BirChildElementList(this, 3)
+            BirChildElementList(this, 3, false)
 
     override var implicitReceiversParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this, 4)
+            BirChildElementList(this, 4, false)
 
     override var providedPropertiesParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this, 5)
+            BirChildElementList(this, 5, false)
 
     private var _resultProperty: BirPropertySymbol? = resultProperty
 

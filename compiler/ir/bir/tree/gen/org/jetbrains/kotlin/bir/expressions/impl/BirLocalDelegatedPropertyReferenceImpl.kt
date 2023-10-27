@@ -131,7 +131,7 @@ class BirLocalDelegatedPropertyReferenceImpl(
         }
 
     override val valueArguments: BirChildElementList<BirExpression?> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, true)
 
     private var _delegate: BirVariableSymbol = delegate
 

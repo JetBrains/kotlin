@@ -35,12 +35,12 @@ class BirCatchImpl(
             }
         }
 
-    private var _catchParameter: BirVariable = catchParameter
+    private var _catchParameter: BirVariable? = catchParameter
 
     override var catchParameter: BirVariable
         get() {
             recordPropertyRead()
-            return _catchParameter
+            return _catchParameter ?: throwChildElementRemoved("catchParameter")
         }
         set(value) {
             if (_catchParameter != value) {
@@ -50,12 +50,12 @@ class BirCatchImpl(
             }
         }
 
-    private var _result: BirExpression = result
+    private var _result: BirExpression? = result
 
     override var result: BirExpression
         get() {
             recordPropertyRead()
-            return _result
+            return _result ?: throwChildElementRemoved("result")
         }
         set(value) {
             if (_result != value) {
@@ -70,8 +70,8 @@ class BirCatchImpl(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _catchParameter.acceptLite(visitor)
-        _result.acceptLite(visitor)
+        _catchParameter?.acceptLite(visitor)
+        _result?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

@@ -64,12 +64,12 @@ class BirGetClassImpl(
             }
         }
 
-    private var _argument: BirExpression = argument
+    private var _argument: BirExpression? = argument
 
     override var argument: BirExpression
         get() {
             recordPropertyRead()
-            return _argument
+            return _argument ?: throwChildElementRemoved("argument")
         }
         set(value) {
             if (_argument != value) {
@@ -83,7 +83,7 @@ class BirGetClassImpl(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _argument.acceptLite(visitor)
+        _argument?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

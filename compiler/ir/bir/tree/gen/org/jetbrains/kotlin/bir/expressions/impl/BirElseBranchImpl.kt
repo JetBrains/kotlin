@@ -34,12 +34,12 @@ class BirElseBranchImpl(
             }
         }
 
-    private var _condition: BirExpression = condition
+    private var _condition: BirExpression? = condition
 
     override var condition: BirExpression
         get() {
             recordPropertyRead()
-            return _condition
+            return _condition ?: throwChildElementRemoved("condition")
         }
         set(value) {
             if (_condition != value) {
@@ -49,12 +49,12 @@ class BirElseBranchImpl(
             }
         }
 
-    private var _result: BirExpression = result
+    private var _result: BirExpression? = result
 
     override var result: BirExpression
         get() {
             recordPropertyRead()
-            return _result
+            return _result ?: throwChildElementRemoved("result")
         }
         set(value) {
             if (_result != value) {
@@ -69,8 +69,8 @@ class BirElseBranchImpl(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _condition.acceptLite(visitor)
-        _result.acceptLite(visitor)
+        _condition?.acceptLite(visitor)
+        _result?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

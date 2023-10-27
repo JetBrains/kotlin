@@ -81,7 +81,7 @@ class BirConstantObjectImpl(
         }
 
     override val valueArguments: BirChildElementList<BirConstantValue> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, false)
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         valueArguments.acceptChildrenLite(visitor)

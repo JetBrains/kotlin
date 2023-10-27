@@ -127,7 +127,7 @@ class BirDelegatingConstructorCallImpl(
         }
 
     override val valueArguments: BirChildElementList<BirExpression?> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, true)
 
     private var _contextReceiversCount: Int = contextReceiversCount
 

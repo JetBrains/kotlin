@@ -77,12 +77,12 @@ class BirDynamicOperatorExpressionImpl(
             }
         }
 
-    private var _receiver: BirExpression = receiver
+    private var _receiver: BirExpression? = receiver
 
     override var receiver: BirExpression
         get() {
             recordPropertyRead()
-            return _receiver
+            return _receiver ?: throwChildElementRemoved("receiver")
         }
         set(value) {
             if (_receiver != value) {
@@ -92,13 +92,14 @@ class BirDynamicOperatorExpressionImpl(
             }
         }
 
-    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1)
+    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1,
+            false)
     init {
         initChild(_receiver)
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _receiver.acceptLite(visitor)
+        _receiver?.acceptLite(visitor)
         arguments.acceptChildrenLite(visitor)
     }
 

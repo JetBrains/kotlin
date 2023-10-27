@@ -33,12 +33,12 @@ class BirSpreadElementImpl(
             }
         }
 
-    private var _expression: BirExpression = expression
+    private var _expression: BirExpression? = expression
 
     override var expression: BirExpression
         get() {
             recordPropertyRead()
-            return _expression
+            return _expression ?: throwChildElementRemoved("expression")
         }
         set(value) {
             if (_expression != value) {
@@ -52,7 +52,7 @@ class BirSpreadElementImpl(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _expression.acceptLite(visitor)
+        _expression?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
