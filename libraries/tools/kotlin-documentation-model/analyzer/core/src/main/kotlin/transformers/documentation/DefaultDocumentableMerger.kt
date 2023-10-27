@@ -2,18 +2,27 @@
  * Copyright 2014-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package org.jetbrains.dokka.base.transformers.documentables
+package org.jetbrains.dokka.transformers.documentation
 
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.base.utils.firstNotNullOfOrNull
+import org.jetbrains.dokka.InternalDokkaApi
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.model.properties.mergeExtras
 import org.jetbrains.dokka.plugability.DokkaContext
-import org.jetbrains.dokka.transformers.documentation.DocumentableMerger
+import org.jetbrains.dokka.CoreExtensions
 
-internal class DefaultDocumentableMerger(val context: DokkaContext) : DocumentableMerger {
+/**
+ * Should NOT be used outside of Dokka itself, there are no guarantees
+ * this class will continue to exist in future releases.
+ *
+ * This class resides in core because it is a non-trivial implementation
+ * for a core extension [CoreExtensions.documentableMerger], which is needed
+ * in modules that only have access to `dokka-core`.
+ */
+@InternalDokkaApi
+public class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerger {
     private val dependencyInfo = context.getDependencyInfo()
 
     override fun invoke(modules: Collection<DModule>): DModule? =
@@ -123,7 +132,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         }
     }
 
-    fun DPackage.mergeWith(other: DPackage): DPackage = copy(
+    public fun DPackage.mergeWith(other: DPackage): DPackage = copy(
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
@@ -133,7 +142,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    fun DFunction.mergeWith(other: DFunction): DFunction = copy(
+    public fun DFunction.mergeWith(other: DFunction): DFunction = copy(
         parameters = merge(this.parameters + other.parameters) { p1, p2 -> p1.mergeWith(p2) },
         receiver = receiver?.let { r -> other.receiver?.let { r.mergeWith(it) } ?: r } ?: other.receiver,
         documentation = documentation + other.documentation,
@@ -145,7 +154,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         generics = merge(generics + other.generics) { tp1, tp2 -> tp1.mergeWith(tp2) },
     ).mergeExtras(this, other)
 
-    fun DProperty.mergeWith(other: DProperty): DProperty = copy(
+    public fun DProperty.mergeWith(other: DProperty): DProperty = copy(
         receiver = receiver?.let { r -> other.receiver?.let { r.mergeWith(it) } ?: r } ?: other.receiver,
         documentation = documentation + other.documentation,
         expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
@@ -158,7 +167,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         generics = merge(generics + other.generics) { tp1, tp2 -> tp1.mergeWith(tp2) },
     ).mergeExtras(this, other)
 
-    fun DClasslike.mergeWith(other: DClasslike): DClasslike = when {
+    private fun DClasslike.mergeWith(other: DClasslike): DClasslike = when {
         this is DClass && other is DClass -> mergeWith(other)
         this is DEnum && other is DEnum -> mergeWith(other)
         this is DInterface && other is DInterface -> mergeWith(other)
@@ -167,7 +176,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         else -> throw IllegalStateException("${this::class.qualifiedName} ${this.name} cannot be merged with ${other::class.qualifiedName} ${other.name}")
     }
 
-    fun DClass.mergeWith(other: DClass): DClass = copy(
+    private fun DClass.mergeWith(other: DClass): DClass = copy(
         constructors = mergeExpectActual(
             constructors + other.constructors
         ) { f1, f2 -> f1.mergeWith(f2) },
@@ -185,7 +194,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    fun DEnum.mergeWith(other: DEnum): DEnum = copy(
+    private fun DEnum.mergeWith(other: DEnum): DEnum = copy(
         entries = merge(entries + other.entries) { ee1, ee2 -> ee1.mergeWith(ee2) },
         constructors = mergeExpectActual(
             constructors + other.constructors
@@ -202,7 +211,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    fun DEnumEntry.mergeWith(other: DEnumEntry): DEnumEntry = copy(
+    private fun DEnumEntry.mergeWith(other: DEnumEntry): DEnumEntry = copy(
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
@@ -211,7 +220,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    fun DObject.mergeWith(other: DObject): DObject = copy(
+    private fun DObject.mergeWith(other: DObject): DObject = copy(
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
@@ -223,7 +232,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    fun DInterface.mergeWith(other: DInterface): DInterface = copy(
+    private fun DInterface.mergeWith(other: DInterface): DInterface = copy(
         functions = mergeExpectActual(functions + other.functions) { f1, f2 -> f1.mergeWith(f2) },
         properties = mergeExpectActual(properties + other.properties) { p1, p2 -> p1.mergeWith(p2) },
         classlikes = mergeExpectActual(classlikes + other.classlikes) { c1, c2 -> c1.mergeWith(c2) },
@@ -237,7 +246,7 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    fun DAnnotation.mergeWith(other: DAnnotation): DAnnotation = copy(
+    private fun DAnnotation.mergeWith(other: DAnnotation): DAnnotation = copy(
         constructors = mergeExpectActual(
             constructors + other.constructors
         ) { f1, f2 -> f1.mergeWith(f2) },
@@ -253,19 +262,19 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         generics = merge(generics + other.generics) { tp1, tp2 -> tp1.mergeWith(tp2) }
     ).mergeExtras(this, other)
 
-    fun DParameter.mergeWith(other: DParameter): DParameter = copy(
+    private fun DParameter.mergeWith(other: DParameter): DParameter = copy(
         documentation = documentation + other.documentation,
         expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    fun DTypeParameter.mergeWith(other: DTypeParameter): DTypeParameter = copy(
+    private fun DTypeParameter.mergeWith(other: DTypeParameter): DTypeParameter = copy(
         documentation = documentation + other.documentation,
         expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
         sourceSets = sourceSets + other.sourceSets
     ).mergeExtras(this, other)
 
-    fun DTypeAlias.mergeWith(other: DTypeAlias): DTypeAlias = copy(
+    private fun DTypeAlias.mergeWith(other: DTypeAlias): DTypeAlias = copy(
         documentation = documentation + other.documentation,
         expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
         underlyingType = underlyingType + other.underlyingType,
@@ -284,4 +293,15 @@ public data class ClashingDriIdentifier(val value: Set<DokkaConfiguration.DokkaS
     }
 
     override val key: ExtraProperty.Key<Documentable, *> = ClashingDriIdentifier
+}
+
+// TODO [beresnev] remove this copy-paste and use the same method from stdlib instead after updating to 1.5
+private inline fun <T, R : Any> Iterable<T>.firstNotNullOfOrNull(transform: (T) -> R?): R? {
+    for (element in this) {
+        val result = transform(element)
+        if (result != null) {
+            return result
+        }
+    }
+    return null
 }
