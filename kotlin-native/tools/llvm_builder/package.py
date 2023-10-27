@@ -222,7 +222,7 @@ def run_command(command: List[str], dry_run):
 
     if not dry_run:
         subprocess.run(command, shell=True, check=True)
-        
+
 def force_create_directory(parent, name) -> Path:
     build_path = parent / name
     print(f"Force-creating directory {build_path}")
@@ -248,7 +248,7 @@ def clone_llvm_repository(repo, branch, llvm_repo_destination, dry_run):
     if host_is_darwin():
         default_repo, default_branch = "https://github.com/apple/llvm-project", "apple/stable/20200714"
     else:
-        default_repo, default_branch = "https://github.com/llvm/llvm-project", "release/11.x"
+        default_repo, default_branch = "https://github.com/llvm/llvm-project", "release/14.x"
     repo = default_repo if repo is None else repo
     branch = default_branch if branch is None else branch
     # Download only single commit because we don't need whole history just for building LLVM.
