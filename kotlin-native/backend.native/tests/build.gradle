@@ -2975,26 +2975,6 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
     }
 }
 
-if (HostManager.@Companion.hostIsMac) {
-    fileCheckTest("filecheck_redundant_safepoints_removal_smallbinary") {
-        enabled = project.globalTestArgs.contains("-opt")
-        annotatedSource = project.file('filecheck/redundant_safepoints.kt')
-        targetName = "watchos_arm32"
-        checkPrefix = "CHECK-SMALLBINARY"
-        extraOpts = ["-opt"]
-        phaseToCheck = "RemoveRedundantSafepoints"
-    }
-
-}
-
-fileCheckTest("filecheck_redundant_safepoints_removal") {
-    enabled = !isNoopGC && !isSTWMSGC &&
-            project.globalTestArgs.contains("-opt") &&
-            !PlatformInfo.needSmallBinary(project)
-    annotatedSource = project.file('filecheck/redundant_safepoints.kt')
-    phaseToCheck = "RemoveRedundantSafepoints"
-}
-
 createInterop("filecheck_signext_zeroext_interop_input") {
     it.defFile 'filecheck/signext_zeroext_interop_input.def'
 }

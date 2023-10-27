@@ -10,6 +10,7 @@ import com.intellij.openapi.util.text.StringUtilRt.convertLineSeparators
 import kotlinx.coroutines.*
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.needSmallBinary
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.AbstractRunner.AbstractRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.ExecutionTimeout
@@ -169,6 +170,11 @@ internal abstract class LocalResultHandler<R>(
                             add("CHECK-${testTarget.name.toUpperCaseAsciiOnly()}")
                             if (testTarget.family.isAppleFamily) {
                                 add("CHECK-APPLE")
+                            }
+                            if (testTarget.needSmallBinary()) {
+                                add("CHECK-SMALLBINARY")
+                            } else {
+                                add("CHECK-BIGBINARY")
                             }
                         }
                         val optimizationMode = check.settings.get<OptimizationMode>().name

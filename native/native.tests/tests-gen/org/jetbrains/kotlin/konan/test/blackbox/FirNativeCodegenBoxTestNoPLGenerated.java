@@ -16196,6 +16196,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
+            @TestMetadata("redundant_safepoints.kt")
+            public void testRedundant_safepoints() throws Exception {
+                runTest("compiler/testData/codegen/box/fileCheck/redundant_safepoints.kt");
+            }
+
+            @Test
             @TestMetadata("replace_invoke_with_call.kt")
             public void testReplace_invoke_with_call() throws Exception {
                 runTest("compiler/testData/codegen/box/fileCheck/replace_invoke_with_call.kt");
