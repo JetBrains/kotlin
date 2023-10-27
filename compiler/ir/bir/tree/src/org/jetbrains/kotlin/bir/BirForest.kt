@@ -316,7 +316,6 @@ class BirForest : BirElementParent() {
         var mainListIdx = 0
             private set
         private var next: BirElementBase? = null
-        private var prev: BirElementBase? = null
 
         override fun hasNext(): Boolean {
             if (next != null) return true
@@ -339,9 +338,7 @@ class BirForest : BirElementParent() {
             val array = slot.array
 
             while (true) {
-                prev?.let {
-                    addElementToIndex(it)
-                }
+                flushElementsWithInvalidatedIndexBuffer()
 
                 val idx = mainListIdx
                 var element: BirElementBase? = null
@@ -364,7 +361,6 @@ class BirForest : BirElementParent() {
 
                 if (element != null) {
                     mainListIdx++
-                    prev = element
                     return element
                 } else {
                     mainListIdx = 0
@@ -384,7 +380,6 @@ class BirForest : BirElementParent() {
 
             slot.size = 0
             next = null
-            prev = null
             canceled = true
         }
     }
