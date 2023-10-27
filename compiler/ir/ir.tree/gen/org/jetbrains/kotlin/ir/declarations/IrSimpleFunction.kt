@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.simpleFunction]
  */
-abstract class IrSimpleFunction : IrFunction(),
-        IrOverridableDeclaration<IrSimpleFunctionSymbol>, IrAttributeContainer {
+abstract class IrSimpleFunction : IrFunction(), IrOverridableDeclaration<IrSimpleFunctionSymbol>, IrAttributeContainer {
     abstract override val symbol: IrSimpleFunctionSymbol
 
     abstract var isTailrec: Boolean

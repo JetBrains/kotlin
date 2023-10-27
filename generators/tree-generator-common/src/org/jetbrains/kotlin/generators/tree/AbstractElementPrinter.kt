@@ -69,7 +69,7 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field>,
 
             if (body.isNotEmpty()) {
                 println(" {")
-                print(body)
+                print(body.trimStart('\n'))
                 print("}")
             }
             println()

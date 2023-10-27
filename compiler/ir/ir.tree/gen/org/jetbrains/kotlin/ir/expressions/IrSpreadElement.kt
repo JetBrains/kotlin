@@ -23,8 +23,8 @@ abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSpreadElement(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D):
-            IrSpreadElement = accept(transformer, data) as IrSpreadElement
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrSpreadElement =
+        accept(transformer, data) as IrSpreadElement
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)

@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.ir.generator.model
 
-import com.squareup.kotlinpoet.CodeBlock
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.FieldConfig
-import org.jetbrains.kotlin.ir.generator.util.*
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
@@ -77,7 +75,7 @@ class Element(
 
     override val kDoc = config.kDoc
 
-    val additionalImports: List<Import> = config.additionalImports
+    val usedTypes: List<Importable> = config.usedTypes
 
     override fun toString() = name
 
@@ -112,25 +110,33 @@ class Element(
 typealias ElementRef = GenericElementRef<Element, Field>
 typealias ElementOrRef = GenericElementOrRef<Element, Field>
 
+@Suppress("LeakingThis")
 sealed class Field(
     config: FieldConfig,
     override val name: String,
     override var isMutable: Boolean,
     val isChild: Boolean,
 ) : AbstractField() {
-    abstract val baseDefaultValue: CodeBlock?
-    abstract val baseGetter: CodeBlock?
-    var isOverride = false
-    var needsDescriptorApiAnnotation = false
+    abstract val baseDefaultValue: String?
+    abstract val baseGetter: String?
     abstract val transformable: Boolean
 
     val useInIrFactoryStrategy = config.useFieldInIrFactoryStrategy
+
     init {
         kDoc = config.kDoc
+        optInAnnotation = config.optInAnnotation
+        deprecation = config.deprecation
+        visibility = config.visibility
     }
 
-    val printProperty = config.printProperty
-    val generationCallback = config.generationCallback
+    override val withGetter: Boolean
+        get() = baseGetter != null
+
+    override val defaultValueInImplementation: String?
+        get() = baseGetter ?: baseDefaultValue
+
+    override val customSetter: String? = config.customSetter
 
     override fun toString() = "$name: $typeRef"
 
@@ -138,7 +144,7 @@ sealed class Field(
         get() = false
 
     override val isFinal: Boolean
-        get() = false
+        get() = defaultValueInImplementation != null
 
     override val isLateinit: Boolean
         get() = false
@@ -153,8 +159,8 @@ class SingleField(
     override var typeRef: TypeRefWithNullability,
     mutable: Boolean,
     isChild: Boolean,
-    override val baseDefaultValue: CodeBlock?,
-    override val baseGetter: CodeBlock?,
+    override val baseDefaultValue: String?,
+    override val baseGetter: String?,
 ) : Field(config, name, mutable, isChild) {
     override val transformable: Boolean
         get() = isMutable
@@ -168,8 +174,8 @@ class ListField(
     mutable: Boolean,
     isChild: Boolean,
     override val transformable: Boolean,
-    override val baseDefaultValue: CodeBlock?,
-    override val baseGetter: CodeBlock?,
+    override val baseDefaultValue: String?,
+    override val baseGetter: String?,
 ) : Field(config, name, mutable, isChild) {
     override val typeRef: TypeRefWithNullability
         get() = listType.withArgs(elementType)

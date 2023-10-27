@@ -35,6 +35,17 @@ abstract class AbstractFieldPrinter<Field : AbstractField>(
     ) {
         printer.run {
             printKDoc(field.kDoc)
+
+            field.deprecation?.let {
+                println("@Deprecated(")
+                withIndent {
+                    println("message = \"", it.message, "\",")
+                    println("replaceWith = ReplaceWith(\"", it.replaceWith.expression, "\"),")
+                    println("level = DeprecationLevel.", it.level.name, ",")
+                }
+                println(")")
+            }
+
             if (field.isVolatile) {
                 println("@", type<Volatile>().render())
             }
@@ -48,6 +59,10 @@ abstract class AbstractFieldPrinter<Field : AbstractField>(
                     inConstructor -> println("@property:", rendered)
                     else -> println("@", rendered)
                 }
+            }
+
+            if (field.visibility != Visibility.PUBLIC) {
+                print(field.visibility.name.toLowerCaseAsciiOnly(), " ")
             }
 
             modality?.let {

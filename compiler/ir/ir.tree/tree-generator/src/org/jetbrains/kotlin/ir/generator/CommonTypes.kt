@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.ir.generator
 
 import org.jetbrains.kotlin.generators.tree.TypeKind
+import org.jetbrains.kotlin.generators.tree.type
 import org.jetbrains.kotlin.ir.generator.Packages.declarations
 import org.jetbrains.kotlin.ir.generator.Packages.exprs
 import org.jetbrains.kotlin.ir.generator.Packages.symbols
 import org.jetbrains.kotlin.ir.generator.Packages.tree
 import org.jetbrains.kotlin.ir.generator.Packages.types
+import org.jetbrains.kotlin.ir.generator.Packages.util
 import org.jetbrains.kotlin.ir.generator.Packages.visitors
-import org.jetbrains.kotlin.generators.tree.type
 
 object Packages {
     const val tree = "org.jetbrains.kotlin.ir"
@@ -22,6 +23,7 @@ object Packages {
     const val types = "org.jetbrains.kotlin.ir.types"
     const val visitors = "org.jetbrains.kotlin.ir.visitors"
     const val descriptors = "org.jetbrains.kotlin.descriptors"
+    const val util = "org.jetbrains.kotlin.ir.util"
 }
 
 val elementBaseType = type(tree, "IrElementBase", TypeKind.Class)
@@ -34,6 +36,7 @@ val mutableAnnotationContainerType = type(declarations, "IrMutableAnnotationCont
 val irTypeType = type(types, "IrType")
 val irFactoryType = type(declarations, "IrFactory")
 val stageControllerType = type(declarations, "StageController", TypeKind.Class)
+val idSignatureType = type(util, "IdSignature", TypeKind.Class)
 
 val symbolType = type(symbols, "IrSymbol")
 val packageFragmentSymbolType = type(symbols, "IrPackageFragmentSymbol")
@@ -57,3 +60,6 @@ val returnableBlockSymbolType = type(symbols, "IrReturnableBlockSymbol")
 val propertySymbolType = type(symbols, "IrPropertySymbol")
 val localDelegatedPropertySymbolType = type(symbols, "IrLocalDelegatedPropertySymbol")
 val typeAliasSymbolType = type(symbols, "IrTypeAliasSymbol")
+
+val obsoleteDescriptorBasedApiAnnotation = type(BASE_PACKAGE, "ObsoleteDescriptorBasedAPI", TypeKind.Class)
+val unsafeDuringIrConstructionApiAnnotation = type(symbols, "UnsafeDuringIrConstructionAPI", TypeKind.Class)

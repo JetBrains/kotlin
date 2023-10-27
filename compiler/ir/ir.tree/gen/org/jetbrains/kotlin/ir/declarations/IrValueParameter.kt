@@ -40,8 +40,7 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
      * If `true`, the value parameter does not participate in [IdSignature] computation.
      *
      * This is a workaround that is needed for better support of compiler plugins.
-     * Suppose you have the following code and some IR plugin that adds a value parameter to
-     * functions
+     * Suppose you have the following code and some IR plugin that adds a value parameter to functions
      * marked with the `@PluginMarker` annotation.
      * ```kotlin
      * @PluginMarker
@@ -55,11 +54,9 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
      * ```
      *
      * If a compiler plugin adds parameters to an [IrFunction],
-     * the representations of the function in the frontend and in the backend may diverge,
-     * potentially causing signature mismatch and
+     * the representations of the function in the frontend and in the backend may diverge, potentially causing signature mismatch and
      * linkage errors (see [KT-40980](https://youtrack.jetbrains.com/issue/KT-40980)).
-     * We wouldn't want IR plugins to affect the frontend representation, since in an IDE you'd want
-     * to be able to see those
+     * We wouldn't want IR plugins to affect the frontend representation, since in an IDE you'd want to be able to see those
      * declarations in their original form (without the `$extra` parameter).
      *
      * To fix this problem, [isHidden] was introduced.
@@ -73,8 +70,8 @@ abstract class IrValueParameter : IrDeclarationBase(), IrValueDeclaration {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D):
-            IrValueParameter = accept(transformer, data) as IrValueParameter
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrValueParameter =
+        accept(transformer, data) as IrValueParameter
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         defaultValue?.accept(visitor, data)

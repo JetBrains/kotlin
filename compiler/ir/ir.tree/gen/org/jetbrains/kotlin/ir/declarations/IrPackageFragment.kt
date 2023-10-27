@@ -28,9 +28,8 @@ abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSy
 
     /**
      * This should be a link to [IrModuleFragment] instead. 
-     *    
-     * Unfortunately, some package fragments (e.g. some synthetic ones and
-     * [IrExternalPackageFragment])
+     *
+     * Unfortunately, some package fragments (e.g. some synthetic ones and [IrExternalPackageFragment])
      * are not located in any IR module, but still have a module descriptor. 
      */
     abstract val moduleDescriptor: ModuleDescriptor

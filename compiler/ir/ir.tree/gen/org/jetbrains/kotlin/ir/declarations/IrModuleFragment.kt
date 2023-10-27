@@ -41,8 +41,8 @@ abstract class IrModuleFragment : IrElementBase(), IrElement {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitModuleFragment(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D):
-            IrModuleFragment = accept(transformer, data) as IrModuleFragment
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrModuleFragment =
+        accept(transformer, data) as IrModuleFragment
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         files.forEach { it.accept(visitor, data) }

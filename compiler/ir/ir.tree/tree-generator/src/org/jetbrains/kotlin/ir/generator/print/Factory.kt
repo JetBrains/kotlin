@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
 import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.ir.generator.IrTree
+import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
 import org.jetbrains.kotlin.ir.generator.config.UseFieldAsParameterInIrFactoryStrategy
 import org.jetbrains.kotlin.ir.generator.irFactoryType
 import org.jetbrains.kotlin.ir.generator.model.Element
@@ -28,7 +29,6 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile = p
     irFactoryType.packageName,
     irFactoryType.simpleName,
 ) {
-    println()
     println("interface ", irFactoryType.simpleName, " {")
     withIndent {
         println("val stageController: ", stageControllerType.render())

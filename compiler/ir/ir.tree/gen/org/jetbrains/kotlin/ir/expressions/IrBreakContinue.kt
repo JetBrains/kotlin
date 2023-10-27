@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-
 /**
  * A non-leaf IR tree element.
  *

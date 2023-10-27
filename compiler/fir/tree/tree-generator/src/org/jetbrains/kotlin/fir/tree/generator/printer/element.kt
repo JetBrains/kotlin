@@ -88,6 +88,5 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
 
 fun Element.generateCode(generationPath: File): GeneratedFile =
     printGeneratedType(generationPath, TREE_GENERATOR_README, packageName, typeName) {
-        println()
         ElementPrinter(this).printElement(element)
     }

@@ -5,27 +5,26 @@
 
 package org.jetbrains.kotlin.ir.generator
 
-import com.squareup.kotlinpoet.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
 import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig.Category.*
+import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.*
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Array
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.List
-import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.config.SimpleFieldConfig
 import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typeName
-import org.jetbrains.kotlin.ir.generator.print.toPoet
-import org.jetbrains.kotlin.ir.generator.util.*
-import org.jetbrains.kotlin.ir.generator.util.Import
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.withIndent
 
 // Note the style of the DSL to describe IR elements, which is these things in the following order:
 // 1) config (see properties of ElementConfig)
@@ -38,10 +37,11 @@ object IrTree : AbstractTreeBuilder() {
     private fun descriptor(typeName: String, nullable: Boolean = false): SimpleFieldConfig =
         field(
             name = "descriptor",
-            type = ClassRef<TypeParameterRef>(TypeKind.Interface, Packages.descriptors, typeName),
+            type = type(Packages.descriptors, typeName),
             mutable = false,
             nullable = nullable,
         ) {
+            optInAnnotation = obsoleteDescriptorBasedApiAnnotation
             skipInIrFactory()
         }
 
@@ -55,16 +55,15 @@ object IrTree : AbstractTreeBuilder() {
             skipInIrFactory()
         }
 
-        val oldCallback = generationCallback
         generationCallback = {
-            oldCallback?.invoke(this)
-            addFunction(
-                FunSpec.builder("acquireSymbol")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .addParameter("symbol", symbol.toPoet())
-                    .returns(this@element.toPoet())
-                    .build(),
+            println()
+            printFunctionDeclaration(
+                name = "acquireSymbol",
+                parameters = listOf(FunctionParameter("symbol", symbol)),
+                returnType = this@element,
+                modality = Modality.ABSTRACT,
             )
+            println()
         }
     }
 
@@ -208,7 +207,7 @@ object IrTree : AbstractTreeBuilder() {
         +field("isCrossinline", boolean)
         +field("isNoinline", boolean)
         +field("isHidden", boolean) {
-            additionalImports.add(Import("org.jetbrains.kotlin.ir.util", "IdSignature"))
+            usedTypes.add(idSignatureType)
             kDoc = """
             If `true`, the value parameter does not participate in [IdSignature] computation.
 
@@ -349,9 +348,7 @@ object IrTree : AbstractTreeBuilder() {
                    before IR for all sources is built (because fake-overrides of lazy classes may depend on
                    declaration of source classes, e.g. for java source classes)
             """.trimIndent()
-            generationCallback = {
-                addAnnotation(ClassName("org.jetbrains.kotlin.ir.symbols", "UnsafeDuringIrConstructionAPI"))
-            }
+            optInAnnotation = unsafeDuringIrConstructionApiAnnotation
         }
     }
     val typeParametersContainer: ElementConfig by element(Declaration) {
@@ -446,7 +443,7 @@ object IrTree : AbstractTreeBuilder() {
         fieldsToSkipInIrFactoryMethod.add("origin")
 
         +field("symbol", symbolType, mutable = false) {
-            baseGetter = code("error(\"Should never be called\")")
+            baseGetter = "error(\"Should never be called\")"
             skipInIrFactory()
         }
     }
@@ -497,16 +494,18 @@ object IrTree : AbstractTreeBuilder() {
         transformByChildren = true
         generateIrFactoryMethod = false
 
-        +descriptor("ModuleDescriptor")
+        +descriptor("ModuleDescriptor").apply {
+            optInAnnotation = null
+        }
         +field("name", type<Name>(), mutable = false)
         +field("irBuiltins", type(Packages.tree, "IrBuiltIns"), mutable = false)
         +listField("files", file, mutability = List, isChild = true)
-        val undefinedOffset = MemberName(Packages.tree, "UNDEFINED_OFFSET")
+        usedTypes += ArbitraryImportable(Packages.tree, "UNDEFINED_OFFSET")
         +field("startOffset", int, mutable = false) {
-            baseGetter = code("%M", undefinedOffset)
+            baseGetter = "UNDEFINED_OFFSET"
         }
         +field("endOffset", int, mutable = false) {
-            baseGetter = code("%M", undefinedOffset)
+            baseGetter = "UNDEFINED_OFFSET"
         }
     }
     val property: ElementConfig by element(Declaration) {
@@ -621,7 +620,9 @@ object IrTree : AbstractTreeBuilder() {
         parent(symbolOwner)
 
         +symbol(packageFragmentSymbolType)
-        +field("packageFragmentDescriptor", type(Packages.descriptors, "PackageFragmentDescriptor"), mutable = false)
+        +field("packageFragmentDescriptor", type(Packages.descriptors, "PackageFragmentDescriptor"), mutable = false) {
+            optInAnnotation = obsoleteDescriptorBasedApiAnnotation
+        }
         +field("moduleDescriptor", type(Packages.descriptors, "ModuleDescriptor"), mutable = false) {
             kDoc = """
             This should be a link to [IrModuleFragment] instead. 
@@ -632,16 +633,13 @@ object IrTree : AbstractTreeBuilder() {
         }
         +field("packageFqName", type<FqName>())
         +field("fqName", type<FqName>()) {
-            baseGetter = code("packageFqName")
-            generationCallback = {
-                val deprecatedAnnotation = AnnotationSpec.builder(Deprecated::class)
-                    .addMember(code("message = \"Please use `packageFqName` instead\""))
-                    .addMember(code("replaceWith = ReplaceWith(\"packageFqName\")"))
-                    .addMember(code("level = DeprecationLevel.ERROR"))
-                    .build()
-                addAnnotation(deprecatedAnnotation)
-                setter(FunSpec.setterBuilder().addParameter("value", FqName::class).addCode(code("packageFqName = value")).build())
-            }
+            baseGetter = "packageFqName"
+            customSetter = "packageFqName = value"
+            deprecation = Deprecated(
+                "Please use `packageFqName` instead",
+                ReplaceWith("packageFqName"),
+                DeprecationLevel.ERROR,
+            )
         }
     }
     val externalPackageFragment: ElementConfig by element(Declaration) {
@@ -679,11 +677,11 @@ object IrTree : AbstractTreeBuilder() {
         parent(attributeContainer)
 
         +field("attributeOwnerId", attributeContainer) {
-            baseDefaultValue = code("this")
+            baseDefaultValue = "this"
             skipInIrFactory()
         }
         +field("originalBeforeInline", attributeContainer, nullable = true) {
-            baseDefaultValue = code("null")
+            baseDefaultValue = "null"
             skipInIrFactory()
         }
         +field("type", irTypeType)
@@ -740,67 +738,79 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationReference)
 
         +field("dispatchReceiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("null")
+            baseDefaultValue = "null"
         }
         +field("extensionReceiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("null")
+            baseDefaultValue = "null"
         }
         +symbol(s)
         +field("origin", statementOriginType, nullable = true)
         +listField("valueArguments", expression.copy(nullable = true), mutability = Array, isChild = true) {
-            generationCallback = {
-                addModifiers(KModifier.PROTECTED)
-            }
+            visibility = Visibility.PROTECTED
         }
         +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array) {
-            generationCallback = {
-                addModifiers(KModifier.PROTECTED)
-            }
+            visibility = Visibility.PROTECTED
         }
 
-        val checkArgumentSlotAccess = MemberName("org.jetbrains.kotlin.ir.expressions", "checkArgumentSlotAccess", true)
+        usedTypes += ArbitraryImportable(Packages.exprs, "checkArgumentSlotAccess")
         generationCallback = {
-            addFunction(
-                FunSpec.builder("getValueArgument")
-                    .addParameter("index", int.toPoet())
-                    .returns(expression.toPoet().copy(nullable = true))
-                    .addCode("%M(\"value\", index, valueArguments.size)\n", checkArgumentSlotAccess)
-                    .addCode("return valueArguments[index]")
-                    .build()
+            val indexParam = FunctionParameter("index", StandardTypes.int)
+            val valueArgumentParam = FunctionParameter("valueArgument", expression.copy(nullable = true))
+            val typeArgumentParam = FunctionParameter("type", irTypeType.copy(nullable = true))
+
+            fun printSizeProperty(listName: String) {
+                println()
+                println("val ", listName, "Count: Int")
+                withIndent {
+                    println("get() = ", listName, ".size")
+                }
+            }
+
+            printSizeProperty("valueArguments")
+            printSizeProperty("typeArguments")
+
+            fun printFunction(
+                name: String,
+                additionalParameter: FunctionParameter?,
+                returnType: TypeRefWithNullability,
+                vararg statements: String,
+            ) {
+                println()
+                printFunctionDeclaration(name, listOf(indexParam) + listOfNotNull(additionalParameter), returnType)
+                println(" {")
+                withIndent {
+                    statements.forEach { println(it) }
+                }
+                println("}")
+            }
+
+            printFunction(
+                "getValueArgument",
+                null,
+                expression.copy(nullable = true),
+                "checkArgumentSlotAccess(\"value\", index, valueArguments.size)",
+                "return valueArguments[index]",
             )
-            addFunction(
-                FunSpec.builder("getTypeArgument")
-                    .addParameter("index", int.toPoet())
-                    .returns(irTypeType.toPoet().copy(nullable = true))
-                    .addCode("%M(\"type\", index, typeArguments.size)\n", checkArgumentSlotAccess)
-                    .addCode("return typeArguments[index]")
-                    .build()
+            printFunction(
+                "getTypeArgument",
+                null,
+                irTypeType.copy(nullable = true),
+                "checkArgumentSlotAccess(\"type\", index, typeArguments.size)",
+                "return typeArguments[index]",
             )
-            addFunction(
-                FunSpec.builder("putValueArgument")
-                    .addParameter("index", int.toPoet())
-                    .addParameter("valueArgument", expression.toPoet().copy(nullable = true))
-                    .addCode("%M(\"value\", index, valueArguments.size)\n", checkArgumentSlotAccess)
-                    .addCode("valueArguments[index] = valueArgument")
-                    .build()
+            printFunction(
+                "putValueArgument",
+                valueArgumentParam,
+                StandardTypes.unit,
+                "checkArgumentSlotAccess(\"value\", index, valueArguments.size)",
+                "valueArguments[index] = valueArgument",
             )
-            addFunction(
-                FunSpec.builder("putTypeArgument")
-                    .addParameter("index", int.toPoet())
-                    .addParameter("type", irTypeType.toPoet().copy(nullable = true))
-                    .addCode("%M(\"type\", index, typeArguments.size)\n", checkArgumentSlotAccess)
-                    .addCode("typeArguments[index] = type")
-                    .build()
-            )
-            addProperty(
-                PropertySpec.builder("valueArgumentsCount", int.toPoet())
-                    .getter(FunSpec.getterBuilder().addCode("return valueArguments.size").build())
-                    .build()
-            )
-            addProperty(
-                PropertySpec.builder("typeArgumentsCount", int.toPoet())
-                    .getter(FunSpec.getterBuilder().addCode("return typeArguments.size").build())
-                    .build()
+            printFunction(
+                "putTypeArgument",
+                typeArgumentParam,
+                StandardTypes.unit,
+                "checkArgumentSlotAccess(\"type\", index, typeArguments.size)",
+                "typeArguments[index] = type",
             )
         }
     }
@@ -867,10 +877,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("origin", statementOriginType, nullable = true)
         +listField("statements", statement, mutability = List, isChild = true) {
-            generationCallback = {
-                addModifiers(KModifier.OVERRIDE)
-            }
-            baseDefaultValue = code("ArrayList(2)")
+            baseDefaultValue = "ArrayList(2)"
         }
     }
     val block: ElementConfig by element(Expression) {
@@ -913,7 +920,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("loop", loop)
         +field("label", string, nullable = true) {
-            baseDefaultValue = code("null")
+            baseDefaultValue = "null"
         }
     }
     val `break` by element(Expression) {
@@ -993,19 +1000,22 @@ object IrTree : AbstractTreeBuilder() {
         parent(expression)
 
         generationCallback = {
-            addFunction(
-                FunSpec.builder("contentEquals")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .addParameter("other", constantValue.toPoet())
-                    .returns(boolean.toPoet())
-                    .build()
+            println()
+            printFunctionDeclaration(
+                name = "contentEquals",
+                parameters = listOf(FunctionParameter("other", constantValue)),
+                returnType = StandardTypes.boolean,
+                modality = Modality.ABSTRACT,
             )
-            addFunction(
-                FunSpec.builder("contentHashCode")
-                    .addModifiers(KModifier.ABSTRACT)
-                    .returns(int.toPoet())
-                    .build()
+            println()
+            println()
+            printFunctionDeclaration(
+                name = "contentHashCode",
+                parameters = emptyList(),
+                returnType = StandardTypes.int,
+                modality = Modality.ABSTRACT,
             )
+            println()
         }
     }
     val constantPrimitive: ElementConfig by element(Expression) {
@@ -1093,7 +1103,7 @@ object IrTree : AbstractTreeBuilder() {
         +symbol(fieldSymbolType, mutable = true)
         +field("superQualifierSymbol", classSymbolType, nullable = true)
         +field("receiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("null")
+            baseDefaultValue = "null"
         }
         +field("origin", statementOriginType, nullable = true)
     }
@@ -1141,11 +1151,11 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("origin", statementOriginType, nullable = true)
         +field("body", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("null")
+            baseDefaultValue = "null"
         }
         +field("condition", expression, isChild = true)
         +field("label", string, nullable = true) {
-            baseDefaultValue = code("null")
+            baseDefaultValue = "null"
         }
     }
     val whileLoop: ElementConfig by element(Expression) {
