@@ -51,6 +51,12 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
     }
 
     @Test
+    fun extensions() {
+        val testDir = File("native/native.tests/testData/SwiftExport/extensions")
+        runTest(testDir.absolutePath)
+    }
+    
+    @Test
     fun unknownSwiftType() {
         val testDir = File("native/native.tests/testData/SwiftExport/unknown_swift_type")
         runTest(testDir.absolutePath)
