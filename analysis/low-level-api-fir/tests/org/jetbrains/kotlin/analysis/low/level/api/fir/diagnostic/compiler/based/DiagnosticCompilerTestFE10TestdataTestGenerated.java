@@ -13973,6 +13973,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("whereClauseSyntax.kt")
+            public void testWhereClauseSyntax() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/whereClauseSyntax.kt");
+            }
+
+            @Test
             @TestMetadata("wildcardInValueParameter.kt")
             public void testWildcardInValueParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/wildcardInValueParameter.kt");

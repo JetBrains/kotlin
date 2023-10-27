@@ -1975,18 +1975,22 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeConstraint
      */
     private fun convertTypeConstraint(typeConstraint: LighterASTNode): TypeConstraint {
-        lateinit var identifier: String
-        lateinit var firType: FirTypeRef
-        lateinit var referenceExpression: LighterASTNode
-
-        val diagnostic = ConeSimpleDiagnostic(
-            "Type parameter annotations are not allowed inside where clauses", DiagnosticKind.AnnotationNotAllowed,
-        )
+        var identifier: String? = null
+        var firType: FirTypeRef? = null
+        var referenceExpression: LighterASTNode? = null
 
         val annotations = mutableListOf<FirAnnotation>()
         typeConstraint.forEachChildren {
             when (it.tokenType) {
-                ANNOTATION_ENTRY -> annotations += convertAnnotationEntry(it, diagnostic = diagnostic)
+                ANNOTATION_ENTRY -> {
+                    annotations +=
+                        convertAnnotationEntry(
+                            it,
+                            diagnostic = ConeSimpleDiagnostic(
+                                "Type parameter annotations are not allowed inside where clauses", DiagnosticKind.AnnotationNotAllowed,
+                            )
+                        )
+                }
                 REFERENCE_EXPRESSION -> {
                     identifier = it.asText
                     referenceExpression = it
@@ -1995,7 +1999,12 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
 
-        return TypeConstraint(annotations, identifier, firType, referenceExpression.toFirSourceElement())
+        return TypeConstraint(
+            annotations,
+            identifier,
+            firType ?: buildErrorTypeRef { },
+            (referenceExpression ?: typeConstraint).toFirSourceElement()
+        )
     }
 
     /**
@@ -2391,8 +2400,8 @@ class LightTreeRawFirDeclarationBuilder(
     ) where T : FirDeclaration, T : FirTypeParameterRefsOwner {
         val typeParamNames = typeParameters.map { it.name }.toSet()
         val result = typeConstraints.mapNotNull { constraint ->
-            val name = constraint.identifier.nameAsSafeName()
-            if (!typeParamNames.contains(name)) {
+            val name = constraint.identifier?.nameAsSafeName()
+            if (name != null && !typeParamNames.contains(name)) {
                 DanglingTypeConstraint(name, constraint.source)
             } else {
                 null

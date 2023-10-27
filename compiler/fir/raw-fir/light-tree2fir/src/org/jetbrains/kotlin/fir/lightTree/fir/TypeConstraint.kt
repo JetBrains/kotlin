@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 class TypeConstraint(
     val annotations: List<FirAnnotation>,
-    val identifier: String,
+    val identifier: String?,
     val firTypeRef: FirTypeRef,
     val source: KtSourceElement
 )
