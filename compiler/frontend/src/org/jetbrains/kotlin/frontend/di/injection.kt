@@ -159,6 +159,8 @@ fun StorageComponentContainer.configureModule(
     useInstance(KotlinTypePreparator.Default)
 
     configurePlatformIndependentComponents()
+
+    error("K1 is disabled: LV=$languageVersionSettings, MD: ${moduleContext.module.name}")
 }
 
 private fun StorageComponentContainer.configurePlatformIndependentComponents() {
