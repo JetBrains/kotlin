@@ -177,7 +177,7 @@ private val functionInliningPhase = makeCustomWasmModulePhase(
             inlineFunctionResolver = WasmInlineFunctionResolver(context),
             innerClassesSupport = context.innerClassesSupport,
             insertAdditionalImplicitCasts = true,
-            alwaysCreateTemporaryVariablesForArguments = true
+            alwaysCreateTemporaryVariablesForArguments = false
         ) {
             // Erasure results in additional casts, and every cast in `jsCheckIsNullOrUndefinedAdapter` results in infinite recursion.
             // This is safe as code of `jsCheckIsNullOrUndefinedAdapter` does not have reification-problematic code.
