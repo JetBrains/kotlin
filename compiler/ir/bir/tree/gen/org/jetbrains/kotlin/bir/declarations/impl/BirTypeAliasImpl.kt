@@ -66,7 +66,7 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -111,7 +111,7 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 2)
+            BirChildElementList(this, 2, false)
 
     private var _isActual: Boolean = isActual
 

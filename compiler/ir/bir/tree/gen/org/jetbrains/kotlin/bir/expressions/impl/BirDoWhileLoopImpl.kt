@@ -97,12 +97,12 @@ class BirDoWhileLoopImpl(
             }
         }
 
-    private var _condition: BirExpression = condition
+    private var _condition: BirExpression? = condition
 
     override var condition: BirExpression
         get() {
             recordPropertyRead()
-            return _condition
+            return _condition ?: throwChildElementRemoved("condition")
         }
         set(value) {
             if (_condition != value) {
@@ -132,7 +132,7 @@ class BirDoWhileLoopImpl(
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         _body?.acceptLite(visitor)
-        _condition.acceptLite(visitor)
+        _condition?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

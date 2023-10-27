@@ -63,7 +63,8 @@ class BirStringConcatenationImpl(
             }
         }
 
-    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1)
+    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1,
+            false)
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         arguments.acceptChildrenLite(visitor)

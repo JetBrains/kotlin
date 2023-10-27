@@ -91,7 +91,8 @@ class BirErrorCallExpressionImpl(
             }
         }
 
-    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1)
+    override val arguments: BirChildElementList<BirExpression> = BirChildElementList(this, 1,
+            false)
     init {
         initChild(_explicitReceiver)
     }

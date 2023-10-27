@@ -65,7 +65,7 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -123,12 +123,12 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _delegate: BirVariable = delegate
+    private var _delegate: BirVariable? = delegate
 
     override var delegate: BirVariable
         get() {
             recordPropertyRead()
-            return _delegate
+            return _delegate ?: throwChildElementRemoved("delegate")
         }
         set(value) {
             if (_delegate != value) {
@@ -138,12 +138,12 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _getter: BirSimpleFunction = getter
+    private var _getter: BirSimpleFunction? = getter
 
     override var getter: BirSimpleFunction
         get() {
             recordPropertyRead()
-            return _getter
+            return _getter ?: throwChildElementRemoved("getter")
         }
         set(value) {
             if (_getter != value) {
@@ -175,8 +175,8 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         annotations.acceptChildrenLite(visitor)
-        _delegate.acceptLite(visitor)
-        _getter.acceptLite(visitor)
+        _delegate?.acceptLite(visitor)
+        _getter?.acceptLite(visitor)
         _setter?.acceptLite(visitor)
     }
 
