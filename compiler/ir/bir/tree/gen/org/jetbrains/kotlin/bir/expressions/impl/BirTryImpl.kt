@@ -63,12 +63,12 @@ class BirTryImpl(
             }
         }
 
-    private var _tryResult: BirExpression = tryResult
+    private var _tryResult: BirExpression? = tryResult
 
     override var tryResult: BirExpression
         get() {
             recordPropertyRead()
-            return _tryResult
+            return _tryResult ?: throwChildElementRemoved("tryResult")
         }
         set(value) {
             if (_tryResult != value) {
@@ -78,7 +78,7 @@ class BirTryImpl(
             }
         }
 
-    override val catches: BirChildElementList<BirCatch> = BirChildElementList(this, 1)
+    override val catches: BirChildElementList<BirCatch> = BirChildElementList(this, 1, false)
 
     private var _finallyExpression: BirExpression? = finallyExpression
 
@@ -100,7 +100,7 @@ class BirTryImpl(
     }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        _tryResult.acceptLite(visitor)
+        _tryResult?.acceptLite(visitor)
         catches.acceptChildrenLite(visitor)
         _finallyExpression?.acceptLite(visitor)
     }

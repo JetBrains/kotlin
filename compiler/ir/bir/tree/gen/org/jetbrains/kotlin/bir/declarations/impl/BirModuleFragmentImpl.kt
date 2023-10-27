@@ -36,7 +36,7 @@ class BirModuleFragmentImpl(
             }
         }
 
-    override val files: BirChildElementList<BirFile> = BirChildElementList(this, 1)
+    override val files: BirChildElementList<BirFile> = BirChildElementList(this, 1, false)
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         files.acceptChildrenLite(visitor)

@@ -58,7 +58,7 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
         }
 
     override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1)
+            BirChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -88,12 +88,12 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    private var _body: BirBlockBody = body
+    private var _body: BirBlockBody? = body
 
     override var body: BirBlockBody
         get() {
             recordPropertyRead()
-            return _body
+            return _body ?: throwChildElementRemoved("body")
         }
         set(value) {
             if (_body != value) {
@@ -108,7 +108,7 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         annotations.acceptChildrenLite(visitor)
-        _body.acceptLite(visitor)
+        _body?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {

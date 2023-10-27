@@ -66,7 +66,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        initializer("BirChildElementList(this, %L)", childrenLists.indexOf(field) + 1)
+                        initializer("BirChildElementList(this, %L, %L)", childrenLists.indexOf(field) + 1, (field.elementType as ElementOrRef).nullable)
                     } else if (field is SingleField && field.isMutable) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, poetType)

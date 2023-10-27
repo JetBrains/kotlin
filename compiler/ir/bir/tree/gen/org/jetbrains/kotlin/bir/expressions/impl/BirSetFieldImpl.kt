@@ -128,12 +128,12 @@ class BirSetFieldImpl(
             }
         }
 
-    private var _value: BirExpression = value
+    private var _value: BirExpression? = value
 
     override var value: BirExpression
         get() {
             recordPropertyRead()
-            return _value
+            return _value ?: throwChildElementRemoved("value")
         }
         set(value) {
             if (_value != value) {
@@ -149,7 +149,7 @@ class BirSetFieldImpl(
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         _receiver?.acceptLite(visitor)
-        _value.acceptLite(visitor)
+        _value?.acceptLite(visitor)
     }
 
     override fun replaceChildProperty(old: BirElement, new: BirElement?) {
