@@ -79,14 +79,15 @@ internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
     override val token: KtLifetimeToken,
 ) : AbstractKtCallResolver(), KtFirAnalysisSessionComponent {
-    private val equalsSymbolInAny: FirNamedFunctionSymbol by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val equalsSymbolInAny: FirNamedFunctionSymbol? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         val session = analysisSession.useSiteSession
+        val anyFirClass = session.builtinTypes.anyType.toRegularClassSymbol(session) ?: return@lazy null
         val scope = session.declaredMemberScope(
-            session.builtinTypes.anyType.toRegularClassSymbol(session)!!,
+            anyFirClass,
             memberRequiredPhase = FirResolvePhase.STATUS,
         )
 
-        lateinit var result: FirNamedFunctionSymbol
+        var result: FirNamedFunctionSymbol? = null
         scope.processFunctionsByName(EQUALS) {
             result = it
         }
@@ -1217,13 +1218,12 @@ internal class KtFirCallResolver(
         val rightPsi = binaryExpression.right ?: return null
         return when (operation) {
             FirOperation.EQ, FirOperation.NOT_EQ -> {
-                val equalsSymbolInAny = equalsSymbolInAny
                 val leftOperand = arguments.firstOrNull() ?: return null
                 val session = analysisSession.useSiteSession
                 val leftOperandType = leftOperand.resolvedType
 
                 val classSymbol = leftOperandType.fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
-                val equalsSymbol = classSymbol?.getEqualsSymbol(equalsSymbolInAny) ?: equalsSymbolInAny
+                val equalsSymbol = classSymbol?.getEqualsSymbol() ?: equalsSymbolInAny ?: return null
                 val ktSignature = equalsSymbol.toKtSignature()
                 KtSuccessCallInfo(
                     KtSimpleFunctionCall(
@@ -1244,7 +1244,7 @@ internal class KtFirCallResolver(
         }
     }
 
-    private fun FirClassSymbol<*>.getEqualsSymbol(equalsSymbolInAny: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
+    private fun FirClassSymbol<*>.getEqualsSymbol(): FirNamedFunctionSymbol? {
         val scope = unsubstitutedScope(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),

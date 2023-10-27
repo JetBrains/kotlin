@@ -665,6 +665,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("noBuiltIns.kt")
+    public void testNoBuiltIns() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/noBuiltIns.kt");
+    }
+
+    @Test
     @TestMetadata("postfixUnaryOperatorOnVar.kt")
     public void testPostfixUnaryOperatorOnVar() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/postfixUnaryOperatorOnVar.kt");
