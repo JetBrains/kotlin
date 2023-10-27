@@ -16,6 +16,10 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-spec"))
     testImplementation(projectTests(":generators:analysis-api-generator"))
 
+    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testImplementation(projectTests(":analysis:analysis-api-impl-barebone"))
+    testImplementation(projectTests(":analysis:low-level-api-fir:low-level-api-fir-native"))
+
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
