@@ -16800,6 +16800,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("lambdaParameterTypeFixation.kt")
+                public void testLambdaParameterTypeFixation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/lambdaParameterTypeFixation.kt");
+                }
+
+                @Test
                 @TestMetadata("manyArgsDifferentYields.kt")
                 public void testManyArgsDifferentYields() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/manyArgsDifferentYields.kt");
