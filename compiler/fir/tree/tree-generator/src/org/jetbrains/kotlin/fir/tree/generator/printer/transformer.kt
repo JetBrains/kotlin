@@ -48,7 +48,7 @@ private class TransformerPrinter(
             println()
             val elementParameterName = element.safeDecapitalizedName
             if (element.isRootElement) {
-                val elementTP = TypeVariable("E", listOf(element), variance = Variance.INVARIANT)
+                val elementTP = TypeVariable("E", listOf(element))
                 printFunctionDeclaration(
                     name = "transformElement",
                     parameters = listOf(
