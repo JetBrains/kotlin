@@ -1,0 +1,45 @@
+FILE: Map.kt
+    package some
+
+    public final class Map : R|kotlin/Any| {
+        public constructor(): R|some/Map| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|some/Map.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun of(): R|kotlin/Int| {
+                ^of Int(42)
+            }
+
+        }
+
+    }
+FILE: Map.kt
+    package other
+
+    public final class Map : R|kotlin/Any| {
+        public constructor(): R|other/Map| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: test.kt
+    public final fun test(): <ERROR TYPE REF: Unresolved name: of> {
+        ^test Q|kotlin/collections/Map|.<Unresolved name: of>#()
+    }
+FILE: test2.kt
+    public final fun test2(): <ERROR TYPE REF: Unresolved name: of> {
+        ^test2 Q|kotlin/collections/Map|.<Unresolved name: of>#()
+    }
+FILE: test3.kt
+    public final fun test3(): R|ft<kotlin/collections/MutableMap<kotlin/String!, kotlin/String!>, kotlin/collections/Map<kotlin/String!, kotlin/String!>?>| {
+        ^test3 Q|java/util/Map|.R|java/util/Map.of*s|<R|kotlin/String|, R|kotlin/String|>()
+    }
+FILE: test4.kt
+    public final fun test4(): R|kotlin/Int| {
+        ^test4 Q|some/Map|.R|some/Map.Companion.of|()
+    }
