@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.Abstrac
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
@@ -170,6 +171,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
     group("types", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractTypeByDeclarationReturnTypeTest::class) {
             model(it, "byDeclarationReturnType")
+        }
+
+        test(AbstractBuiltInTypeTest::class) {
+            model(it, "builtins")
         }
     }
 

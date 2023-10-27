@@ -1,0 +1,12 @@
+annotationsList: []
+candidateClassSymbols: []
+errorMessage: Symbol not found for kotlin/Any
+nullability: NON_NULLABLE
+qualifiers: [
+  qualifier:
+    name: kotlin
+    typeArguments: []
+  qualifier:
+    name: Any
+    typeArguments: []
+]

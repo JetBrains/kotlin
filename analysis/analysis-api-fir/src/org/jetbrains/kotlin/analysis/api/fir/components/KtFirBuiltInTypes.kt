@@ -42,7 +42,7 @@ internal class KtFirBuiltInTypes(
     override val NULLABLE_ANY: KtType by cachedBuiltin(builtinTypes.nullableAnyType)
     override val NULLABLE_NOTHING: KtType by cachedBuiltin(builtinTypes.nullableNothingType)
 
-    private fun cachedBuiltin(builtinTypeRef: FirImplicitBuiltinTypeRef): ValidityAwareCachedValue<KtFirUsualClassType> = cached {
-        KtFirUsualClassType(builtinTypeRef.type as ConeClassLikeTypeImpl, builder)
+    private fun cachedBuiltin(builtinTypeRef: FirImplicitBuiltinTypeRef): ValidityAwareCachedValue<KtType> = cached {
+        builder.typeBuilder.buildKtType(builtinTypeRef)
     }
 }
