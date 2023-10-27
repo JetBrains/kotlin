@@ -113,7 +113,7 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
             block(tempDir)
         } finally {
             if (cleanUpAfterUse) {
-                tempDir.delete()
+                tempDir.deleteRecursively()
             }
         }
     }
