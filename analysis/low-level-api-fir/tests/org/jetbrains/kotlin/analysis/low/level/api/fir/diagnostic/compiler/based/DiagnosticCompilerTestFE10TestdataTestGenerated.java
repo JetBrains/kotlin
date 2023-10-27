@@ -6454,6 +6454,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("identityCompare.kt")
+                public void testIdentityCompare() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/identityCompare.kt");
+                }
+
+                @Test
                 @TestMetadata("integer.kt")
                 public void testInteger() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/integer.kt");
@@ -6529,6 +6535,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 @TestMetadata("unaryMinusIndependentExpType.kt")
                 public void testUnaryMinusIndependentExpType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/unaryMinusIndependentExpType.kt");
+                }
+
+                @Test
+                @TestMetadata("unsignedOperations.kt")
+                public void testUnsignedOperations() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/unsignedOperations.kt");
                 }
             }
 

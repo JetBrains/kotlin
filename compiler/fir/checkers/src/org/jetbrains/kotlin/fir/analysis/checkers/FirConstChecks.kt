@@ -80,9 +80,20 @@ internal fun checkConstantArguments(
         expression is FirComparisonExpression -> {
             return checkConstantArguments(expression.compareToCall, session)
         }
-        expression is FirStringConcatenationCall || expression is FirEqualityOperatorCall -> {
+        expression is FirStringConcatenationCall -> {
             for (exp in (expression as FirCall).arguments) {
                 if (exp is FirResolvedQualifier || expression.isForbiddenComplexConstant(session)) {
+                    return ConstantArgumentKind.NOT_CONST
+                }
+                checkConstantArguments(exp, session)?.let { return it }
+            }
+        }
+        expression is FirEqualityOperatorCall -> {
+            if (expression.operation == FirOperation.IDENTITY || expression.operation == FirOperation.NOT_IDENTITY) {
+                return ConstantArgumentKind.NOT_CONST
+            }
+            for (exp in (expression as FirCall).arguments) {
+                if (exp is FirResolvedQualifier || expression.isForbiddenComplexConstant(session) || exp.resolvedType.isUnsignedType) {
                     return ConstantArgumentKind.NOT_CONST
                 }
                 checkConstantArguments(exp, session)?.let { return it }
