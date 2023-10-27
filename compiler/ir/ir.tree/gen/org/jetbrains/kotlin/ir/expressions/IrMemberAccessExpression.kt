@@ -38,18 +38,6 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     val typeArgumentsCount: Int
         get() = typeArguments.size
 
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        dispatchReceiver?.accept(visitor, data)
-        extensionReceiver?.accept(visitor, data)
-        valueArguments.forEach { it?.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
-        extensionReceiver = extensionReceiver?.transform(transformer, data)
-        valueArguments.transformInPlace(transformer, data)
-    }
-
     fun getValueArgument(index: Int): IrExpression? {
         checkArgumentSlotAccess("value", index, valueArguments.size)
         return valueArguments[index]
@@ -68,5 +56,17 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     fun putTypeArgument(index: Int, type: IrType?) {
         checkArgumentSlotAccess("type", index, typeArguments.size)
         typeArguments[index] = type
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        dispatchReceiver?.accept(visitor, data)
+        extensionReceiver?.accept(visitor, data)
+        valueArguments.forEach { it?.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
+        extensionReceiver = extensionReceiver?.transform(transformer, data)
+        valueArguments.transformInPlace(transformer, data)
     }
 }

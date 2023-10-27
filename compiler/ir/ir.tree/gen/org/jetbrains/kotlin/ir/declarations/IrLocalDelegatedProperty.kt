@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedProperty]
  */
-abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWithName,
-        IrSymbolOwner, IrMetadataSourceOwner {
+abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWithName, IrSymbolOwner, IrMetadataSourceOwner {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: VariableDescriptorWithAccessors
 

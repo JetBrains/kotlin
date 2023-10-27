@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  *
  * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.localDelegatedPropertyReference]
  */
-abstract class IrLocalDelegatedPropertyReference :
-        IrCallableReference<IrLocalDelegatedPropertySymbol>() {
+abstract class IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDelegatedPropertySymbol>() {
     abstract var delegate: IrVariableSymbol
 
     abstract var getter: IrSimpleFunctionSymbol

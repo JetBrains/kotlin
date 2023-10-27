@@ -120,6 +120,5 @@ private fun printVisitorCommon(
     makePrinter: (SmartPrinter, ClassRef<*>) -> AbstractVisitorPrinter<Element, Field>,
 ): GeneratedFile =
     printGeneratedType(generationPath, TREE_GENERATOR_README, visitorType.packageName, visitorType.simpleName) {
-        println()
         makePrinter(this, visitorType).printVisitor(elements)
     }

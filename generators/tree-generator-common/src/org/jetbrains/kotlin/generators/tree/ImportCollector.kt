@@ -68,12 +68,20 @@ class ImportCollector(currentPackage: String) {
         addImport(packageName, "*")
     }
 
-    fun printAllImports(printer: Appendable) {
+    /**
+     * Prints all the collected imports in alphabetical order.
+     *
+     * @return `true` if at least one import was printed, `false` if no imports were printed.
+     */
+    fun printAllImports(printer: Appendable): Boolean {
+        var atLeastOneImport = false
         for ((packageName, entities) in imports) {
             for (entity in entities) {
+                atLeastOneImport = true
                 printer.append("import ", packageName, ".", entity, "\n")
             }
         }
+        return atLeastOneImport
     }
 
     fun addAllImports(importables: Collection<Importable>) {

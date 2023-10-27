@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-
 /**
  * A non-leaf IR tree element.
  *

@@ -45,7 +45,9 @@ fun printGeneratedType(
             }
             appendLine("package $packageName")
             appendLine()
-            importCollector.printAllImports(this)
+            if (importCollector.printAllImports(this)) {
+                appendLine()
+            }
             append(stringBuilder)
         }
     )

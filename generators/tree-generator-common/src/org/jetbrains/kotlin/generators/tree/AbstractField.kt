@@ -32,6 +32,10 @@ abstract class AbstractField {
     open val withGetter: Boolean get() = false
     open val customSetter: String? get() = null
 
+    var deprecation: Deprecated? = null
+
+    var visibility: Visibility = Visibility.PUBLIC
+
     var fromParent: Boolean = false
 
     open val defaultValueInImplementation: String? get() = null

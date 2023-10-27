@@ -50,7 +50,6 @@ fun config2model(config: Config): Model {
     configureInterfacesAndAbstractClasses(elements)
     addPureAbstractElement(elements, elementBaseType)
     markLeaves(elements)
-    configureDescriptorApiAnnotation(elements)
     processFieldOverrides(elements)
     addWalkableChildren(elements)
 
@@ -160,19 +159,6 @@ private fun markLeaves(elements: List<Element>) {
     }
 }
 
-private fun configureDescriptorApiAnnotation(elements: List<Element>) {
-    for (el in elements) {
-        for (field in el.fields) {
-            val type = field.typeRef
-            if (type is ClassRef<*> && type.packageName.startsWith("org.jetbrains.kotlin.descriptors") &&
-                type.simpleName.endsWith("Descriptor") && type.simpleName != "ModuleDescriptor"
-            ) {
-                field.needsDescriptorApiAnnotation = true
-            }
-        }
-    }
-}
-
 private fun processFieldOverrides(elements: List<Element>) {
     for (element in iterateElementsParentFirst(elements)) {
         for (field in element.fields) {
@@ -180,9 +166,8 @@ private fun processFieldOverrides(elements: List<Element>) {
                 for (parent in visited.elementParents) {
                     val overriddenField = parent.element.fields.singleOrNull { it.name == field.name }
                     if (overriddenField != null) {
-                        field.isOverride = true
-                        field.needsDescriptorApiAnnotation =
-                            field.needsDescriptorApiAnnotation || overriddenField.needsDescriptorApiAnnotation
+                        field.fromParent = true
+                        field.optInAnnotation = field.optInAnnotation ?: overriddenField.optInAnnotation
 
                         fun transformInferredType(type: TypeRef, overriddenType: TypeRef) =
                             type.takeUnless { it is InferredOverriddenType } ?: overriddenType

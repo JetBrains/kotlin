@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.generator.print.*
 import java.io.File
 
 const val BASE_PACKAGE = "org.jetbrains.kotlin.ir"
-const val VISITOR_PACKAGE = "$BASE_PACKAGE.visitors"
+
+internal const val TREE_GENERATOR_README = "compiler/ir/ir.tree/tree-generator/ReadMe.md"
 
 fun main(args: Array<String>) {
     val generationPath = args.firstOrNull()?.let { File(it) }

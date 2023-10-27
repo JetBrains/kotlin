@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.ir.generator.config
 
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeSpec
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.model.Element
-import org.jetbrains.kotlin.ir.generator.util.*
+import org.jetbrains.kotlin.utils.SmartPrinter
 
 class Config(
     val elements: List<ElementConfig>,
@@ -26,7 +23,7 @@ class ElementConfig(
     val params = mutableListOf<TypeVariable>()
     val parents = mutableListOf<TypeRef>()
     val fields = mutableListOf<FieldConfig>()
-    val additionalImports = mutableListOf<Import>()
+    val usedTypes = mutableListOf<Importable>()
 
     var visitorName: String? = null
     var visitorParent: ElementConfig? = null
@@ -53,7 +50,7 @@ class ElementConfig(
 
     var typeKind: TypeKind? = null
 
-    var generationCallback: (TypeSpec.Builder.() -> Unit)? = null
+    var generationCallback: (context(ImportCollector) SmartPrinter.() -> Unit)? = null
     var kDoc: String? = null
 
     override val element get() = this
@@ -139,10 +136,14 @@ sealed class FieldConfig(
     val name: String,
     val isChild: Boolean,
 ) {
-    var baseDefaultValue: CodeBlock? = null
-    var baseGetter: CodeBlock? = null
-    var printProperty = true
-    var strictCastInTransformChildren = false
+    var baseDefaultValue: String? = null
+    var baseGetter: String? = null
+    var customSetter: String? = null
+    var optInAnnotation: ClassRef<*>? = null
+
+    var deprecation: Deprecated? = null
+
+    var visibility = Visibility.PUBLIC
 
     internal var useFieldInIrFactoryStrategy: UseFieldAsParameterInIrFactoryStrategy =
         if (isChild) UseFieldAsParameterInIrFactoryStrategy.No else UseFieldAsParameterInIrFactoryStrategy.Yes(null)
@@ -156,8 +157,6 @@ sealed class FieldConfig(
     }
 
     var kDoc: String? = null
-
-    var generationCallback: (PropertySpec.Builder.() -> Unit)? = null
 
     override fun toString() = name
 }

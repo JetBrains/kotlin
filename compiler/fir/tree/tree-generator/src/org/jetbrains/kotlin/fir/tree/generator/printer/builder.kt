@@ -24,7 +24,6 @@ fun Builder.generateCode(generationPath: File): GeneratedFile =
         typeName,
         fileSuppressions = listOf("DuplicatedCode", "unused"),
     ) {
-        println()
         addAllImports(usedTypes)
         printBuilder(this@generateCode)
     }
