@@ -326,4 +326,32 @@ class BirStatementBuilderScope() {
             block()
         }
     }
+
+
+    fun birEquals(
+        arg1: BirExpression,
+        arg2: BirExpression,
+        origin: IrStatementOrigin? = IrStatementOrigin.EQEQ,
+        block: BirCall.() -> Unit = {},
+    ): BirCall =
+        BirCallImpl(
+            sourceSpan, birBuiltIns.booleanType, birBuiltIns.eqeqSymbol, null, null, origin,
+            emptyList(), 0, null
+        ).apply {
+            valueArguments += arg1
+            valueArguments += arg2
+            block()
+        }
+
+    fun birNotEquals(
+        arg1: BirExpression,
+        arg2: BirExpression,
+        origin: IrStatementOrigin? = IrStatementOrigin.EXCLEQ,
+        block: BirCall.() -> Unit = {},
+    ): BirCall =
+        BirCallImpl(
+            sourceSpan, birBuiltIns.booleanType, birBuiltIns.booleanNotSymbol, null,
+            birEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ),
+            origin, emptyList(), 0, null
+        ).apply(block)
 }
