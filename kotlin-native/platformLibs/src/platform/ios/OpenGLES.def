@@ -1,4 +1,4 @@
-depends = EAGL OpenGLESCommon darwin posix
+depends = CFCGTypes CFNetwork CoreFoundation CoreFoundationBase EAGL Foundation OpenGLESCommon Security darwin posix
 language = Objective-C
 package = platform.gles
 headers = OpenGLES/ES1/gl.h OpenGLES/ES1/glext.h

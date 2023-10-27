@@ -1,4 +1,4 @@
-depends = CoreData CoreFoundationBase Foundation darwin posix
+depends = CFCGTypes CloudKit CoreData CoreFoundation CoreFoundationBase CoreLocation Foundation Security darwin posix
 language = Objective-C
 package = platform._CoreData_CloudKit
 
