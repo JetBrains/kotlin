@@ -29,8 +29,10 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.has
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
@@ -95,7 +97,9 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
                         .createBuiltinsSymbolProvider(session, moduleData, kotlinScopeProvider)
                 )
                 add(FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider))
-                add(FirCloneableSymbolProvider(session, moduleData, kotlinScopeProvider))
+                if (platform.has<JvmPlatform>()) {
+                    add(FirCloneableSymbolProvider(session, moduleData, kotlinScopeProvider))
+                }
             }
 
             register(FirSymbolProvider::class, symbolProvider)
