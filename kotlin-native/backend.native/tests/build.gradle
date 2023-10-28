@@ -4959,30 +4959,50 @@ interopTest("interop_exceptions_cCallback") {
     interop = "exceptions_cCallback"
 }
 
-tasks.register("library_ir_provider_mismatch", KonanDriverTest) {
-    disabled = isAggressiveGC // No need to test with different GC schedulers
+standaloneTest("library_ir_provider_mismatch") {
+    enabled = !isAggressiveGC // No need to test with different GC schedulers
 
-    def dir = buildDir.absolutePath
-    def lib = "$projectDir/link/ir_providers/library/empty.kt"
-    def invalidManifest = "$projectDir/link/ir_providers/library/manifest.properties"
+    String librarySource = "$projectDir/link/ir_providers/library/empty.kt"
+    String invalidManifest = "$projectDir/link/ir_providers/library/manifest.properties"
+    String mainSource = "$projectDir/link/ir_providers/hello.kt"
 
-    def currentTarget = project.target.name
+    String outputDir = "$buildDir/$name"
+    String currentTarget = project.target.name
+
+    inputs.files(librarySource, invalidManifest)
+    inputs.property("target", currentTarget)
+    outputs.dir(outputDir)
+    source = mainSource
 
     doBeforeBuild {
-        konanc("$lib -p library -o $dir/supported_ir_provider/empty -target $currentTarget")
-        konanc("$lib -p library -o $dir/unsupported_ir_provider/empty -manifest $invalidManifest -target $currentTarget")
+        konanc("$librarySource -target $currentTarget -p library -o $outputDir/unsupported_ir_provider/empty.klib -manifest $invalidManifest")
+        konanc("$librarySource -target $currentTarget -p library -o $outputDir/supported_ir_provider/empty.klib ")
 
+        // Should not be successful:
+        boolean failed = false
+        String command = "$mainSource -target $currentTarget -p program -o $outputDir/failed.kexe -l $outputDir/unsupported_ir_provider/empty.klib"
+        try {
+            konanc(command)
+        } catch (Throwable t) {
+            String exceptionText = t.message
+            exceptionText = PlatformInfo.isWindows() ? exceptionText.replace("\\", "/") : exceptionText
+
+            String expectedText = "warning: skipping $outputDir/unsupported_ir_provider/empty.klib. The library requires unknown IR provider UNSUPPORTED."
+            expectedText = PlatformInfo.isWindows() ? expectedText.replace("\\", "/") : expectedText
+
+            if (t instanceof GradleException && exceptionText.contains(expectedText)) {
+                failed = true
+            } else {
+                throw t
+            }
+        }
+
+        if (!failed) {
+            throw new GradleException("Kotlin/Natice invocation is successful but should fail:\n$command")
+        }
     }
-    source = "link/ir_providers/hello.kt"
-    flags = ['-target', currentTarget, '-l', 'empty', '-r', "$dir/unsupported_ir_provider", '-r', "$dir/supported_ir_provider"]
-    compilerMessages = true
-    def messages = "warning: skipping $dir/unsupported_ir_provider/empty.klib. The library requires unknown IR provider UNSUPPORTED.\nhello\n"
-    messages = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
-    outputChecker = { out ->
-        messages.split("\n")
-                .collect { line -> out.contains(line) }
-                .every { it == true }
-    }
+
+    flags = ["-l", "$outputDir/supported_ir_provider/empty.klib"]
 }
 
 standaloneTest("kt51302") {
@@ -4993,15 +5013,14 @@ standaloneTest("kt51302") {
 
 standaloneTest("fake_override_0") {
     def sources = "$projectDir/link/fake_overrides"
-    def dir = buildDir.absolutePath
     doBeforeBuild {
-        konanc("$sources/base.kt -p library -target ${target.name} -o $dir/base")
-        konanc("$sources/move.kt -p library -target ${target.name} -o $dir/move -r $dir -l base")
-        konanc("$sources/use.kt -p library -target ${target.name} -o $dir/use -r $dir -l move")
-        konanc("$sources/move2.kt -p library -target ${target.name} -o $dir/move -r $dir -l base")
+        konanc("$sources/base.kt -p library -target ${target.name} -o $outputDirectory/base.klib")
+        konanc("$sources/move.kt -p library -target ${target.name} -o $outputDirectory/move.klib -l $outputDirectory/base.klib")
+        konanc("$sources/use.kt -p library -target ${target.name} -o $outputDirectory/use.klib -l $outputDirectory/move.klib -l $outputDirectory/base.klib")
+        konanc("$sources/move2.kt -p library -target ${target.name} -o $outputDirectory/move.klib -l $outputDirectory/base.klib")
     }
     source = "$sources/main.kt"
-    flags = ["-l", "use", "-r", "$dir"]
+    flags = ["-l", "$outputDirectory/use.klib", "-l", "$outputDirectory/move.klib", "-l", "$outputDirectory/base.klib"]
     useGoldenData = true
 }
 
@@ -5015,8 +5034,8 @@ standaloneTest("split_compilation_pipeline") {
     def dir = buildDir.absolutePath
     source = "link/private_fake_overrides/override_main.kt"
     doBeforeBuild {
-        konanc("$projectDir/link/private_fake_overrides/override_lib.kt -p library -target ${target.name} -o $dir/lib")
-        konanc("$projectDir/$source -target ${target.name} -o $dir/out -r $dir -l lib " +
+        konanc("$projectDir/link/private_fake_overrides/override_lib.kt -p library -target ${target.name} -o $dir/lib.klib")
+        konanc("$projectDir/$source -target ${target.name} -o $dir/out.klib -l $dir/lib.klib " +
                 "-Xtemporary-files-dir=$dir/tmp/split " +
                 "-Xwrite-dependencies-to=${dir}/split_compilation_pipeline.deps")
     }
@@ -5126,6 +5145,7 @@ Task objcExportTest(
 
         def libraryName = frameworkName + "Library"
         def noEnumEntriesLibraryName = frameworkName + "NoEnumEntriesLibrary"
+        File exportedKlibArtifact = null
         konanArtifacts {
             library(libraryName, targets: [target.name]) {
                 srcDir "objcexport/library"
@@ -5144,6 +5164,7 @@ Task objcExportTest(
                     UtilsKt.dependsOnDist(it)
                 }
 
+                exportedKlibArtifact = getArtifactByTarget(target.name)
                 extraOpts "-Xshort-module-name=NoEnumEntriesLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-no-enum-entries-library"
                 extraOpts "-XXLanguage:-EnumEntries"
@@ -5162,7 +5183,7 @@ Task objcExportTest(
             opts += [
                     "-Xexport-kdoc",
                     "-Xbinary=bundleId=foo.bar",
-                    "-Xexport-library=test-no-enum-entries-${libraryName}.klib",
+                    "-Xexport-library=$exportedKlibArtifact",
                     "-module-name", "Kt"
             ]
             opts += frameworkOpts
