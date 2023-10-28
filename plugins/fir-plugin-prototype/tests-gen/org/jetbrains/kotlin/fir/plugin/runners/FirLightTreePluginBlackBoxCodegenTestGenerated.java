@@ -120,4 +120,10 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
     public void testTopLevelCallables() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");
     }
+
+    @Test
+    @TestMetadata("generatedEnumClass.kt")
+    public void generatedEnumClass() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/generatedEnumClass.kt");
+    }
 }

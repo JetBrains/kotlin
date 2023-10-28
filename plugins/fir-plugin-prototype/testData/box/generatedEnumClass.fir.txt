@@ -1,0 +1,142 @@
+FILE: generatedEnumClass.kt
+    @R|org/jetbrains/kotlin/fir/plugin/GenerateEnumConstant|() public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/GenerateEnumConstant|() public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/GenerateEnumConstant|() public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun testEnumEntryVariables(): R|kotlin/Unit| {
+        lval entryA: R|foo/GeneratedEnum| = Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.A|
+        lval entryB: R|foo/GeneratedEnum| = Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.B|
+        lval entryC: R|foo/GeneratedEnum| = Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.C|
+        when () {
+            !=(R|<local>/entryA|.R|SubstitutionOverride<foo/GeneratedEnum.name: R|kotlin/String|>|, String(A)) || !=(R|<local>/entryA|.R|SubstitutionOverride<foo/GeneratedEnum.ordinal: R|kotlin/Int|>|, Int(0)) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(R|<local>/entryB|.R|SubstitutionOverride<foo/GeneratedEnum.name: R|kotlin/String|>|, String(B)) || !=(R|<local>/entryB|.R|SubstitutionOverride<foo/GeneratedEnum.ordinal: R|kotlin/Int|>|, Int(1)) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(R|<local>/entryC|.R|SubstitutionOverride<foo/GeneratedEnum.name: R|kotlin/String|>|, String(C)) || !=(R|<local>/entryC|.R|SubstitutionOverride<foo/GeneratedEnum.ordinal: R|kotlin/Int|>|, Int(2)) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+    }
+    public final fun testEnumValues(): R|kotlin/Unit| {
+        lval values: R|kotlin/Array<foo/GeneratedEnum>| = Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.values*s|()
+        when () {
+            !=(R|<local>/values|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|, Int(3)) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(R|<local>/values|.R|SubstitutionOverride<kotlin/Array.get: R|foo/GeneratedEnum|>|(Int(0)), Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.A|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(R|<local>/values|.R|SubstitutionOverride<kotlin/Array.get: R|foo/GeneratedEnum|>|(Int(1)), Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.B|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(R|<local>/values|.R|SubstitutionOverride<kotlin/Array.get: R|foo/GeneratedEnum|>|(Int(2)), Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.C|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+    }
+    public final fun testEnumValueOf(): R|kotlin/Unit| {
+        when () {
+            !=(Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.A|, Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.valueOf*s|(String(A))) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.B|, Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.valueOf*s|(String(B))) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.C|, Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.valueOf*s|(String(C))) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+    }
+    public final fun testEnumEntries(): R|kotlin/Unit| {
+        lval entries: R|kotlin/enums/EnumEntries<foo/GeneratedEnum>| = Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.entries*s|
+        when () {
+            !=(R|<local>/entries|.R|SubstitutionOverride<kotlin/enums/EnumEntries.size: R|kotlin/Int|>|, Int(3)) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(R|<local>/entries|.R|SubstitutionOverride<kotlin/enums/EnumEntries.get: R|foo/GeneratedEnum|>|(Int(0)), Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.A|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(R|<local>/entries|.R|SubstitutionOverride<kotlin/enums/EnumEntries.get: R|foo/GeneratedEnum|>|(Int(1)), Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.B|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        when () {
+            !=(R|<local>/entries|.R|SubstitutionOverride<kotlin/enums/EnumEntries.get: R|foo/GeneratedEnum|>|(Int(2)), Q|foo/GeneratedEnum|.R|foo/GeneratedEnum.C|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        R|/testEnumEntryVariables|()
+        R|/testEnumValues|()
+        R|/testEnumValueOf|()
+        R|/testEnumEntries|()
+        ^box String(OK)
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package foo
+
+    public final enum class GeneratedEnum : R|kotlin/Enum<foo/GeneratedEnum>| {
+        public final static enum entry A: R|foo/GeneratedEnum|
+        public final static enum entry B: R|foo/GeneratedEnum|
+        public final static enum entry C: R|foo/GeneratedEnum|
+        public final static fun values(): R|kotlin/Array<foo/GeneratedEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|foo/GeneratedEnum| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<foo/GeneratedEnum>|
+            public get(): R|kotlin/enums/EnumEntries<foo/GeneratedEnum>|
+
+        private constructor(): R|foo/GeneratedEnum|
+
+    }

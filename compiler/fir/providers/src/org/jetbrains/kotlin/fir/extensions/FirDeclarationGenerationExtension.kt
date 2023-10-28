@@ -54,6 +54,7 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     // Can be called on STATUS stage
     open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = emptyList()
     open fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> = emptyList()
+    open fun generateEnumEntries(callableId: CallableId, context: MemberGenerationContext): List<FirEnumEntrySymbol> = emptyList()
     open fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> = emptyList()
 
     // Can be called on IMPORTS stage

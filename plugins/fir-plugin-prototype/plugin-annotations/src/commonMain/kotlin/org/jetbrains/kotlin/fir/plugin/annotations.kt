@@ -15,6 +15,7 @@ annotation class ExternalClassWithNested
 annotation class NestedClassAndMaterializeMember
 annotation class MyInterfaceSupertype
 annotation class CompanionWithFoo
+annotation class GenerateEnumConstant
 
 annotation class MySerializable
 annotation class CoreSerializer

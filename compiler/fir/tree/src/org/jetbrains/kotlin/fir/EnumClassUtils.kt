@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.builtins.StandardNames.ENUM_ENTRIES
 import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES
@@ -13,8 +14,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -42,38 +43,18 @@ fun FirRegularClassBuilder.generateValuesFunction(
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
 ) {
     val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
-    declarations += buildSimpleFunction {
-        source = sourceElement
-        this.origin = origin
-        this.moduleData = moduleData
-        val returnTypeRef = buildResolvedTypeRef {
-            source = sourceElement
-            type = ConeClassLikeTypeImpl(
-                StandardClassIds.Array.toLookupTag(),
-                arrayOf(
-                    ConeClassLikeTypeImpl(
-                        this@generateValuesFunction.symbol.toLookupTag(),
-                        ConeTypeProjection.EMPTY_ARRAY,
-                        isNullable = false
-                    )
-                ),
-                isNullable = false
-            )
-        }
-        this.returnTypeRef = returnTypeRef
-        name = ENUM_VALUES
-        this.status = createStatus(this@generateValuesFunction.status).apply {
-            isStatic = true
-            isExpect = makeExpect
-        }
-        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
-        resolvePhase = this@generateValuesFunction.resolvePhase
-        body = buildEmptyExpressionBlock().also {
-            it.replaceConeTypeOrNull(returnTypeRef.type)
-        }
-    }.apply {
-        containingClassForStaticMemberAttr = this@generateValuesFunction.symbol.toLookupTag()
-    }
+
+    declarations += createEnumValuesFunction(
+        symbol,
+        status,
+        resolvePhase,
+        moduleData,
+        packageFqName,
+        classFqName,
+        origin,
+        makeExpect,
+        sourceElement
+    )
 }
 
 fun FirRegularClassBuilder.generateValueOfFunction(
@@ -84,14 +65,105 @@ fun FirRegularClassBuilder.generateValueOfFunction(
     origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
 ) {
     val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
-    declarations += buildSimpleFunction {
+
+    declarations += createEnumValueOfFunction(
+        symbol,
+        status,
+        resolvePhase,
+        moduleData,
+        packageFqName,
+        classFqName,
+        origin,
+        makeExpect,
+        sourceElement
+    )
+}
+
+fun FirRegularClassBuilder.generateEntriesGetter(
+    moduleData: FirModuleData,
+    packageFqName: FqName,
+    classFqName: FqName,
+    makeExpect: Boolean = false,
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
+) {
+    val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
+    declarations += createEnumEntriesGetter(
+        symbol,
+        status,
+        resolvePhase,
+        moduleData,
+        packageFqName,
+        classFqName,
+        origin,
+        makeExpect,
+        sourceElement
+    )
+}
+
+fun createEnumValuesFunction(
+    owner: FirClassSymbol<*>,
+    ownerStatus: FirDeclarationStatus,
+    resolvePhase: FirResolvePhase,
+    moduleData: FirModuleData,
+    packageFqName: FqName,
+    classFqName: FqName,
+    origin: FirDeclarationOrigin,
+    makeExpect: Boolean = false,
+    sourceElement: KtSourceElement? = null
+): FirSimpleFunction {
+    return buildSimpleFunction {
         source = sourceElement
         this.origin = origin
         this.moduleData = moduleData
         val returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
-                this@generateValueOfFunction.symbol.toLookupTag(),
+                StandardClassIds.Array.toLookupTag(),
+                arrayOf(
+                    ConeClassLikeTypeImpl(
+                        owner.toLookupTag(),
+                        ConeTypeProjection.EMPTY_ARRAY,
+                        isNullable = false
+                    )
+                ),
+                isNullable = false
+            )
+        }
+        this.returnTypeRef = returnTypeRef
+        name = ENUM_VALUES
+        this.status = createStatus(ownerStatus).apply {
+            isStatic = true
+            isExpect = makeExpect
+        }
+        symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
+        this.resolvePhase = resolvePhase
+        body = buildEmptyExpressionBlock().also {
+            it.replaceConeTypeOrNull(returnTypeRef.type)
+        }
+    }.apply {
+        containingClassForStaticMemberAttr = owner.toLookupTag()
+    }
+}
+
+fun createEnumValueOfFunction(
+    owner: FirClassSymbol<*>,
+    ownerStatus: FirDeclarationStatus,
+    resolvePhase: FirResolvePhase,
+    moduleData: FirModuleData,
+    packageFqName: FqName,
+    classFqName: FqName,
+    origin: FirDeclarationOrigin,
+    makeExpect: Boolean = false,
+    sourceElement: KtSourceElement? = null
+): FirSimpleFunction {
+    return buildSimpleFunction {
+        source = sourceElement
+        this.origin = origin
+        this.moduleData = moduleData
+        val returnTypeRef = buildResolvedTypeRef {
+            source = sourceElement
+            type = ConeClassLikeTypeImpl(
+                owner.toLookupTag(),
                 emptyArray(),
                 isNullable = false
             )
@@ -99,7 +171,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         this.returnTypeRef = returnTypeRef
         name = ENUM_VALUE_OF
 
-        status = createStatus(this@generateValueOfFunction.status).apply {
+        status = createStatus(ownerStatus).apply {
             isStatic = true
             isExpect = makeExpect
         }
@@ -122,26 +194,29 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             isCrossinline = false
             isNoinline = false
             isVararg = false
-            resolvePhase = this@generateValueOfFunction.resolvePhase
+            this.resolvePhase = resolvePhase
         }
-        resolvePhase = this@generateValueOfFunction.resolvePhase
+        this.resolvePhase = resolvePhase
         body = buildEmptyExpressionBlock().also {
             it.replaceConeTypeOrNull(returnTypeRef.type)
         }
     }.apply {
-        containingClassForStaticMemberAttr = this@generateValueOfFunction.symbol.toLookupTag()
+        containingClassForStaticMemberAttr = owner.toLookupTag()
     }
 }
 
-fun FirRegularClassBuilder.generateEntriesGetter(
+fun createEnumEntriesGetter(
+    owner: FirClassSymbol<*>,
+    ownerStatus: FirDeclarationStatus,
+    resolvePhase: FirResolvePhase,
     moduleData: FirModuleData,
     packageFqName: FqName,
     classFqName: FqName,
+    origin: FirDeclarationOrigin,
     makeExpect: Boolean = false,
-    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
-) {
-    val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
-    declarations += buildProperty {
+    sourceElement: KtSourceElement? = null
+): FirProperty {
+    return buildProperty {
         source = sourceElement
         isVar = false
         isLocal = false
@@ -152,29 +227,33 @@ fun FirRegularClassBuilder.generateEntriesGetter(
             type = ConeClassLikeTypeImpl(
                 StandardClassIds.EnumEntries.toLookupTag(),
                 arrayOf(
-                    ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
+                    ConeClassLikeTypeImpl(
+                        owner.toLookupTag(),
+                        ConeTypeProjection.EMPTY_ARRAY,
+                        isNullable = false
+                    )
                 ),
                 isNullable = false
             )
         }
         name = ENUM_ENTRIES
-        this.status = createStatus(this@generateEntriesGetter.status).apply {
+        this.status = createStatus(ownerStatus).apply {
             isStatic = true
             isExpect = makeExpect
         }
         symbol = FirPropertySymbol(CallableId(packageFqName, classFqName, ENUM_ENTRIES))
-        resolvePhase = this@generateEntriesGetter.resolvePhase
+        this.resolvePhase = resolvePhase
         getter = FirDefaultPropertyGetter(
             sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
             moduleData, origin, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
-            Visibilities.Public, symbol, resolvePhase = this@generateEntriesGetter.resolvePhase
+            Visibilities.Public, symbol, resolvePhase = resolvePhase
         ).apply {
-            this.status = createStatus(this@generateEntriesGetter.status).apply {
+            this.status = createStatus(ownerStatus).apply {
                 isStatic = true
             }
         }
     }.apply {
-        containingClassForStaticMemberAttr = this@generateEntriesGetter.symbol.toLookupTag()
+        containingClassForStaticMemberAttr = owner.toLookupTag()
     }
 }
 
