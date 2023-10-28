@@ -45,12 +45,21 @@ class BirForest : BirElementParent() {
     }
 
     fun attachRootElement(element: BirElementBase) {
-        require(element._parent == null)
-        require(element.root == null || element.root === this)
+        val oldParent = element._parent
+        if (oldParent != null) {
+            element.replacedWithInternal(null)
+            element.setParentWithInvalidation(this)
+            if (oldParent is BirElementBase) {
+                oldParent.invalidate()
+            }
+
+            elementMoved(element, oldParent)
+        } else {
+            element.setParentWithInvalidation(this)
+            elementAttached(element)
+        }
 
         possiblyRootElements += element
-        element.setParentWithInvalidation(this)
-        elementAttached(element)
     }
 
     internal fun elementDetached(element: BirElementBase) {
