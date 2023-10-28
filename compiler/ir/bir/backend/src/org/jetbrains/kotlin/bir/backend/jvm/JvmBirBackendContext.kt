@@ -32,16 +32,15 @@ class JvmBirBackendContext @OptIn(ObsoleteDescriptorBasedAPI::class) constructor
 ) : BirBackendContext(compiledBir, dynamicPropertyManager) {
     override val configuration: CompilerConfiguration = irContext.configuration
     override val builtIns = irContext.builtIns
+    val generationState: GenerationState = irContext.state
+    override val internalPackageFqn = FqName("kotlin.jvm")
+    
+    val loweringPhases = phaseConfig.map { it(this) }
 
     override val birBuiltIns: BirBuiltIns = BirBuiltIns(irContext.irBuiltIns, ir2BirConverter)
     override val builtInSymbols: JvmBirBuiltInSymbols = JvmBirBuiltInSymbols(irContext.ir.symbols, ir2BirConverter)
     override val typeSystem: BirTypeSystemContext = BirTypeSystemContextImpl(birBuiltIns)
 
-    val generationState: GenerationState = irContext.state
-
-    val loweringPhases = phaseConfig.map { it(this) }
-
-    override val internalPackageFqn = FqName("kotlin.jvm")
     override val sharedVariablesManager: SharedVariablesManager
         get() = TODO("Not yet implemented")
 }

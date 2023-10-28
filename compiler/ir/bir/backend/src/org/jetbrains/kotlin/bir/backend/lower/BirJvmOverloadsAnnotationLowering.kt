@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 context(JvmBirBackendContext)
 class BirJvmOverloadsAnnotationLowering : BirLoweringPhase() {
-    private val JvmOverloadsAnnotation = birBuiltIns.findClass(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)
+    private val JvmOverloadsAnnotation by lz { birBuiltIns.findClass(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME) }
 
     private val overloadsAnnotations = registerIndexKey<BirConstructorCall>(false) {
         it.constructedClass == JvmOverloadsAnnotation
