@@ -144,7 +144,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         }
     }
 
-    private fun replacedWithInternal(new: BirElementBase?): BirElementParent? {
+    internal fun replacedWithInternal(new: BirElementBase?): BirElementParent? {
         val parent = _parent
         if (parent is BirElementBase) {
             val list = getContainingList()
@@ -176,30 +176,80 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
     internal fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
         recordPropertyRead()
+        val arrayMap = dynamicProperties ?: return null
+        val keyIndex = findDynamicPropertyIndex(arrayMap, token)
+        if (keyIndex < 0) return null
         @Suppress("UNCHECKED_CAST")
-        return dynamicProperties?.get(token.key.index) as T?
+        return arrayMap[keyIndex + 1] as T
     }
 
     internal fun <T> setDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
-        var dynamicProperties = dynamicProperties
-        if (dynamicProperties == null) {
+        val arrayMap = dynamicProperties
+        if (arrayMap == null) {
             if (value == null) {
                 // optimization: next read will return null if the array is null, so no need to initialize it
                 return
             }
 
-            val size = token.manager.getInitialDynamicPropertyArraySize(javaClass)
-            require(size != 0) { "This element is not supposed to store any aux data" }
-            dynamicProperties = arrayOfNulls(size)
-            this.dynamicProperties = dynamicProperties
+            initializeDynamicProperties(token, value)
+        } else {
+            val keyIndex = findDynamicPropertyIndex(arrayMap, token)
+            if (keyIndex >= 0) {
+                val valueIndex = keyIndex + 1
+                val old = arrayMap[valueIndex]
+                if (old != value) {
+                    arrayMap[valueIndex] = value
+                    invalidate()
+                }
+            } else {
+                val valueIndex = -keyIndex + 1
+                arrayMap[valueIndex] = value
+                invalidate()
+            }
+        }
+    }
+
+    internal fun <T> getOrPutDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, compute: () -> T): T {
+        recordPropertyRead()
+
+        val arrayMap = dynamicProperties
+        if (arrayMap == null) {
+            val value = compute()
+            initializeDynamicProperties(token, value)
+            return value
         }
 
-        val index = token.key.index
-        val old = dynamicProperties[index]
-        if (old != value) {
-            dynamicProperties[index] = value
+        val keyIndex = findDynamicPropertyIndex(arrayMap, token)
+        if (keyIndex >= 0) {
+            @Suppress("UNCHECKED_CAST")
+            return arrayMap[keyIndex + 1] as T
+        } else {
+            val value = compute()
+            val valueIndex = -keyIndex + 1
+            arrayMap[valueIndex] = value
             invalidate()
+            return value
         }
+    }
+
+    private fun <T> initializeDynamicProperties(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
+        val size = token.manager.getInitialDynamicPropertyArraySize(javaClass)
+        require(size != 0) { "This element is not supposed to store any dynamic properties" }
+
+        val arrayMap = arrayOfNulls<Any?>(size * 2)
+        arrayMap[0] = token
+        arrayMap[1] = value
+        this.dynamicProperties = arrayMap
+
+        invalidate()
+    }
+
+    private fun findDynamicPropertyIndex(arrayMap: Array<Any?>, token: BirElementDynamicPropertyToken<*, *>): Int {
+        for (i in arrayMap.indices step 2) {
+            val key = arrayMap[i] ?: return -i
+            if (key === token) return i
+        }
+        return -1
     }
 
     // todo: fine-grained control of which data to copy
