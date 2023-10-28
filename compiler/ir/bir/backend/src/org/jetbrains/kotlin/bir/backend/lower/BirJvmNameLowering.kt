@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 context(JvmBirBackendContext)
 class BirJvmNameLowering : BirLoweringPhase() {
-    private val JvmNameAnnotation = birBuiltIns.findClass(DescriptorUtils.JVM_NAME)
+    private val JvmNameAnnotation by lz { birBuiltIns.findClass(DescriptorUtils.JVM_NAME) }
 
     private val jvmNameKey = acquireProperty(JvmName)
     private val jvmNameAnnotations = registerIndexKey<BirConstructorCall>(false) {
