@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.bir
 
 
 sealed interface BirElementOrChildList {
-    fun<D> acceptChildren(visitor: BirElementVisitor<D>, data: D)
+    fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D)
 }
 
 interface BirElement : BirElementOrChildList {
@@ -29,10 +29,7 @@ operator fun <E : BirElement, T> E.set(token: BirElementDynamicPropertyToken<E, 
 }
 
 fun <E : BirElement, T> E.getOrPutDynamicProperty(token: BirElementDynamicPropertyToken<E, T>, compute: () -> T): T {
-    this as BirElementBase
-    return getDynamicProperty(token) ?: compute().also {
-        setDynamicProperty(token, it)
-    }
+    return (this as BirElementBase).getOrPutDynamicProperty(token, compute)
 }
 
 

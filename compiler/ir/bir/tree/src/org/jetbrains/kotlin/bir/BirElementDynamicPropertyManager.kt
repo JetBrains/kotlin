@@ -89,7 +89,7 @@ class BirElementDynamicPropertyManager {
 }
 
 class BirElementDynamicPropertyKey<E : BirElement, T>(
-    internal val elementClass: Class<E>
+    internal val elementClass: Class<E>,
 ) {
     internal var index = -1
 }
@@ -98,5 +98,5 @@ inline fun <reified E : BirElement, T> BirElementDynamicPropertyKey() = BirEleme
 
 class BirElementDynamicPropertyToken<E : BirElement, T> internal constructor(
     internal val manager: BirElementDynamicPropertyManager,
-    val key: BirElementDynamicPropertyKey<E, T>
+    val key: BirElementDynamicPropertyKey<E, T>,
 )
