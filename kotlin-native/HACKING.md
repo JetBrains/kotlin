@@ -98,6 +98,19 @@ To run blackbox compiler tests use:
 | `executionTimeout`      | Max permitted duration of each individual test execution in milliseconds                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | `sanitizer`             | Run tests with sanitizer: `NONE` (default), `THREAD`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
+A test can be ignored for certain property values with the help of test directives within test source files:
+- `// IGNORE_NATIVE: <name>=<value>` to ignore test for both K1 and K2 frontends
+- `// IGNORE_NATIVE_K1: <name>=<value>` to ignore test for K1 frontend only
+- `// IGNORE_NATIVE_K2: <name>=<value>` to ignore test for K2 frontend only
+
+Good examples are:
+- `// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE`
+- `// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE`
+- `// IGNORE_NATIVE_K2: optimizationMode=OPT`
+- `// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE && target=linux_x64`
+
+Test will be ignored in case value of any `// IGNORE_NATIVE*` directive would match to an actual test run setting. 
+
 ### Target-specific tests
 
 There are also tests that are very Native-backend specific: tests for Kotlin/Native-specific function, C-interop tests, linkage tests, etc.

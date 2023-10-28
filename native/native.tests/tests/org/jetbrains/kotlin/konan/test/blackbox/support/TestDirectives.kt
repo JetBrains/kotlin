@@ -148,6 +148,39 @@ internal object TestDirectives : SimpleDirectivesContainer() {
     val FILECHECK_STAGE by stringDirective(
         description = "Specify a LLVM stage to dump LLVM IR after, and check it with LLVM FileCheck using its directives in test file"
     )
+
+    val DISABLE_NATIVE by stringDirective(
+        description = "Test is not compiled/run with neither K1 nor K2 frontend and marked as disabled(GRAY)."
+    )
+
+    val DISABLE_NATIVE_K1 by stringDirective(
+        description = "Test is not compiled/run with K1 frontend and marked as disabled(GRAY)."
+    )
+
+    val DISABLE_NATIVE_K2 by stringDirective(
+        description = "Test is not compiled/run with K2 frontend and marked as disabled(GRAY)."
+    )
+
+    val IGNORE_NATIVE by stringDirective(
+        """
+            Usage: // IGNORE_NATIVE: property1=value1[ && property2=value2][ && property3=value3]
+            Declares this test is expected to fail in described run configuration on both K1 and K2 frontends.
+        """.trimIndent()
+    )
+
+    val IGNORE_NATIVE_K1 by stringDirective(
+        """
+            Usage: // IGNORE_NATIVE_K1: property1=value1[ && property2=value2][ && property3=value3]
+            Declares this test is expected to fail in described run configuration on K1 frontend.
+        """.trimIndent()
+    )
+
+    val IGNORE_NATIVE_K2 by stringDirective(
+        """
+            Usage: // IGNORE_NATIVE_K2: property1=value1[ && property2=value2][ && property3=value3]
+            Declares this test is expected to fail in described run configuration on K2 frontend.
+        """.trimIndent()
+    )
 }
 
 internal enum class TestKind {

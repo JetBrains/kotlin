@@ -4,7 +4,8 @@
 // TARGET_BACKEND: WASM
 // TARGET_BACKEND: JVM_IR
 
-// IGNORE_BACKEND_K1: ANY
+// IGNORE_BACKEND_K1: JVM, JVM_IR, JS, JS_IR, JS_IR_ES6, WASM
+// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE
 
 // IllegalArgumentException: arg wrongly != this@Test5: arg=null, this@Test5=[object Object]
 // IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6

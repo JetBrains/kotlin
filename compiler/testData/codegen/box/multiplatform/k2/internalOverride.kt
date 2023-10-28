@@ -1,6 +1,7 @@
 // LANGUAGE: +MultiPlatformProjects
 // It accidentially passes K1 JVM while not intended to do so.
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, WASM, NATIVE
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, WASM
+// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE
 // MODULE: common
 // FILE: common.kt
 

@@ -9,6 +9,8 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeBlackBoxTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.PackageName
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.CompilationToolException
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.TreeNode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.joinPackageNames
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.prependPackageName
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.extension.ExtendWith
@@ -32,8 +35,17 @@ abstract class AbstractNativeBlackBoxTest {
      * This function should be called from a method annotated with [org.junit.jupiter.api.Test].
      */
     fun runTest(@TestDataFile testDataFilePath: String) {
-        val testCaseId = TestCaseId.TestDataFile(getAbsoluteFile(testDataFilePath))
-        runTestCase(testCaseId)
+        val absoluteTestFile = getAbsoluteFile(testDataFilePath)
+        val testCaseId = TestCaseId.TestDataFile(absoluteTestFile)
+        try {
+            runTestCase(testCaseId)
+        } catch (e: CompilationToolException) {
+            // TODO find out the way not to re-read test source file, but to re-use already extracted test directives.
+            if (testRunSettings.isIgnoredTarget(absoluteTestFile))
+                println("There was an expected failure: CompilationToolException: ${e.reason}")
+            else
+                fail { e.reason }
+        }
     }
 
     /**

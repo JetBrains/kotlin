@@ -21,7 +21,13 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_NATIVE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_NATIVE_K1
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.DISABLE_NATIVE_K2
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FILECHECK_STAGE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K1
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K2
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
@@ -35,6 +41,9 @@ import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K1
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -72,14 +81,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     testDataFile = testDataFile,
                     structureFactory = structureFactory,
                     customSourceTransformers = settings.get<ExternalSourceTransformersProvider>().getSourceTransformers(testDataFile),
-                    testRoots = settings.get(),
-                    generatedSources = settings.get(),
-                    customKlibs = settings.get(),
-                    pipelineType = settings.get(),
-                    testMode = settings.get(),
-                    cacheMode = settings.get(),
-                    optimizationMode = settings.get(),
-                    timeouts = settings.get(),
+                    settings = settings,
                 )
 
                 if (extTestDataFile.isRelevant)
@@ -100,15 +102,17 @@ private class ExtTestDataFile(
     private val testDataFile: File,
     structureFactory: ExtTestDataFileStructureFactory,
     customSourceTransformers: ExternalSourceTransformers?,
-    testRoots: TestRoots,
-    private val generatedSources: GeneratedSources,
-    private val customKlibs: CustomKlibs,
-    pipelineType: PipelineType,
-    testMode: TestMode,
-    cacheMode: CacheMode,
-    optimizationMode: OptimizationMode,
-    private val timeouts: Timeouts,
+    settings: Settings,
 ) {
+    private val testRoots = settings.get<TestRoots>()
+    private val generatedSources = settings.get<GeneratedSources>()
+    private val customKlibs = settings.get<CustomKlibs>()
+    private val timeouts = settings.get<Timeouts>()
+    private val pipelineType = settings.get<PipelineType>()
+    private val testMode = settings.get<TestMode>()
+    private val cacheMode = settings.get<CacheMode>()
+    private val optimizationMode = settings.get<OptimizationMode>()
+
     private val structure by lazy {
         val allSourceTransformers: ExternalSourceTransformers = if (customSourceTransformers.isNullOrEmpty())
             MANDATORY_SOURCE_TRANSFORMERS
@@ -117,6 +121,8 @@ private class ExtTestDataFile(
 
         structureFactory.ExtTestDataFileStructure(testDataFile, allSourceTransformers)
     }
+
+    private val isIgnoredTarget: Boolean = settings.isIgnoredTarget(structure.directives)
 
     private val testDataFileSettings by lazy {
         val optIns = structure.directives.multiValues(OPT_IN_DIRECTIVE)
@@ -145,7 +151,7 @@ private class ExtTestDataFile(
 
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
-                && !isIgnoredTarget(pipelineType, testDataFile, TargetBackend.NATIVE) // Checks IGNORE_BACKEND directives.
+                && !isDisabledNative(pipelineType, structure.directives)
                 && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
@@ -156,34 +162,6 @@ private class ExtTestDataFile(
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
                      && pipelineType == PipelineType.K2
                      && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
-
-    private fun isIgnoredTarget(pipelineType: PipelineType, testDataFile: File, backend: TargetBackend): Boolean {
-        return when (pipelineType) {
-            PipelineType.K1 ->
-                isIgnoredTarget(
-                    backend,
-                    testDataFile,
-                    /*includeAny = */true,
-                    IGNORE_BACKEND_DIRECTIVE_PREFIX,
-                    IGNORE_BACKEND_K1_DIRECTIVE_PREFIX
-                )
-            PipelineType.K2 ->
-                isIgnoredTarget(
-                    backend,
-                    testDataFile,
-                    /*includeAny = */true,
-                    IGNORE_BACKEND_DIRECTIVE_PREFIX,
-                    IGNORE_BACKEND_K2_DIRECTIVE_PREFIX
-                )
-            PipelineType.DEFAULT ->
-                isIgnoredTarget(
-                    backend,
-                    testDataFile,
-                    /*includeAny = */true,
-                    IGNORE_BACKEND_DIRECTIVE_PREFIX,
-                )
-        }
-    }
 
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
@@ -214,6 +192,12 @@ private class ExtTestDataFile(
     private fun determineIfStandaloneTest(): Boolean = with(structure) {
         if (directives.contains(NATIVE_STANDALONE_DIRECTIVE)) return true
         if (directives.contains(FILECHECK_STAGE.name)) return true
+        if (isIgnoredTarget) return true
+        // To make the debug of possible failed testruns easier, it makes sense to run dodgy tests alone
+        if (directives.contains(IGNORE_NATIVE.name) ||
+            directives.contains(IGNORE_NATIVE_K1.name) ||
+            directives.contains(IGNORE_NATIVE_K2.name)
+        ) return true
 
         var isStandaloneTest = false
 
@@ -531,8 +515,11 @@ private class ExtTestDataFile(
             modules = modules,
             freeCompilerArgs = assembleFreeCompilerArgs(),
             nominalPackageName = testDataFileSettings.nominalPackageName,
-            checks = TestRunChecks.Default(timeouts.executionTimeout)
-                .copy(fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) }),
+            checks = TestRunChecks.Default(timeouts.executionTimeout).copy(
+                fileCheckMatcher = fileCheckStage?.let { TestRunCheck.FileCheckMatcher(settings, testDataFile) },
+                exitCodeCheck = TestRunCheck.ExitCode.Expected(0).takeUnless { isIgnoredTarget },
+                expectedFailureCheck = TestRunCheck.ExpectedFailure.takeIf { isIgnoredTarget },
+            ),
             fileCheckStage = fileCheckStage,
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
         )
@@ -612,7 +599,7 @@ private class ExtTestDataFileSettings(
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?
 private typealias SharedModuleCache = (moduleName: String, generator: SharedModuleGenerator) -> TestModule.Shared?
 
-private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : TestDisposable(parentDisposable) {
+private class ExtTestDataFileStructureFactory(parentDisposable: Disposable?) : TestDisposable(parentDisposable) {
     private val psiFactory = createPsiFactory(parentDisposable = this)
 
     inner class ExtTestDataFileStructure(originalTestDataFile: File, sourceTransformers: ExternalSourceTransformers) {
@@ -881,4 +868,86 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             return KtPsiFactory(environment.project)
         }
     }
+}
+
+internal fun isDisabledNative(pipelineType: PipelineType, directives: Directives): Boolean {
+    return when (pipelineType) {
+        PipelineType.K1 -> directives.contains(DISABLE_NATIVE.name) || directives.contains(DISABLE_NATIVE_K1.name)
+        PipelineType.K2 -> directives.contains(DISABLE_NATIVE.name) || directives.contains(DISABLE_NATIVE_K2.name)
+        PipelineType.DEFAULT -> directives.contains(DISABLE_NATIVE.name)
+    }
+}
+
+internal fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
+    val extTestDataFileStructure =
+        ExtTestDataFileStructureFactory(parentDisposable = null).ExtTestDataFileStructure(testDataFile, emptyList())
+    return isIgnoredTarget(extTestDataFileStructure.directives)
+}
+
+internal fun Settings.isIgnoredTarget(directives: Directives): Boolean {
+    return isIgnoredWithIGNORE_BACKEND(directives) ||
+            isIgnoredWithIGNORE_NATIVE(directives)
+}
+
+// Mimics `InTextDirectivesUtils.isIgnoredTarget(NATIVE, file)` but does not require file contents, but only already parsed directives.
+private fun Settings.isIgnoredWithIGNORE_BACKEND(directives: Directives): Boolean {
+    val containsNativeOrAny: (List<String>) -> Boolean = { TargetBackend.NATIVE.name in it || TargetBackend.ANY.name in it }
+
+    if (directives.listValues(IGNORE_BACKEND.name)?.let(containsNativeOrAny) == true)
+        return true
+    when (get<PipelineType>()) {
+        PipelineType.K1 ->
+            if (directives.listValues(IGNORE_BACKEND_K1.name)?.let(containsNativeOrAny) == true)
+                return true
+        PipelineType.K2 ->
+            if (directives.listValues(IGNORE_BACKEND_K2.name)?.let(containsNativeOrAny) == true)
+                return true
+        else -> {}
+    }
+    return false
+}
+
+private val CACHE_MODE_NAMES = CacheMode.Alias.entries.map { it.name }
+private val TEST_MODE_NAMES = TestMode.entries.map { it.name }
+private val OPTIMIZATION_MODE_NAMES = OptimizationMode.entries.map { it.name }
+
+private fun Settings.isIgnoredWithIGNORE_NATIVE(
+    directives: Directives,
+): Boolean {
+    val directiveValues = buildList {
+        directives.listValues(IGNORE_NATIVE.name)?.let { addAll(it) }
+        when (get<PipelineType>()) {
+            PipelineType.K1 -> directives.listValues(IGNORE_NATIVE_K1.name)?.let { addAll(it) }
+            PipelineType.K2 -> directives.listValues(IGNORE_NATIVE_K2.name)?.let { addAll(it) }
+            else -> {}
+        }
+    }
+    // Boolean evaluation of expressions like `property1=value1 && property2=value2`
+    directiveValues.forEach {
+        val split = it.split("&&")
+        val booleanList = split.map {
+            val matchResult = "(.+)=(.+)".toRegex().find(it.trim())
+                ?: throw AssertionError("Invalid format for IGNORE_NATIVE* directive ($it). Must be <property>=<value>")
+            val propName = matchResult.groups[1]?.value
+            val (actualValue, supportedValues) = when (propName) {
+                ClassLevelProperty.CACHE_MODE.shortName -> get<CacheMode>().alias.name to CACHE_MODE_NAMES
+                ClassLevelProperty.TEST_MODE.shortName -> get<TestMode>().name to TEST_MODE_NAMES
+                ClassLevelProperty.OPTIMIZATION_MODE.shortName -> get<OptimizationMode>().name to OPTIMIZATION_MODE_NAMES
+                ClassLevelProperty.TEST_TARGET.shortName -> get<KotlinNativeTargets>().testTarget.name to null
+                else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in IGNORE_NATIVE* test directives.")
+            }
+            val valueFromTestDirective = matchResult.groups[2]?.value!!
+            supportedValues?.let {
+                if (actualValue !in it)
+                    throw AssertionError("Internal error: Test run value $propName=$actualValue is not in expected supported values: $it")
+                if (valueFromTestDirective !in it)
+                    throw AssertionError("Test directive `IGNORE_NATIVE*: $propName=$valueFromTestDirective` has unsupported value. Supported are: $it")
+            }
+            actualValue == valueFromTestDirective
+        }
+        val matches = booleanList.reduce { a, b -> a && b }
+        if (matches)
+            return true
+    }
+    return false
 }

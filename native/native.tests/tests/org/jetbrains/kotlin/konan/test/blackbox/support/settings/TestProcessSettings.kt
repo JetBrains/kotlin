@@ -210,6 +210,7 @@ internal sealed class CacheMode {
     abstract val staticCacheForDistributionLibrariesRootDir: File?
     abstract val useStaticCacheForUserLibraries: Boolean
     abstract val makePerFileCaches: Boolean
+    abstract val alias: Alias
 
     val useStaticCacheForDistributionLibraries: Boolean get() = staticCacheForDistributionLibrariesRootDir != null
 
@@ -217,6 +218,7 @@ internal sealed class CacheMode {
         override val staticCacheForDistributionLibrariesRootDir: File? get() = null
         override val useStaticCacheForUserLibraries: Boolean get() = false
         override val makePerFileCaches: Boolean = false
+        override val alias = Alias.NO
     }
 
     class WithStaticCache(
@@ -224,7 +226,8 @@ internal sealed class CacheMode {
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode,
         override val useStaticCacheForUserLibraries: Boolean,
-        override val makePerFileCaches: Boolean
+        override val makePerFileCaches: Boolean,
+        override val alias: Alias,
     ) : CacheMode() {
         override val staticCacheForDistributionLibrariesRootDir: File = File(distribution.klib)
             .resolve("cache")

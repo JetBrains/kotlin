@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
 
-// IGNORE_BACKEND_K1: NATIVE
+// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE
 // !LANGUAGE: +MultiPlatformProjects +ImplicitSignedToUnsignedIntegerConversion
 // WITH_STDLIB
 

@@ -1,7 +1,8 @@
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE, WASM
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, WASM
 //   JS tests don't support MPP modules compilation
+// IGNORE_NATIVE_K1: mode=ONE_STAGE_MULTI_MODULE
 // ISSUE: KT-58252
 
 // MODULE: lib-common

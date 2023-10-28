@@ -34,12 +34,6 @@ fun main() {
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
-                    disabledInOneStageMode(
-                        "codegen/box/coroutines/featureIntersection/defaultExpect.kt",
-                        "codegen/box/multiplatform/defaultArguments/*.kt",
-                        "codegen/box/multiplatform/migratedOldTests/*.kt",
-                        "codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt"
-                    )
                 )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)

@@ -83,8 +83,17 @@ internal class ResultHandler(
             )
         }
 
-        verifyNoSuchTests(testReport.failedTests, "There are failed tests")
-
+        if (checks.expectedFailureCheck !is TestRunCheck.ExpectedFailure)
+            verifyNoSuchTests(testReport.failedTests, "There are failed tests")
+        else {
+            runResult.processOutput.stdOut.filteredOutput.let {
+                if (it.isNotEmpty())
+                    println("Failure is expected. Exit code=${runResult.exitCode}, filtered test output is below:\n$it")
+                else
+                    println("Failure is expected. Exit code=${runResult.exitCode}, filtered test output is empty.")
+            }
+            verifyNoSuchTests(testReport.passedTests, "There are unexpectedly passed tests")
+        }
         assumeFalse(testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(), "Test case is disabled")
     }
 

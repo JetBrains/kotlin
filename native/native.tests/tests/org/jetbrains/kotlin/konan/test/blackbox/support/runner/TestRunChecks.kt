@@ -22,6 +22,8 @@ internal sealed interface TestRunCheck {
         class Expected(val expectedExitCode: Int) : ExitCode()
     }
 
+    object ExpectedFailure : TestRunCheck
+
     class OutputDataFile(val file: File) : TestRunCheck
 
     class OutputMatcher(val match: (String) -> Boolean): TestRunCheck
@@ -31,7 +33,8 @@ internal sealed interface TestRunCheck {
 
 internal data class TestRunChecks(
     val executionTimeoutCheck: ExecutionTimeout,
-    private val exitCodeCheck: ExitCode,
+    private val exitCodeCheck: ExitCode?,
+    val expectedFailureCheck: ExpectedFailure?,
     val outputDataFile: OutputDataFile?,
     val outputMatcher: OutputMatcher?,
     val fileCheckMatcher: FileCheckMatcher?,
@@ -39,7 +42,8 @@ internal data class TestRunChecks(
 
     override fun iterator() = iterator {
         yield(executionTimeoutCheck)
-        yield(exitCodeCheck)
+        yieldIfNotNull(exitCodeCheck)
+        yieldIfNotNull(expectedFailureCheck)
         yieldIfNotNull(outputDataFile)
         yieldIfNotNull(outputMatcher)
         yieldIfNotNull(fileCheckMatcher)
@@ -51,6 +55,7 @@ internal data class TestRunChecks(
         fun Default(timeout: Duration) = TestRunChecks(
             executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(timeout),
             exitCodeCheck = ExitCode.Expected(0),
+            expectedFailureCheck = null,
             outputDataFile = null,
             outputMatcher = null,
             fileCheckMatcher = null,

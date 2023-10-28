@@ -96,7 +96,7 @@ internal abstract class AbstractLocalProcessRunner<R>(protected val checks: Test
 internal abstract class LocalResultHandler<R>(
     runResult: RunResult,
     private val visibleProcessName: String,
-    private val checks: TestRunChecks
+    protected val checks: TestRunChecks
 ) : AbstractResultHandler<R>(runResult) {
     override fun handle(): R {
         checks.forEach { check ->
@@ -106,6 +106,21 @@ internal abstract class LocalResultHandler<R>(
                 }
                 is ExecutionTimeout.ShouldExceed -> verifyExpectation(!runResult.hasFinishedOnTime) {
                     "Test is expected to fail with exceeded timeout, which hasn't happened."
+                }
+                is TestRunCheck.ExpectedFailure -> {
+                    val testReport = runResult.processOutput.stdOut.testReport
+                    verifyExpectation(testReport != null) {
+                        "testReport is expected to be non-null"
+                    }
+                    verifyExpectation(!testReport!!.isEmpty()) {
+                        "testReport is expected to be non-empty"
+                    }
+                    verifyExpectation(testReport.failedTests.isNotEmpty()) {
+                        "Test did not fail as expected"
+                    }
+                    verifyExpectation(testReport.passedTests.isEmpty()) {
+                        "Test unexpectedly passed"
+                    }
                 }
                 is ExitCode -> {
                     // Don't check exit code if it is unknown.

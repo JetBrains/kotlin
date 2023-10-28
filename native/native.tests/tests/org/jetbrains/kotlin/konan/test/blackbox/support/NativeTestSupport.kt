@@ -283,7 +283,8 @@ private object NativeTestSupport {
             kotlinNativeTargets,
             optimizationMode,
             useStaticCacheForUserLibraries,
-            makePerFileCaches
+            makePerFileCaches,
+            cacheMode
         )
     }
 

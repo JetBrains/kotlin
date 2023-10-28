@@ -226,6 +226,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             checks = TestRunChecks(
                 computeExecutionTimeoutCheck(settings, expectedTimeoutFailure),
                 computeExitCodeCheck(testKind, registeredDirectives, location),
+                expectedFailureCheck = null,
                 computeOutputDataFileCheck(testDataFile, registeredDirectives, location),
                 lldbSpec?.let { OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) } },
                 fileCheckMatcher = null,

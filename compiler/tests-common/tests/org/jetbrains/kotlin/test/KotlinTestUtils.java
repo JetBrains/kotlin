@@ -81,7 +81,7 @@ public class KotlinTestUtils {
     private static final boolean AUTOMATICALLY_UNMUTE_PASSED_TESTS = false;
     private static final boolean AUTOMATICALLY_MUTE_FAILED_TESTS = false;
 
-    private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
+    private static final Pattern DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_0-9]+)(:[ \\t]*(.*))?$", Pattern.MULTILINE);
 
     private KotlinTestUtils() {
     }
