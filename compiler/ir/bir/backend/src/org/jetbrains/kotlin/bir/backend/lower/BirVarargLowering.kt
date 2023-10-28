@@ -87,7 +87,7 @@ class BirVarargLowering : BirLoweringPhase() {
     private fun BirElement.isInsideAnnotation(): Boolean =
         ancestors().takeWhile { it is BirExpression }.any { it is BirConstructorCall && it.isAnnotation }
 
-    private val primitiveArrayOfFunctions =
+    private val primitiveArrayOfFunctions by lz {
         (PrimitiveType.entries.map { type -> type.name } + UnsignedType.entries.map { type -> type.typeName.asString() })
             .map { name -> Name.identifier(name.toLowerCaseAsciiOnly() + "ArrayOf") }
             .flatMap { name -> birBuiltIns.findFunctions(name, StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString()) }
@@ -97,4 +97,5 @@ class BirVarargLowering : BirLoweringPhase() {
                         it.valueParameters.size == 1 &&
                         it.valueParameters[0].isVararg
             }.toSet()
+    }
 }

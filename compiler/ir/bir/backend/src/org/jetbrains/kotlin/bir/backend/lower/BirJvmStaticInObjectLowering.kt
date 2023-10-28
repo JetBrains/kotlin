@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 
 context(JvmBirBackendContext)
 class BirJvmStaticInObjectLowering : BirLoweringPhase() {
-    private val JvmStaticAnnotation = birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME)!!
+    private val JvmStaticAnnotation by lz { birBuiltIns.findClass(JVM_STATIC_ANNOTATION_FQ_NAME)!! }
 
     private val functionsWithStaticAnnotationKey = registerIndexKey<BirSimpleFunction>(false) {
         it.isJvmStaticDeclaration()
