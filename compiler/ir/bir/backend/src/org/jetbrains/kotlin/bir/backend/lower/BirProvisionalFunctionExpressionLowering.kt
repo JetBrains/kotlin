@@ -40,14 +40,17 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
         }
 
         compiledBir.subtreeShuffleTransaction {
+            val function = expression.function
             val block = BirBlock.build {
                 this.sourceSpan = sourceSpan
                 type = expression.type
                 origin = expression.origin
+
+                statements += function
                 statements += BirFunctionReferenceImpl(
                     sourceSpan = sourceSpan,
                     type = expression.type,
-                    symbol = expression.function,
+                    symbol = function,
                     dispatchReceiver = null,
                     extensionReceiver = null,
                     origin = expression.origin,
@@ -58,10 +61,6 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
                 }
             }
             expression.replaceWith(block)
-
-            // This expression becomes orphaned :( but its function is still being used,
-            //  so we hook it temporarily.
-            compiledBir.attachRootElement(expression)
         }
     }
 }
