@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.jvm.checkers.PolymorphicSignatureCallChecker
 
 context(JvmBirBackendContext)
 class BirPolymorphicSignatureLowering : BirLoweringPhase() {
-    private val PolymorphicSignatureAnnotation = birBuiltIns.findClass(PolymorphicSignatureCallChecker.polymorphicSignatureFqName)
+    private val PolymorphicSignatureAnnotation by lz { birBuiltIns.findClass(PolymorphicSignatureCallChecker.polymorphicSignatureFqName) }
 
     private val polymorphicCalls = registerIndexKey<BirCall>(false) { call ->
         PolymorphicSignatureAnnotation?.let { call.symbol.owner.hasAnnotation(it) } == true
