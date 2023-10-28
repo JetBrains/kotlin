@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+
+import org.codehaus.groovy.runtime.IOGroovyMethods
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 import org.jetbrains.kotlin.konan.target.Architecture
@@ -136,11 +138,37 @@ konanArtifacts {
 }
 
 void konanc(String[] args) {
-   def konancScript = isWindows() ? "konanc.bat" : "konanc"
-   def konanc = "$kotlinNativeDist/bin/$konancScript"
-   def allArgs = args.join(" ")
-   println("$konanc $allArgs")
-   "$konanc $allArgs".execute().waitFor()
+    String kotlincNative = isWindows() ? "kotlinc-native.bat" : "kotlinc-native"
+    String allArgs = args.join(" ")
+    String commandWithArguments = "$kotlinNativeDist/bin/$kotlincNative $allArgs"
+
+    println(commandWithArguments)
+
+    Process process = commandWithArguments.execute()
+    int exitCode = process.waitFor()
+
+    if (exitCode != 0) {
+        String stdOut = IOGroovyMethods.getText(process.inputStream)
+        String stdErr = IOGroovyMethods.getText(process.errorStream)
+
+        StringBuilder builder = new StringBuilder()
+        builder.append("Error during execution of the command: $commandWithArguments\n")
+        builder.append("exitCode = $exitCode\n")
+        builder.append("=== STDOUT: BEGIN ===\n")
+        if (!stdOut.isEmpty()) {
+            builder.append(stdOut)
+            if (!stdOut.endsWith("\n")) builder.append("\n")
+        }
+        builder.append("=== STDOUT: END ===\n")
+        builder.append("=== STDERR: BEGIN ===\n")
+        if (!stdErr.isEmpty()) {
+            builder.append(stdErr)
+            if (!stdErr.endsWith("\n")) builder.append("\n")
+        }
+        builder.append("=== STDERR: END ===\n")
+
+        throw new GradleException(builder.toString())
+    }
 }
 
 tasks.named("clean", Delete.class) {
