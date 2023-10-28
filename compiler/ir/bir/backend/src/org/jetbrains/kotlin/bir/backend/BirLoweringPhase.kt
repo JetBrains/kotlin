@@ -62,4 +62,12 @@ abstract class BirLoweringPhase {
     protected fun <E : BirElement, T> acquireProperty(property: BirElementDynamicPropertyKey<E, T>): BirElementDynamicPropertyToken<E, T> {
         return dynamicPropertyManager.acquireProperty(property)
     }
+
+    protected inline fun <reified E : BirElement, T> acquireTemporaryProperty(): BirElementDynamicPropertyToken<E, T> {
+        val property = BirElementDynamicPropertyKey<E, T>()
+        return acquireProperty(property)
+    }
+
+
+    protected fun<T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
 }
