@@ -22,14 +22,8 @@ private fun Test() {
 private fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%changed != 0 || !%composer.skipping) {
-    if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
-    }
     A(a, %composer, 0)
     A(b, %composer, 0)
-    if (isTraceInProgress()) {
-      traceEventEnd()
-    }
   } else {
     %composer.skipToGroupEnd()
   }

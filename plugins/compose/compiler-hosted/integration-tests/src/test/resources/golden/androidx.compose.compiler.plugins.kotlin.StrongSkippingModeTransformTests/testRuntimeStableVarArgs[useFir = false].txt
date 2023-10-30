@@ -23,7 +23,6 @@ class Holder<T>  {
   @Composable
   fun Test(x: Array<out T>, %composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
-    sourceInformation(%composer, "C(Test)")
     val %dirty = %changed
     %composer.startMovableGroup(<>, x.size)
     val <iterator> = x.iterator()

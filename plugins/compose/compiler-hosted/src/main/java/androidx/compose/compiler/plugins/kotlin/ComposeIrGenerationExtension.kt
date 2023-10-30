@@ -53,6 +53,7 @@ class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsV2Enabled: Boolean = false,
     private val generateFunctionKeyMetaClasses: Boolean = false,
     private val sourceInformationEnabled: Boolean = true,
+    private val traceMarkersEnabled: Boolean = true,
     private val intrinsicRememberEnabled: Boolean = false,
     private val decoysEnabled: Boolean = false,
     private val metricsDestination: String? = null,
@@ -194,6 +195,7 @@ class ComposeIrGenerationExtension(
             metrics,
             stabilityInferencer,
             sourceInformationEnabled,
+            traceMarkersEnabled,
             intrinsicRememberEnabled,
             strongSkippingEnabled
         ).lower(moduleFragment)
