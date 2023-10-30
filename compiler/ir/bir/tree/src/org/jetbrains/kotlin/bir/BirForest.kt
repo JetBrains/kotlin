@@ -104,7 +104,7 @@ class BirForest : BirElementParent() {
     fun countAllElements(): Int {
         var count = 0
         val roots = getActualRootElements()
-        for(root in roots) {
+        for (root in roots) {
             count += root.countAllElementsInTree()
         }
         return count
@@ -239,10 +239,20 @@ class BirForest : BirElementParent() {
                         indexer.index = index
                         val slot = ElementsIndexSlot(index, indexer.condition, indexer.elementClass)
                         elementIndexSlots[index] = slot
-                        BirElementIndexClassifierFunctionGenerator.Indexer(indexer.condition, indexer.elementClass, index)
+                        BirElementIndexClassifierFunctionGenerator.Indexer(
+                            BirElementGeneralIndexer.Kind.IndexMatcher,
+                            indexer.condition,
+                            indexer.elementClass,
+                            index
+                        )
                     }
                     is BirElementBackReferencesKey<*> -> {
-                        BirElementIndexClassifierFunctionGenerator.Indexer(indexer.recorder, indexer.elementClass, index)
+                        BirElementIndexClassifierFunctionGenerator.Indexer(
+                            BirElementGeneralIndexer.Kind.BackReferenceRecorder,
+                            indexer.recorder,
+                            indexer.elementClass,
+                            index
+                        )
                     }
                 }
             }
@@ -294,7 +304,7 @@ class BirForest : BirElementParent() {
 
     private inner class ElementsIndexSlot(
         val index: Int,
-        val condition: BirElementIndexMatcher,
+        val condition: BirElementIndexMatcher?,
         val elementClass: Class<*>,
     ) {
         var array = emptyArray<BirElementBase?>()
