@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.bir
 
 import org.jetbrains.kotlin.bir.util.ancestors
+import org.jetbrains.kotlin.bir.util.countAllElementsInTree
 import java.lang.AutoCloseable
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -94,6 +95,21 @@ class BirForest : BirElementParent() {
             dirtyElementsInsideSubtreeShuffleTransaction += element
         }
     }
+
+    private fun getActualRootElements(): List<BirElementBase> {
+        possiblyRootElements.retainAll { it._parent === this }
+        return possiblyRootElements
+    }
+
+    fun countAllElements(): Int {
+        var count = 0
+        val roots = getActualRootElements()
+        for(root in roots) {
+            count += root.countAllElementsInTree()
+        }
+        return count
+    }
+
 
     /**
      * Allows to efficiently move around big BIR subtrees within the forest.
@@ -239,9 +255,8 @@ class BirForest : BirElementParent() {
     fun reindexAllElements() {
         require(!isInsideSubtreeShuffleTransaction)
 
-        possiblyRootElements.retainAll { it._parent === this }
-
-        for (root in possiblyRootElements) {
+        val roots = getActualRootElements()
+        for (root in roots) {
             root.acceptLite { element ->
                 addElementToIndex(element)
                 element.walkIntoChildren()
