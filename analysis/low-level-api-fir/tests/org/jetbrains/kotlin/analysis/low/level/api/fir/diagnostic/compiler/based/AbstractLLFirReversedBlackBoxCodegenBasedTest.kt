@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirOnlyReversedTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -13,6 +14,6 @@ abstract class AbstractLLFirReversedBlackBoxCodegenBasedTest : AbstractLLFirBlac
     override fun TestConfigurationBuilder.configureTest() {
         facadeStep(::LowLevelFirFrontendFacade.bind(LLFirAnalyzerFacadeFactoryWithPreresolveInReversedOrder))
         baseConfiguration()
-        useAfterAnalysisCheckers(::FirReversedSuppressor)
+        useAfterAnalysisCheckers(::LLFirOnlyReversedTestSuppressor)
     }
 }

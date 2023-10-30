@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.LLFirCompiledBasedTestSuppressor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -60,7 +60,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         useMetaTestConfigurators(::LLFirMetaTestConfigurator)
         useAfterAnalysisCheckers(::LLFirIdenticalChecker)
         useAfterAnalysisCheckers(::LLFirDivergenceCommentChecker)
-        useAfterAnalysisCheckers(::LLFirCompiledBasedTestSuppressor)
+        useAfterAnalysisCheckers(::LLFirTestSuppressor)
     }
 
     open fun TestConfigurationBuilder.configureTest() {}
