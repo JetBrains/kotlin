@@ -235,7 +235,7 @@ open class NamedTypeParameterRef(
         renderNullabilityTo(appendable)
     }
 
-    final override fun copy(nullable: Boolean) = NamedTypeParameterRef(name, nullable)
+    override fun copy(nullable: Boolean) = NamedTypeParameterRef(name, nullable)
 }
 
 interface TypeRefWithNullability : TypeRef {
@@ -284,7 +284,10 @@ class TypeVariable(
     name: String,
     val bounds: List<TypeRef> = emptyList(),
     val variance: Variance = Variance.INVARIANT,
-) : NamedTypeParameterRef(name)
+    nullable: Boolean = false,
+) : NamedTypeParameterRef(name, nullable) {
+    final override fun copy(nullable: Boolean) = TypeVariable(name, bounds, variance, nullable)
+}
 
 fun <P : TypeParameterRef> KClass<*>.asRef(): ClassRef<P> {
     val qualifiedName = this.qualifiedName ?: error("$this doesn't have qualified name and thus cannot be converted to ClassRef")
