@@ -31,13 +31,13 @@ var FirDeclaration.expectForActual: ExpectForActualMatchingData? by FirDeclarati
 /**
  * @see expectForActual
  */
-fun FirFunctionSymbol<*>.getSingleExpectForActualOrNull(): FirFunctionSymbol<*>? =
-    (this as FirBasedSymbol<*>).getSingleExpectForActualOrNull() as? FirFunctionSymbol<*>
+fun FirFunctionSymbol<*>.getSingleMatchedExpectFunForActualFunOrNull(): FirFunctionSymbol<*>? =
+    getSingleMatchedExpectForActualOrNull() as? FirFunctionSymbol<*>
 
 /**
  * @see expectForActual
  */
-fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(): FirBasedSymbol<*>? =
+fun FirBasedSymbol<*>.getSingleMatchedExpectForActualOrNull(): FirBasedSymbol<*>? =
     expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)?.singleOrNull()
 
 /**
