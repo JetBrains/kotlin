@@ -96,17 +96,25 @@ class BuildReportsIT : KGPBaseTest() {
     )
     @GradleTest
     fun testBuildMetricsForJsProject(gradleVersion: GradleVersion) {
-        testBuildReportInFile("kotlin-js-plugin-project", "compileKotlinJs", gradleVersion,
-                              languageVersion = KotlinVersion.KOTLIN_1_7.version)
+        testBuildReportInFile(
+            "kotlin-js-plugin-project",
+            "compileKotlinJs",
+            gradleVersion,
+            languageVersion = KotlinVersion.KOTLIN_1_7.version
+        )
     }
 
-    private fun testBuildReportInFile(project: String, task: String, gradleVersion: GradleVersion,
-                                      languageVersion: String = KotlinVersion.KOTLIN_2_0.version) {
+    private fun testBuildReportInFile(
+        project: String,
+        task: String,
+        gradleVersion: GradleVersion,
+        languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
+    ) {
         project(project, gradleVersion) {
             build(task) {
                 assertBuildReportPathIsPrinted()
             }
-            //Should contains build metrics for all compile kotlin tasks
+            //Should contain build metrics for all compile kotlin tasks
             validateBuildReportFile(KotlinVersion.DEFAULT.version)
         }
 
@@ -114,7 +122,7 @@ class BuildReportsIT : KGPBaseTest() {
             build(task, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
                 assertBuildReportPathIsPrinted()
             }
-            //Should contains build metrics for all compile kotlin tasks
+            //Should contain build metrics for all compile kotlin tasks
             validateBuildReportFile(languageVersion)
         }
     }
@@ -330,7 +338,7 @@ class BuildReportsIT : KGPBaseTest() {
                     files.single().bufferedReader().use { reader ->
                         val kotlinVersion = reader.readLine()
                         assertTrue("kotlin version should be in the error file") {
-                            kotlinVersion != null && kotlinVersion.trim().equals("kotlin version: ${buildOptions.kotlinVersion}")
+                            kotlinVersion != null && kotlinVersion.trim() == "kotlin version: ${buildOptions.kotlinVersion}"
                         }
                         val errorMessage = reader.readLine()
                         assertTrue("Error message should start with 'error message: ' to parse it on IDEA side") {
