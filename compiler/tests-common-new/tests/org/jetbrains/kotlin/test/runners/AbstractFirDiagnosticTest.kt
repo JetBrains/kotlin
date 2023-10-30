@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.runners
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.*
@@ -110,6 +111,9 @@ abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) :
         }
 
         useAdditionalService(::LibraryProvider)
+
+        @OptIn(TestInfrastructureInternals::class)
+        useModuleStructureTransformers(DuplicateFileNameChecker)
     }
 }
 
@@ -238,7 +242,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 class FirLazyDeclarationResolverWithPhaseCheckingSessionComponentRegistrar : FirSessionComponentRegistrar() {
     private val lazyResolver = FirCompilerLazyDeclarationResolverWithPhaseChecking()
 
-    @OptIn(org.jetbrains.kotlin.fir.SessionConfiguration::class)
+    @OptIn(SessionConfiguration::class)
     override fun registerAdditionalComponent(session: FirSession) {
         session.register(FirLazyDeclarationResolver::class, lazyResolver)
     }
