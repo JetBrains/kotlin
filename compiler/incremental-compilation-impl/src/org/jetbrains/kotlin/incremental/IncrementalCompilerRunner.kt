@@ -421,7 +421,9 @@ abstract class IncrementalCompilerRunner<
                 GradleBuildPerformanceMetric.SNAPSHOT_SIZE,
                 (buildHistoryFile?.length() ?: 0) + lastBuildInfoFile.length() + abiSnapshotFile.length()
             )
-            reporter.addMetric(GradleBuildPerformanceMetric.CACHE_DIRECTORY_SIZE, cacheDirectory.walk().sumOf { it.length() })
+            reporter.addMetric(
+                GradleBuildPerformanceMetric.CACHE_DIRECTORY_SIZE,
+                cacheDirectory.walk().filter { it.isFile }.sumOf { it.length() })
         }
     }
 
