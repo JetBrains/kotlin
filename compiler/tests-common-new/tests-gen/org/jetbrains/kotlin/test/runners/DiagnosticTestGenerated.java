@@ -12359,6 +12359,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt59493.kt")
+            public void testKt59493() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/kt59493.kt");
+            }
+
+            @Test
             @TestMetadata("notApplicable.kt")
             public void testNotApplicable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/notApplicable.kt");
