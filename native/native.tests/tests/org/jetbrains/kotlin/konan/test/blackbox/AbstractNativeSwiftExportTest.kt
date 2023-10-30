@@ -36,7 +36,7 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
 
     private val testCompilationFactory = TestCompilationFactory()
 
-    protected fun runTest(@TestDataFile testDir: String) {
+    protected fun runIntegrationTest(@TestDataFile testDir: String) {
         val testDirectory = getAbsoluteFile(testDir)
         val ktSources = testDirectory.list()!!
             .filter { it.endsWith(".kt") }
@@ -64,8 +64,45 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         runExecutableAndVerify(testCase, testExecutable)
     }
 
+    protected fun runAPIGenerationTest(@TestDataFile testDir: String) {
+        val testDirectory = getAbsoluteFile(testDir)
+        val ktSources = testDirectory.list()!!
+            .filter { it.endsWith(".kt") }
+            .map { testDirectory.resolve(it) }
+        val expectedSwiftAPI = testDirectory.list()!!
+            .filter { it.endsWith(".swift") }
+            .map { testDirectory.resolve(it) }
+
+        val testCase = generateSwiftExportTestCase(testDirectory, ktSources)
+        val resultedSwiftAPI = testCase.toSwiftAPI().assertSuccess()
+
+        assert(expectedSwiftAPI.count() == resultedSwiftAPI.resultingArtifact.swiftSources.count()) {
+            "expected ${expectedSwiftAPI.count()} swift files in result, got ${resultedSwiftAPI.resultingArtifact.swiftSources.count()}"
+        }
+        val zipped = expectedSwiftAPI.sorted().zip(resultedSwiftAPI.resultingArtifact.swiftSources.sorted())
+        zipped.forEach {
+            assert(it.first.readBytes().contentEquals(it.second.readBytes())) { "Generated files were different" }
+        }
+    }
+
     private fun TestCase.toSwiftArtifact(): TestCompilationResult<out TestCompilationArtifact.SwiftArtifact> {
-        return testCompilationFactory.testCaseToSwiftArtifactCompilation(this, testRunSettings).result
+        val factory = testCompilationFactory
+        toSwiftAPI()
+        toSwiftFromKLib()
+        val compilation = factory.testCaseToSwiftArtifactCompilation(this, testRunSettings)
+        return compilation.result
+    }
+
+    private fun TestCase.toSwiftAPI(): TestCompilationResult<out TestCompilationArtifact.SwiftArtifact> {
+        val factory = testCompilationFactory
+        val compilation = factory.testCaseToSwiftAPIProduction(this, testRunSettings)
+        return compilation.result
+    }
+
+    private fun TestCase.toSwiftFromKLib(): TestCompilationResult<out TestCompilationArtifact.SwiftArtifact> {
+        val factory = testCompilationFactory
+        val compilation = factory.testCaseToExtractSwiftFromKLib(this, testRunSettings)
+        return compilation.result
     }
 
     // This method is pretty hacky and there is a big room for improvement (e.g. a proper support for test-runners).

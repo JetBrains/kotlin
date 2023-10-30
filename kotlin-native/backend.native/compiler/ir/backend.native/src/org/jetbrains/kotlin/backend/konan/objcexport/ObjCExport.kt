@@ -110,14 +110,14 @@ internal class ObjCExport(
 ) {
     private val config = generationState.config
     private val target get() = config.target
-    private val topLevelNamePrefix get() = if (config.produce == CompilerOutputKind.IR_BASED_SWIFT) {
-        // Since SwiftExport is standing on Objective-C Export shoulders at the moment, but does not rely
-        // on a closed-world approach as we did there, use a stable "Kotlin" prefix to avoid linkage problems.
-        // TODO: Eventually, we should extract some common part of two exports to a separate entity and avoid such hacks.
-        "Kotlin"
-    } else {
-        generationState.objCExportTopLevelNamePrefix
-    }
+    private val topLevelNamePrefix get() = if (config.produce.isSwiftProduction()) {
+            // Since SwiftExport is standing on Objective-C Export shoulders at the moment, but does not rely
+            // on a closed-world approach as we did there, use a stable "Kotlin" prefix to avoid linkage problems.
+            // TODO: Eventually, we should extract some common part of two exports to a separate entity and avoid such hacks.
+            "Kotlin"
+        } else {
+            generationState.objCExportTopLevelNamePrefix
+        }
 
     lateinit var namer: ObjCExportNamer
 

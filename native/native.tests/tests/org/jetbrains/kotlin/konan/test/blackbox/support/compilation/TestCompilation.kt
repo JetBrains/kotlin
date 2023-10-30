@@ -257,7 +257,12 @@ internal class ObjCFrameworkCompilation(
     }
 }
 
-internal class SwiftArtifactCompilation(
+enum class SwiftTaskMode {
+    BINARY, API, EXTRACT_KLIB
+}
+
+internal open class SwiftTask(
+    val mode: SwiftTaskMode,
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
@@ -285,12 +290,58 @@ internal class SwiftArtifactCompilation(
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
         add(
-            "-produce", "ir_based_swift",
+            "-produce", "swift",
+            "-swift-task", mode.name.lowercase(),
             "-output", expectedArtifact.kotlinBinary.absolutePath
         )
         super.applySpecificArgs(argsBuilder)
     }
 }
+
+internal class SwiftArtifactCompilation(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: SwiftArtifact
+) : SwiftTask(
+    mode = SwiftTaskMode.BINARY,
+    settings = settings,
+    freeCompilerArgs = freeCompilerArgs,
+    sourceModules = sourceModules,
+    dependencies = dependencies,
+    expectedArtifact = expectedArtifact,
+)
+
+internal class SwiftAPIProduction(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: SwiftArtifact
+) : SwiftTask(
+    mode = SwiftTaskMode.API,
+    settings = settings,
+    freeCompilerArgs = freeCompilerArgs,
+    sourceModules = sourceModules,
+    dependencies = dependencies,
+    expectedArtifact = expectedArtifact,
+)
+
+internal class SwiftFromKLibExtraction(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: SwiftArtifact
+) : SwiftTask(
+    mode = SwiftTaskMode.EXTRACT_KLIB,
+    settings = settings,
+    freeCompilerArgs = freeCompilerArgs,
+    sourceModules = sourceModules,
+    dependencies = dependencies,
+    expectedArtifact = expectedArtifact,
+)
 
 internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
     override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))

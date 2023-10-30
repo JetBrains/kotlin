@@ -41,10 +41,22 @@ enum class CompilerOutputKind {
     PRELIMINARY_CACHE {
         override fun suffix(target: KonanTarget?) = ""
     },
-    IR_BASED_SWIFT {
+    SWIFT_API {
         override fun suffix(target: KonanTarget?): String = ""
-    };
+        override fun isSwiftProduction(): Boolean = true
+    },
+    SWIFT_BINARY {
+        override fun suffix(target: KonanTarget?): String = ""
+        override fun isSwiftProduction(): Boolean = true
+    },
+    SWIFT_EXTRACT_KLIB {
+        override fun suffix(target: KonanTarget?): String = ""
+        override fun isSwiftProduction(): Boolean = true
+    },
+    ;
 
     abstract fun suffix(target: KonanTarget? = null): String
     open fun prefix(target: KonanTarget? = null): String = ""
+
+    open fun isSwiftProduction(): Boolean = false
 }

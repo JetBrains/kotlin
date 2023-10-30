@@ -17,37 +17,37 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
     @Test
     fun trivial() {
         val testDir = File("native/native.tests/testData/SwiftExport/trivial")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
     fun primitiveTypeFunctions() {
         val testDir = File("native/native.tests/testData/SwiftExport/primitive_type_functions")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
     fun bridgedTypes() {
         val testDir = File("native/native.tests/testData/SwiftExport/bridged_types")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
     fun primitiveProperties() {
         val testDir = File("native/native.tests/testData/SwiftExport/primitive_properties")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
     fun namespacing() {
         val testDir = File("native/native.tests/testData/SwiftExport/namespacing")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
     fun classes() {
         val testDir = File("native/native.tests/testData/SwiftExport/classes")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
@@ -59,12 +59,18 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
     @Test
     fun unknownSwiftType() {
         val testDir = File("native/native.tests/testData/SwiftExport/unknown_swift_type")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
     fun overloading() {
         val testDir = File("native/native.tests/testData/SwiftExport/overloading")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
+    }
+
+    @Test
+    fun `kotlin sources should generate swift api`() {
+        val testDir = File("native/native.tests/testData/SwiftExport/swift_api_generation")
+        runAPIGenerationTest(testDir.absolutePath)
     }
 }

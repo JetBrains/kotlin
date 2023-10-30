@@ -26,12 +26,18 @@ internal class TestCompilationFactory {
     private val cachedKlibCompilations = ThreadSafeCache<KlibCacheKey, KlibCompilations>()
     private val cachedExecutableCompilations = ThreadSafeCache<ExecutableCacheKey, TestCompilation<Executable>>()
     private val cachedObjCFrameworkCompilations = ThreadSafeCache<ObjCFrameworkCacheKey, ObjCFrameworkCompilation>()
-    private val cachedSwiftArtifactCompilations = ThreadSafeCache<SwiftArtifactCacheKey, SwiftArtifactCompilation>()
+    private val cachedSwiftArtifactCompilations = ThreadSafeCache<Swift.ArtifactCacheKey, SwiftArtifactCompilation>()
+    private val cachedSwiftAPIProductions = ThreadSafeCache<Swift.APIProductionCacheKey, SwiftAPIProduction>()
+    private val cachedSwiftFromKLibExtraction = ThreadSafeCache<Swift.FromKLibExtractionCacheKey, SwiftFromKLibExtraction>()
 
     private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs)
     private data class ExecutableCacheKey(val sourceModules: Set<TestModule>)
     private data class ObjCFrameworkCacheKey(val sourceModules: Set<TestModule>)
-    private data class SwiftArtifactCacheKey(val sourceModules: Set<TestModule>)
+    private sealed class Swift {
+        data class ArtifactCacheKey(val sourceModules: Set<TestModule>) : Swift()
+        data class APIProductionCacheKey(val sourceModules: Set<TestModule>) : Swift()
+        data class FromKLibExtractionCacheKey(val sourceModules: Set<TestModule>) : Swift()
+    }
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
     private data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?)
@@ -110,7 +116,7 @@ internal class TestCompilationFactory {
     }
 
     fun testCaseToSwiftArtifactCompilation(testCase: TestCase, settings: Settings): SwiftArtifactCompilation {
-        val cacheKey = SwiftArtifactCacheKey(testCase.rootModules)
+        val cacheKey = Swift.ArtifactCacheKey(testCase.rootModules)
         cachedSwiftArtifactCompilations[cacheKey]?.let { return it }
 
         val (
@@ -122,6 +128,56 @@ internal class TestCompilationFactory {
 
         return cachedSwiftArtifactCompilations.computeIfAbsent(cacheKey) {
             SwiftArtifactCompilation(
+                settings = settings,
+                freeCompilerArgs = testCase.freeCompilerArgs,
+                sourceModules = sourceModules,
+                dependencies = dependencies,
+                expectedArtifact = SwiftArtifact(
+                    settings.artifactDirForPackageName(testCase.nominalPackageName),
+                    testCase.nominalPackageName.compressedPackageName
+                )
+            )
+        }
+    }
+
+    fun testCaseToSwiftAPIProduction(testCase: TestCase, settings: Settings): SwiftAPIProduction {
+        val cacheKey = Swift.APIProductionCacheKey(testCase.rootModules)
+        cachedSwiftAPIProductions[cacheKey]?.let { return it }
+
+        val (
+            dependencies: Iterable<CompiledDependency<*>>,
+            sourceModules: Set<TestModule.Exclusive>
+        ) = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
+            ProduceStaticCache.No
+        }
+
+        return cachedSwiftAPIProductions.computeIfAbsent(cacheKey) {
+            SwiftAPIProduction(
+                settings = settings,
+                freeCompilerArgs = testCase.freeCompilerArgs,
+                sourceModules = sourceModules,
+                dependencies = dependencies,
+                expectedArtifact = SwiftArtifact(
+                    settings.artifactDirForPackageName(testCase.nominalPackageName),
+                    testCase.nominalPackageName.compressedPackageName
+                )
+            )
+        }
+    }
+
+    fun testCaseToExtractSwiftFromKLib(testCase: TestCase, settings: Settings): SwiftFromKLibExtraction {
+        val cacheKey = Swift.FromKLibExtractionCacheKey(testCase.rootModules)
+        cachedSwiftFromKLibExtraction[cacheKey]?.let { return it }
+
+        val (
+            dependencies: Iterable<CompiledDependency<*>>,
+            sourceModules: Set<TestModule.Exclusive>
+        ) = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
+            ProduceStaticCache.No
+        }
+
+        return cachedSwiftFromKLibExtraction.computeIfAbsent(cacheKey) {
+            SwiftFromKLibExtraction(
                 settings = settings,
                 freeCompilerArgs = testCase.freeCompilerArgs,
                 sourceModules = sourceModules,

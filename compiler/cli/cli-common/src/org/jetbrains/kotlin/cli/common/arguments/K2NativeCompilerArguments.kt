@@ -116,10 +116,17 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
         value = "-produce", shortName = "-p",
-        valueDescription = "{program|static|dynamic|framework|library|bitcode}",
+        valueDescription = "{program|static|dynamic|framework|library|bitcode|swift}",
         description = "Specify output file kind"
     )
     var produce: String? = null
+
+    @Argument(
+        value = "-swift-task",
+        valueDescription = "{api|extract_klib|binary}",
+        description = "Specify output file kind"
+    )
+    var swiftTask: String? = null
 
     @Argument(value = "-repo", shortName = "-r", valueDescription = "<path>", description = "Library search path")
     var repositories: Array<String>? = null

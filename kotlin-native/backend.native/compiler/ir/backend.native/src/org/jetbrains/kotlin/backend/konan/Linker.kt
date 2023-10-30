@@ -20,7 +20,7 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
             }
             CompilerOutputKind.TEST_BUNDLE,
             CompilerOutputKind.DYNAMIC_CACHE,
-            CompilerOutputKind.IR_BASED_SWIFT,
+            CompilerOutputKind.SWIFT_BINARY,
             CompilerOutputKind.DYNAMIC -> LinkerOutputKind.DYNAMIC_LIBRARY
             CompilerOutputKind.STATIC_CACHE,
             CompilerOutputKind.STATIC -> LinkerOutputKind.STATIC_LIBRARY

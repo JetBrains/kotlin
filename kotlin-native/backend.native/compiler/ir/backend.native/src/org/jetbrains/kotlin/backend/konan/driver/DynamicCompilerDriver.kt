@@ -49,27 +49,27 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                         CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
                         CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
                         CompilerOutputKind.TEST_BUNDLE -> produceBundle(engine, config, environment)
-                        CompilerOutputKind.IR_BASED_SWIFT -> produceSwiftArtifacts(engine, config, environment)
+                        CompilerOutputKind.SWIFT_API -> produceSwiftAPI(engine, config, environment)
+                        CompilerOutputKind.SWIFT_EXTRACT_KLIB -> extractSwiftFromKLib(engine, config)
+                        CompilerOutputKind.SWIFT_BINARY -> produceBinary(engine, config, environment)
                     }
                 }
             }
         }
     }
 
-    private fun produceSwiftArtifacts(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceSwiftAPI(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
-        require(psiToIrOutput is PsiToIrOutput.ForBackend)
-        val swiftGenerationOutputs = psiToIrOutput.irModules
+        val result = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
+        require(result is PsiToIrOutput.ForBackend)
+
+        val swiftGenerationOutputs = result.irModules
                 .filter { config.resolve.includedLibraries.contains(it.value.descriptor.konanLibrary) }
-                .map { (_, module) ->
-                    engine.runPhase(SwiftGenerationPhase, SwiftGenerationInput(module))
-                }
-        swiftGenerationOutputs.forEach { (moduleName, swiftProducer, cProducer) ->
-            val outputDirectory = java.io.File(config.outputPath).absoluteFile.parentFile
-            outputDirectory.mkdirs()
-            engine.runPhase(WriteSwiftGenerationOutputPhase, WriteSwiftGenerationInput(moduleName, swiftProducer, cProducer, outputDirectory))
-        }
+                .map { engine.runPhase(SwiftGenerationPhase, SwiftGenerationInput(it.value)) }
+        swiftGenerationOutputs.forEach { it.dumpToFile(engine, config) }
+    }
+
+    private fun extractSwiftFromKLib(engine: PhaseEngine<PhaseContext>, config: KonanConfig) {
         config.resolvedLibraries.getFullList()
                 .filterIsInstance<KonanLibrary>()
                 .filter { it.swiftSourcesPaths.isNotEmpty() || it.objcHeadersPaths.isNotEmpty() }
@@ -80,8 +80,12 @@ internal class DynamicCompilerDriver : CompilerDriver() {
                     val input = ExtractEmbeddedSwiftExtensionsInput(konanLibrary, swiftOutputDirectory, objcOutputDirectory)
                     engine.runPhase(ExtractEmbeddedSwiftExtensionsPhase, input)
                 }
-        val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-        engine.runBackend(backendContext, psiToIrOutput.irModule)
+    }
+
+    private fun SwiftGenerationOutput.dumpToFile(engine: PhaseEngine<PhaseContext>, config: KonanConfig) {
+        val outputDirectory = java.io.File(config.outputPath).absoluteFile.parentFile
+        outputDirectory.mkdirs()
+        engine.runPhase(WriteSwiftGenerationOutputPhase, WriteSwiftGenerationInput(moduleName, swiftCodeProducer, cCodeProducer, outputDirectory))
     }
 
     /**

@@ -52,8 +52,13 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     // and teach the compiler to work with temporaries and -save-temps.
 
     arguments.outputName?.let { put(OUTPUT, it) }
-    val outputKind = CompilerOutputKind.valueOf(
-            (arguments.produce ?: "program").uppercase())
+    var outputKindString = (arguments.produce ?: "program")
+    if (outputKindString.uppercase() == "SWIFT") {
+        val swiftCompilationTypeString = arguments.swiftTask
+                ?: throw IllegalArgumentException("-produce swift should be accompanied by -swift-task always")
+        outputKindString = "${outputKindString}_$swiftCompilationTypeString"
+    }
+    val outputKind = CompilerOutputKind.valueOf(outputKindString.uppercase())
     put(PRODUCE, outputKind)
     putIfNotNull(HEADER_KLIB, arguments.headerKlibPath)
 
