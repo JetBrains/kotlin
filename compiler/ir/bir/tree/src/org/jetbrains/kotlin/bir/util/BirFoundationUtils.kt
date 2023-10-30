@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.bir.util
 
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.accept
 
 internal class BirElementAncestorsIterator(
     initial: BirElementBase?,
@@ -28,3 +29,12 @@ internal class BirElementAncestorsSequence(private val element: BirElementBase?)
 
 fun BirElement.ancestors(includeSelf: Boolean = false): Sequence<BirElementBase> =
     BirElementAncestorsSequence(if (includeSelf) this as BirElementBase else parent)
+
+fun BirElement.countAllElementsInTree(): Int {
+    var count = 0
+    accept {
+        count++
+        it.walkIntoChildren()
+    }
+    return count
+}
