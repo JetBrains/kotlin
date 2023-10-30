@@ -1,0 +1,9 @@
+depends = Foundation
+language = Objective-C
+
+---
+
+#import "Foundation/NSObject.h"
+
+@interface WithClassProperty : NSObject
+@end
