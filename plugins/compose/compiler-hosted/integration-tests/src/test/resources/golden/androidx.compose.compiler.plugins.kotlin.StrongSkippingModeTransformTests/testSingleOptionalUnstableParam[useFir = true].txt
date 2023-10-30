@@ -19,7 +19,6 @@ fun Test(x: Foo? = Foo()) {
 @Composable
 fun Test(x: Foo?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changedInstance(x)) 0b0100 else 0b0010

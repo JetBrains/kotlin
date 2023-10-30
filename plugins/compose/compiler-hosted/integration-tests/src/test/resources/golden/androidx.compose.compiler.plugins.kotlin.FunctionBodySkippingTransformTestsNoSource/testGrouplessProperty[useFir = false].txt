@@ -38,13 +38,7 @@ open class Foo {
   @ReadOnlyComposable
   @Composable
   fun getHashCode(%composer: Composer?, %changed: Int): Int {
-    if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
-    }
     val tmp0 = %composer.hashCode()
-    if (isTraceInProgress()) {
-      traceEventEnd()
-    }
     return tmp0
   }
   static val %stable: Int = 0
@@ -52,12 +46,6 @@ open class Foo {
 @ReadOnlyComposable
 @Composable
 fun getHashCode(%composer: Composer?, %changed: Int): Int {
-  if (isTraceInProgress()) {
-    traceEventStart(<>, %changed, -1, <>)
-  }
   val tmp0 = %composer.hashCode()
-  if (isTraceInProgress()) {
-    traceEventEnd()
-  }
   return tmp0
 }

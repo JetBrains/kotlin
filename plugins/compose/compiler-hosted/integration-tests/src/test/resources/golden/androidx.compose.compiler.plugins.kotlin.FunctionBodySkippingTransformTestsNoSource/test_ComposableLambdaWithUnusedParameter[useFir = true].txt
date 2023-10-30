@@ -16,13 +16,7 @@ val layoutLambda: Function3<Int, Composer, Int, Unit> = ComposableSingletons%Tes
 internal object ComposableSingletons%TestKt {
   val lambda-1: Function3<Int, Composer, Int, Unit> = composableLambdaInstance(<>, false) { <unused var>: Int, %composer: Composer?, %changed: Int ->
     if (%changed and 0b01010001 != 0b00010000 || !%composer.skipping) {
-      if (isTraceInProgress()) {
-        traceEventStart(<>, %changed, -1, <>)
-      }
       Layout(%composer, 0)
-      if (isTraceInProgress()) {
-        traceEventEnd()
-      }
     } else {
       %composer.skipToGroupEnd()
     }

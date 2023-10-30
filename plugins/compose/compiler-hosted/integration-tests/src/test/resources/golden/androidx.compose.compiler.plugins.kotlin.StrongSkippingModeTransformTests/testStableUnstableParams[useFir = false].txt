@@ -27,7 +27,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 @Composable
 fun CanSkip(a: Int, b: Foo?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(CanSkip)")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
@@ -72,7 +71,6 @@ fun CanSkip(a: Int, b: Foo?, %composer: Composer?, %changed: Int, %default: Int)
 @Composable
 fun CannotSkip(a: Int, b: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(CannotSkip)")
   val %dirty = %changed
   if (%changed and 0b0110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
@@ -100,7 +98,6 @@ fun CannotSkip(a: Int, b: Foo, %composer: Composer?, %changed: Int) {
 @Composable
 fun NoParams(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(NoParams)")
   if (%changed != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)

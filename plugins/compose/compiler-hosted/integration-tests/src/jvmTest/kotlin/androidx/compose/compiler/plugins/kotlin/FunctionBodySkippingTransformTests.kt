@@ -1263,6 +1263,7 @@ class FunctionBodySkippingTransformTestsNoSource(
 ) : FunctionBodySkippingTransformTestsBase(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)
+        put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, false)
     }
 
     @Test

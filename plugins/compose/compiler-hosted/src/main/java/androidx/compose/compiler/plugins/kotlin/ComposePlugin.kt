@@ -74,6 +74,8 @@ object ComposeConfiguration {
         CompilerConfigurationKey<String>(
             "Path to stability configuration file"
         )
+    val TRACE_MARKERS_ENABLED_KEY =
+        CompilerConfigurationKey<Boolean>("Include composition trace markers in generated code")
 }
 
 @OptIn(ExperimentalCompilerApi::class)
@@ -158,6 +160,13 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = true
         )
+        val TRACE_MARKERS_OPTION = CliOption(
+            "traceMarkersEnabled",
+            "<true|false>",
+            "Include composition trace markers in generate code",
+            required = false,
+            allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = PLUGIN_ID
@@ -171,7 +180,8 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION,
         DECOYS_ENABLED_OPTION,
-        STRONG_SKIPPING_OPTION
+        STRONG_SKIPPING_OPTION,
+        TRACE_MARKERS_OPTION
     )
 
     override fun processOption(
@@ -222,6 +232,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         STABLE_CONFIG_PATH_OPTION -> configuration.put(
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
             value
+        )
+        TRACE_MARKERS_OPTION -> configuration.put(
+            ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY,
+            value == "true"
         )
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
@@ -396,6 +410,10 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
                 ""
             )
+            val traceMarkersEnabled = configuration.get(
+                ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY,
+                true
+            )
 
             val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             val stableTypeMatchers = try {
@@ -413,6 +431,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 liveLiteralsV2Enabled = liveLiteralsV2Enabled,
                 generateFunctionKeyMetaClasses = generateFunctionKeyMetaClasses,
                 sourceInformationEnabled = sourceInformationEnabled,
+                traceMarkersEnabled = traceMarkersEnabled,
                 intrinsicRememberEnabled = intrinsicRememberEnabled,
                 decoysEnabled = decoysEnabled,
                 metricsDestination = metricsDestination,

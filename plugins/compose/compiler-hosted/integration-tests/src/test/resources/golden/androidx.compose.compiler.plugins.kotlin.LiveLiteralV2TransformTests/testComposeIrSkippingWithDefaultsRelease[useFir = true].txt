@@ -35,7 +35,6 @@ object Ui {
 @ComposableTarget(applier = "androidx.compose.ui.UiComposable")
 fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(UiTextField)")
   val %dirty = %changed
   if (%changed and 0b01110000 == 0) {
     %dirty = %dirty or if (%default and 0b0001 == 0 && %composer.changed(isError)) 0b00100000 else 0b00010000
