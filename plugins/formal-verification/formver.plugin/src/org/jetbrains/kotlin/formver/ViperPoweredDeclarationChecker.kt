@@ -78,9 +78,6 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
         } catch (e: Exception) {
             val error = errorCollector.formatErrorWithInfos(e.message ?: "No message provided")
             reporter.reportOn(declaration.source, PluginErrors.INTERNAL_ERROR, error, context)
-            // Note that the below text is only visible during plugin development; Gradle hides it when running the plugin
-            // on another project.
-            System.err.println("Viper verification failed with an exception. Viper text:\n${program?.toDebugOutput()}\nException: $e")
         }
 
         errorCollector.forEachMinorError {
