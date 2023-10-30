@@ -2015,6 +2015,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         }
 
         @Test
+        @TestMetadata("smartCastAside2.kt")
+        public void testSmartCastAside2() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/smartCastAside2.kt");
+        }
+
+        @Test
         @TestMetadata("smartCasts.kt")
         public void testSmartCasts() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/smartCasts.kt");
