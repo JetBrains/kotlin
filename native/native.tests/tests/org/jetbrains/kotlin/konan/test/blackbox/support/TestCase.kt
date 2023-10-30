@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allDependsOn
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule.Companion.allFriends
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -211,12 +212,14 @@ internal class TestCase(
         modules.forEach { module ->
             allModules += module
             allModules += module.allDependencies
+            allModules += module.allFriends
             allModules += module.allDependsOn
         }
 
         val rootModules = allModules.toHashSet()
         allModules.forEach { module ->
             rootModules -= module.allDependencies
+            rootModules -= module.allFriends
             rootModules -= module.allDependsOn
         }
 
@@ -268,6 +271,7 @@ internal class TestCase(
 
             module.directDependencies = buildSet {
                 module.directDependencySymbols.mapTo(this, ::findModule)
+                module.directFriendSymbols.mapTo(this, ::findModule)
                 givenModules?.let(this@buildSet::addAll)
             }
 

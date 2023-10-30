@@ -29,6 +29,12 @@ internal abstract class TestCompilation<A : TestCompilationArtifact> {
     abstract val result: TestCompilationResult<out A>
 }
 
+private val KotlinNativeClassLoader.embeddedKotlinVersion: String
+    get() = classLoader.loadClass("kotlin.KotlinVersion")
+        .getDeclaredField("CURRENT")
+        .get(null).toString()
+
+
 internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected val targets: KotlinNativeTargets,
     protected val home: KotlinNativeHome,
@@ -89,7 +95,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             applySources()
         }
 
-        val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs, sourceModules)
+        val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs, sourceModules, kotlinVersion = classLoader.embeddedKotlinVersion)
 
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
             val compilerToolCallResult = when (compilerOutputInterceptor) {
@@ -140,7 +146,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val gcType: GCType,
     private val gcScheduler: GCScheduler,
     private val allocator: Allocator,
-    private val pipelineType: PipelineType,
+    protected var pipelineType: PipelineType,
     freeCompilerArgs: TestCompilerArgs,
     compilerPlugins: CompilerPlugins,
     override val sourceModules: Collection<TestModule>,
@@ -188,6 +194,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
 }
 
 internal class LibraryCompilation(
+    val ifNotNullCompileWithNewCompilerAndDumpCallSites: File?,
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     sourceModules: Collection<TestModule>,
@@ -196,7 +203,7 @@ internal class LibraryCompilation(
 ) : SourceBasedCompilation<KLIB>(
     targets = settings.get(),
     home = settings.get(),
-    classLoader = settings.get(),
+    classLoader = if (ifNotNullCompileWithNewCompilerAndDumpCallSites != null) settings.get() else KotlinNativeClassLoader.getAlternativeClassLoader(),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
     threadStateChecker = settings.get(),
@@ -204,7 +211,11 @@ internal class LibraryCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = settings.get(),
+    pipelineType = if (ifNotNullCompileWithNewCompilerAndDumpCallSites == null
+        && KotlinNativeClassLoader.getAlternativeClassLoader().embeddedKotlinVersion.startsWith("1.9")
+    ) {
+        PipelineType.K1
+    } else settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,
@@ -218,6 +229,9 @@ internal class LibraryCompilation(
             "-produce", "library",
             "-output", expectedArtifact.path
         )
+        ifNotNullCompileWithNewCompilerAndDumpCallSites?.let {
+            add("-Xdump-call-sites=$it")
+        }
         super.applySpecificArgs(argsBuilder)
     }
 }

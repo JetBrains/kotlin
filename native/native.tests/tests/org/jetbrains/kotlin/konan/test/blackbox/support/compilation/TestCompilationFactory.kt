@@ -149,15 +149,16 @@ internal class TestCompilationFactory {
     ): Pair<Iterable<CompiledDependency<*>>, Set<TestModule.Exclusive>> =
         when (settings.get<TestMode>()) {
             TestMode.ONE_STAGE_MULTI_MODULE -> {
-                Pair(
-                    // Collect dependencies of root modules. Compile root modules directly to executable.
-                    collectDependencies(rootModules, freeCompilerArgs, settings).forOneStageExecutable(),
-                    rootModules
-                )
+                error("should not reach here")
+//                Pair(
+//                    // Collect dependencies of root modules. Compile root modules directly to executable.
+//                    collectDependencies(rootModules, freeCompilerArgs, settings).forOneStageExecutable(),
+//                    rootModules
+//                )
             }
             TestMode.TWO_STAGE_MULTI_MODULE -> {
                 // Compile root modules to KLIB. Pass this KLIB as included dependency to executable compilation.
-                val klibCompilations = modulesToKlib(rootModules, freeCompilerArgs, produceStaticCache(), settings)
+                val klibCompilations = modulesToKlib(rootModules.single(), rootModules, freeCompilerArgs, produceStaticCache(), settings)
 
                 Pair(
                     // Include just compiled KLIB as -Xinclude dependency.
@@ -171,6 +172,7 @@ internal class TestCompilationFactory {
         }
 
     private fun modulesToKlib(
+        singleRoot: TestModule?,
         sourceModules: Set<TestModule>,
         freeCompilerArgs: TestCompilerArgs,
         produceStaticCache: ProduceStaticCache,
@@ -200,6 +202,12 @@ internal class TestCompilationFactory {
                 GivenLibraryCompilation(klibArtifact)
             else
                 LibraryCompilation(
+                    ifNotNullCompileWithNewCompilerAndDumpCallSites = singleRoot?.let {
+                        val callsites = File(klibArtifact.klibFile.absolutePath + "-callsites")
+                        check(!callsites.exists())
+                        callsites.mkdirs()
+                        callsites
+                    },
                     settings = settings,
                     freeCompilerArgs = freeCompilerArgs,
                     sourceModules = sourceModules.flatMapToSet { sortDependsOnTopologically(it) },
@@ -235,7 +243,7 @@ internal class TestCompilationFactory {
 
         fun <T : TestCompilationDependencyType<KLIB>> Set<TestModule>.collectDependencies(type: T) =
             forEach { dependencyModule: TestModule ->
-                val klibCompilations = modulesToKlib(setOf(dependencyModule), freeCompilerArgs, produceStaticCache, settings)
+                val klibCompilations = modulesToKlib(null, setOf(dependencyModule), freeCompilerArgs, produceStaticCache, settings)
                 klibDependencies += klibCompilations.klib.asKlibDependency(type)
 
                 if (type == Library || type == IncludedLibrary)

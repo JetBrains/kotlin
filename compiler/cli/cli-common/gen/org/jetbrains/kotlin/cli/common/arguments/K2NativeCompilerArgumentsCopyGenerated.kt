@@ -82,6 +82,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.printFiles = from.printFiles
     to.printIr = from.printIr
     to.produce = from.produce
+    to.dumpCallSites = from.dumpCallSites
     to.propertyLazyInitialization = from.propertyLazyInitialization
     to.purgeUserLibs = from.purgeUserLibs
     to.refinesPaths = from.refinesPaths?.copyOf()

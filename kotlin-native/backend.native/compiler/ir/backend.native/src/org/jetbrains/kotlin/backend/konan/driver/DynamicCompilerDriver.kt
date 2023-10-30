@@ -11,9 +11,11 @@ import llvm.LLVMContextCreate
 import llvm.LLVMContextDispose
 import llvm.LLVMDisposeModule
 import llvm.LLVMOpaqueModule
+import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.BitcodePostProcessingContextImpl
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.KonanConfigKeys.Companion.DUMP_CALL_SITES
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
@@ -21,9 +23,22 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
+import org.jetbrains.kotlin.utils.addIfNotNull
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Dynamic driver does not "know" upfront which phases will be executed.
@@ -117,7 +132,106 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             }
 
             engine.runK2SpecialBackendChecks(fir2IrOutput)
-            engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput))
+            val result = engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput))
+            dumpCallSites(fir2IrOutput.irModuleFragment, config.configuration[DUMP_CALL_SITES])
+            result
+        }
+    }
+
+    private fun dumpCallSites(moduleFragment: IrModuleFragment, dumpCallSites: String?) {
+        val dumpLocation = dumpCallSites?.let { File(it) } ?: return
+        when {
+            dumpLocation.exists -> {
+                check(dumpLocation.isDirectory)
+                check(dumpLocation.listFiles.isEmpty())
+            }
+            else -> dumpLocation.mkdirs()
+        }
+
+        class PerFileData(val file: IrFile) {
+            val signaturesAtCallSites = mutableListOf<String>()
+        }
+
+        val perFileData = mutableListOf<PerFileData>()
+
+        moduleFragment.acceptChildrenVoid(object : IrElementVisitorVoid {
+            var data: PerFileData? = null
+
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitFile(declaration: IrFile) {
+                check(data == null)
+                try {
+                    data = PerFileData(declaration)
+                    super.visitFile(declaration)
+                } finally {
+                    check(data?.file === declaration)
+                    perFileData += data!!
+                    data = null
+                }
+            }
+
+            private fun IrDeclarationReference.getSignatureOrNull(): String? {
+                val signature = symbol.signature ?: return null
+                if (signature.isLocal || !signature.isPubliclyVisible) return null
+                return signature.render()
+            }
+
+            override fun visitCall(expression: IrCall) {
+                data!!.signaturesAtCallSites.addIfNotNull(expression.getSignatureOrNull())
+                super.visitCall(expression)
+            }
+
+            override fun visitConstructorCall(expression: IrConstructorCall) {
+                data!!.signaturesAtCallSites.addIfNotNull(expression.getSignatureOrNull())
+                super.visitConstructorCall(expression)
+            }
+
+            override fun visitCallableReference(expression: IrCallableReference<*>) {
+                data!!.signaturesAtCallSites.addIfNotNull(expression.getSignatureOrNull())
+                super.visitCallableReference(expression)
+            }
+        })
+
+        if (perFileData.isEmpty()) return
+
+        var commonDir: Path? = null
+        perFileData.forEach { data ->
+            val file = data.file.getIoFile()?.path?.let(Paths::get)
+            check(file != null)
+            check(file.isAbsolute)
+
+            commonDir = if (commonDir == null)
+                file.parent
+            else {
+                val parentDir = file.parent!!
+                val nameCount = commonDir!!.nameCount.coerceAtMost(parentDir.nameCount)
+                check(nameCount > 0)
+
+                var newDir = Paths.get("/")
+                for (i in 0 until nameCount) {
+                    if (commonDir!!.getName(i) != parentDir.getName(i))
+                        break
+                    else
+                        newDir = newDir.resolve(commonDir!!.getName(i))
+                }
+
+                newDir
+            }
+        }
+
+        check(commonDir != null)
+
+        perFileData.forEach { data ->
+            val file = data.file.getIoFile()!!.path.let(Paths::get)
+            val relPath = commonDir!!.relativize(file).toString()
+
+            val outputFile = File(dumpLocation.path + "/" + relPath)
+            outputFile.parentFile.mkdirs()
+
+            outputFile.writeLines(data.signaturesAtCallSites)
         }
     }
 

@@ -273,6 +273,7 @@ private fun AbstractNativeSimpleTest.compileToLibrary(
     dependencies: List<TestCompilationDependency<*>>
 ): TestCompilationResult.Success<out TestCompilationArtifact.KLIB> {
     val compilation = LibraryCompilation(
+        null,
         settings = testRunSettings,
         freeCompilerArgs = testCase.freeCompilerArgs,
         sourceModules = testCase.modules,

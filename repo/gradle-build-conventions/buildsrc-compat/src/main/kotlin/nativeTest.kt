@@ -119,6 +119,10 @@ fun Project.nativeTest(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
+        this@nativeTest.properties
+            .filterKeys { it.startsWith("native.internal.alternative") }
+            .forEach { (name, value) -> jvmArgs("-D$name=$value") }
+
         val availableCpuCores: Int = Runtime.getRuntime().availableProcessors()
         if (!kotlinBuildProperties.isTeamcityBuild
             && minOf(kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: 16, availableCpuCores) > 4

@@ -119,6 +119,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(VERIFY_BITCODE, arguments.verifyBitCode)
 
     put(ENABLE_ASSERTIONS, arguments.enableAssertions)
+    putIfNotNull(DUMP_CALL_SITES, arguments.dumpCallSites)
 
     val memoryModelFromArgument = when (arguments.memoryModel) {
         "relaxed" -> MemoryModel.RELAXED

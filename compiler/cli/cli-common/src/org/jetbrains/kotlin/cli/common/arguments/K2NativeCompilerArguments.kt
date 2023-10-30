@@ -14,6 +14,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     // Prepend them with a single dash.
     // Keep the list lexically sorted.
 
+    @Argument(value = "-Xdump-call-sites", description = "Dump call sites")
+    var dumpCallSites: String? = null
+
     @Argument(value = "-enable-assertions", deprecatedName = "-enable_assertions", shortName = "-ea", description = "Enable runtime assertions in generated code")
     var enableAssertions: Boolean = false
 

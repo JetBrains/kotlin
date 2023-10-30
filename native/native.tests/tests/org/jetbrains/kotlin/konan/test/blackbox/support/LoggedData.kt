@@ -57,7 +57,8 @@ internal abstract class LoggedData {
         private val home: KotlinNativeHome,
         private val compilerArgs: Array<String>,
         private val sourceModules: Collection<TestModule>,
-        private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
+        private val environment: JVMEnvironment = JVMEnvironment(), // Capture environment.
+        private val kotlinVersion: String
     ) : LoggedData() {
         private val testDataFiles: List<File>
             get() = buildList {
@@ -69,6 +70,8 @@ internal abstract class LoggedData {
             }
 
         override fun computeText() = buildString {
+            appendLine("Kotlin version: $kotlinVersion")
+            appendLine()
             appendArguments("COMPILER ARGUMENTS:", listOf(home.dir.resolve("bin/kotlinc-native").path) + compilerArgs)
             appendLine()
             appendLine(environment)

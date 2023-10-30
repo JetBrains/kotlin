@@ -64,6 +64,7 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
         val testCase = makeTestCase(module.name, module.module, COMPILER_ARGS_FOR_KLIB)
 
         val compilation = LibraryCompilation(
+            null,
             settings = testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,

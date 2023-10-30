@@ -25,6 +25,8 @@ class KonanConfigKeys {
                 CompilerConfigurationKey.create("output file to emit lazy Obj-C header")
         val ENABLE_ASSERTIONS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("enable runtime assertions in generated code")
+        val DUMP_CALL_SITES: CompilerConfigurationKey<String>
+                = CompilerConfigurationKey.create("dump call sites")
         val ENTRY: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("fully qualified main() name")
         val EXPORTED_LIBRARIES: CompilerConfigurationKey<List<String>>

@@ -101,6 +101,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         val testCase = createTestCase(moduleName, moduleSourceDir, COMPILER_ARGS)
 
         val compilation = LibraryCompilation(
+            null,
             settings = testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,

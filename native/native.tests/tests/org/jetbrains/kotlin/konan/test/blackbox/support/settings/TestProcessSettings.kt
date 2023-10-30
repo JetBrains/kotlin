@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.Runner
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
 import java.io.IOException
+import java.net.URLClassLoader
 import java.util.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -57,6 +58,35 @@ internal class LLDB(nativeHome: KotlinNativeHome) {
  */
 internal class KotlinNativeClassLoader(private val lazyClassLoader: Lazy<ClassLoader>) {
     val classLoader: ClassLoader get() = lazyClassLoader.value
+
+    companion object {
+        private const val ALTERNATIVE_CLASSPATH = "native.internal.alternative.classpath"
+        private const val ALTERNATIVE_NATIVE_HOME = "native.internal.alternative.home"
+
+        fun getAlternativeClassLoader(): KotlinNativeClassLoader {
+            val classPath: String = System.getProperty(ALTERNATIVE_CLASSPATH)
+                ?: run {
+                    val home: File = System.getProperty(ALTERNATIVE_NATIVE_HOME)?.let(::File)
+                        ?: error("Please provide -D$ALTERNATIVE_CLASSPATH=<class path> or -D$ALTERNATIVE_NATIVE_HOME=<native home>")
+
+                    listOf(
+                        "konan/lib/kotlin-native-compiler-embeddable.jar",
+                        "konan/lib/trove4j.jar"
+                    ).joinToString(":") { home.resolve(it).absolutePath }
+                }
+
+            return KotlinNativeClassLoader(
+                lazy {
+                    val nativeClassPath = classPath
+                        .split(':', ';')
+                        .map { File(it).toURI().toURL() }
+                        .toTypedArray()
+
+                    URLClassLoader(nativeClassPath, null).apply { setDefaultAssertionStatus(true) }
+                }
+            )
+        }
+    }
 }
 
 /**
