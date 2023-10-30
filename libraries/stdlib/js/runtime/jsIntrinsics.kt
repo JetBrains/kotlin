@@ -120,10 +120,6 @@ internal fun jsBitShiftL(a: Any?, b: Any?): Int
 @JsIntrinsic
 internal fun jsInstanceOfIntrinsic(a: Any?, b: Any?): Boolean
 
-// @JsIntrinsic
-//  To prevent people to insert @OptIn every time
-public external fun jsTypeOf(a: Any?): String
-
 @JsIntrinsic
 internal fun jsNewTarget(a: Any?): Any?
 
