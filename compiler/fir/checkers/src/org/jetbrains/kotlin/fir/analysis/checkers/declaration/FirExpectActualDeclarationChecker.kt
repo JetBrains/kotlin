@@ -145,14 +145,10 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
         val source = declaration.source
         if (!declaration.isActual) {
-            if (matchingCompatibilityToMembersMap.allMismatches()) return
-
-            if (ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap) {
-                if (checkActual) {
-                    reporter.reportOn(source, FirErrors.ACTUAL_MISSING, context)
-                }
-                return
+            if (checkActual && ExpectActualMatchingCompatibility.MatchedSuccessfully in matchingCompatibilityToMembersMap) {
+                reporter.reportOn(source, FirErrors.ACTUAL_MISSING, context)
             }
+            return
         }
 
         when {
@@ -295,10 +291,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             ),
             context,
         )
-    }
-
-    fun Map<out ExpectActualCompatibility<*>, *>.allMismatches(): Boolean {
-        return keys.all { it is ExpectActualMatchingCompatibility.Mismatch }
     }
 
     // we don't require `actual` modifier on
