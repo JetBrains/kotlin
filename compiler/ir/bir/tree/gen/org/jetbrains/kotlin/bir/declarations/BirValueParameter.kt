@@ -22,18 +22,17 @@ import org.jetbrains.kotlin.ir.util.IdSignature
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.valueParameter]
  */
-abstract class BirValueParameter : BirValueDeclaration(), BirDeclaration,
-        BirValueParameterSymbol {
+interface BirValueParameter : BirDeclaration, BirValueDeclaration, BirValueParameterSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ParameterDescriptor?
+    override val descriptor: ParameterDescriptor?
 
-    abstract var index: Int
+    var index: Int
 
-    abstract var varargElementType: BirType?
+    var varargElementType: BirType?
 
-    abstract var isCrossinline: Boolean
+    var isCrossinline: Boolean
 
-    abstract var isNoinline: Boolean
+    var isNoinline: Boolean
 
     /**
      * If `true`, the value parameter does not participate in [IdSignature] computation.
@@ -65,9 +64,9 @@ abstract class BirValueParameter : BirValueDeclaration(), BirDeclaration,
      *
      * TODO: consider dropping [isHidden] if it isn't used by any known plugin.
      */
-    abstract var isHidden: Boolean
+    var isHidden: Boolean
 
-    abstract var defaultValue: BirExpressionBody?
+    var defaultValue: BirExpressionBody?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)

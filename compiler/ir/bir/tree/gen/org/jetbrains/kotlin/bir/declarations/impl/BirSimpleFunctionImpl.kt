@@ -50,7 +50,7 @@ class BirSimpleFunctionImpl @ObsoleteDescriptorBasedAPI constructor(
     isOperator: Boolean,
     isInfix: Boolean,
     correspondingPropertySymbol: BirPropertySymbol?,
-) : BirSimpleFunction() {
+) : BirElementBase(), BirSimpleFunction {
     override val owner: BirSimpleFunctionImpl
         get() = this
 

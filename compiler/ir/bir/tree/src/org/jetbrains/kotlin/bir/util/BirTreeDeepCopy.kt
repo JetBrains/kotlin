@@ -114,8 +114,9 @@ open class BirTreeDeepCopier {
         }
     }
 
-    protected open fun BirElementBase.copyAuxData(from: BirElementBase) {
-        copyDynamicProperties(from)
+    protected open fun BirElement.copyAuxData(from: BirElement) {
+        this as BirElementBase
+        copyDynamicProperties(from as BirElementBase)
     }
 
     protected open fun BirAttributeContainer.copyAttributes(other: BirAttributeContainer) {
