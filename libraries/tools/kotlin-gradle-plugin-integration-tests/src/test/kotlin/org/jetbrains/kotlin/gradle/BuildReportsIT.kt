@@ -164,7 +164,20 @@ class BuildReportsIT : KGPBaseTest() {
             assertEquals(formatSize(actualCacheDirectoriesSize), reportedCacheDirectoriesSize)
         }
 
+        fun validateSnapshotSizeMetric() {
+            // traverse only the `build` directory files, because Gradle also contains a file with the name `last-build.bin`
+            val actualSnapshotSize = Files.walk(projectPath.resolve("build")).use { files ->
+                val knownSnapshotFiles = setOf("last-build.bin", "build-history.bin", "abi-snapshot.bin")
+                files.asSequence().filter { Files.isRegularFile(it) && it.name in knownSnapshotFiles }.map { Files.size(it) }.sum()
+            }
+            // the first found line of the report should contain a sum of the metric per all the tasks
+            val reportedSnapshotSize = fileContents.lineSequence().find { "ABI snapshot size:" in it }
+                ?.replace("ABI snapshot size:", "")?.trim()
+            assertEquals(formatSize(actualSnapshotSize), reportedSnapshotSize)
+        }
+
         validateTotalCachesSizeMetric()
+        validateSnapshotSizeMetric()
     }
 
     @DisplayName("Compiler build metrics report is produced")
