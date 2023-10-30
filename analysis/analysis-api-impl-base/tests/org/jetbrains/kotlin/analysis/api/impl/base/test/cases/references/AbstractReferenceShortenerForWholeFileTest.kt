@@ -20,7 +20,7 @@ abstract class AbstractReferenceShortenerForWholeFileTest : AbstractAnalysisApiB
 
         val shortenings = executeOnPooledThreadInReadAction {
             analyseForTest(file) {
-                ShortenStrategy.values().map { option ->
+                ShortenStrategy.entries.associateWith { option ->
                     val shorteningsForOption = collectPossibleReferenceShortenings(
                         file,
                         file.textRange,
@@ -28,7 +28,7 @@ abstract class AbstractReferenceShortenerForWholeFileTest : AbstractAnalysisApiB
                         callableShortenStrategy = { option }
                     )
 
-                    Pair(option.name, shorteningsForOption)
+                    shorteningsForOption
                 }
             }
         }
