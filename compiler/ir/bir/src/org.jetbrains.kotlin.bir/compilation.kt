@@ -37,6 +37,7 @@ private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirVarargLowering,
     ::BirJvmLateinitLowering,
     ::BirJvmInventNamesForLocalClassesLowering,
+    ::BirInlineCallableReferenceToLambdaLowering,
 )
 
 private val excludedStandardPhases = setOf<String>()
@@ -108,7 +109,7 @@ private fun reconstructPhases(
                 .toMutableList()
 
             filePhases.add(
-                filePhases.indexOfFirst { (it as AnyNamedPhase).name == "SuspendLambda" } + 1,
+                filePhases.indexOfFirst { (it as AnyNamedPhase).name == "DirectInvokes" } + 1,
                 terminateProcessPhase
             )
 

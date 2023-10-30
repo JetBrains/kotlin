@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.bir.backend.BirBackendContext
 import org.jetbrains.kotlin.bir.expressions.BirBlockBody
 import org.jetbrains.kotlin.bir.expressions.BirContainerExpression
 import org.jetbrains.kotlin.bir.expressions.BirExpression
+import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.expressions.impl.BirBlockBodyImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirBlockImpl
 import org.jetbrains.kotlin.bir.expressions.impl.BirCompositeImpl
@@ -70,6 +71,15 @@ fun birBlock(
     return scope.build(sourceSpan, origin, resultType, isTransparent)
 }
 
+
+context(BirBackendContext)
+fun birExpressionBody(
+    builder: BirStatementBuilderScope.() -> BirExpression,
+): BirExpressionBody {
+    val scope = BirStatementBuilderScope()
+    val expr = builder(scope)
+    return scope.birExpressionBody(expr)
+}
 
 class BirBlockBodyBuilderScope(
     private val blockBody: BirBlockBodyImpl,
