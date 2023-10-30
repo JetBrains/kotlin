@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.formver.linearization
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Declaration
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -24,13 +23,17 @@ data class Linearizer(
     val seqnBuilder: SeqnBuilder,
     override val source: KtSourceElement?,
 ) : LinearizationContext {
-    override fun newVar(type: TypeEmbedding): VariableEmbedding = state.freshVar(type)
+    override fun freshAnonVar(type: TypeEmbedding): Exp.LocalVar {
+        val variable = state.freshVar(type)
+        addDeclaration(variable.toLocalVarDecl())
+        return variable.toLocalVarUse()
+    }
 
     override fun inhaleForThisStatement(assumption: Exp) {
         state.assumptionTracker.addAssumption(assumption)
     }
 
-    override fun withNewScope(action: LinearizationContext.() -> Unit): Stmt.Seqn {
+    override fun asBlock(action: LinearizationContext.() -> Unit): Stmt.Seqn {
         val newBuilder = SeqnBuilder(source)
         copy(seqnBuilder = newBuilder).action()
         return newBuilder.block
@@ -51,7 +54,7 @@ data class Linearizer(
     }
 
     /**
-     * This is a stopgap solution for now. Eventually, we would like to perform on-scope-exit operations here,
+     * This is a stopgap solution for now. Eventually, we would like to perform on-block-exit operations here,
      * so we will need to make an interface that makes it clearer that the builder cannot be reused after
      * `block` has been called.
      */

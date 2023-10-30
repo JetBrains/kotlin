@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.formver.linearization
 
 import org.jetbrains.kotlin.formver.conversion.FreshEntityProducer
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 import org.jetbrains.kotlin.formver.names.AnonymousName
 
 class SharedLinearizationState {

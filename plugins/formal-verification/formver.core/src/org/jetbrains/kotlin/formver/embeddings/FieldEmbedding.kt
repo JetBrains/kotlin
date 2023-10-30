@@ -6,6 +6,10 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.conversion.AccessPolicy
+import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.ExpWrapper
+import org.jetbrains.kotlin.formver.embeddings.expression.GeCmp
+import org.jetbrains.kotlin.formver.embeddings.expression.IntLit
 import org.jetbrains.kotlin.formver.names.NameMatcher
 import org.jetbrains.kotlin.formver.names.ScopedKotlinName
 import org.jetbrains.kotlin.formver.names.SpecialName

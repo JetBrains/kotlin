@@ -11,7 +11,8 @@ The data structures involved can be split into four stages, numbered from Kotlin
 1. The FIR tree: `kotlinc`'s frontend representation of the code.
 2. Embeddings of Kotlin constructs: our internal representations of Kotlin constructs, adjusted
    to make them easier to translate to Viper.  This is primarily done with things like types and
-   function signatures, that have to be referred to often.
+   function signatures, that have to be referred to often.  The key data structure here is
+   `ExpEmbedding`.
 3. Kotlin wrappers for Silver: since Viper is written in Scala, we have very thin,
    mostly one-to-one wrappers around its structures that are easier to create from Kotlin.
 4. The Silver AST: the Scala representation of Viper syntax.
@@ -36,8 +37,11 @@ A few notes:
 - `formver.embeddable`: Separate target necessary for the Gradle plugin.
 - `formver.cli`: Command-line processor and plugin loading implementation.
 - `formver.core`: Core conversion logic and associated data structures.
-  - `formver.core/.../conversion`: Conversion logic from the FIR to Viper
-  - `formver.core/.../embeddings`: Embedded versions of Kotlin constructs.
+  - `formver.core/.../conversion/`: Logic for embedding the FIR into our `ExpEmbedding`
+  - `formver.core/.../domains/`: New domains that we need for our conversion.
+  - `formver.core/.../embeddings/`: Embedded versions of Kotlin constructs.
+  - `formver.core/.../linearization/`: Logic for flattening our `ExpEmbedding` into Viper `Stmt`s and `Exp`s.
+  - `formver.core/.../names/`: Data classes for names and logic for embedding Kotlin names into them.
 - `formver.plugin`: Infrastructure for packaging our conversion as a plugin and reporting verification errors.
 - `formver.viper`: Wrappers around Viper code. This is the only place any direct reference to Viper is permitted!
   - `formver.viper/.../ast/`: Wrappers around Silver data structures.

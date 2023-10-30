@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
-import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.withType
+import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.withType
 
 /**
  * Kotlin entity that can be called.

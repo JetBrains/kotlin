@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.insertCall
+import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 
 class CustomGetter(val getterMethod: FunctionEmbedding) : GetterEmbedding {
     override fun getValue(

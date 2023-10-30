@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.conversion.withResult
-import org.jetbrains.kotlin.formver.embeddings.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Method
 
 class NonInlineNamedFunction(

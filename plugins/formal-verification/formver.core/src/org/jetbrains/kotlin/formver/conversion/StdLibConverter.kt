@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.ListSizeFieldEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
+import org.jetbrains.kotlin.formver.embeddings.expression.*
 import org.jetbrains.kotlin.formver.names.NameMatcher
 
 fun VariableEmbedding.sameSize(): ExpEmbedding =

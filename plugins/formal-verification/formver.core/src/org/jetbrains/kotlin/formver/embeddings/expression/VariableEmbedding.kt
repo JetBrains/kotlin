@@ -3,19 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.embeddings
+package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
-import org.jetbrains.kotlin.formver.linearization.LinearizationContext
+import org.jetbrains.kotlin.formver.embeddings.PropertyAccessEmbedding
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
 class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding) :
-    ExpEmbedding,
+    PureExpEmbedding,
     PropertyAccessEmbedding {
 
     fun toLocalVarDecl(
@@ -30,7 +31,7 @@ class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding)
         trafos: Trafos = Trafos.NoTrafos,
     ): Exp.LocalVar = Exp.LocalVar(name, type.viperType, pos, info, trafos)
 
-    override fun toViper(ctx: LinearizationContext): Exp.LocalVar = Exp.LocalVar(name, type.viperType, ctx.source.asPosition)
+    override fun toViper(source: KtSourceElement?): Exp.LocalVar = Exp.LocalVar(name, type.viperType, source.asPosition)
 
     fun toFieldAccess(
         field: Field,
