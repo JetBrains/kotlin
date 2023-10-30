@@ -1,8 +1,6 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 buildscript {
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
@@ -495,6 +493,7 @@ val projectsWithEnabledContextReceivers by extra {
         ":plugins:kapt4",
         ":compiler:bir",
         ":compiler:bir.tree",
+        ":compiler:bir.tree:tree-generator",
         ":compiler:bir.backend",
     )
 }
