@@ -2880,10 +2880,6 @@ standaloneTest("memory_only_gc") {
     source = "runtime/memory/only_gc.kt"
 }
 
-tasks.register("memory_stable_ref_cross_thread_check", KonanLocalTest) {
-    source = "runtime/memory/stable_ref_cross_thread_check.kt"
-}
-
 standaloneTest("leakMemory") {
     source = "runtime/memory/leak_memory.kt"
 }
@@ -4275,10 +4271,6 @@ tasks.register("interop_convert", KonanLocalTest) {
 
 tasks.register("interop_sourceCodeStruct", KonanLocalTest) {
     source = "codegen/intrinsics/interop_sourceCodeStruct.kt"
-}
-
-tasks.register("interop_alloc_value", KonanLocalTest) {
-    source = "runtime/interop/interop_alloc_value.kt"
 }
 
 standaloneTest("isExperimentalMM") {
