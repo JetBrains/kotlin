@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.test.KtAssert.assertTrue
@@ -177,6 +178,10 @@ object MockLibraryUtil {
         runCompiler(compiler2JSClass, args)
     }
 
+    fun runMetadataCompiler(args: List<String>) {
+        runCompiler(compiler2MetadataClass, args)
+    }
+
     // Runs compiler in custom class loader to avoid effects caused by replacing Application with another one created in compiler.
     private fun runCompiler(compilerClass: Class<*>, args: List<String>) {
         val outStream = ByteArrayOutputStream()
@@ -222,6 +227,9 @@ object MockLibraryUtil {
 
     private val compiler2JSClass: Class<*>
         @Synchronized get() = loadCompilerClass(K2JSCompiler::class)
+
+    private val compiler2MetadataClass: Class<*>
+        @Synchronized get() = loadCompilerClass(K2MetadataCompiler::class)
 
     @Synchronized
     private fun loadCompilerClass(compilerClass: KClass<out CLICompiler<*>>): Class<*> {
