@@ -166,23 +166,21 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 // This is needed only to reduce the number of errors. Incompatibility errors for those members will be reported
                 // later when this checker is called for them
                 fun hasSingleActualSuspect(
-                    expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<out ExpectActualCompatibility.MismatchOrIncompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>,
+                    expectedWithIncompatibility: Pair<FirBasedSymbol<*>, Map<out ExpectActualCheckingCompatibility.Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>,
                 ): Boolean {
                     val (expectedMember, incompatibility) = expectedWithIncompatibility
                     val actualMember = incompatibility.values.singleOrNull()?.singleOrNull()
                     @OptIn(SymbolInternals::class)
                     return actualMember != null &&
-                            !incompatibility.allMismatches() &&
                             actualMember.fir.expectForActual?.values?.singleOrNull()?.singleOrNull() == expectedMember
                 }
 
                 val nonTrivialIncompatibleMembers = checkingCompatibility.incompatibleMembers.filterNot(::hasSingleActualSuspect)
-                val nonTrivialMismatchedMembers = checkingCompatibility.mismatchedMembers.filterNot(::hasSingleActualSuspect)
 
                 if (nonTrivialIncompatibleMembers.isNotEmpty()) {
                     reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialIncompatibleMembers, context)
-                } else if (nonTrivialMismatchedMembers.isNotEmpty()) {
-                    reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, nonTrivialMismatchedMembers, context)
+                } else if (checkingCompatibility.mismatchedMembers.isNotEmpty()) {
+                    reporter.reportOn(source, FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, symbol, checkingCompatibility.mismatchedMembers, context)
                 }
             }
 
