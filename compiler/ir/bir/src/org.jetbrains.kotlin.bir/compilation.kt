@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.bir.backend.lower.*
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
+import org.jetbrains.kotlin.bir.util.countAllElementsInTree
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.transformFlat
@@ -226,7 +227,7 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
             birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
         }
 
-        birModule.countAllDescendants()
+        birModule.countAllElementsInTree()
         //measureElementDistribution(birModule)
 
         return BirCompilationBundle(birModule, birContext, input, profile)
@@ -264,7 +265,7 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         }
         repeat(1) {
             invokePhaseMeasuringTime(profile, "!BIR - baseline tree traversal") {
-                input.birModule.countAllDescendants()
+                input.birModule.countAllElementsInTree()
             }
 
             invokePhaseMeasuringTime(profile, "!BIR - reindexAllElements") {
@@ -298,15 +299,6 @@ private class ConvertBirToIrPhase(name: String, description: String) :
     ): IrModuleFragment {
         return input.originalIrModuleFragment
     }
-}
-
-private fun BirElement.countAllDescendants(): Int {
-    var count = 0
-    accept {
-        count++
-        it.walkIntoChildren()
-    }
-    return count
 }
 
 private val terminateProcessPhase =
