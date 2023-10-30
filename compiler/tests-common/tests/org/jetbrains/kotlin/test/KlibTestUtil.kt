@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -38,7 +39,12 @@ import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 object KlibTestUtil {
-    fun compileCommonSourcesToKlib(sourceFiles: Collection<File>, libraryName: String, klibFile: File) {
+    fun compileCommonSourcesToKlib(
+        sourceFiles: Collection<File>,
+        libraryName: String,
+        klibFile: File,
+        libraryVersioning: KotlinLibraryVersioning? = null,
+    ) {
         require(!Name.guessByFirstCharacter(libraryName).isSpecial) { "Invalid library name: $libraryName" }
 
         val configuration = KotlinTestUtils.newConfiguration()
@@ -68,10 +74,15 @@ object KlibTestUtil {
             Disposer.dispose(rootDisposable)
         }
 
-        serializeCommonModuleToKlib(module, libraryName, klibFile)
+        serializeCommonModuleToKlib(module, libraryName, klibFile, libraryVersioning)
     }
 
-    fun serializeCommonModuleToKlib(module: ModuleDescriptor, libraryName: String, klibFile: File) {
+    fun serializeCommonModuleToKlib(
+        module: ModuleDescriptor,
+        libraryName: String,
+        klibFile: File,
+        libraryVersioning: KotlinLibraryVersioning? = null,
+    ) {
         require(klibFile.extension == KLIB_FILE_EXTENSION) { "KLIB file must have $KLIB_FILE_EXTENSION extension" }
 
         val serializer = KlibMetadataMonolithicSerializer(
@@ -89,7 +100,7 @@ object KlibTestUtil {
 
         val library = KotlinLibraryWriterImpl(
             moduleName = libraryName,
-            versions = KotlinLibraryVersioning(
+            versions = libraryVersioning ?: KotlinLibraryVersioning(
                 libraryVersion = null,
                 compilerVersion = null,
                 abiVersion = null,
