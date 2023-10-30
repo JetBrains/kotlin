@@ -28,7 +28,7 @@ abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedSingleMo
 
         val shortenings = executeOnPooledThreadInReadAction {
             analyseForTest(element) {
-                ShortenStrategy.values().map { option ->
+                ShortenStrategy.entries.associateWith { option ->
                     val shorteningsForOption = collectPossibleReferenceShorteningsInElement(
                         element,
                         shortenOptions = ShortenOptions.ALL_ENABLED,
@@ -36,7 +36,7 @@ abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedSingleMo
                         callableShortenStrategy = { option }
                     )
 
-                    Pair(option.name, shorteningsForOption)
+                    shorteningsForOption
                 }
             }
         }
