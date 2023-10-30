@@ -18,21 +18,22 @@ import org.jetbrains.kotlin.bir.symbols.BirSimpleFunctionSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.simpleFunction]
  */
-abstract class BirSimpleFunction : BirOverridableDeclaration<BirSimpleFunctionSymbol>(),
-        BirFunction, BirAttributeContainer, BirSimpleFunctionSymbol {
-    abstract var isTailrec: Boolean
+interface BirSimpleFunction : BirFunction,
+        BirOverridableDeclaration<BirSimpleFunctionSymbol>, BirAttributeContainer,
+        BirSimpleFunctionSymbol {
+    var isTailrec: Boolean
 
-    abstract var isSuspend: Boolean
+    var isSuspend: Boolean
 
-    abstract override var isFakeOverride: Boolean
+    override var isFakeOverride: Boolean
 
-    abstract var isOperator: Boolean
+    var isOperator: Boolean
 
-    abstract var isInfix: Boolean
+    var isInfix: Boolean
 
-    abstract var correspondingPropertySymbol: BirPropertySymbol?
+    var correspondingPropertySymbol: BirPropertySymbol?
 
-    abstract override var overriddenSymbols: List<BirSimpleFunctionSymbol>
+    override var overriddenSymbols: List<BirSimpleFunctionSymbol>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)
