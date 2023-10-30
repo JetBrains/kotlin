@@ -140,11 +140,6 @@ internal fun checkConstantArguments(
                 return ConstantArgumentKind.NOT_KCLASS_LITERAL
             }
 
-            //TODO, KT-59822: UNRESOLVED REFERENCE
-            if (expression.dispatchReceiver is FirThisReceiverExpression) {
-                return null
-            }
-
             if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
             val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
 
@@ -183,11 +178,8 @@ internal fun checkConstantArguments(
                     val receiver = listOf(expression.dispatchReceiver, expression.extensionReceiver).single { it != null }!!
                     return checkConstantArguments(receiver, session)
                 }
-                propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST
+                propertySymbol.isLocal -> return ConstantArgumentKind.NOT_CONST
                 expressionType.fullyExpandedClassId(session) == StandardClassIds.KClass -> return ConstantArgumentKind.NOT_KCLASS_LITERAL
-
-                //TODO, KT-59822: UNRESOLVED REFERENCE
-                expression.dispatchReceiver is FirThisReceiverExpression -> return null
             }
             return when (property.initializer) {
                 is FirConstExpression<*> -> when {

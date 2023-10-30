@@ -23,8 +23,8 @@ class A
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a<!>,
-        b()
+        <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>b()<!>
 )
 constructor() {
 
@@ -36,8 +36,8 @@ constructor() {
             Companion.CONST,
             Nested.CONST,
             Interface.CONST,
-            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>a<!>,
-            b()
+            <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>a<!>,
+            <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>b()<!>
     )
     constructor(dummy: Int) : this()
 

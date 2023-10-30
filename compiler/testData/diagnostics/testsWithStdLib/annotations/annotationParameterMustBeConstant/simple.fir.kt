@@ -6,14 +6,14 @@ annotation class AnnSA(val sa: Array<String>)
 
 var i = 1
 
-@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>MyClass().i<!>)
+@Ann(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>MyClass().i<!>)
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i<!>)
 @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i2<!>)
 @AnnIA(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>ia<!>)
 @AnnSA(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>sa<!>)
 class Test {
     val i = 1
-    @Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i<!>) val i2 = 1
+    @Ann(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>i<!>) val i2 = 1
 }
 
 val i2 = foo()

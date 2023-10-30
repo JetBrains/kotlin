@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package myPack
 
 annotation class Anno(val number: String)
