@@ -81,6 +81,38 @@ class StandaloneSessionBuilderTest {
     }
 
     @Test
+    fun testResolveAgainstCommonKlib() {
+        lateinit var sourceModule: KtSourceModule
+        val session = buildStandaloneAnalysisAPISession {
+            registerProjectService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider())
+
+            buildKtModuleProvider {
+                platform = CommonPlatforms.defaultCommonPlatform
+                val kLib = addModule(
+                    buildKtLibraryModule {
+                        val compiledKLibRoot = compileCommonKlib(testDataPath("resolveAgainstCommonKLib/klibSrc"))
+                        addBinaryRoot(compiledKLibRoot)
+                        platform = CommonPlatforms.defaultCommonPlatform
+                        libraryName = "klib"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath("resolveAgainstCommonKLib/src"))
+                        addRegularDependency(kLib)
+                        platform = CommonPlatforms.defaultCommonPlatform
+                        moduleName = "source"
+                    }
+                )
+            }
+        }
+        val ktFile = session.modulesWithFiles.getValue(sourceModule).single() as KtFile
+
+        val ktCallExpression = ktFile.findDescendantOfType<KtCallExpression>()!!
+        ktCallExpression.assertIsCallOf(CallableId(FqName("commonKLib"), Name.identifier("commonKLibFunction")))
+    }
+
+    @Test
     fun testKotlinStdlibJvm() {
         doTestKotlinStdLibResolve(JvmPlatforms.defaultJvmPlatform, PathUtil.kotlinPathsForDistDirectory.stdlibPath.toPath())
     }

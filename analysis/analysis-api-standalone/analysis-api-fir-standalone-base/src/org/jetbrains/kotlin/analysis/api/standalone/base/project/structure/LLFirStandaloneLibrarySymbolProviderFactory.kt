@@ -60,15 +60,21 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
-        return listOf(
-            MetadataSymbolProvider(
-                session,
-                moduleDataProvider,
-                kotlinScopeProvider,
-                packagePartProvider as PackageAndMetadataPartProvider,
-                VirtualFileFinderFactory.getInstance(project).create(scope),
+        return buildList {
+            add(
+                MetadataSymbolProvider(
+                    session,
+                    moduleDataProvider,
+                    kotlinScopeProvider,
+                    packagePartProvider as PackageAndMetadataPartProvider,
+                    VirtualFileFinderFactory.getInstance(project).create(scope),
+                )
             )
-        )
+            val kLibs = moduleData.getLibraryKLibs()
+            if (kLibs.isNotEmpty()) {
+                add(KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, kLibs))
+            }
+        }
     }
 
     override fun createNativeLibrarySymbolProvider(
