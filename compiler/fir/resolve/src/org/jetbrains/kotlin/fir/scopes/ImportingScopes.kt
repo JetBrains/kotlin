@@ -70,7 +70,7 @@ internal fun computeImportingScopes(
             )
 
             this += scopeSession.getOrBuild(DefaultImportPriority.KOTLIN_THROWS, DEFAULT_SIMPLE_IMPORT) {
-                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.KOTLIN_THROWS)
+                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.KOTLIN_THROWS, excludedImportNames)
             }
         }
 
@@ -78,10 +78,10 @@ internal fun computeImportingScopes(
 
         if (includeDefaultImports) {
             this += scopeSession.getOrBuild(DefaultImportPriority.LOW, DEFAULT_SIMPLE_IMPORT) {
-                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW)
+                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.LOW, excludedImportNames)
             }
             this += scopeSession.getOrBuild(DefaultImportPriority.HIGH, DEFAULT_SIMPLE_IMPORT) {
-                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH)
+                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.HIGH, excludedImportNames)
             }
         }
 

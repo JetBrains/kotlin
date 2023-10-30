@@ -50,6 +50,10 @@ class FirSingleLevelDefaultStarImportingScope(
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name.isSpecial || name.identifier.isNotEmpty()) {
             for (import in starImports) {
+                if (isExcluded(import, name)) {
+                    continue
+                }
+
                 for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, name)) {
                     processor(symbol)
                 }
@@ -60,6 +64,10 @@ class FirSingleLevelDefaultStarImportingScope(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         if (name.isSpecial || name.identifier.isNotEmpty()) {
             for (import in starImports) {
+                if (isExcluded(import, name)) {
+                    continue
+                }
+
                 for (symbol in provider.getTopLevelPropertySymbols(import.packageFqName, name)) {
                     processor(symbol)
                 }

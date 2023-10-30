@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.name.FqName
 
 class FirDefaultSimpleImportingScope(
     session: FirSession,
     scopeSession: ScopeSession,
-    priority: DefaultImportPriority
+    priority: DefaultImportPriority,
+    private val excludedImportNames: Set<FqName>,
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
 
     private fun FirImport.resolve(importResolveTransformer: FirImportResolveTransformer) =
@@ -28,12 +30,14 @@ class FirDefaultSimpleImportingScope(
         val analyzerServices = session.moduleData.analyzerServices
         val allDefaultImports = priority.getAllDefaultImports(analyzerServices, LanguageVersionSettingsImpl.DEFAULT)
         allDefaultImports
-            ?.filter { !it.isAllUnder }
-            ?.map {
+            ?.filter { !it.isAllUnder && it.fqName !in excludedImportNames }
+            ?.mapNotNull {
                 buildImport {
                     importedFqName = it.fqName
                     isAllUnder = false
                 }.resolve(importResolveTransformer)
-            }?.filterNotNull()?.groupBy { it.importedName!! } ?: emptyMap()
+            }
+            ?.groupBy { it.importedName!! }
+            ?: emptyMap()
     }
 }
