@@ -2403,6 +2403,12 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("methodReturnType.kt")
+        public void testMethodReturnType() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/methodReturnType.kt");
+        }
+
+        @Test
         @TestMetadata("parameterInLocalObject.kt")
         public void testParameterInLocalObject() throws Exception {
             runTest("compiler/testData/codegen/boxInline/dontReify/parameterInLocalObject.kt");
