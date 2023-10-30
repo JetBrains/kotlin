@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.bir.types.BirTypeSystemContext
 import org.jetbrains.kotlin.bir.types.BirTypeSystemContextImpl
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -31,6 +32,7 @@ class JvmBirBackendContext @OptIn(ObsoleteDescriptorBasedAPI::class) constructor
     phaseConfig: List<(JvmBirBackendContext) -> BirLoweringPhase>,
 ) : BirBackendContext(compiledBir, dynamicPropertyManager) {
     override val configuration: CompilerConfiguration = irContext.configuration
+    val config: JvmBackendConfig = irContext.state.config
     override val builtIns = irContext.builtIns
     val generationState: GenerationState = irContext.state
     override val internalPackageFqn = FqName("kotlin.jvm")
