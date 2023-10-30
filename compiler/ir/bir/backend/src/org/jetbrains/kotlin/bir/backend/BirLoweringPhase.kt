@@ -27,11 +27,11 @@ abstract class BirLoweringPhase {
         registerIndexKey<E>(includeOtherModules, { element -> condition(element as E) }, E::class.java)
 
     protected inline fun <reified E : BirElement> registerIndexKey(includeOtherModules: Boolean): BirElementsIndexKey<E> =
-        registerIndexKey<E>(includeOtherModules) { true }
+        registerIndexKey<E>(includeOtherModules, null, E::class.java)
 
     protected fun <E : BirElement> registerIndexKey(
         includeOtherModules: Boolean,
-        condition: BirElementIndexMatcher,
+        condition: BirElementIndexMatcher?,
         elementClass: Class<*>,
     ): BirElementsIndexKey<E> {
         val key = BirElementsIndexKey<E>(condition, elementClass, includeOtherModules)
@@ -69,5 +69,5 @@ abstract class BirLoweringPhase {
     }
 
 
-    protected fun<T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
+    protected fun <T> lz(initializer: () -> T) = lazy(LazyThreadSafetyMode.NONE, initializer)
 }
