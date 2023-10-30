@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.Variance
 // 2) parents
 // 3) fields
 object BirTree : AbstractTreeBuilder() {
-    private fun symbol(type: TypeRef, mutable: Boolean = false): SimpleFieldConfig =
+    private fun symbol(type: TypeRefWithNullability, mutable: Boolean = false): SimpleFieldConfig =
         field("symbol", type, mutable = mutable)
 
     private fun descriptor(typeName: String, nullable: Boolean = true, initializer: SimpleFieldConfig.() -> Unit = {}): SimpleFieldConfig =

@@ -17,7 +17,7 @@ dependencies {
     }
 }
 
-optInToIrSymbolInternals()
+optInToUnsafeDuringIrConstructionAPI()
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
