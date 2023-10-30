@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -17,6 +18,9 @@ import kotlin.io.path.*
 import kotlin.test.assertTrue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
+import java.nio.file.Files
+import kotlin.streams.asSequence
+import kotlin.test.assertEquals
 
 @DisplayName("Build reports")
 @JvmGradlePluginTests
@@ -116,7 +120,7 @@ class BuildReportsIT : KGPBaseTest() {
     }
 
     private fun TestProject.validateBuildReportFile(kotlinLanguageVersion: String) {
-        assertFileContains(
+        val fileContents = assertFileContains(
             reportFile,
             "Time metrics:",
             "Run compilation:",
@@ -135,6 +139,24 @@ class BuildReportsIT : KGPBaseTest() {
             "Task info:",
             "Kotlin language version: $kotlinLanguageVersion",
         )
+
+        fun validateTotalCachesSizeMetric() {
+            val cachesDirectories = Files.walk(projectPath).use { files ->
+                val knownCachesDirectories = setOf("caches-jvm", "caches-js")
+                files.asSequence().filter { Files.isDirectory(it) && it.name in knownCachesDirectories }.toList()
+            }
+            val actualCacheDirectoriesSize = cachesDirectories.sumOf { files ->
+                Files.walk(files).use { cacheFiles ->
+                    cacheFiles.filter { Files.isRegularFile(it) }.mapToLong { Files.size(it) }.sum()
+                }
+            }
+            // the first found line of the report should contain a sum of the metric per all the tasks
+            val reportedCacheDirectoriesSize = fileContents.lineSequence().find { "Total size of the cache directory:" in it }
+                ?.replace("Total size of the cache directory:", "")?.trim()
+            assertEquals(formatSize(actualCacheDirectoriesSize), reportedCacheDirectoriesSize)
+        }
+
+        validateTotalCachesSizeMetric()
     }
 
     @DisplayName("Compiler build metrics report is produced")

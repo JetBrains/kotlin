@@ -219,11 +219,13 @@ fun GradleProject.assertFileInProjectDoesNotContain(
 
 /**
  * Asserts file under [file] exists and contains all the lines from [expectedText]
+ *
+ * @return the content of the [file]
  */
 fun assertFileContains(
     file: Path,
     vararg expectedText: String,
-) {
+): String {
     assertFileExists(file)
     val text = file.readText()
     val textNotInTheFile = expectedText.filterNot { text.contains(it) }
@@ -237,6 +239,7 @@ fun assertFileContains(
         |       
         """.trimMargin()
     }
+    return text
 }
 
 /**
