@@ -16,6 +16,9 @@ sealed interface BirElementOrChildList {
 interface BirElement : BirElementOrChildList {
     val sourceSpan: SourceSpan
     val parent: BirElementBase?
+
+    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
+
     fun replaceWith(new: BirElement?)
 }
 

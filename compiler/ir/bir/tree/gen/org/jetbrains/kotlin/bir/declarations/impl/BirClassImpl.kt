@@ -41,7 +41,7 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
     override var superTypes: List<BirType>,
     thisReceiver: BirValueParameter?,
     valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?,
-) : BirClass() {
+) : BirElementBase(), BirClass {
     override val owner: BirClassImpl
         get() = this
 

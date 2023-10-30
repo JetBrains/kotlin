@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirConstructorSymbol
@@ -20,11 +19,11 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.constructor]
  */
-abstract class BirConstructor : BirElementBase(), BirFunction, BirConstructorSymbol {
+interface BirConstructor : BirFunction, BirConstructorSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassConstructorDescriptor?
+    override val descriptor: ClassConstructorDescriptor?
 
-    abstract var isPrimary: Boolean
+    var isPrimary: Boolean
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)

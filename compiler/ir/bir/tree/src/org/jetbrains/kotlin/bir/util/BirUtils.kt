@@ -193,7 +193,7 @@ fun BirAnnotationContainer.hasAnnotation(annotationClass: BirClassSymbol) =
     getAnnotation(annotationClass) != null
 
 fun BirValueParameter.getIndex(): Int {
-    val list = getContainingList()
+    val list = (this as BirElementBase).getContainingList()
         ?: return -1
     return list.indexOf(this)
 }
