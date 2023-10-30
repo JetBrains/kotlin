@@ -22,6 +22,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.Stability
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.analysis.forEach
 import androidx.compose.compiler.plugins.kotlin.analysis.hasStableMarker
+import androidx.compose.compiler.plugins.kotlin.analysis.knownStable
 import androidx.compose.compiler.plugins.kotlin.analysis.normalize
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
@@ -87,7 +88,12 @@ class ClassStabilityTransformer(
         val cls = result as? IrClass ?: return result
 
         if (
-            cls.visibility != DescriptorVisibilities.PUBLIC ||
+            (
+                // Including public AND internal to support incremental compilation, which
+                // is separated by file.
+                cls.visibility != DescriptorVisibilities.PUBLIC &&
+                    cls.visibility != DescriptorVisibilities.INTERNAL
+            ) ||
             cls.isEnumClass ||
             cls.isEnumEntry ||
             cls.isInterface ||
@@ -128,15 +134,19 @@ class ClassStabilityTransformer(
                         if (index != -1) {
                             // the stability of this parameter matters for the stability of the
                             // class
-                            parameterMask = parameterMask or 0b1 shl index
+                            parameterMask = parameterMask or (0b1 shl index)
                         } else {
                             externalParameters = true
                         }
                     }
+
                     else -> {
                         /* No action necessary */
                     }
                 }
+            }
+            if (stability.knownStable() && symbols.size < 32) {
+                parameterMask = parameterMask or (0b1 shl symbols.size)
             }
             stableExpr = if (externalParameters)
                 irConst(UNSTABLE)
@@ -144,6 +154,9 @@ class ClassStabilityTransformer(
                 stability.irStableExpression { irConst(STABLE) } ?: irConst(UNSTABLE)
         } else {
             stableExpr = stability.irStableExpression() ?: irConst(UNSTABLE)
+            if (stability.knownStable()) {
+                parameterMask = 0b1
+            }
         }
         metrics.recordClass(
             declaration,
@@ -151,18 +164,19 @@ class ClassStabilityTransformer(
             stability = stability
         )
 
-        cls.annotations = cls.annotations + IrConstructorCallImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
-            StabilityInferredClass.defaultType,
-            StabilityInferredClass.constructors.first(),
-            0,
-            0,
-            1,
-            null
-        ).also {
-            it.putValueArgument(0, irConst(parameterMask))
-        }
+        cls.annotations +=
+            IrConstructorCallImpl(
+                startOffset = UNDEFINED_OFFSET,
+                endOffset = UNDEFINED_OFFSET,
+                type = StabilityInferredClass.defaultType,
+                symbol = StabilityInferredClass.constructors.first(),
+                typeArgumentsCount = 0,
+                constructorTypeArgumentsCount = 0,
+                valueArgumentsCount = 1,
+                origin = null
+            ).also {
+                it.putValueArgument(0, irConst(parameterMask))
+            }
 
         cls.addStabilityMarkerField(stableExpr)
         return result

@@ -27,7 +27,7 @@ fun getHashCode(): Int = currentComposer.hashCode()
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 open class Foo {
   val current: Int
     @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")

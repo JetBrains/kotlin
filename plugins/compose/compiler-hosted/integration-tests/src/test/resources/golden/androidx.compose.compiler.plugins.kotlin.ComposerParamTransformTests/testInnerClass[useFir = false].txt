@@ -32,7 +32,7 @@ class C {
 interface A {
   open fun b() { }
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class C {
   val foo: Int = 1
   inner class D : A {

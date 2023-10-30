@@ -15,7 +15,7 @@ class ContentImpl : Content {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class ContentImpl : Content {
   override fun setContent(c: Function2<Composer, Int, Unit>) { }
   static val %stable: Int = 0

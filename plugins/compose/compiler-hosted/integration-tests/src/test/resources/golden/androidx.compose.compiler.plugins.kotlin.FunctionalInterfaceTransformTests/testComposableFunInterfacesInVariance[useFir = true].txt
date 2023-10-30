@@ -26,7 +26,7 @@ interface Consumer<T>  {
   @Composable
   abstract fun consume(t: T, %composer: Composer?, %changed: Int)
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 2)
 class Repro<T: Any>  {
   fun test(consumer: Consumer<in T>) { }
   static val %stable: Int = 0

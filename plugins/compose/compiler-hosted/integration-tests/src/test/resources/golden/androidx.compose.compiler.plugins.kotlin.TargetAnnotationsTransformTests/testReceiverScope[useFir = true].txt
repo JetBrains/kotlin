@@ -47,7 +47,7 @@ interface LocalBoxScope {
   @Stable
   abstract fun Modifier.align(alignment: Alignment): Modifier
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 object LocalBoxScopeInstance : LocalBoxScope {
   override fun Modifier.align(alignment: Alignment): Modifier {
     return Companion
