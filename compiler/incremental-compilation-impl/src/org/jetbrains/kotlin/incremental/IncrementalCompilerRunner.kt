@@ -113,7 +113,7 @@ abstract class IncrementalCompilerRunner<
         changedFiles: ChangedFiles?, // When not-null, changes are provided by the build system; otherwise, the IC will need to track them
         fileLocations: FileLocations? = null, // Must be not-null if the build system needs to support build cache relocatability
     ): ExitCode = reporter.measure(GradleBuildTime.INCREMENTAL_COMPILATION_DAEMON) {
-        return when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector)) {
+        val result = when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, fileLocations, messageCollector)) {
             is ICResult.Completed -> {
                 reporter.debug { "Incremental compilation completed" }
                 result.exitCode
@@ -146,6 +146,8 @@ abstract class IncrementalCompilerRunner<
                 )
             }
         }
+        collectSizeMetrics()
+        return result
     }
 
     /** The result when attempting to compile incrementally ([tryCompileIncrementally]). */
@@ -411,11 +413,9 @@ abstract class IncrementalCompilerRunner<
 
     protected open fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: Args) {}
 
-    protected open fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: CacheManager) {
-        collectMetrics()
-    }
+    protected open fun performWorkAfterCompilation(compilationMode: CompilationMode, exitCode: ExitCode, caches: CacheManager) {}
 
-    private fun collectMetrics() {
+    private fun collectSizeMetrics() {
         reporter.measure(GradleBuildTime.CALCULATE_OUTPUT_SIZE) {
             reporter.addMetric(
                 GradleBuildPerformanceMetric.SNAPSHOT_SIZE,
