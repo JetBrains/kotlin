@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -48,6 +46,7 @@ class FirRenderer(
     override val fileAnnotationsContainerRenderer: FirFileAnnotationsContainerRenderer? = null,
     override val resolvedNamedReferenceRenderer: FirResolvedNamedReferenceRenderer = FirResolvedNamedReferenceRendererWithLabel(),
     override val resolvedQualifierRenderer: FirResolvedQualifierRenderer = FirResolvedQualifierRendererWithLabel(),
+    private val lineBreakAfterContextReceivers: Boolean = true,
 ) : FirRendererComponents {
 
     override val visitor = Visitor()
@@ -149,7 +148,12 @@ class FirRenderer(
         print("context(")
         renderSeparated(contextReceivers, visitor)
         print(")")
-        printer.newLine()
+
+        if (lineBreakAfterContextReceivers) {
+            printer.newLine()
+        } else {
+            print(" ")
+        }
     }
 
     private fun List<FirTypeParameterRef>.renderTypeParameters() {

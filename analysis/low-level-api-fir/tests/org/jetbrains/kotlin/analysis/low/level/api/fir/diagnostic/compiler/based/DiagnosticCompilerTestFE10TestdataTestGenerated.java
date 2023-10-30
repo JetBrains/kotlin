@@ -12688,6 +12688,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("contextReceiverAmbiguity.kt")
+                public void testContextReceiverAmbiguity() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextReceiverAmbiguity.kt");
+                }
+
+                @Test
                 @TestMetadata("contextReceiverTypeParamsUsage.kt")
                 public void testContextReceiverTypeParamsUsage() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextReceiverTypeParamsUsage.kt");

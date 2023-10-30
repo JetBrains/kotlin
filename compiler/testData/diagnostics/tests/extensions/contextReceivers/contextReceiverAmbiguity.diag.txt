@@ -1,0 +1,5 @@
+/contextReceiverAmbiguity.kt:13:9: error: overload resolution ambiguity:
+context(String) public fun foo(x: Comparable<*>): Unit defined in root package in file contextReceiverAmbiguity.kt
+context(String) public fun foo(x: Number): Unit defined in root package in file contextReceiverAmbiguity.kt
+        foo(1)
+        ^
