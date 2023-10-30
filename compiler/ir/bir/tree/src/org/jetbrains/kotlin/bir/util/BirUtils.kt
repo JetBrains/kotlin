@@ -573,3 +573,13 @@ fun BirValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
     { current -> (current.parent as? BirSimpleFunction)?.overriddenSymbols?.map { it.owner.valueParameters[current.index] } ?: listOf() },
     { current -> current.defaultValue != null }
 )
+
+
+fun BirMemberAccessExpression<*>.putArgument(parameter: BirValueParameter, argument: BirExpression?) {
+    val calleeFunction = symbol.owner as? BirFunction
+    when (parameter) {
+        calleeFunction?.dispatchReceiverParameter -> dispatchReceiver = argument
+        calleeFunction?.extensionReceiverParameter -> extensionReceiver = argument
+        else -> valueArguments[parameter.index] = argument
+    }
+}

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.bir.backend.jvm
 
+import org.jetbrains.kotlin.bir.backend.utils.isInlineArrayConstructor
 import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirFile
+import org.jetbrains.kotlin.bir.declarations.BirFunction
 import org.jetbrains.kotlin.bir.expressions.BirConst
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.types.utils.classFqName
@@ -87,3 +89,7 @@ private fun getLiteralStringFromAnnotation(annotationCall: BirConstructorCall): 
 }
 
 internal class ParsedJvmFileClassAnnotations(val jvmName: String?, val jvmPackageName: FqName?, val isMultifileClass: Boolean)
+
+context(JvmBirBackendContext)
+fun BirFunction.isInlineFunctionCall(): Boolean =
+    (!config.isInlineDisabled || typeParameters.any { it.isReified }) && (isInline || isInlineArrayConstructor())

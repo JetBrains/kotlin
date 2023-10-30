@@ -354,4 +354,10 @@ class BirStatementBuilderScope() {
             birEquals(arg1, arg2, origin = IrStatementOrigin.EXCLEQ),
             origin, emptyList(), 0, null
         ).apply(block)
+
+
+    fun birExpressionBody(
+        expression: BirExpression,
+    ): BirExpressionBody =
+        BirExpressionBodyImpl(sourceSpan, expression)
 }
