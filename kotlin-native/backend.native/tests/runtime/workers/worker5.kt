@@ -8,33 +8,8 @@ import kotlin.test.*
 
 import kotlin.native.concurrent.*
 
-fun runTest0() {
-    val worker = Worker.start()
-    val future = worker.execute(TransferMode.SAFE, { "zzz" }) {
-        input -> input.length
-    }
-    future.consume {
-        result -> println("Got $result")
-    }
-    worker.requestTermination().result
-    println("OK")
-}
-
-var done = false
-
-fun runTest1() {
-    val worker = Worker.current
-    done = false
-    // Here we request execution of the operation on the current worker.
-    worker.executeAfter(0, {
-        done = true
-    }.freeze())
-    while (!done)
-        worker.processQueue()
-}
-
 // Ensure that termination of current worker on main thread doesn't lead to problems.
-fun runTest2() {
+fun main() {
     val worker = Worker.current
     val future = worker.requestTermination(false)
     worker.processQueue()
@@ -43,11 +18,5 @@ fun runTest2() {
     // After termination request this worker is no longer addressable.
     assertFailsWith<IllegalStateException> { worker.executeAfter(0, {
         println("BUG!")
-    }.freeze()) }
-}
-
-fun main() {
-    runTest0()
-    runTest1()
-    runTest2()
+    })}
 }

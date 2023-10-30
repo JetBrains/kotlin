@@ -845,71 +845,16 @@ standaloneTest("worker_bound_reference0") {
     }
 }
 
-tasks.register("worker0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker0.kt"
-}
-
-tasks.register("worker1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker1.kt"
-}
-
-tasks.register("worker2", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker2.kt"
-}
-
-tasks.register("worker3", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker3.kt"
-}
-
-tasks.register("worker4", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker4.kt"
-}
-
 // This tests changes main thread worker queue state, so better be executed alone.
 standaloneTest("worker5") {
     useGoldenData = true
     source = "runtime/workers/worker5.kt"
 }
 
-tasks.register("worker6", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker6.kt"
-}
-
-tasks.register("worker7", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker7.kt"
-}
-
-tasks.register("worker8", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker8.kt"
-}
-
-tasks.register("worker9_experimentalMM", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/worker9_experimentalMM.kt"
-}
-
 tasks.register("worker10", KonanLocalTest) {
     enabled = !isNoopGC
     useGoldenData = true
     source = "runtime/workers/worker10.kt"
-}
-
-tasks.register("worker11", KonanLocalTest) {
-    enabled = !isAggressiveGC // TODO: Investigate why too slow
-    useGoldenData = true
-    source = "runtime/workers/worker11.kt"
-}
-
-tasks.register("worker_exception_messages", KonanLocalTest) {
-    source = "runtime/workers/worker_exception_messages.kt"
 }
 
 standaloneTest("worker_exceptions") {
@@ -998,25 +943,11 @@ standaloneTest("worker_threadlocal_no_leak") {
     source = "runtime/workers/worker_threadlocal_no_leak.kt"
 }
 
-tasks.register("worker_list_workers", KonanLocalTest) {
-    source = "runtime/workers/worker_list_workers.kt"
-}
-
 standaloneTest("freeze_disabled") {
     enabled = !isNoopGC
     flags = ["-tr"]
     source = "runtime/workers/freeze_disabled.kt"
     testLogger = KonanTest.Logger.SILENT
-}
-
-tasks.register("lazy0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/lazy0.kt"
-}
-
-tasks.register("lazy1", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/workers/lazy1.kt"
 }
 
 standaloneTest("lazy2") {
@@ -1027,11 +958,6 @@ standaloneTest("lazy2") {
 standaloneTest("lazy3") {
     enabled = !isNoopGC
     source = "runtime/workers/lazy3.kt"
-}
-
-tasks.register("lazy4", KonanLocalTest) {
-    enabled = !isAggressiveGC // TODO: Investigate why too slow
-    source = "runtime/workers/lazy4.kt"
 }
 
 tasks.register("mutableData1", KonanLocalTest) {

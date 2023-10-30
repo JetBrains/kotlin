@@ -547,6 +547,7 @@ kotlin {
                     optIn("kotlin.native.runtime.NativeRuntimeApi")
                     optIn("kotlin.native.internal.InternalForKotlinNative")
                     optIn("kotlinx.cinterop.ExperimentalForeignApi")
+                    optIn("kotlin.native.concurrent.ObsoleteWorkersApi")
                 }
             }
         }

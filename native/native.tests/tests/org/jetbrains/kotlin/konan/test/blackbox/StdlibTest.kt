@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.PredefinedTestCase
         freeCompilerArgs = [
             ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
             ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
-            ENABLE_INTERNAL_FOR_KOTLIN_NATIVE],
+            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE],
         sourceLocations = [
             "libraries/stdlib/test/**.kt",
             "libraries/stdlib/common/test/**.kt",
@@ -53,7 +53,7 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
         freeCompilerArgs = [
             ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API, ENABLE_X_ENCODING_API, ENABLE_RANGE_UNTIL,
             ENABLE_X_FOREIGN_API, ENABLE_X_NATIVE_API, ENABLE_OBSOLETE_NATIVE_API, ENABLE_NATIVE_RUNTIME_API,
-            ENABLE_INTERNAL_FOR_KOTLIN_NATIVE,
+            ENABLE_OBSOLETE_WORKERS_API, ENABLE_INTERNAL_FOR_KOTLIN_NATIVE,
             "-Xcommon-sources=libraries/stdlib/common/test/jsCollectionFactories.kt",
             "-Xcommon-sources=libraries/stdlib/common/test/testUtils.kt",
             "-Xcommon-sources=libraries/stdlib/test/testUtils.kt",
@@ -84,6 +84,7 @@ private const val ENABLE_X_FOREIGN_API = "-opt-in=kotlinx.cinterop.ExperimentalF
 private const val ENABLE_X_NATIVE_API = "-opt-in=kotlin.experimental.ExperimentalNativeApi"
 private const val ENABLE_OBSOLETE_NATIVE_API = "-opt-in=kotlin.native.ObsoleteNativeApi"
 private const val ENABLE_NATIVE_RUNTIME_API = "-opt-in=kotlin.native.runtime.NativeRuntimeApi"
+private const val ENABLE_OBSOLETE_WORKERS_API = "-opt-in=kotlin.native.concurrent.ObsoleteWorkersApi"
 private const val ENABLE_INTERNAL_FOR_KOTLIN_NATIVE = "-opt-in=kotlin.native.internal.InternalForKotlinNative"
 private const val ENABLE_RANGE_UNTIL = "-XXLanguage:+RangeUntilOperator" // keep until 1.8
 private const val DISABLED_STDLIB_TEST = "test.collections.CollectionTest.abstractCollectionToArray"
