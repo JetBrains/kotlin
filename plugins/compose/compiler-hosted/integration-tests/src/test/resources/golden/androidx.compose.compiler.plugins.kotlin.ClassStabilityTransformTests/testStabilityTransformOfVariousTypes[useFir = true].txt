@@ -73,11 +73,11 @@ class Unstable {
   var value: Int = 0
   static val %stable: Int = 8
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class EmptyClass {
   static val %stable: Int = 0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class SingleStableVal(val p1: Int) {
   static val %stable: Int = 0
 }
@@ -85,7 +85,7 @@ class SingleStableVal(val p1: Int) {
 class SingleParamProp<T> (val p1: T) {
   static val %stable: Int = 0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 2)
 class SingleParamNonProp<T> (p1: T) {
   val p2: Int = p1.hashCode()
   static val %stable: Int = 0
@@ -99,7 +99,7 @@ class DoubleParamSingleProp<T, V> (val p1: T, p2: V) {
 class X<T> (val p1: List<T>) {
   static val %stable: Int = 8
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class NonBackingFieldUnstableProp {
   val p1: Unstable
     get() {
@@ -107,7 +107,7 @@ class NonBackingFieldUnstableProp {
     }
   static val %stable: Int = 0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class NonBackingFieldUnstableVarProp {
   var p1: Unstable
     get() {
@@ -117,7 +117,7 @@ class NonBackingFieldUnstableVarProp {
     }
   static val %stable: Int = 0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class StableDelegateProp {
   var p1: StableDelegate = StableDelegate()
     get() {

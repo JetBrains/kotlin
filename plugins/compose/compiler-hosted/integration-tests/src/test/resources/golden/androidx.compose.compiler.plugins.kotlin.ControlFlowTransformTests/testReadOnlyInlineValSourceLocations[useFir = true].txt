@@ -41,7 +41,7 @@ fun Test() {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class CurrentHolder {
   val current: Int
     @ReadOnlyComposable @Composable @JvmName(name = "getCurrent")
@@ -53,7 +53,7 @@ class CurrentHolder {
     }
   static val %stable: Int = 0
 }
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class HolderHolder {
   val _currentHolder: CurrentHolder = CurrentHolder()
   val current: Int

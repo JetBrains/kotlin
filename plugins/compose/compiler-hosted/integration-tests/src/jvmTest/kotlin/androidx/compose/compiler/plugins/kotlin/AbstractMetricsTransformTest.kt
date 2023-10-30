@@ -16,7 +16,6 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.facade.KotlinCompilerFacade
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -28,20 +27,21 @@ abstract class AbstractMetricsTransformTest(useFir: Boolean) : AbstractIrTransfo
         verify: ModuleMetrics.() -> Unit
     ) {
         val files = listOf(SourceFile("Test.kt", source))
-        val stabilityInferencer = StabilityInferencer(emptySet())
-        val metrics = ModuleMetricsImpl(KotlinCompilerFacade.TEST_MODULE_NAME) {
-            stabilityInferencer.stabilityOf(it)
-        }
+        lateinit var extension: ComposeIrGenerationExtension
         compileToIr(
             files,
             registerExtensions = { configuration ->
                 ComposePluginRegistrar.registerCommonExtensions(this)
-                val extension = ComposePluginRegistrar.createComposeIrExtension(configuration)
-                extension.metrics = metrics
+                extension =
+                    ComposePluginRegistrar.createComposeIrExtension(configuration) { inferencer ->
+                        ModuleMetricsImpl(KotlinCompilerFacade.TEST_MODULE_NAME) { type ->
+                            inferencer.stabilityOf(type)
+                        }
+                    }
                 IrGenerationExtension.registerExtension(this, extension)
             }
         )
-        metrics.verify()
+        extension.metrics.verify()
     }
 
     fun assertClasses(

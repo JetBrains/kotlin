@@ -15,7 +15,7 @@ class A {
 // Transformed IR
 // ------------------------------------------
 
-@StabilityInferred(parameters = 0)
+@StabilityInferred(parameters = 1)
 class A {
   val b: String = ""
   val c: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
