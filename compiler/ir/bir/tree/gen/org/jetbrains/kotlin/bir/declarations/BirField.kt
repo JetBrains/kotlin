@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
@@ -23,20 +22,20 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.field]
  */
-abstract class BirField : BirElementBase(), BirDeclaration, BirPossiblyExternalDeclaration,
+interface BirField : BirDeclaration, BirPossiblyExternalDeclaration,
         BirDeclarationWithVisibility, BirDeclarationParent, BirMetadataSourceOwner, BirFieldSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: PropertyDescriptor?
+    override val descriptor: PropertyDescriptor?
 
-    abstract var type: BirType
+    var type: BirType
 
-    abstract var isFinal: Boolean
+    var isFinal: Boolean
 
-    abstract var isStatic: Boolean
+    var isStatic: Boolean
 
-    abstract var initializer: BirExpressionBody?
+    var initializer: BirExpressionBody?
 
-    abstract var correspondingPropertySymbol: BirPropertySymbol?
+    var correspondingPropertySymbol: BirPropertySymbol?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)

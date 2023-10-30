@@ -34,7 +34,7 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     isNoinline: Boolean,
     isHidden: Boolean,
     defaultValue: BirExpressionBody?,
-) : BirValueParameter() {
+) : BirElementBase(), BirValueParameter {
     override val owner: BirValueParameterImpl
         get() = this
 

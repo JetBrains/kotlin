@@ -35,7 +35,7 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
     isStatic: Boolean,
     initializer: BirExpressionBody?,
     correspondingPropertySymbol: BirPropertySymbol?,
-) : BirField() {
+) : BirElementBase(), BirField {
     override val owner: BirFieldImpl
         get() = this
 

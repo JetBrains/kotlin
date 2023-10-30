@@ -39,7 +39,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     contextReceiverParametersCount: Int,
     body: BirBody?,
     isPrimary: Boolean,
-) : BirConstructor() {
+) : BirElementBase(), BirConstructor {
     override val owner: BirConstructorImpl
         get() = this
 

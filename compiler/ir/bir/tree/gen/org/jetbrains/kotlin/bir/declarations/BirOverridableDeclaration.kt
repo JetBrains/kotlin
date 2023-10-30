@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.bir.symbols.BirSymbol
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.overridableDeclaration]
  */
-abstract class BirOverridableDeclaration<S : BirSymbol> : BirOverridableMember(), BirSymbol {
-    abstract var isFakeOverride: Boolean
+interface BirOverridableDeclaration<S : BirSymbol> : BirOverridableMember, BirSymbol {
+    var isFakeOverride: Boolean
 
-    abstract var overriddenSymbols: List<S>
+    var overriddenSymbols: List<S>
 
     companion object
 }

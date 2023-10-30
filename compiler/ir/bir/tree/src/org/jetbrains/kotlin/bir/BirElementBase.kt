@@ -63,7 +63,6 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     }
 
 
-    override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
     internal open fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
 
     fun isAncestorOf(other: BirElementBase): Boolean {

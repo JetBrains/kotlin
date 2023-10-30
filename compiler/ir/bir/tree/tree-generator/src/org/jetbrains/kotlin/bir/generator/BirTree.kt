@@ -135,6 +135,8 @@ object BirTree : AbstractTreeBuilder() {
         +field("isAssignable", boolean)
     }
     val valueParameter: ElementConfig by element(Declaration) {
+        typeKind = TypeKind.Interface
+
         parent(declaration)
         parent(valueDeclaration)
 
@@ -177,6 +179,8 @@ object BirTree : AbstractTreeBuilder() {
         +field("defaultValue", expressionBody, nullable = true, isChild = true)
     }
     val `class`: ElementConfig by element(Declaration) {
+        typeKind = TypeKind.Interface
+
         parent(declaration)
         parent(possiblyExternalDeclaration)
         parent(declarationWithVisibility)
@@ -296,6 +300,8 @@ object BirTree : AbstractTreeBuilder() {
         +field("body", body, nullable = true, isChild = true)
     }
     val constructor: ElementConfig by element(Declaration) {
+        typeKind = TypeKind.Interface
+
         parent(function)
 
         +descriptor("ClassConstructorDescriptor")
@@ -317,6 +323,8 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(symbolType)
     }
     val field: ElementConfig by element(Declaration) {
+        typeKind = TypeKind.Interface
+
         parent(declaration)
         parent(possiblyExternalDeclaration)
         parent(declarationWithVisibility)
@@ -408,6 +416,7 @@ object BirTree : AbstractTreeBuilder() {
     }
     val simpleFunction: ElementConfig by element(Declaration) {
         isForcedLeaf = true
+        typeKind = TypeKind.Interface
 
         parent(function)
         parent(overridableDeclaration.withArgs("S" to SymbolTypes.simpleFunction))

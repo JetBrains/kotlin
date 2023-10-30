@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
@@ -22,27 +21,27 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.class]
  */
-abstract class BirClass : BirElementBase(), BirDeclaration, BirPossiblyExternalDeclaration,
+interface BirClass : BirDeclaration, BirPossiblyExternalDeclaration,
         BirDeclarationWithVisibility, BirTypeParametersContainer, BirDeclarationContainer,
         BirAttributeContainer, BirMetadataSourceOwner, BirClassSymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: ClassDescriptor?
+    override val descriptor: ClassDescriptor?
 
-    abstract var kind: ClassKind
+    var kind: ClassKind
 
-    abstract var modality: Modality
+    var modality: Modality
 
-    abstract var isCompanion: Boolean
+    var isCompanion: Boolean
 
-    abstract var isInner: Boolean
+    var isInner: Boolean
 
-    abstract var isData: Boolean
+    var isData: Boolean
 
-    abstract var isValue: Boolean
+    var isValue: Boolean
 
-    abstract var isExpect: Boolean
+    var isExpect: Boolean
 
-    abstract var isFun: Boolean
+    var isFun: Boolean
 
     /**
      * Returns true iff this is a class loaded from dependencies which has the `HAS_ENUM_ENTRIES`
@@ -53,15 +52,15 @@ abstract class BirClass : BirElementBase(), BirDeclaration, BirPossiblyExternalD
      * enum classes compiled by
      * old versions of Kotlin which did not support the EnumEntries language feature.
      */
-    abstract var hasEnumEntries: Boolean
+    var hasEnumEntries: Boolean
 
-    abstract val source: SourceElement
+    val source: SourceElement
 
-    abstract var superTypes: List<BirType>
+    var superTypes: List<BirType>
 
-    abstract var thisReceiver: BirValueParameter?
+    var thisReceiver: BirValueParameter?
 
-    abstract var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?
+    var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)
