@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 
 internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
-    private val logger: Logger = Logging.getLogger(IdeNativePlatformDependencyResolver::class.java)
-
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         val konanDistribution = KonanDistribution(sourceSet.project.konanHome)
         val stdlibFile = KonanDistribution(sourceSet.project.konanHome).stdlib
@@ -40,7 +38,6 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
 
             KlibExtra(kotlinLibrary)
         } catch (error: Throwable) {
-            logger.error("Failed to resolve Native Stdlib", error)
             null
         }
 
@@ -62,6 +59,6 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
     }
 
     fun nativeStdlibCoordinates(project: Project): IdeaKotlinBinaryCoordinates = IdeaKotlinBinaryCoordinates(
-        "org.jetbrains.kotlin.native", "stdlib", project.konanVersion.toString(),
+        "org.jetbrains.kotlin.native", "stdlib", project.konanVersion,
     )
 }
