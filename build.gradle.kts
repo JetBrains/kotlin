@@ -1,8 +1,6 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 buildscript {
@@ -489,6 +487,7 @@ val projectsWithEnabledContextReceivers by extra {
         ":generators:tree-generator-common",
         ":compiler:bir",
         ":compiler:bir.tree",
+        ":compiler:bir.tree:tree-generator",
         ":compiler:bir.backend",
     )
 }

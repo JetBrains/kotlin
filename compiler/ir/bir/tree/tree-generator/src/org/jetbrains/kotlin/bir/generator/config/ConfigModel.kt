@@ -54,6 +54,8 @@ class ElementConfig(
     override fun copy(args: Map<NamedTypeParameterRef, TypeRef>) = ElementConfigRef(this, args, false)
     override fun copy(nullable: Boolean) = ElementConfigRef(this, args, nullable)
 
+    override fun substitute(map: TypeParameterSubstitutionMap): ElementConfig = this
+
     operator fun TypeVariable.unaryPlus() = apply {
         params.add(this)
     }
@@ -64,13 +66,18 @@ class ElementConfig(
 
     override fun toString() = element.name
 
-    override val packageName: String
+    val packageName: String
         get() = category.packageName
 
-    override val type: String
+    val type: String
         get() = Element.elementName2typeName(name)
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type
+    fun getTypeWithArguments(notNull: Boolean): String = type
+
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        renderingIsNotSupported()
+    }
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
         Expression("expressions", "expression"),
@@ -95,13 +102,16 @@ class ElementConfigRef(
 
     override fun toString() = element.name
 
-    override val type: String
+    val type: String
         get() = element.type
 
-    override val packageName: String
+    val packageName: String
         get() = element.packageName
 
-    override fun getTypeWithArguments(notNull: Boolean): String = type + generics
+    context(ImportCollector)
+    override fun renderTo(appendable: Appendable) {
+        renderingIsNotSupported()
+    }
 }
 
 sealed class FieldConfig(
@@ -122,7 +132,7 @@ sealed class FieldConfig(
 
 class SimpleFieldConfig(
     name: String,
-    val type: TypeRef?,
+    val type: TypeRefWithNullability?,
     val nullable: Boolean,
     val mutable: Boolean,
     isChildElement: Boolean,

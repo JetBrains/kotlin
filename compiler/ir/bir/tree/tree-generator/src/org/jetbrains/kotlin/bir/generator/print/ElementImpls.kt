@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.bir.generator.BirTree.rootElement
 import org.jetbrains.kotlin.bir.generator.Packages
 import org.jetbrains.kotlin.bir.generator.childElementList
 import org.jetbrains.kotlin.bir.generator.elementBaseType
-import org.jetbrains.kotlin.bir.generator.model.ElementOrRef
 import org.jetbrains.kotlin.bir.generator.model.ListField
 import org.jetbrains.kotlin.bir.generator.model.Model
 import org.jetbrains.kotlin.bir.generator.model.SingleField
 import org.jetbrains.kotlin.bir.generator.util.tryParameterizedBy
 import org.jetbrains.kotlin.generators.tree.ImplementationKind
+import org.jetbrains.kotlin.generators.tree.TypeRefWithNullability
 import java.io.File
 
 fun printElementImpls(generationPath: File, model: Model) = sequence {
@@ -67,7 +67,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        initializer("BirChildElementList(this, %L, %L)", childrenLists.indexOf(field) + 1, (field.elementType as ElementOrRef).nullable)
+                        initializer("BirChildElementList(this, %L, %L)", childrenLists.indexOf(field) + 1, (field.elementType as TypeRefWithNullability).nullable)
                     } else if (field is SingleField && field.isMutable) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, if (field.isChild) poetType.copy(nullable = true) else poetType)
