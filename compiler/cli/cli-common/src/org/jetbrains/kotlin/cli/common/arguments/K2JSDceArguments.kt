@@ -26,7 +26,7 @@ class K2JSDceArguments : CommonToolArguments() {
     @Argument(
             value = "-output-dir",
             valueDescription = "<path>",
-            description = "Output directory"
+            description = "Output directory."
     )
     var outputDirectory: String? = null
         set(value) {
@@ -37,7 +37,7 @@ class K2JSDceArguments : CommonToolArguments() {
     @Argument(
             value = "-keep",
             valueDescription = "<fully.qualified.name[,]>",
-            description = "List of fully-qualified names of declarations that shouldn't be eliminated"
+            description = "List of fully-qualified names of declarations that shouldn't be eliminated."
     )
     var declarationsToKeep: Array<String>? = null
         set(value) {
@@ -47,7 +47,7 @@ class K2JSDceArguments : CommonToolArguments() {
 
     @Argument(
             value = "-Xprint-reachability-info",
-            description = "Print declarations marked as reachable"
+            description = "Print declarations marked as reachable."
     )
     var printReachabilityInfo = false
         set(value) {
@@ -62,7 +62,7 @@ class K2JSDceArguments : CommonToolArguments() {
     )
     @Argument(
             value = "-dev-mode",
-            description = "Development mode: don't strip out any code, just copy dependencies"
+            description = "Development mode: don't strip out any code, just copy dependencies."
     )
     var devMode = false
         set(value) {
@@ -73,7 +73,7 @@ class K2JSDceArguments : CommonToolArguments() {
     @Argument(
         value = "-Xdev-mode-overwriting-strategy",
         valueDescription = "{$OLDER|$ALL}",
-        description = "Overwriting strategy during copy dependencies in development mode"
+        description = "Overwriting strategy when copying dependencies in development mode."
     )
     var devModeOverwritingStrategy: String? = null
         set(value) {

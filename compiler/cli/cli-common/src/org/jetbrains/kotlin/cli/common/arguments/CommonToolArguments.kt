@@ -35,21 +35,21 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     @Transient
     var errors: ArgumentParseErrors? = null
 
-    @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
+    @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options.")
     var help = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-X", description = "Print a synopsis of advanced options")
+    @Argument(value = "-X", description = "Print a synopsis of advanced options.")
     var extraHelp = false
         set(value) {
             checkFrozen()
             field = value
         }
 
-    @Argument(value = "-version", description = "Display compiler version")
+    @Argument(value = "-version", description = "Display the compiler version.")
     var version = false
         set(value) {
             checkFrozen()
@@ -61,7 +61,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         gradleInputType = GradleInputTypes.INTERNAL,
         shouldGenerateDeprecatedKotlinOptions = true,
     )
-    @Argument(value = "-verbose", description = "Enable verbose logging output")
+    @Argument(value = "-verbose", description = "Enable verbose logging output.")
     var verbose = false
         set(value) {
             checkFrozen()
@@ -73,7 +73,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         gradleInputType = GradleInputTypes.INTERNAL,
         shouldGenerateDeprecatedKotlinOptions = true,
     )
-    @Argument(value = "-nowarn", description = "Generate no warnings")
+    @Argument(value = "-nowarn", description = "Don't generate any warnings.")
     var suppressWarnings = false
         set(value) {
             checkFrozen()
@@ -85,7 +85,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
         gradleInputType = GradleInputTypes.INPUT,
         shouldGenerateDeprecatedKotlinOptions = true,
     )
-    @Argument(value = "-Werror", description = "Report an error if there are any warnings")
+    @Argument(value = "-Werror", description = "Report an error if there are any warnings.")
     var allWarningsAsErrors = false
         set(value) {
             checkFrozen()

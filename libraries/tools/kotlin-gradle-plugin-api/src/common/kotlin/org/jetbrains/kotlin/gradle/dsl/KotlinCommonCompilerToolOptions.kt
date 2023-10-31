@@ -8,21 +8,21 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinCommonCompilerToolOptions {
 
     /**
-     * Report an error if there are any warnings
+     * Report an error if there are any warnings.
      * Default value: false
      */
     @get:org.gradle.api.tasks.Input
     val allWarningsAsErrors: org.gradle.api.provider.Property<kotlin.Boolean>
 
     /**
-     * Generate no warnings
+     * Don't generate any warnings.
      * Default value: false
      */
     @get:org.gradle.api.tasks.Internal
     val suppressWarnings: org.gradle.api.provider.Property<kotlin.Boolean>
 
     /**
-     * Enable verbose logging output
+     * Enable verbose logging output.
      * Default value: false
      */
     @get:org.gradle.api.tasks.Internal

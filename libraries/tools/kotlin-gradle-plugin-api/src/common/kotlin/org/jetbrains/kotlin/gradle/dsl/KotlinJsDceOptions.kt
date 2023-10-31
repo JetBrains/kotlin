@@ -9,7 +9,7 @@ interface KotlinJsDceOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolO
     override val options: org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptions
 
     /**
-     * Development mode: don't strip out any code, just copy dependencies
+     * Development mode: don't strip out any code, just copy dependencies.
      * Default value: false
      */
     var devMode: kotlin.Boolean
@@ -17,7 +17,7 @@ interface KotlinJsDceOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolO
         set(value) = options.devMode.set(value)
 
     /**
-     * Output directory
+     * Output directory.
      * Default value: null
      */
     @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.WARNING)

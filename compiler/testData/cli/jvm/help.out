@@ -1,38 +1,38 @@
 Usage: kotlinc-jvm <options> <source files>
 where possible options include:
-  -classpath (-cp) <path>    List of directories and JAR/ZIP archives to search for user class files
-  -d <directory|jar>         Destination for generated class files
-  -expression (-e)           Evaluate the given string as a Kotlin script
-  -include-runtime           Include Kotlin runtime into the resulting JAR
-  -java-parameters           Generate metadata for Java 1.8 reflection on method parameters
-  -jdk-home <path>           Include a custom JDK from the specified location into the classpath instead of the default JAVA_HOME
-  -jvm-target <version>      Target version of the generated JVM bytecode (1.8, 9, 10, ..., 21), default is 1.8
-  -module-name <name>        Name of the generated .kotlin_module file
-  -no-jdk                    Don't automatically include the Java runtime into the classpath
-  -no-reflect                Don't automatically include Kotlin reflection into the classpath
-  -no-stdlib                 Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
+  -classpath (-cp) <path>    List of directories and JAR/ZIP archives to search for user class files.
+  -d <directory|jar>         Destination for generated class files.
+  -expression (-e)           Evaluate the given string as a Kotlin script.
+  -include-runtime           Include the Kotlin runtime in the resulting JAR.
+  -java-parameters           Generate metadata for Java 1.8 reflection on method parameters.
+  -jdk-home <path>           Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.
+  -jvm-target <version>      The target version of the generated JVM bytecode (1.8, 9, 10, ..., 21), with 1.8 as the default.
+  -module-name <name>        Name of the generated '.kotlin_module' file.
+  -no-jdk                    Don't automatically include the Java runtime in the classpath.
+  -no-reflect                Don't automatically include the Kotlin reflection dependency in the classpath.
+  -no-stdlib                 Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection dependencies in the classpath.
   -script-templates <fully qualified class name[,]>
-                             Script definition template classes
-  -Werror                    Report an error if there are any warnings
-  -api-version <version>     Allow using declarations only from the specified version of bundled libraries
-  -X                         Print a synopsis of advanced options
-  -help (-h)                 Print a synopsis of standard options
-  -kotlin-home <path>        Path to the home directory of Kotlin compiler used for discovery of runtime libraries
-  -language-version <version> Provide source compatibility with the specified version of Kotlin
-  -opt-in <fq.name>          Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name
+                             Script definition template classes.
+  -Werror                    Report an error if there are any warnings.
+  -api-version <version>     Allow using declarations from only the specified version of bundled libraries.
+  -X                         Print a synopsis of advanced options.
+  -help (-h)                 Print a synopsis of standard options.
+  -kotlin-home <path>        Path to the Kotlin compiler home directory used for the discovery of runtime libraries.
+  -language-version <version> Provide source compatibility with the specified version of Kotlin.
+  -opt-in <fq.name>          Enable API usages that require opt-in with an opt-in requirement marker with the given fully qualified name.
   -P plugin:<pluginId>:<optionName>=<value>
-                             Pass an option to a plugin
+                             Pass an option to a plugin.
   -progressive               Enable progressive compiler mode.
-                             In this mode, deprecations and bug fixes for unstable code take effect immediately,
+                             In this mode, deprecations and bug fixes for unstable code take effect immediately
                              instead of going through a graceful migration cycle.
-                             Code written in the progressive mode is backward compatible; however, code written in
-                             non-progressive mode may cause compilation errors in the progressive mode.
-  -script                    Evaluate the given Kotlin script (*.kts) file
-  -nowarn                    Generate no warnings
-  -verbose                   Enable verbose logging output
-  -version                   Display compiler version
-  -J<option>                 Pass an option directly to JVM
-  @<argfile>                 Read compiler arguments and file paths from the given file
+                             Code written in progressive mode is backward compatible; however, code written without
+                             progressive mode enabled may cause compilation errors in progressive mode.
+  -script                    Evaluate the given Kotlin script (*.kts) file.
+  -nowarn                    Don't generate any warnings.
+  -verbose                   Enable verbose logging output.
+  -version                   Display the compiler version.
+  -J<option>                 Pass an option directly to JVM.
+  @<argfile>                 Read compiler arguments and file paths from the given file.
 
 For details, see https://kotl.in/cli
 OK

@@ -113,7 +113,7 @@ public class Usage {
         while (sb.length() < descriptionStart) {
             sb.append(" ");
         }
-        appendln(sb, "Pass an option directly to JVM");
+        appendln(sb, "Pass an option directly to JVM.");
     }
 
     private static void renderArgfileUsage(@NotNull StringBuilder sb) {
@@ -124,7 +124,7 @@ public class Usage {
         while (sb.length() < descriptionStart) {
             sb.append(" ");
         }
-        appendln(sb, "Read compiler arguments and file paths from the given file");
+        appendln(sb, "Read compiler arguments and file paths from the given file.");
     }
 
     private static void appendln(@NotNull StringBuilder sb, @NotNull String string) {

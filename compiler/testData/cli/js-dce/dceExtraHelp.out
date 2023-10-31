@@ -1,8 +1,8 @@
 Usage: kotlin-dce-js <options> <source files>
 where advanced options include:
   -Xdev-mode-overwriting-strategy={older|all}
-                             Overwriting strategy during copy dependencies in development mode
-  -Xprint-reachability-info  Print declarations marked as reachable
+                             Overwriting strategy when copying dependencies in development mode.
+  -Xprint-reachability-info  Print declarations marked as reachable.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

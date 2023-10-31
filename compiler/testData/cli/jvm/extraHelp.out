@@ -2,240 +2,241 @@ Usage: kotlinc-jvm <options> <source files>
 where advanced options include:
   -Xabi-stability={stable|unstable}
                              When using unstable compiler features such as FIR, use 'stable' to mark generated class files as stable
-                             to prevent diagnostics from stable compilers at the call site.
+                             to prevent diagnostics from being reported when using stable compilers at the call site.
                              When using the JVM IR backend, conversely, use 'unstable' to mark generated class files as unstable
                              to force diagnostics to be reported.
-  -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
-                             or all modules on the module path if <module> is ALL-MODULE-PATH
-  -Xallow-no-source-files    Allow no source files
-  -Xallow-unstable-dependencies Do not report errors on classes in dependencies, which were compiled by an unstable version of the Kotlin compiler
+  -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules, or all modules on the module path if <module> is ALL-MODULE-PATH.
+  -Xallow-no-source-files    Allow the set of source files to be empty.
+  -Xallow-unstable-dependencies Do not report errors on classes in dependencies that were compiled by an unstable version of the Kotlin compiler.
   -Xassertions={always-enable|always-disable|jvm|legacy}
-                             Assert calls behaviour
-                             -Xassertions=always-enable:  enable, ignore jvm assertion settings;
-                             -Xassertions=always-disable: disable, ignore jvm assertion settings;
-                             -Xassertions=jvm:            enable, depend on jvm assertion settings;
-                             -Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;
+                             'kotlin.assert' call behavior:
+                             -Xassertions=always-enable:  enable, ignore JVM assertion settings;
+                             -Xassertions=always-disable: disable, ignore JVM assertion settings;
+                             -Xassertions=jvm:            enable, depend on JVM assertion settings;
+                             -Xassertions=legacy:         calculate the condition on each call, the behavior depends on JVM assertion settings in the kotlin package;
                              default: legacy
   -Xbackend-threads=<N>      When using the IR backend, run lowerings by file in N parallel threads.
-                             0 means use a thread per processor core.
-                             Default value is 1
-  -Xbuild-file=<path>        Path to the .xml build file to compile
-  -Xcompile-java             Reuse javac analysis and compile Java source files
-  -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
+                             0 means use one thread per processor core.
+                             The default value is 1.
+  -Xbuild-file=<path>        Path to the .xml build file to compile.
+  -Xcompile-java             Reuse 'javac' analysis and compile Java source files.
+  -Xdump-declarations-to=<path> Path to the JSON file where Java-to-Kotlin declaration mappings should be dumped.
   -Xdefault-script-extension=<script filename extension>
-                             Compile expressions and unrecognized scripts passed with the -script argument as scripts with given filename extension
-  -Xdisable-standard-script  Disable standard kotlin script support
+                             Compile expressions and unrecognized scripts passed with the -script argument as scripts with the given filename extension.
+  -Xdisable-standard-script  Disable standard Kotlin scripting support.
   -Xir-do-not-clear-binding-context
-                             When using the IR backend, do not clear BindingContext between psi2ir and lowerings
-  -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
+                             When using the IR backend, do not clear BindingContext between 'psi2ir' and lowerings.
+  -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode.
   -Xdebug                    Enable debug mode for compilation.
-                             Currently this includes spilling all variables in a suspending context regardless their liveness.
-  -Xir-inliner               Inline functions using IR inliner instead of bytecode inliner
-  -Xjvm-enable-preview       Allow using features from Java language that are in preview phase.
-                             Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment
+                             Currently this includes spilling all variables in a suspending context regardless of whether they are alive.
+  -Xir-inliner               Inline functions using the IR inliner instead of the bytecode inliner.
+  -Xjvm-enable-preview       Allow using Java features that are in the preview phase.
+                             This works like '--enable-preview' in Java. All class files are marked as compiled with preview features, meaning it won't be possible to use them in release environments.
   -Xenhance-type-parameter-types-to-def-not-null
-                             Enhance not null annotated type parameter's types to definitely not null types (@NotNull T => T & Any)
-  -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
-  -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
-  -Xmodule-path=<path>       Paths where to find Java 9+ modules
-  -Xjava-package-prefix      Package prefix for Java files
-  -Xjava-source-roots=<path> Paths to directories with Java source files
-  -Xjavac-arguments=<option[,]> Java compiler arguments
-  -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's `-release`. Requires JDK 9 or newer.
-                             Supported versions depend on the used JDK; for JDK 17+ supported versions are 1.8, 9, 10, ..., 21.
-                             Also sets `-jvm-target` value equal to the selected JDK version
+                             Enhance not-null-annotated type parameter types to definitely-non-nullable types ('@NotNull T' => 'T & Any').
+  -Xfriend-paths=<path>      Paths to output directories for friend modules (modules whose internals should be visible).
+  -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and a facade.
+  -Xmodule-path=<path>       Paths to Java 9+ modules.
+  -Xjava-package-prefix      Package prefix for Java files.
+  -Xjava-source-roots=<path> Paths to directories with Java source files.
+  -Xjavac-arguments=<option[,]> Java compiler arguments.
+  -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's '-release'. This requires JDK 9 or newer.
+                             The supported versions depend on the JDK used; for JDK 17+, the supported versions are 1.8 and 9–21.
+                             This also sets the value of '-jvm-target' to be equal to the selected JDK version.
   -Xjspecify-annotations=ignore|strict|warn
-                             Specify behavior for jspecify annotations.
-                             Default value is 'warn'
+                             Specify the behavior of 'jspecify' annotations.
+                             The default value is 'warn'.
   -Xjsr305={ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}
-                             Specify behavior for JSR-305 nullability annotations:
-                             -Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)
+                             Specify the behavior of 'JSR-305' nullability annotations:
+                             -Xjsr305={ignore/strict/warn}                   global (all non-@UnderMigration annotations)
                              -Xjsr305=under-migration:{ignore/strict/warn}   all @UnderMigration annotations
                              -Xjsr305=@<fq.name>:{ignore/strict/warn}        annotation with the given fully qualified class name
                              Modes:
-                               * ignore
-                               * strict (experimental; treat as other supported nullability annotations)
-                               * warn (report a warning)
+                             * ignore
+                             * strict (experimental; treat like other supported nullability annotations)
+                             * warn (report a warning)
   -Xjvm-default={all|all-compatibility|disable}
-                             Emit JVM default methods for interface declarations with bodies. Default is 'disable'.
+                             Emit JVM default methods for interface declarations with bodies. The default is 'disable'.
                              -Xjvm-default=all                Generate JVM default methods for all interface declarations with bodies in the module.
-                                                              Do not generate DefaultImpls stubs for interface declarations with bodies, which are generated by default
-                                                              in the 'disable' mode. If interface inherits a method with body from an interface compiled in the 'disable'
-                                                              mode and doesn't override it, then a DefaultImpls stub will be generated for it.
-                                                              BREAKS BINARY COMPATIBILITY if some client code relies on the presence of DefaultImpls classes.
+                                                              Do not generate 'DefaultImpls' stubs for interface declarations with bodies. If an interface inherits a method with a
+                                                              body from an interface compiled in 'disable' mode and doesn't override it, then a 'DefaultImpls' stub will be
+                                                              generated for it.
+                                                              This BREAKS BINARY COMPATIBILITY if some client code relies on the presence of 'DefaultImpls' classes.
                                                               Note that if interface delegation is used, all interface methods are delegated.
-                             -Xjvm-default=all-compatibility  In addition to the 'all' mode, generate compatibility stubs in the DefaultImpls classes.
-                                                              Compatibility stubs could be useful for library and runtime authors to keep backward binary compatibility
+                             -Xjvm-default=all-compatibility  Like 'all', but additionally generate compatibility stubs in the 'DefaultImpls' classes.
+                                                              Compatibility stubs can help library and runtime authors maintain backward binary compatibility
                                                               for existing clients compiled against previous library versions.
-                                                              'all' and 'all-compatibility' modes are changing the library ABI surface that will be used by clients after
-                                                              the recompilation of the library. In that sense, clients might be incompatible with previous library
-                                                              versions. This usually means that proper library versioning is required, e.g. major version increase in SemVer.
-                                                              In case of inheritance from a Kotlin interface compiled in 'all' or 'all-compatibility' modes, DefaultImpls
+                                                              'all' and 'all-compatibility' modes change the library ABI surface that will be used by clients after
+                                                              the recompilation of the library. Because of this, clients might be incompatible with previous library
+                                                              versions. This usually means that proper library versioning is required, for example with major version increases in SemVer.
+                                                              In subtypes of Kotlin interfaces compiled in 'all' or 'all-compatibility' mode, 'DefaultImpls'
                                                               compatibility stubs will invoke the default method of the interface with standard JVM runtime resolution semantics.
-                                                              Perform additional compatibility checks for classes inheriting generic interfaces where in some cases
-                                                              additional implicit method with specialized signatures was generated in the 'disable' mode:
-                                                              unlike in the 'disable' mode, the compiler will report an error if such method is not overridden explicitly
-                                                              and the class is not annotated with @JvmDefaultWithoutCompatibility (see KT-39603 for more details).
+                                                              Perform additional compatibility checks for classes inheriting generic interfaces where in some cases an
+                                                              additional implicit method with specialized signatures was generated in 'disable' mode.
+                                                              Unlike in 'disable' mode, the compiler will report an error if such a method is not overridden explicitly
+                                                              and the class is not annotated with '@JvmDefaultWithoutCompatibility' (see KT-39603 for more details).
                              -Xjvm-default=disable            Default behavior. Do not generate JVM default methods.
-  -Xklib=<path>              Paths to cross-platform libraries in .klib format
-  -Xlambdas={class|indy}     Select code generation scheme for lambdas.
-                             -Xlambdas=indy                      Generate lambdas using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
-                                                                 Lambda objects created using `LambdaMetafactory.metafactory` will have different `toString()`.
-                             -Xlambdas=class                     Generate lambdas as explicit classes
-  -Xlink-via-signatures      Link JVM IR symbols via signatures, instead of descriptors.
-                             This mode is slower, but can be useful in troubleshooting problems with the JVM IR backend
-  -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
+  -Xklib=<path>              Paths to cross-platform libraries in the .klib format.
+  -Xlambdas={class|indy}     Select the code generation scheme for lambdas.
+                             -Xlambdas=indy                  Generate lambdas using 'invokedynamic' with 'LambdaMetafactory.metafactory'. This requires '-jvm-target 1.8' or greater.
+                                                             A lambda object created using 'LambdaMetafactory.metafactory' will have a different 'toString()'.
+                             -Xlambdas=class                 Generate lambdas as explicit classes.
+  -Xlink-via-signatures      Link JVM IR symbols via signatures instead of descriptors.
+                             This mode is slower, but it can be useful for troubleshooting problems with the JVM IR backend.
+  -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types.
   -Xno-kotlin-nothing-value-exception
-                             Do not use KotlinNothingValueException available since 1.4
+                             Don't use KotlinNothingValueException, which has been available since 1.4.
   -Xno-new-java-annotation-targets
-                             Do not generate Java 1.8+ targets for Kotlin annotation classes
-  -Xno-optimize              Disable optimizations
+                             Don't generate Java 1.8+ targets for Kotlin annotation classes.
+  -Xno-optimize              Disable optimizations.
   -Xno-optimized-callable-references
-                             Do not use optimized callable reference superclasses available from 1.4
-  -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
-  -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
-  -Xno-reset-jar-timestamps  Do not reset jar entry timestamps to a fixed date
-  -Xno-source-debug-extension Do not generate @kotlin.jvm.internal.SourceDebugExtension annotation on a class with the copy of SMAP
-  -Xno-unified-null-checks   Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details
+                             Don't use optimized callable reference superclasses, which have been available since 1.4.
+  -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java.
+  -Xno-receiver-assertions   Don't generate not-null assertions for extension receiver arguments of platform types.
+  -Xno-reset-jar-timestamps  Don't reset jar entry timestamps to a fixed date.
+  -Xno-source-debug-extension Don't generate the '@kotlin.jvm.internal.SourceDebugExtension' annotation with an SMAP copy on classes.
+  -Xno-unified-null-checks   Use pre-1.4 exception types instead of 'java.lang.NPE' in null checks. See KT-22275 for more details.
   -Xnullability-annotations=@<fq.name>:{ignore/strict/warn}
-                             Specify behavior for specific Java nullability annotations (provided with fully qualified package name)
+                             Specify the behavior for specific Java nullability annotations (provided with fully qualified package name).
                              Modes:
-                               * ignore
-                               * strict
-                               * warn (report a warning)
-  -Xuse-old-innerclasses-logic Use old logic for generation of InnerClasses attributes.
+                             * ignore
+                             * strict
+                             * warn (report a warning)
+  -Xuse-old-innerclasses-logic Use the old logic for the generation of 'InnerClasses' attributes.
                              This option is deprecated and will be deleted in future versions.
   -Xprofile=<profilerPath:command:outputDir>
-                             Debug option: Run compiler with async profiler and save snapshots to `outputDir`; `command` is passed to async-profiler on start.
-                             `profilerPath` is a path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
+                             Debug option: Run the compiler with the async profiler and save snapshots to `outputDir`; `command` is passed to the async profiler on start.
+                             `profilerPath` is the path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.
                              If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.
                              Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>
-  -Xrepeat=<number>          Debug option: Repeats modules compilation <number> times
-  -Xsam-conversions={class|indy} Select code generation scheme for SAM conversions.
-                             -Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
-                             -Xsam-conversions=class             Generate SAM conversions as explicit classes
+  -Xrepeat=<number>          Debug option: Repeat module compilation <number> times.
+  -Xsam-conversions={class|indy} Select the code generation scheme for SAM conversions.
+                             -Xsam-conversions=indy          Generate SAM conversions using 'invokedynamic' with 'LambdaMetafactory.metafactory'. Requires '-jvm-target 1.8' or greater.
+                             -Xsam-conversions=class         Generate SAM conversions as explicit classes
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
-                             This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
-                             problems with parentheses in identifiers on certain platforms
+                             This mode can BREAK BINARY COMPATIBILITY and should only be used as a workaround for
+                             problems with parentheses in identifiers on certain platforms.
   -Xscript-resolver-environment=<key=value[,]>
-                             Script resolver environment in key-value pairs (the value could be quoted and escaped)
+                             Set the script resolver environment in key-value pairs (the value can be quoted and escaped).
   -Xserialize-ir={none|inline|all}
-                             Save IR to metadata (EXPERIMENTAL)
+                             Save the IR to metadata (Experimental).
   -Xgenerate-strict-metadata-version
-                             Generate metadata with strict version semantics (see kdoc on Metadata.extraInt)
+                             Generate metadata with strict version semantics (see the KDoc entry on 'Metadata.extraInt').
   -Xstring-concat={indy-with-constants|indy|inline}
-                             Select code generation scheme for string concatenation.
-                             -Xstring-concat=indy-with-constants   Concatenate strings using `invokedynamic` `makeConcatWithConstants`. Requires `-jvm-target 9` or greater.
-                             -Xstring-concat=indy                Concatenate strings using `invokedynamic` `makeConcat`. Requires `-jvm-target 9` or greater.
-                             -Xstring-concat=inline              Concatenate strings using `StringBuilder`
-                             default: `indy-with-constants` for JVM target 9 or greater, `inline` otherwise
+                             Select the code generation scheme for string concatenation:
+                             -Xstring-concat=indy-with-constants  Concatenate strings using 'invokedynamic' and 'makeConcatWithConstants'. This requires '-jvm-target 9' or greater.
+                             -Xstring-concat=indy                 Concatenate strings using 'invokedynamic' and 'makeConcat'. This requires '-jvm-target 9' or greater.
+                             -Xstring-concat=inline               Concatenate strings using 'StringBuilder'
+                             default: 'indy-with-constants' for JVM targets 9 or greater, 'inline' otherwise.
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
-                             Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
-                             Default value is 'enable'
+                             Specify the behavior for Checker Framework 'compatqual' annotations ('NullableDecl'/'NonNullDecl').
+                             The default value is 'enable'.
   -Xsuppress-deprecated-jvm-target-warning
-                             Suppress deprecation warning about deprecated JVM target versions.
+                             Suppress warnings about deprecated JVM target versions.
                              This option has no effect and will be deleted in a future version.
   -Xsuppress-missing-builtins-error
-                             Suppress the "cannot access built-in declaration" error (useful with -no-stdlib)
+                             Suppress the "cannot access built-in declaration" error (useful with '-no-stdlib').
   -Xtype-enhancement-improvements-strict-mode
-                             Enable strict mode for some improvements in the type enhancement for loaded Java types based on nullability annotations,
-                             including freshly supported reading of the type use annotations from class files.
-                             See KT-45671 for more details
-  -Xuse-fast-jar-file-system Use fast implementation on Jar FS. This may speed up compilation time, but currently it's an experimental mode
-  -Xuse-javac                Use javac for Java source and class files analysis
+                             Enable strict mode for improvements to type enhancement for loaded Java types based on nullability annotations,
+                             including the ability to read type-use annotations from class files.
+                             See KT-45671 for more details.
+  -Xuse-fast-jar-file-system Use the fast implementation of Jar FS. This may speed up compilation time, but it is experimental.
+  -Xuse-javac                Use javac for Java source and class file analysis.
   -Xuse-kapt4                Enable the experimental KAPT 4.
-  -Xuse-old-backend          Use the old JVM backend
-  -Xuse-old-class-files-reading Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.
-                             Should be used in case of problems with the new implementation
+  -Xuse-old-backend          Use the old JVM backend.
+  -Xuse-old-class-files-reading Use the old implementation for reading class files. This may slow down the compilation and cause problems with Groovy interop.
+                             This can be used in the event of problems with the new implementation.
   -Xuse-14-inline-classes-mangling-scheme
-                             Use 1.4 inline classes mangling scheme instead of 1.4.30 one
-  -Xuse-type-table           Use type table in metadata serialization
-  -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations
-  -Xvalidate-ir              Validate IR before and after lowering
-  -Xvalue-classes            Enable experimental value classes
+                             Use the scheme for inline class mangling from version 1.4 instead of the one from 1.4.30.
+  -Xuse-type-table           Use a type table in metadata serialization.
+  -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations.
+  -Xvalidate-ir              Validate IR before and after lowering.
+  -Xvalue-classes            Enable experimental value classes.
   -Xallow-any-scripts-in-source-roots
-                             Allow to compile any scripts along with regular Kotlin sources
-  -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
-  -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
-  -Xbuiltins-from-sources    Compile builtIns from sources
-  -Xcheck-phase-conditions   Check pre- and postconditions on phases
+                             Allow compiling scripts along with regular Kotlin sources.
+  -Xallow-kotlin-package     Allow compiling code in the 'kotlin' package, and allow not requiring 'kotlin.stdlib' in 'module-info'.
+  -Xallow-result-return-type Allow compiling code when 'kotlin.Result' is used as a return type.
+  -Xbuiltins-from-sources    Compile built-ins from sources.
+  -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
   -Xcheck-sticky-phase-conditions
-                             Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions
-  -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
-                             Should be a subset of sources passed as free arguments
-  -Xcontext-receivers        Enable experimental context receivers
+                             Run sticky condition checks on subsequent phases. Implicitly enables '-Xcheck-phase-conditions'.
+  -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in multiplatform mode.
+                             They should be a subset of sources passed as free arguments.
+  -Xcontext-receivers        Enable experimental context receivers.
   -Xdisable-default-scripting-plugin
-                             Do not enable scripting plugin by default
-  -Xdisable-phases           Disable backend phases
-  -Xdisable-ultra-light-classes Do not use the ultra light classes implementation
+                             Don't enable the scripting plugin by default.
+  -Xdisable-phases           Disable backend phases.
+  -Xdisable-ultra-light-classes Don't use ultra-light classes.
   -Xdont-warn-on-error-suppression
-                             Don't report a warning when an error is suppressed. Only affects K2.
-  -Xdump-directory           Dump backend state into directory
-  -Xdump-fqname              FqName of declaration that should be dumped
-  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
-  -Xeffect-system            Enable experimental language feature: effect system
-  -Xenable-builder-inference Use the builder inference by default, for all calls with lambdas which can't be resolved without it.
+                             Don't report warnings when errors are suppressed. This only affects K2.
+  -Xdump-directory           Dump the backend state into this directory.
+  -Xdump-fqname              Dump the declaration with the given FqName.
+  -Xdump-perf=<path>         Dump detailed performance statistics to the specified file.
+  -Xeffect-system            Enable experimental language feature: effect system.
+  -Xenable-builder-inference Use builder inference by default for all calls with lambdas that can't be resolved without it.
                              The corresponding calls' declarations may not be marked with @BuilderInference.
   -Xklib-enable-signature-clash-checks
-                             Enable the checks on uniqueness of signatures
+                             Enable signature uniqueness checks.
   -Xexpect-actual-classes    'expect'/'actual' classes (including interfaces, objects, annotations, enums, and 'actual' typealiases) are in Beta.
-                             Kotlin reports a warning every time you use them. You can use this flag to mute the warning.
+                             Kotlin reports a warning every time you use one of them. You can use this flag to mute the warning.
   -Xexplicit-api={strict|warning|disable}
-                             Force compiler to report errors on all public API declarations without explicit visibility or return type.
-                             Use 'warning' level to issue warnings instead of errors.
+                             Force the compiler to report errors on all public API declarations without an explicit visibility or a return type.
+                             Use the 'warning' level to issue warnings instead of errors.
   -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
-                             Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code.
+                             Warning: This mode is not backward compatible and might cause compilation errors in previously compiled code.
   -Xfragment-refines=<fromModuleName>:<onModuleName>
-                             Declares that <fromModuleName> refines <onModuleName> with dependsOn/refines relation
+                             Declare that <fromModuleName> refines <onModuleName> with the dependsOn/refines relation.
   -Xfragment-sources=<fragment name>:<path>
-                             Adds sources to a specific fragment of a multiplatform compilation
-  -Xfragments=<fragment name> Declares all known fragments of a multiplatform compilation
+                             Add sources to a specific fragment of a multiplatform compilation.
+  -Xfragments=<fragment name> Declare all known fragments of a multiplatform compilation.
   -Xignore-const-optimization-errors
                              Ignore all compilation exceptions while optimizing some constant expressions.
   -Xenable-incremental-compilation
-                             Enable incremental compilation
-  -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm
-  -Xinline-classes           Enable experimental inline classes
-  -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
-  -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
-  -Xlist-phases              List backend phases
-  -Xmetadata-klib            Produce a klib that only contains the declarations metadata
-  -Xmetadata-version         Change metadata version of the generated binary files
-  -Xmulti-platform           Enable language support for multi-platform projects
-  -Xnew-inference            Enable new experimental generic type inference algorithm
-  -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
-  -Xno-inline                Disable method inlining
-  -Xklib-normalize-absolute-path Normalize absolute paths in klibs
-  -Xphases-to-dump           Dump backend state both before and after these phases
-  -Xphases-to-dump-after     Dump backend state after these phases
-  -Xphases-to-dump-before    Dump backend state before these phases
-  -Xphases-to-validate       Validate backend state both before and after these phases
-  -Xphases-to-validate-after Validate backend state after these phases
-  -Xphases-to-validate-before Validate backend state before these phases
-  -Xplugin=<path>            Load plugins from the given classpath
+                             Enable incremental compilation.
+  -Xinference-compatibility  Enable compatibility changes for the generic type inference algorithm.
+  -Xinline-classes           Enable experimental inline classes.
+  -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.
+  -Xlegacy-smart-cast-after-try Allow 'var' smart casts even in the presence of assignments in 'try' blocks.
+  -Xlist-phases              List backend phases.
+  -Xmetadata-klib            Produce a klib that only contains the metadata of declarations.
+  -Xmetadata-version         Change the metadata version of the generated binary files.
+  -Xmulti-platform           Enable language support for multiplatform projects.
+  -Xnew-inference            Enable the new experimental generic type inference algorithm.
+  -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
+  -Xno-inline                Disable method inlining.
+  -Xklib-normalize-absolute-path Normalize absolute paths in klibs.
+  -Xphases-to-dump           Dump the backend's state both before and after these phases.
+  -Xphases-to-dump-after     Dump the backend's state after these phases.
+  -Xphases-to-dump-before    Dump the backend's state before these phases.
+  -Xphases-to-validate       Validate the backend's state both before and after these phases.
+  -Xphases-to-validate-after Validate the backend's state after these phases.
+  -Xphases-to-validate-before Validate the backend's state before these phases.
+  -Xplugin=<path>            Load plugins from the given classpath.
   -Xcompiler-plugin=<path1>,<path2>:<optionName>=<value>,<optionName>=<value>
-                             Register compiler plugin
-  -Xprofile-phases           Profile backend phases
-  -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
-  -Xread-deserialized-contracts Enable reading of contracts from metadata
-  -Xklib-relative-path-base  Provide a base paths to compute source's relative paths in klib (default is empty)
+                             Register a compiler plugin.
+  -Xprofile-phases           Profile backend phases.
+  -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types.
+  -Xread-deserialized-contracts Enable reading contracts from metadata.
+  -Xklib-relative-path-base  Provide a base path to compute the source's relative paths in klib (default is empty).
   -Xrender-internal-diagnostic-names
-                             Render internal names of warnings and errors
-  -Xreport-output-files      Report source to output files mapping
-  -Xreport-perf              Report detailed performance statistics
-  -Xself-upper-bound-inference Support inferring type arguments based on only self upper bounds of the corresponding type parameters
-  -Xskip-metadata-version-check Allow to load classes with bad metadata version and pre-release classes
-  -Xskip-prerelease-check    Allow to load pre-release classes
-  -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent or experimental language or API versions
+                             Render the internal names of warnings and errors.
+  -Xreport-output-files      Report the source-to-output file mapping.
+  -Xreport-perf              Report detailed performance statistics.
+  -Xself-upper-bound-inference Support inferring type arguments from the self-type upper bounds of the corresponding type parameters.
+  -Xskip-metadata-version-check Allow loading classes with bad metadata versions and pre-release classes.
+  -Xskip-prerelease-check    Allow loading pre-release classes.
+  -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent, or experimental language or API versions.
   -Xunrestricted-builder-inference
-                             Eliminate builder inference restrictions like allowance of returning type variables of a builder inference call
-  -Xuse-fir-extended-checkers Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready
-  -Xuse-fir-ic               Compile using Front-end IR internal incremental compilation cycle. Warning: this feature is far from being production-ready
-  -Xuse-fir-lt               Compile using LightTree parser with Front-end IR
+                             Eliminate builder inference restrictions, for example by allowing type variables to be returned from builder inference calls.
+  -Xuse-fir-extended-checkers Use extended analysis mode based on the frontend IR.
+                             Warning: This feature is not yet production-ready.
+  -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.
+                             Warning: This feature is not yet production-ready.
+  -Xuse-fir-lt               Compile using the LightTree parser with the frontend IR.
   -Xuse-ir-fake-override-builder Generate fake overrides via IR. See KT-61514
-  -Xuse-k2                   Compile using experimental K2. K2 is a new compiler pipeline, no compatibility guarantees are yet provided
-  -Xuse-mixed-named-arguments Enable Support named arguments in their own position even if the result appears as mixed
-  -Xverbose-phases           Be verbose while performing these backend phases
+  -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
+  -Xuse-mixed-named-arguments Allow mixing named and unnamed arguments when the arguments appear in their default order.
+  -Xverbose-phases           Be verbose while performing the given backend phases.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

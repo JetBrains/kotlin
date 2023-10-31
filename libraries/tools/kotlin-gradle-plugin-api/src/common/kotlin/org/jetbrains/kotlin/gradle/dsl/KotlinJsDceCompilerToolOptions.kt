@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.gradle.dsl
 interface KotlinJsDceCompilerToolOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions {
 
     /**
-     * Development mode: don't strip out any code, just copy dependencies
+     * Development mode: don't strip out any code, just copy dependencies.
      * Default value: false
      */
     @get:org.gradle.api.tasks.Input
     val devMode: org.gradle.api.provider.Property<kotlin.Boolean>
 
     /**
-     * Output directory
+     * Output directory.
      * Default value: null
      */
     @Deprecated(message = "Use task 'destinationDirectory' to configure output directory", level = DeprecationLevel.WARNING)
