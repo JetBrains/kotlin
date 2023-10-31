@@ -214,10 +214,16 @@ class FunctionInlining(
             val transformer = ParameterSubstitutor()
             val newStatements = statements.map { it.transform(transformer, data = null) as IrStatement }
 
+            // We want to use the most specific type as a result of inlined block
+            // It matters because `ReturnableBlockLowering` may incorrectly process blocks with implicit return when block's type is erased:
+            // see codegen/boxInline/functionExpression/unitFunctionLiteral.kt and codegen/boxInline/special/blockReturnsNullableUnit.kt
+            val shouldUseCalleeType = with(originalInlinedElement) {
+                this is IrFunctionExpression && (origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.ANONYMOUS_FUNCTION)
+            }
             val inlinedBlock = IrInlinedFunctionBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
-                type = callSite.type,
+                type = if (shouldUseCalleeType) callee.returnType else callSite.type,
                 inlineCall = callSite,
                 inlinedElement = originalInlinedElement,
                 origin = null,
@@ -229,7 +235,7 @@ class FunctionInlining(
             return IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
-                type = callSite.type,
+                type = inlinedBlock.type,
                 symbol = irReturnableBlockSymbol,
                 origin = null,
                 statements = listOf(inlinedBlock),

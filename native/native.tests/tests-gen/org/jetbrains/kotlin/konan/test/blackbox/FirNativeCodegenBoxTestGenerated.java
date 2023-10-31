@@ -34,6 +34,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
 
+        @Test
+        @TestMetadata("debug.kt")
+        public void testDebug() throws Exception {
+            runTest("compiler/testData/codegen/box/debug.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations")
         @TestDataPath("$PROJECT_ROOT")
@@ -43986,6 +43992,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             public void testParameterInLocalObject() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/dontReify/parameterInLocalObject.kt");
             }
+
+            @Test
+            @TestMetadata("recursiveInlining.kt")
+            public void testRecursiveInlining() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/dontReify/recursiveInlining.kt");
+            }
         }
 
         @Nested
@@ -44120,6 +44132,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             @TestMetadata("extension.kt")
             public void testExtension() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/functionExpression/extension.kt");
+            }
+
+            @Test
+            @TestMetadata("unitFunctionLiteral.kt")
+            public void testUnitFunctionLiteral() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/functionExpression/unitFunctionLiteral.kt");
             }
         }
 

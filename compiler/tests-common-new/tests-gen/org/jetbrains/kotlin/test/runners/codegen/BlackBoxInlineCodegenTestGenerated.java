@@ -2389,6 +2389,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         public void testParameterInLocalObject() throws Exception {
             runTest("compiler/testData/codegen/boxInline/dontReify/parameterInLocalObject.kt");
         }
+
+        @Test
+        @TestMetadata("recursiveInlining.kt")
+        public void testRecursiveInlining() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/recursiveInlining.kt");
+        }
     }
 
     @Nested
@@ -2562,6 +2568,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
         @TestMetadata("extension.kt")
         public void testExtension() throws Exception {
             runTest("compiler/testData/codegen/boxInline/functionExpression/extension.kt");
+        }
+
+        @Test
+        @TestMetadata("unitFunctionLiteral.kt")
+        public void testUnitFunctionLiteral() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/functionExpression/unitFunctionLiteral.kt");
         }
     }
 
