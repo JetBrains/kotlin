@@ -32,7 +32,7 @@ fun useDataClass(d: DataClass) {
 
 typealias My = <!OPT_IN_USAGE_ERROR!>Some<!>
 
-fun my(my: My) {}
+fun my(my: <!OPT_IN_USAGE_ERROR!>My<!>) {}
 
 fun your(my: <!OPT_IN_USAGE_ERROR!>Some<!>) {}
 
@@ -69,6 +69,10 @@ typealias AList = ArrayList<I>
 
 @Marker
 typealias YourList = ArrayList<String>
+
+fun my2(my: MyList) {}
+
+fun my3(my: <!OPT_IN_USAGE_ERROR!>YourList<!>) {}
 
 fun main() {
     val x = <!OPT_IN_USAGE_ERROR!>listOf<!>(A(), B())

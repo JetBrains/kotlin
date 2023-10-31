@@ -78,6 +78,10 @@ fun main() {
     <!OPT_IN_USAGE_FUTURE_ERROR!>YourList<!>().add("")
 }
 
+fun my2(my: <!OPT_IN_USAGE_FUTURE_ERROR!>MyList<!>) {}
+
+fun my3(my: <!OPT_IN_USAGE_ERROR!>YourList<!>) {}
+
 @Marker
 class C {
     operator fun getValue(x: Any?, y: Any?): String = ""

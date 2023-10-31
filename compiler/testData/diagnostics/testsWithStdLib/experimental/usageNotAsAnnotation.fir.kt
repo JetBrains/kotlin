@@ -26,8 +26,8 @@ fun f2(u: <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn?<!>) {}
 
 typealias Experimental0 = <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>RequiresOptIn<!>
 typealias OptIn0 = <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn<!>
-fun f3(e: Experimental0 /* TODO */) {}
-fun f4(u: OptIn0 /* TODO */) {}
+fun f3(e: <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>Experimental0<!> /* TODO */) {}
+fun f4(u: <!OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION!>OptIn0<!> /* TODO */) {}
 
 
 // Usages as ::class literals should be errors
@@ -60,7 +60,7 @@ fun f8(): <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>
 
 typealias Marker0 = <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker<!>
 
-fun f9(m: Marker0) {}
+fun f9(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker0<!>) {}
 
 
 // Usages of markers as qualifiers are errors as well (we can lift this restriction for select cases)
