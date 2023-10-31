@@ -9,22 +9,35 @@ import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar.ExtensionSto
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.formver.*
+import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
-    override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
-        val logLevel = when {
-            module.files.any { it.name.contains("full_viper_dump") } -> LogLevel.FULL_VIPER_DUMP
-            module.files.any { it.name.contains("predicates") } -> LogLevel.SHORT_VIPER_DUMP_WITH_PREDICATES
-            else -> LogLevel.SHORT_VIPER_DUMP
+    private fun <V> List<TestFile>.retrieveByPathMatch(map: Map<String, V>, default: V): V {
+        for ((k, v) in map) {
+            if (any { it.originalFile.absolutePath.contains(k) }) {
+                return v
+            }
         }
+        return default
+    }
+
+    override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
+        val logLevel = module.files.retrieveByPathMatch(
+            mapOf(
+                "full_viper_dump" to LogLevel.FULL_VIPER_DUMP,
+                "predicates" to LogLevel.SHORT_VIPER_DUMP_WITH_PREDICATES
+            ), default = LogLevel.SHORT_VIPER_DUMP
+        )
         val errorStyle = ErrorStyle.USER_FRIENDLY
-        val verificationSelection =
-            if (module.files.any { it.name.contains("always_validate") }) TargetsSelection.ALL_TARGETS
-            else if (module.files.any {it.name.contains("no_contracts") }) TargetsSelection.NO_TARGETS
-            else TargetsSelection.TARGETS_WITH_CONTRACT
+        val verificationSelection = module.files.retrieveByPathMatch(
+            mapOf(
+                "always_validate" to TargetsSelection.ALL_TARGETS,
+                "no_contracts" to TargetsSelection.NO_TARGETS
+            ), default = TargetsSelection.TARGETS_WITH_CONTRACT
+        )
         val config = PluginConfiguration(
             logLevel,
             errorStyle,
