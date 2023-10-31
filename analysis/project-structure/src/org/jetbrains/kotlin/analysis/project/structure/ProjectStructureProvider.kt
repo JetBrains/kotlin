@@ -12,17 +12,25 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 
 public abstract class ProjectStructureProvider {
     /**
-     * Returns a [KtModule] for a given [element] in context of the [contextualModule].
+     * Returns a [KtModule] for a given [element] in the context of the [contextualModule].
+     *
+     * The contextual module is the [KtModule] from which [getModule] is called. It is a way to disambiguate the [KtModule] of [element]s
+     * with whom multiple modules might be associated. In particular:
+     *
+     *  1. It allows replacing the original [KtModule] of [element] with another module, e.g. for supporting outsider files (see below).
+     *  2. It helps to distinguish between multiple possible [KtModule]s for library elements.
+     *
+     * #### Outsider Modules
      *
      * Normally, every Kotlin source file either belongs to some module (e.g. a source module, or a library module), or is self-contained
      * (a script file, or a file outside content roots). However, in certain cases there might be special modules that include both
      * existing source files, and also some additional files.
      *
      * An example of such a module is one that owns an 'outsider' source file. Outsiders are used in IntelliJ for displaying files that
-     * technically belong to some module, but are not included in the module's content roots (e.g. a file from previous VCS revision).
+     * technically belong to some module, but are not included in the module's content roots (e.g. a file from a previous VCS revision).
      * As there might be cross-references between the outsider file and other files in the module, they need to be analyzed as a single
-     * synthetic module. Inside an analysis session for such a module (that would become there a 'contextualModule'),
-     * sources that originally belong to a source module should be treated rather as a part of the synthetic one.
+     * synthetic module. Inside an analysis session for such a module (which would be the [contextualModule]), sources that originally
+     * belong to a source module should be treated rather as a part of the synthetic one.
      */
     public abstract fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule
 
