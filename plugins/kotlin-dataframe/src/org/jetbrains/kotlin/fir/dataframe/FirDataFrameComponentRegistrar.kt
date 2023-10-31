@@ -108,13 +108,13 @@ class GeneratedNames : IGeneratedNames {
 
     override fun nextName(s: String): ClassId {
         val s = s.prefixIfNot("Token")
-        val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier(s))
+        val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), FqName(s), true)
         tokens.add(newId)
         return newId
     }
 
     override fun nextScope(s: String): ClassId {
-        val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("${s}Scope"))
+        val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), FqName("${s}Scope"), true)
         scopes.add(newId)
         return newId
     }
@@ -176,7 +176,7 @@ class FirDataFrameExtensionRegistrar(
                         ExpressionAnalyzerReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
                     }
                     +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
-                    +{ it: FirSession -> TokenGenerator(it, tokens, tokenState) }
+                    +{ it: FirSession -> TokenGenerator(it) }
                 }
                 Mode.EXPERIMENTAL -> {
                     +::ReturnTypeBasedReceiverInjector
@@ -185,7 +185,9 @@ class FirDataFrameExtensionRegistrar(
                         val templateCompiler = TemplateCompiler(flag)
                         templateCompiler.session = it
                         CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, mode, FirMetaContextImpl(it, templateCompiler), refinedToOriginal, flag)
+//                        NewCandidateInterceptor(it, ::nextFunction, this::nextName, refinedToOriginal, flag)
                     }
+                    +::TokenGenerator
                 }
             }
         }
