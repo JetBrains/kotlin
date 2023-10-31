@@ -26,7 +26,7 @@ korlibs-template = "4.0.10"
 kotlinx-html = "0.9.1"
 
 ## Markdown
-jetbrains-markdown = "0.3.1"
+jetbrains-markdown = "0.5.2"
 
 ## JSON
 jackson = "2.12.7" # jackson 2.13.X does not support kotlin language version 1.4, check before updating
