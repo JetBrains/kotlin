@@ -21,7 +21,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -273,7 +274,13 @@ object FirOptInUsageBaseChecker {
             ?: return null
 
         val levelArgument = experimental.findArgumentByName(LEVEL) as? FirQualifiedAccessExpression
-        val levelName = levelArgument?.calleeReference?.resolved?.name?.asString()
+
+        val levelName = when (val calleeReference = levelArgument?.calleeReference) {
+            is FirErrorNamedReference -> null
+            is FirNamedReference -> calleeReference.name.asString()
+            else -> null
+        }
+
         val severity = Experimentality.Severity.values().firstOrNull { it.name == levelName } ?: Experimentality.DEFAULT_SEVERITY
         val message = (experimental.findArgumentByName(MESSAGE) as? FirConstExpression<*>)?.value as? String
         return Experimentality(symbol.classId, severity, message, annotatedOwnerClassName)
