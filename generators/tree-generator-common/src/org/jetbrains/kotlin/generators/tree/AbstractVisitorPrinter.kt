@@ -68,6 +68,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field>,
         hasDataParameter: Boolean = true,
         modality: Modality? = null,
         override: Boolean = false,
+        returnType: TypeRef = visitMethodReturnType(element),
     ) {
         val visitorParameterType = ElementRef(
             element,
@@ -80,7 +81,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field>,
         printFunctionDeclaration(
             name = element.visitFunctionName,
             parameters = parameters,
-            returnType = visitMethodReturnType(element),
+            returnType = returnType,
             typeParameters = if (allowTypeParametersInVisitorMethods) {
                 element.params
             } else {

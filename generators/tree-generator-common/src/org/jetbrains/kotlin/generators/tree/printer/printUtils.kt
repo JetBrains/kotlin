@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.generators.tree.ImportCollector
 import org.jetbrains.kotlin.generators.tree.render
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import org.jetbrains.kotlin.utils.withIndent
 
@@ -110,10 +111,16 @@ fun SmartPrinter.printFunctionDeclaration(
     parameters: List<FunctionParameter>,
     returnType: TypeRef,
     typeParameters: List<TypeVariable> = emptyList(),
+    extensionReceiver: TypeRef? = null,
+    visibility: Visibility = Visibility.PUBLIC,
     modality: Modality? = null,
     override: Boolean = false,
+    isInline: Boolean = false,
     allParametersOnSeparateLines: Boolean = false,
 ) {
+    if (visibility != Visibility.PUBLIC) {
+        print(visibility.name.toLowerCaseAsciiOnly(), " ")
+    }
     when (modality) {
         null -> {}
         Modality.FINAL -> print("final ")
@@ -124,8 +131,14 @@ fun SmartPrinter.printFunctionDeclaration(
     if (override) {
         print("override ")
     }
+    if (isInline) {
+        print("inline ")
+    }
     print("fun ")
     print(typeParameters.typeParameters(end = " "))
+    if (extensionReceiver != null) {
+        print(extensionReceiver.render(), ".")
+    }
     print(name, "(")
 
     if (allParametersOnSeparateLines) {

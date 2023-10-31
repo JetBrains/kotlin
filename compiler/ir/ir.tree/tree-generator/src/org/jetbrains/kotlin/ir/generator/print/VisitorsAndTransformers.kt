@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.ir.generator.print
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.*
+import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
+import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.*
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -117,6 +120,149 @@ private class TransformerPrinter(
 fun printTransformer(generationPath: File, model: Model): GeneratedFile =
     printVisitorCommon(generationPath, model, elementTransformerType) { printer, visitorType ->
         TransformerPrinter(printer, visitorType, model.rootElement)
+    }
+
+private class TransformerVoidPrinter(
+    printer: SmartPrinter,
+    override val visitorType: ClassRef<*>,
+) : AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+
+    override val visitorTypeParameters: List<TypeVariable>
+        get() = emptyList()
+
+    override val visitorSuperType: ClassRef<PositionTypeParameterRef>
+        get() = elementTransformerType.withArgs(visitorDataType)
+
+    override val visitorDataType: TypeRef
+        get() = StandardTypes.nothing.copy(nullable = true)
+
+    // IrPackageFragment is treated as transformByChildren in IrElementTransformerVoid for historical reasons.
+    private val Element.isPackageFragment: Boolean
+        get() = name == IrTree.packageFragment.name
+
+    // Despite IrFile and IrExternalPackageFragment being transformByChildren, we treat them differently in IrElementTransformerVoid
+    // than in IrElementTransformer for historical reasons.
+    private val Element.isPackageFragmentChild: Boolean
+        get() = elementParents.any { it.element.isPackageFragment }
+
+    private val Element.transformByChildrenVoid: Boolean
+        get() = element.transformByChildren || isPackageFragment
+
+    // Some `visit` methods overrides should have a more concrete return type, but we have to keep the old return type
+    // that was used before this class was auto-generated to preserve binary compatibility with compiler and IDE plugins.
+    private val Element.useCompatibilityReturnType: Boolean
+        get() = name in setOf(
+            IrTree.packageFragment.name,
+            IrTree.functionReference.name,
+            IrTree.propertyReference.name,
+            IrTree.functionExpression.name,
+        )
+
+    override fun visitMethodReturnType(element: Element): Element =
+        when {
+            element.isPackageFragment -> element
+            element.transformByChildren -> element.getTransformExplicitType()
+            else -> element.parentInVisitor?.let(this::visitMethodReturnType) ?: element
+        }
+
+    override val allowTypeParametersInVisitorMethods: Boolean
+        get() = false
+
+    context(ImportCollector)
+    override fun SmartPrinter.printAdditionalMethods() {
+        println()
+        val typeParameter = TypeVariable("T", listOf(IrTree.rootElement))
+        printFunctionDeclaration(
+            name = "transformPostfix",
+            parameters = listOf(FunctionParameter("body", Lambda(receiver = typeParameter, returnType = StandardTypes.unit))),
+            returnType = typeParameter,
+            typeParameters = listOf(typeParameter),
+            extensionReceiver = typeParameter,
+            visibility = Visibility.PROTECTED,
+            isInline = true,
+        )
+        println(" {")
+        withIndent {
+            println("transformChildrenVoid()")
+            println("this.body()")
+            println("return this")
+        }
+        println("}")
+        println()
+        printFunctionDeclaration(
+            name = "transformChildrenVoid",
+            parameters = emptyList(),
+            returnType = StandardTypes.unit,
+            extensionReceiver = IrTree.rootElement,
+            visibility = Visibility.PROTECTED,
+        )
+        println(" {")
+        withIndent {
+            println("transformChildrenVoid(this@", visitorType.simpleName, ")")
+        }
+        println("}")
+    }
+
+    context(ImportCollector)
+    override fun printMethodsForElement(element: Element) {
+        val parent = element.parentInVisitor
+        if (!element.transformByChildrenVoid && parent == null) return
+        printer.run {
+            println()
+            printVisitMethodDeclaration(element, hasDataParameter = false, modality = Modality.OPEN)
+            if (element.transformByChildrenVoid && !element.isPackageFragmentChild) {
+                println(" {")
+                withIndent {
+                    println(element.visitorParameterName, ".transformChildren(this, null)")
+                    println("return ", element.visitorParameterName)
+                }
+                println("}")
+            } else {
+                println(" =")
+                withIndent {
+                    print(parent!!.visitFunctionName, "(", element.visitorParameterName, ")")
+                    if (element.isPackageFragmentChild) {
+                        print(" as ", element.render())
+                    }
+                    println()
+                }
+            }
+            println()
+            printVisitMethodDeclaration(
+                element = element,
+                modality = Modality.FINAL,
+                override = true,
+                returnType = if (element.useCompatibilityReturnType) IrTree.rootElement else visitMethodReturnType(element),
+            )
+            println(" =")
+            withIndent {
+                println(element.visitFunctionName, "(", element.visitorParameterName, ")")
+            }
+        }
+    }
+}
+
+fun printTransformerVoid(generationPath: File, model: Model): GeneratedFile =
+    printGeneratedType(
+        generationPath,
+        TREE_GENERATOR_README,
+        elementTransformerVoidType.packageName,
+        elementTransformerVoidType.simpleName,
+    ) {
+        TransformerVoidPrinter(this, elementTransformerVoidType).printVisitor(model.elements)
+        println()
+        val transformerParameter = FunctionParameter("transformer", elementTransformerVoidType)
+        printFunctionDeclaration(
+            name = "transformChildrenVoid",
+            parameters = listOf(transformerParameter),
+            returnType = StandardTypes.unit,
+            extensionReceiver = IrTree.rootElement,
+        )
+        println(" {")
+        withIndent {
+            println("transformChildren(", transformerParameter.name, ", null)")
+        }
+        println("}")
     }
 
 private class TypeTransformerPrinter(
@@ -260,7 +406,7 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile =
     }
 
 private fun Element.getTransformExplicitType(): Element {
-    return generateSequence(this) { it.parentInVisitor?.element }
+    return generateSequence(this) { it.parentInVisitor }
         .firstNotNullOfOrNull {
             when {
                 it.transformByChildren -> it.transformerReturnType ?: it
