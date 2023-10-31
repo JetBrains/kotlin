@@ -19,6 +19,10 @@ class FormalVerificationPluginComponentRegistrar : CompilerPluginRegistrar() {
             FormalVerificationConfigurationKeys.UNSUPPORTED_FEATURE_BEHAVIOUR,
             UnsupportedFeatureBehaviour.defaultBehaviour()
         )
+        val errorStyle = configuration.get(
+            FormalVerificationConfigurationKeys.ERROR_STYLE,
+            ErrorStyle.defaultBehaviour()
+        )
         val conversionSelection = configuration.get(
             FormalVerificationConfigurationKeys.CONVERSION_TARGETS_SELECTION,
             TargetsSelection.defaultBehaviour()
@@ -27,7 +31,7 @@ class FormalVerificationPluginComponentRegistrar : CompilerPluginRegistrar() {
             FormalVerificationConfigurationKeys.VERIFICATION_TARGETS_SELECTION,
             TargetsSelection.defaultBehaviour()
         )
-        val config = PluginConfiguration(logLevel, behaviour, conversionSelection, verificationSelection)
+        val config = PluginConfiguration(logLevel, errorStyle, behaviour, conversionSelection, verificationSelection)
         FirExtensionRegistrarAdapter.registerExtension(FormalVerificationPluginExtensionRegistrar(config))
     }
 }

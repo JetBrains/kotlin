@@ -20,12 +20,14 @@ class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentCo
             module.files.any { it.name.contains("predicates") } -> LogLevel.SHORT_VIPER_DUMP_WITH_PREDICATES
             else -> LogLevel.SHORT_VIPER_DUMP
         }
+        val errorStyle = ErrorStyle.USER_FRIENDLY
         val verificationSelection =
             if (module.files.any { it.name.contains("always_validate") }) TargetsSelection.ALL_TARGETS
             else if (module.files.any {it.name.contains("no_contracts") }) TargetsSelection.NO_TARGETS
             else TargetsSelection.TARGETS_WITH_CONTRACT
         val config = PluginConfiguration(
             logLevel,
+            errorStyle,
             UnsupportedFeatureBehaviour.THROW_EXCEPTION,
             conversionSelection = TargetsSelection.ALL_TARGETS,
             verificationSelection = verificationSelection

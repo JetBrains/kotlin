@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.CONVERSION_TARGETS_SELECTION
+import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.ERROR_STYLE
 import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.LOG_LEVEL
 import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.UNSUPPORTED_FEATURE_BEHAVIOUR
 import org.jetbrains.kotlin.formver.FormalVerificationConfigurationKeys.VERIFICATION_TARGETS_SELECTION
 import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.CONVERSION_TARGETS_SELECTION_OPTION_NAME
+import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.ERROR_STYLE_NAME
 import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.LOG_LEVEL_OPTION_NAME
 import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION_NAME
 import org.jetbrains.kotlin.formver.FormalVerificationPluginNames.VERIFICATION_TARGETS_SELECTION_OPTION_NAME
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 object FormalVerificationConfigurationKeys {
     val LOG_LEVEL: CompilerConfigurationKey<LogLevel> = CompilerConfigurationKey.create("viper log level")
+    val ERROR_STYLE: CompilerConfigurationKey<ErrorStyle> = CompilerConfigurationKey.create("error style")
     val UNSUPPORTED_FEATURE_BEHAVIOUR: CompilerConfigurationKey<UnsupportedFeatureBehaviour> =
         CompilerConfigurationKey.create("unsupported feature behaviour")
     val CONVERSION_TARGETS_SELECTION: CompilerConfigurationKey<TargetsSelection> =
@@ -35,6 +38,10 @@ class FormalVerificationCommandLineProcessor : CommandLineProcessor {
     companion object {
         val LOG_LEVEL_OPTION = CliOption(
             LOG_LEVEL_OPTION_NAME, "<log_level>", "Viper log level",
+            required = false, allowMultipleOccurrences = false
+        )
+        val ERROR_STYLE_OPTION = CliOption(
+            ERROR_STYLE_NAME, "<error_style>", "Style of error messages",
             required = false, allowMultipleOccurrences = false
         )
         val UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION = CliOption(
@@ -63,6 +70,7 @@ class FormalVerificationCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = FormalVerificationPluginNames.PLUGIN_ID
     override val pluginOptions: Collection<AbstractCliOption> = listOf(
         LOG_LEVEL_OPTION,
+        ERROR_STYLE_OPTION,
         UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION,
         CONVERSION_TARGETS_SELECTION_OPTION,
         VERIFICATION_TARGETS_SELECTION_OPTION
@@ -72,6 +80,8 @@ class FormalVerificationCommandLineProcessor : CommandLineProcessor {
         try {
             when (option) {
                 LOG_LEVEL_OPTION -> configuration.put(LOG_LEVEL, LogLevel.valueOf(value.toUpperCaseAsciiOnly()))
+                ERROR_STYLE_OPTION ->
+                    configuration.put(ERROR_STYLE, ErrorStyle.valueOf(value.toUpperCaseAsciiOnly()))
                 UNSUPPORTED_FEATURE_BEHAVIOUR_OPTION ->
                     configuration.put(UNSUPPORTED_FEATURE_BEHAVIOUR, UnsupportedFeatureBehaviour.valueOf(value.toUpperCaseAsciiOnly()))
                 CONVERSION_TARGETS_SELECTION_OPTION ->

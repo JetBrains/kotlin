@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.formver
 
 class PluginConfiguration(
     val logLevel: LogLevel,
+    val errorStyle: ErrorStyle,
     val behaviour: UnsupportedFeatureBehaviour,
     val conversionSelection: TargetsSelection,
     val verificationSelection: TargetsSelection,

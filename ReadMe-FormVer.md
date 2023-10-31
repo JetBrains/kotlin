@@ -79,6 +79,7 @@ dist/kotlinc/bin/kotlinc -language-version 2.0 -Xplugin=dist/kotlinc/lib/formver
 
 The plugin accepts a number of command line options which can be passed via `-P plugin:org.jetbrains.kotlin.formver:OPTION=SETTING`:
 - Option `log_level`: permitted values `only_warnings`, `short_viper_dump`, `full_viper_dump` (default: `only_warnings`).
+- Option `error_style`: permitted values `user_friendly`, `original_viper` and `both` (default: `user_friendly`).
 - Options `conversion_targets_selection` and `verification_targets_selection`: permitted values `no_targets`, `targets_with_contract`, `all_targets` (default: `targets_with_contract`).
 - Option `unsupported_feature_behaviour`: permitted values `throw_exception`, `assume_unreachable` (default: `throw_exception`).
 
