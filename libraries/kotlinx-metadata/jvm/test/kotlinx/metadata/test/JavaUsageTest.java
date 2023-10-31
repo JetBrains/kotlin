@@ -30,9 +30,9 @@ public class JavaUsageTest {
     @Test
     public void testWritingBackWithDefaults() {
         Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
-        KmClass clazz1 = ((KotlinClassMetadata.Class) Objects.requireNonNull(KotlinClassMetadata.readStrict(m))).getKmClass();
-        Metadata written = KotlinClassMetadata.writeClass(clazz1);
+        KotlinClassMetadata clazz1 = ((KotlinClassMetadata) Objects.requireNonNull(KotlinClassMetadata.readStrict(m)));
+        Metadata written = clazz1.write();
         assertArrayEquals(written.mv(), KotlinClassMetadata.COMPATIBLE_METADATA_VERSION);
-        assertEquals(0, written.xi());
+        assertEquals(50, written.xi());
     }
 }

@@ -12,18 +12,22 @@ package kotlinx.metadata.jvm
 import kotlinx.metadata.*
 import kotlinx.metadata.internal.*
 import kotlinx.metadata.jvm.internal.*
+import kotlinx.metadata.jvm.internal.JvmReadUtils.checkMetadataVersion
+import kotlinx.metadata.jvm.internal.JvmReadUtils.readMetadataImpl
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import java.util.*
 
 /**
  * Represents the parsed metadata of a Kotlin JVM class file. Entry point for parsing metadata on JVM.
  *
- * To create an instance of [KotlinClassMetadata], first obtain an instance of [Metadata] annotation on a class file, and then call [KotlinClassMetadata.read].
+ * To create an instance of [KotlinClassMetadata], first obtain an instance of [Metadata] annotation on a class file,
+ * and then call [KotlinClassMetadata.readStrict] or [KotlinClassMetadata.readLenient], depending on your application (see 'Working with different versions' section in the readme).
+ *
  * [Metadata] annotation can be obtained either via reflection or created from data from a binary class file, using its constructor or helper function [kotlinx.metadata.jvm.Metadata].
  *
- * [KotlinClassMetadata] itself does not have any meaningful methods or properties; to work with it, it is required to do a `when` over subclasses.
+ * [KotlinClassMetadata] alone exposes only [KotlinClassMetadata.version] and [KotlinClassMetadata.flags];
+ * to work with it, it is required to do a `when` over subclasses.
  * Different subclasses of [KotlinClassMetadata] represent different kinds of class files produced by Kotlin compiler.
  * It is recommended to study documentation for each subclass and decide what subclasses one has to handle in the `when` expression,
  * trying to cover as much as possible.
@@ -32,11 +36,14 @@ import java.util.*
  * Most of the subclasses declare a property to view metadata as a Km data structure — for example, [KotlinClassMetadata.Class.kmClass].
  * Some of them also can contain additional properties, e.g. [KotlinClassMetadata.MultiFileClassPart.facadeClassName].
  * Km data structures represent Kotlin declarations and offer a variety of properties to introspect and alter them.
- * After desired changes are made, it is possible to get a new raw metadata instance with a corresponding `write` function, such as [KotlinClassMetadata.writeClass].
+ * After desired changes are made to a Km data structure or to [KotlinClassMetadata] itself,
+ * it is possible to get a new raw metadata instance with a [write] function.
+ *
+ * > If metadata has been read with [readLenient], [write] will throw an exception.
  *
  * Here is an example of reading a content name of some metadata:
  * ```
- * fun displayName(metadata: Metadata): String = when (val kcm = KotlinClassMetadata.read(metadata)) {
+ * fun displayName(metadata: Metadata): String = when (val kcm = KotlinClassMetadata.readStrict(metadata)) {
  *     is KotlinClassMetadata.Class -> "Class ${kcm.kmClass.name}"
  *     is KotlinClassMetadata.FileFacade -> "File facade with functions: ${kcm.kmPackage.functions.joinToString { it.name }}"
  *     is KotlinClassMetadata.SyntheticClass -> kcm.kmLambda?.function?.name?.let { "Lambda $it" } ?: "Synthetic class"
@@ -45,8 +52,32 @@ import java.util.*
  *     is KotlinClassMetadata.Unknown -> "Unknown metadata"
  * }
  * ```
+ *
+ * > In this example, only introspection (reading) is performed. In such cases, to support more broad range of metadata versions, you may also use [readLenient] method.
  */
-public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
+public sealed class KotlinClassMetadata {
+
+    /**
+     * Encodes and writes this metadata to the new instance of [Metadata].
+     *
+     * This method encodes all available data, including [version] and [flags].
+     * Due to technical limitations, it is not possible to write the metadata when the specified version is less (lexicographically) than `[1, 4]`
+     *
+     * @throws IllegalArgumentException if metadata is malformed or [version] of this instance is less than 1.4 and cannot be written.
+     */
+    public abstract fun write(): Metadata
+
+    /**
+     * Version of this metadata.
+     */
+    public abstract var version: IntArray
+
+    /**
+     * Additional classfile-level flags of this metadata. See [Metadata.extraInt] for possible values.
+     */
+    public abstract var flags: Int
+
+    internal var isAllowedToWrite: Boolean = true
 
     /**
      * Represents metadata of a class file containing a declaration of a Kotlin class.
@@ -54,18 +85,34 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
      * Anything that does not belong to a Kotlin class (top-level declarations) is not present in
      * [Class] metadata, even if such declaration was in the same source file. See [FileFacade] for details.
      */
-    public class Class internal constructor(annotationData: Metadata, lenient: Boolean) : KotlinClassMetadata(annotationData) {
-
+    public class Class public constructor(
         /**
-         * Returns the [KmClass] representation of this metadata.
+         * [KmClass] representation of this metadata.
          *
          * Returns the same (mutable) [KmClass] instance every time.
          */
-        public val kmClass: KmClass
+        public var kmClass: KmClass,
+        public override var version: IntArray,
+        public override var flags: Int,
+    ) : KotlinClassMetadata() {
 
-        init {
-            val (strings, proto) = JvmProtoBufUtil.readClassDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
-            kmClass = proto.toKmClass(strings)
+        internal constructor(annotationData: Metadata, lenient: Boolean) : this(
+            JvmReadUtils.readKmClass(annotationData),
+            annotationData.metadataVersion,
+            annotationData.extraInt
+        ) {
+            isAllowedToWrite = !lenient
+        }
+
+        override fun write(): Metadata {
+            throwIfNotWriteable(isAllowedToWrite, "class")
+            checkMetadataVersion(version)
+            return wrapWriteIntoIAE {
+                val writer = ClassWriter(JvmStringTable())
+                writer.writeClass(kmClass)
+                val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
+                Metadata(CLASS_KIND, version, d1, d2, extraInt = flags)
+            }
         }
 
         /**
@@ -124,18 +171,40 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
      * If Kotlin source file contains both classes and top-level declarations, only top-level declarations would be available in the corresponding file facade.
      * Classes would have their own JVM classfiles and their own metadata of [Class] kind.
      */
-    public class FileFacade internal constructor(annotationData: Metadata, lenient: Boolean) : KotlinClassMetadata(annotationData) {
-
+    public class FileFacade public constructor(
         /**
-         * Returns the [KmPackage] representation of this metadata.
+         * [KmPackage] representation of this metadata.
          *
          * Returns the same (mutable) [KmPackage] instance every time.
          */
-        public val kmPackage: KmPackage
+        public var kmPackage: KmPackage,
+        /**
+         * Version of this metadata.
+         */
+        public override var version: IntArray,
+        /**
+         * Additional classfile-level flags of this metadata. See [Metadata.extraInt] for possible values.
+         */
+        public override var flags: Int,
+    ) : KotlinClassMetadata() {
 
-        init {
-            val (strings, proto) = JvmProtoBufUtil.readPackageDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
-            kmPackage = proto.toKmPackage(strings)
+        internal constructor(annotationData: Metadata, lenient: Boolean) : this(
+            JvmReadUtils.readKmPackage(annotationData),
+            annotationData.metadataVersion,
+            annotationData.extraInt
+        ) {
+            isAllowedToWrite = !lenient
+        }
+
+        override fun write(): Metadata {
+            throwIfNotWriteable(isAllowedToWrite, "file facade")
+            checkMetadataVersion(version)
+            return wrapWriteIntoIAE {
+                val writer = PackageWriter(JvmStringTable())
+                writer.writePackage(kmPackage)
+                val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
+                Metadata(FILE_FACADE_KIND, version, d1, d2, extraInt = flags)
+            }
         }
 
         /**
@@ -190,34 +259,52 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
      * Represents metadata of a class file containing a synthetic class, e.g. a class for lambda, `$DefaultImpls` class for interface
      * method implementations, `$WhenMappings` class for optimized `when` over enums, etc.
      */
-    public class SyntheticClass internal constructor(annotationData: Metadata, lenient: Boolean) : KotlinClassMetadata(annotationData) {
-        private val functionData =
-            annotationData.data1.takeIf(Array<*>::isNotEmpty)?.let { data1 ->
-                JvmProtoBufUtil.readFunctionDataFrom(data1, annotationData.data2)
+    public class SyntheticClass(
+        /**
+         * [KmLambda] representation of this metadata, or `null` if this synthetic class does not represent a lambda.
+         *
+         * Returns the same (mutable) [KmLambda] instance every time.
+         */
+        public var kmLambda: KmLambda?,
+        /**
+         * Version of this metadata.
+         */
+        public override var version: IntArray,
+        /**
+         * Additional classfile-level flags of this metadata. See [Metadata.extraInt] for possible values.
+         */
+        public override var flags: Int,
+    ) : KotlinClassMetadata() {
+
+        internal constructor(annotationData: Metadata, lenient: Boolean) : this(
+            JvmReadUtils.readKmLambda(annotationData),
+            annotationData.metadataVersion,
+            annotationData.extraInt
+        ) {
+            isAllowedToWrite = !lenient
+        }
+
+        override fun write(): Metadata {
+            throwIfNotWriteable(isAllowedToWrite, if (isLambda) "lambda" else "synthetic class")
+            checkMetadataVersion(version)
+            return if (isLambda) wrapWriteIntoIAE {
+                val writer = LambdaWriter(JvmStringTable())
+                writer.writeLambda(kmLambda!!)
+                val proto = writer.t?.build()
+                val (d1, d2) =
+                    if (proto != null) writeProtoBufData(proto, writer.c)
+                    else Pair(emptyArray<String>(), emptyArray<String>())
+                Metadata(SYNTHETIC_CLASS_KIND, version, d1, d2, extraInt = flags)
+            } else {
+                Metadata(SYNTHETIC_CLASS_KIND, version, emptyArray<String>(), emptyArray<String>(), extraInt = flags)
             }
+        }
 
         /**
          * Returns `true` if this synthetic class is a class file compiled for a Kotlin lambda.
          */
         public val isLambda: Boolean
-            get() = annotationData.data1.isNotEmpty()
-
-
-        /**
-         * Returns the [KmLambda] representation of this metadata, or `null` if this synthetic class does not represent a lambda.
-         *
-         * Returns the same (mutable) [KmLambda] instance every time.
-         */
-        public val kmLambda: KmLambda?
-
-        init {
-            if (!isLambda) {
-                kmLambda = null
-            } else {
-                val (strings, proto) = functionData!!
-                kmLambda = proto.toKmLambda(strings)
-            }
-        }
+            get() = kmLambda != null
 
         /**
          * Creates a new [KmLambda] instance from this synthetic class metadata.
@@ -312,11 +399,37 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
      * @see MultiFileClassPart
      * @see JvmMultifileClass
      */
-    public class MultiFileClassFacade internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
+    public class MultiFileClassFacade(
         /**
          * JVM internal names of the part classes which this multi-file class combines.
          */
-        public val partClassNames: List<String> = annotationData.data1.asList()
+        public var partClassNames: List<String>,
+        /**
+         * Version of this metadata.
+         */
+        public override var version: IntArray,
+        /**
+         * Additional classfile-level flags of this metadata. See [Metadata.extraInt] for possible values.
+         */
+        public override var flags: Int,
+    ) : KotlinClassMetadata() {
+
+        internal constructor(annotationData: Metadata, lenient: Boolean) : this(
+            annotationData.data1.asList(),
+            annotationData.metadataVersion,
+            annotationData.extraInt
+        ) {
+            isAllowedToWrite = !lenient
+        }
+
+        override fun write(): Metadata {
+            throwIfNotWriteable(isAllowedToWrite, "multi-file class facade")
+            checkMetadataVersion(version)
+            return Metadata(
+                MULTI_FILE_CLASS_FACADE_KIND, version,
+                partClassNames.toTypedArray<String>(), extraInt = flags
+            )
+        }
 
         /**
          * A writer that generates the metadata of a multi-file class facade.
@@ -361,24 +474,48 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
      * @see MultiFileClassFacade
      * @see JvmMultifileClass
      */
-    public class MultiFileClassPart internal constructor(annotationData: Metadata, lenient: Boolean) : KotlinClassMetadata(annotationData) {
+    public class MultiFileClassPart public constructor(
         /**
          * Returns the [KmPackage] representation of this metadata.
          *
          * Returns the same (mutable) [KmPackage] instance every time.
          */
-        public val kmPackage: KmPackage
-
-        init {
-            val (strings, proto) = JvmProtoBufUtil.readPackageDataFrom(annotationData.requireNotEmpty(), annotationData.data2)
-            kmPackage = proto.toKmPackage(strings)
-        }
-
+        public var kmPackage: KmPackage,
         /**
          * JVM internal name of the corresponding multi-file class facade.
          */
-        public val facadeClassName: String
-            get() = annotationData.extraString
+        public var facadeClassName: String,
+        /**
+         * Version of this metadata.
+         */
+        public override var version: IntArray,
+        /**
+         * Additional classfile-level flags of this metadata. See [Metadata.extraInt] for possible values.
+         */
+        public override var flags: Int,
+    ) : KotlinClassMetadata() {
+
+        internal constructor(annotationData: Metadata, lenient: Boolean) : this(
+            JvmReadUtils.readKmPackage(annotationData),
+            annotationData.extraString,
+            annotationData.metadataVersion,
+            annotationData.extraInt
+        ) {
+            isAllowedToWrite = !lenient
+        }
+
+        override fun write(): Metadata {
+            throwIfNotWriteable(isAllowedToWrite, "multi-file class part")
+            checkMetadataVersion(version)
+            return wrapWriteIntoIAE {
+                val writer = PackageWriter(JvmStringTable())
+                writer.writePackage(kmPackage)
+                val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
+                Metadata(
+                    MULTI_FILE_CLASS_PART_KIND, version, d1, d2, facadeClassName, extraInt = flags
+                )
+            }
+        }
 
         /**
          * Creates a new [KmPackage] instance from this multi-file class part metadata.
@@ -436,13 +573,51 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
      * Represents metadata of an unknown class file. This class is used if an old version of this library is used against a new kind
      * of class files generated by the Kotlin compiler, unsupported by this library.
      */
-    public data object Unknown : KotlinClassMetadata(Metadata())
+    public class Unknown internal constructor(private val original: Metadata, private val lenient: Boolean) : KotlinClassMetadata() {
+        /**
+         * Version of this metadata.
+         */
+        public override var version: IntArray = original.metadataVersion
+
+        /**
+         * Additional classfile-level flags of this metadata. See [Metadata.extraInt] for possible values.
+         */
+        public override var flags: Int = original.extraInt
+
+        override fun write(): Metadata {
+            throwIfNotWriteable(!lenient, "unknown kind")
+            return Metadata(original.kind, version, original.data1, original.data2, original.extraString, original.packageName, flags)
+        }
+
+        @PublishedApi
+        @Deprecated("This declaration is intended for binary compatibility only", level = DeprecationLevel.HIDDEN)
+        internal companion object {
+            @JvmField // For binary compatibility with previous `data object Unknown`
+            public val INSTANCE: Unknown = Unknown(Metadata(kind = 99), true)
+        }
+    }
 
     /**
      * Collection of methods for reading and writing [KotlinClassMetadata],
      * as well as metadata kind constants and [COMPATIBLE_METADATA_VERSION] constant.
      */
     public companion object {
+
+        /**
+         * Utility method to combine reading and writing of metadata:
+         * First, [metadata] is parsed with [readStrict]; then, [transformer] is called on a read instance.
+         * [transformer] may mutate passed instance of [KotlinClassMetadata] to achieve a desired result.
+         * After transformation, [KotlinClassMetadata.write] method is called and its result becomes return value of this method.
+         *
+         * @throws IllegalArgumentException if metadata cannot be read or written
+         *
+         * @see readStrict
+         * @see write
+         */
+        public fun transform(metadata: Metadata, transformer: (KotlinClassMetadata) -> Unit): Metadata {
+            return readStrict(metadata).apply(transformer).write()
+        }
+
         /**
          * Writes contents of [kmClass] as the class metadata.
          *
@@ -455,17 +630,13 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
          */
         @JvmStatic
         @JvmOverloads
+        @Deprecated("Use a KotlinClassMetadata.Class instance and its write() member function", level = DeprecationLevel.WARNING)
         public fun writeClass(
             kmClass: KmClass,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0,
-        ): Metadata = wrapWriteIntoIAE {
-            checkMetadataVersion(metadataVersion)
-            val writer = ClassWriter(JvmStringTable())
-            writer.writeClass(kmClass)
-            val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
-            Metadata(CLASS_KIND, metadataVersion, d1, d2, extraInt = extraInt)
-        }
+        ): Metadata = Class(kmClass, metadataVersion, extraInt).write()
+
 
         /**
          * Writes [kmPackage] contents as the file facade metadata.
@@ -479,17 +650,12 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
          */
         @JvmStatic
         @JvmOverloads
+        @Deprecated("Use a KotlinClassMetadata.FileFacade instance and its write() member function", level = DeprecationLevel.WARNING)
         public fun writeFileFacade(
             kmPackage: KmPackage,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0,
-        ): Metadata = wrapWriteIntoIAE {
-            checkMetadataVersion(metadataVersion)
-            val writer = PackageWriter(JvmStringTable())
-            writer.writePackage(kmPackage)
-            val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
-            Metadata(FILE_FACADE_KIND, metadataVersion, d1, d2, extraInt = extraInt)
-        }
+        ): Metadata = FileFacade(kmPackage, metadataVersion, extraInt).write()
 
         /**
          * Writes [kmLambda] as the synthetic class metadata.
@@ -503,20 +669,12 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
          */
         @JvmStatic
         @JvmOverloads
+        @Deprecated("Use a KotlinClassMetadata.SyntheticClass instance and its write() member function", level = DeprecationLevel.WARNING)
         public fun writeLambda(
             kmLambda: KmLambda,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0,
-        ): Metadata = wrapWriteIntoIAE {
-            checkMetadataVersion(metadataVersion)
-            val writer = LambdaWriter(JvmStringTable())
-            writer.writeLambda(kmLambda)
-            val proto = writer.t?.build()
-            val (d1, d2) =
-                if (proto != null) writeProtoBufData(proto, writer.c)
-                else Pair(emptyArray(), emptyArray())
-            Metadata(SYNTHETIC_CLASS_KIND, metadataVersion, d1, d2, extraInt = extraInt)
-        }
+        ): Metadata = SyntheticClass(kmLambda, metadataVersion, extraInt).write()
 
         /**
          * Writes synthetic class metadata.
@@ -530,13 +688,11 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
          */
         @JvmStatic
         @JvmOverloads
+        @Deprecated("Use a KotlinClassMetadata.SyntheticClass instance and its write() member function", level = DeprecationLevel.WARNING)
         public fun writeSyntheticClass(
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0,
-        ): Metadata {
-            checkMetadataVersion(metadataVersion)
-            return Metadata(SYNTHETIC_CLASS_KIND, metadataVersion, emptyArray(), emptyArray(), extraInt = extraInt)
-        }
+        ): Metadata = SyntheticClass(null, metadataVersion, extraInt).write()
 
         /**
          * Writes metadata of the multi-file class facade.
@@ -551,16 +707,14 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
          */
         @JvmStatic
         @JvmOverloads
+        @Deprecated(
+            "Use a KotlinClassMetadata.MultiFileClassFacade instance and its write() member function",
+            level = DeprecationLevel.WARNING
+        )
         public fun writeMultiFileClassFacade(
             partClassNames: List<String>, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0,
-        ): Metadata {
-            checkMetadataVersion(metadataVersion)
-            return Metadata(
-                MULTI_FILE_CLASS_FACADE_KIND, metadataVersion,
-                partClassNames.toTypedArray(), extraInt = extraInt
-            )
-        }
+        ): Metadata = MultiFileClassFacade(partClassNames, metadataVersion, extraInt).write()
 
         /**
          * Writes the metadata of the multi-file class part.
@@ -575,20 +729,16 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
          */
         @JvmStatic
         @JvmOverloads
+        @Deprecated(
+            "Use a KotlinClassMetadata.MultiFileClassPart instance and its write() member function",
+            level = DeprecationLevel.WARNING
+        )
         public fun writeMultiFileClassPart(
             kmPackage: KmPackage,
             facadeClassName: String,
             metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION,
             extraInt: Int = 0,
-        ): Metadata = wrapWriteIntoIAE {
-            checkMetadataVersion(metadataVersion)
-            val writer = PackageWriter(JvmStringTable())
-            writer.writePackage(kmPackage)
-            val (d1, d2) = writeProtoBufData(writer.t.build(), writer.c)
-            Metadata(
-                MULTI_FILE_CLASS_PART_KIND, metadataVersion, d1, d2, facadeClassName, extraInt = extraInt
-            )
-        }
+        ): Metadata = MultiFileClassPart(kmPackage, facadeClassName, metadataVersion, extraInt).write()
 
         /**
          * Reads and parses the given annotation data of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
@@ -607,62 +757,54 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
          * @see COMPATIBLE_METADATA_VERSION
          */
         @JvmStatic
-        @Deprecated("todo", ReplaceWith("KotlinClassMetadata.readStrict(annotationData)"), DeprecationLevel.WARNING)
-        public fun read(annotationData: Metadata): KotlinClassMetadata = readImpl(annotationData, lenient = false)
+        @Deprecated(
+            "read() throws an error if metadata version is too high. Use either readStrict() if you want to retain this behavior, or readLenient() if you want to try to read newer metadata.",
+            ReplaceWith("KotlinClassMetadata.readStrict(annotationData)"),
+            DeprecationLevel.WARNING
+        )
+        public fun read(annotationData: Metadata): KotlinClassMetadata = readMetadataImpl(annotationData, lenient = false)
 
+        /**
+         * Reads and parses the given annotation data of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
+         * this annotation, if the metadata version is supported.
+         *
+         * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlinx.metadata.jvm.Metadata] function,
+         * or equivalent [KotlinClassHeader] can be used.
+         *
+         * This method can read only supported metadata versions (see [COMPATIBLE_METADATA_VERSION] for definition).
+         * It will throw an exception if the metadata version is greater than what kotlinx-metadata-jvm understands.
+         * It is suitable when your tooling cannot tolerate reading potentially incomplete or incorrect information due to version differences.
+         * It is also the only method that allows metadata transformation and `KotlinClassMetadata.write` subsequent calls.
+         *
+         * @throws IllegalArgumentException if the metadata version is unsupported
+         *
+         * @see COMPATIBLE_METADATA_VERSION
+         */
         @JvmStatic
-        public fun readStrict(annotationData: Metadata): KotlinClassMetadata = readImpl(annotationData, lenient = false)
+        public fun readStrict(annotationData: Metadata): KotlinClassMetadata = readMetadataImpl(annotationData, lenient = false)
 
+        /**
+         * Reads and parses the given annotation data of a Kotlin JVM class file and returns the correct type of [KotlinClassMetadata] encoded by
+         * this annotation. [KotlinClassMetadata] instances obtained from this method cannot be written.
+         *
+         * [annotationData] may be obtained reflectively, constructed manually or with helper [kotlinx.metadata.jvm.Metadata] function,
+         * or equivalent [KotlinClassHeader] can be used.
+         *
+         * This method makes best effort to read unsupported metadata versions.
+         * If metadata version is greater than [COMPATIBLE_METADATA_VERSION] + 1, this method may ignore parts of the metadata it does not understand but it will not throw an exception.
+         * Because obtained metadata can be incomplete, its [KotlinClassMetadata.write] method will throw an exception.
+         * This method still cannot read metadata produced by pre-1.0 compilers.
+         *
+         * @throws IllegalArgumentException if the metadata version is that of Kotlin 1.0 or metadata format has been changed in an unpredictable way and reading of incompatible metadata is not possible
+         *
+         * @see COMPATIBLE_METADATA_VERSION
+         */
         @JvmStatic
-        public fun readLenient(annotationData: Metadata): KotlinClassMetadata = readImpl(annotationData, lenient = true)
-
-        private fun readImpl(annotationData: Metadata, lenient: Boolean): KotlinClassMetadata {
-            checkMetadataVersionForRead(annotationData, lenient)
-
-            return wrapIntoMetadataExceptionWhenNeeded {
-                when (annotationData.kind) {
-                    CLASS_KIND -> Class(annotationData, lenient)
-                    FILE_FACADE_KIND -> FileFacade(annotationData, lenient)
-                    SYNTHETIC_CLASS_KIND -> SyntheticClass(annotationData, lenient)
-                    MULTI_FILE_CLASS_FACADE_KIND -> MultiFileClassFacade(annotationData)
-                    MULTI_FILE_CLASS_PART_KIND -> MultiFileClassPart(annotationData, lenient)
-                    else -> Unknown
-                }
-            }
-        }
-
-        private fun checkMetadataVersionForRead(annotationData: Metadata, lenient: Boolean) {
-            if (annotationData.metadataVersion.isEmpty())
-                throw IllegalArgumentException("Provided Metadata instance does not have metadataVersion in it and therefore is malformed and cannot be read.")
-            val jvmMetadataVersion = JvmMetadataVersion(
-                annotationData.metadataVersion,
-                (annotationData.extraInt and (1 shl 3)/* see JvmAnnotationNames.METADATA_STRICT_VERSION_SEMANTICS_FLAG */) != 0
-            )
-            throwIfNotCompatible(jvmMetadataVersion, lenient)
-        }
-
-        internal fun throwIfNotCompatible(jvmMetadataVersion: JvmMetadataVersion, lenient: Boolean) {
-            val isAtLeast110 = jvmMetadataVersion.isAtLeast(1, 1, 0)
-            val isCompatible = if (lenient) isAtLeast110 else jvmMetadataVersion.isCompatibleWithCurrentCompilerVersion()
-            if (!isCompatible) {
-                // Kotlin 1.0 produces classfiles with metadataVersion = 1.1.0, while 1.0.0 represents unsupported pre-1.0 Kotlin (see JvmMetadataVersion.kt:39)
-                val postfix =
-                    if (!isAtLeast110) "while minimum supported version is 1.1.0 (Kotlin 1.0)."
-                    else "while maximum supported version is ${if (jvmMetadataVersion.isStrictSemantics) JvmMetadataVersion.INSTANCE else JvmMetadataVersion.INSTANCE_NEXT}. To support newer versions, update the kotlinx-metadata-jvm library."
-                throw IllegalArgumentException("Provided Metadata instance has version $jvmMetadataVersion, $postfix")
-            }
-        }
-
-        private fun checkMetadataVersion(version: IntArray) {
-            require(version.size >= 2 && version[0] >= 1 && (version[0] > 1 || version[1] >= 4)) {
-                "This version of kotlinx-metadata-jvm doesn't support writing Kotlin metadata of version earlier than 1.4. " +
-                        "Please change the version from ${version.toList()} to at least [1, 4]."
-            }
-        }
+        public fun readLenient(annotationData: Metadata): KotlinClassMetadata = readMetadataImpl(annotationData, lenient = true)
 
         internal fun throwIfNotWriteable(writeable: Boolean, name: String) {
             if (writeable) return
-            throw IllegalArgumentException("This $name cannot be written because it represents $name read in lenient mode")
+            throw IllegalArgumentException("This $name cannot be written because it represents metadata read in lenient mode")
         }
 
         /**
@@ -708,7 +850,10 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
 
         /**
          * The latest stable metadata version supported by this version of the library.
-         * The library can read Kotlin metadata produced by Kotlin compilers from 1.0 up to and including this version + 1 minor.
+         * The library can read in strict mode Kotlin metadata produced by Kotlin compilers from 1.0 up to and including this version + 1 minor.
+         *
+         * In other words, metadata version is supported if it is greater or equal than 1.1, and less or equal than [COMPATIBLE_METADATA_VERSION] + 1 minor version.
+         * Note that metadata version is 1.1 for Kotlin < 1.4, and is equal to the language version starting from Kotlin 1.4.
          *
          * For example, if the latest supported stable Kotlin version is 1.7.0, kotlinx-metadata-jvm can read binaries produced by Kotlin compilers from 1.0
          * to 1.8.* inclusively. In this case, this property will have the value `[1, 7, 0]`.

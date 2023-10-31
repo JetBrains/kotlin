@@ -28,28 +28,19 @@ fun abiMetadataProcessor(annotationVisitor: AnnotationVisitor): AnnotationVisito
         } ?: intArrayOf(1, 4)
 
         val newHeader = runCatching {
-            when (val metadata = KotlinClassMetadata.readStrict(header)) {
-                is KotlinClassMetadata.Class -> {
-                    val klass = metadata.kmClass
-                    klass.removePrivateDeclarations()
-                    KotlinClassMetadata.writeClass(klass, metadataVersion, header.extraInt)
+            KotlinClassMetadata.transform(header) { metadata ->
+                when (metadata) {
+                    is KotlinClassMetadata.Class -> {
+                        metadata.kmClass.removePrivateDeclarations()
+                    }
+                    is KotlinClassMetadata.FileFacade -> {
+                        metadata.kmPackage.removePrivateDeclarations()
+                    }
+                    is KotlinClassMetadata.MultiFileClassPart -> {
+                        metadata.kmPackage.removePrivateDeclarations()
+                    }
+                    else -> Unit
                 }
-                is KotlinClassMetadata.FileFacade -> {
-                    val pkg = metadata.kmPackage
-                    pkg.removePrivateDeclarations()
-                    KotlinClassMetadata.writeFileFacade(pkg, metadataVersion, header.extraInt)
-                }
-                is KotlinClassMetadata.MultiFileClassPart -> {
-                    val pkg = metadata.kmPackage
-                    pkg.removePrivateDeclarations()
-                    KotlinClassMetadata.writeMultiFileClassPart(
-                        pkg,
-                        metadata.facadeClassName,
-                        metadataVersion,
-                        header.extraInt
-                    )
-                }
-                else -> header
             }
         }.getOrElse { cause ->
             // TODO: maybe jvm-abi-gen should throw this exception by default, and not only in tests.

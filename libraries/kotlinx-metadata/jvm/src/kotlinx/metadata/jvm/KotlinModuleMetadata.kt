@@ -17,7 +17,7 @@ package kotlinx.metadata.jvm
 import kotlinx.metadata.*
 import kotlinx.metadata.internal.toKmClass
 import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
-import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.throwIfNotCompatible
+import kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatible
 import kotlinx.metadata.jvm.internal.wrapIntoMetadataExceptionWhenNeeded
 import kotlinx.metadata.jvm.internal.wrapWriteIntoIAE
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf

@@ -29,7 +29,7 @@ class MetadataExceptionsTest {
     fun testWriteMalformedClass() {
         val kmClass = KmClass() // kotlin.UninitializedPropertyAccessException: lateinit property name has not been initialized
         val e = assertFailsWith<IllegalArgumentException> {
-            KotlinClassMetadata.writeClass(kmClass)
+            KotlinClassMetadata.Class(kmClass, KotlinClassMetadata.COMPATIBLE_METADATA_VERSION, 0).write()
         }
         assertIs<UninitializedPropertyAccessException>(e.cause)
     }

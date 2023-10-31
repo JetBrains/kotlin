@@ -18,3 +18,4 @@ internal fun Metadata.readAsKmClass(): KmClass {
 }
 
 internal fun Class<*>.readMetadataAsKmClass(): KmClass = getMetadata().readAsKmClass()
+internal fun Class<*>.readMetadataAsClass(): KotlinClassMetadata.Class = KotlinClassMetadata.readStrict(getMetadata()) as KotlinClassMetadata.Class

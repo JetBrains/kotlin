@@ -81,7 +81,7 @@ private fun compileAndPrintAllFiles(
             "class" -> {
                 val metadata = kotlinp.readClassFile(outputFile)
                 val classFile = KotlinClassMetadata.readStrict(metadata)
-                val classFile2 = KotlinClassMetadata.readStrict(transformClassFileWithNodes(metadata, classFile))
+                val classFile2 = KotlinClassMetadata.readStrict(classFile.write())
 
                 for ((sb, classFileToRender) in listOf(
                     main to classFile, afterNodes to classFile2
@@ -128,21 +128,6 @@ private fun StringBuilder.appendFileName(file: File) {
     appendLine("// ${file.invariantSeparatorsPath}")
     appendLine("// ------------------------------------------")
 }
-
-// Reads the class file and writes it back with KmClass/KmFunction/... elements.
-private fun transformClassFileWithNodes(metadata: Metadata, classFile: KotlinClassMetadata): Metadata =
-    when (classFile) {
-        is KotlinClassMetadata.Class ->
-            KotlinClassMetadata.writeClass(classFile.kmClass)
-        is KotlinClassMetadata.FileFacade ->
-            KotlinClassMetadata.writeFileFacade(classFile.kmPackage)
-        is KotlinClassMetadata.SyntheticClass ->
-            classFile.kmLambda?.let { KotlinClassMetadata.writeLambda(it) } ?: KotlinClassMetadata.writeSyntheticClass()
-        is KotlinClassMetadata.MultiFileClassPart ->
-            KotlinClassMetadata.writeMultiFileClassPart(classFile.kmPackage, classFile.facadeClassName)
-        is KotlinClassMetadata.MultiFileClassFacade -> KotlinClassMetadata.writeMultiFileClassFacade(classFile.partClassNames)
-        is KotlinClassMetadata.Unknown -> metadata
-    }
 
 @OptIn(UnstableMetadataApi::class)
 private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): ByteArray =

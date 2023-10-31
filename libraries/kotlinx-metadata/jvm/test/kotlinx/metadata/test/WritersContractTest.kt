@@ -17,15 +17,15 @@ class WritersContractTest {
 //    val fileFacadeMd = TODO
 
     @Test
-    @Ignore // TODO
     fun lenientDataCantBeWritten() {
-        val lenientClass = KotlinClassMetadata.readLenient(classMd) as KotlinClassMetadata.Class
-        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeClass(lenientClass.kmClass) }
+        val lenientClass = KotlinClassMetadata.readLenient(classMd)
+        assertFailsWith<IllegalArgumentException> { lenientClass.write() }
     }
 
     @Test
     fun oldVersionCantBeWritten() {
         val writeableClass = KotlinClassMetadata.readStrict(classMd) as KotlinClassMetadata.Class
-        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.writeClass(writeableClass.kmClass, intArrayOf(1, 2, 0)) }
+        writeableClass.version = intArrayOf(1, 2, 0)
+        assertFailsWith<IllegalArgumentException> { writeableClass.write() }
     }
 }
