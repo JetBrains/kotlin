@@ -44862,6 +44862,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("qualifierStaticObjectOrCompanionMemberCase2.kt")
+                public void testQualifierStaticObjectOrCompanionMemberCase2() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/qualifierStaticObjectOrCompanionMemberCase2.kt");
+                }
+
+                @Test
                 @TestMetadata("typeCase.kt")
                 public void testTypeCase() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/typeCase.kt");
