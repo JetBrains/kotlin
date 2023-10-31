@@ -29,8 +29,8 @@ fun main(args: Array<String>) {
         yield(printVisitor(generationPath, model))
         yield(printVisitorVoid(generationPath, model))
         yield(printTransformer(generationPath, model))
+        yield(printTransformerVoid(generationPath, model))
         yield(printTypeVisitor(generationPath, model))
-        // IrElementTransformerVoid is too random to autogenerate
         yield(printFactory(generationPath, model))
     }.map {
         GeneratorsFileUtil.writeFileIfContentChanged(it.file, it.newText, logNotChanged = false)
