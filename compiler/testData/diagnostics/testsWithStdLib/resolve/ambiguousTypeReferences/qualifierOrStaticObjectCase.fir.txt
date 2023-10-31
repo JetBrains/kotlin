@@ -1,0 +1,20 @@
+FILE: Some.kt
+    package some
+
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|some/Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object foo : R|kotlin/Any| {
+            private constructor(): R|some/Some.foo| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+FILE: main.kt
+    public final fun test(): <ERROR TYPE REF: Unresolved name: foo> {
+        ^test <Ambiguity: Some, [some/Some, some3/Some]>#.<Unresolved name: foo>#
+    }
