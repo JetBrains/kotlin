@@ -20619,6 +20619,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("arrayAnnotationConstructorReference.kt")
+            public void testArrayAnnotationConstructorReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/arrayAnnotationConstructorReference.kt");
+            }
+
+            @Test
             @TestMetadata("arrayOfStarParametrized.kt")
             public void testArrayOfStarParametrized() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/arrayOfStarParametrized.kt");
