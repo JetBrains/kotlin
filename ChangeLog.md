@@ -1,3 +1,29 @@
+## 1.9.20-RC2
+
+### Compiler
+
+- [`KT-62747`](https://youtrack.jetbrains.com/issue/KT-62747) Wrong warning message when overriding vararg with Array during actualization
+- [`KT-62655`](https://youtrack.jetbrains.com/issue/KT-62655) Don't report a warning when new members and new supertypes are added to open expect actualization
+- [`KT-62313`](https://youtrack.jetbrains.com/issue/KT-62313) Kotlin/Native Compiler crash: ClassCastException in IntrinsicGenerator
+
+### JavaScript
+
+- [`KT-62790`](https://youtrack.jetbrains.com/issue/KT-62790) java.lang.ClassCastException in compiler when ::class is used
+
+### Libraries
+
+- [`KT-62656`](https://youtrack.jetbrains.com/issue/KT-62656) Drop `@AllowDifferentMembersInActual` from stdlib
+
+### Reflection
+
+- [`KT-47973`](https://youtrack.jetbrains.com/issue/KT-47973) Reflection: "IllegalArgumentException: argument type mismatch" when using callSuspend to call a function returning value class over primitive
+
+### Tools. Gradle
+
+- [`KT-61359`](https://youtrack.jetbrains.com/issue/KT-61359) "Unresolved reference: platform" when enabling Gradle configuration cache
+- [`KT-62496`](https://youtrack.jetbrains.com/issue/KT-62496) Configuration time regression with KGP 1.9.20-Beta caused by loading of properties
+
+
 ## 1.9.20-RC
 
 ### Compiler
