@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.PropertyAccessEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.fillHoles
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
@@ -46,8 +47,8 @@ class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding)
         ctx.addStatement(Stmt.LocalVarAssign(toLocalVarUse(), value.withType(type).pureToViper(), source.asPosition))
     }
 
-    fun pureInvariants(): List<ExpEmbedding> = type.pureInvariants(toLocalVarUse())
-    fun provenInvariants(): List<ExpEmbedding> = type.provenInvariants(toLocalVarUse())
-    fun accessInvariants(): List<ExpEmbedding> = type.accessInvariants(toLocalVarUse())
-    fun dynamicInvariants(): List<ExpEmbedding> = type.dynamicInvariants(toLocalVarUse())
+    fun pureInvariants(): List<ExpEmbedding> = type.pureInvariants().fillHoles(this)
+    fun provenInvariants(): List<ExpEmbedding> = type.provenInvariants().fillHoles(this)
+    fun accessInvariants(): List<ExpEmbedding> = type.accessInvariants().fillHoles(this)
+    fun dynamicInvariants(): List<ExpEmbedding> = type.dynamicInvariants().fillHoles(this)
 }

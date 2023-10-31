@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.conversion.AccessPolicy
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.ExpWrapper
+import org.jetbrains.kotlin.formver.embeddings.expression.FieldAccess
 import org.jetbrains.kotlin.formver.embeddings.expression.GeCmp
 import org.jetbrains.kotlin.formver.embeddings.expression.IntLit
 import org.jetbrains.kotlin.formver.names.NameMatcher
 import org.jetbrains.kotlin.formver.names.ScopedKotlinName
 import org.jetbrains.kotlin.formver.names.SpecialName
 import org.jetbrains.kotlin.formver.viper.MangledName
-import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Field
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
 
@@ -29,23 +28,20 @@ interface FieldEmbedding {
 
     fun toViper(): Field = Field(name, type.viperType, includeInShortDump)
 
-    fun extraAccessInvariantsForParameter(v: Exp): List<ExpEmbedding> = listOf()
+    fun extraAccessInvariantsForParameter(): List<TypeInvariantEmbedding> = listOf()
 
-    fun accessInvariantsForParameter(v: Exp): List<ExpEmbedding> =
+    fun accessInvariantsForParameter(): List<TypeInvariantEmbedding> =
         when (accessPolicy) {
             AccessPolicy.ALWAYS_INHALE_EXHALE -> listOf()
             AccessPolicy.ALWAYS_READABLE -> listOf(
-                ExpWrapper(
-                    v.fieldAccessPredicate(toViper(), PermExp.WildcardPerm()),
-                    BooleanTypeEmbedding
-                )
+                FieldAccessTypeInvariantEmbedding(this, PermExp.WildcardPerm())
             )
-            AccessPolicy.ALWAYS_WRITEABLE -> listOf(ExpWrapper(v.fieldAccessPredicate(toViper(), PermExp.FullPerm()), BooleanTypeEmbedding))
-        } + extraAccessInvariantsForParameter(v)
+            AccessPolicy.ALWAYS_WRITEABLE -> listOf(FieldAccessTypeInvariantEmbedding(this, PermExp.FullPerm()))
+        } + extraAccessInvariantsForParameter()
 
-    fun accessInvariantForAccess(v: Exp): ExpEmbedding? =
+    fun accessInvariantForAccess(): TypeInvariantEmbedding? =
         when (accessPolicy) {
-            AccessPolicy.ALWAYS_INHALE_EXHALE -> ExpWrapper(v.fieldAccessPredicate(toViper(), PermExp.FullPerm()), BooleanTypeEmbedding)
+            AccessPolicy.ALWAYS_INHALE_EXHALE -> FieldAccessTypeInvariantEmbedding(this, PermExp.FullPerm())
             AccessPolicy.ALWAYS_READABLE, AccessPolicy.ALWAYS_WRITEABLE -> null
         }
 }
@@ -58,11 +54,14 @@ class UserFieldEmbedding(override val name: ScopedKotlinName, override val type:
 object ListSizeFieldEmbedding : FieldEmbedding {
     override val name = SpecialName("size")
     override val type = IntTypeEmbedding
-
     override val accessPolicy = AccessPolicy.ALWAYS_WRITEABLE
     override val includeInShortDump: Boolean = true
-    override fun extraAccessInvariantsForParameter(v: Exp): List<ExpEmbedding> =
-        listOf(GeCmp(ExpWrapper(v.fieldAccess(toViper()), IntTypeEmbedding), IntLit(0)))
+    override fun extraAccessInvariantsForParameter(): List<TypeInvariantEmbedding> = listOf(NonNegativeSizeTypeInvariantEmbedding)
+
+    object NonNegativeSizeTypeInvariantEmbedding : TypeInvariantEmbedding {
+        override fun fillHole(exp: ExpEmbedding): ExpEmbedding =
+            GeCmp(FieldAccess(exp, ListSizeFieldEmbedding), IntLit(0))
+    }
 }
 
 fun ScopedKotlinName.specialEmbedding(): FieldEmbedding? =

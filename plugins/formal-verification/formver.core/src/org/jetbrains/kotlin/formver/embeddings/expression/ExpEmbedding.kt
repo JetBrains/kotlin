@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.formver.domains.TypeOfDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
+import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.viper.ast.PermExp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
 sealed interface ExpEmbedding {
@@ -229,6 +231,23 @@ data class Cast(val exp: ExpEmbedding, override val type: TypeEmbedding) : Direc
 data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : DirectResultExpEmbedding {
     override val type: TypeEmbedding = field.type
     override fun toViper(ctx: LinearizationContext) = Exp.FieldAccess(receiver.toViper(ctx), field.toViper(), ctx.source.asPosition)
+}
+
+data class FieldAccessPermissions(val exp: ExpEmbedding, val field: FieldEmbedding, val perm: PermExp) : DirectResultExpEmbedding {
+    // We consider access permissions to have type Boolean, though this is a bit questionable.
+    override val type: TypeEmbedding = BooleanTypeEmbedding
+
+    override fun toViper(ctx: LinearizationContext): Exp {
+        val expViper = exp.toViper(ctx)
+        return expViper.fieldAccessPredicate(field.toViper(), perm, ctx.source.asPosition)
+    }
+}
+
+// Ideally we would use the predicate, but due to the possibility of recursion this is inconvenient at present.
+data class PredicateAccessPermissions(val predicateName: MangledName, val args: List<ExpEmbedding>) : DirectResultExpEmbedding {
+    override val type: TypeEmbedding = BooleanTypeEmbedding
+    override fun toViper(ctx: LinearizationContext): Exp =
+        Exp.PredicateAccess(predicateName, args.map { it.toViper(ctx) }, ctx.source.asPosition)
 }
 
 data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : DirectResultExpEmbedding {

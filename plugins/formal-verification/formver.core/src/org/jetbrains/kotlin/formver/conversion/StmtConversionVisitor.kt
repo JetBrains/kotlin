@@ -376,7 +376,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
                     val invariants = if (argument.type.isNullable) {
                         resultCtx.resultVar.accessInvariants()
                     } else {
-                        conversionType.accessInvariants(Cast(resultExp, conversionType).pureToViper())
+                        conversionType.accessInvariants().fillHoles(Cast(resultExp, conversionType))
                     }
 
                     for (invariant in invariants) {
