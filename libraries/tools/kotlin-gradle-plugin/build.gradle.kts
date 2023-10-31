@@ -110,7 +110,7 @@ dependencies {
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-compiler-embeddable")
     }
     commonRuntimeOnly(project(":kotlin-util-klib"))
-    commonRuntimeOnly(project(":prepare:kotlin-gradle-plugin-compiler-dependencies"))
+    commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
 
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))

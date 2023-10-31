@@ -340,7 +340,7 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-gradle-plugin-compiler-dependencies</artifactId>
+      <artifactId>kotlin-compiler-embeddable</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
       <exclusions>
