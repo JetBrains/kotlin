@@ -408,7 +408,7 @@ We compute that binding by analyzing module with `FirExpectActualMatcherTransfor
 
 See: [`org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherTransformer`](../../compiler/fir/resolve/src/org/jetbrains/kotlin/fir/resolve/transformers/mpp/FirExpectActualMatcherTransformer.kt)
 
-**The responsibility** of this phase is to perform [expect/actual matching](#matching-vs-checking).
+**The responsibility** of this phase is to perform [expect/actual matching](#matching).
 
 This phase happens before body/implicit type resolution
 as the binding is required to perform [call resolution in case of defaults](#default-propagation)
@@ -438,20 +438,32 @@ There are no overloads by return type in Kotlin, and it makes it possible to avo
 [actual->expect binding construction](#fir-actual---expect-binding-construction).
 However, we still [check](#frontend-checkers) that return type matches afterward.  
 
-#### Matching vs checking
+#### Matching
 
-Currently, both matching and a part of checking are performed in the `AbstractExpectActualCompatibilityChecker`.
+Expect-actual matching is performed in the `AbstractExpectActualMatcher`.
 
-See: [`org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker`](../../compiler/resolution.common/src/org/jetbrains/kotlin/resolve/calls/mpp/AbstractExpectActualCompatibilityChecker.kt)
+See: [`org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualMatcher`](../../compiler/resolution.common/src/org/jetbrains/kotlin/resolve/calls/mpp/AbstractExpectActualMatcher.kt)
 
-Matching is a process of finding expect-actual pairs. 
+Matching is a process of finding expect-actual pairs.
 For classes, it is matching of class-ids.
 For callables, it is a complex rule, similar to overloading.
 If declarations don't match, no pair is formed and **matching continues** over other declarations.
 
-Checking is a process of checking that a pair is correct w.r.t all compatibility requirements.
-If checking failed for a pair, error is reported for the pair. 
-It will fail compilation. 
+All possible mismatches that can be reported by `AbstractExpectActualMatcher` are declared in
+[`ExpectActualMatchingCompatibility`](../../core/compiler.common/src/org/jetbrains/kotlin/resolve/multiplatform/ExpectActualCompatibility.kt)
+
+#### Checking
+
+Expect-actual checking is performed in the `AbstractExpectActualChecker`.
+
+See: [`org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualChecker`](../../compiler/resolution.common/src/org/jetbrains/kotlin/resolve/calls/mpp/AbstractExpectActualChecker.kt)
+
+Checking is a process of checking that a pair of [already matched declarations](#matching) is correct w.r.t all compatibility requirements.
+If checking failed for a pair, error is reported for the pair.
+It will fail compilation.
+
+All possible "checking" incompatibilities that can be reported by `AbstractExpectActualChecker` are declared in
+[`ExpectActualCheckingCompatibility`](../../core/compiler.common/src/org/jetbrains/kotlin/resolve/multiplatform/ExpectActualCompatibility.kt)
 
 ## Frontend checkers
 
