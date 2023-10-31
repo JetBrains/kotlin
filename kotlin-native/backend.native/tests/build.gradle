@@ -44,8 +44,6 @@ ext.testOutputRoot = rootProject.file("test.output").absolutePath
 ext.platformManager = project.project(":kotlin-native").platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
-ext.testLibraryDir = "${ext.testOutputRoot}/klib/platform/${project.target.name}"
-
 // Add executor to run tests depending on a target
 // NOTE: If this persists in a gradle daemon, environment update (e.g. an Xcode update) may lead to execution failures.
 project.extensions.executor = ExecutorServiceKt.create(project)
@@ -2117,20 +2115,6 @@ standaloneTest("link_default_libs") {
     source = "link/default/default.kt"
     UtilsKt.dependsOnPlatformLibs(it)
 }
-
-//standaloneTest("link_testLib_explicitly1") {
-//    // there is no testLibrary for cross targets yet.
-//    enabled = project.target.name == project.hostName
-//    dependsOn installTestLib
-//    useGoldenData = true
-//    source = "link/testLib_explicitly1.kt"
-//    // We force library inclusion, so need to see the warning banner.
-//    flags = ['-l', 'testLibrary', '-r', testLibraryDir]
-//    doLast {
-//        def file = new File("$testLibraryDir/testLibrary")
-//        file.deleteDir()
-//    }
-//}
 
 linkTest("no_purge_for_dependencies") {
     useGoldenData = true
