@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.overrides.IrExternalOverridabilityCondition
+import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
 
 /**
  * Describes method overriding rules for Objective-C methods.
@@ -25,8 +26,14 @@ object IrObjCOverridabilityCondition : IrExternalOverridabilityCondition {
     override val contract = IrExternalOverridabilityCondition.Contract.BOTH
 
     override fun isOverridable(
+        superMember: MemberWithOriginal,
+        subMember: MemberWithOriginal,
+    ): IrExternalOverridabilityCondition.Result =
+        isOverridableImpl(superMember.member, subMember.member)
+
+    private fun isOverridableImpl(
         superMember: IrOverridableMember,
-        subMember: IrOverridableMember
+        subMember: IrOverridableMember,
     ): IrExternalOverridabilityCondition.Result {
         if (superMember.name == subMember.name) { // Slow path:
             if (superMember is IrFunction && subMember is IrFunction) {

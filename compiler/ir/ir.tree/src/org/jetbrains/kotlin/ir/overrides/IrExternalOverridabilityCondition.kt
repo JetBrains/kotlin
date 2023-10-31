@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
-
 interface IrExternalOverridabilityCondition {
     enum class Result {
         OVERRIDABLE,
@@ -31,8 +29,8 @@ interface IrExternalOverridabilityCondition {
      *     will be based on the general override checking algorithm and the other external overridability conditions.
      */
     fun isOverridable(
-        superMember: IrOverridableMember,
-        subMember: IrOverridableMember,
+        superMember: MemberWithOriginal,
+        subMember: MemberWithOriginal,
     ): Result
 
     /**

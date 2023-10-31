@@ -36,7 +36,7 @@ class IrFakeOverrideBuilder(
 ) {
     private val overrideChecker = IrOverrideChecker(typeSystem, externalOverridabilityConditions)
 
-    private data class FakeOverride(val override: IrOverridableMember, val original: IrOverridableMember)
+    internal data class FakeOverride(val override: IrOverridableMember, val original: IrOverridableMember)
 
     private var IrOverridableMember.overriddenSymbols: List<IrSymbol>
         get() = when (this) {
@@ -153,7 +153,12 @@ class IrFakeOverrideBuilder(
 
         for (fromSupertype in membersFromSuper) {
             // Note: We do allow overriding multiple FOs at once one of which is `isInline=true`.
-            when (overrideChecker.isOverridableBy(fromSupertype.override, fromCurrent, checkIsInlineFlag = true).result) {
+            val overridability = overrideChecker.isOverridableBy(
+                MemberWithOriginal(fromSupertype),
+                MemberWithOriginal(fromCurrent),
+                checkIsInlineFlag = true,
+            )
+            when (overridability.result) {
                 OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
                     overridden += fromSupertype
                     bound += fromSupertype
@@ -465,7 +470,7 @@ class IrFakeOverrideBuilder(
                 iterator.remove()
                 continue
             }
-            val finalResult = overrideChecker.getBothWaysOverridability(overrider.override, candidate.override)
+            val finalResult = overrideChecker.getBothWaysOverridability(MemberWithOriginal(overrider), MemberWithOriginal(candidate))
             if (finalResult == OverrideCompatibilityInfo.Result.OVERRIDABLE) {
                 overridable.add(candidate)
                 iterator.remove()

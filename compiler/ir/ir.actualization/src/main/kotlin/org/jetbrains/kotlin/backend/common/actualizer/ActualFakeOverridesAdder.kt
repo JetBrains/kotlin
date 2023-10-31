@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.IrOverrideChecker
+import org.jetbrains.kotlin.ir.overrides.MemberWithOriginal
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -91,8 +92,8 @@ internal class ActualFakeOverridesAdder(
                 val override = klass.declarations.firstOrNull {
                     it is IrOverridableMember &&
                             overrideChecker.isOverridableBy(
-                                superMember = memberFromSupertype,
-                                subMember = it,
+                                superMember = MemberWithOriginal(memberFromSupertype),
+                                subMember = MemberWithOriginal(it),
                                 checkIsInlineFlag = false,
                             ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
                 } as? IrOverridableDeclaration<IrSymbol>
