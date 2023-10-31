@@ -67,45 +67,50 @@ external fun <
         T3 : T1?
         > supportedTypeParamtersUpperBounds(p1: T1, p2: T2): T3
 
+external fun supportedVararg(vararg p: Int)
 
 external fun wrongExternalTypes(
-    any: Any,
-    nany: Any?,
-    unit: Unit,
-    nunit: Unit?,
-    nothing: Nothing,
-    nnothing: Nothing?,
-    charSequence: CharSequence,
-    list: List<Int>,
-    array: Array<Int>,
-    intArray: IntArray,
-    pair: Pair<Int, Int>,
-    number: Number,
+    <!WRONG_JS_INTEROP_TYPE!>any: Any<!>,
+    <!WRONG_JS_INTEROP_TYPE!>nany: Any?<!>,
+    <!WRONG_JS_INTEROP_TYPE!>unit: Unit<!>,
+    <!WRONG_JS_INTEROP_TYPE!>nunit: Unit?<!>,
+    <!WRONG_JS_INTEROP_TYPE!>nothing: Nothing<!>,
+    <!WRONG_JS_INTEROP_TYPE!>nnothing: Nothing?<!>,
+    <!WRONG_JS_INTEROP_TYPE!>charSequence: CharSequence<!>,
+    <!WRONG_JS_INTEROP_TYPE!>list: List<Int><!>,
+    <!WRONG_JS_INTEROP_TYPE!>array: Array<Int><!>,
+    <!WRONG_JS_INTEROP_TYPE!>intArray: IntArray<!>,
+    <!WRONG_JS_INTEROP_TYPE!>pair: Pair<Int, Int><!>,
+    <!WRONG_JS_INTEROP_TYPE!>number: Number<!>,
 )
 
-external fun <T> supportedTypeParamtersUpperBounds(p: T): T where T : EI, T : Any
+external fun wrongVararg(<!WRONG_JS_INTEROP_TYPE!>vararg p: Any<!>)
+
+external fun <T> supportedTypeParamtersUpperBounds(p: T): T where T : EI, T : <!WRONG_JS_INTEROP_TYPE!>Any<!>
 
 external fun <
-        T1,
-        T2 : Number,
-        T3: List<Int>,
+        <!WRONG_JS_INTEROP_TYPE!>T1<!>,
+        T2 : <!WRONG_JS_INTEROP_TYPE!>Number<!>,
+        T3: <!WRONG_JS_INTEROP_TYPE!>List<Int><!>,
         > supportedTypeParamtersUpperBounds(
     p1: T1,
     p2: T2
 ): T3
 
-fun jsCode1(x: Any): Any = js("x")
-fun jsCode2(x: Any): Any {
+<!WRONG_JS_INTEROP_TYPE!>fun jsCode1(<!WRONG_JS_INTEROP_TYPE!>x: Any<!>): Any<!> = js("x")
+<!WRONG_JS_INTEROP_TYPE!>fun jsCode2(<!WRONG_JS_INTEROP_TYPE!>x: Any<!>): Any<!> {
     js("return x;")
 }
-val jsProp: Any = js("1")
+<!WRONG_JS_INTEROP_TYPE!>val jsProp: Any<!> = js("1")
 
-@JsExport
-fun exported(x: Any): Any = x
+<!WRONG_JS_INTEROP_TYPE!>@JsExport
+fun exported(<!WRONG_JS_INTEROP_TYPE!>x: Any<!>): Any<!> = x
 
 typealias EI_alias = EI
 typealias Any_alias = Any
+typealias Function_alias = (Int) -> Int
 external fun fooAlias(
     ei: EI_alias,
-    any: Any_alias,
+    <!WRONG_JS_INTEROP_TYPE!>any: Any_alias<!>,
+    function: Function_alias,
 )

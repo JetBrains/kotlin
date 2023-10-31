@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
 
 object WasmStandardClassIds {
     val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
+    val BASE_WASM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("wasm"))
 
     object Annotations {
         @JvmField
@@ -22,14 +23,22 @@ object WasmStandardClassIds {
 
         @JvmField
         val JsExport = "JsExport".jsId()
+
+        @JvmField
+        val WasmImport = "WasmImport".wasmId()
     }
 
     object Callables {
         @JvmField
         val JsDefinedExternally = "definedExternally".callableId(BASE_JS_PACKAGE)
+
+        @JvmField
+        val Js = "js".callableId(BASE_JS_PACKAGE)
     }
 }
 
 private fun String.jsId() = ClassId(WasmStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+
+private fun String.wasmId() = ClassId(WasmStandardClassIds.BASE_WASM_PACKAGE, Name.identifier(this))
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))

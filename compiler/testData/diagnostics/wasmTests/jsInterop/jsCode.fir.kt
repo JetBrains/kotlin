@@ -9,7 +9,7 @@ fun funBlockBody(x: Int): Int {
 }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>returnTypeNotSepcified<!>() = js("1")
-val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>valTypeNotSepcified<!> = js("1")
+<!WRONG_JS_INTEROP_TYPE!>val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>valTypeNotSepcified<!><!> = js("1")
 
 val a = "1"
 fun nonConst(): String = "1"

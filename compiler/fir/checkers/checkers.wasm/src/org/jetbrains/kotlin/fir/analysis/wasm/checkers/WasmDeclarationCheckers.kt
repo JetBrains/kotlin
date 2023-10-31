@@ -13,4 +13,9 @@ object WasmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirWasmExternalInheritanceChecker,
         )
+
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
+        get() = setOf(
+            FirWasmJsInteropTypesChecker,
+        )
 }

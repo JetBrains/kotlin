@@ -67,6 +67,7 @@ external fun <
         T3 : T1?
         > supportedTypeParamtersUpperBounds(p1: T1, p2: T2): T3
 
+external fun supportedVararg(vararg p: Int)
 
 external fun wrongExternalTypes(
     <!WRONG_JS_INTEROP_TYPE!>any: Any<!>,
@@ -82,6 +83,8 @@ external fun wrongExternalTypes(
     <!WRONG_JS_INTEROP_TYPE!>pair: Pair<Int, Int><!>,
     <!WRONG_JS_INTEROP_TYPE!>number: Number<!>,
 )
+
+external fun wrongVararg(<!WRONG_JS_INTEROP_TYPE!>vararg p: Any<!>)
 
 external fun <<!WRONG_JS_INTEROP_TYPE!>T<!>> supportedTypeParamtersUpperBounds(p: T): T where T : EI, T : Any
 
@@ -105,7 +108,9 @@ fun exported(<!WRONG_JS_INTEROP_TYPE!>x: Any<!>): Any<!> = x
 
 typealias EI_alias = EI
 typealias Any_alias = Any
+typealias Function_alias = (Int) -> Int
 external fun fooAlias(
     ei: EI_alias,
     <!WRONG_JS_INTEROP_TYPE!>any: Any_alias<!>,
+    function: Function_alias,
 )
