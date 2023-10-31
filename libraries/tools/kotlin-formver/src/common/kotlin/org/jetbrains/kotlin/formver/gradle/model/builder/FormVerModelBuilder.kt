@@ -21,6 +21,7 @@ class FormVerModelBuilder : ToolingModelBuilder {
         return FormVerImpl(
             project.name,
             extension.myLogLevel,
+            extension.myErrorStyle,
             extension.myUnsupportedFeatureBehaviour,
             extension.myConversionTargetsSelection,
             extension.myVerificationTargetsSelection

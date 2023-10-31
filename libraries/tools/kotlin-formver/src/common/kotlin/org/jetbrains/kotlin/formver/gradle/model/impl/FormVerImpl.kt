@@ -14,6 +14,7 @@ import java.io.Serializable
 data class FormVerImpl(
     override val name: String,
     override val logLevel: String?,
+    override val errorStyle: String?,
     override val unsupportedFeatureBehaviour: String?,
     override val conversionTargetsSelection: String?,
     override val verificationTargetsSelection: String?,

@@ -29,6 +29,13 @@ interface FormVer {
     val logLevel: String?
 
     /**
+     * Return the desired style for error messages.
+     *
+     * @return the error style
+     */
+    val errorStyle: String?
+
+    /**
      * Returns the desired behaviour when encountering unsupported Kotlin features.
      *
      * @return the behaviour for unsupported features

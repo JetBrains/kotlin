@@ -49,7 +49,7 @@ Plugin options can be enabled using the `formver` configuration block:
 
 ```kotlin
 formver {
-    setLogLevel("full_viper_dump")
+    logLevel("full_viper_dump")
 }
 ```
 
