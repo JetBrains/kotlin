@@ -22,6 +22,12 @@ sealed interface ExpEmbedding {
     val type: TypeEmbedding
 
     /**
+     * The original Kotlin source's role for the generated expression embedding.
+     */
+    val sourceRole: SourceRole?
+        get() = null
+
+    /**
      * Convert this `ExpEmbedding` into a Viper `Exp`, using the provided context for auxiliary statements and declarations.
      *
      * The `Exp` returned contains the result of the expression.

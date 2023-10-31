@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.SourceRole
+import org.jetbrains.kotlin.formver.embeddings.asInfo
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
@@ -48,14 +50,18 @@ data class GeCmp(
 data class EqCmp(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
+    override val sourceRole: SourceRole? = null,
 ) : ComparisonExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.EqCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override fun toViper(ctx: LinearizationContext) =
+        Exp.EqCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition, sourceRole.asInfo)
 }
 
 data class NeCmp(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
+    override val sourceRole: SourceRole? = null,
 ) : ComparisonExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.NeCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override fun toViper(ctx: LinearizationContext) =
+        Exp.NeCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition, sourceRole.asInfo)
 }
 

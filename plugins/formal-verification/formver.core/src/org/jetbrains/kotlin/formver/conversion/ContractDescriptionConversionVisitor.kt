@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractConstantValues
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.effects
 import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.SourceRole
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.*
 
@@ -63,16 +63,16 @@ class ContractDescriptionConversionVisitor(
     ): ExpEmbedding {
         val retVar = signature.returnVar
         return when (returnsEffect.value) {
-            ConeContractConstantValues.WILDCARD -> BooleanLit(true)
+            ConeContractConstantValues.WILDCARD -> BooleanLit(true, SourceRole.ReturnsEffect)
             /* NOTE: in a function that has a non-nullable return type, the compiler will not complain if there is an effect like
              * returnsNotNull(). So it is necessary to take care of these cases in order to avoid comparison between non-nullable
              * values and null. In a function that has a non-nullable return type, returnsNotNull() is mapped to true and returns(null)
              * is mapped to false
              */
-            ConeContractConstantValues.NULL -> retVar.nullCmp(false)
-            ConeContractConstantValues.NOT_NULL -> retVar.nullCmp(true)
-            ConeContractConstantValues.TRUE -> EqCmp(retVar, BooleanLit(true))
-            ConeContractConstantValues.FALSE -> EqCmp(retVar, BooleanLit(false))
+            ConeContractConstantValues.NULL -> retVar.nullCmp(false, SourceRole.ReturnsNullEffect)
+            ConeContractConstantValues.NOT_NULL -> retVar.nullCmp(true, SourceRole.ReturnsNotNullEffect)
+            ConeContractConstantValues.TRUE -> EqCmp(retVar, BooleanLit(true), SourceRole.ReturnsTrueEffect)
+            ConeContractConstantValues.FALSE -> EqCmp(retVar, BooleanLit(false), SourceRole.ReturnsFalseEffect)
             else -> throw IllegalArgumentException("Unexpected constant: ${returnsEffect.value}")
         }
     }
@@ -91,7 +91,7 @@ class ContractDescriptionConversionVisitor(
          * values and null. Let x be a non-nullable variable, then x == null is mapped to false and x != null is mapped to true
          */
         val param = isNullPredicate.arg.embeddedVar()
-        return param.nullCmp(isNullPredicate.isNegated)
+        return param.nullCmp(isNullPredicate.isNegated, null)
     }
 
     override fun visitLogicalBinaryOperationContractExpression(
@@ -171,15 +171,15 @@ class ContractDescriptionConversionVisitor(
     private fun embeddedVarByIndex(ix: Int): VariableEmbedding =
         if (ix == -1) signature.receiver!! else signature.params[ix]
 
-    private fun VariableEmbedding.nullCmp(isNegated: Boolean, source: KtSourceElement? = null): ExpEmbedding =
+    private fun VariableEmbedding.nullCmp(isNegated: Boolean, sourceRole: SourceRole?): ExpEmbedding =
         if (type is NullableTypeEmbedding) {
             if (isNegated) {
-                NeCmp(this, type.nullVal)
+                NeCmp(this, type.nullVal, sourceRole)
             } else {
-                EqCmp(this, type.nullVal)
+                EqCmp(this, type.nullVal, sourceRole)
             }
         } else {
-            BooleanLit(isNegated)
+            BooleanLit(isNegated, sourceRole)
         }
 }
 
