@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 import java.util.regex.Pattern
+import java.nio.file.Paths
 
 buildscript {
     repositories {
@@ -168,7 +169,36 @@ tasks.named("clean", Delete.class) {
     }
 }
 
+void klib(String[] args) {
+    def konancScript = isWindows() ? "klib.bat" : "klib"
+    def konanc = "$kotlinNativeDist/bin/$konancScript"
+    def allArgs = args.join(" ")
+    println("$konanc $allArgs")
+    ExecutorServiceKt.executeAndCheck(project, Paths.get(konanc), args.toList())
+}
+
+void cinterop(String[] args) {
+    def konancScript = isWindows() ? "cinterop.bat" : "cinterop"
+    def konanc = "$kotlinNativeDist/bin/$konancScript"
+    def allArgs = args.join(" ")
+    println("$konanc $allArgs")
+    ExecutorServiceKt.executeAndCheck(project, Paths.get(konanc), args.toList())
+}
+
+tasks.register("metadata") {
+    def defFile = project.file("interop/metadata.def").getAbsolutePath()
+    def klibFile = project.buildDir.toPath().resolve("sample.klib").toString()
+    doFirst {
+        cinterop(["-def", defFile, "-o", klibFile] as String[])
+        klib(["dump-metadata-signatures", klibFile, "-signature-version", "1"] as String[])
+        klib(["dump-metadata-signatures", klibFile, "-signature-version", "2"] as String[])
+    }
+    outputs.upToDateWhen { false }
+}
+
 tasks.named("run") {
+    dependsOn("metadata")
+
     dependsOn(tasks.withType(KonanTest).matching { it.enabled })
     // Add framework tests
     dependsOn(tasks.withType(FrameworkTest).matching { it.enabled })
