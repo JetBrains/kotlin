@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -23,10 +25,11 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
 internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
-        callableId: CallableId,
-        receiverType: ConeClassLikeTypeImpl,
-        propertyName: Name,
-        returnTypeRef: FirResolvedTypeRef
+    callableId: CallableId,
+    receiverType: ConeClassLikeTypeImpl,
+    propertyName: Name,
+    returnTypeRef: FirResolvedTypeRef,
+    symbol: FirClassSymbol<*>? = null
 ): FirProperty {
     val firPropertySymbol = FirPropertySymbol(callableId)
     return buildProperty {
@@ -44,11 +47,19 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         }
         val classId = callableId.classId
         if (classId != null) {
-            dispatchReceiverType = ConeClassLikeTypeImpl(
+            dispatchReceiverType = if (symbol != null) {
+                ConeClassLikeTypeImpl(
+                    ConeClassLookupTagWithFixedSymbol(classId, symbol),
+                    emptyArray(),
+                    false
+                )
+            } else {
+                ConeClassLikeTypeImpl(
                     ConeClassLikeLookupTagImpl(classId),
                     emptyArray(),
                     false
-            )
+                )
+            }
         }
         val firPropertyAccessorSymbol = FirPropertyAccessorSymbol()
         getter = buildPropertyAccessor {
@@ -57,7 +68,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             origin = FirDeclarationOrigin.Plugin(ScopesGenerator.DataFramePlugin)
             this.returnTypeRef = returnTypeRef
             dispatchReceiverType = receiverType
-            symbol = firPropertyAccessorSymbol
+            this.symbol = firPropertyAccessorSymbol
             propertySymbol = firPropertySymbol
             isGetter = true
             status = FirResolvedDeclarationStatusImpl(
@@ -67,7 +78,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             )
         }.also { firPropertyAccessorSymbol.bind(it) }
         name = propertyName
-        symbol = firPropertySymbol
+        this.symbol = firPropertySymbol
         isVar = false
         isLocal = false
     }.also { firPropertySymbol.bind(it) }

@@ -13,6 +13,9 @@ fun box(): String {
 
     df.add("hello") { 42 }.hello
 
+    df
+        .add("hello") { 42 }
+        .add("hello1") { hello + 3}
 
     df.sortByDesc { stargazers_count }.print(rowsLimit = 10)
     println(df.count { stargazers_count > 50 })
