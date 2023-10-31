@@ -1,7 +1,8 @@
 // ISSUE: KT-59355
 
 // MODULE: common
-internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Some<!> {
+// TARGET_PLATFORM: Common
+internal expect open class Some {
     protected class ProtectedNested
     internal class InternalNested
 
@@ -10,12 +11,13 @@ internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Some<!> {
     protected fun protectedFun()
 }
 
-internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Other<!> {
+internal expect open class Other {
     protected class ProtectedNested
     internal class InternalNested
 }
 
 // MODULE: platform-jvm()()(common)
+// TARGET_PLATFORM: JVM
 <!ACTUAL_WITHOUT_EXPECT!>public<!> actual open class Some { // should be allowed
     <!ACTUAL_WITHOUT_EXPECT!>public<!> class <!ACTUAL_MISSING!>ProtectedNested<!>  // should be allowed
     <!ACTUAL_WITHOUT_EXPECT!>public<!> class <!ACTUAL_MISSING!>InternalNested<!> // should be allowed
