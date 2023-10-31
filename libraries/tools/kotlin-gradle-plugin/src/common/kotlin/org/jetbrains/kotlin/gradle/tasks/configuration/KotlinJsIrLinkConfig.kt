@@ -29,10 +29,8 @@ internal open class KotlinJsIrLinkConfig(
             task.dependsOn(compilation.compileTaskProvider)
             task.dependsOn(compilation.output.classesDirs)
             task.entryModule.fileProvider(
-                compilation.output.classesDirs.elements.flatMap {
-                    task.project.providers.provider {
-                        it.single().asFile
-                    }
+                compilation.output.classesDirs.elements.map {
+                    it.single().asFile
                 }
             ).disallowChanges()
             task.rootCacheDirectory.set(project.layout.buildDirectory.map { it.dir("klib/cache/js/${binary.name}") })
