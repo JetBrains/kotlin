@@ -497,7 +497,14 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
                 kind = ClassKind.CLASS,
                 modality = Modality.FINAL,
             ).apply {
-                parent = irParent
+                setParent(irParent)
+                addDeclarationToParent(this, irParent)
+                typeParameters = emptyList()
+                thisReceiver = declareThisReceiverParameter(
+                    thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
+                    thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER,
+                )
+                superTypes = listOf(irBuiltIns.anyType)
             }
         }
     }
