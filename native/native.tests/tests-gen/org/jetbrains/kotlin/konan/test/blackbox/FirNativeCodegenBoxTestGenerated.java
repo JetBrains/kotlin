@@ -34,12 +34,6 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
 
-        @Test
-        @TestMetadata("debug.kt")
-        public void testDebug() throws Exception {
-            runTest("compiler/testData/codegen/box/debug.kt");
-        }
-
         @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations")
         @TestDataPath("$PROJECT_ROOT")

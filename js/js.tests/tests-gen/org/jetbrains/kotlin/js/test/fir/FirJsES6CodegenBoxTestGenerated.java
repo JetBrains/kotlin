@@ -26,12 +26,6 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true, "compileKotlinAgainstKotlin");
     }
 
-    @Test
-    @TestMetadata("debug.kt")
-    public void testDebug() throws Exception {
-        runTest("compiler/testData/codegen/box/debug.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/codegen/box/annotations")
     @TestDataPath("$PROJECT_ROOT")
