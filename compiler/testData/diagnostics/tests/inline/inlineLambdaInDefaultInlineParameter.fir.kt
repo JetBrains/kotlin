@@ -20,11 +20,11 @@ inline fun default0(lambda: () -> String, dlambda: () -> String = { noInlineFun 
     lambda() + dlambda()
 }
 
-inline fun default1_0(lambda: () -> String, dlambda: () -> String = { <!NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE!>lambda<!>() }) {
+inline fun default1_0(lambda: () -> String, dlambda: () -> String = { <!NON_LOCAL_RETURN_NOT_ALLOWED, NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE!>lambda<!>() }) {
     lambda() + dlambda()
 }
 
-inline fun default1_1(lambda: () -> String, noinline dlambda: () -> String = { lambda() }) {
+inline fun default1_1(lambda: () -> String, noinline dlambda: () -> String = { <!NON_LOCAL_RETURN_NOT_ALLOWED!>lambda<!>() }) {
     lambda() + dlambda()
 }
 
@@ -41,7 +41,7 @@ inline fun default1_3(noinline lambda: () -> String, noinline dlambda: () -> Str
 }
 
 
-inline fun default2_1(lambda: () -> String, noinline dlambda: () -> String = { inlineFun(lambda) }) {
+inline fun default2_1(lambda: () -> String, noinline dlambda: () -> String = { inlineFun(<!NON_LOCAL_RETURN_NOT_ALLOWED!>lambda<!>) }) {
     lambda() + dlambda()
 }
 
