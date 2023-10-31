@@ -32,14 +32,14 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 fun ConeKotlinType.canBeUsedForConstVal(): Boolean = with(lowerBoundIfFlexible()) { isPrimitive || isString || isUnsignedType }
 
 fun canBeEvaluatedAtCompileTime(expression: FirExpression?, session: FirSession): Boolean {
-    return checkConstantArguments(expression, session) == null
+    return checkConstantArguments(expression, session) == ConstantArgumentKind.VALID_CONST
 }
 
 internal fun checkConstantArguments(
     expression: FirExpression?,
     session: FirSession,
-): ConstantArgumentKind? {
-    if (expression == null) return null
+): ConstantArgumentKind {
+    if (expression == null) return ConstantArgumentKind.VALID_CONST
     val expressionSymbol = expression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
     val classKindOfParent = (expressionSymbol?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)?.classKind
     val intrinsicConstEvaluation = session.languageVersionSettings.supportsFeature(LanguageFeature.IntrinsicConstEvaluation)
@@ -52,7 +52,7 @@ internal fun checkConstantArguments(
 
     when {
         expression is FirNamedArgumentExpression -> {
-            checkConstantArguments(expression.expression, session)
+            return checkConstantArguments(expression.expression, session)
         }
         expression is FirTypeOperatorCall -> if (expression.operation == FirOperation.AS) return ConstantArgumentKind.NOT_CONST
         expression is FirWhenExpression -> {
@@ -60,21 +60,21 @@ internal fun checkConstantArguments(
                 return ConstantArgumentKind.NOT_CONST
             }
 
-            expression.subject?.let { subject -> checkConstantArguments(subject, session)?.let { return it } }
+            expression.subject?.let { subject -> checkConstantArguments(subject, session).ifNotValidConst { return it } }
             for (branch in expression.branches) {
-                checkConstantArguments(branch.condition, session)?.let { return it }
+                checkConstantArguments(branch.condition, session).ifNotValidConst { return it }
                 branch.result.statements.forEach { stmt ->
                     if (stmt !is FirExpression) return ConstantArgumentKind.NOT_CONST
-                    checkConstantArguments(stmt, session)?.let { return it }
+                    checkConstantArguments(stmt, session).ifNotValidConst { return it }
                 }
             }
-            return null
+            return ConstantArgumentKind.VALID_CONST
         }
         expression is FirConstExpression<*>
                 || expressionSymbol is FirEnumEntrySymbol
                 || expressionSymbol?.isConst == true
                 || expressionSymbol is FirConstructorSymbol && classKindOfParent == ClassKind.ANNOTATION_CLASS -> {
-            //DO NOTHING
+            return ConstantArgumentKind.VALID_CONST
         }
         classKindOfParent == ClassKind.ENUM_CLASS -> {
             return ConstantArgumentKind.ENUM_NOT_CONST
@@ -87,7 +87,7 @@ internal fun checkConstantArguments(
                 if (exp is FirResolvedQualifier || exp is FirGetClassCall) {
                     return ConstantArgumentKind.NOT_CONST
                 }
-                checkConstantArguments(exp, session)?.let { return it }
+                checkConstantArguments(exp, session).ifNotValidConst { return it }
             }
         }
         expression is FirEqualityOperatorCall -> {
@@ -103,12 +103,12 @@ internal fun checkConstantArguments(
                 if (exp is FirResolvedQualifier || exp is FirGetClassCall || exp.getExpandedType().isUnsignedType) {
                     return ConstantArgumentKind.NOT_CONST
                 }
-                checkConstantArguments(exp, session)?.let { return it }
+                checkConstantArguments(exp, session).ifNotValidConst { return it }
             }
         }
         expression is FirBinaryLogicExpression -> {
-            checkConstantArguments(expression.leftOperand, session)?.let { return it }
-            checkConstantArguments(expression.rightOperand, session)?.let { return it }
+            checkConstantArguments(expression.leftOperand, session).ifNotValidConst { return it }
+            checkConstantArguments(expression.rightOperand, session).ifNotValidConst { return it }
         }
         expression is FirGetClassCall -> {
             var coneType = expression.argument.getExpandedType()
@@ -122,21 +122,19 @@ internal fun checkConstantArguments(
             return when {
                 coneType is ConeTypeParameterType -> ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
                 expression.argument !is FirResolvedQualifier -> ConstantArgumentKind.NOT_KCLASS_LITERAL
-                else -> null
+                else -> ConstantArgumentKind.VALID_CONST
             }
         }
         expression is FirArrayLiteral -> {
             for (exp in expression.arguments) {
-                checkConstantArguments(exp, session)?.let {
-                    return it
-                }
+                checkConstantArguments(exp, session).ifNotValidConst { return it }
             }
         }
         expression is FirThisReceiverExpression -> {
             return ConstantArgumentKind.NOT_CONST
         }
         expressionSymbol == null -> {
-            //DO NOTHING
+            return ConstantArgumentKind.VALID_CONST
         }
         expressionSymbol is FirFieldSymbol -> {
             if (!expressionSymbol.isStatic || expressionSymbol.modality != Modality.FINAL || !expressionSymbol.hasConstantInitializer) {
@@ -144,10 +142,10 @@ internal fun checkConstantArguments(
             }
         }
         expressionSymbol is FirConstructorSymbol -> {
-            if (expression is FirCallableReferenceAccess) return null
+            if (expression is FirCallableReferenceAccess) return ConstantArgumentKind.VALID_CONST
             if (expression.getExpandedType().isUnsignedType) {
                 (expression as FirFunctionCall).arguments.forEach { argumentExpression ->
-                    checkConstantArguments(argumentExpression, session)?.let { return it }
+                    checkConstantArguments(argumentExpression, session).ifNotValidConst { return it }
                 }
             } else {
                 return ConstantArgumentKind.NOT_CONST
@@ -156,7 +154,7 @@ internal fun checkConstantArguments(
         expression is FirFunctionCall -> {
             val calleeReference = expression.calleeReference
             if (calleeReference is FirErrorNamedReference) {
-                return null
+                return ConstantArgumentKind.VALID_CONST
             }
             if (expression.getExpandedType().classId == StandardClassIds.KClass) {
                 return ConstantArgumentKind.NOT_KCLASS_LITERAL
@@ -177,10 +175,10 @@ internal fun checkConstantArguments(
                     return ConstantArgumentKind.NOT_CONST
                 }
 
-                checkConstantArguments(exp, session)?.let { return it }
+                checkConstantArguments(exp, session).ifNotValidConst { return it }
             }
 
-            return null
+            return ConstantArgumentKind.VALID_CONST
         }
         expression is FirQualifiedAccessExpression -> {
             val expressionType = expression.getExpandedType()
@@ -214,7 +212,7 @@ internal fun checkConstantArguments(
         }
         else -> return ConstantArgumentKind.NOT_CONST
     }
-    return null
+    return ConstantArgumentKind.VALID_CONST
 }
 
 private val compileTimeFunctions = setOf(
@@ -275,9 +273,16 @@ private fun FirCallableSymbol<*>?.getReferencedClassSymbol(session: FirSession):
         ?.toSymbol(session)
 
 internal enum class ConstantArgumentKind {
+    VALID_CONST,
     NOT_CONST,
     ENUM_NOT_CONST,
     NOT_KCLASS_LITERAL,
     NOT_CONST_VAL_IN_CONST_EXPRESSION,
-    KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
+    KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR;
+
+    inline fun ifNotValidConst(action: (ConstantArgumentKind) -> Unit) {
+        if (this != VALID_CONST) {
+            action(this)
+        }
+    }
 }

@@ -64,7 +64,7 @@ object FirConstPropertyChecker : FirPropertyChecker() {
         }
 
         val errorKind = when (checkConstantArguments(initializer, context.session)) {
-            null -> return
+            ConstantArgumentKind.VALID_CONST -> return
             ConstantArgumentKind.NOT_CONST_VAL_IN_CONST_EXPRESSION -> FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
             else -> FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
         }
