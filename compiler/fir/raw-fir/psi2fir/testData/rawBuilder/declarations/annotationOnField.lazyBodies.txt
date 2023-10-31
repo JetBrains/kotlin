@@ -25,9 +25,7 @@ FILE: annotationOnField.kt
             protected get(): String
 
         field:@FIELD:Ann() protected final? val delegatedProperty: Stringby LAZY_EXPRESSION
-            protected get(): <implicit> {
-                ^ this@R|/SomeClass|.D|/SomeClass.delegatedProperty|.getValue#(this@R|/SomeClass|, ::R|/SomeClass.delegatedProperty|)
-            }
+            protected get(): <implicit> { LAZY_BLOCK }
 
         field:@FIELD:Ann() public? final? val propertyWithCustomGetter: Int
             public? get(): Int { LAZY_BLOCK }

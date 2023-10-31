@@ -2057,9 +2057,9 @@ open class PsiRawFirBuilder(
                                 expression = delegateExpression
                             }
 
-                            val lazyDelegateExpression: FirLazyExpression? = buildOrLazy(
-                                build = { null },
-                                lazy = { buildLazyExpression { source = delegateBuilder.source } },
+                            val (lazyDelegateExpression: FirLazyExpression?, lazyBody: FirLazyBlock?) = buildOrLazy(
+                                build = { null to null },
+                                lazy = { buildLazyExpression { source = delegateBuilder.source } to buildLazyBlock() },
                             )
 
                             generateAccessorsByDelegate(
@@ -2069,6 +2069,7 @@ open class PsiRawFirBuilder(
                                 context,
                                 isExtension = receiverTypeReference != null,
                                 lazyDelegateExpression = lazyDelegateExpression,
+                                lazyBodyForGeneratedAccessors = lazyBody,
                             )
                         }
                     }

@@ -334,6 +334,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     context: Context<T>,
     isExtension: Boolean,
     lazyDelegateExpression: FirLazyExpression? = null,
+    lazyBodyForGeneratedAccessors: FirLazyBlock? = null,
 ) {
     if (delegateBuilder == null) return
     val delegateFieldSymbol = FirDelegateFieldSymbol(symbol.callableId).also {
@@ -460,8 +461,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 isInline = getterStatus?.isInline ?: isInline
             }
             symbol = FirPropertyAccessorSymbol()
-
-            body = FirSingleExpressionBlock(
+            body = lazyBodyForGeneratedAccessors ?: FirSingleExpressionBlock(
                 buildReturnExpression {
                     result = buildFunctionCall {
                         source = fakeSource
@@ -518,7 +518,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 }
             }
             valueParameters += parameter
-            body = FirSingleExpressionBlock(
+            body = lazyBodyForGeneratedAccessors ?: FirSingleExpressionBlock(
                 buildReturnExpression {
                     result = buildFunctionCall {
                         source = fakeSource

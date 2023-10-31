@@ -15,9 +15,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:Deprecated[Unresolved](LAZY_EXPRESSION) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -37,9 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:Deprecated[Unresolved](LAZY_EXPRESSION) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -59,9 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(delegate)) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -81,9 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(delegate)) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -103,9 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(delegate)) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
 
 
 TYPES:
@@ -125,9 +115,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(TYPES)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
 
 
 STATUS:
@@ -147,9 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -169,9 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -191,9 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
         }
 
         field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] val memberProperty: <implicit>by LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
-            }
+            public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -294,3 +276,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnPropertyDelegateSc
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
                 ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
             }
+

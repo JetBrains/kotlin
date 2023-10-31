@@ -12,30 +12,18 @@ FILE: [ResolvedTo(RAW_FIR)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -52,30 +40,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -92,30 +68,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -132,30 +96,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -172,30 +124,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -212,30 +152,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -252,30 +180,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -292,30 +208,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -337,30 +241,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -382,30 +274,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ANNOTATION_ARGUMENTS:
@@ -427,30 +307,18 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by LAZY_EXPRESSION
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
-                ^ D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:
@@ -486,9 +354,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
 
         public final [ResolvedTo(CONTRACTS)] val valueWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
-                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
-            }
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
@@ -496,12 +362,8 @@ FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
             }
 
         public final [ResolvedTo(CONTRACTS)] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
-            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
-                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
-            }
-            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
-            }
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+            public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
@@ -569,3 +431,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] delegatesScript.kts
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
             }
+

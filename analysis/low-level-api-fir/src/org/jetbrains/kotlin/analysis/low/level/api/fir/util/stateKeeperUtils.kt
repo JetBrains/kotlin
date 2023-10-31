@@ -36,7 +36,6 @@ private fun isLazyStatement(fir: FirStatement): Boolean {
 
 private val SPECIAL_BODY_CALLABLE_SOURCE_KINDS = setOf(
     KtFakeSourceElementKind.DefaultAccessor,
-    KtFakeSourceElementKind.DelegatedPropertyAccessor,
     KtFakeSourceElementKind.ImplicitConstructor,
     KtFakeSourceElementKind.PropertyFromParameter,
     KtFakeSourceElementKind.DataClassGeneratedMembers,

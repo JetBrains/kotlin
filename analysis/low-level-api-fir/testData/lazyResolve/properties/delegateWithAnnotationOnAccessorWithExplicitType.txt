@@ -1,12 +1,8 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var foo: Intby LAZY_EXPRESSION
-        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -30,12 +26,8 @@ FILE: [ResolvedTo(RAW_FIR)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var foo: Intby LAZY_EXPRESSION
-        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
+        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -59,12 +51,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var foo: Intby LAZY_EXPRESSION
-        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
+        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -88,12 +76,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] var foo: Intby LAZY_EXPRESSION
-        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
+        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -117,12 +101,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] var foo: Intby LAZY_EXPRESSION
-        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
+        @PROPERTY_SETTER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) <set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -146,12 +126,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var foo: R|kotlin/Int|by LAZY_EXPRESSION
-        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -175,12 +151,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var foo: R|kotlin/Int|by LAZY_EXPRESSION
-        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] get(): R|kotlin/Int| {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -204,12 +176,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var foo: R|kotlin/Int|by LAZY_EXPRESSION
-        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -233,12 +201,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] var foo: R|kotlin/Int|by LAZY_EXPRESSION
-        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -262,12 +226,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var foo: R|kotlin/Int|by LAZY_EXPRESSION
-        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        @PROPERTY_SETTER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     @Repeatable[Unresolved]() public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
             LAZY_super<R|kotlin/Any|>
@@ -291,12 +251,8 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
 ANNOTATION_ARGUMENTS:
 FILE: [ResolvedTo(IMPORTS)] delegateWithAnnotationOnAccessorWithExplicitType.kt
     field:@PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var foo: R|kotlin/Int|by LAZY_EXPRESSION
-        @PROPERTY_GETTER:R|Anno|[Types](s = String(getter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
-            ^ D|/foo|.getValue#(Null(null), ::R|/foo|)
-        }
-        @PROPERTY_SETTER:R|Anno|[Types](s = String(setter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter)) <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ D|/foo|.setValue#(Null(null), ::R|/foo|, R|<local>/foo|)
-        }
+        @PROPERTY_GETTER:R|Anno|[Types](s = String(getter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+        @PROPERTY_SETTER:R|Anno|[Types](s = String(setter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] set([ResolvedTo(ANNOTATION_ARGUMENTS)] @SETTER_PARAMETER:R|Anno|[Types](s = String(parameter)) <set-?>: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
     @R|kotlin/annotation/Repeatable|[Types]() public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
             LAZY_super<R|kotlin/Any|>

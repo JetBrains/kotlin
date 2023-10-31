@@ -1,21 +1,13 @@
 FILE: delegates.kt
     public? final? val x: Intby LAZY_EXPRESSION
-        public? get(): <implicit> {
-            ^ D|/x|.getValue#(Null(null), ::R|/x|)
-        }
+        public? get(): <implicit> { LAZY_BLOCK }
     public? final? val delegate: <implicit> = LAZY_EXPRESSION
         public? get(): <implicit>
     public? final? val value: <implicit>by LAZY_EXPRESSION
-        public? get(): <implicit> {
-            ^ D|/value|.getValue#(Null(null), ::R|/value|)
-        }
+        public? get(): <implicit> { LAZY_BLOCK }
     public? final? var variable: <implicit>by LAZY_EXPRESSION
-        public? get(): <implicit> {
-            ^ D|/variable|.getValue#(Null(null), ::R|/variable|)
-        }
-        public? set(<set-?>: <implicit>): R|kotlin/Unit| {
-            ^ D|/variable|.setValue#(Null(null), ::R|/variable|, R|<local>/variable|)
-        }
+        public? get(): <implicit> { LAZY_BLOCK }
+        public? set(<set-?>: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? interface Base : R|kotlin/Any| {
     }
     public? final? class Derived : Base {

@@ -28,9 +28,7 @@ FILE: [ResolvedTo(RAW_FIR)] lazyPropertyScript.kts
             }
 
             public? final? [ResolvedTo(RAW_FIR)] val resolveMe: Stringby LAZY_EXPRESSION
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] get(): <implicit> {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -65,9 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public? final? [ResolvedTo(RAW_FIR)] val resolveMe: Stringby LAZY_EXPRESSION
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] get(): <implicit> {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -102,9 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val resolveMe: Stringby LAZY_EXPRESSION
-                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Test] get(): <implicit> {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -139,9 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public? final? [ResolvedTo(COMPANION_GENERATION)] val resolveMe: Stringby LAZY_EXPRESSION
-                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Test] get(): <implicit> {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -176,9 +168,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] val resolveMe: Stringby LAZY_EXPRESSION
-                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Test] get(): <implicit> {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Test] get(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -213,9 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public? final? [ResolvedTo(TYPES)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
-                public? [ResolvedTo(TYPES)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
 
@@ -250,9 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public final [ResolvedTo(STATUS)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
 
@@ -287,9 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
-                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
 
@@ -324,9 +308,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public final [ResolvedTo(CONTRACTS)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
-                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
 
@@ -361,9 +343,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
-                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
 
@@ -398,9 +378,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
 
             public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val resolveMe: R|kotlin/String|by LAZY_EXPRESSION
-                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
-                }
+                public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Test] get(): R|kotlin/String| { LAZY_BLOCK }
 
         }
 
@@ -497,3 +475,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lazyPropertyScript.kts
                 }
 
         }
+
