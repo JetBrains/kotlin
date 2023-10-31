@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
-sealed interface BinaryBooleanExpression : DirectResultExpEmbedding {
-    val left: ExpEmbedding
-    val right: ExpEmbedding
+sealed interface BinaryBooleanExpression : BinaryDirectResultExpEmbedding {
     override val type: BooleanTypeEmbedding
         get() = BooleanTypeEmbedding
 }
@@ -39,8 +37,8 @@ data class Implies(
 }
 
 data class Not(
-    val exp: ExpEmbedding,
-) : DirectResultExpEmbedding {
+    override val inner: ExpEmbedding,
+) : UnaryDirectResultExpEmbedding {
     override val type = BooleanTypeEmbedding
-    override fun toViper(ctx: LinearizationContext) = Exp.Not(exp.toViper(ctx), ctx.source.asPosition)
+    override fun toViper(ctx: LinearizationContext) = Exp.Not(inner.toViper(ctx), ctx.source.asPosition)
 }

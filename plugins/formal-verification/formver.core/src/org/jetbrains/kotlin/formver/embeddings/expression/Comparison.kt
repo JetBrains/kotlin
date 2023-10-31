@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.formver.embeddings.asInfo
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
-sealed interface ComparisonExpression : DirectResultExpEmbedding {
-    val left: ExpEmbedding
-    val right: ExpEmbedding
+sealed interface ComparisonExpression : BinaryDirectResultExpEmbedding {
     override val type
         get() = BooleanTypeEmbedding
 }

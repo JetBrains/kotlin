@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.formver.embeddings.IntTypeEmbedding
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
-sealed interface IntArithmeticExpression : DirectResultExpEmbedding {
-    val left: ExpEmbedding
-    val right: ExpEmbedding
+sealed interface IntArithmeticExpression : BinaryDirectResultExpEmbedding {
     override val type
         get() = IntTypeEmbedding
 }

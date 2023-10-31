@@ -66,9 +66,16 @@ sealed interface ExpEmbedding {
 }
 
 /**
- * `ExpEmbedding` with default `toViperMaybeStoringIn` implementation.
- *
- * This class typically shouldn't be used directly, but this case is common enough that it warrants a common base interface.
+ * Default implementation for `toViperStoringIn`, which simply assigns the value to the result variable.
+ */
+sealed interface DefaultStoringInExpEmbedding : ExpEmbedding {
+    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+        ctx.addStatement(Stmt.assign(result, toViper(ctx)))
+    }
+}
+
+/**
+ * Default `toViperMaybeStoringIn` implementation, which uses `StoringIn` if there is a result and `UnusedResult` otherwise.
  */
 sealed interface DefaultMaybeStoringInExpEmbedding : ExpEmbedding {
     override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
@@ -78,7 +85,7 @@ sealed interface DefaultMaybeStoringInExpEmbedding : ExpEmbedding {
 }
 
 /**
- * `ExpEmbedding` with default `toViperUnusedResult` implementation.
+ * Default `toViperUnusedResult` implementation, that simply uses `toViper`.
  */
 sealed interface DefaultUnusedResultExpEmbedding : ExpEmbedding {
     override fun toViperUnusedResult(ctx: LinearizationContext) {
@@ -86,16 +93,45 @@ sealed interface DefaultUnusedResultExpEmbedding : ExpEmbedding {
     }
 }
 
+sealed interface OnlyToViperExpEmbedding : DefaultStoringInExpEmbedding, DefaultMaybeStoringInExpEmbedding, DefaultUnusedResultExpEmbedding
+
 /**
  * `ExpEmbedding` that produces a result as an expression.
  *
  * The best possible implementation of `toViperStoringIn` simply assigns to the result; we cannot
  * propagate the variable in any way.
  */
-sealed interface DirectResultExpEmbedding : DefaultMaybeStoringInExpEmbedding, DefaultUnusedResultExpEmbedding {
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.assign(result, toViper(ctx)))
+sealed interface DirectResultExpEmbedding : DefaultMaybeStoringInExpEmbedding, DefaultStoringInExpEmbedding {
+    /**
+     * When the result is unused, we don't want to produce any expression, but we still want to evaluate the subexpressions.
+     */
+    val subexpressions: List<ExpEmbedding>
+
+    override fun toViperUnusedResult(ctx: LinearizationContext) {
+        for (exp in subexpressions) {
+            exp.toViperUnusedResult(ctx)
+        }
     }
+}
+
+sealed interface NullaryDirectResultExpEmbedding : DirectResultExpEmbedding {
+    override val subexpressions: List<ExpEmbedding>
+        get() = listOf()
+}
+
+sealed interface UnaryDirectResultExpEmbedding : DirectResultExpEmbedding {
+    val inner: ExpEmbedding
+
+    override val subexpressions: List<ExpEmbedding>
+        get() = listOf(inner)
+}
+
+sealed interface BinaryDirectResultExpEmbedding : DirectResultExpEmbedding {
+    val left: ExpEmbedding
+    val right: ExpEmbedding
+
+    override val subexpressions: List<ExpEmbedding>
+        get() = listOf(left, right)
 }
 
 /**
@@ -138,12 +174,19 @@ sealed interface NoResultExpEmbedding : DefaultMaybeStoringInExpEmbedding {
 
 /**
  * `ExpEmbedding` that can be converted to an `Exp` without any linearization context.
+ *
+ * Note that such an expression of course cannot have (non-pure) subexpressions, since otherwise they would have to be linearized as well.
  */
-sealed interface PureExpEmbedding : DirectResultExpEmbedding {
+sealed interface PureExpEmbedding : NullaryDirectResultExpEmbedding {
     fun toViper(source: KtSourceElement? = null): Exp
     override fun toViper(ctx: LinearizationContext): Exp = toViper(ctx.source)
 }
 
+/**
+ * `ExpEmbedding` with different behaviour when there is and isn't a result.
+ *
+ * These are typically control flow structures like `if`.
+ */
 sealed interface OptionalResultExpEmbedding : BaseStoredResultExpEmbedding {
     override fun toViperUnusedResult(ctx: LinearizationContext) {
         toViperMaybeStoringIn(null, ctx)
@@ -190,7 +233,7 @@ sealed interface PassthroughExpEmbedding : ExpEmbedding {
 /**
  * `ExpEmbedding` that always evaluates to `Unit`.
  */
-sealed interface UnitResultExpEmbedding : DirectResultExpEmbedding {
+sealed interface UnitResultExpEmbedding : OnlyToViperExpEmbedding {
     override val type: TypeEmbedding
         get() = UnitTypeEmbedding
 
@@ -220,23 +263,23 @@ fun List<ExpEmbedding>.toConjunction(): ExpEmbedding =
     else reduce { l, r -> And(l, r) }
 
 
-data class Is(val exp: ExpEmbedding, val comparisonType: TypeEmbedding) : DirectResultExpEmbedding {
+data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbedding) : UnaryDirectResultExpEmbedding {
     override val type = BooleanTypeEmbedding
 
     override fun toViper(ctx: LinearizationContext) =
-        TypeDomain.isSubtype(TypeOfDomain.typeOf(exp.toViper(ctx)), comparisonType.runtimeType, pos = ctx.source.asPosition)
+        TypeDomain.isSubtype(TypeOfDomain.typeOf(inner.toViper(ctx)), comparisonType.runtimeType, pos = ctx.source.asPosition)
 }
 
 // TODO: probably casts need to be more flexible when it comes to containing result-less nodes.
-data class Cast(val exp: ExpEmbedding, override val type: TypeEmbedding) : DirectResultExpEmbedding {
-    override fun toViper(ctx: LinearizationContext) = CastingDomain.cast(exp.toViper(ctx), type, ctx.source)
-    override fun ignoringCasts(): ExpEmbedding = exp.ignoringCasts()
-    override fun ignoringCastsAndMetaNodes(): ExpEmbedding = exp.ignoringCastsAndMetaNodes()
+data class Cast(override val inner: ExpEmbedding, override val type: TypeEmbedding) : UnaryDirectResultExpEmbedding {
+    override fun toViper(ctx: LinearizationContext) = CastingDomain.cast(inner.toViper(ctx), type, ctx.source)
+    override fun ignoringCasts(): ExpEmbedding = inner.ignoringCasts()
+    override fun ignoringCastsAndMetaNodes(): ExpEmbedding = inner.ignoringCastsAndMetaNodes()
 }
 
-data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : DirectResultExpEmbedding {
+data class FieldAccess(override val inner: ExpEmbedding, val field: FieldEmbedding) : UnaryDirectResultExpEmbedding {
     override val type: TypeEmbedding = field.type
-    override fun toViper(ctx: LinearizationContext) = Exp.FieldAccess(receiver.toViper(ctx), field.toViper(), ctx.source.asPosition)
+    override fun toViper(ctx: LinearizationContext) = Exp.FieldAccess(inner.toViper(ctx), field.toViper(), ctx.source.asPosition)
 }
 
 data class FieldAccessPermissions(val exp: ExpEmbedding, val field: FieldEmbedding, val perm: PermExp) : DirectResultExpEmbedding {
@@ -247,6 +290,9 @@ data class FieldAccessPermissions(val exp: ExpEmbedding, val field: FieldEmbeddi
         val expViper = exp.toViper(ctx)
         return expViper.fieldAccessPredicate(field.toViper(), perm, ctx.source.asPosition)
     }
+
+    override val subexpressions: List<ExpEmbedding>
+        get() = listOf(exp)
 }
 
 // Ideally we would use the predicate, but due to the possibility of recursion this is inconvenient at present.
@@ -254,17 +300,22 @@ data class PredicateAccessPermissions(val predicateName: MangledName, val args: 
     override val type: TypeEmbedding = BooleanTypeEmbedding
     override fun toViper(ctx: LinearizationContext): Exp =
         Exp.PredicateAccess(predicateName, args.map { it.toViper(ctx) }, ctx.source.asPosition)
+
+    override val subexpressions: List<ExpEmbedding>
+        get() = args
 }
 
-data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : DirectResultExpEmbedding {
+data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpEmbedding {
     override val type: TypeEmbedding = lhs.type
 
-    override fun toViper(ctx: LinearizationContext): Exp {
-        // TODO: this can be done more efficiently by using `toViperStoringIn` when `lhsViper` is an `Exp.LocalVar`.
+    override fun toViperSideEffects(ctx: LinearizationContext) {
         val lhsViper = lhs.toViper(ctx)
-        val rhsViper = rhs.toViper(ctx)
-        ctx.addStatement(Stmt.assign(lhsViper, rhsViper))
-        return lhsViper
+        if (lhsViper is Exp.LocalVar) {
+            rhs.withType(lhs.type).toViperStoringIn(lhsViper, ctx)
+        } else {
+            val rhsViper = rhs.withType(lhs.type).toViper(ctx)
+            ctx.addStatement(Stmt.assign(lhsViper, rhsViper))
+        }
     }
 }
 

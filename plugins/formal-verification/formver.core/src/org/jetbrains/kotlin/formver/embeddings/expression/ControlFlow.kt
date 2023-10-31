@@ -30,7 +30,7 @@ data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
         if (exps.isEmpty()) return
 
         for (exp in exps.take(exps.size - 1)) {
-            exp.toViper(ctx)
+            exp.toViperUnusedResult(ctx)
         }
         exps.last().toViperMaybeStoringIn(result, ctx)
     }
@@ -60,7 +60,7 @@ data class While(
         ctx.addLabel(continueLabel)
         condition.toViperStoringIn(condVar, ctx)
         val bodyBlock = ctx.asBlock {
-            body.toViper(this)
+            body.toViperUnusedResult(this)
             condition.toViperStoringIn(condVar, this)
         }
         ctx.addStatement(
@@ -71,13 +71,7 @@ data class While(
                 ctx.source.asPosition
             )
         )
-    }
-}
-
-data class Return(val returnVariable: VariableEmbedding, val returnTarget: Label, val returnValue: ExpEmbedding) : NoResultExpEmbedding {
-    override fun toViperUnusedResult(ctx: LinearizationContext) {
-        returnValue.toViperStoringIn(returnVariable.toLocalVarUse(), ctx)
-        ctx.addStatement(returnTarget.toGoto(ctx.source.asPosition))
+        ctx.addLabel(breakLabel)
     }
 }
 
@@ -110,7 +104,7 @@ data class GotoChainNode(val label: Label?, val exp: ExpEmbedding, val next: Lab
     }
 }
 
-data class NonDeterministically(val exp: ExpEmbedding): UnitResultExpEmbedding {
+data class NonDeterministically(val exp: ExpEmbedding) : UnitResultExpEmbedding {
     override fun toViperSideEffects(ctx: LinearizationContext) {
         val choice = ctx.freshAnonVar(BooleanTypeEmbedding)
         val expViper = ctx.asBlock { exp.toViper(this) }
@@ -127,7 +121,13 @@ data class MethodCall(val method: NamedFunctionSignature, val args: List<ExpEmbe
     }
 }
 
-data class InvokeFunctionObject(val receiver: ExpEmbedding, val args: List<ExpEmbedding>, override val type: TypeEmbedding) : DirectResultExpEmbedding {
+/**
+ * We need to generate a fresh variable here since we want to havoc the result.
+ *
+ * TODO: do this with an explicit havoc in `toViperMaybeStoringIn`.
+ */
+data class InvokeFunctionObject(val receiver: ExpEmbedding, val args: List<ExpEmbedding>, override val type: TypeEmbedding) :
+    OnlyToViperExpEmbedding {
     override fun toViper(ctx: LinearizationContext): Exp {
         val receiverViper = receiver.toViper(ctx)
         for (arg in args) arg.toViperUnusedResult(ctx)
@@ -139,13 +139,17 @@ data class InvokeFunctionObject(val receiver: ExpEmbedding, val args: List<ExpEm
                 listOf(receiverViper),
                 listOf(),
                 ctx.source.asPosition
-            ))
+            )
+        )
         return variable
     }
 }
 
-data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: ExpEmbedding, val returnLabel: Label) : UnitResultExpEmbedding {
-    override fun toViperSideEffects(ctx: LinearizationContext) {
+data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: ExpEmbedding, val returnLabel: Label) :
+    OptionalResultExpEmbedding {
+    override val type: TypeEmbedding = body.type
+
+    override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
         signature?.formalArgs?.forEach { arg ->
             // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
             // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
@@ -154,7 +158,7 @@ data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: Exp
                 ctx.addStatement(Stmt.Inhale(invariant.pureToViper()))
             }
         }
-        body.toViperUnusedResult(ctx)
+        body.toViperMaybeStoringIn(result, ctx)
         ctx.addLabel(returnLabel)
     }
 }

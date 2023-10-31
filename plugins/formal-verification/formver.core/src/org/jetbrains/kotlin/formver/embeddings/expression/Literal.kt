@@ -19,13 +19,11 @@ data object UnitLit : UnitResultExpEmbedding {
 
 data class IntLit(val value: Int) : PureExpEmbedding {
     override val type = IntTypeEmbedding
-
     override fun toViper(source: KtSourceElement?): Exp = Exp.IntLit(value, source.asPosition)
 }
 
 data class BooleanLit(val value: Boolean, override val sourceRole: SourceRole? = null) : PureExpEmbedding {
     override val type = BooleanTypeEmbedding
-
     override fun toViper(source: KtSourceElement?): Exp = Exp.BoolLit(value, source.asPosition, sourceRole.asInfo)
 }
 

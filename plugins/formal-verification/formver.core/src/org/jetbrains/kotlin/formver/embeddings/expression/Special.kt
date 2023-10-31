@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.NothingTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.callables.DuplicableFunction
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -53,12 +50,4 @@ data class ExhaleDirect(val exp: ExpEmbedding) : UnitResultExpEmbedding {
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addStatement(Stmt.Exhale(exp.toViper(ctx)))
     }
-}
-
-data class DuplicableFunctionCall(val exp: ExpEmbedding) : DirectResultExpEmbedding {
-    override val type: TypeEmbedding = BooleanTypeEmbedding
-    override fun toViper(ctx: LinearizationContext): Exp = DuplicableFunction.toFuncApp(
-        listOf(exp.toViper(ctx)),
-        ctx.source.asPosition
-    )
 }
