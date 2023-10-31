@@ -44798,6 +44798,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("qualifierEnumEntryOrCompanionMemberCase2.kt")
+                public void testQualifierEnumEntryOrCompanionMemberCase2() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/qualifierEnumEntryOrCompanionMemberCase2.kt");
+                }
+
+                @Test
                 @TestMetadata("qualifierForStaticCase.kt")
                 public void testQualifierForStaticCase() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/resolve/ambiguousTypeReferences/qualifierForStaticCase.kt");
