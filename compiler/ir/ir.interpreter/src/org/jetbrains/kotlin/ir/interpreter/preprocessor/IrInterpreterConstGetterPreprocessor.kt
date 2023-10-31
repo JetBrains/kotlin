@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.interpreter.preprocessor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.ir.interpreter.correspondingProperty
 import org.jetbrains.kotlin.ir.interpreter.isConst
 import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.types.classOrFail
-import org.jetbrains.kotlin.ir.util.defaultType
 
 class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
     override fun visitFunction(declaration: IrFunction, data: IrInterpreterPreprocessorData): IrStatement {
@@ -48,15 +46,10 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor {
 
         transformChildren(this@IrInterpreterConstGetterPreprocessor, data)
 
+        val getObject = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, receiver.type, receiver.type.classOrFail)
         when (this) {
-            is IrCall -> {
-                val declaringClass = this.symbol.owner.parent
-                require(declaringClass is IrClass)
-                this.dispatchReceiver =
-                    IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, declaringClass.defaultType, declaringClass.symbol)
-            }
-            is IrGetField -> this.receiver =
-                IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, receiver.type, receiver.type.classOrFail)
+            is IrCall -> this.dispatchReceiver = getObject
+            is IrGetField -> this.receiver = getObject
         }
 
         return if (receiver.shouldDropConstReceiver()) {
