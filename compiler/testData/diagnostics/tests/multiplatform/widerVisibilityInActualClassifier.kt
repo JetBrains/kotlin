@@ -1,7 +1,8 @@
 // ISSUE: KT-59355
 
 // MODULE: common
-internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Some<!> {
+// TARGET_PLATFORM: Common
+internal expect open class Some {
     protected class ProtectedNested
     internal class InternalNested
 
@@ -10,7 +11,7 @@ internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Some<!> {
     protected fun protectedFun()
 }
 
-internal expect open class <!NO_ACTUAL_FOR_EXPECT!>Other<!> {
+internal expect open class Other {
     protected class ProtectedNested
     internal class InternalNested
 }
