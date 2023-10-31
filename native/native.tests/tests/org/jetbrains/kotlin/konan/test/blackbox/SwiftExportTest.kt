@@ -55,7 +55,13 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
         val testDir = File("native/native.tests/testData/SwiftExport/extensions")
         runTest(testDir.absolutePath)
     }
-    
+
+    @Test
+    fun `function and property with same name should not result in conflict`() {
+        val testDir = File("native/native.tests/testData/SwiftExport/conflicts")
+        runTest(testDir.absolutePath)
+    }
+
     @Test
     fun unknownSwiftType() {
         val testDir = File("native/native.tests/testData/SwiftExport/unknown_swift_type")

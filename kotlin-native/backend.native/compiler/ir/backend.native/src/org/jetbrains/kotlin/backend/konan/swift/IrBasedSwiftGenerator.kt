@@ -556,6 +556,51 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
     fun buildSwiftBridgingHeader() = CCode.build {
         CCode.File(result.cImports + pragma("clang assume_nonnull begin") + result.cDeclarations + pragma("clang assume_nonnull end"))
     }
+
+    fun preventFunctionAndVariableNameClashes() {
+
+        fun List<SwiftCode.Declaration>.fixFunctionAndPropertyConflict() =
+                filterIsInstance<SwiftCode.Declaration.Function>()
+                        .filter { it !is SwiftCode.Declaration.Init }
+                        .filter { it.parameters.isEmpty() }
+                        .forEach(SwiftCode.Declaration.Function::addDummyParam)
+
+        fun <T> IrBasedSwiftVisitor.Namespace<T>.collectPackages(): List<IrBasedSwiftVisitor.Namespace<T>> = children.values.filter { it.kind == IrBasedSwiftVisitor.Namespace.Kind.PACKAGE }
+        fun <T> IrBasedSwiftVisitor.Namespace<T>.collectClasses(): List<SwiftCode.Declaration.Class> = elements.filterIsInstance<SwiftCode.Declaration.Class>()
+        fun SwiftCode.Declaration.Class.fixFunctionAndPropertiesConflict() = block.elements.fixFunctionAndPropertyConflict()
+        fun SwiftCode.Declaration.Class.recursivelyFixFunctionAndPropertyConflict(currentLvl: IrBasedSwiftVisitor.Namespace<SwiftCode.Declaration>) {
+            fixFunctionAndPropertiesConflict()
+
+            val nextLvl = currentLvl.children[name] ?: return
+            val innerClasses = nextLvl.collectClasses()
+            innerClasses.forEach {
+                it.recursivelyFixFunctionAndPropertyConflict(nextLvl)
+            }
+        }
+
+        fun IrBasedSwiftVisitor.Namespace<SwiftCode.Declaration>.recursivelyFixConflicts() {
+            elements.fixFunctionAndPropertyConflict()
+            val topClasses = collectClasses()
+            topClasses.forEach { it.recursivelyFixFunctionAndPropertyConflict(this) }
+
+            collectPackages().forEach(IrBasedSwiftVisitor.Namespace<SwiftCode.Declaration>::recursivelyFixConflicts)
+        }
+
+        val topPackage = result.swiftDeclarations
+        topPackage.recursivelyFixConflicts()
+    }
+}
+
+private fun SwiftCode.Declaration.Function.addDummyParam() {
+    val newParams = parameters.toMutableList()
+    newParams.add(
+            0,
+            SwiftCode.Declaration.Function.Parameter(
+                    null,
+                    "dummy",
+                    SwiftCode.Type.Named("Void"),
+                    SwiftCode.Expression.Identifier("()")))
+    applyNewParameters(newParams)
 }
 
 private val IrType.isRegularClass: Boolean

@@ -137,7 +137,7 @@ sealed interface SwiftCode {
         sealed interface Function : Declaration {
             val keyword: String
             val name: String? get() = null
-            val parameters: List<Parameter> get() = emptyList()
+            val parameters: List<Parameter>
             val returnType: Type? get() = null
             val genericTypes: List<GenericParameter> get() = emptyList()
             val genericTypeConstraints: List<GenericConstraint> get() = emptyList()
@@ -173,11 +173,13 @@ sealed interface SwiftCode {
                     genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { " $it" },
                     code?.renderAsBlock()?.let { " $it" }
             ).joinToString(separator = "")
+
+            fun applyNewParameters(newParameters: List<Parameter>)
         }
 
         data class FreestandingFunction(
                 override val name: String,
-                override val parameters: List<Function.Parameter> = emptyList(),
+                override var parameters: List<Function.Parameter> = listOf(),
                 override val returnType: Type? = null,
                 override val genericTypes: List<GenericParameter> = emptyList(),
                 override val genericTypeConstraints: List<GenericConstraint> = emptyList(),
@@ -194,11 +196,15 @@ sealed interface SwiftCode {
                         "async".takeIf { isAsync },
                         "throws".takeIf { isThrowing },
                 )
+
+            override fun applyNewParameters(newParameters: List<Function.Parameter>) {
+                parameters = newParameters
+            }
         }
 
         data class Method(
                 override val name: String,
-                override val parameters: List<Function.Parameter> = emptyList(),
+                override var parameters: List<Function.Parameter> = listOf(),
                 override val returnType: Type? = null,
                 override val genericTypes: List<GenericParameter> = emptyList(),
                 override val genericTypeConstraints: List<GenericConstraint> = emptyList(),
@@ -227,10 +233,14 @@ sealed interface SwiftCode {
                         "async".takeIf { isAsync },
                         "throws".takeIf { isThrowing },
                 )
+
+            override fun applyNewParameters(newParameters: List<Function.Parameter>) {
+                parameters = newParameters
+            }
         }
 
         data class Init(
-                override val parameters: List<Function.Parameter> = emptyList(),
+                override var parameters: List<Function.Parameter> = listOf(),
                 override val genericTypes: List<GenericParameter> = emptyList(),
                 override val genericTypeConstraints: List<GenericConstraint> = emptyList(),
                 val isMutating: Boolean = false,
@@ -262,6 +272,10 @@ sealed interface SwiftCode {
                         "async".takeIf { isAsync },
                         "throws".takeIf { isThrowing },
                 )
+
+            override fun applyNewParameters(newParameters: List<Function.Parameter>) {
+                parameters = newParameters
+            }
         }
 
         sealed interface Variable : Declaration {
@@ -1105,7 +1119,7 @@ fun SwiftCode.Builder.`class`(
         inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
         genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
         attributes: List<SwiftCode.Attribute> = emptyList(),
-        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.PUBLIC,
         block: SwiftCode.ListBuilder<SwiftCode.Declaration>.() -> Unit
 ) = SwiftCode.Declaration.Class(
         name,

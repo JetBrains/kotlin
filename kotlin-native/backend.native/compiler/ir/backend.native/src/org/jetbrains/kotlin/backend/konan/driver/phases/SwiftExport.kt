@@ -32,6 +32,7 @@ internal val SwiftGenerationPhase = createSimpleNamedCompilerPhase<PhaseContext,
 ) { _, input ->
     val swiftGenerator = IrBasedSwiftGenerator()
     swiftGenerator.visitModuleFragment(input.module)
+    swiftGenerator.preventFunctionAndVariableNameClashes()
     SwiftGenerationOutput(
             input.module.name.asStringStripSpecialMarkers(),
             swiftGenerator::buildSwiftShimFile,
