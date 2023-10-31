@@ -3060,6 +3060,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("implicitTypeWithInaccessibleAnnotation.kt")
+                public void testImplicitTypeWithInaccessibleAnnotation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/typeUse/implicitTypeWithInaccessibleAnnotation.kt");
+                }
+
+                @Test
                 @TestMetadata("kt19455.kt")
                 public void testKt19455() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/typeUse/kt19455.kt");

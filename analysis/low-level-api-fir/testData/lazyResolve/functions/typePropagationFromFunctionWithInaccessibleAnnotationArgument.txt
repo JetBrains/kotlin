@@ -1,0 +1,254 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(RAW_FIR)] usafe.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public? final? [ResolvedTo(TYPES)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public final [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(RAW_FIR)] declaration.kt
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public? final? [ResolvedTo(RAW_FIR)] fun withType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int> { LAZY_BLOCK }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public final [ResolvedTo(CONTRACTS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] declaration.kt
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.number] number: Int): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val number: Int = R|<local>/number|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): Int
+
+    }
+    private final? const [ResolvedTo(RAW_FIR)] val privateConstant: <implicit> = LAZY_EXPRESSION
+        private [ResolvedTo(RAW_FIR)] get(): <implicit>
+    internal final? const [ResolvedTo(RAW_FIR)] val internalConstant: <implicit> = LAZY_EXPRESSION
+        internal [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(internalConstant#)  kotlin/collections/List<@R|Anno|(privateConstant#)  kotlin/Int>| {
+        ^implicitType R|/withType|()
+    }
+
+ANNOTATION_ARGUMENTS:
+FILE: [ResolvedTo(IMPORTS)] declaration.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val number: R|kotlin/Int| = R|<local>/number|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstant: R|kotlin/Int| = Int(0)
+        private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    internal final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val internalConstant: R|kotlin/Int| = Int(1)
+        internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/Int>| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/Int>| {
+        ^implicitType R|/withType|()
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] declaration.kt
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.number] number: R|kotlin/Int|): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val number: R|kotlin/Int| = R|<local>/number|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
+
+    }
+    private final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val privateConstant: R|kotlin/Int| = Int(0)
+        private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    internal final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val internalConstant: R|kotlin/Int| = Int(1)
+        internal [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(CONTRACTS)] fun withType(): R|@R|Anno|(number = R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/Int>| {
+    }
+
+FILE: [ResolvedTo(IMPORTS)] usafe.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/Int>| {
+        ^implicitType R|/withType|()
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] usafe.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun implicitType(): R|@R|Anno|(number = R|/internalConstant<HIDDEN: /internalConstant is invisible>#|)  kotlin/collections/List<@R|Anno|(number = R|/privateConstant<HIDDEN: /privateConstant is invisible>#|)  kotlin/Int>| {
+        ^implicitType R|/withType|()
+    }
