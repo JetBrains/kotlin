@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 
 data class WithPosition(override val inner: ExpEmbedding, val source: KtSourceElement) : PassthroughExpEmbedding {
@@ -14,5 +15,9 @@ data class WithPosition(override val inner: ExpEmbedding, val source: KtSourceEl
 
     override fun ignoringMetaNodes(): ExpEmbedding = inner.ignoringMetaNodes()
     override fun ignoringCastsAndMetaNodes(): ExpEmbedding = inner.ignoringCastsAndMetaNodes()
+
+    // We ignore position information in the debug view.
+    override val debugTreeView: TreeView
+        get() = inner.debugTreeView
 }
 

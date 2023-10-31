@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.asData
+import org.jetbrains.kotlin.formver.embeddings.expression.debug.PlaintextLeaf
+import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 
@@ -40,4 +42,7 @@ class LambdaExp(
         val paramNames = function.valueParameters.map { it.name }
         return ctx.insertInlineFunctionCall(signature, paramNames, args, inlineBody, parentCtx, ctx.signature.sourceName)
     }
+
+    override val debugTreeView: TreeView
+        get() = PlaintextLeaf("Lambda")
 }

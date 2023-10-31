@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.formver.domains.TypeDomain
 import org.jetbrains.kotlin.formver.domains.TypeOfDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.expression.debug.*
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
@@ -63,6 +64,8 @@ sealed interface ExpEmbedding {
     // TODO: Come up with a better way to solve the problem these `ignoring` functions solve...
     // Probably either virtual functions or a visitor.
     fun ignoringCastsAndMetaNodes(): ExpEmbedding = this
+
+    val debugTreeView: TreeView
 }
 
 /**
@@ -96,12 +99,44 @@ sealed interface DefaultUnusedResultExpEmbedding : ExpEmbedding {
 sealed interface OnlyToViperExpEmbedding : DefaultStoringInExpEmbedding, DefaultMaybeStoringInExpEmbedding, DefaultUnusedResultExpEmbedding
 
 /**
+ * Default `debugTreeView` implementation that collects trees from a number of possible formats.
+ *
+ * This covers most use-cases.
+ * We don't give `debugAnonymousSubexpressions` a default value since not specifying it explicitly is a good sign we just forgot
+ * to implement things for that class.
+ */
+sealed interface DefaultDebugTreeViewImplementation : ExpEmbedding {
+    val debugName: String
+        get() = javaClass.simpleName
+    val debugAnonymousSubexpressions: List<ExpEmbedding>
+    val debugNamedSubexpressions: Map<String, ExpEmbedding>
+        get() = mapOf()
+    val debugExtraSubtrees: List<TreeView>
+        get() = listOf()
+    override val debugTreeView: TreeView
+        get() {
+            val anonymousSubtrees = debugAnonymousSubexpressions.map { it.debugTreeView }
+            val namedSubtrees =
+                debugNamedSubexpressions.map {
+                    DesignatedNode(
+                        it.key,
+                        it.value.debugTreeView
+                    )
+                }
+            val allSubtrees = anonymousSubtrees + namedSubtrees + debugExtraSubtrees
+            return if (allSubtrees.isNotEmpty()) NamedBranchingNode(debugName, allSubtrees)
+            else PlaintextLeaf(debugName)
+        }
+}
+
+/**
  * `ExpEmbedding` that produces a result as an expression.
  *
  * The best possible implementation of `toViperStoringIn` simply assigns to the result; we cannot
  * propagate the variable in any way.
  */
-sealed interface DirectResultExpEmbedding : DefaultMaybeStoringInExpEmbedding, DefaultStoringInExpEmbedding {
+sealed interface DirectResultExpEmbedding : DefaultMaybeStoringInExpEmbedding, DefaultStoringInExpEmbedding,
+    DefaultDebugTreeViewImplementation {
     /**
      * When the result is unused, we don't want to produce any expression, but we still want to evaluate the subexpressions.
      */
@@ -112,6 +147,9 @@ sealed interface DirectResultExpEmbedding : DefaultMaybeStoringInExpEmbedding, D
             exp.toViperUnusedResult(ctx)
         }
     }
+
+    override val debugAnonymousSubexpressions: List<ExpEmbedding>
+        get() = subexpressions
 }
 
 sealed interface NullaryDirectResultExpEmbedding : DirectResultExpEmbedding {
@@ -280,19 +318,25 @@ data class Cast(override val inner: ExpEmbedding, override val type: TypeEmbeddi
 data class FieldAccess(override val inner: ExpEmbedding, val field: FieldEmbedding) : UnaryDirectResultExpEmbedding {
     override val type: TypeEmbedding = field.type
     override fun toViper(ctx: LinearizationContext) = Exp.FieldAccess(inner.toViper(ctx), field.toViper(), ctx.source.asPosition)
+
+    // field collides with the field context-sensitive keyword.
+    override val debugExtraSubtrees: List<TreeView>
+        get() = listOf(this.field.debugTreeView)
 }
 
-data class FieldAccessPermissions(val exp: ExpEmbedding, val field: FieldEmbedding, val perm: PermExp) : DirectResultExpEmbedding {
+data class FieldAccessPermissions(override val inner: ExpEmbedding, val field: FieldEmbedding, val perm: PermExp) :
+    UnaryDirectResultExpEmbedding {
     // We consider access permissions to have type Boolean, though this is a bit questionable.
     override val type: TypeEmbedding = BooleanTypeEmbedding
 
     override fun toViper(ctx: LinearizationContext): Exp {
-        val expViper = exp.toViper(ctx)
+        val expViper = inner.toViper(ctx)
         return expViper.fieldAccessPredicate(field.toViper(), perm, ctx.source.asPosition)
     }
 
-    override val subexpressions: List<ExpEmbedding>
-        get() = listOf(exp)
+    // field collides with the field context-sensitive keyword.
+    override val debugExtraSubtrees: List<TreeView>
+        get() = listOf(this.field.debugTreeView)
 }
 
 // Ideally we would use the predicate, but due to the possibility of recursion this is inconvenient at present.
@@ -303,9 +347,15 @@ data class PredicateAccessPermissions(val predicateName: MangledName, val args: 
 
     override val subexpressions: List<ExpEmbedding>
         get() = args
+
+    override val debugTreeView: TreeView
+        get() = NamedBranchingNode("PredicateAccess", buildList {
+            add(PlaintextLeaf(predicateName.mangled).withDesignation("name"))
+            addAll(args.map { it.debugTreeView })
+        })
 }
 
-data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpEmbedding {
+data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override val type: TypeEmbedding = lhs.type
 
     override fun toViperSideEffects(ctx: LinearizationContext) {
@@ -317,13 +367,23 @@ data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpE
             ctx.addStatement(Stmt.assign(lhsViper, rhsViper))
         }
     }
+
+    override val debugAnonymousSubexpressions: List<ExpEmbedding>
+        get() = listOf(lhs, rhs)
 }
 
-data class Declare(val variable: VariableEmbedding, val initializer: ExpEmbedding?) : UnitResultExpEmbedding {
+data class Declare(val variable: VariableEmbedding, val initializer: ExpEmbedding?) : UnitResultExpEmbedding,
+    DefaultDebugTreeViewImplementation {
     override val type: TypeEmbedding = UnitTypeEmbedding
 
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addDeclaration(variable.toLocalVarDecl())
         initializer?.toViperStoringIn(variable.toLocalVarUse(), ctx)
     }
+
+    override val debugAnonymousSubexpressions: List<ExpEmbedding>
+        get() = listOf()
+
+    override val debugExtraSubtrees: List<TreeView>
+        get() = listOfNotNull(variable.debugTreeView, initializer?.debugTreeView)
 }

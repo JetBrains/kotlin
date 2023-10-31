@@ -21,17 +21,23 @@ data class ExpWrapper(val value: Exp, override val type: TypeEmbedding) : PureEx
     override fun toViper(source: KtSourceElement?): Exp = value
 }
 
-data object ErrorExp : NoResultExpEmbedding {
+data object ErrorExp : NoResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override val type: TypeEmbedding = NothingTypeEmbedding
     override fun toViperUnusedResult(ctx: LinearizationContext) {
         ctx.addStatement(Stmt.Inhale(Exp.BoolLit(false)))
     }
+
+    override val debugAnonymousSubexpressions: List<ExpEmbedding>
+        get() = listOf()
 }
 
-data class Assert(val exp: ExpEmbedding) : UnitResultExpEmbedding {
+data class Assert(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addStatement(Stmt.Assert(exp.toViper(ctx)))
     }
+
+    override val debugAnonymousSubexpressions: List<ExpEmbedding>
+        get() = listOf(exp)
 }
 
 /**
@@ -40,14 +46,20 @@ data class Assert(val exp: ExpEmbedding) : UnitResultExpEmbedding {
  * This can cause all kinds of issues with statement ordering, so it's more of a solution for porting legacy stuff than something
  * we should be adding more of going forward.
  */
-data class InhaleDirect(val exp: ExpEmbedding) : UnitResultExpEmbedding {
+data class InhaleDirect(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addStatement(Stmt.Inhale(exp.toViper(ctx)))
     }
+
+    override val debugAnonymousSubexpressions: List<ExpEmbedding>
+        get() = listOf(exp)
 }
 
-data class ExhaleDirect(val exp: ExpEmbedding) : UnitResultExpEmbedding {
+data class ExhaleDirect(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addStatement(Stmt.Exhale(exp.toViper(ctx)))
     }
+
+    override val debugAnonymousSubexpressions: List<ExpEmbedding>
+        get() = listOf(exp)
 }
