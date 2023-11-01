@@ -78,7 +78,7 @@ object AbstractExpectActualMatcher {
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassSymbol: RegularClassSymbolMarker,
         context: ExpectActualMatchingContext<*>,
-    ) = with(context) {
+    ): Unit = with(context) {
         val expectTypeParameterSymbols = expectClassSymbol.typeParameters
         val actualTypeParameterSymbols = actualClassSymbol.typeParameters
         val substitutor = createExpectActualTypeParameterSubstitutor(
