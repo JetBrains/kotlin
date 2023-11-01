@@ -1,5 +1,5 @@
 // INFERENCE_HELPERS
-// ISSUE: KT-44802
+// ISSUES: KT-44802, KT-56744
 // FILE: a.kt
 
 package foo

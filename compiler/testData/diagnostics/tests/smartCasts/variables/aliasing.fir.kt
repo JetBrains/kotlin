@@ -1,3 +1,4 @@
+// ISSUE: KT-56744
 // SKIP_TXT
 
 fun test() {

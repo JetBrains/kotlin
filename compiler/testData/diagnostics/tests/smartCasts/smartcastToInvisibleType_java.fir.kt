@@ -1,4 +1,4 @@
-// ISSUE: KT-44802
+// ISSUES: KT-44802, KT-56744
 // INFERENCE_HELPERS
 
 // FILE: foo/PackagePrivateInterface.java
