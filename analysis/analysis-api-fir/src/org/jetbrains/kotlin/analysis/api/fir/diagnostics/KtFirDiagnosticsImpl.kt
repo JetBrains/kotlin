@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -3501,7 +3501,7 @@ internal class ExpectedConditionImpl(
 ) : KtAbstractFirDiagnostic<KtWhenCondition>(firDiagnostic, token), KtFirDiagnostic.ExpectedCondition
 
 internal class NoElseInWhenImpl(
-    override val missingWhenCases: List<WhenMissingCase>,
+    override val missingWhenCases: List<List<WhenMissingCaseFor>>,
     override val description: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
@@ -3509,7 +3509,7 @@ internal class NoElseInWhenImpl(
 
 internal class NonExhaustiveWhenStatementImpl(
     override val type: String,
-    override val missingWhenCases: List<WhenMissingCase>,
+    override val missingWhenCases: List<List<WhenMissingCaseFor>>,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtWhenExpression>(firDiagnostic, token), KtFirDiagnostic.NonExhaustiveWhenStatement

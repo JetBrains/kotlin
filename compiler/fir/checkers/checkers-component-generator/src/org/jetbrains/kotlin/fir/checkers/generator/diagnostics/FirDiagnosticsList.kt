@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.ExtendedWhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -1445,12 +1445,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val WHEN_EXPRESSIONS by object : DiagnosticGroup("When expressions") {
         val EXPECTED_CONDITION by error<KtWhenCondition>()
         val NO_ELSE_IN_WHEN by error<KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
-            parameter<List<WhenMissingCase>>("missingWhenCases")
+            parameter<List<ExtendedWhenMissingCase>>("missingWhenCases")
             parameter<String>("description")
         }
         val NON_EXHAUSTIVE_WHEN_STATEMENT by warning<KtWhenExpression>(PositioningStrategy.WHEN_EXPRESSION) {
             parameter<String>("type")
-            parameter<List<WhenMissingCase>>("missingWhenCases")
+            parameter<List<ExtendedWhenMissingCase>>("missingWhenCases")
         }
         val INVALID_IF_AS_EXPRESSION by error<KtIfExpression>(PositioningStrategy.IF_EXPRESSION)
         val ELSE_MISPLACED_IN_WHEN by error<KtWhenEntry>(PositioningStrategy.ELSE_ENTRY)

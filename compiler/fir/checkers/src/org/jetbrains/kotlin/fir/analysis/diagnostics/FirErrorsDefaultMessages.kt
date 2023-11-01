@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.AMBI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLABLES_FQ_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.EXTENDED_WHEN_MISSING_CASES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FOR_OPTIONAL_OPERATOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FQ_NAMES_IN_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FUNCTIONAL_TYPE_KINDS
@@ -2200,13 +2201,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // When expressions
         map.put(EXPECTED_CONDITION, "Condition of type 'Boolean' expected.")
-        map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive. Add the necessary {0}{1}", WHEN_MISSING_CASES, STRING)
+        map.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive. Add the necessary {0}{1}", EXTENDED_WHEN_MISSING_CASES, STRING)
         map.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches when used as an expression.")
         map.put(
             NON_EXHAUSTIVE_WHEN_STATEMENT,
             "Non-exhaustive ''when'' statements on ''{0}'' will be prohibited in 1.7. Add ''{1}''.",
             TO_STRING,
-            WHEN_MISSING_CASES
+            EXTENDED_WHEN_MISSING_CASES
         )
         map.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a 'when' expression.")
         map.put(

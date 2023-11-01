@@ -136,6 +136,11 @@ abstract class FirDataFlowAnalyzer(
         return variable.stability to types.toMutableList()
     }
 
+    fun getVariableFromSmartcastInfo(expression: FirExpression): RealVariable? {
+        val flow = graphBuilder.lastNode.flow
+        return variableStorage.getRealVariableWithoutUnwrappingAlias(flow, expression)
+    }
+
     fun returnExpressionsOfAnonymousFunctionOrNull(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo>? =
         graphBuilder.returnExpressionsOfAnonymousFunction(function)
 

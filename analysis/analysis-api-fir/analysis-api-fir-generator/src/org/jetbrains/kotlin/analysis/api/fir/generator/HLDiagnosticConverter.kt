@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -364,6 +365,7 @@ internal object FirToKtConversionCreator {
         KtModifierKeywordToken::class,
         Visibility::class,
         EffectiveVisibility::class,
+        WhenMissingCaseFor::class,
         WhenMissingCase::class,
         ForbiddenNamedArgumentsTarget::class,
         LanguageFeature::class,

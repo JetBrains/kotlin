@@ -5,11 +5,20 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
+typealias ExtendedWhenMissingCase = List<WhenMissingCaseFor>
+
+data class WhenMissingCaseFor(
+    val expression: KtSourceElement?,
+    val missingCase: WhenMissingCase
+)
+
 sealed class WhenMissingCase {
     abstract val branchConditionText: String
+    open val reportAsEquality: Boolean = false
 
     object Unknown : WhenMissingCase() {
         override fun toString(): String = "unknown"
@@ -29,6 +38,11 @@ sealed class WhenMissingCase {
 
     object NullIsMissing : WhenMissingCase() {
         override val branchConditionText: String = "null"
+        override val reportAsEquality: Boolean = true
+    }
+
+    object NotNullIsMissing : WhenMissingCase() {
+        override val branchConditionText: String = "!= null"
     }
 
     sealed class BooleanIsMissing(val value: Boolean) : WhenMissingCase() {
@@ -36,6 +50,7 @@ sealed class WhenMissingCase {
         object FalseIsMissing : BooleanIsMissing(false)
 
         override val branchConditionText: String = value.toString()
+        override val reportAsEquality: Boolean = true
     }
 
     class IsTypeCheckIsMissing(val classId: ClassId, val isSingleton: Boolean) : WhenMissingCase() {
@@ -43,6 +58,8 @@ sealed class WhenMissingCase {
             val fqName = classId.asSingleFqName().toString()
             if (isSingleton) fqName else "is $fqName"
         }
+
+        override val reportAsEquality: Boolean = isSingleton
 
         override fun toString(): String {
             val className = classId.shortClassName
@@ -53,6 +70,7 @@ sealed class WhenMissingCase {
 
     class EnumCheckIsMissing(val callableId: CallableId) : WhenMissingCase() {
         override val branchConditionText: String = callableId.asSingleFqName().toString()
+        override val reportAsEquality: Boolean = true
 
         override fun toString(): String {
             return callableId.callableName.identifier

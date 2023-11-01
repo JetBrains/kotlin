@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.diagnostics.ExtendedWhenMissingCase
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.ContextIndependentParameterRenderer
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.renderReadableWithFqNames
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.text
 
 object FirDiagnosticRenderers {
     @OptIn(SymbolInternals::class)
@@ -166,6 +168,22 @@ object FirDiagnosticRenderers {
     }
 
     private const val WHEN_MISSING_LIMIT = 7
+
+    val EXTENDED_WHEN_MISSING_CASES = Renderer { missingCases: List<ExtendedWhenMissingCase> ->
+        if (missingCases.singleOrNull()?.singleOrNull()?.missingCase == WhenMissingCase.Unknown) {
+            "'else' branch"
+        } else {
+            val list = missingCases.joinToString(", ", limit = WHEN_MISSING_LIMIT) { missingCase ->
+                missingCase.joinToString(separator = " && ") { (expression, component) ->
+                    val subject = expression?.let { "${it.text} " } ?: ""
+                    val separator = if (expression != null && component.reportAsEquality) "== " else ""
+                    "$subject$separator$component"
+                }.let { "'$it'" }
+            }
+            val branches = if (missingCases.size > 1) "branches" else "branch"
+            "$list $branches or 'else' branch instead"
+        }
+    }
 
     val WHEN_MISSING_CASES = Renderer { missingCases: List<WhenMissingCase> ->
         if (missingCases.singleOrNull() == WhenMissingCase.Unknown) {

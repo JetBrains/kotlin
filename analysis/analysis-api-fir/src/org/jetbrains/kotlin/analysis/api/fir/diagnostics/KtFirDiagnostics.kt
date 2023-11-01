@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -2908,14 +2908,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     interface NoElseInWhen : KtFirDiagnostic<KtWhenExpression> {
         override val diagnosticClass get() = NoElseInWhen::class
-        val missingWhenCases: List<WhenMissingCase>
+        val missingWhenCases: List<List<WhenMissingCaseFor>>
         val description: String
     }
 
     interface NonExhaustiveWhenStatement : KtFirDiagnostic<KtWhenExpression> {
         override val diagnosticClass get() = NonExhaustiveWhenStatement::class
         val type: String
-        val missingWhenCases: List<WhenMissingCase>
+        val missingWhenCases: List<List<WhenMissingCaseFor>>
     }
 
     interface InvalidIfAsExpression : KtFirDiagnostic<KtIfExpression> {

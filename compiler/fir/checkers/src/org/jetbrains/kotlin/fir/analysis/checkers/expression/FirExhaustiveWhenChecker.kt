@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.ExtendedWhenMissingCase
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
@@ -85,7 +86,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
         reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, whenExpression.missingCases, description, context)
     }
 
-    private val FirWhenExpression.missingCases: List<WhenMissingCase>
+    private val FirWhenExpression.missingCases: List<ExtendedWhenMissingCase>
         get() = (exhaustivenessStatus as ExhaustivenessStatus.NotExhaustive).reasons
 
     private enum class AlgebraicTypeKind(val displayName: String) {

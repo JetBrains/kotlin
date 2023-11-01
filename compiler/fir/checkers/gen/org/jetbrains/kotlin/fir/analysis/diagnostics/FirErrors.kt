@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -730,8 +730,8 @@ object FirErrors {
 
     // When expressions
     val EXPECTED_CONDITION by error0<KtWhenCondition>()
-    val NO_ELSE_IN_WHEN by error2<KtWhenExpression, List<WhenMissingCase>, String>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
-    val NON_EXHAUSTIVE_WHEN_STATEMENT by warning2<KtWhenExpression, String, List<WhenMissingCase>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
+    val NO_ELSE_IN_WHEN by error2<KtWhenExpression, List<List<WhenMissingCaseFor>>, String>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
+    val NON_EXHAUSTIVE_WHEN_STATEMENT by warning2<KtWhenExpression, String, List<List<WhenMissingCaseFor>>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
     val INVALID_IF_AS_EXPRESSION by error0<KtIfExpression>(SourceElementPositioningStrategies.IF_EXPRESSION)
     val ELSE_MISPLACED_IN_WHEN by error0<KtWhenEntry>(SourceElementPositioningStrategies.ELSE_ENTRY)
     val ILLEGAL_DECLARATION_IN_WHEN_SUBJECT by error1<KtElement, String>()
