@@ -67,11 +67,15 @@ class VariableFixationFinder(
         postponedKtPrimitives: List<PostponedResolvedAtomMarker>,
         completionMode: ConstraintSystemCompletionMode,
         topLevelType: KotlinTypeMarker,
-    ): VariableForFixation? = c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType)
+        isRelevantToInputType: Boolean = false,
+    ): VariableForFixation? =
+        c.findTypeVariableForFixation(allTypeVariables, postponedKtPrimitives, completionMode, topLevelType, isRelevantToInputType)
 
     enum class TypeVariableFixationReadiness {
         FORBIDDEN,
         WITHOUT_PROPER_ARGUMENT_CONSTRAINT, // proper constraint from arguments -- not from upper bound for type parameters
+        SHALLOW_OUTER_TYPE_VARIABLE_DEPENDENCY,
+        DEEP_OUTER_TYPE_VARIABLE_DEPENDENCY,
         READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES,
         WITH_COMPLEX_DEPENDENCY, // if type variable T has constraint with non fixed type variable inside (non-top-level): T <: Foo<S>
         WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS, // proper trivial constraint from arguments, Nothing <: T
@@ -96,9 +100,11 @@ class VariableFixationFinder(
         !notFixedTypeVariables.contains(variable) || dependencyProvider.isVariableRelatedToTopLevelType(variable) ||
                 variableHasUnprocessedConstraintsInForks(variable) ->
             TypeVariableFixationReadiness.FORBIDDEN
+        dependencyProvider.isShallowlyRelatedToOuterType(variable) -> TypeVariableFixationReadiness.SHALLOW_OUTER_TYPE_VARIABLE_DEPENDENCY
         isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
+        dependencyProvider.isDeeplyRelatedToOuterType(variable) -> TypeVariableFixationReadiness.DEEP_OUTER_TYPE_VARIABLE_DEPENDENCY
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
         variableHasTrivialOrNonProperConstraints(variable) -> TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS
         dependencyProvider.isVariableRelatedToAnyOutputType(variable) -> TypeVariableFixationReadiness.RELATED_TO_ANY_OUTPUT_TYPE
@@ -162,6 +168,7 @@ class VariableFixationFinder(
         postponedArguments: List<PostponedResolvedAtomMarker>,
         completionMode: ConstraintSystemCompletionMode,
         topLevelType: KotlinTypeMarker,
+        isRelevantToInputType: Boolean,
     ): VariableForFixation? {
         if (allTypeVariables.isEmpty()) return null
 
@@ -174,7 +181,9 @@ class VariableFixationFinder(
 
         return when (getTypeVariableReadiness(candidate, dependencyProvider)) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
-            TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
+            TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT, TypeVariableFixationReadiness.SHALLOW_OUTER_TYPE_VARIABLE_DEPENDENCY -> VariableForFixation(candidate, false)
+            TypeVariableFixationReadiness.DEEP_OUTER_TYPE_VARIABLE_DEPENDENCY ->
+                VariableForFixation(candidate, hasProperConstraint = isRelevantToInputType)
             TypeVariableFixationReadiness.WITH_TRIVIAL_OR_NON_PROPER_CONSTRAINTS ->
                 VariableForFixation(candidate, hasProperConstraint = true, hasOnlyTrivialProperConstraint = true)
 
