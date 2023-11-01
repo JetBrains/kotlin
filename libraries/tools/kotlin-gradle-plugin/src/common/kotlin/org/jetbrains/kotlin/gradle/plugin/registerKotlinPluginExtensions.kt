@@ -109,6 +109,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, CInteropCommonizedCInteropApiElementsConfigurationsSetupAction)
             register(project, AddBuildListenerForXCodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
+            register(project, KotlinRegisterCompilationArchiveTasksExtension)
         }
     }
 
@@ -132,6 +133,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinCreateNativeCompileTasksSideEffect)
         register(project, KotlinCompilationProcessorSideEffect)
         register(project, KotlinCreateNativeCInteropTasksSideEffect)
+        register(project, KotlinCreateCompilationArchivesTask)
     }
 
     KotlinTargetArtifact.extensionPoint.apply {

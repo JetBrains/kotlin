@@ -27,6 +27,11 @@ internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : Kotl
     val configurations: KotlinCompilationConfigurationsContainer
     val friendPaths: Iterable<FileCollection>
     val processResourcesTaskName: String?
+
+    /**
+     * @see [org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationArchiveTasks]
+     */
+    val archiveTaskName: String?
 }
 
 internal val <T : KotlinCommonOptions> KotlinCompilation<T>.internal: InternalKotlinCompilation<T>

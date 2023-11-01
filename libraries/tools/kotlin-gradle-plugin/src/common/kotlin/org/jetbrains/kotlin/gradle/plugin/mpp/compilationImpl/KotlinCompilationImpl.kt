@@ -164,6 +164,8 @@ internal class KotlinCompilationImpl constructor(
 
     //endregion
 
+    override val archiveTaskName: String?
+        get() = project.kotlinCompilationArchiveTasksOrNull?.getArchiveTaskOrNull(this)?.name
 
     //region CompilerOptions & KotlinOptions
 
