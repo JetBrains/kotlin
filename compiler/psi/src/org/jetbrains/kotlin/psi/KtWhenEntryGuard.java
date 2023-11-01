@@ -22,7 +22,8 @@ public class KtWhenEntryGuard extends KtElementImpl {
     }
 
     @Nullable
-    public PsiElement getIfKeyword() {
-        return findChildByType(KtTokens.IF_KEYWORD);
+    public PsiElement getKeyword() {
+        PsiElement andAnd = findChildByType(KtTokens.ANDAND);
+        return andAnd == null ? findChildByType(KtTokens.IF_KEYWORD) : andAnd;
     }
 }

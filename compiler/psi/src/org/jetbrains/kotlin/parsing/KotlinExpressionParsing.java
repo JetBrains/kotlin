@@ -952,12 +952,12 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             parseWhenCondition();
             if (!at(COMMA)) break;
             advance(); // COMMA
-            if (at(ARROW) || at(IF_KEYWORD)) {
+            if (at(ARROW) || at(ANDAND)) {
                 break;
             }
         }
 
-        if(at(IF_KEYWORD)) {
+        if(at(ANDAND)) {
             parseWhenEntryGuard();
         }
 
