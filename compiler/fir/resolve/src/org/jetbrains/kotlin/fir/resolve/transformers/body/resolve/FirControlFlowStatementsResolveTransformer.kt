@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.isUnitOrFlexibleUnit
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.transformWhenSubjectExpressionUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
-import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer2
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -24,7 +24,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     FirPartialBodyResolveTransformer(transformer) {
 
     private val syntheticCallGenerator: FirSyntheticCallGenerator get() = components.syntheticCallGenerator
-    private val whenExhaustivenessTransformer = FirWhenExhaustivenessTransformer(components)
+    private val whenExhaustivenessTransformer = FirWhenExhaustivenessTransformer2(components)
 
 
     // ------------------------------- Loops -------------------------------

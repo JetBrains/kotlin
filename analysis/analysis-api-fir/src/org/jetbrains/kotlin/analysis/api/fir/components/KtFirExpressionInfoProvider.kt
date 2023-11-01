@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.ExtendedWhenMissingCase
+import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
@@ -37,9 +38,11 @@ internal class KtFirExpressionInfoProvider(
         return firSymbolBuilder.callableBuilder.buildCallableSymbol(firTargetSymbol.symbol)
     }
 
-    override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase> {
+    override fun getWhenMissingCases(whenExpression: KtWhenExpression): List<ExtendedWhenMissingCase> {
         val firWhenExpression = whenExpression.getOrBuildFirSafe<FirWhenExpression>(analysisSession.firResolveSession) ?: return emptyList()
-        return FirWhenExhaustivenessTransformer.computeAllMissingCases(analysisSession.firResolveSession.useSiteFirSession, firWhenExpression)
+        return FirWhenExhaustivenessTransformer
+            .computeAllMissingCases(analysisSession.firResolveSession.useSiteFirSession, firWhenExpression)
+            .map { listOf(WhenMissingCaseFor(null, it)) }
     }
 
     override fun isUsedAsExpression(expression: KtExpression): Boolean =

@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.diagnostics.ExtendedWhenMissingCase
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
 public abstract class KtExpressionInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol?
-    public abstract fun getWhenMissingCases(whenExpression: KtWhenExpression): List<WhenMissingCase>
+    public abstract fun getWhenMissingCases(whenExpression: KtWhenExpression): List<ExtendedWhenMissingCase>
     public abstract fun isUsedAsExpression(expression: KtExpression): Boolean
 }
 
@@ -49,7 +50,7 @@ public interface KtExpressionInfoProviderMixIn : KtAnalysisSessionMixIn {
      * If you have to assume that it does not have the missing cases when it has an else branch,
      * you need a separate check whether it has an else branch or not.
      */
-    public fun KtWhenExpression.getMissingCases(): List<WhenMissingCase> =
+    public fun KtWhenExpression.getMissingCases(): List<ExtendedWhenMissingCase> =
         withValidityAssertion { analysisSession.expressionInfoProvider.getWhenMissingCases(this) }
 
     /**

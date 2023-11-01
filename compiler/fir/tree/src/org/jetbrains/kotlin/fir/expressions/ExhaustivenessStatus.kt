@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.diagnostics.ExtendedWhenMissingCase
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
 
 sealed class ExhaustivenessStatus {
 
@@ -21,9 +23,9 @@ sealed class ExhaustivenessStatus {
      */
     object ExhaustiveAsNothing : ExhaustivenessStatus()
 
-    class NotExhaustive(val reasons: List<WhenMissingCase>) : ExhaustivenessStatus() {
+    class NotExhaustive(val reasons: List<ExtendedWhenMissingCase>) : ExhaustivenessStatus() {
         companion object {
-            val NO_ELSE_BRANCH = NotExhaustive(listOf(WhenMissingCase.Unknown))
+            val NO_ELSE_BRANCH = NotExhaustive(listOf(listOf(WhenMissingCaseFor(null, WhenMissingCase.Unknown))))
         }
     }
 }

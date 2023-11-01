@@ -4220,8 +4220,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.NO_ELSE_IN_WHEN) { firDiagnostic ->
         NoElseInWhenImpl(
-            firDiagnostic.a.map { whenMissingCase ->
-                whenMissingCase
+            firDiagnostic.a.map { list ->
+                list.map { whenMissingCaseFor ->
+                                    whenMissingCaseFor
+                                }
             },
             firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
@@ -4231,8 +4233,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.NON_EXHAUSTIVE_WHEN_STATEMENT) { firDiagnostic ->
         NonExhaustiveWhenStatementImpl(
             firDiagnostic.a,
-            firDiagnostic.b.map { whenMissingCase ->
-                whenMissingCase
+            firDiagnostic.b.map { list ->
+                list.map { whenMissingCaseFor ->
+                                    whenMissingCaseFor
+                                }
             },
             firDiagnostic as KtPsiDiagnostic,
             token,

@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation2
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation3
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation4
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -749,8 +749,8 @@ object FirErrors {
 
     // When expressions
     val EXPECTED_CONDITION: KtDiagnosticFactory0 by error0<KtWhenCondition>()
-    val NO_ELSE_IN_WHEN: KtDiagnosticFactory2<List<WhenMissingCase>, String> by error2<KtWhenExpression, List<WhenMissingCase>, String>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
-    val NON_EXHAUSTIVE_WHEN_STATEMENT: KtDiagnosticFactory2<String, List<WhenMissingCase>> by warning2<KtWhenExpression, String, List<WhenMissingCase>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
+    val NO_ELSE_IN_WHEN: KtDiagnosticFactory2<List<List<WhenMissingCaseFor>>, String> by error2<KtWhenExpression, List<List<WhenMissingCaseFor>>, String>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
+    val NON_EXHAUSTIVE_WHEN_STATEMENT: KtDiagnosticFactory2<String, List<List<WhenMissingCaseFor>>> by warning2<KtWhenExpression, String, List<List<WhenMissingCaseFor>>>(SourceElementPositioningStrategies.WHEN_EXPRESSION)
     val INVALID_IF_AS_EXPRESSION: KtDiagnosticFactory0 by error0<KtIfExpression>(SourceElementPositioningStrategies.IF_EXPRESSION)
     val ELSE_MISPLACED_IN_WHEN: KtDiagnosticFactory0 by error0<KtWhenEntry>(SourceElementPositioningStrategies.ELSE_ENTRY)
     val ILLEGAL_DECLARATION_IN_WHEN_SUBJECT: KtDiagnosticFactory1<String> by error1<KtElement, String>()
