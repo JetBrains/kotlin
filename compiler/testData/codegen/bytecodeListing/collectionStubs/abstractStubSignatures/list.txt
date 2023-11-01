@@ -12,8 +12,8 @@ public abstract class<Ljava/lang/Object;Ljava/util/List<Ljava/lang/Double;>;Lkot
     public <null> method <init>(): void
     public <null> method add(p0: double): boolean
     public <null> method add(p0: int, p1: double): void
-    public synthetic <null> method add(p0: int, p1: java.lang.Object): void
-    public synthetic <null> method add(p0: java.lang.Object): boolean
+    public synthetic bridge <null> method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge <null> method add(p0: java.lang.Object): boolean
     public <null> method clear(): void
     public abstract <null> method contains(p0: double): boolean
     public bridge final <null> method contains(p0: java.lang.Object): boolean
@@ -23,10 +23,10 @@ public abstract class<Ljava/lang/Object;Ljava/util/List<Ljava/lang/Double;>;Lkot
     public abstract <null> method lastIndexOf(p0: double): int
     public bridge final <null> method lastIndexOf(p0: java.lang.Object): int
     public <null> method remove(p0: int): double
-    public synthetic <null> method remove(p0: int): java.lang.Object
+    public synthetic bridge <null> method remove(p0: int): java.lang.Object
     public <null> method remove(p0: java.lang.Object): boolean
     public <null> method set(p0: int, p1: double): java.lang.Double
-    public synthetic <null> method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge <null> method set(p0: int, p1: java.lang.Object): java.lang.Object
     public bridge final <null> method size(): int
     public <null> method toArray(): java.lang.Object[]
 }
@@ -48,10 +48,7 @@ public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/List<TT
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
     public <null> method clear(): void
-    public abstract <null> method contains(p0: java.lang.Object): boolean
     public abstract <null> method getSize(): int
-    public abstract <null> method indexOf(p0: java.lang.Object): int
-    public abstract <null> method lastIndexOf(p0: java.lang.Object): int
     public <null> method remove(p0: java.lang.Object): boolean
     public bridge final <null> method size(): int
     public <null> method toArray(): java.lang.Object[]
@@ -69,9 +66,9 @@ public abstract class<Ljava/lang/Object;Ljava/util/List<Ljava/lang/String;>;Lkot
     public <(Ljava/util/Collection<+Ljava/lang/String;>;)Z> method addAll(p0: java.util.Collection): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
-    public synthetic <null> method add(p0: int, p1: java.lang.Object): void
+    public synthetic bridge <null> method add(p0: int, p1: java.lang.Object): void
     public <null> method add(p0: int, p1: java.lang.String): void
-    public synthetic <null> method add(p0: java.lang.Object): boolean
+    public synthetic bridge <null> method add(p0: java.lang.Object): boolean
     public <null> method add(p0: java.lang.String): boolean
     public <null> method clear(): void
     public bridge final <null> method contains(p0: java.lang.Object): boolean
@@ -81,10 +78,10 @@ public abstract class<Ljava/lang/Object;Ljava/util/List<Ljava/lang/String;>;Lkot
     public abstract <null> method indexOf(p0: java.lang.String): int
     public bridge final <null> method lastIndexOf(p0: java.lang.Object): int
     public abstract <null> method lastIndexOf(p0: java.lang.String): int
-    public synthetic <null> method remove(p0: int): java.lang.Object
+    public synthetic bridge <null> method remove(p0: int): java.lang.Object
     public <null> method remove(p0: int): java.lang.String
     public <null> method remove(p0: java.lang.Object): boolean
-    public synthetic <null> method set(p0: int, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge <null> method set(p0: int, p1: java.lang.Object): java.lang.Object
     public <null> method set(p0: int, p1: java.lang.String): java.lang.String
     public bridge final <null> method size(): int
     public <null> method toArray(): java.lang.Object[]

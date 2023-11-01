@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM
-
 abstract class AbstractNumber : Number()
 
 class MyNumber : Number() {

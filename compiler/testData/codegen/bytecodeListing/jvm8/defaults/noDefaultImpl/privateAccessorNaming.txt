@@ -1,19 +1,6 @@
 @kotlin.Metadata
-final class I$bar$1 {
-    // source: 'privateAccessorNaming.kt'
-    enclosing method I.bar()I
-    synthetic final field this$0: I
-    inner (anonymous) class I$bar$1
-    method <init>(p0: I): void
-    public final method invoke(): int
-    public synthetic bridge method invoke(): java.lang.Object
-}
-
-@kotlin.Metadata
 public interface I {
     // source: 'privateAccessorNaming.kt'
-    inner (anonymous) class I$bar$1
-    public synthetic static method access$foo(p0: I): int
     public method bar(): int
     private method foo(): int
 }

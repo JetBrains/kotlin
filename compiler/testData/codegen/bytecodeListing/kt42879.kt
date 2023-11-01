@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 inline class A(val value: Int)
 
 fun interface I {

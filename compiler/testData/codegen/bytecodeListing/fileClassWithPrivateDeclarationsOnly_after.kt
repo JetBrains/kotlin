@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM
 // !LANGUAGE: +PackagePrivateFileClassesWithAllPrivateMembers
 
 private fun f() {

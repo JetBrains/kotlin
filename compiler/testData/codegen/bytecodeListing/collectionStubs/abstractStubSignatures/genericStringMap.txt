@@ -4,20 +4,20 @@ public abstract class<<K:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;
     public bridge final <()Ljava/util/Collection<Ljava/lang/String;>;> method values(): java.util.Collection
     public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;Ljava/lang/String;>;>;> method entrySet(): java.util.Set
     public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
-    public bridge final <(Ljava/lang/Object;)Ljava/lang/String;> method get(p0: java.lang.Object): java.lang.Object
-    public <(Ljava/lang/Object;)Ljava/lang/String;> method remove(p0: java.lang.Object): java.lang.Object
     public <(Ljava/util/Map<+TK;+Ljava/lang/String;>;)V> method putAll(p0: java.util.Map): void
     public <(TK;Ljava/lang/String;)Ljava/lang/String;> method put(p0: java.lang.Object, p1: java.lang.String): java.lang.String
     public <null> method <init>(): void
     public <null> method clear(): void
-    public abstract <null> method containsKey(p0: java.lang.Object): boolean
     public bridge final <null> method containsValue(p0: java.lang.Object): boolean
     public abstract <null> method containsValue(p0: java.lang.String): boolean
-    public abstract <null> method get(p0: java.lang.Object): java.lang.String
+    public synthetic bridge <null> method get(p0: java.lang.Object): java.lang.Object
     public abstract <null> method getEntries(): java.util.Set
     public abstract <null> method getKeys(): java.util.Set
     public abstract <null> method getSize(): int
     public abstract <null> method getValues(): java.util.Collection
-    public synthetic <null> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge <null> method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public synthetic bridge <null> method remove(p0: java.lang.Object): java.lang.Object
+    public <null> method remove(p0: java.lang.Object): java.lang.String
     public bridge final <null> method size(): int
+    public inner class java/util/Map$Entry
 }

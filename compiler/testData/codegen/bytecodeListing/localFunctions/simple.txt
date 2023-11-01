@@ -1,18 +1,6 @@
 @kotlin.Metadata
-final class SimpleKt$foo$1 {
-    // source: 'simple.kt'
-    enclosing method SimpleKt.foo()V
-    public final static field INSTANCE: SimpleKt$foo$1
-    inner (anonymous) class SimpleKt$foo$1
-    static method <clinit>(): void
-    method <init>(): void
-    public synthetic bridge method invoke(): java.lang.Object
-    public final method invoke(): void
-}
-
-@kotlin.Metadata
 public final class SimpleKt {
     // source: 'simple.kt'
-    inner (anonymous) class SimpleKt$foo$1
+    private final static method foo$bar(): void
     public final static method foo(): void
 }

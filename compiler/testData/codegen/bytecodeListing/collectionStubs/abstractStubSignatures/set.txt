@@ -9,7 +9,6 @@ public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Set<TT;
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
     public <null> method clear(): void
-    public abstract <null> method contains(p0: java.lang.Object): boolean
     public abstract <null> method getSize(): int
     public <null> method remove(p0: java.lang.Object): boolean
     public bridge final <null> method size(): int
@@ -26,7 +25,7 @@ public abstract class<Ljava/lang/Object;Ljava/util/Set<Ljava/lang/Integer;>;Lkot
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
     public <null> method add(p0: int): boolean
-    public synthetic <null> method add(p0: java.lang.Object): boolean
+    public synthetic bridge <null> method add(p0: java.lang.Object): boolean
     public <null> method clear(): void
     public abstract <null> method contains(p0: int): boolean
     public bridge final <null> method contains(p0: java.lang.Object): boolean
@@ -45,7 +44,7 @@ public abstract class<Ljava/lang/Object;Ljava/util/Set<Ljava/lang/String;>;Lkotl
     public <(Ljava/util/Collection<+Ljava/lang/String;>;)Z> method addAll(p0: java.util.Collection): boolean
     public <<T:Ljava/lang/Object;>([TT;)[TT;> method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public <null> method <init>(): void
-    public synthetic <null> method add(p0: java.lang.Object): boolean
+    public synthetic bridge <null> method add(p0: java.lang.Object): boolean
     public <null> method add(p0: java.lang.String): boolean
     public <null> method clear(): void
     public bridge final <null> method contains(p0: java.lang.Object): boolean

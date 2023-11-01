@@ -1,13 +1,14 @@
 @kotlin.Metadata
 public final class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>LJImpl<TK;TV;>;>  MyMap {
     // source: 'test.kt'
+    public bridge <()Ljava/util/Collection<Ljava/lang/Object;>;> method getValues(): java.util.Collection
     public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
+    public bridge <()Ljava/util/Set<Ljava/lang/Object;>;> method getKeys(): java.util.Set
+    public bridge <()Ljava/util/Set<Ljava/util/Map$Entry<Ljava/lang/Object;Ljava/lang/Object;>;>;> method getEntries(): java.util.Set
     public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method entrySet(): java.util.Set
     public bridge final <()Ljava/util/Set<TK;>;> method keySet(): java.util.Set
     public <null> method <init>(): void
-    public bridge <null> method getEntries(): java.util.Set
-    public bridge <null> method getKeys(): java.util.Set
     public bridge <null> method getSize(): int
-    public bridge <null> method getValues(): java.util.Collection
     public bridge final <null> method size(): int
+    public inner class java/util/Map$Entry
 }

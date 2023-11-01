@@ -1,7 +1,7 @@
 @kotlin.Metadata
-synthetic final class<Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/functions/Function0<TT;>;>  TKt$genericSam$1 {
+synthetic final class<null>  TKt$genericSam$1 {
     // source: 't.kt'
-    public final <()TT;> method invoke(): java.lang.Object
+    public final <()TT;> method get(): java.lang.Object
     static <null> method <clinit>(): void
     <null> method <init>(): void
     enclosing method TKt.genericSam()Ljava/lang/Object;
@@ -10,20 +10,9 @@ synthetic final class<Lkotlin/jvm/internal/FunctionReferenceImpl;Lkotlin/jvm/fun
 }
 
 @kotlin.Metadata
-synthetic final class<null>  TKt$sam$Sam$0 {
-    // source: 't.kt'
-    <null> method <init>(p0: kotlin.jvm.functions.Function0): void
-    public synthetic final <null> method get(): java.lang.Object
-    enclosing method TKt.genericSam()Ljava/lang/Object;
-    private synthetic final field <null> function: kotlin.jvm.functions.Function0
-    inner (anonymous) class TKt$sam$Sam$0
-}
-
-@kotlin.Metadata
 public final class<null>  TKt {
     // source: 't.kt'
     public final static <<T:Ljava/lang/Object;>()TT;> method foo(): java.lang.Object
     public final static <<T:Ljava/lang/Object;>()TT;> method genericSam(): java.lang.Object
     inner (anonymous) class TKt$genericSam$1
-    inner (anonymous) class TKt$sam$Sam$0
 }

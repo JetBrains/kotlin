@@ -15,7 +15,7 @@ final class SamAdapterForJavaInterfaceWithNullabilityKt$testNotNull$1 {
     synthetic final field $s: java.lang.String
     inner (anonymous) class SamAdapterForJavaInterfaceWithNullabilityKt$testNotNull$1
     method <init>(p0: java.lang.String): void
-    public final @org.jetbrains.annotations.NotNull method getNullableString(): java.lang.String
+    public final method getNullableString(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -25,7 +25,7 @@ final class SamAdapterForJavaInterfaceWithNullabilityKt$testNullable$1 {
     synthetic final field $s: java.lang.String
     inner (anonymous) class SamAdapterForJavaInterfaceWithNullabilityKt$testNullable$1
     method <init>(p0: java.lang.String): void
-    public final @org.jetbrains.annotations.Nullable method getNullableString(): java.lang.String
+    public final method getNullableString(): java.lang.String
 }
 
 @kotlin.Metadata

@@ -2,28 +2,33 @@
 public abstract class<Ljava/lang/Object;Ljava/util/Map$Entry<Ljava/lang/Byte;Ljava/lang/Short;>;Lkotlin/jvm/internal/markers/KMutableMap$Entry;>  ByteShortMutableMapEntry {
     // source: 'mutableMapEntry.kt'
     public <null> method <init>(): void
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
 public abstract class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map$Entry<TK;TV;>;Lkotlin/jvm/internal/markers/KMutableMap$Entry;>  GenericMutableMutableMapEntry {
     // source: 'mutableMapEntry.kt'
     public <null> method <init>(): void
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
 public abstract class<<K:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map$Entry<TK;Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMutableMap$Entry;>  GenericStringMutableMapEntry {
     // source: 'mutableMapEntry.kt'
     public <null> method <init>(): void
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
 public abstract class<Ljava/lang/Object;Ljava/util/Map$Entry<Ljava/lang/Number;Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMutableMap$Entry;>  NumberStringMutableMapEntry {
     // source: 'mutableMapEntry.kt'
     public <null> method <init>(): void
+    public inner class java/util/Map$Entry
 }
 
 @kotlin.Metadata
 public abstract class<<V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map$Entry<Ljava/lang/String;TV;>;Lkotlin/jvm/internal/markers/KMutableMap$Entry;>  StringGenericMutableMapEntry {
     // source: 'mutableMapEntry.kt'
     public <null> method <init>(): void
+    public inner class java/util/Map$Entry
 }

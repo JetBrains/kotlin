@@ -2,9 +2,9 @@
 final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam;>  TKt$genericSam$1 {
     // source: 't.kt'
     public final <()TT;> method get(): java.lang.Object
-    <null> method <init>(p0: kotlin.jvm.functions.Function0): void
+    <(Lkotlin/jvm/functions/Function0<+TT;>;)V> method <init>(p0: kotlin.jvm.functions.Function0): void
     enclosing method TKt.genericSam(Lkotlin/jvm/functions/Function0;)LSam;
-    synthetic final field <null> $f: kotlin.jvm.functions.Function0
+    synthetic final field <Lkotlin/jvm/functions/Function0<TT;>;> $f: kotlin.jvm.functions.Function0
     inner (anonymous) class TKt$genericSam$1
 }
 
@@ -12,9 +12,9 @@ final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam;>  TKt$genericSam$1 {
 final class<<T:Ljava/lang/Object;>Ljava/lang/Object;LSam;>  TKt$genericSamGet$1 {
     // source: 't.kt'
     public final <()TT;> method get(): java.lang.Object
-    <null> method <init>(p0: kotlin.jvm.functions.Function0): void
+    <(Lkotlin/jvm/functions/Function0<+TT;>;)V> method <init>(p0: kotlin.jvm.functions.Function0): void
     enclosing method TKt.genericSamGet(Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
-    synthetic final field <null> $f: kotlin.jvm.functions.Function0
+    synthetic final field <Lkotlin/jvm/functions/Function0<TT;>;> $f: kotlin.jvm.functions.Function0
     inner (anonymous) class TKt$genericSamGet$1
 }
 

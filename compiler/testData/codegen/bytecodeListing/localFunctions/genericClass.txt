@@ -1,19 +1,9 @@
 @kotlin.Metadata
-final class<Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<TT;>;>  A$f$1 {
-    // source: 'genericClass.kt'
-    public final <()TT;> method invoke(): java.lang.Object
-    <null> method <init>(p0: A): void
-    enclosing method A.f()Ljava/lang/Object;
-    synthetic final field <null> this$0: A
-    inner (anonymous) class A$f$1
-}
-
-@kotlin.Metadata
 public final class<<T:Ljava/lang/Object;>Ljava/lang/Object;>  A {
     // source: 'genericClass.kt'
     public final <()TT;> method f(): java.lang.Object
     public final <()TT;> method getResult(): java.lang.Object
     public <(TT;)V> method <init>(p0: java.lang.Object): void
+    private final static <<T:Ljava/lang/Object;>(LA<TT;>;)TT;> method f$g(p0: A): java.lang.Object
     private final field <TT;> result: java.lang.Object
-    inner (anonymous) class A$f$1
 }

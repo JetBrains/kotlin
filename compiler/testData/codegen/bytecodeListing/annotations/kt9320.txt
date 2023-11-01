@@ -30,7 +30,7 @@ final class Kt9320Kt$foo$w$1 {
     inner (anonymous) class Kt9320Kt$foo$w$1
     static method <clinit>(): void
     method <init>(): void
-    public final @Ann method invoke(@org.jetbrains.annotations.NotNull p0: My): int
+    public final @Ann method invoke(p0: My): java.lang.Integer
     public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
 }
 

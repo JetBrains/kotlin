@@ -25,7 +25,7 @@ public final class InlineCollection {
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public method toString(): java.lang.String

@@ -1,54 +1,58 @@
 @kotlin.Metadata
-public final class _2Kt$box$$inlined$test$lambda$1$1 {
+public final class _2Kt$box$1$1$1$q$1 {
     // source: '2.kt'
-    enclosing method _2Kt$box$$inlined$test$lambda$1.invoke()V
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1$1
+    enclosing method _2Kt$box$1$1$1.invoke()V
+    inner (anonymous) class _2Kt$box$1$1
+    inner (anonymous) class _2Kt$box$1$1$1
+    inner (anonymous) class _2Kt$box$1$1$1$q$1
     method <init>(): void
 }
 
 @kotlin.Metadata
-public final class _2Kt$box$$inlined$test$lambda$1$2$1 {
+final class _2Kt$box$1$1$1 {
     // source: '2.kt'
-    enclosing method _2Kt$box$$inlined$test$lambda$1$2.invoke()V
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1$2
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1$2$1
-    method <init>(): void
-}
-
-@kotlin.Metadata
-final class _2Kt$box$$inlined$test$lambda$1$2 {
-    // source: '2.kt'
-    enclosing method _2Kt$box$$inlined$test$lambda$1.invoke()V
-    synthetic final field this$0: _2Kt$box$$inlined$test$lambda$1
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1$2
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1$2$1
-    method <init>(p0: _2Kt$box$$inlined$test$lambda$1): void
+    enclosing method _2Kt$box$1$1.invoke()V
+    synthetic final field $s2: kotlin.jvm.internal.Ref$ObjectRef
+    inner (anonymous) class _2Kt$box$1$1
+    inner (anonymous) class _2Kt$box$1$1$1
+    inner (anonymous) class _2Kt$box$1$1$1$q$1
+    method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
+    public final inner class kotlin/jvm/internal/Ref$ObjectRef
 }
 
 @kotlin.Metadata
-final class _2Kt$box$$inlined$test$lambda$1 {
+public final class _2Kt$box$1$1$p$1 {
+    // source: '2.kt'
+    enclosing method _2Kt$box$1$1.invoke()V
+    inner (anonymous) class _2Kt$box$1$1
+    inner (anonymous) class _2Kt$box$1$1$p$1
+    method <init>(): void
+}
+
+@kotlin.Metadata
+final class _2Kt$box$1$1 {
     // source: '2.kt'
     enclosing method _2Kt.box()V
-    synthetic final field $s1$inlined: kotlin.jvm.internal.Ref$ObjectRef
-    synthetic final field $s2$inlined: kotlin.jvm.internal.Ref$ObjectRef
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1$1
-    inner (anonymous) class _2Kt$box$$inlined$test$lambda$1$2
+    synthetic final field $s1: kotlin.jvm.internal.Ref$ObjectRef
+    synthetic final field $s2: kotlin.jvm.internal.Ref$ObjectRef
+    inner (anonymous) class _2Kt$box$1$1
+    inner (anonymous) class _2Kt$box$1$1$1
+    inner (anonymous) class _2Kt$box$1$1$p$1
     method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.jvm.internal.Ref$ObjectRef): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
+    public final inner class kotlin/jvm/internal/Ref$ObjectRef
 }
 
 @kotlin.Metadata
 public final class _2Kt {
     // source: '2.kt'
+    inner (anonymous) class _2Kt$box$1$1
     public final static method box(): void
     public final static method eval(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
+    public final inner class kotlin/jvm/internal/Ref$ObjectRef
 }
 
 @kotlin.Metadata

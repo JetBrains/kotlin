@@ -1,5 +1,5 @@
-@kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
 final class OomInReturnUnitKt$test$1 {
     // source: 'oomInReturnUnit.kt'
     enclosing method OomInReturnUnitKt.test(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

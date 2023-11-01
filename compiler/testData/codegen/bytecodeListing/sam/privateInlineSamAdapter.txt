@@ -3,7 +3,7 @@ synthetic final class<null>  test/PrivateInlineSamAdapterKt$sam$java_lang_Runnab
     // source: 'privateInlineSamAdapter.kt'
     <null> method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final <null> method run(): void
-    enclosing method test/PrivateInlineSamAdapterKt.test()V
+    enclosing class test/PrivateInlineSamAdapterKt
     private synthetic final field <null> function: kotlin.jvm.functions.Function0
     inner (anonymous) class test/PrivateInlineSamAdapterKt$sam$java_lang_Runnable$0
 }
@@ -24,5 +24,6 @@ final class<Lkotlin/jvm/internal/Lambda;Lkotlin/jvm/functions/Function0<Lkotlin/
 public final class<null>  test/PrivateInlineSamAdapterKt {
     // source: 'privateInlineSamAdapter.kt'
     public final static <null> method test(): void
+    inner (anonymous) class test/PrivateInlineSamAdapterKt$sam$java_lang_Runnable$0
     inner (anonymous) class test/PrivateInlineSamAdapterKt$test$lambda$1
 }

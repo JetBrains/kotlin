@@ -1,5 +1,5 @@
-@kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
 final class CoroutineContextIntrinsicKt$notTailCall$1 {
     // source: 'coroutineContextIntrinsic.kt'
     enclosing method CoroutineContextIntrinsicKt.notTailCall(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

@@ -51,7 +51,7 @@ public final class InlineMutableSet {
     public static method removeAll-impl(p0: java.util.Set, p1: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public static method retainAll-impl(p0: java.util.Set, p1: java.util.Collection): boolean
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public method toString(): java.lang.String

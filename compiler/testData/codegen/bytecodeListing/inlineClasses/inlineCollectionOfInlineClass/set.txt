@@ -19,7 +19,7 @@ public final class InlineSet {
     // source: 'set.kt'
     private final field s: java.util.Set
     private synthetic method <init>(p0: java.util.Set): void
-    public synthetic method add(p0: java.lang.Object): boolean
+    public synthetic bridge method add(p0: java.lang.Object): boolean
     public method add-jHY5zpA(p0: int): boolean
     public method addAll(p0: java.util.Collection): boolean
     public synthetic final static method box-impl(p0: java.util.Set): InlineSet
@@ -44,7 +44,7 @@ public final class InlineSet {
     public method remove(p0: java.lang.Object): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
-    public bridge final method size(): int
+    public synthetic bridge method size(): int
     public method toArray(): java.lang.Object[]
     public method toArray(p0: java.lang.Object[]): java.lang.Object[]
     public method toString(): java.lang.String

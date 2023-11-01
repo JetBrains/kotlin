@@ -8,7 +8,7 @@ public final class A {
 @kotlin.Metadata
 public final class AccessorForTopLevelMembersKt {
     // source: 'accessorForTopLevelMembers.kt'
-    private final static field x: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field x: java.lang.String
     static method <clinit>(): void
     public synthetic final static method access$f(p0: java.lang.String): java.lang.String
     public synthetic final static method access$getX$p(): java.lang.String

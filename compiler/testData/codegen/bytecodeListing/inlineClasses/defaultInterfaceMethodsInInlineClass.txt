@@ -43,6 +43,7 @@ public final class L {
     public synthetic bridge method withDefault(p0: java.lang.Object, p1: int): java.lang.String
     public @org.jetbrains.annotations.NotNull method withDefault-7bZmAKo(p0: long, p1: int): java.lang.String
     public static @org.jetbrains.annotations.NotNull method withDefault-7bZmAKo(p0: long, p1: long, p2: int): java.lang.String
+    public final inner class IFoo$DefaultImpls
 }
 
 @kotlin.Metadata
@@ -55,4 +56,5 @@ public final class X {
     public @org.jetbrains.annotations.NotNull method foo--h0D71M(p0: long): java.lang.String
     public synthetic bridge method withDefault(p0: java.lang.Object, p1: int): java.lang.String
     public @org.jetbrains.annotations.NotNull method withDefault-7bZmAKo(p0: long, p1: int): java.lang.String
+    public final inner class IFoo$DefaultImpls
 }

@@ -9,7 +9,7 @@ public annotation class AllOpen {
 class Test {
     // source: 'privateMembers.kt'
     private final @org.jetbrains.annotations.NotNull field internalProp: java.lang.String
-    private final field privateProp: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field privateProp: java.lang.String
     private final @org.jetbrains.annotations.NotNull field protectedProp: java.lang.String
     private final @org.jetbrains.annotations.NotNull field publicProp: java.lang.String
     public method <init>(): void

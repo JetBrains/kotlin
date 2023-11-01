@@ -4,8 +4,8 @@ public final class A$Companion {
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method access$f(p0: A$Companion, p1: int): void
-    public synthetic final static method access$getXx$p(p0: A$Companion): java.lang.String
-    public synthetic final static method access$setXx$p(p0: A$Companion, p1: java.lang.String): void
+    public synthetic final static method access$getXx(p0: A$Companion): java.lang.String
+    public synthetic final static method access$setXx(p0: A$Companion, p1: java.lang.String): void
     private final @kotlin.jvm.JvmStatic method f(p0: int): void
     private synthetic deprecated static @kotlin.jvm.JvmStatic method getX$annotations(): void
     private final @kotlin.jvm.JvmStatic method getXx(): java.lang.String
@@ -17,7 +17,7 @@ public final class A$Companion {
 public final class A {
     // source: 'jvmStaticPrivate.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: A$Companion
-    private final static field x: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field x: java.lang.String
     static method <clinit>(): void
     public method <init>(): void
     private final static @kotlin.jvm.JvmStatic method f(p0: int): void
@@ -30,7 +30,7 @@ public final class A {
 public final class O {
     // source: 'jvmStaticPrivate.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: O
-    private final static field y: java.lang.String
+    private final static @org.jetbrains.annotations.NotNull field y: java.lang.String
     static method <clinit>(): void
     private method <init>(): void
     private final static @kotlin.jvm.JvmStatic method g(p0: int): void

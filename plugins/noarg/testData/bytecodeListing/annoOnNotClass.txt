@@ -2,11 +2,14 @@
 @kotlin.Metadata
 public final enum class Colors {
     // source: 'annoOnNotClass.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: Colors[]
     public final enum static field RED: Colors
     public final enum static field WHITE: Colors
+    private synthetic final static method $values(): Colors[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     public static method valueOf(p0: java.lang.String): Colors
     public static method values(): Colors[]
 }

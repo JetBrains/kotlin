@@ -30,7 +30,7 @@ final class LiteralsKt$foo$1 {
     synthetic final field $arg: int
     inner (anonymous) class LiteralsKt$foo$1
     method <init>(p0: int): void
-    public final @FunAnn method invoke(): int
+    public final @FunAnn method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -41,7 +41,7 @@ final class LiteralsKt$foo$2 {
     synthetic final field $arg: int
     inner (anonymous) class LiteralsKt$foo$2
     method <init>(p0: int): void
-    public final method invoke(): int
+    public final method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
@@ -61,7 +61,7 @@ final class LiteralsKt$foo$x$1 {
     synthetic final field $arg: int
     inner (anonymous) class LiteralsKt$foo$x$1
     method <init>(p0: int): void
-    public final @FunAnn method invoke(): int
+    public final @FunAnn method invoke(): java.lang.Integer
     public synthetic bridge method invoke(): java.lang.Object
 }
 
