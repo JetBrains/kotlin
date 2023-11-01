@@ -106,6 +106,13 @@ object AbstractExpectActualMatcher {
         // TODO: check static scope?
     }
 
+    /**
+     * Besides returning the matched declaration
+     *
+     * The function has an additional side effects:
+     * - It adds mismatched members to `mismatchedMembers`
+     * - It calls `onMatchedMembers` and `onMismatchedMembersFromClassScope` callbacks
+     */
     context(ExpectActualMatchingContext<*>)
     internal fun matchSingleExpectAgainstPotentialActuals(
         expectMember: DeclarationSymbolMarker,
