@@ -563,14 +563,17 @@ class PostponedArgumentInputTypesResolver(
         dependencyProvider: TypeVariableDependencyInformationProvider,
         resolvedAtomByTypeVariableProvider: ResolvedAtomProvider,
     ): Boolean = with(resolutionTypeSystemContext) {
+        val outerTypeVariables = outerTypeVariables ?: emptySet()
         val relatedVariables = type.extractArgumentsForFunctionTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
+            .filter { it !in outerTypeVariables }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
             this@fixNextReadyVariableForParameterType,
             relatedVariables,
             postponedArguments,
             ConstraintSystemCompletionMode.FULL,
-            topLevelType
+            topLevelType,
+            isRelevantToInputType = true,
         )
 
         if (variableForFixation == null || !variableForFixation.hasProperConstraint)
