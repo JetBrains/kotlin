@@ -16,13 +16,17 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.*
-import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
-import org.jetbrains.kotlin.test.frontend.classic.*
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJvmResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 
 abstract class AbstractBytecodeListingTestBase<R : ResultingArtifact.FrontendOutput<R>, I : ResultingArtifact.BackendInput<I>>(
     targetBackend: TargetBackend,
@@ -45,12 +49,6 @@ abstract class AbstractBytecodeListingTestBase<R : ResultingArtifact.FrontendOut
         }
 
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
-
-        forTestsMatching("compiler/fir/fir2ir/testData/codegen/bytecodeListing/properties/backingField/*") {
-            defaultDirectives {
-                LanguageSettingsDirectives.LANGUAGE with "+ExplicitBackingFields"
-            }
-        }
     }
 }
 
