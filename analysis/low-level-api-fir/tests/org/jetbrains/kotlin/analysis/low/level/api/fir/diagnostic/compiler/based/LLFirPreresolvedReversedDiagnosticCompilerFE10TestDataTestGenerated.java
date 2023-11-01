@@ -13751,6 +13751,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("approximationOfBoundedProjection.kt")
+            public void testApproximationOfBoundedProjection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/approximationOfBoundedProjection.kt");
+            }
+
+            @Test
             @TestMetadata("approximationOfInProjection.kt")
             public void testApproximationOfInProjection() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/approximationOfInProjection.kt");
