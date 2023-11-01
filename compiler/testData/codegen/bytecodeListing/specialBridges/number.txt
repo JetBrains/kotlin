@@ -8,6 +8,12 @@ public abstract class AbstractNumber {
     public bridge final method intValue(): int
     public bridge final method longValue(): long
     public bridge final method shortValue(): short
+    public abstract method toByte(): byte
+    public abstract method toDouble(): double
+    public abstract method toFloat(): float
+    public abstract method toInt(): int
+    public abstract method toLong(): long
+    public abstract method toShort(): short
 }
 
 @kotlin.Metadata

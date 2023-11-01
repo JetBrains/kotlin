@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 
 import kotlin.coroutines.*
 import kotlin.experimental.*

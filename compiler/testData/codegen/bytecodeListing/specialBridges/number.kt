@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
-// ^ see KT-42578
+// IGNORE_BACKEND: JVM
 
 abstract class AbstractNumber : Number()
 

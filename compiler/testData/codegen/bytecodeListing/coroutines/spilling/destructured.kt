@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM_IR
+// IGNORE_BACKEND: JVM
 
 fun use(c: suspend (Pair<Int, Int>) -> Unit) {}
 
