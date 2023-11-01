@@ -612,90 +612,8 @@ tasks.register("codegen_vector_default_argument", KonanLocalTest) {
     source = "codegen/vector/default_argument.kt"
 }
 
-tasks.register("hello0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/hello0.kt"
-}
-
 tasks.register("stringTrim", KonanLocalTest) {
     source = "codegen/stringTrim/stringTrim.kt"
-}
-
-standaloneTest("hello1") {
-   useGoldenData = true
-   useTestData = true
-   source = "runtime/basic/hello1.kt"
-}
-
-standaloneTest("hello2") {
-   useGoldenData = true
-   useTestData = true
-   source = "runtime/basic/hello2.kt"
-}
-
-standaloneTest("readlnOrNull_empty") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readlnOrNull_empty.kt"
-}
-
-standaloneTest("readln_empty") {
-    useTestData = true
-    outputChecker = { s -> s.contains("ReadAfterEOFException") }
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/basic/readln_empty.kt"
-}
-
-standaloneTest("readln_alone_CR") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readln_alone_CR.kt"
-}
-
-standaloneTest("readln_empty_new_line") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readln_empty_new_line.kt"
-}
-
-standaloneTest("readln_multiline") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readln_multiline.kt"
-}
-
-standaloneTest("readln_CR_and_CRLF") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readln_CR_and_CRLF.kt"
-}
-
-standaloneTest("readln_long_line") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readln_long_line.kt"
-}
-
-standaloneTest("readln_cyrillic") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readln_cyrillic.kt"
-}
-
-standaloneTest("readln_multiple_empty_new_lines") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readln_multiple_empty_new_lines.kt"
-}
-
-tasks.register("hello3", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/hello3.kt"
-}
-
-tasks.register("hello4", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/hello4.kt"
 }
 
 standaloneTest('enumEquals') {
@@ -732,18 +650,6 @@ standaloneTest("entry3") {
 standaloneTest("entry4") {
     useGoldenData = true
     source = "runtime/basic/entry4.kt"
-}
-
-standaloneTest("readline0") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readline0.kt"
-}
-
-standaloneTest("readline1") {
-    useGoldenData = true
-    useTestData = true
-    source = "runtime/basic/readline1.kt"
 }
 
 standaloneTest("cleaner_basic") {
@@ -2049,11 +1955,6 @@ linkTest("lib@name") {
     lib = "link/klib_name/lib.kt"
 }
 
-tasks.register("for0", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/for0.kt"
-}
-
 tasks.register("throw0", KonanLocalTest) {
     useGoldenData = true
     source = "runtime/basic/throw0.kt"
@@ -2168,11 +2069,6 @@ tasks.register("listof1", KonanLocalTest) {
     enabled = false
     useGoldenData = true
     source = "datagen/literals/listof1.kt"
-}
-
-tasks.register("print_utf8", KonanLocalTest) {
-    useGoldenData = true
-    source = "runtime/basic/print_utf8.kt"
 }
 
 tasks.register("catch1", KonanLocalTest) {
