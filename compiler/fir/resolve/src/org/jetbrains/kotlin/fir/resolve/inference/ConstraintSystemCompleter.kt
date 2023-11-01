@@ -48,11 +48,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         collectVariablesFromContext: Boolean = false,
         analyze: (PostponedResolvedAtom) -> Unit,
     ) = with(c) {
-//        outerTypeVariables?.let {
-//            return withTypeVariablesThatAreNotCountedAsProperTypes(allTypeVariables.keys - it) {
-//                runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
-//            }
-//        }
+        outerTypeVariables?.let {
+            return@with withTypeVariablesThatAreNotCountedAsProperTypes(allTypeVariables.keys - it) {
+                runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
+            }
+        }
 
         runCompletion(completionMode, topLevelAtoms, candidateReturnType, context, collectVariablesFromContext, analyze)
     }
@@ -128,7 +128,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             if (wasBuiltNewExpectedTypeForSomeArgument)
                 continue
 
-            if (completionMode == ConstraintSystemCompletionMode.FULL) {
+            if (completionMode == ConstraintSystemCompletionMode.FULL || completionMode == ConstraintSystemCompletionMode.PARTIAL_BI) {
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedArguments) {
                     val variableWasFixed = postponedArgumentsInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
@@ -174,11 +174,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             if (areThereAppearedProperConstraintsForSomeVariable)
                 continue
 
-            if (completionMode == ConstraintSystemCompletionMode.PARTIAL_BI) {
-                // Complete all lambdas, maybe with semi-fixing type variables used as top-level input types
-                if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments, analyze))
-                    continue
-            }
+//            if (completionMode == ConstraintSystemCompletionMode.PARTIAL_BI) {
+//                // Complete all lambdas, maybe with semi-fixing type variables used as top-level input types
+//                if (analyzeRemainingNotAnalyzedPostponedArgument(postponedArguments, analyze))
+//                    continue
+//            }
 
             // Stage 8: report "not enough information" for uninferred type variables
             reportNotEnoughTypeInformation(
