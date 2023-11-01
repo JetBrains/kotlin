@@ -69,11 +69,7 @@ internal class KtFirPropertySetterSymbol(
     override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override val annotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(
-            firSymbol,
-            analysisSession.useSiteSession,
-            token,
-        )
+        KtFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
     /**

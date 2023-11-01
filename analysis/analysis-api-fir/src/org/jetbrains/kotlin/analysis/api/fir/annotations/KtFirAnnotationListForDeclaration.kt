@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilt
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -19,12 +20,14 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirAnnotationListForDeclaration private constructor(
     val firSymbol: FirBasedSymbol<*>,
-    private val useSiteSession: FirSession,
-    override val token: KtLifetimeToken,
+    private val builder: KtSymbolByFirBuilder,
 ) : KtAnnotationsList() {
+    override val token: KtLifetimeToken get() = builder.token
+    private val useSiteSession: FirSession get() = builder.rootSession
+
     override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
-            annotations(firSymbol, useSiteSession)
+            annotations(firSymbol, builder)
         }
 
     override val annotationInfos: List<KtAnnotationApplicationInfo>
@@ -40,7 +43,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
-        annotationsByClassId(firSymbol, classId, useSiteTargetFilter, useSiteSession)
+        annotationsByClassId(firSymbol, classId, useSiteTargetFilter, builder)
     }
 
     override val annotationClassIds: Collection<ClassId>
@@ -49,18 +52,14 @@ internal class KtFirAnnotationListForDeclaration private constructor(
         }
 
     companion object {
-        fun create(
-            firSymbol: FirBasedSymbol<*>,
-            useSiteSession: FirSession,
-            token: KtLifetimeToken,
-        ): KtAnnotationsList {
+        fun create(firSymbol: FirBasedSymbol<*>, builder: KtSymbolByFirBuilder): KtAnnotationsList {
             return when {
                 firSymbol is FirBackingFieldSymbol && firSymbol.propertySymbol.annotations.any { it.useSiteTarget == null } ->
-                    KtFirAnnotationListForDeclaration(firSymbol, useSiteSession, token)
+                    KtFirAnnotationListForDeclaration(firSymbol, builder)
                 firSymbol.annotations.isEmpty() ->
-                    KtEmptyAnnotationsList(token)
+                    KtEmptyAnnotationsList(builder.token)
                 else ->
-                    KtFirAnnotationListForDeclaration(firSymbol, useSiteSession, token)
+                    KtFirAnnotationListForDeclaration(firSymbol, builder)
             }
         }
     }

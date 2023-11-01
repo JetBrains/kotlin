@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
@@ -82,19 +83,26 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
     }
 
 internal fun FirAnnotation.toKtAnnotationApplication(
-    useSiteSession: FirSession,
+    builder: KtSymbolByFirBuilder,
     index: Int,
     arguments: List<KtNamedAnnotationValue> = FirAnnotationValueConverter.toNamedConstantValue(
         mapAnnotationParameters(this),
-        useSiteSession,
+        builder,
     )
-): KtAnnotationApplicationWithArgumentsInfo = KtAnnotationApplicationWithArgumentsInfo(
-    classId = toAnnotationClassId(useSiteSession),
-    psi = psi as? KtCallElement,
-    useSiteTarget = useSiteTarget,
-    arguments = arguments,
-    index = index,
-)
+): KtAnnotationApplicationWithArgumentsInfo {
+    val constructorSymbol = (this as? FirAnnotationCall)?.calleeReference
+        ?.toResolvedConstructorSymbol()
+        ?.let(builder.functionLikeBuilder::buildConstructorSymbol)
+
+    return KtAnnotationApplicationWithArgumentsInfo(
+        classId = toAnnotationClassId(builder.rootSession),
+        psi = psi as? KtCallElement,
+        useSiteTarget = useSiteTarget,
+        arguments = arguments,
+        index = index,
+        constructorSymbolPointer = with(builder.analysisSession) { constructorSymbol?.createPointer() },
+    )
+}
 
 internal fun FirAnnotation.toKtAnnotationInfo(
     useSiteSession: FirSession,

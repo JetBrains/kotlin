@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
+import org.jetbrains.kotlin.fir.types.isNullableAny
 
 /**
  * [KtFirTypeParameterSymbolBase] provides shared implementations for [KtFirTypeParameterSymbol] and [KtFirPsiJavaTypeParameterSymbol].
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 internal sealed class KtFirTypeParameterSymbolBase : KtTypeParameterSymbol(), KtFirSymbol<FirTypeParameterSymbol> {
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {
-            KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
+            KtFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
     @OptIn(UnexpandedTypeCheck::class)

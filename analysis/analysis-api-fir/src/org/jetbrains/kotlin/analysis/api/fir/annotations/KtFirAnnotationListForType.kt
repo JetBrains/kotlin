@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilt
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
@@ -27,13 +28,15 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirAnnotationListForType private constructor(
     val coneType: ConeKotlinType,
-    private val useSiteSession: FirSession,
-    override val token: KtLifetimeToken,
+    private val builder: KtSymbolByFirBuilder,
 ) : KtAnnotationsList() {
+    override val token: KtLifetimeToken get() = builder.token
+    private val useSiteSession: FirSession get() = builder.rootSession
+
     override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATION_ARGUMENTS).mapIndexed { index, annotation ->
-                annotation.toKtAnnotationApplication(useSiteSession, index)
+                annotation.toKtAnnotationApplication(builder, index)
             }
         }
 
@@ -59,7 +62,7 @@ internal class KtFirAnnotationListForType private constructor(
                 return@mapIndexedNotNull null
             }
 
-            annotation.toKtAnnotationApplication(useSiteSession, index)
+            annotation.toKtAnnotationApplication(builder, index)
         }
     }
 
@@ -69,15 +72,11 @@ internal class KtFirAnnotationListForType private constructor(
         }
 
     companion object {
-        fun create(
-            coneType: ConeKotlinType,
-            useSiteSession: FirSession,
-            token: KtLifetimeToken,
-        ): KtAnnotationsList {
+        fun create(coneType: ConeKotlinType, builder: KtSymbolByFirBuilder): KtAnnotationsList {
             return if (coneType.customAnnotations.isEmpty()) {
-                KtEmptyAnnotationsList(token)
+                KtEmptyAnnotationsList(builder.token)
             } else {
-                KtFirAnnotationListForType(coneType, useSiteSession, token)
+                KtFirAnnotationListForType(coneType, builder)
             }
         }
     }

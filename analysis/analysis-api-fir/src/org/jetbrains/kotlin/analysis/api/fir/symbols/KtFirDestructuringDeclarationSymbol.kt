@@ -47,7 +47,7 @@ internal class KtFirDestructuringDeclarationSymbol(
         }
 
     override val annotationsList: KtAnnotationsList
-        get() = withValidityAssertion { KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token) }
+        get() = withValidityAssertion { KtFirAnnotationListForDeclaration.create(firSymbol, builder) }
 
     override val entries: List<KtLocalVariableSymbol>
         get() = withValidityAssertion {

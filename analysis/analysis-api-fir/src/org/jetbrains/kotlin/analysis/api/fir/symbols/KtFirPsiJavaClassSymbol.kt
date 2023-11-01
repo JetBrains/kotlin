@@ -131,7 +131,7 @@ internal class KtFirPsiJavaClassSymbol(
     }
 
     override val annotationsList: KtAnnotationsList by cached {
-        if (hasAnnotations) KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
+        if (hasAnnotations) KtFirAnnotationListForDeclaration.create(firSymbol, builder)
         else KtEmptyAnnotationsList(token)
     }
 }

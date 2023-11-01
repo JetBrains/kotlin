@@ -37,7 +37,7 @@ internal abstract class KtFirLocalOrErrorVariableSymbol<E : FirVariable, S : Fir
 
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {
-            KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
+            KtFirAnnotationListForDeclaration.create(firSymbol, builder)
         }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }

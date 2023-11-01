@@ -32,11 +32,7 @@ internal class KtFirScriptSymbol(
         get() = withValidityAssertion { firSymbol.fir.psi }
 
     override val annotationsList by cached {
-        KtFirAnnotationListForDeclaration.create(
-            firSymbol,
-            analysisSession.useSiteSession,
-            token,
-        )
+        KtFirAnnotationListForDeclaration.create(firSymbol, builder)
     }
 
     override val typeParameters: List<KtTypeParameterSymbol>

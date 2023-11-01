@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilt
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
+import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -20,12 +21,14 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KtFirAnnotationListForReceiverParameter private constructor(
     private val firCallableSymbol: FirCallableSymbol<*>,
     private val receiverParameter: FirAnnotationContainer,
-    private val useSiteSession: FirSession,
-    override val token: KtLifetimeToken,
+    private val builder: KtSymbolByFirBuilder,
 ) : KtAnnotationsList() {
+    private val useSiteSession: FirSession get() = builder.rootSession
+    override val token: KtLifetimeToken get() = builder.token
+
     override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
-            annotations(firCallableSymbol, useSiteSession, receiverParameter)
+            annotations(firCallableSymbol, builder, receiverParameter)
         }
 
     override val annotationInfos: List<KtAnnotationApplicationInfo>
@@ -41,7 +44,7 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
         classId: ClassId,
         useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
-        annotationsByClassId(firCallableSymbol, classId, useSiteTargetFilter, useSiteSession, receiverParameter)
+        annotationsByClassId(firCallableSymbol, classId, useSiteTargetFilter, builder, receiverParameter)
     }
 
     override val annotationClassIds: Collection<ClassId>
@@ -50,16 +53,12 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
         }
 
     companion object {
-        fun create(
-            firCallableSymbol: FirCallableSymbol<*>,
-            useSiteSession: FirSession,
-            token: KtLifetimeToken,
-        ): KtAnnotationsList {
+        fun create(firCallableSymbol: FirCallableSymbol<*>, builder: KtSymbolByFirBuilder): KtAnnotationsList {
             val receiverParameter = firCallableSymbol.receiverParameter
             return if (receiverParameter?.annotations?.isEmpty() != false) {
-                KtEmptyAnnotationsList(token)
+                KtEmptyAnnotationsList(builder.token)
             } else {
-                KtFirAnnotationListForReceiverParameter(firCallableSymbol, receiverParameter, useSiteSession, token)
+                KtFirAnnotationListForReceiverParameter(firCallableSymbol, receiverParameter, builder)
             }
         }
     }
