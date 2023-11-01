@@ -118,7 +118,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
             print("*")
         } else {
             when (typeArgument.variance) {
-                KVariance.INVARIANT, null -> Unit
+                KVariance.INVARIANT, null -> {}
                 KVariance.IN -> print("in ")
                 KVariance.OUT -> print("out ")
             }
