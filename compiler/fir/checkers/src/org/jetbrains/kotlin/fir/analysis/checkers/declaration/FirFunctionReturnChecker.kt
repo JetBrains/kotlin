@@ -35,7 +35,7 @@ object FirFunctionReturnChecker : FirFunctionChecker() {
         if (declaration is FirConstructor) return
         if (declaration is FirAnonymousFunction && declaration.isLambda) return
         val returnType = declaration.returnTypeRef.coneType.fullyExpandedType(context.session)
-        if (returnType.isUnit || returnType.isNothing) return
+        if (returnType.isUnit) return
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
 
         val blockExitNode = graph.exitNode.previousNodes.lastOrNull { it is BlockExitNode } ?: return
