@@ -6,7 +6,7 @@ tasks.register("analysisAllTests") {
     dependsOn(
         ":analysis:decompiled:decompiler-to-file-stubs:test",
         ":analysis:decompiled:decompiler-to-psi:test",
-        ":analysis:decompiled:native:test",
+        ":analysis:decompiled:decompiler-native:test",
         ":analysis:analysis-api:test",
         ":analysis:analysis-api-fir:test",
         ":analysis:analysis-api-fe10:test",

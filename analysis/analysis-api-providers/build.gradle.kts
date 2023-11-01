@@ -10,7 +10,7 @@ dependencies {
     implementation(project(":analysis:project-structure"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
-    implementation(project(":analysis:decompiled:native"))
+    implementation(project(":analysis:decompiled:decompiler-native"))
     implementation(intellijCore())
 }
 

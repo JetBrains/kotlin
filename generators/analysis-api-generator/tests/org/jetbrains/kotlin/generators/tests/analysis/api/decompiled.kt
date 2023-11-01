@@ -56,7 +56,7 @@ internal fun TestGroupSuite.generateDecompiledTests() {
     }
 
     testGroup(
-        "analysis/decompiled/native/tests",
+        "analysis/decompiled/decompiler-native/tests",
         "analysis/decompiled/decompiler-to-file-stubs/testData",
     ) {
         testClass<AbstractDecompiledKnmStubConsistencyK2Test> {
