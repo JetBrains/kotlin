@@ -191,12 +191,11 @@ public abstract class AbstractTest<M : TestMethods, T : TestBuilder<M>, D : Dokk
             ?.replaceAfter(".jar", "")
     }
 
-    protected val commonStdlibPath: String? by lazy {
-        // TODO: feels hacky, find a better way to do it
-        ClassLoader.getSystemResource("kotlin/UInt.kotlin_metadata")
-            ?.file
-            ?.replace("file:", "")
-            ?.replaceAfter(".jar", "")
+    protected val commonStdlibPath: String?  by lazy {
+        // `kotlin-stdlib-common` is legacy
+        // we can use any platform dependency
+        // since common code should be resolved with all platform
+        jvmStdlibPath
     }
 
     protected val stdlibExternalDocumentationLink: ExternalDocumentationLinkImpl = ExternalDocumentationLinkImpl(
