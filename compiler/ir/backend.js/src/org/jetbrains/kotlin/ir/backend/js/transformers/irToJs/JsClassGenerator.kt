@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
@@ -489,23 +488,6 @@ fun JsFunction.escapedIfNeed(): JsFunction {
     }
     return this
 
-}
-
-fun JsStatement.isSimpleSuperCall(container: JsFunction): Boolean {
-    if (this !is JsExpressionStatement) return false
-    val invocation = expression as? JsInvocation ?: return false
-    if (invocation.qualifier !is JsSuperRef || container.parameters.size != invocation.arguments.size) return false
-
-    for (i in 0..container.parameters.lastIndex) {
-        val declaredParameter = container.parameters[i]
-        val providedParameter = (invocation.arguments[i] as? JsNameRef)?.takeIf { it.qualifier == null } ?: return false
-
-        if (declaredParameter.name != providedParameter.name) {
-            return false
-        }
-    }
-
-    return true
 }
 
 fun IrSimpleFunction?.shouldExportAccessor(context: JsIrBackendContext): Boolean {

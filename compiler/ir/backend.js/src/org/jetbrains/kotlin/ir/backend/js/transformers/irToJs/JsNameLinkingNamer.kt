@@ -24,12 +24,12 @@ class JsNameLinkingNamer(
 
     val nameMap = mutableMapOf<IrDeclaration, JsName>()
 
-    private fun IrDeclarationWithName.getName(prefix: String = ""): JsName {
+    private fun IrDeclarationWithName.getName(): JsName {
         return nameMap.getOrPut(this) {
             val name = (this as? IrClass)?.let { context.localClassNames[this] } ?: let {
                 this.nameIfPropertyAccessor() ?: getJsNameOrKotlinName().asString()
             }
-            JsName(sanitizeName(prefix + name), true)
+            JsName(sanitizeName(name), true)
         }
     }
 
