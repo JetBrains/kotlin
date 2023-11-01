@@ -289,9 +289,6 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/allopen/tests-gen", "plugins/allopen/testData") {
-            testClass<AbstractBytecodeListingTestForAllOpen> {
-                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
-            }
             testClass<AbstractIrBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
@@ -315,9 +312,6 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirPsiDiagnosticsTestForNoArg> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
-            }
-            testClass<AbstractBytecodeListingTestForNoArg> {
-                model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractIrBytecodeListingTestForNoArg> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)

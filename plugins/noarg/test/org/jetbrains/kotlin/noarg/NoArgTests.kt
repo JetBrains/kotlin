@@ -43,13 +43,6 @@ open class AbstractFirLightTreeBlackBoxCodegenTestForNoArg : AbstractFirLightTre
 
 // ---------------------------- bytecode ----------------------------
 
-open class AbstractBytecodeListingTestForNoArg : AbstractBytecodeListingTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.enableNoArg()
-    }
-}
-
 open class AbstractIrBytecodeListingTestForNoArg : AbstractIrBytecodeListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

@@ -171,10 +171,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractBytecodeListingTest> {
-                model("codegen/bytecodeListing")
-            }
-
             testClass<AbstractIrBytecodeListingTest> {
                 model("codegen/bytecodeListing")
             }
