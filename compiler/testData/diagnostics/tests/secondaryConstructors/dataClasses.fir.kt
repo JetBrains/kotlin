@@ -7,7 +7,7 @@ data class A2(val y: String, val z: Int) {
     constructor(x: String): this(x, 0)
 }
 
-data <!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>class A3<!> {
+data <!DATA_CLASS_WITHOUT_PARAMETERS!>class A3<!> {
     constructor()
 }
 

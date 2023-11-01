@@ -65,7 +65,6 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -616,10 +615,6 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DelegationSuperCallInEnumConstructor::class
     }
 
-    interface PrimaryConstructorRequiredForDataClass : KtFirDiagnostic<KtNamedDeclaration> {
-        override val diagnosticClass get() = PrimaryConstructorRequiredForDataClass::class
-    }
-
     interface ExplicitDelegationCallRequired : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ExplicitDelegationCallRequired::class
     }
@@ -628,7 +623,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = SealedClassConstructorCall::class
     }
 
-    interface DataClassWithoutParameters : KtFirDiagnostic<KtPrimaryConstructor> {
+    interface DataClassWithoutParameters : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = DataClassWithoutParameters::class
     }
 

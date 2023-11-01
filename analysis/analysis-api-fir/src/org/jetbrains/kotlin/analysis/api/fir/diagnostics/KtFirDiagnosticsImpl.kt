@@ -66,7 +66,6 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.KtReturnExpression
@@ -728,11 +727,6 @@ internal class DelegationSuperCallInEnumConstructorImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.DelegationSuperCallInEnumConstructor
 
-internal class PrimaryConstructorRequiredForDataClassImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.PrimaryConstructorRequiredForDataClass
-
 internal class ExplicitDelegationCallRequiredImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
@@ -746,7 +740,7 @@ internal class SealedClassConstructorCallImpl(
 internal class DataClassWithoutParametersImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
-) : KtAbstractFirDiagnostic<KtPrimaryConstructor>(firDiagnostic, token), KtFirDiagnostic.DataClassWithoutParameters
+) : KtAbstractFirDiagnostic<KtNamedDeclaration>(firDiagnostic, token), KtFirDiagnostic.DataClassWithoutParameters
 
 internal class DataClassVarargParameterImpl(
     firDiagnostic: KtPsiDiagnostic,

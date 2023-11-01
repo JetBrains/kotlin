@@ -307,12 +307,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SUPERTYPE_NOT_INITIALIZED by error<KtTypeReference>()
         val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by error<PsiElement>()
         val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by error<PsiElement>()
-        val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val EXPLICIT_DELEGATION_CALL_REQUIRED by error<PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
         val SEALED_CLASS_CONSTRUCTOR_CALL by error<PsiElement>()
 
         // TODO: Consider creating a parameter list position strategy and report on the parameter list instead
-        val DATA_CLASS_WITHOUT_PARAMETERS by error<KtPrimaryConstructor>()
+        val DATA_CLASS_WITHOUT_PARAMETERS by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
         val DATA_CLASS_VARARG_PARAMETER by error<KtParameter>()
         val DATA_CLASS_NOT_PROPERTY_PARAMETER by error<KtParameter>()
     }

@@ -496,7 +496,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.POTENTIALLY_NON_REPORTED_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRE_RELEASE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_FUNCTION_WITH_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_PROPERTY_IN_INTERFACE
@@ -943,7 +942,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, "Protected constructor ''{0}'' from other classes can only be used in super-call.", SYMBOL)
         map.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without a primary constructor.")
         map.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Calls to super in enum constructors are prohibited.")
-        map.put(PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, "Primary constructor required for data class.")
         map.put(
             EXPLICIT_DELEGATION_CALL_REQUIRED,
             "Explicit 'this' or 'super' call is required. There is no constructor in the superclass that can be called without arguments."
