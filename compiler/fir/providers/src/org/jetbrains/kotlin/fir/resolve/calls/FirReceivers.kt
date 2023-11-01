@@ -176,7 +176,7 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
         )
     }
 
-    abstract fun createSnapshot(): ImplicitReceiverValue<S>
+    abstract fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<S>
 }
 
 private fun receiverExpression(
@@ -219,8 +219,8 @@ class ImplicitDispatchReceiverValue(
         useSiteSession, scopeSession
     )
 
-    override fun createSnapshot(): ImplicitReceiverValue<FirClassSymbol<*>> {
-        return ImplicitDispatchReceiverValue(boundSymbol, type, useSiteSession, scopeSession, false)
+    override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirClassSymbol<*>> {
+        return ImplicitDispatchReceiverValue(boundSymbol, type, useSiteSession, scopeSession, keepMutable)
     }
 
     override val isContextReceiver: Boolean
@@ -234,8 +234,8 @@ class ImplicitExtensionReceiverValue(
     scopeSession: ScopeSession,
     mutable: Boolean = true,
 ) : ImplicitReceiverValue<FirCallableSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession, mutable) {
-    override fun createSnapshot(): ImplicitReceiverValue<FirCallableSymbol<*>> {
-        return ImplicitExtensionReceiverValue(boundSymbol, type, useSiteSession, scopeSession, false)
+    override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirCallableSymbol<*>> {
+        return ImplicitExtensionReceiverValue(boundSymbol, type, useSiteSession, scopeSession, keepMutable)
     }
 
     override val isContextReceiver: Boolean
@@ -250,8 +250,8 @@ class InaccessibleImplicitReceiverValue(
     scopeSession: ScopeSession,
     mutable: Boolean = true,
 ) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession, mutable, inaccessibleReceiver = true) {
-    override fun createSnapshot(): ImplicitReceiverValue<FirClassSymbol<*>> {
-        return InaccessibleImplicitReceiverValue(boundSymbol, type, useSiteSession, scopeSession, false)
+    override fun createSnapshot(keepMutable: Boolean): ImplicitReceiverValue<FirClassSymbol<*>> {
+        return InaccessibleImplicitReceiverValue(boundSymbol, type, useSiteSession, scopeSession, keepMutable)
     }
 
     override val isContextReceiver: Boolean
@@ -269,7 +269,7 @@ sealed class ContextReceiverValue<S : FirBasedSymbol<*>>(
 ) : ImplicitReceiverValue<S>(
     boundSymbol, type, useSiteSession, scopeSession, mutable, contextReceiverNumber,
 ) {
-    abstract override fun createSnapshot(): ContextReceiverValue<S>
+    abstract override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue<S>
 
     override val isContextReceiver: Boolean
         get() = true
@@ -286,8 +286,8 @@ class ContextReceiverValueForCallable(
 ) : ContextReceiverValue<FirCallableSymbol<*>>(
     boundSymbol, type, labelName, useSiteSession, scopeSession, mutable, contextReceiverNumber
 ) {
-    override fun createSnapshot(): ContextReceiverValue<FirCallableSymbol<*>> =
-        ContextReceiverValueForCallable(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
+    override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue<FirCallableSymbol<*>> =
+        ContextReceiverValueForCallable(boundSymbol, type, labelName, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
 }
 
 class ContextReceiverValueForClass(
@@ -301,8 +301,8 @@ class ContextReceiverValueForClass(
 ) : ContextReceiverValue<FirClassSymbol<*>>(
     boundSymbol, type, labelName, useSiteSession, scopeSession, mutable, contextReceiverNumber
 ) {
-    override fun createSnapshot(): ContextReceiverValue<FirClassSymbol<*>> =
-        ContextReceiverValueForClass(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
+    override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue<FirClassSymbol<*>> =
+        ContextReceiverValueForClass(boundSymbol, type, labelName, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
 }
 
 class ImplicitReceiverValueForScript(
@@ -316,7 +316,7 @@ class ImplicitReceiverValueForScript(
 ) : ContextReceiverValue<FirScriptSymbol>(
     boundSymbol, type, labelName, useSiteSession, scopeSession, mutable, contextReceiverNumber
 ) {
-    override fun createSnapshot(): ContextReceiverValue<FirScriptSymbol> =
-        ImplicitReceiverValueForScript(boundSymbol, type, labelName, useSiteSession, scopeSession, mutable = false, contextReceiverNumber)
+    override fun createSnapshot(keepMutable: Boolean): ContextReceiverValue<FirScriptSymbol> =
+        ImplicitReceiverValueForScript(boundSymbol, type, labelName, useSiteSession, scopeSession, keepMutable, contextReceiverNumber)
 }
 

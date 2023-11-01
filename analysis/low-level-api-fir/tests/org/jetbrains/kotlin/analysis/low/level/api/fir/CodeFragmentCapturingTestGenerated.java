@@ -73,6 +73,12 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
     }
 
     @Test
+    @TestMetadata("extensionReceiverSmartCasted.kt")
+    public void testExtensionReceiverSmartCasted() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/extensionReceiverSmartCasted.kt");
+    }
+
+    @Test
     @TestMetadata("initializer.kt")
     public void testInitializer() throws Exception {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/initializer.kt");

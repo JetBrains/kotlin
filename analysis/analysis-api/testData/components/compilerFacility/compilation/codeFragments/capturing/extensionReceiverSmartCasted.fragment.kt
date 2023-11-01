@@ -1,0 +1,2 @@
+this as FooImpl
+n

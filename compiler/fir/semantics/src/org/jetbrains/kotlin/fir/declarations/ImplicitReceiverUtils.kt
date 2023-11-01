@@ -236,12 +236,12 @@ class FirTowerDataContext private constructor(
         )
     }
 
-    fun createSnapshot(): FirTowerDataContext {
+    fun createSnapshot(keepMutable: Boolean): FirTowerDataContext {
         return FirTowerDataContext(
-            towerDataElements.map(FirTowerDataElement::createSnapshot).toPersistentList(),
-            implicitReceiverStack.createSnapshot(),
+            towerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList(),
+            implicitReceiverStack.createSnapshot(keepMutable),
             localScopes.toPersistentList(),
-            nonLocalTowerDataElements.map(FirTowerDataElement::createSnapshot).toPersistentList()
+            nonLocalTowerDataElements.map { it.createSnapshot(keepMutable) }.toPersistentList()
         )
     }
 }
@@ -254,11 +254,11 @@ class FirTowerDataElement(
     val isLocal: Boolean,
     val staticScopeOwnerSymbol: FirRegularClassSymbol? = null
 ) {
-    fun createSnapshot(): FirTowerDataElement =
+    fun createSnapshot(keepMutable: Boolean): FirTowerDataElement =
         FirTowerDataElement(
             scope,
-            implicitReceiver?.createSnapshot(),
-            contextReceiverGroup?.map { it.createSnapshot() },
+            implicitReceiver?.createSnapshot(keepMutable),
+            contextReceiverGroup?.map { it.createSnapshot(keepMutable) },
             isLocal,
             staticScopeOwnerSymbol
         )

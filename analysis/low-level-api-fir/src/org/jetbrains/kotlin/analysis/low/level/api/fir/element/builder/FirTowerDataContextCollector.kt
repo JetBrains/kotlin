@@ -51,7 +51,7 @@ internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollec
     override fun addStatementContext(statement: FirStatement, context: BodyResolveContext) {
         val closestParentExpression = statement.psi?.closestParentExpressionWithSameContextOrSelf() ?: return
         // FIR body transform may alter the context if there are implicit receivers with smartcast
-        elementsToContext[closestParentExpression] = context.towerDataContext.createSnapshot()
+        elementsToContext[closestParentExpression] = context.towerDataContext.createSnapshot(keepMutable = false)
     }
 
     override fun addDeclarationContext(declaration: FirDeclaration, context: BodyResolveContext) {
@@ -62,7 +62,7 @@ internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollec
         // we do not collect contexts for such declarations
         if (psi is KtDelegatedSuperTypeEntry) return
 
-        elementsToContext[psi] = context.towerDataContext.createSnapshot()
+        elementsToContext[psi] = context.towerDataContext.createSnapshot(keepMutable = false)
     }
 
     override fun addClassHeaderContext(declaration: FirRegularClass, context: FirTowerDataContext) {

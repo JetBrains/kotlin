@@ -110,9 +110,9 @@ class PersistentImplicitReceiverStack private constructor(
         stack[index].updateTypeFromSmartcast(type)
     }
 
-    fun createSnapshot(): PersistentImplicitReceiverStack {
+    fun createSnapshot(keepMutable: Boolean): PersistentImplicitReceiverStack {
         return PersistentImplicitReceiverStack(
-            stack.map { it.createSnapshot() }.toPersistentList(),
+            stack.map { it.createSnapshot(keepMutable) }.toPersistentList(),
             receiversPerLabel,
             indexesPerSymbol,
             originalTypes

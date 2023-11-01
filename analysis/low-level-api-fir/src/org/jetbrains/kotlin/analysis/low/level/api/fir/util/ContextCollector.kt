@@ -264,7 +264,7 @@ private class ContextCollectorVisitor(
             }
         }
 
-        val towerDataContextSnapshot = context.towerDataContext.createSnapshot()
+        val towerDataContextSnapshot = context.towerDataContext.createSnapshot(keepMutable = true)
 
         for ((index, oldType) in oldReceiverTypes) {
             implicitReceiverStack.replaceReceiverType(index, oldType)

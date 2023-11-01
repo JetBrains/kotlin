@@ -949,7 +949,10 @@ class BodyResolveContext(
 
     @OptIn(PrivateForInline::class)
     fun storeCallableReferenceContext(callableReferenceAccess: FirCallableReferenceAccess) {
-        specialTowerDataContexts.storeCallableReferenceContext(callableReferenceAccess, towerDataContext.createSnapshot())
+        specialTowerDataContexts.storeCallableReferenceContext(
+            callableReferenceAccess,
+            towerDataContext.createSnapshot(keepMutable = false)
+        )
     }
 
     @OptIn(PrivateForInline::class)
