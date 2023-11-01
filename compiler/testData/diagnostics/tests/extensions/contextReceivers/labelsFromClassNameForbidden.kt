@@ -1,3 +1,4 @@
+// ISSUE: KT-63068
 fun List<Int>.f() {
     this<!UNRESOLVED_REFERENCE!>@List<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>size<!>
 }
