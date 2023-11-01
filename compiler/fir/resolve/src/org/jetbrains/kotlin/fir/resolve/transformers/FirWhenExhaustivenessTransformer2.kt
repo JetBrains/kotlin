@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
 import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
+import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
@@ -28,6 +30,8 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyResolveComponents) : FirTransformer<Any?>() {
 
@@ -89,9 +93,10 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
     // - returns 'null' if a non-stable variable or an unknown expression is mentioned
     private fun computeStableExpressions(
         expression: FirExpression,
-        result: MutableMap<RealVariable, VariableInformation>,
+        result: MutableMap<RealVariable, VariableInformation>
     ): List<WhenBranchList> {
         when (expression) {
+            is FirElseIfTrueCondition -> return listOf(WhenBranchList.empty())
             is FirBinaryLogicExpression -> {
                 val left = computeStableExpressions(expression.leftOperand, result)
                 val right = computeStableExpressions(expression.rightOperand, result)
@@ -100,24 +105,32 @@ class FirWhenExhaustivenessTransformer2(private val bodyResolveComponents: BodyR
                     LogicOperationKind.AND -> return left.flatMap { l -> right.map { r -> l + r } }
                 }
             }
-            is FirCall -> {
-                if (expression !is FirEqualityOperatorCall && expression !is FirTypeOperatorCall) return notUsefulBranch
-                val operator = expression.arguments[0]
-                val realVar = bodyResolveComponents.dataFlowAnalyzer.getVariableFromSmartcastInfo(operator) ?: return notUsefulBranch
-                if (realVar.stability != PropertyStability.STABLE_VALUE) return notUsefulBranch
-                result[realVar] = VariableInformation.fromExpression(operator, bodyResolveComponents.session)
-                return listOf(WhenBranchList.from(realVar, expression))
+            is FirEqualityOperatorCall, is FirTypeOperatorCall -> {
+                expression as FirCall
+                return getInformation(expression.arguments[0], expression, result)?.let { listOf(it) } ?: notUsefulBranch
             }
-            is FirElseIfTrueCondition -> return listOf(WhenBranchList.empty())
+            is FirFunctionCall -> {
+                val operator = expression.toResolvedCallableSymbol() ?: return notUsefulBranch
+                if (!operator.isOperator || operator.name != OperatorNameConventions.NOT) return notUsefulBranch
+                val receiver = expression.dispatchReceiver ?: return notUsefulBranch
+                return getInformation(receiver, expression, result)?.let { listOf(it) } ?: notUsefulBranch
+            }
             else -> {
                 // lone Boolean variables
-                // TODO: handle the case of negated variables
-                val realVar = bodyResolveComponents.dataFlowAnalyzer.getVariableFromSmartcastInfo(expression) ?: return notUsefulBranch
-                if (realVar.stability != PropertyStability.STABLE_VALUE) return notUsefulBranch
-                result[realVar] = VariableInformation.fromExpression(expression, bodyResolveComponents.session)
-                return listOf(WhenBranchList.from(realVar, expression))
+                return getInformation(expression, expression, result)?.let { listOf(it) } ?: notUsefulBranch
             }
         }
+    }
+
+    private fun getInformation(
+        variable: FirExpression,
+        whole: FirExpression,
+        result: MutableMap<RealVariable, VariableInformation>
+    ): WhenBranchList? {
+        val realVar = bodyResolveComponents.dataFlowAnalyzer.getVariableFromSmartcastInfo(variable) ?: return null
+        if (realVar.stability != PropertyStability.STABLE_VALUE) return null
+        result[realVar] = VariableInformation.fromExpression(variable, bodyResolveComponents.session)
+        return WhenBranchList.from(realVar, whole)
     }
 
     private fun List<WhenBranchList>.checkExhaustiveness(
@@ -275,7 +288,29 @@ sealed interface WhenChoice {
     }
 
     data class BooleanValue(val value: Boolean) : WhenChoice {
-        override fun coveredBy(session: FirSession, expression: FirExpression): Boolean = false
+        @Suppress("UNCHECKED_CAST")
+        override fun coveredBy(session: FirSession, expression: FirExpression): Boolean {
+            // note: we know that the expression mentions the expression
+            when (expression) {
+                is FirTypeOperatorCall -> return false
+                is FirEqualityOperatorCall -> {
+                    val argument = expression.arguments[1]
+                    if (argument !is FirConstExpression<*> || argument.kind != ConstantValueKind.Boolean) return false
+                    val info = (argument as FirConstExpression<Boolean>).value
+                    return when (expression.operation) {
+                        FirOperation.EQ, FirOperation.IDENTITY -> value == info
+                        FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY -> value != info
+                        else -> false
+                    }
+                }
+                is FirFunctionCall -> {
+                    val operator = expression.toResolvedCallableSymbol() ?: return false
+                    if (!operator.isOperator || operator.name != OperatorNameConventions.NOT) return false
+                    return !value // value == false
+                }
+                else -> return value // value == true
+            }
+        }
 
         override fun toWhenMissingCase(): WhenMissingCase = when (value) {
             true -> WhenMissingCase.BooleanIsMissing.FalseIsMissing
