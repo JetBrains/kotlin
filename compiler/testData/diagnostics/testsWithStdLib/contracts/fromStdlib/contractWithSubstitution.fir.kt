@@ -1,4 +1,4 @@
-// ISSUE: KT-57911
+// ISSUES: KT-57911, KT-56744
 
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract

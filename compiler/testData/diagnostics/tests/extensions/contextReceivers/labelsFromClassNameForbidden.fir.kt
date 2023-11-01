@@ -1,3 +1,4 @@
+// ISSUE: KT-63068
 fun List<Int>.f() {
     this@List.size
 }

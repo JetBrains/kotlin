@@ -1,3 +1,4 @@
+// ISSUE: KT-56744
 // !LANGUAGE: +SafeCastCheckBoundSmartCasts
 interface SomeClass {
     val data: Any?

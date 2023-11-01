@@ -1,3 +1,5 @@
+// ISSUE: KT-56744
+
 fun castInTry(s: Any) {
     try {
         s as String // Potential cast exception

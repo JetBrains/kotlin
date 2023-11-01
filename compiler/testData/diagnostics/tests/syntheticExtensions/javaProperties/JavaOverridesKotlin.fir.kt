@@ -1,3 +1,4 @@
+// ISSUE: KT-63067
 // FILE: KotlinFile.kt
 open class KotlinClass {
     public open fun getSomething1(): Int = 1

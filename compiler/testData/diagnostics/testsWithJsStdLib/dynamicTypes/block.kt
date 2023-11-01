@@ -1,3 +1,4 @@
+// ISSUE: KT-63071
 // !MARK_DYNAMIC_CALLS
 
 fun test() {

@@ -1,3 +1,4 @@
+// ISSUE: KT-56744
 // DUMP_CFG
 
 interface A {

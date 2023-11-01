@@ -1,3 +1,4 @@
+// ISSUE: KT-59138
 // SKIP_TXT
 // FILE: JavaClass.java
 public class JavaClass {
