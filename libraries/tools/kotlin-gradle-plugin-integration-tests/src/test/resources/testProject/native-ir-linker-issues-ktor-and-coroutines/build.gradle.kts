@@ -7,6 +7,12 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    resolutionStrategy {
+        preferProjectModules()
+    }
+}
+
 kotlin {
     <SingleNativeTarget>("native") {
         binaries {

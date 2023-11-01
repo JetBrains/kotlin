@@ -8,6 +8,12 @@ repositories {
     maven("<localRepo>")
 }
 
+configurations.all {
+    resolutionStrategy {
+        preferProjectModules()
+    }
+}
+
 kotlin {
     <SingleNativeTarget>("native") {
         binaries {
