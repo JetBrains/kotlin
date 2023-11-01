@@ -1,0 +1,14 @@
+# Teams can be specified as code owners as well. Teams should
+# be identified in the format @org/team-name. Teams must have
+# explicit write access to the repository.
+
+
+# In this example, @JetBrains/kotlin-build-infrastructure
+# owns any files in defined .space directory and any of
+# its subdirectories.
+
+# These owners will be the default owners for everything in
+# the repo.
+* @JetBrains/kotlin-build-infrastructure
+
+/.space/ @JetBrains/kotlin-build-infrastructure
