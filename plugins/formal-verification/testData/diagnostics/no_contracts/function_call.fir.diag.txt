@@ -4,7 +4,7 @@ method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
 
 
 method global$fun_function_call$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Int
   var anonymous$1: Int
@@ -19,7 +19,7 @@ method global$fun_f$fun_take$T_Int$return$T_Int(local$x: Int)
 
 
 method global$fun_function_call_nested$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Int
   var anonymous$1: Int

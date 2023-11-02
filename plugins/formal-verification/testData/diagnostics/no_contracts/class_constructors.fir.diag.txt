@@ -21,7 +21,7 @@ method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(loca
 
 
 method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$f1: Ref
@@ -67,7 +67,7 @@ method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(loca
 
 
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$b1: Ref

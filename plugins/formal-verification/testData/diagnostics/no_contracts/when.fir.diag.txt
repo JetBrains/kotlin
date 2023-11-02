@@ -1,7 +1,7 @@
 /when.kt:(4,15): info: Generated Viper text for return_when:
 method global$fun_return_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
   local$b: Bool, local$c: Bool)
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var anonymous$0: Int
   if (true) {
@@ -14,7 +14,7 @@ method global$fun_return_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_In
     } else {
       anonymous$0 := 3}
   }
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
@@ -22,20 +22,20 @@ method global$fun_return_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_In
 /when.kt:(153,164): info: Generated Viper text for when_return:
 method global$fun_when_return$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
   local$b: Bool, local$c: Bool)
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   if (true) {
     if (local$a) {
-      ret := 0
+      ret$0 := 0
       goto label$ret$0
     } elseif (local$b) {
-      ret := 1
+      ret$0 := 1
       goto label$ret$0
     } elseif (local$c) {
-      ret := 2
+      ret$0 := 2
       goto label$ret$0
     } else {
-      ret := 3
+      ret$0 := 3
       goto label$ret$0
     }
   }
@@ -44,7 +44,7 @@ method global$fun_when_return$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_In
 
 /when.kt:(323,341): info: Generated Viper text for single_branch_when:
 method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Bool)
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var local0$x: Int
   local0$x := 1
@@ -53,7 +53,7 @@ method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Bo
       local0$x := 2
     }
   }
-  ret := local0$x
+  ret$0 := local0$x
   goto label$ret$0
   label label$ret$0
 }
@@ -61,7 +61,7 @@ method global$fun_single_branch_when$fun_take$T_Boolean$return$T_Int(local$a: Bo
 /when.kt:(431,443): info: Generated Viper text for no_else_when:
 method global$fun_no_else_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_Int(local$a: Bool,
   local$b: Bool, local$c: Bool)
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var local0$y: Int
   local0$y := 0
@@ -74,14 +74,14 @@ method global$fun_no_else_when$fun_take$T_Boolean$T_Boolean$T_Boolean$return$T_I
       local0$y := 3
     }
   }
-  ret := local0$y
+  ret$0 := local0$y
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(595,616): info: Generated Viper text for when_with_subject_var:
 method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var anonymous$0: Int
   if (true) {
@@ -92,14 +92,14 @@ method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Int
     } else {
       anonymous$0 := 42}
   }
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(716,738): info: Generated Viper text for when_with_subject_call:
 method global$fun_when_with_subject_call$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var anonymous$0: Int
   if (true) {
@@ -124,7 +124,7 @@ method global$fun_when_with_subject_call$fun_take$T_Int$return$T_Int(local$x: In
       anonymous$0 := anonymous$2
     }
   }
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
@@ -134,17 +134,18 @@ method global$fun_when_with_subject_var$fun_take$T_Int$return$T_Int(local$x: Int
 
 
 /when.kt:(962,972): info: Generated Viper text for empty_when:
-method global$fun_empty_when$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_empty_when$fun_take$$return$T_Int() returns (ret$0: Int)
 {
   if (true) {
   }
-  ret := 1
+  ret$0 := 1
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(1015,1028): info: Generated Viper text for unused_result:
-method global$fun_unused_result$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_unused_result$fun_take$$return$T_Int()
+  returns (ret$0: Int)
 {
   var anonymous$0: Int
   var local0$x: Int
@@ -156,14 +157,14 @@ method global$fun_unused_result$fun_take$$return$T_Int() returns (ret: Int)
     anonymous$0 := 0
   }
   local0$x := anonymous$0
-  ret := local0$x
+  ret$0 := local0$x
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(1222,1229): info: Generated Viper text for when_is:
 method global$fun_when_is$fun_take$T_class_global$class_Foo$return$T_Boolean(local$x: Ref)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
   var anonymous$0: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$global$class_Foo())
@@ -173,14 +174,14 @@ method global$fun_when_is$fun_take$T_class_global$class_Foo$return$T_Boolean(loc
     } else {
       anonymous$0 := false}
   }
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(1303,1319): info: Generated Viper text for when_subject_val:
 method global$fun_when_subject_val$fun_take$$return$T_Int()
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var anonymous$0: Int
   if (true) {
@@ -191,14 +192,14 @@ method global$fun_when_subject_val$fun_take$$return$T_Int()
     } else {
       anonymous$0 := local1$x}
   }
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
 
 /when.kt:(1396,1419): info: Generated Viper text for when_subject_val_nested:
 method global$fun_when_subject_val_nested$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Int
   if (true) {
@@ -209,18 +210,18 @@ method global$fun_when_subject_val_nested$fun_take$$return$T_Unit()
     } else {
       var anonymous$1: Int
       if (true) {
-        var local3$y: Int
-        local3$y := 1
-        if (local3$y == 1) {
+        var local4$y: Int
+        local4$y := 1
+        if (local4$y == 1) {
           anonymous$1 := 1
         } else {
           var anonymous$2: Int
           if (true) {
-            var local5$z: Int
-            local5$z := 1
-            if (local5$z == local3$y) {
+            var local7$z: Int
+            local7$z := 1
+            if (local7$z == local4$y) {
               anonymous$2 := 2
-            } elseif (local5$z == local1$x + 1) {
+            } elseif (local7$z == local1$x + 1) {
               anonymous$2 := 3
             } else {
               anonymous$2 := 4}
@@ -239,7 +240,7 @@ method global$fun_when_subject_val_nested$fun_take$$return$T_Unit()
 
 /when.kt:(1681,1707): info: Generated Viper text for when_subject_var_shadowing:
 method global$fun_when_subject_var_shadowing$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var local0$x: Int
   var anonymous$0: Int

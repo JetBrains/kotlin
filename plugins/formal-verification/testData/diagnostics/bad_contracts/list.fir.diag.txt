@@ -2,7 +2,7 @@
 field special$size: Int
 
 method global$fun_empty_list_get$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$myList: Ref
@@ -42,7 +42,7 @@ method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$
 field special$size: Int
 
 method global$fun_unsafe_last$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Int(local$l: Ref)
-  returns (ret: Int)
+  returns (ret$0: Int)
   requires acc(local$l.special$size, write)
   requires local$l.special$size >= 0
   ensures acc(local$l.special$size, write)
@@ -54,7 +54,7 @@ method global$fun_unsafe_last$fun_take$T_class_pkg$kotlin$collections$global$cla
   anonymous$0 := local$l.special$size
   anonymous$1 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
     anonymous$0 - 1)
-  ret := anonymous$1
+  ret$0 := anonymous$1
   goto label$ret$0
   label label$ret$0
 }
@@ -77,7 +77,7 @@ method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$col
 field special$size: Int
 
 method global$fun_add_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$l: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$l.special$size, write)
   requires local$l.special$size >= 0
   ensures acc(local$l.special$size, write)

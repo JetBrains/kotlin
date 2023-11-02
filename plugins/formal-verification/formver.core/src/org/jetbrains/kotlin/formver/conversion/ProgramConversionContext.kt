@@ -19,18 +19,19 @@ import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 import org.jetbrains.kotlin.formver.names.AnonymousName
 import org.jetbrains.kotlin.formver.names.CatchLabelName
-import org.jetbrains.kotlin.formver.names.ReturnLabelName
 import org.jetbrains.kotlin.formver.names.TryExitLabelName
 
 interface ProgramConversionContext {
     val config: PluginConfiguration
     val errorCollector: ErrorCollector
 
-    val anonNameProducer: FreshEntityProducer<AnonymousName>
-    val whileIndexProducer: FreshEntityProducer<Int>
-    val returnLabelNameProducer: FreshEntityProducer<ReturnLabelName>
-    val catchLabelNameProducer: FreshEntityProducer<CatchLabelName>
-    val tryExitLabelNameProducer: FreshEntityProducer<TryExitLabelName>
+    val anonNameProducer: SimpleFreshEntityProducer<AnonymousName>
+    val whileIndexProducer: SimpleFreshEntityProducer<Int>
+    val catchLabelNameProducer: SimpleFreshEntityProducer<CatchLabelName>
+    val tryExitLabelNameProducer: SimpleFreshEntityProducer<TryExitLabelName>
+    val scopeIndexProducer: SimpleFreshEntityProducer<Int>
+
+    val returnTargetProducer: FreshEntityProducer<ReturnTarget, TypeEmbedding>
 
     fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding
     fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature

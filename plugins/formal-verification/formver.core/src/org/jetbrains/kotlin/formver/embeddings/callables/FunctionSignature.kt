@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
-import org.jetbrains.kotlin.formver.names.ReturnVariableName
 
 interface FunctionSignature : CallableSignature {
     val receiver: VariableEmbedding?
@@ -15,8 +14,6 @@ interface FunctionSignature : CallableSignature {
     val sourceName: String?
         get() = null
 
-    val returnVar
-        get() = VariableEmbedding(ReturnVariableName, returnType)
     val formalArgs: List<VariableEmbedding>
         get() = listOfNotNull(receiver) + params
 

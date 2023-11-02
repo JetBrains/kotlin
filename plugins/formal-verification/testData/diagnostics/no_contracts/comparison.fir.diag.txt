@@ -1,8 +1,8 @@
 /comparison.kt:(4,8): info: Generated Viper text for less:
 method global$fun_less$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Int, local$y: Int)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
-  ret := local$x < local$y
+  ret$0 := local$x < local$y
   goto label$ret$0
   label label$ret$0
 }
@@ -10,9 +10,9 @@ method global$fun_less$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Int, local
 /comparison.kt:(60,70): info: Generated Viper text for less_equal:
 method global$fun_less_equal$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Int,
   local$y: Int)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
-  ret := local$x <= local$y
+  ret$0 := local$x <= local$y
   goto label$ret$0
   label label$ret$0
 }
@@ -20,9 +20,9 @@ method global$fun_less_equal$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Int,
 /comparison.kt:(123,130): info: Generated Viper text for greater:
 method global$fun_greater$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Int,
   local$y: Int)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
-  ret := local$x > local$y
+  ret$0 := local$x > local$y
   goto label$ret$0
   label label$ret$0
 }
@@ -30,9 +30,9 @@ method global$fun_greater$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Int,
 /comparison.kt:(182,195): info: Generated Viper text for greater_equal:
 method global$fun_greater_equal$fun_take$T_Int$T_Int$return$T_Boolean(local$x: Int,
   local$y: Int)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
-  ret := local$x >= local$y
+  ret$0 := local$x >= local$y
   goto label$ret$0
   label label$ret$0
 }

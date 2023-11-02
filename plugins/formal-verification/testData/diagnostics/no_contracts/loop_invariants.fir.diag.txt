@@ -1,6 +1,6 @@
 /loop_invariants.kt:(128,152): info: Generated Viper text for dynamic_lambda_invariant:
 method global$fun_dynamic_lambda_invariant$fun_take$fun_take$$return$T_Int$return$T_Unit(local$f: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -34,7 +34,7 @@ method global$fun_returns_boolean$fun_take$$return$T_Boolean()
 
 /loop_invariants.kt:(226,245): info: Generated Viper text for function_assignment:
 method global$fun_function_assignment$fun_take$fun_take$$return$T_Int$return$T_Unit(local$f: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires special$duplicable(local$f)
   ensures acc(local$f.special$function_object_call_counter, write)
@@ -71,7 +71,7 @@ method global$fun_returns_boolean$fun_take$$return$T_Boolean()
 /loop_invariants.kt:(333,364): info: Generated Viper text for conditional_function_assignment:
 method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$return$T_Int$fun_take$$return$T_Int$return$T_Unit(local$b: Bool,
   local$f: Ref, local$h: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
   requires acc(local$h.special$function_object_call_counter, write)
   requires special$duplicable(local$f)

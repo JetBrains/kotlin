@@ -21,9 +21,17 @@ data class AnonymousName(val n: Int) : MangledName {
         get() = "anonymous\$$n"
 }
 
-data object ReturnVariableName : MangledName {
+/**
+ * Name for return variable that should *only* be used in signatures of methods without a body.
+ */
+data object PlaceholderReturnVariableName : MangledName {
     override val mangled: String
         get() = "ret"
+}
+
+data class ReturnVariableName(val n: Int) : MangledName {
+    override val mangled: String
+        get() = "ret\$$n"
 }
 
 data object ThisReceiverName : MangledName {

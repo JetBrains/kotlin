@@ -1,27 +1,28 @@
 /returns_null.kt:(121,140): info: Generated Viper text for simple_returns_null:
 method global$fun_simple_returns_null$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
-  returns (ret: dom$Nullable[Int])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  ensures ret == (dom$Nullable$null(): dom$Nullable[Int])
-  ensures ret != (dom$Nullable$null(): dom$Nullable[Int]) ==> false
+  returns (ret$0: dom$Nullable[Int])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures ret$0 == (dom$Nullable$null(): dom$Nullable[Int])
+  ensures ret$0 != (dom$Nullable$null(): dom$Nullable[Int]) ==> false
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  ret$0 := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
+    dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   goto label$ret$0
   label label$ret$0
 }
 
 /returns_null.kt:(300,320): info: Generated Viper text for returns_null_implies:
 method global$fun_returns_null_implies$fun_take$NT_Boolean$return$NT_Boolean(local$x: dom$Nullable[Bool])
-  returns (ret: dom$Nullable[Bool])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
-  ensures ret == (dom$Nullable$null(): dom$Nullable[Bool]) ==>
+  returns (ret$0: dom$Nullable[Bool])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
+  ensures ret$0 == (dom$Nullable$null(): dom$Nullable[Bool]) ==>
     local$x == (dom$Nullable$null(): dom$Nullable[Bool])
-  ensures ret != (dom$Nullable$null(): dom$Nullable[Bool]) ==>
+  ensures ret$0 != (dom$Nullable$null(): dom$Nullable[Bool]) ==>
     local$x != (dom$Nullable$null(): dom$Nullable[Bool])
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Boolean()))
-  ret := local$x
+  ret$0 := local$x
   goto label$ret$0
   label label$ret$0
 }
@@ -29,13 +30,13 @@ method global$fun_returns_null_implies$fun_take$NT_Boolean$return$NT_Boolean(loc
 /returns_null.kt:(511,531): info: Generated Viper text for returns_null_with_if:
 method global$fun_returns_null_with_if$fun_take$NT_Int$NT_Int$NT_Int$return$NT_Int(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int], local$z: dom$Nullable[Int])
-  returns (ret: dom$Nullable[Int])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  ensures ret == (dom$Nullable$null(): dom$Nullable[Int]) ==>
+  returns (ret$0: dom$Nullable[Int])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures ret$0 == (dom$Nullable$null(): dom$Nullable[Int]) ==>
     local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     local$y == (dom$Nullable$null(): dom$Nullable[Int]) ||
     local$z == (dom$Nullable$null(): dom$Nullable[Int])
-  ensures ret != (dom$Nullable$null(): dom$Nullable[Int]) ==>
+  ensures ret$0 != (dom$Nullable$null(): dom$Nullable[Int]) ==>
     local$x != (dom$Nullable$null(): dom$Nullable[Int]) ||
     local$y != (dom$Nullable$null(): dom$Nullable[Int])
 {
@@ -51,10 +52,10 @@ method global$fun_returns_null_with_if$fun_take$NT_Int$NT_Int$NT_Int$return$NT_I
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
     (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
     (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)) {
-      ret := local$y
+      ret$0 := local$y
       goto label$ret$0
     } else {
-      ret := local$z
+      ret$0 := local$z
       goto label$ret$0
     }
   }
@@ -63,10 +64,10 @@ method global$fun_returns_null_with_if$fun_take$NT_Int$NT_Int$NT_Int$return$NT_I
 
 /returns_null.kt:(833,862): info: Generated Viper text for non_nullable_returns_not_null:
 method global$fun_non_nullable_returns_not_null$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret: Int)
+  returns (ret$0: Int)
   ensures true
 {
-  ret := local$x
+  ret$0 := local$x
   goto label$ret$0
   label label$ret$0
 }
@@ -74,10 +75,10 @@ method global$fun_non_nullable_returns_not_null$fun_take$T_Int$return$T_Int(loca
 /returns_null.kt:(981,1010): info: Generated Viper text for non_nullable_compared_to_null:
 method global$fun_non_nullable_compared_to_null$fun_take$T_Int$T_Int$return$T_Int(local$x: Int,
   local$y: Int)
-  returns (ret: Int)
+  returns (ret$0: Int)
   ensures true ==> false || true
 {
-  ret := local$x
+  ret$0 := local$x
   goto label$ret$0
   label label$ret$0
 }

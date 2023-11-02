@@ -52,7 +52,7 @@ predicate T_class_global$class_Rec(special$class$predicate$subject: Ref) {
 
 method global$fun_useFoo$fun_take$T_class_global$class_Bar$T_class_global$class_Rec$return$T_Unit(local$bar: Ref,
   local$rec: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$bar.class_Bar$member_foo, wildcard)
   requires acc(local$rec.class_Rec$member_next, wildcard)
   ensures acc(local$bar.class_Bar$member_foo, wildcard)
@@ -102,7 +102,7 @@ predicate T_class_global$class_C(special$class$predicate$subject: Ref) {
 }
 
 method global$fun_three_layers_hierarchy$fun_take$T_class_global$class_C$return$T_Unit(local$c: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$c.class_A$member_x, wildcard)
   ensures acc(local$c.class_A$member_x, wildcard)
 {
@@ -170,7 +170,7 @@ predicate T_class_pkg$kotlin$collections$global$class_MutableList(special$class$
 }
 
 method global$fun_list_hierarchy$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$xs: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$xs.special$size, write)
   requires local$xs.special$size >= 0
   ensures acc(local$xs.special$size, write)

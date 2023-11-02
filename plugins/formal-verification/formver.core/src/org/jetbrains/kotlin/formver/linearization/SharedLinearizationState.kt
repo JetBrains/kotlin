@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.formver.linearization
 
-import org.jetbrains.kotlin.formver.conversion.FreshEntityProducer
+import org.jetbrains.kotlin.formver.conversion.getFresh
+import org.jetbrains.kotlin.formver.conversion.simpleFreshEntityProducer
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 import org.jetbrains.kotlin.formver.names.AnonymousName
 
 class SharedLinearizationState {
-    private val producer = FreshEntityProducer { AnonymousName(it) }
+    private val producer = simpleFreshEntityProducer { AnonymousName(it) }
     val assumptionTracker = AssumptionTracker()
 
     fun freshVar(type: TypeEmbedding) = VariableEmbedding(producer.getFresh(), type)

@@ -4,7 +4,7 @@ method global$ext_getter_succ$fun_take$T_Int$return$T_Int(this: Int)
 
 
 method global$fun_extensionGetterProperty$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Int
   var local0$a: Int
@@ -30,7 +30,7 @@ method global$ext_setter_strange$fun_take$T_Int$T_Int$return$T_Unit(this: Int,
 
 
 method global$fun_extensionSetterProperty$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: dom$Unit
   anonymous$0 := global$ext_setter_strange$fun_take$T_Int$T_Int$return$T_Unit(42,
@@ -54,7 +54,7 @@ method global$ext_getter_succ$fun_take$T_class_global$class_Foo$return$T_Int(thi
 
 
 method global$fun_extensionGetterPropertyUserDefinedClass$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$f: Ref
@@ -90,7 +90,7 @@ method global$ext_setter_strange$fun_take$T_class_global$class_Foo$T_Int$return$
 
 
 method global$fun_extensionSetterPropertyUserDefinedClass$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$f: Ref

@@ -2,7 +2,7 @@
 field special$size: Int
 
 method global$fun_declaration$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var local0$l1: Ref
   var local0$l2: dom$Nullable[Ref]
@@ -14,7 +14,7 @@ method global$fun_declaration$fun_take$$return$T_Unit()
 field special$size: Int
 
 method global$fun_initialization$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Unit(local$l: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$l.special$size, write)
   requires local$l.special$size >= 0
   ensures acc(local$l.special$size, write)
@@ -42,7 +42,7 @@ method pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$
 field special$size: Int
 
 method global$fun_add_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$return$T_Unit(local$l: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires acc(local$l.special$size, write)
   requires local$l.special$size >= 0
   ensures acc(local$l.special$size, write)
@@ -86,12 +86,12 @@ method pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kot
 field special$size: Int
 
 method global$fun_last_or_null$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$NT_Int(local$l: Ref)
-  returns (ret: dom$Nullable[Int])
+  returns (ret$0: dom$Nullable[Int])
   requires acc(local$l.special$size, write)
   requires local$l.special$size >= 0
   ensures acc(local$l.special$size, write)
   ensures local$l.special$size >= 0
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   var anonymous$0: Int
   var local0$size: Int
@@ -103,10 +103,10 @@ method global$fun_last_or_null$fun_take$T_class_pkg$kotlin$collections$global$cl
       var anonymous$1: Int
       anonymous$1 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
         local0$size - 1)
-      ret := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+      ret$0 := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
       goto label$ret$0
     } else {
-      ret := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
+      ret$0 := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
         dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
       goto label$ret$0
     }
@@ -130,7 +130,7 @@ method pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$col
 field special$size: Int
 
 method global$fun_is_empty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Int(local$l: Ref)
-  returns (ret: Int)
+  returns (ret$0: Int)
   requires acc(local$l.special$size, write)
   requires local$l.special$size >= 0
   ensures acc(local$l.special$size, write)
@@ -149,7 +149,7 @@ method global$fun_is_empty$fun_take$T_class_pkg$kotlin$collections$global$class_
     } else {
       anonymous$0 := 1}
   }
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
@@ -181,7 +181,7 @@ method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin
 field special$size: Int
 
 method global$fun_nullable_list$fun_take$NT_class_pkg$kotlin$collections$global$class_List$return$T_Unit(local$l: dom$Nullable[Ref])
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires local$l != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
     acc((dom$Casting$cast(local$l, dom$Type$pkg$kotlin$collections$global$class_List()): Ref).special$size, write)
   requires local$l != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
@@ -213,12 +213,12 @@ method global$fun_nullable_list$fun_take$NT_class_pkg$kotlin$collections$global$
     if (anonymous$0) {
       var anonymous$2: Int
       var anonymous$3: Int
-      var local2$x: Int
+      var local4$x: Int
       anonymous$2 := (dom$Casting$cast(local$l, dom$Type$pkg$kotlin$collections$global$class_List()): Ref).special$size
       anonymous$3 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int((dom$Casting$cast(local$l,
         dom$Type$pkg$kotlin$collections$global$class_List()): Ref), anonymous$2 -
         1)
-      local2$x := anonymous$3
+      local4$x := anonymous$3
     }
   }
   label label$ret$0

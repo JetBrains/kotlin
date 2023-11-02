@@ -138,6 +138,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("inline_correctness.kt")
+        public void testInline_correctness() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inline_correctness.kt");
+        }
+
+        @Test
         @TestMetadata("inlining.kt")
         public void testInlining() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/good_contracts/inlining.kt");

@@ -24,7 +24,7 @@ class InlineNamedFunction(
         source: KtSourceElement?
     ): ExpEmbedding {
         val paramNames = symbol.valueParameterSymbols.map { it.name }
-        return ctx.insertInlineFunctionCall(signature, paramNames, args, body)
+        return ctx.insertInlineFunctionCall(signature, paramNames, args, body, signature.sourceName)
     }
 
     override fun toViperMethod(): Nothing? = null

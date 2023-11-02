@@ -1,62 +1,63 @@
 /inline.kt:(211,220): info: Generated Viper text for quadruple:
 method global$fun_quadruple$fun_take$T_Int$return$T_Int(local$x: Int)
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
-  var anonymous$0: Int
-  var anonymous$1: Int
+  var ret$1: Int
+  var ret$2: Int
   if (true) {
     var local1$y: Int
     local1$y := local$x + local$x
-    anonymous$0 := local1$y
+    ret$1 := local1$y
     goto label$ret$1
     label label$ret$1
   }
   if (true) {
-    var local1$y: Int
-    local1$y := local$x + local$x
-    anonymous$1 := local1$y
+    var local2$y: Int
+    local2$y := local$x + local$x
+    ret$2 := local2$y
     goto label$ret$2
     label label$ret$2
   }
-  ret := anonymous$0 + anonymous$1
+  ret$0 := ret$1 + ret$2
   goto label$ret$0
   label label$ret$0
 }
 
 /inline.kt:(450,463): info: Generated Viper text for use_branching:
-method global$fun_use_branching$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_use_branching$fun_take$$return$T_Int()
+  returns (ret$0: Int)
 {
-  var anonymous$0: Int
+  var ret$1: Int
+  var anonymous$0: Bool
+  var ret$2: Int
   var anonymous$1: Bool
-  var anonymous$2: Int
-  var anonymous$3: Bool
-  anonymous$1 := false
+  anonymous$0 := false
   if (true) {
     if (true) {
-      if (anonymous$1) {
-        anonymous$0 := 1
+      if (anonymous$0) {
+        ret$1 := 1
         goto label$ret$1
       } else {
-        anonymous$0 := 0
+        ret$1 := 0
         goto label$ret$1
       }
     }
     label label$ret$1
   }
-  anonymous$3 := true
+  anonymous$1 := true
   if (true) {
     if (true) {
-      if (anonymous$3) {
-        anonymous$2 := 1
+      if (anonymous$1) {
+        ret$2 := 1
         goto label$ret$2
       } else {
-        anonymous$2 := 0
+        ret$2 := 0
         goto label$ret$2
       }
     }
     label label$ret$2
   }
-  ret := anonymous$0 + anonymous$2
+  ret$0 := ret$1 + ret$2
   goto label$ret$0
   label label$ret$0
 }

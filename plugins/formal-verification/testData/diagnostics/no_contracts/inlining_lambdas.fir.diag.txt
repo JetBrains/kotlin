@@ -1,91 +1,93 @@
 /inlining_lambdas.kt:(136,148): info: Generated Viper text for explicit_arg:
-method global$fun_explicit_arg$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_explicit_arg$fun_take$$return$T_Int()
+  returns (ret$0: Int)
 {
-  var anonymous$0: Int
+  var ret$1: Int
   if (true) {
-    var anonymous$1: Int
-    var anonymous$2: Int
-    anonymous$2 := 0
+    var ret$2: Int
+    var anonymous$0: Int
+    anonymous$0 := 0
     if (true) {
-      anonymous$1 := anonymous$2 + anonymous$2
+      ret$2 := anonymous$0 + anonymous$0
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1
+    ret$1 := ret$2
     goto label$ret$1
     label label$ret$1
   }
-  ret := anonymous$0
+  ret$0 := ret$1
   goto label$ret$0
   label label$ret$0
 }
 
 /inlining_lambdas.kt:(198,210): info: Generated Viper text for implicit_arg:
-method global$fun_implicit_arg$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_implicit_arg$fun_take$$return$T_Int()
+  returns (ret$0: Int)
 {
-  var anonymous$0: Int
+  var ret$1: Int
   if (true) {
-    var anonymous$1: Int
-    var anonymous$2: Int
-    anonymous$2 := 0
+    var ret$2: Int
+    var anonymous$0: Int
+    anonymous$0 := 0
     if (true) {
-      anonymous$1 := anonymous$2 * 2
+      ret$2 := anonymous$0 * 2
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1
+    ret$1 := ret$2
     goto label$ret$1
     label label$ret$1
   }
-  ret := anonymous$0
+  ret$0 := ret$1
   goto label$ret$0
   label label$ret$0
 }
 
 /inlining_lambdas.kt:(256,265): info: Generated Viper text for lambda_if:
-method global$fun_lambda_if$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_lambda_if$fun_take$$return$T_Int() returns (ret$0: Int)
 {
-  var anonymous$0: Int
+  var ret$1: Int
   if (true) {
-    var anonymous$1: Int
-    var anonymous$2: Int
-    anonymous$2 := 0
+    var ret$2: Int
+    var anonymous$0: Int
+    anonymous$0 := 0
     if (true) {
-      var anonymous$3: Int
+      var anonymous$1: Int
       if (true) {
-        if (anonymous$2 == 0) {
-          anonymous$3 := anonymous$2 + 1
+        if (anonymous$0 == 0) {
+          anonymous$1 := anonymous$0 + 1
         } else {
-          anonymous$3 := anonymous$2 + 2}
+          anonymous$1 := anonymous$0 + 2}
       }
-      anonymous$1 := anonymous$3
+      ret$2 := anonymous$1
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1
+    ret$1 := ret$2
     goto label$ret$1
     label label$ret$1
   }
-  ret := anonymous$0
+  ret$0 := ret$1
   goto label$ret$0
   label label$ret$0
 }
 
 /inlining_lambdas.kt:(396,417): info: Generated Viper text for return_value_not_used:
 method global$fun_return_value_not_used$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Int
+  var ret$1: Int
   if (true) {
-    var anonymous$1: Int
-    var anonymous$2: Int
-    anonymous$2 := 0
+    var ret$2: Int
+    var anonymous$0: Int
+    anonymous$0 := 0
     if (true) {
-      anonymous$1 := anonymous$2
+      ret$2 := anonymous$0
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1
+    ret$1 := ret$2
     goto label$ret$1
     label label$ret$1
   }
@@ -93,82 +95,82 @@ method global$fun_return_value_not_used$fun_take$$return$T_Unit()
 }
 
 /inlining_lambdas.kt:(453,462): info: Generated Viper text for shadowing:
-method global$fun_shadowing$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_shadowing$fun_take$$return$T_Int() returns (ret$0: Int)
 {
   var local0$x: Int
   var local0$y: Int
-  var anonymous$0: Int
+  var ret$1: Int
   local0$x := 1
   local0$y := 1
   if (true) {
-    var anonymous$1: Int
-    var anonymous$2: Int
-    anonymous$2 := 0
+    var ret$2: Int
+    var anonymous$0: Int
+    anonymous$0 := 0
     if (true) {
       var local2$y: Int
       local2$y := 0
-      anonymous$1 := anonymous$2 + local2$y
+      ret$2 := anonymous$0 + local2$y
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1
+    ret$1 := ret$2
     goto label$ret$1
     label label$ret$1
   }
-  ret := anonymous$0
+  ret$0 := ret$1
   goto label$ret$0
   label label$ret$0
 }
 
 /inlining_lambdas.kt:(699,705): info: Generated Viper text for nested:
-method global$fun_nested$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_nested$fun_take$$return$T_Int() returns (ret$0: Int)
 {
   var local0$x: Int
-  var anonymous$0: Int
+  var ret$1: Int
   local0$x := 2
   if (true) {
     var local1$x: Int
-    var anonymous$1: Int
+    var ret$2: Int
     local1$x := 2
     if (true) {
-      var anonymous$2: Int
-      var anonymous$3: Int
-      anonymous$3 := 0
+      var ret$3: Int
+      var anonymous$0: Int
+      anonymous$0 := 0
       if (true) {
-        anonymous$2 := anonymous$3 + 1
+        ret$3 := anonymous$0 + 1
         goto label$ret$3
         label label$ret$3
       }
-      anonymous$1 := anonymous$2
+      ret$2 := ret$3
       goto label$ret$2
       label label$ret$2
     }
-    anonymous$0 := anonymous$1
+    ret$1 := ret$2
     goto label$ret$1
     label label$ret$1
   }
-  ret := anonymous$0
+  ret$0 := ret$1
   goto label$ret$0
   label label$ret$0
 }
 
 /inlining_lambdas.kt:(843,861): info: Generated Viper text for lambda_passthrough:
 method global$fun_lambda_passthrough$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
-  var anonymous$0: dom$Unit
+  var ret$1: dom$Unit
   if (true) {
-    var anonymous$1: Int
+    var ret$2: Int
     if (true) {
-      var anonymous$2: Int
-      var anonymous$3: Int
-      anonymous$3 := 0
+      var ret$3: Int
+      var anonymous$0: Int
+      anonymous$0 := 0
       if (true) {
-        anonymous$2 := anonymous$3 + 1
+        ret$3 := anonymous$0 + 1
         goto label$ret$3
         label label$ret$3
       }
-      anonymous$1 := anonymous$2
+      ret$2 := ret$3
       goto label$ret$2
       label label$ret$2
     }

@@ -50,9 +50,9 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         val expr = data.convert(returnExpression.result)
         // returnTarget is null when it is the implicit return of a lambda
         val returnTargetName = returnExpression.target.labelName
-        val (retVar, retLabel) = data.resolveReturnTarget(returnTargetName)
-        retVar.setValue(expr, data, returnExpression.source)
-        data.addStatement(retLabel.toGoto(returnExpression.source.asPosition))
+        val target = data.resolveReturnTarget(returnTargetName)
+        target.variable.setValue(expr, data, returnExpression.source)
+        data.addStatement(target.label.toGoto(returnExpression.source.asPosition))
         return UnitLit
     }
 
@@ -266,8 +266,9 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
                 convert(whileLoop.block)
                 convertAndCapture(whileLoop.condition)
             }
+            val returnTarget = defaultResolvedReturnTarget
             val postconditions = when (val sig = data.signature) {
-                is FullNamedFunctionSignature -> sig.postconditions
+                is FullNamedFunctionSignature -> sig.getPostconditions(returnTarget.variable)
                 else -> listOf()
             }
             data.addStatement(

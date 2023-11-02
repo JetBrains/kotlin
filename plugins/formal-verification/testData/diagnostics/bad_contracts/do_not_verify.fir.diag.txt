@@ -1,9 +1,9 @@
 /do_not_verify.kt:(245,256): info: Generated Viper text for bad_returns:
 method global$fun_bad_returns$fun_take$$return$T_Boolean()
-  returns (ret: Bool)
-  ensures ret == true
+  returns (ret$0: Bool)
+  ensures ret$0 == true
 {
-  ret := false
+  ret$0 := false
   goto label$ret$0
   label label$ret$0
 }

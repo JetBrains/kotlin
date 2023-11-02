@@ -6,25 +6,27 @@
 package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.ast.*
 
 interface FullNamedFunctionSignature : NamedFunctionSignature {
-    val preconditions: List<ExpEmbedding>
-    val postconditions: List<ExpEmbedding>
+    fun getPreconditions(returnVariable: VariableEmbedding): List<ExpEmbedding>
+    fun getPostconditions(returnVariable: VariableEmbedding): List<ExpEmbedding>
 }
 
 fun FullNamedFunctionSignature.toViperMethod(
     body: Stmt.Seqn?,
+    returnVariable: VariableEmbedding,
     position: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
     trafos: Trafos = Trafos.NoTrafos,
 ) = UserMethod(
     name,
     formalArgs.map { it.toLocalVarDecl() },
-    returnVar.toLocalVarDecl(),
-    preconditions.pureToViper(),
-    postconditions.pureToViper(),
+    returnVariable.toLocalVarDecl(),
+    getPreconditions(returnVariable).pureToViper(),
+    getPostconditions(returnVariable).pureToViper(),
     body,
     position,
     info,

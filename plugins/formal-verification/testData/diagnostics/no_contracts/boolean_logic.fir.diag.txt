@@ -1,8 +1,8 @@
 /boolean_logic.kt:(4,12): info: Generated Viper text for negation:
 method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Bool)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
-  ret := !local$x
+  ret$0 := !local$x
   goto label$ret$0
   label label$ret$0
 }
@@ -10,14 +10,14 @@ method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Bool)
 /boolean_logic.kt:(56,67): info: Generated Viper text for conjunction:
 method global$fun_conjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
   local$y: Bool)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
   var anonymous$0: Bool
   if (local$x) {
     anonymous$0 := local$y
   } else {
     anonymous$0 := false}
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
@@ -25,7 +25,7 @@ method global$fun_conjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(loca
 /boolean_logic.kt:(127,151): info: Generated Viper text for conjunction_side_effects:
 method global$fun_conjunction_side_effects$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
   local$y: Bool)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
   var anonymous$0: Bool
   var anonymous$1: Bool
@@ -36,7 +36,7 @@ method global$fun_conjunction_side_effects$fun_take$T_Boolean$T_Boolean$return$T
     anonymous$1 := anonymous$2
   } else {
     anonymous$1 := false}
-  ret := anonymous$1
+  ret$0 := anonymous$1
   goto label$ret$0
   label label$ret$0
 }
@@ -48,14 +48,14 @@ method global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x: Bool)
 /boolean_logic.kt:(324,335): info: Generated Viper text for disjunction:
 method global$fun_disjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(local$x: Bool,
   local$y: Bool)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
   var anonymous$0: Bool
   if (local$x) {
     anonymous$0 := true
   } else {
     anonymous$0 := local$y}
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }

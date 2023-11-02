@@ -1,27 +1,27 @@
 /nullable.kt:(61,79): info: Generated Viper text for use_nullable_twice:
 method global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
-  returns (ret: dom$Nullable[Int])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  returns (ret$0: dom$Nullable[Int])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   var local0$a: dom$Nullable[Int]
   var local0$b: dom$Nullable[Int]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   local0$a := local$x
   local0$b := local$x
-  ret := local0$a
+  ret$0 := local0$a
   goto label$ret$0
   label label$ret$0
 }
 
 /nullable.kt:(145,168): info: Generated Viper text for pass_nullable_parameter:
 method global$fun_pass_nullable_parameter$fun_take$NT_Int$return$NT_Int(local$x: dom$Nullable[Int])
-  returns (ret: dom$Nullable[Int])
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  returns (ret$0: dom$Nullable[Int])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   var anonymous$0: dom$Nullable[Int]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   anonymous$0 := global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x)
-  ret := local$x
+  ret$0 := local$x
   goto label$ret$0
   label label$ret$0
 }
@@ -34,11 +34,11 @@ method global$fun_use_nullable_twice$fun_take$NT_Int$return$NT_Int(local$x: dom$
 /nullable.kt:(232,260): info: Generated Viper text for nullable_nullable_comparison:
 method global$fun_nullable_nullable_comparison$fun_take$NT_Int$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$y): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  ret := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
+  ret$0 := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     local$y == (dom$Nullable$null(): dom$Nullable[Int]) ||
     local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
     local$y != (dom$Nullable$null(): dom$Nullable[Int]) &&
@@ -51,11 +51,11 @@ method global$fun_nullable_nullable_comparison$fun_take$NT_Int$NT_Int$return$T_B
 /nullable.kt:(315,347): info: Generated Viper text for nullable_non_nullable_comparison:
 method global$fun_nullable_non_nullable_comparison$fun_take$NT_Int$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int],
   local$y: dom$Nullable[Int])
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$y): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  ret := !(local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
+  ret$0 := !(local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Casting$cast(local$x, dom$Type$Int()): Int) == 3)
   goto label$ret$0
   label label$ret$0
@@ -63,10 +63,10 @@ method global$fun_nullable_non_nullable_comparison$fun_take$NT_Int$NT_Int$return
 
 /nullable.kt:(402,417): info: Generated Viper text for null_comparison:
 method global$fun_null_comparison$fun_take$NT_Int$return$T_Boolean(local$x: dom$Nullable[Int])
-  returns (ret: Bool)
+  returns (ret$0: Bool)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  ret := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
+  ret$0 := local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
     (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
     local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
@@ -80,7 +80,7 @@ method global$fun_null_comparison$fun_take$NT_Int$return$T_Boolean(local$x: dom$
 
 /nullable.kt:(466,480): info: Generated Viper text for elvis_operator:
 method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var anonymous$0: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
@@ -88,7 +88,7 @@ method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nulla
     anonymous$0 := 3
   } else {
     anonymous$0 := (dom$Casting$cast(local$x, dom$Type$Int()): Int)}
-  ret := anonymous$0
+  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
@@ -99,7 +99,7 @@ method global$fun_elvis_operator$fun_take$NT_Int$return$T_Int(local$x: dom$Nulla
 
 
 method global$fun_elvis_operator_complex$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var anonymous$0: dom$Nullable[Int]
   var anonymous$1: Int
@@ -112,7 +112,7 @@ method global$fun_elvis_operator_complex$fun_take$NT_Int$return$T_Int(local$x: d
     anonymous$1 := anonymous$2
   } else {
     anonymous$1 := (dom$Casting$cast(anonymous$0, dom$Type$Int()): Int)}
-  ret := anonymous$1
+  ret$0 := anonymous$1
   goto label$ret$0
   label label$ret$0
 }
@@ -124,19 +124,19 @@ method global$fun_pass_nullable_parameter$fun_take$NT_Int$return$NT_Int(local$x:
 
 /nullable.kt:(627,648): info: Generated Viper text for evlis_operator_return:
 method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: dom$Nullable[Int])
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var anonymous$0: Int
   var local0$y: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   if (local$x == (dom$Nullable$null(): dom$Nullable[Int])) {
-    ret := 0
+    ret$0 := 0
     goto label$ret$0
     anonymous$0 := (dom$Casting$cast(dom$Unit$element(), dom$Type$Int()): Int)
   } else {
     anonymous$0 := (dom$Casting$cast(local$x, dom$Type$Int()): Int)}
   local0$y := anonymous$0
-  ret := local0$y
+  ret$0 := local0$y
   goto label$ret$0
   label label$ret$0
 }
@@ -145,7 +145,7 @@ method global$fun_evlis_operator_return$fun_take$NT_Int$return$T_Int(local$x: do
 field pkg$kotlin$class_String$member_length: Int
 
 method global$fun_safe_call$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
     acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length, wildcard)
   ensures local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
@@ -176,7 +176,7 @@ method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
 field pkg$kotlin$class_String$member_length: Int
 
 method global$fun_safe_call_property$fun_take$NT_class_pkg$kotlin$global$class_String$return$T_Unit(local$s: dom$Nullable[Ref])
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
   requires local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
     acc((dom$Casting$cast(local$s, dom$Type$pkg$kotlin$global$class_String()): Ref).pkg$kotlin$class_String$member_length, wildcard)
   ensures local$s != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
@@ -213,12 +213,12 @@ method class_Foo$fun_nullable$fun_take$T_class_global$class_Foo$return$NT_class_
 
 
 method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_Int(local$foo: dom$Nullable[Ref])
-  returns (ret: dom$Nullable[Int])
+  returns (ret$0: dom$Nullable[Int])
   requires local$foo != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
     acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_Foo$member_v, wildcard)
   ensures local$foo != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
     acc((dom$Casting$cast(local$foo, dom$Type$global$class_Foo()): Ref).class_Foo$member_v, wildcard)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
   var anonymous$0: dom$Nullable[Ref]
   var anonymous$2: dom$Nullable[Ref]
@@ -247,7 +247,7 @@ method global$fun_safe_call_chain$fun_take$NT_class_global$class_Foo$return$NT_I
     anonymous$5 := (dom$Casting$cast(anonymous$2, dom$Type$global$class_Foo()): Ref).class_Foo$member_v
     anonymous$4 := (dom$Casting$cast(anonymous$5, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   }
-  ret := anonymous$4
+  ret$0 := anonymous$4
   goto label$ret$0
   label label$ret$0
 }

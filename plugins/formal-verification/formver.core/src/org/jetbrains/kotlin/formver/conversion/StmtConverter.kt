@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.withPosition
@@ -34,11 +33,11 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
     private val whileIndex: Int = 0,
     override val whenSubject: VariableEmbedding? = null,
     override val checkedSafeCallSubject: ExpEmbedding? = null,
-    private val scopeDepth: Int = 0,
+    private val scopeIndex: Int = 0,
     override val activeCatchLabels: List<Label> = listOf(),
 ) : StmtConversionContext<RTC>, SeqnBuildContext by seqnCtx, MethodConversionContext by methodCtx, ResultTrackingContext {
     private fun <NewRTC : ResultTrackingContext> withResultFactory(newFactory: ResultTrackerFactory<NewRTC>): StmtConverter<NewRTC> =
-        StmtConverter(this, seqnCtx, newFactory, whileIndex, whenSubject, checkedSafeCallSubject, scopeDepth, activeCatchLabels)
+        StmtConverter(this, seqnCtx, newFactory, whileIndex, whenSubject, checkedSafeCallSubject, scopeIndex, activeCatchLabels)
 
     override val resultCtx: RTC
         get() = resultCtxFactory.build(this)
@@ -54,20 +53,20 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
 
     override fun removeResult(): StmtConversionContext<NoopResultTracker> = withResultFactory(NoopResultTrackerFactory)
 
-    override fun addResult(type: TypeEmbedding): StmtConverter<VarResultTrackingContext> {
-        val newResultVar = freshAnonVar(type)
-        addDeclaration(newResultVar.toLocalVarDecl())
-        return withResultFactory(VarResultTrackerFactory(newResultVar))
+    override fun addResult(variable: VariableEmbedding): StmtConverter<VarResultTrackingContext> {
+        addDeclaration(variable.toLocalVarDecl())
+        return withResultFactory(VarResultTrackerFactory(variable))
     }
 
     override fun withNewScopeToBlock(action: StmtConversionContext<RTC>.() -> Unit): Stmt.Seqn {
-        val inner = copy(seqnCtx = SeqnBuilder(), scopeDepth = scopeDepth + 1)
-        inner.withScopeImpl(scopeDepth + 1) { inner.action() }
+        val newScopeIndex = scopeIndexProducer.getFresh()
+        val inner = copy(seqnCtx = SeqnBuilder(), scopeIndex = newScopeIndex)
+        inner.withScopeImpl(newScopeIndex) { inner.action() }
         return inner.block
     }
 
     override fun <R> withMethodCtx(factory: MethodContextFactory, action: StmtConversionContext<RTC>.() -> R): R =
-        copy(methodCtx = factory.create(this, scopeDepth)).withNewScope { action() }
+        copy(methodCtx = factory.create(this, scopeIndex)).withNewScope { action() }
 
     // We can't implement these members using `by` due to Kotlin shenanigans.
     override val resultExp: ExpEmbedding

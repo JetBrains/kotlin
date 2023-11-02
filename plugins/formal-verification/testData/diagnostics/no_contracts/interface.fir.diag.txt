@@ -10,7 +10,7 @@ method class_Foo$setter_varProp(this: Ref, local$value: Int)
 
 
 method global$fun_test_properties$fun_take$T_class_global$class_Foo$return$T_Unit(local$foo: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: dom$Unit
   var anonymous$1: Int

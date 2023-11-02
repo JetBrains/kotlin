@@ -1,34 +1,34 @@
 /return_break_continue.kt:(4,15): info: Generated Viper text for test_return:
-method global$fun_test_return$fun_take$$return$T_Int() returns (ret: Int)
+method global$fun_test_return$fun_take$$return$T_Int() returns (ret$0: Int)
 {
-  ret := 0
+  ret$0 := 0
   goto label$ret$0
-  ret := 1
+  ret$0 := 1
   goto label$ret$0
   label label$ret$0
 }
 
 /return_break_continue.kt:(58,74): info: Generated Viper text for return_from_loop:
 method global$fun_return_from_loop$fun_take$$return$T_Int()
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var anonymous$0: Bool
   label label$continue$0
   anonymous$0 := true
   while (anonymous$0) {
-    ret := 0
+    ret$0 := 0
     goto label$ret$0
     anonymous$0 := true
   }
   label label$break$0
-  ret := 1
+  ret$0 := 1
   goto label$ret$0
   label label$ret$0
 }
 
 /return_break_continue.kt:(146,157): info: Generated Viper text for while_break:
 method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Bool)
-  returns (ret: Int)
+  returns (ret$0: Int)
 {
   var local0$i: Int
   var anonymous$0: Bool
@@ -41,14 +41,14 @@ method global$fun_while_break$fun_take$T_Boolean$return$T_Int(local$b: Bool)
     anonymous$0 := local$b
   }
   label label$break$0
-  ret := local0$i
+  ret$0 := local0$i
   goto label$ret$0
   label label$ret$0
 }
 
 /return_break_continue.kt:(261,275): info: Generated Viper text for while_continue:
 method global$fun_while_continue$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var local0$b: Bool
   var anonymous$0: Bool
@@ -66,7 +66,7 @@ method global$fun_while_continue$fun_take$$return$T_Unit()
 
 /return_break_continue.kt:(361,373): info: Generated Viper text for while_nested:
 method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Bool
   label label$continue$0
@@ -98,7 +98,7 @@ method global$fun_while_nested$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
 
 /return_break_continue.kt:(543,557): info: Generated Viper text for labelled_break:
 method global$fun_labelled_break$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Bool
   label label$continue$0
@@ -124,7 +124,7 @@ method global$fun_labelled_break$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
 
 /return_break_continue.kt:(742,759): info: Generated Viper text for labelled_continue:
 method global$fun_labelled_continue$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Bool
   label label$continue$0
@@ -150,7 +150,7 @@ method global$fun_labelled_continue$fun_take$T_Boolean$return$T_Unit(local$b: Bo
 
 /return_break_continue.kt:(959,983): info: Generated Viper text for labelled_while_shadowing:
 method global$fun_labelled_while_shadowing$fun_take$T_Boolean$return$T_Unit(local$b: Bool)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Bool
   label label$continue$0

@@ -1,6 +1,6 @@
 /shadowing.kt:(4,16): info: Generated Viper text for shadow_local:
 method global$fun_shadow_local$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var local0$foo: Int
   var local0$x: Int
@@ -12,10 +12,10 @@ method global$fun_shadow_local$fun_take$$return$T_Unit()
       local2$x := 1
       local0$foo := local2$x
     } else {
-      var local2$x: Int
+      var local3$x: Int
       local0$foo := local0$x
-      local2$x := 2
-      local0$foo := local2$x
+      local3$x := 2
+      local0$foo := local3$x
     }
   }
   local0$foo := local0$x
@@ -24,7 +24,7 @@ method global$fun_shadow_local$fun_take$$return$T_Unit()
 
 /shadowing.kt:(214,226): info: Generated Viper text for shadow_param:
 method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var local0$foo: Int
   var local0$x: Int
@@ -36,7 +36,7 @@ method global$fun_shadow_param$fun_take$T_Int$return$T_Unit(local$x: Int)
 
 /shadowing.kt:(305,318): info: Generated Viper text for shadow_nested:
 method global$fun_shadow_nested$fun_take$T_Int$return$T_Unit(local$x: Int)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var local0$foo: Int
   var local0$x: Int

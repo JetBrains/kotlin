@@ -16,7 +16,7 @@ method class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
 
 
 method global$fun_testCustomSetter$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$f: Ref
@@ -39,7 +39,7 @@ method class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Perso
 
 
 method global$fun_testSetter$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$person: Ref
@@ -71,7 +71,7 @@ method class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_gl
 
 
 method global$fun_testSetterCascade$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var anonymous$1: Ref
@@ -106,7 +106,7 @@ method class_Baz$setter_a(this: Ref, local$value: Int)
 
 
 method global$fun_testSetterNoBackingField$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$baz: Ref
@@ -126,10 +126,10 @@ method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(loca
 
 
 method global$fun_testSetterLambda$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
-  var anonymous$1: dom$Unit
+  var ret$1: dom$Unit
   anonymous$0 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(0)
   if (true) {
     inhale acc(anonymous$0.class_Bar$member_a, write)

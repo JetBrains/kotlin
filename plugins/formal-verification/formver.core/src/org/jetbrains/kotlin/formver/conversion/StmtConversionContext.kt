@@ -48,7 +48,7 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun store(exp: ExpEmbedding): VariableEmbedding
 
     fun removeResult(): StmtConversionContext<NoopResultTracker>
-    fun addResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext>
+    fun addResult(variable: VariableEmbedding): StmtConversionContext<VarResultTrackingContext>
 
     fun withNewScopeToBlock(action: StmtConversionContext<RTC>.() -> Unit): Stmt.Seqn
     fun <R> withMethodCtx(factory: MethodContextFactory, action: StmtConversionContext<RTC>.() -> R): R
@@ -78,7 +78,7 @@ fun StmtConversionContext<ResultTrackingContext>.declareLocal(
     name: Name,
     type: TypeEmbedding,
     initializer: ExpEmbedding?,
-    pos: KtSourceElement? = null
+    pos: KtSourceElement? = null,
 ): VariableEmbedding {
     registerLocalPropertyName(name)
     val varEmb = VariableEmbedding(resolveLocalPropertyName(name), type)
@@ -104,11 +104,19 @@ fun StmtConversionContext<ResultTrackingContext>.embedPropertyAccess(symbol: Fir
         else -> throw IllegalStateException("Property access symbol $calleeSymbol has unsupported type.")
     }
 
+fun StmtConversionContext<ResultTrackingContext>.addResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext> =
+    addResult(freshAnonVar(type))
+
 fun StmtConversionContext<ResultTrackingContext>.withResult(
     type: TypeEmbedding,
     action: StmtConversionContext<VarResultTrackingContext>.() -> Unit,
+): VariableEmbedding = withResult(freshAnonVar(type), action)
+
+fun StmtConversionContext<ResultTrackingContext>.withResult(
+    variable: VariableEmbedding,
+    action: StmtConversionContext<VarResultTrackingContext>.() -> Unit,
 ): VariableEmbedding {
-    val ctx = addResult(type)
+    val ctx = addResult(variable)
     ctx.action()
     return ctx.resultCtx.resultVar
 }
@@ -141,21 +149,23 @@ fun StmtConversionContext<ResultTrackingContext>.insertInlineFunctionCall(
     paramNames: List<Name>,
     args: List<ExpEmbedding>,
     body: FirBlock,
+    returnTargetName: String?,
     parentCtx: MethodConversionContext? = null,
-    returnPointName: String? = null,
-): ExpEmbedding = withResult(calleeSignature.returnType) {
-    val callArgs = getInlineFunctionCallArgs(args)
-    val subs = paramNames.zip(callArgs).toMap()
-    val returnLabelName = returnLabelNameProducer.getFresh()
-    val methodCtxFactory = MethodContextFactory(
-        calleeSignature,
-        InlineParameterResolver(this.resultCtx.resultVar.name, returnLabelName, subs),
-        parentCtx,
-        returnPointName
-    )
-    withMethodCtx(methodCtxFactory) {
-        convert(body)
-        addDeclaration(returnLabel.toDecl())
-        addStatement(returnLabel.toStmt())
+): ExpEmbedding {
+    val returnTarget = returnTargetProducer.getFresh(calleeSignature.returnType)
+    return withResult(returnTarget.variable) {
+        val callArgs = getInlineFunctionCallArgs(args)
+        val subs = paramNames.zip(callArgs).toMap()
+        val methodCtxFactory = MethodContextFactory(
+            calleeSignature,
+            InlineParameterResolver(subs, returnTargetName, returnTarget),
+            parentCtx,
+        )
+        withMethodCtx(methodCtxFactory) {
+            convert(body)
+            addDeclaration(returnTarget.label.toDecl())
+            addStatement(returnTarget.label.toStmt())
+        }
     }
 }
+

@@ -8,20 +8,24 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 import org.jetbrains.kotlin.formver.names.ReturnLabelName
+import org.jetbrains.kotlin.formver.names.ReturnVariableName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.name.Name
 
-data class ReturnTarget(val returnVar: VariableEmbedding, val returnLabel: Label)
+class ReturnTarget(depth: Int, type: TypeEmbedding) {
+    val variable = VariableEmbedding(ReturnVariableName(depth), type)
+    val label = Label(ReturnLabelName(depth), listOf())
+}
 
 interface MethodConversionContext : ProgramConversionContext {
     val signature: FunctionSignature
-    val resolvedReturnVarName: MangledName
-    val resolvedReturnLabelName: ReturnLabelName
+    val defaultResolvedReturnTarget: ReturnTarget
 
     fun embedParameter(symbol: FirValueParameterSymbol): ExpEmbedding
     fun resolveLocalPropertyName(name: Name): MangledName
@@ -30,8 +34,12 @@ interface MethodConversionContext : ProgramConversionContext {
     fun <R> withScopeImpl(scopeDepth: Int, action: () -> R): R
     fun addLoopIdentifier(labelName: String, index: Int)
     fun resolveLoopIndex(name: String): Int
-    fun resolveReturnTarget(sourceName: String?): ReturnTarget
+    fun resolveNamedReturnTarget(sourceName: String): ReturnTarget?
 }
+
+fun MethodConversionContext.resolveReturnTarget(targetSourceName: String?): ReturnTarget =
+    if (targetSourceName == null) defaultResolvedReturnTarget
+    else resolveNamedReturnTarget(targetSourceName) ?: throw IllegalArgumentException("Cannot resolve returnTarget of $targetSourceName")
 
 fun MethodConversionContext.embedLocalProperty(symbol: FirPropertySymbol): VariableEmbedding =
     VariableEmbedding(resolveLocalPropertyName(symbol.name), embedType(symbol.resolvedReturnType))
@@ -42,11 +50,3 @@ fun MethodConversionContext.embedLocalSymbol(symbol: FirBasedSymbol<*>): ExpEmbe
         is FirPropertySymbol -> embedLocalProperty(symbol)
         else -> throw IllegalArgumentException("Symbol $symbol cannot be embedded as a local symbol.")
     }
-
-val MethodConversionContext.returnVar: VariableEmbedding
-    get() = VariableEmbedding(resolvedReturnVarName, signature.returnType)
-
-// It seems like Viper will propagate the weakest precondition through the label correctly even in the absence of
-// explicit invariants; we only need to add those if we want to make a stronger claim.
-val MethodConversionContext.returnLabel: Label
-    get() = Label(resolvedReturnLabelName, listOf())

@@ -1,8 +1,9 @@
 /scope_functions.kt:(4,11): info: Generated Viper text for use_run:
-method global$fun_use_run$fun_take$$return$T_Unit() returns (ret: dom$Unit)
+method global$fun_use_run$fun_take$$return$T_Unit()
+  returns (ret$0: dom$Unit)
 {
   var local0$x: Int
-  var anonymous$0: dom$Unit
+  var ret$1: dom$Unit
   if (true) {
     local0$x := 0
     label label$ret$1

@@ -1,7 +1,7 @@
 /function_overloading.kt:(30,33): info: Generated Viper text for baz:
 method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Foo$return$T_Unit(this: Ref,
   local$f: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Bar())
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$global$class_Foo())
@@ -11,7 +11,7 @@ method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_
 /function_overloading.kt:(55,58): info: Generated Viper text for baz:
 method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_Bar$return$T_Unit(this: Ref,
   local$b: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(this): dom$Type), dom$Type$global$class_Bar())
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$global$class_Bar())
@@ -20,7 +20,7 @@ method class_Bar$fun_baz$fun_take$T_class_global$class_Bar$T_class_global$class_
 
 /function_overloading.kt:(79,88): info: Generated Viper text for fakePrint:
 method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(local$b: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$b): dom$Type), dom$Type$global$class_Bar())
   label label$ret$0
@@ -28,7 +28,7 @@ method global$fun_fakePrint$fun_take$T_class_global$class_Bar$return$T_Unit(loca
 
 /function_overloading.kt:(106,115): info: Generated Viper text for fakePrint:
 method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(local$f: Ref)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$global$class_Foo())
   label label$ret$0
@@ -36,14 +36,14 @@ method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(loca
 
 /function_overloading.kt:(133,142): info: Generated Viper text for fakePrint:
 method global$fun_fakePrint$fun_take$T_Int$return$T_Unit(local$value: Int)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   label label$ret$0
 }
 
 /function_overloading.kt:(164,173): info: Generated Viper text for fakePrint:
 method global$fun_fakePrint$fun_take$T_Boolean$return$T_Unit(local$truth: Bool)
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   label label$ret$0
 }
@@ -76,7 +76,7 @@ method global$fun_fakePrint$fun_take$T_class_global$class_Foo$return$T_Unit(loca
 
 
 method global$fun_testGlobalScopeOverloading$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: dom$Unit
   var anonymous$1: dom$Unit
@@ -115,7 +115,7 @@ method class_Foo$constructor$fun_take$$return$T_class_global$class_Foo()
 
 
 method global$fun_testClassFunctionOverloading$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$b: Ref

@@ -10,7 +10,7 @@ method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
 
 
 method global$fun_try_catch$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   if (true) {
     var anonymous$0: Bool
@@ -28,7 +28,7 @@ method global$fun_try_catch$fun_take$$return$T_Unit()
     goto label$try_exit$0
   }
   if (true) {
-    var local1$e: Ref
+    var local4$e: Ref
     var anonymous$4: dom$Unit
     label label$catch$0
     anonymous$4 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
@@ -54,7 +54,7 @@ method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
 
 
 method global$fun_nested_try_catch$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   if (true) {
     var anonymous$0: Bool
@@ -78,7 +78,7 @@ method global$fun_nested_try_catch$fun_take$$return$T_Unit()
       goto label$try_exit$1
     }
     if (true) {
-      var local2$e: Ref
+      var local6$e: Ref
       var anonymous$5: dom$Unit
       label label$catch$1
       anonymous$5 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
@@ -91,7 +91,7 @@ method global$fun_nested_try_catch$fun_take$$return$T_Unit()
     goto label$try_exit$0
   }
   if (true) {
-    var local1$e: Ref
+    var local8$e: Ref
     label label$catch$0
     goto label$try_exit$0
   }
@@ -115,32 +115,32 @@ method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
 
 
 method global$fun_try_catch_with_inline$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   if (true) {
     var anonymous$0: Bool
-    var anonymous$1: dom$Unit
-    var anonymous$4: Bool
+    var ret$1: dom$Unit
+    var anonymous$3: Bool
     if (anonymous$0) {
       goto label$catch$0
     }
     if (true) {
+      var anonymous$1: dom$Unit
       var anonymous$2: dom$Unit
-      var anonymous$3: dom$Unit
-      anonymous$2 := global$fun_call$fun_take$T_Int$return$T_Unit(0)
-      anonymous$3 := global$fun_call$fun_take$T_Int$return$T_Unit(1)
+      anonymous$1 := global$fun_call$fun_take$T_Int$return$T_Unit(0)
+      anonymous$2 := global$fun_call$fun_take$T_Int$return$T_Unit(1)
       label label$ret$1
     }
-    if (anonymous$4) {
+    if (anonymous$3) {
       goto label$catch$0
     }
     goto label$try_exit$0
   }
   if (true) {
-    var local1$e: Ref
-    var anonymous$5: dom$Unit
+    var local5$e: Ref
+    var anonymous$4: dom$Unit
     label label$catch$0
-    anonymous$5 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
+    anonymous$4 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
     goto label$try_exit$0
   }
   label label$try_exit$0
@@ -159,7 +159,7 @@ field pkg$kotlin$class_Throwable$member_cause: dom$Nullable[Ref]
 field pkg$kotlin$class_Throwable$member_message: dom$Nullable[Ref]
 
 method global$fun_try_catch_shadowing$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var local0$x: Int
   local0$x := 0
@@ -177,10 +177,10 @@ method global$fun_try_catch_shadowing$fun_take$$return$T_Unit()
     goto label$try_exit$0
   }
   if (true) {
-    var local1$e: Ref
-    var local1$x: Int
+    var local4$e: Ref
+    var local4$x: Int
     label label$catch$0
-    local1$x := 2
+    local4$x := 2
     goto label$try_exit$0
   }
   label label$try_exit$0
@@ -203,7 +203,7 @@ method global$fun_call$fun_take$T_Int$return$T_Unit(local$x: Int)
 
 
 method global$fun_multiple_catches$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   if (true) {
     var anonymous$0: Bool
@@ -229,14 +229,14 @@ method global$fun_multiple_catches$fun_take$$return$T_Unit()
     goto label$try_exit$0
   }
   if (true) {
-    var local1$e: Ref
+    var local6$e: Ref
     var anonymous$6: dom$Unit
     label label$catch$0
     anonymous$6 := global$fun_call$fun_take$T_Int$return$T_Unit(2)
     goto label$try_exit$0
   }
   if (true) {
-    var local1$e: Ref
+    var local7$e: Ref
     var anonymous$7: dom$Unit
     label label$catch$1
     anonymous$7 := global$fun_call$fun_take$T_Int$return$T_Unit(3)
@@ -270,7 +270,7 @@ method global$fun_ignore$fun_take$T_class_pkg$java$lang$global$class_Exception$r
 
 
 method global$fun_use_exception$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   if (true) {
     var anonymous$0: Bool
@@ -286,10 +286,10 @@ method global$fun_use_exception$fun_take$$return$T_Unit()
     goto label$try_exit$0
   }
   if (true) {
-    var local1$e: Ref
+    var local4$e: Ref
     var anonymous$3: dom$Unit
     label label$catch$0
-    anonymous$3 := global$fun_ignore$fun_take$T_class_pkg$java$lang$global$class_Exception$return$T_Unit(local1$e)
+    anonymous$3 := global$fun_ignore$fun_take$T_class_pkg$java$lang$global$class_Exception$return$T_Unit(local4$e)
     goto label$try_exit$0
   }
   label label$try_exit$0

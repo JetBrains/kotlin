@@ -12,10 +12,10 @@ method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Fo
 
 
 method global$fun_createFoo$fun_take$$return$T_class_global$class_Foo()
-  returns (ret: Ref)
-  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret): dom$Type), dom$Type$global$class_Foo())
-  ensures acc(ret.class_Foo$member_a, wildcard)
-  ensures acc(ret.class_Foo$member_b, wildcard)
+  returns (ret$0: Ref)
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$global$class_Foo())
+  ensures acc(ret$0.class_Foo$member_a, wildcard)
+  ensures acc(ret$0.class_Foo$member_b, wildcard)
 {
   var anonymous$0: Ref
   var local0$f: Ref
@@ -30,7 +30,7 @@ method global$fun_createFoo$fun_take$$return$T_class_global$class_Foo()
   local0$fa := anonymous$1
   anonymous$2 := local0$f.class_Foo$member_b
   local0$fb := anonymous$2
-  ret := local0$f
+  ret$0 := local0$f
   goto label$ret$0
   label label$ret$0
 }
@@ -49,7 +49,7 @@ method class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_g
 
 
 method global$fun_createBar$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$b: Ref

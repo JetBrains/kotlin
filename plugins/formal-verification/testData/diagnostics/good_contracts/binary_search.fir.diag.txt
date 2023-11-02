@@ -3,7 +3,7 @@ field special$size: Int
 
 method global$fun_safe_binary_search$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Boolean(local$arr: Ref,
   local$target: Int)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
   requires acc(local$arr.special$size, write)
   requires local$arr.special$size >= 0
   ensures acc(local$arr.special$size, write)
@@ -55,7 +55,7 @@ method global$fun_safe_binary_search$fun_take$T_class_pkg$kotlin$collections$glo
       }
     }
   }
-  ret := anonymous$2
+  ret$0 := anonymous$2
   goto label$ret$0
   label label$ret$0
 }
@@ -105,7 +105,7 @@ field special$size: Int
 
 method global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$T_Int$T_Int$return$T_Boolean(local$arr: Ref,
   local$target: Int, local$left: Int, local$right: Int)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
   requires acc(local$arr.special$size, write)
   requires local$arr.special$size >= 0
   ensures acc(local$arr.special$size, write)
@@ -129,7 +129,7 @@ method global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collect
       anonymous$1 := local$right >= anonymous$2
     }
     if (anonymous$1) {
-      ret := false
+      ret$0 := false
       goto label$ret$0
     }
   }
@@ -158,7 +158,7 @@ method global$fun_unsafe_binary_search_fixed$fun_take$T_class_pkg$kotlin$collect
       }
     }
   }
-  ret := anonymous$3
+  ret$0 := anonymous$3
   goto label$ret$0
   label label$ret$0
 }

@@ -13,7 +13,7 @@ method class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
 
 
 method global$fun_testGetter$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$wrapper: Ref
@@ -52,7 +52,7 @@ method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Fo
 
 
 method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var local0$foo: Ref
@@ -105,7 +105,7 @@ method class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWr
 
 
 method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
-  returns (ret: dom$Unit)
+  returns (ret$0: dom$Unit)
 {
   var anonymous$0: Ref
   var anonymous$1: Ref

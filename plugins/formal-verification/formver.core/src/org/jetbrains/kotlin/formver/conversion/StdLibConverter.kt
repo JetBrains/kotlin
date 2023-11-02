@@ -41,14 +41,13 @@ fun NamedFunctionSignature.stdLibPreConditions(): List<ExpEmbedding> =
         return listOf()
     }
 
-fun NamedFunctionSignature.stdLibPostConditions(): List<ExpEmbedding> =
+fun NamedFunctionSignature.stdLibPostConditions(returnVariable: VariableEmbedding): List<ExpEmbedding> =
     NameMatcher.match(this.name) {
-        val retVar = this@stdLibPostConditions.returnVar
         val receiver = receiver
         ifInCollectionsPkg {
             ifFunctionName("emptyList") {
                 return listOf(
-                    EqCmp(FieldAccess(retVar, ListSizeFieldEmbedding), IntLit(0))
+                    EqCmp(FieldAccess(returnVariable, ListSizeFieldEmbedding), IntLit(0))
                 )
             }
             ifFunctionName("get") {
@@ -60,8 +59,8 @@ fun NamedFunctionSignature.stdLibPostConditions(): List<ExpEmbedding> =
             ifFunctionName("isEmpty") {
                 return listOf(
                     receiver!!.sameSize(),
-                    Implies(retVar, EqCmp(FieldAccess(receiver, ListSizeFieldEmbedding), IntLit(0))),
-                    Implies(Not(retVar), GtCmp(FieldAccess(receiver, ListSizeFieldEmbedding), IntLit(0)))
+                    Implies(returnVariable, EqCmp(FieldAccess(receiver, ListSizeFieldEmbedding), IntLit(0))),
+                    Implies(Not(returnVariable), GtCmp(FieldAccess(receiver, ListSizeFieldEmbedding), IntLit(0)))
                 )
             }
             ifFunctionName("subList") {
@@ -69,7 +68,7 @@ fun NamedFunctionSignature.stdLibPostConditions(): List<ExpEmbedding> =
                 val toIndexArg = formalArgs[2]
                 return listOf(
                     receiver!!.sameSize(),
-                    EqCmp(FieldAccess(retVar, ListSizeFieldEmbedding), Sub(toIndexArg, fromIndexArg))
+                    EqCmp(FieldAccess(returnVariable, ListSizeFieldEmbedding), Sub(toIndexArg, fromIndexArg))
                 )
             }
         }

@@ -43,11 +43,14 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
     private val properties: MutableMap<MangledName, PropertyEmbedding> = mutableMapOf()
 
-    override val anonNameProducer = FreshEntityProducer { AnonymousName(it) }
-    override val whileIndexProducer = FreshEntityProducer { it }
-    override val returnLabelNameProducer = FreshEntityProducer { ReturnLabelName(it) }
-    override val catchLabelNameProducer = FreshEntityProducer { CatchLabelName(it) }
-    override val tryExitLabelNameProducer = FreshEntityProducer { TryExitLabelName(it) }
+    override val anonNameProducer = simpleFreshEntityProducer { AnonymousName(it) }
+    override val whileIndexProducer = indexProducer()
+    override val catchLabelNameProducer = simpleFreshEntityProducer { CatchLabelName(it) }
+    override val tryExitLabelNameProducer = simpleFreshEntityProducer { TryExitLabelName(it) }
+    override val scopeIndexProducer = indexProducer()
+
+    // For some reason, type deduction does not seem to work here.
+    override val returnTargetProducer = FreshEntityProducer { n, type: TypeEmbedding -> ReturnTarget(n, type) }
 
     val program: Program
         get() = Program(
@@ -180,18 +183,18 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val contractVisitor = ContractDescriptionConversionVisitor(this@ProgramConverter, subSignature)
 
         return object : FullNamedFunctionSignature, NamedFunctionSignature by subSignature {
-            override val preconditions = subSignature.formalArgs.flatMap { it.pureInvariants() } +
+            override fun getPreconditions(returnVariable: VariableEmbedding) = subSignature.formalArgs.flatMap { it.pureInvariants() } +
                     subSignature.formalArgs.flatMap { it.accessInvariants() } +
                     contractVisitor.getPreconditions(symbol) +
                     subSignature.stdLibPreConditions()
 
-            override val postconditions = subSignature.formalArgs.flatMap { it.accessInvariants() } +
+            override fun getPostconditions(returnVariable: VariableEmbedding) = subSignature.formalArgs.flatMap { it.accessInvariants() } +
                     subSignature.params.flatMap { it.dynamicInvariants() } +
-                    subSignature.returnVar.pureInvariants() +
-                    subSignature.returnVar.provenInvariants() +
-                    subSignature.returnVar.accessInvariants() +
-                    contractVisitor.getPostconditions(symbol) +
-                    subSignature.stdLibPostConditions()
+                    returnVariable.pureInvariants() +
+                    returnVariable.provenInvariants() +
+                    returnVariable.accessInvariants() +
+                    contractVisitor.getPostconditions(symbol, ContractVisitorContext(returnVariable)) +
+                    subSignature.stdLibPostConditions(returnVariable)
         }
     }
 
@@ -261,14 +264,14 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     }
 
     private fun convertMethodWithBody(declaration: FirSimpleFunction, signature: FullNamedFunctionSignature): Method {
+        val returnTarget = returnTargetProducer.getFresh(signature.returnType)
         val body = declaration.body?.let {
             val methodCtx =
                 MethodConverter(
                     this,
                     signature,
-                    RootParameterResolver(this, returnLabelNameProducer.getFresh()),
-                    0,
-                    returnPointName = signature.sourceName
+                    RootParameterResolver(this, signature.sourceName, returnTarget),
+                    scopeIndexProducer.getFresh(),
                 )
             val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(it.source), NoopResultTrackerFactory)
             signature.formalArgs.forEach { arg ->
@@ -279,13 +282,13 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     stmtCtx.addStatement(Stmt.Inhale(invariant.pureToViper()))
                 }
             }
-            stmtCtx.addDeclaration(methodCtx.returnLabel.toDecl())
+            stmtCtx.addDeclaration(returnTarget.label.toDecl())
             stmtCtx.convert(it)
-            stmtCtx.addStatement(methodCtx.returnLabel.toStmt())
+            stmtCtx.addStatement(returnTarget.label.toStmt())
             stmtCtx.block
         }
 
-        return signature.toViperMethod(body, declaration.source.asPosition)
+        return signature.toViperMethod(body, returnTarget.variable, declaration.source.asPosition)
     }
 
     private fun unimplementedTypeEmbedding(type: ConeKotlinType): TypeEmbedding =

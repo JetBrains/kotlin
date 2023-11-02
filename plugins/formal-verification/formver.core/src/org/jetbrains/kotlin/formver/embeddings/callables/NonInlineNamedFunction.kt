@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.conversion.withResult
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
+import org.jetbrains.kotlin.formver.names.PlaceholderReturnVariableName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 
 class NonInlineNamedFunction(
@@ -27,5 +29,6 @@ class NonInlineNamedFunction(
             resultExp
         }
 
-    override fun toViperMethod(): Method = signature.toViperMethod(null, source.asPosition)
+    override fun toViperMethod(): Method =
+        signature.toViperMethod(null, VariableEmbedding(PlaceholderReturnVariableName, signature.returnType), source.asPosition)
 }

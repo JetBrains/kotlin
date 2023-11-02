@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
-import org.jetbrains.kotlin.formver.names.ReturnLabelName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.name.Name
 
@@ -29,7 +28,6 @@ class MethodConverter(
     private val paramResolver: ParameterResolver,
     scopeDepth: Int,
     private val parent: MethodConversionContext? = null,
-    private val returnPointName: String?, // null while converting the body of an inline function
 ) : MethodConversionContext, ProgramConversionContext by programCtx {
     private var propertyResolver = PropertyNameResolver(scopeDepth)
 
@@ -59,13 +57,8 @@ class MethodConverter(
         paramResolver.tryEmbedParameter(symbol) ?: parent?.embedParameter(symbol)
         ?: throw IllegalArgumentException("Parameter $symbol not found in scope.")
 
-    override val resolvedReturnVarName: MangledName = paramResolver.resolvedReturnVarName
-    override val resolvedReturnLabelName: ReturnLabelName = paramResolver.resolvedReturnLabelName
-    override fun resolveReturnTarget(sourceName: String?): ReturnTarget {
-        return if (returnPointName == null || sourceName == null || returnPointName == sourceName) {
-            ReturnTarget(returnVar, returnLabel)
-        } else {
-            parent?.resolveReturnTarget(sourceName) ?: throw IllegalArgumentException("Cannot resolve returnTarget of $sourceName")
-        }
+    override val defaultResolvedReturnTarget = paramResolver.defaultResolvedReturnTarget
+    override fun resolveNamedReturnTarget(sourceName: String): ReturnTarget? {
+        return paramResolver.resolveNamedReturnTarget(sourceName) ?: parent?.resolveNamedReturnTarget(sourceName)
     }
 }

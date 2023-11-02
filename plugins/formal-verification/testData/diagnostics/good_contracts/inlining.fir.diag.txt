@@ -1,6 +1,6 @@
 /inlining.kt:(481,492): info: Generated Viper text for call_invoke:
 method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
-  returns (ret: Int)
+  returns (ret$0: Int)
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
@@ -8,41 +8,41 @@ method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
   ensures local$g.special$function_object_call_counter >
     old(local$g.special$function_object_call_counter)
 {
-  var anonymous$0: Int
+  var ret$1: Int
   var local0$z: Int
-  var anonymous$3: Int
+  var ret$2: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   if (true) {
-    var anonymous$1: Int
+    var anonymous$0: Int
     var local1$x: Int
-    var anonymous$2: Int
+    var anonymous$1: Int
     special$invoke_function_object(local$g)
-    local1$x := anonymous$1
+    local1$x := anonymous$0
     special$invoke_function_object(local$g)
-    anonymous$0 := anonymous$2
+    ret$1 := anonymous$1
     goto label$ret$1
     label label$ret$1
   }
-  local0$z := anonymous$0
+  local0$z := ret$1
   if (true) {
-    var anonymous$4: Int
-    var local1$x: Int
-    var anonymous$5: Int
+    var anonymous$2: Int
+    var local2$x: Int
+    var anonymous$3: Int
     special$invoke_function_object(local$g)
-    local1$x := anonymous$4
+    local2$x := anonymous$2
     special$invoke_function_object(local$g)
-    anonymous$3 := anonymous$5
+    ret$2 := anonymous$3
     goto label$ret$2
     label label$ret$2
   }
-  ret := anonymous$3
+  ret$0 := ret$2
   goto label$ret$0
   label label$ret$0
 }
 
 /inlining.kt:(725,745): info: Generated Viper text for call_invoke_with_int:
 method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$g: Ref)
-  returns (ret: Int)
+  returns (ret$0: Int)
   requires acc(local$g.special$function_object_call_counter, write)
   ensures acc(local$g.special$function_object_call_counter, write)
   ensures old(local$g.special$function_object_call_counter) <=
@@ -50,41 +50,41 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
   ensures local$g.special$function_object_call_counter >
     old(local$g.special$function_object_call_counter)
 {
+  var ret$1: Int
   var anonymous$0: Int
-  var anonymous$1: Int
   var local0$z: Int
-  var anonymous$3: Int
-  var anonymous$4: Int
+  var anonymous$2: Int
+  var ret$2: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
-  anonymous$1 := 1
+  anonymous$0 := 1
   if (true) {
     var local1$x: Int
-    var anonymous$2: Int
-    local1$x := anonymous$1 + anonymous$1
+    var anonymous$1: Int
+    local1$x := anonymous$0 + anonymous$0
     special$invoke_function_object(local$g)
-    anonymous$0 := anonymous$2
+    ret$1 := anonymous$1
     goto label$ret$1
     label label$ret$1
   }
-  local0$z := anonymous$0
+  local0$z := ret$1
   special$invoke_function_object(local$g)
   if (true) {
-    var local1$x: Int
-    var anonymous$5: Int
-    local1$x := anonymous$3 + anonymous$3
+    var local2$x: Int
+    var anonymous$3: Int
+    local2$x := anonymous$2 + anonymous$2
     special$invoke_function_object(local$g)
-    anonymous$4 := anonymous$5
+    ret$2 := anonymous$3
     goto label$ret$2
     label label$ret$2
   }
-  ret := anonymous$4
+  ret$0 := ret$2
   goto label$ret$0
   label label$ret$0
 }
 
 /inlining.kt:(1005,1017): info: Generated Viper text for name_clashes:
 method global$fun_name_clashes$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f: Ref)
-  returns (ret: Int)
+  returns (ret$0: Int)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -92,39 +92,39 @@ method global$fun_name_clashes$fun_take$fun_take$T_Int$return$T_Int$return$T_Int
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var anonymous$0: Int
+  var ret$1: Int
   var local0$x: Int
-  var anonymous$3: Int
+  var ret$2: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
-    var anonymous$1: Int
+    var anonymous$0: Int
     var local1$x: Int
-    var anonymous$2: Int
+    var anonymous$1: Int
     special$invoke_function_object(local$f)
-    local1$x := anonymous$1
+    local1$x := anonymous$0
     special$invoke_function_object(local$f)
-    anonymous$0 := anonymous$2
+    ret$1 := anonymous$1
     goto label$ret$1
     label label$ret$1
   }
-  local0$x := anonymous$0
+  local0$x := ret$1
   if (true) {
-    var local1$x: Int
-    var anonymous$4: Int
-    local1$x := local0$x + local0$x
+    var local2$x: Int
+    var anonymous$2: Int
+    local2$x := local0$x + local0$x
     special$invoke_function_object(local$f)
-    anonymous$3 := anonymous$4
+    ret$2 := anonymous$2
     goto label$ret$2
     label label$ret$2
   }
-  ret := anonymous$3
+  ret$0 := ret$2
   goto label$ret$0
   label label$ret$0
 }
 
 /inlining.kt:(1262,1283): info: Generated Viper text for different_return_type:
 method global$fun_different_return_type$fun_take$fun_take$T_Int$return$T_Int$return$T_Boolean(local$f: Ref)
-  returns (ret: Bool)
+  returns (ret$0: Bool)
   requires acc(local$f.special$function_object_call_counter, write)
   ensures acc(local$f.special$function_object_call_counter, write)
   ensures old(local$f.special$function_object_call_counter) <=
@@ -132,34 +132,34 @@ method global$fun_different_return_type$fun_take$fun_take$T_Int$return$T_Int$ret
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var anonymous$0: Int
+  var ret$1: Int
   var local0$x: Int
-  var anonymous$3: Int
+  var ret$2: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   if (true) {
-    var anonymous$1: Int
+    var anonymous$0: Int
     var local1$x: Int
-    var anonymous$2: Int
+    var anonymous$1: Int
     special$invoke_function_object(local$f)
-    local1$x := anonymous$1
+    local1$x := anonymous$0
     special$invoke_function_object(local$f)
-    anonymous$0 := anonymous$2
+    ret$1 := anonymous$1
     goto label$ret$1
     label label$ret$1
   }
-  local0$x := anonymous$0
+  local0$x := ret$1
   if (true) {
-    var anonymous$4: Int
-    var local1$x: Int
-    var anonymous$5: Int
+    var anonymous$2: Int
+    var local2$x: Int
+    var anonymous$3: Int
     special$invoke_function_object(local$f)
-    local1$x := anonymous$4
+    local2$x := anonymous$2
     special$invoke_function_object(local$f)
-    anonymous$3 := anonymous$5
+    ret$2 := anonymous$3
     goto label$ret$2
     label label$ret$2
   }
-  ret := local0$x == anonymous$3
+  ret$0 := local0$x == ret$2
   goto label$ret$0
   label label$ret$0
 }

@@ -40,7 +40,7 @@ class LambdaExp(
     ): ExpEmbedding {
         val inlineBody = function.body ?: throw IllegalArgumentException("Lambda $function has a null body")
         val paramNames = function.valueParameters.map { it.name }
-        return ctx.insertInlineFunctionCall(signature, paramNames, args, inlineBody, parentCtx, ctx.signature.sourceName)
+        return ctx.insertInlineFunctionCall(signature, paramNames, args, inlineBody, ctx.signature.sourceName, parentCtx)
     }
 
     override val debugTreeView: TreeView
