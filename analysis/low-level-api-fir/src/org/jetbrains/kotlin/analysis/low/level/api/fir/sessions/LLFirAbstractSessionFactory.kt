@@ -281,7 +281,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirProvider::class, firProvider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            registerCompilerPluginServices(firProvider.searchScope, project, module)
+            registerCompilerPluginServices(project, module)
             registerCompilerPluginExtensions(project, module)
             registerCommonComponentsAfterExtensionsAreConfigured()
 

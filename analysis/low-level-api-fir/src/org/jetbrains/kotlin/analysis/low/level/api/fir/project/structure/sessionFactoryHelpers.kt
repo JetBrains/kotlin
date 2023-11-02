@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.moduleScopeProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirExceptionHandler
@@ -76,11 +76,10 @@ internal fun FirSession.registerCompilerPluginExtensions(project: Project, modul
 
 @SessionConfiguration
 internal fun LLFirSourcesSession.registerCompilerPluginServices(
-    contentScope: GlobalSearchScope,
     project: Project,
     module: KtSourceModule
 ) {
-    val projectWithDependenciesScope = contentScope.uniteWith(project.moduleScopeProvider.getModuleLibrariesScope(module))
+    val projectWithDependenciesScope = KotlinResolutionScopeProvider.getInstance(project).getResolutionScope(module)
     val annotationsResolver = project.createAnnotationResolver(projectWithDependenciesScope)
 
     // We need FirRegisteredPluginAnnotations and FirPredicateBasedProvider during extensions' registration process
