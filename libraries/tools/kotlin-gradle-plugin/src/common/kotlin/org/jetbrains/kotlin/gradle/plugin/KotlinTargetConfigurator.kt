@@ -36,18 +36,12 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     ) {
         target.runKotlinCompilationSideEffects()
         target.runKotlinTargetSideEffects()
-        configurePlatformSpecificModel(target)
     }
-
-    fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
 }
 
 abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
     internal val createTestCompilation: Boolean,
 ) : KotlinTargetConfigurator<KotlinTargetType> {
-
-    protected open val runtimeIncludesCompilationOutputs = true
-
     companion object {
         const val testTaskNameSuffix = "test"
         const val runTaskNameSuffix = "run"
