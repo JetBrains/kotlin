@@ -1268,6 +1268,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/expressions/genericPropertyRef.kt");
         }
 
+        @TestMetadata("genericReceiverOnExtensionWithSmartcast.kt")
+        public void testGenericReceiverOnExtensionWithSmartcast() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/genericReceiverOnExtensionWithSmartcast.kt");
+        }
+
         @TestMetadata("identity.kt")
         public void testIdentity() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/identity.kt");
@@ -1306,6 +1311,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @TestMetadata("interfaceThisRef.kt")
         public void testInterfaceThisRef() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");
+        }
+
+        @TestMetadata("intersectedSmartcastForExtensionReceiverWithSameConstructor.kt")
+        public void testIntersectedSmartcastForExtensionReceiverWithSameConstructor() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/intersectedSmartcastForExtensionReceiverWithSameConstructor.kt");
         }
 
         @TestMetadata("kt16905.kt")

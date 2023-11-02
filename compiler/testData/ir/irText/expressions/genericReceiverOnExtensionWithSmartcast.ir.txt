@@ -1,0 +1,30 @@
+FILE fqName:<root> fileName:/genericReceiverOnExtensionWithSmartcast.kt
+  FUN name:bar visibility:public modality:FINAL <F> ($receiver:F of <root>.bar) returnType:kotlin.Unit
+    TYPE_PARAMETER name:F index:0 variance: superTypes:[kotlin.CharSequence] reified:false
+    $receiver: VALUE_PARAMETER name:<this> type:F of <root>.bar
+    BLOCK_BODY
+  FUN name:test_1 visibility:public modality:FINAL <T> (x:kotlin.Any) returnType:kotlin.Unit [inline]
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.CharSequence] reified:true
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.test_1
+            GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            CALL 'public final fun bar <F> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+              <F>: T of <root>.test_1
+              $receiver: TYPE_OP type=T of <root>.test_1 origin=IMPLICIT_CAST typeOperand=T of <root>.test_1
+                GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
+  FUN name:test_2 visibility:public modality:FINAL <> (x:kotlin.Any?) returnType:kotlin.Unit
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any?
+    BLOCK_BODY
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.CharSequence
+            GET_VAR 'x: kotlin.Any? declared in <root>.test_2' type=kotlin.Any? origin=null
+          then: BLOCK type=kotlin.Unit origin=null
+            CALL 'public final fun bar <F> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+              <F>: kotlin.CharSequence
+              $receiver: TYPE_OP type=kotlin.CharSequence origin=IMPLICIT_CAST typeOperand=kotlin.CharSequence
+                GET_VAR 'x: kotlin.Any? declared in <root>.test_2' type=kotlin.Any? origin=null

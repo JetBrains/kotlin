@@ -1,0 +1,47 @@
+// CHECK:
+//   Mangled name: Bar
+//   Public signature: /Bar|null[0]
+class Bar<T : Any?> {
+  // CHECK:
+  //   Mangled name: Bar#<init>(){}
+  //   Public signature: /Bar.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: #parameterizedExt@Bar<0:0>(){0§<kotlin.Any?>}
+//   Public signature: /parameterizedExt|238116600414962466[0]
+//   Public signature debug description: parameterizedExt@Bar<0:0>(){0§<kotlin.Any?>}
+fun <T : Any?> Bar<T>.parameterizedExt(): Unit
+
+// CHECK:
+//   Mangled name: #specificExt@Bar<kotlin.Int>(){}
+//   Public signature: /specificExt|-1310832403295072487[0]
+//   Public signature debug description: specificExt@Bar<kotlin.Int>(){}
+fun Bar<Int>.specificExt(): Unit
+
+// CHECK:
+//   Mangled name: #test_1_1(kotlin.Any){}
+//   Public signature: /test_1_1|7398425926544174899[0]
+//   Public signature debug description: test_1_1(kotlin.Any){}
+fun test_1_1(x: Any): Unit
+
+// CHECK:
+//   Mangled name: #test_1_2(kotlin.Any){}
+//   Public signature: /test_1_2|7281604678448694217[0]
+//   Public signature debug description: test_1_2(kotlin.Any){}
+fun test_1_2(x: Any): Unit
+
+// CHECK:
+//   Mangled name: #test_2_1(kotlin.Any){}
+//   Public signature: /test_2_1|605030431757647889[0]
+//   Public signature debug description: test_2_1(kotlin.Any){}
+fun test_2_1(x: Any): Unit
+
+// CHECK:
+//   Mangled name: #test_2_2(kotlin.Any){}
+//   Public signature: /test_2_2|-2792936422375173693[0]
+//   Public signature debug description: test_2_2(kotlin.Any){}
+fun test_2_2(x: Any): Unit

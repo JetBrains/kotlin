@@ -72,10 +72,12 @@ FILE fqName:<root> fileName:/smartCastAside2.kt
           GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
       CALL 'public final fun extFoo <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Any
-        $receiver: GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
+        $receiver: TYPE_OP type=<root>.Foo<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Foo<kotlin.Any>
+          GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
       CALL 'public final fun extBar <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Any
-        $receiver: GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
+        $receiver: TYPE_OP type=<root>.Bar<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Bar<kotlin.Any>
+          GET_VAR 'x: kotlin.Any declared in <root>.test_1' type=kotlin.Any origin=null
   FUN name:test_2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
@@ -98,14 +100,16 @@ FILE fqName:<root> fileName:/smartCastAside2.kt
             arg0: GET_VAR 'x: kotlin.Any declared in <root>.test_2' type=kotlin.Any origin=null
       CALL 'public final fun extFoo <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Any
-        $receiver: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
-          <T0>: kotlin.Any
-          arg0: GET_VAR 'x: kotlin.Any declared in <root>.test_2' type=kotlin.Any origin=null
+        $receiver: TYPE_OP type=<root>.Foo<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Foo<kotlin.Any>
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
+            <T0>: kotlin.Any
+            arg0: GET_VAR 'x: kotlin.Any declared in <root>.test_2' type=kotlin.Any origin=null
       CALL 'public final fun extBar <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Any
-        $receiver: CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
-          <T0>: kotlin.Any
-          arg0: GET_VAR 'x: kotlin.Any declared in <root>.test_2' type=kotlin.Any origin=null
+        $receiver: TYPE_OP type=<root>.Bar<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Bar<kotlin.Any>
+          CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Any origin=EXCLEXCL
+            <T0>: kotlin.Any
+            arg0: GET_VAR 'x: kotlin.Any declared in <root>.test_2' type=kotlin.Any origin=null
   FUN name:test_3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
@@ -148,31 +152,33 @@ FILE fqName:<root> fileName:/smartCastAside2.kt
                 then: GET_VAR 'val tmp_1: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
       CALL 'public final fun extFoo <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Any
-        $receiver: BLOCK type=kotlin.Any origin=ELVIS
-          VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any [val]
-            GET_VAR 'x: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
-          WHEN type=kotlin.Any origin=null
-            BRANCH
-              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CALL 'public final fun materialize <K> (): K of <root>.materialize declared in <root>' type=kotlin.Any origin=null
-                <K>: kotlin.Any
-            BRANCH
-              if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
+        $receiver: TYPE_OP type=<root>.Foo<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Foo<kotlin.Any>
+          BLOCK type=kotlin.Any origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any [val]
+              GET_VAR 'x: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
+            WHEN type=kotlin.Any origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
+                  arg1: CONST Null type=kotlin.Nothing? value=null
+                then: CALL 'public final fun materialize <K> (): K of <root>.materialize declared in <root>' type=kotlin.Any origin=null
+                  <K>: kotlin.Any
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: GET_VAR 'val tmp_2: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
       CALL 'public final fun extBar <T> (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         <T>: kotlin.Any
-        $receiver: BLOCK type=kotlin.Any origin=ELVIS
-          VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any [val]
-            GET_VAR 'x: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
-          WHEN type=kotlin.Any origin=null
-            BRANCH
-              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'val tmp_3: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CALL 'public final fun materialize <K> (): K of <root>.materialize declared in <root>' type=kotlin.Any origin=null
-                <K>: kotlin.Any
-            BRANCH
-              if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'val tmp_3: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
+        $receiver: TYPE_OP type=<root>.Bar<kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.Bar<kotlin.Any>
+          BLOCK type=kotlin.Any origin=ELVIS
+            VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Any [val]
+              GET_VAR 'x: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
+            WHEN type=kotlin.Any origin=null
+              BRANCH
+                if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                  arg0: GET_VAR 'val tmp_3: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null
+                  arg1: CONST Null type=kotlin.Nothing? value=null
+                then: CALL 'public final fun materialize <K> (): K of <root>.materialize declared in <root>' type=kotlin.Any origin=null
+                  <K>: kotlin.Any
+              BRANCH
+                if: CONST Boolean type=kotlin.Boolean value=true
+                then: GET_VAR 'val tmp_3: kotlin.Any declared in <root>.test_3' type=kotlin.Any origin=null

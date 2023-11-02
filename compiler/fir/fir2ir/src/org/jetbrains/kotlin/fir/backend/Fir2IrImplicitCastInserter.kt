@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -279,38 +281,68 @@ class Fir2IrImplicitCastInserter(
         }
     }
 
-    internal fun implicitCastFromDispatchReceiver(
-        original: IrExpression,
-        coneKotlinType: ConeKotlinType,
-        calleeReference: FirReference?,
+    internal fun implicitCastFromReceivers(
+        originalIrReceiver: IrExpression,
+        receiver: FirExpression,
+        selector: FirQualifiedAccessExpression,
         typeOrigin: ConversionTypeOrigin,
     ): IrExpression {
-        val referencedDeclaration = calleeReference?.toResolvedCallableSymbol()?.unwrapCallRepresentative()?.fir
+        return implicitCastFromReceiverForIntersectionTypeOrNull(
+            originalIrReceiver,
+            receiver,
+            selector,
+            typeOrigin
+        ) ?: implicitCastOrExpression(originalIrReceiver, receiver.resolvedType)
+    }
 
-        val dispatchReceiverType =
-            referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType
-                ?: return implicitCastOrExpression(original, coneKotlinType)
+    private fun implicitCastFromReceiverForIntersectionTypeOrNull(
+        originalIrReceiver: IrExpression,
+        receiver: FirExpression,
+        selector: FirQualifiedAccessExpression,
+        typeOrigin: ConversionTypeOrigin,
+    ): IrExpression? {
+        val receiverExpressionType = receiver.resolvedType as? ConeIntersectionType ?: return null
+        val referencedDeclaration = selector.calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative()?.fir
 
-        val starProjectedDispatchReceiver = dispatchReceiverType.replaceArgumentsWithStarProjections()
-
-        val castType = coneKotlinType as? ConeIntersectionType
-        castType?.intersectedTypes?.forEach { componentType ->
-            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, componentType, starProjectedDispatchReceiver)) {
-                return implicitCastOrExpression(original, componentType, typeOrigin)
+        val receiverType = with(selector) {
+            when {
+                receiver === dispatchReceiver -> {
+                    val dispatchReceiverType = referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType ?: return null
+                    dispatchReceiverType.replaceArgumentsWithStarProjections()
+                }
+                receiver === extensionReceiver -> {
+                    val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
+                    val substitutor = createSubstitutorFromTypeArguments(selector, referencedDeclaration)
+                    substitutor.substituteOrSelf(extensionReceiverType)
+                }
+                else -> return null
             }
         }
 
-        return implicitCastOrExpression(original, coneKotlinType, typeOrigin)
+        for (componentType in receiverExpressionType.intersectedTypes) {
+            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, componentType, receiverType)) {
+                return implicitCastOrExpression(originalIrReceiver, componentType, typeOrigin)
+            }
+        }
+        return null
+    }
+
+    private fun createSubstitutorFromTypeArguments(
+        qualifiedAccessExpression: FirQualifiedAccessExpression,
+        callableDeclaration: FirCallableDeclaration,
+    ): ConeSubstitutor {
+        if (qualifiedAccessExpression.typeArguments.isEmpty() || callableDeclaration.typeParameters.isEmpty()) return ConeSubstitutor.Empty
+        val map = buildMap {
+            for ((parameter, argument) in callableDeclaration.typeParameters.zip(qualifiedAccessExpression.typeArguments)) {
+                val argumentType = argument.toConeTypeProjection().type ?: continue
+                put(parameter.symbol, argumentType)
+            }
+        }
+        return ConeSubstitutorByMap(map, session)
     }
 
     private fun implicitCastOrExpression(
         original: IrExpression, castType: ConeKotlinType, typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
-    ): IrExpression {
-        return implicitCastOrExpression(original, castType.toIrType(typeOrigin))
-    }
-
-    private fun implicitCastOrExpression(
-        original: IrExpression, castType: FirTypeRef, typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT
     ): IrExpression {
         return implicitCastOrExpression(original, castType.toIrType(typeOrigin))
     }

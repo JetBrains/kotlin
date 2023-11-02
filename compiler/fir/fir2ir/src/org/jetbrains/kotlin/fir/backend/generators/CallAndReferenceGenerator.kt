@@ -1249,7 +1249,7 @@ class CallAndReferenceGenerator(
         }
 
         return firReceiver
-            ?.let { visitor.convertToIrReceiverExpression(it, calleeReference, this as? FirCallableReferenceAccess) }
+            ?.let { visitor.convertToIrReceiverExpression(it, this) }
             ?: explicitReceiverExpression
     }
 

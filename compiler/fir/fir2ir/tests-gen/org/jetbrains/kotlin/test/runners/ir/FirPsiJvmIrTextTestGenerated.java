@@ -1577,6 +1577,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("genericReceiverOnExtensionWithSmartcast.kt")
+        public void testGenericReceiverOnExtensionWithSmartcast() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/genericReceiverOnExtensionWithSmartcast.kt");
+        }
+
+        @Test
         @TestMetadata("identity.kt")
         public void testIdentity() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/identity.kt");
@@ -1640,6 +1646,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         @TestMetadata("interfaceThisRef.kt")
         public void testInterfaceThisRef() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/interfaceThisRef.kt");
+        }
+
+        @Test
+        @TestMetadata("intersectedSmartcastForExtensionReceiverWithSameConstructor.kt")
+        public void testIntersectedSmartcastForExtensionReceiverWithSameConstructor() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/intersectedSmartcastForExtensionReceiverWithSameConstructor.kt");
         }
 
         @Test
