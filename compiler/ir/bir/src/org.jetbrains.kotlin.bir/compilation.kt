@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
@@ -99,18 +100,18 @@ private fun reconstructPhases(
     val newPhases = standardPhases
         .filter { it.first == 1 }
         .map { it.second }
-        .toMutableList() as MutableList<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
+        .toMutableList() as MutableList<AbstractNamedCompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>>
 
     newPhases.transformFlat { topPhase ->
         if (topPhase.name == "PerformByIrFile") {
             val filePhases = topPhase.getNamedSubphases()
                 .filter { it.first == 1 }
-                .map { it.second as NamedCompilerPhase<JvmBackendContext, IrFile> }
+                .map { it.second as AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile> }
                 .toMutableList()
 
             filePhases.add(
                 filePhases.indexOfFirst { (it as AnyNamedPhase).name == "DirectInvokes" } + 1,
-                terminateProcessPhase
+                terminateProcessPhase as AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile>
             )
 
             val lower = CustomPerFileAggregateLoweringPhase(filePhases, profile)
@@ -143,7 +144,7 @@ private fun reconstructPhases(
 }
 
 class CustomPerFileAggregateLoweringPhase(
-    private val filePhases: List<NamedCompilerPhase<JvmBackendContext, IrFile>>,
+    private val filePhases: List<AbstractNamedCompilerPhase<JvmBackendContext, IrFile, IrFile>>,
     private val profile: Boolean,
 ) : SameTypeCompilerPhase<JvmBackendContext, IrModuleFragment> {
     override fun invoke(
@@ -160,7 +161,7 @@ class CustomPerFileAggregateLoweringPhase(
                 }
                 context.inVerbosePhase = phaseConfig.isVerbose(filePhase)
 
-                invokePhaseMeasuringTime(profile, (filePhase as? NamedCompilerPhase<*, *>)?.name ?: filePhase.javaClass.simpleName) {
+                invokePhaseMeasuringTime(profile, (filePhase as? AbstractNamedCompilerPhase<*, *, *>)?.name ?: filePhase.javaClass.simpleName) {
                     for (irFile in input.files) {
                         filePhase.phaseBody(phaseConfig, filePhaserState, context, irFile)
                     }
@@ -302,14 +303,9 @@ private class ConvertBirToIrPhase(name: String, description: String) :
     }
 }
 
-private val terminateProcessPhase =
-    NamedCompilerPhase("Terminate", "Goodbay", lower = object : SameTypeCompilerPhase<JvmBackendContext, IrFile> {
-        override fun invoke(
-            phaseConfig: PhaseConfigurationService,
-            phaserState: PhaserState<IrFile>,
-            context: JvmBackendContext,
-            input: IrFile,
-        ): IrFile {
-            exitProcess(0)
-        }
-    })
+private val terminateProcessPhase = createSimpleNamedCompilerPhase<LoggingContext, IrFile, IrFile>(
+    name = "Terminate",
+    description = "Goodbay",
+    outputIfNotEnabled = { _, _, _, input -> input },
+    op = { _, _ -> exitProcess(0) }
+)
