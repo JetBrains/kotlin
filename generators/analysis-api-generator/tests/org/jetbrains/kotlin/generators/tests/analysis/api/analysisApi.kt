@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveWithResolveExtensionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest
@@ -202,6 +203,14 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             model(it, "metaAnnotations")
         }
 
+    }
+
+    group("imports", filter = frontendIs(FrontendKind.Fir)) {
+        test(
+            AbstractReferenceImportAliasTest::class,
+            filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            model(it, "importAliases")
+        }
     }
 
     group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
