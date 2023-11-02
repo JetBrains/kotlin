@@ -29,6 +29,8 @@ idePluginDependency {
 
     dependencies {
         embedded(project(":kotlin-native:backend.native")) { isTransitive = false }
+        embedded(project(":compiler:ir.serialization.native")) { isTransitive = false }
+        embedded(project(":compiler:fir:native")) { isTransitive = false }
 
         proguardLibraryJars(project(":native:kotlin-native-utils")) { isTransitive = false }
         proguardLibraryJars(project(":kotlin-native:backend.native", "kotlin_stdlib_jar"))
