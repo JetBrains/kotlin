@@ -34,7 +34,7 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     isNoinline: Boolean,
     isHidden: Boolean,
     defaultValue: BirExpressionBody?,
-) : BirElementBase(), BirValueParameter {
+) : BirImplElementBase(), BirValueParameter {
     override val owner: BirValueParameterImpl
         get() = this
 
@@ -66,8 +66,8 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1, false)
+    override val annotations: BirChildElementList<BirConstructorCall> =
+            BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 

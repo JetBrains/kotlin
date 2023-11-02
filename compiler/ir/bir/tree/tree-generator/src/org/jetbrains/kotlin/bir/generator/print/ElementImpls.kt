@@ -67,7 +67,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        initializer("BirChildElementList(this, %L, %L)", childrenLists.indexOf(field) + 1, (field.elementType as TypeRefWithNullability).nullable)
+                        initializer("%M(this, %L, %L)", childElementListImpl, childrenLists.indexOf(field) + 1, (field.elementType as TypeRefWithNullability).nullable)
                     } else if (field is SingleField && field.isMutable) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, if (field.isChild) poetType.copy(nullable = true) else poetType)
@@ -201,3 +201,4 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")
 private val elementVisitorLite = ClassName(Packages.tree, "BirElementVisitorLite")
 private val elementAcceptLite = MemberName(Packages.tree, "acceptLite", true)
+private val childElementListImpl = MemberName(Packages.tree, "BirImplChildElementList")

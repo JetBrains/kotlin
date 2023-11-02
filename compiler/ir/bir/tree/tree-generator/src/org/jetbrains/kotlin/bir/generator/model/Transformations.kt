@@ -81,7 +81,7 @@ private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
             fc.name,
             fc.elementType ?: InferredOverriddenType,
             listType.copy(fc.nullable),
-            fc.mutability == ListFieldConfig.Mutability.Var,
+            !fc.isChild && fc.mutability == ListFieldConfig.Mutability.Var,
             fc.isChild,
             fc.baseDefaultValue,
         )
@@ -211,7 +211,8 @@ private fun processFieldOverrides(elements: List<Element>) {
                             type.takeUnless { it is InferredOverriddenType } ?: overriddenType
                         when (field) {
                             is SingleField -> {
-                                field.typeRef = transformInferredType(field.typeRef, (overriddenField as SingleField).typeRef) as TypeRefWithNullability
+                                field.typeRef =
+                                    transformInferredType(field.typeRef, (overriddenField as SingleField).typeRef) as TypeRefWithNullability
                             }
                             is ListField -> {
                                 field.elementType = transformInferredType(field.elementType, (overriddenField as ListField).elementType)

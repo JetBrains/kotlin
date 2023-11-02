@@ -10,8 +10,8 @@ package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.moduleFragment]
  */
-abstract class BirModuleFragment : BirElementBase(), BirElement {
+abstract class BirModuleFragment : BirImplElementBase(), BirElement {
     abstract val descriptor: ModuleDescriptor?
 
     abstract val name: Name
