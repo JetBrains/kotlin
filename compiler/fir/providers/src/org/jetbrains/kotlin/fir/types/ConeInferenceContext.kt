@@ -95,9 +95,16 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 nullable,
                 coneAttributes
             )
+            is ConeIntersectionType -> if (coneAttributes === constructor.attributes) {
+                constructor
+            } else {
+                ConeIntersectionType(
+                    constructor.intersectedTypes.map { it.withAttributes(coneAttributes) },
+                    constructor.alternativeType?.withAttributes(coneAttributes)
+                )
+            }
             else -> error("!")
         }
-
     }
 
     override fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker {

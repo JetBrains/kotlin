@@ -15913,6 +15913,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("intersectionTypeOnWhenCall.kt")
+            public void testIntersectionTypeOnWhenCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/intersectionTypeOnWhenCall.kt");
+            }
+
+            @Test
             @TestMetadata("intersectionTypesWithContravariantTypes.kt")
             public void testIntersectionTypesWithContravariantTypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/intersectionTypesWithContravariantTypes.kt");
