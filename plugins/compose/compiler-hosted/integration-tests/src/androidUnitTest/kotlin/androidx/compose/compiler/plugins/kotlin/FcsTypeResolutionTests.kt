@@ -39,12 +39,12 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
             @Composable
             fun Int.Foo(content: @Composable Int.(foo: String) -> Unit) {
-                ${if (useFir) "<!NO_VALUE_FOR_PARAMETER!>" else ""}content${if (!useFir) "<!NO_VALUE_FOR_PARAMETER!>" else ""}()<!>
+                content<!NO_VALUE_FOR_PARAMETER!>()<!>
             }
 
             @Composable
             fun Bar(content: @Composable Int.() -> Unit) {
-                ${if (useFir) "<!NO_VALUE_FOR_PARAMETER!>" else ""}content${if (!useFir) "<!NO_VALUE_FOR_PARAMETER!>" else ""}()<!>
+                content<!NO_VALUE_FOR_PARAMETER!>()<!>
             }
         """
     )
@@ -280,12 +280,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
             @Composable fun Test() {
                 <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Foo()<!>
-                ${if (!useFir) {
-                    "<!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Bar" +
-                        "<!NO_VALUE_FOR_PARAMETER!>()<!><!>"
-                } else {
-                    "<!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS,NO_VALUE_FOR_PARAMETER!>Bar()<!>"
-                }}
+                <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Bar<!NO_VALUE_FOR_PARAMETER!>()<!><!>
             }
 
         """.trimIndent()
@@ -570,7 +565,7 @@ class FcsTypeResolutionTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(u
 
                 @Composable fun Test() {
                     ChildrenRequired2 {}
-                    <!NO_VALUE_FOR_PARAMETER!>ChildrenRequired2()<!>
+                    ChildrenRequired2<!NO_VALUE_FOR_PARAMETER!>()<!>
 
                     ChildrenOptional3 {}
                     ChildrenOptional3()

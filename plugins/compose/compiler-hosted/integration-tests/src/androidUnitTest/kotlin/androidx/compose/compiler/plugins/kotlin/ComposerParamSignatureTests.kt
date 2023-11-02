@@ -1622,12 +1622,12 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
 
     val hashCodeEqualsAndToString = if (useFir) {
         """
-              public static equals-impl(ILjava/lang/Object;)Z
-              public equals(Ljava/lang/Object;)Z
-              public static hashCode-impl(I)I
-              public hashCode()I
               public static toString-impl(I)Ljava/lang/String;
               public toString()Ljava/lang/String;
+              public static hashCode-impl(I)I
+              public hashCode()I
+              public static equals-impl(ILjava/lang/Object;)Z
+              public equals(Ljava/lang/Object;)Z
         """
     } else {
         """

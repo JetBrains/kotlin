@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.search.ProjectScope
-import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -57,7 +55,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
+import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -181,8 +179,10 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val platformKtFiles = platformFiles.map { it.toKtFile(project) }
 
         val reporter = DiagnosticReporterFactory.createReporter()
-        val commonAnalysis = buildResolveAndCheckFir(commonSession, commonKtFiles, reporter)
-        val platformAnalysis = buildResolveAndCheckFir(platformSession, platformKtFiles, reporter)
+        val commonAnalysis =
+            buildResolveAndCheckFirFromKtFiles(commonSession, commonKtFiles, reporter)
+        val platformAnalysis =
+            buildResolveAndCheckFirFromKtFiles(platformSession, platformKtFiles, reporter)
 
         return FirAnalysisResult(
             FirResult(listOf(commonAnalysis, platformAnalysis)),
@@ -212,34 +212,13 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             fir2IrExtensions,
             Fir2IrConfiguration(
                 configuration.languageVersionSettings,
+                analysisResult.reporter,
                 configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
-                object : EvaluatedConstTracker() {
-                    private val storage = ConcurrentHashMap<
-                        String,
-                        ConcurrentHashMap<Pair<Int, Int>, ConstantValue<*>>>()
-
-                    override fun save(
-                        start: Int,
-                        end: Int,
-                        file: String,
-                        constant: ConstantValue<*>
-                    ) {
-                        storage
-                            .getOrPut(file) { ConcurrentHashMap() }
-                            .let { it[start to end] = constant }
-                    }
-
-                    override fun load(start: Int, end: Int, file: String): ConstantValue<*>? {
-                        return storage[file]?.get(start to end)
-                    }
-
-                    override fun load(file: String): Map<Pair<Int, Int>, ConstantValue<*>>? {
-                        return storage[file]
-                    }
-                }
+                EvaluatedConstTracker.create(),
+                configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+                allowNonCachedDeclarations = false
             ),
             IrGenerationExtension.getInstances(project),
-            analysisResult.reporter
         )
 
         return FirFrontendResult(fir2IrResult, fir2IrExtensions)
