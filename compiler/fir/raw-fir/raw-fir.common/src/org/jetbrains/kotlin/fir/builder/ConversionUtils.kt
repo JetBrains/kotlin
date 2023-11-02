@@ -9,11 +9,11 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.realElement
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -556,19 +555,20 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     }
 }
 
-fun processLegacyContractDescription(block: FirBlock): FirContractDescription? {
+fun processLegacyContractDescription(block: FirBlock, diagnostic: ConeDiagnostic?): FirContractDescription? {
     if (block.isContractPresentFirCheck()) {
         val contractCall = block.replaceFirstStatement<FirFunctionCall> { FirContractCallBlock(it) }
-        return contractCall.toLegacyRawContractDescription()
+        return contractCall.toLegacyRawContractDescription(diagnostic)
     }
 
     return null
 }
 
-fun FirFunctionCall.toLegacyRawContractDescription(): FirLegacyRawContractDescription {
+fun FirFunctionCall.toLegacyRawContractDescription(diagnostic: ConeDiagnostic? = null): FirLegacyRawContractDescription {
     return buildLegacyRawContractDescription {
         this.source = this@toLegacyRawContractDescription.source
         this.contractCall = this@toLegacyRawContractDescription
+        this.diagnostic = diagnostic
     }
 }
 

@@ -196,6 +196,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
                     }
                 }
                 this.source = contractDescription.source
+                this.diagnostic = contractDescription.diagnostic
             }
             owner.replaceContractDescription(resolvedContractDescription)
             dataFlowAnalyzer.exitContractDescription()

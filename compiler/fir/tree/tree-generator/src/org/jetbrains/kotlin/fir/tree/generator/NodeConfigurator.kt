@@ -777,10 +777,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         resolvedContractDescription.configure {
             +fieldList("effects", effectDeclaration)
             +fieldList("unresolvedEffects", contractElementDeclaration)
+            +field("diagnostic", coneDiagnosticType, nullable = true)
         }
 
         legacyRawContractDescription.configure {
             +field("contractCall", functionCall)
+            +field("diagnostic", coneDiagnosticType, nullable = true)
         }
     }
 }

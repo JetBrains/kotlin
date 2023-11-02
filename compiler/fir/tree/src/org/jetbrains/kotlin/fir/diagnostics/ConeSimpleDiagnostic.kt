@@ -87,6 +87,10 @@ object ConeMissingConstructorKeyword : ConeDiagnostic {
     override val reason: String get() = "Use the 'constructor' keyword after the modifiers of the primary constructor."
 }
 
+object ConeContractShouldBeFirstStatement : ConeDiagnostic {
+    override val reason: String get() = "Contract should be the first statement."
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,

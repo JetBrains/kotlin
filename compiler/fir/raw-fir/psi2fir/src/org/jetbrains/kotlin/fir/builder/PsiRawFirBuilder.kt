@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -419,7 +420,14 @@ open class PsiRawFirBuilder(
                     if (hasBlockBody()) {
                         val block = bodyBlockExpression?.accept(this@Visitor, null) as? FirBlock
                         val contractDescription = when {
-                            !hasContractEffectList() -> block?.let(::processLegacyContractDescription)
+                            !hasContractEffectList() -> block?.let {
+                                val blockSourcePsi = it.source?.psi
+                                val diagnostic = when {
+                                    blockSourcePsi == null || !isCallTheFirstStatement(blockSourcePsi) -> ConeContractShouldBeFirstStatement
+                                    else -> null
+                                }
+                                processLegacyContractDescription(block, diagnostic)
+                            }
                             else -> null
                         }
                         return@buildFirBody block to contractDescription
@@ -431,6 +439,9 @@ open class PsiRawFirBuilder(
             } else {
                 null to null
             }
+
+        private fun isCallTheFirstStatement(psi: PsiElement): Boolean =
+            isCallTheFirstStatement(psi, { it.elementType }, { it.allChildren.toList() })
 
         private fun ValueArgument?.toFirExpression(): FirExpression {
             if (this == null) {

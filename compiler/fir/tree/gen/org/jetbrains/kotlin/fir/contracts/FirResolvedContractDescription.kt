@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.contracts
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
@@ -20,6 +21,7 @@ abstract class FirResolvedContractDescription : FirContractDescription() {
     abstract override val source: KtSourceElement?
     abstract val effects: List<FirEffectDeclaration>
     abstract val unresolvedEffects: List<FirContractElementDeclaration>
+    abstract val diagnostic: ConeDiagnostic?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitResolvedContractDescription(this, data)

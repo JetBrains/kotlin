@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.isCallTheFirstStatement
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -1818,7 +1820,14 @@ class LightTreeRawFirDeclarationBuilder(
         return when {
             blockNode != null -> {
                 val block = convertBlock(blockNode)
-                val contractDescription = runIf(allowLegacyContractDescription) { processLegacyContractDescription(block) }
+                val contractDescription = runIf(allowLegacyContractDescription) {
+                    val blockSource = block.source
+                    val diagnostic = when {
+                        blockSource == null || !isCallTheFirstStatement(blockSource) -> ConeContractShouldBeFirstStatement
+                        else -> null
+                    }
+                    processLegacyContractDescription(block, diagnostic)
+                }
                 block to contractDescription
             }
             expression != null -> FirSingleExpressionBlock(
@@ -1827,6 +1836,9 @@ class LightTreeRawFirDeclarationBuilder(
             else -> null to null
         }
     }
+
+    private fun isCallTheFirstStatement(sourceElement: KtSourceElement): Boolean =
+        isCallTheFirstStatement(sourceElement.lighterASTNode, { it.elementType }, { it.getChildren(sourceElement.treeStructure) })
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock

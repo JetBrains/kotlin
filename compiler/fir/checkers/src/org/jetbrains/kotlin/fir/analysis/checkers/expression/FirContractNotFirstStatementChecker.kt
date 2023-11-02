@@ -9,7 +9,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.diagnostics.ConeContractShouldBeFirstStatement
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -35,5 +39,9 @@ object FirContractNotFirstStatementChecker : FirFunctionCallChecker() {
     private fun FirFunctionCall.isCorrectlyPlacedIn(functionDeclaration: FirFunction): Boolean {
         val firstStatement = functionDeclaration.body?.statements?.first()
         return firstStatement is FirContractCallBlock && firstStatement.call == this
+                && !(functionDeclaration is FirContractDescriptionOwner && functionDeclaration.contractDescription.isNonFirstStatement)
     }
+
+    private val FirContractDescription.isNonFirstStatement: Boolean
+        get() = this is FirResolvedContractDescription && diagnostic == ConeContractShouldBeFirstStatement
 }

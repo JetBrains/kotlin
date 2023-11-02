@@ -15,17 +15,20 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirLegacyRawContractDescriptionImpl
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 
 @FirBuilderDsl
 class FirLegacyRawContractDescriptionBuilder {
     var source: KtSourceElement? = null
     lateinit var contractCall: FirFunctionCall
+    var diagnostic: ConeDiagnostic? = null
 
     fun build(): FirLegacyRawContractDescription {
         return FirLegacyRawContractDescriptionImpl(
             source,
             contractCall,
+            diagnostic,
         )
     }
 

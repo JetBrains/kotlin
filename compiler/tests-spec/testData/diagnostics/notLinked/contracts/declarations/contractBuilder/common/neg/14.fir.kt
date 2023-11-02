@@ -33,7 +33,7 @@ inline fun case_3(block: () -> Unit) {
 
 // TESTCASE NUMBER: 4
 inline fun case_4(block: () -> Unit) {
-    (contract {
+    (<!CONTRACT_NOT_ALLOWED!>contract<!> {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     })
     return block()
@@ -41,7 +41,7 @@ inline fun case_4(block: () -> Unit) {
 
 // TESTCASE NUMBER: 5
 inline fun case_5(block: () -> Unit) {
-    test@ contract {
+    test@ <!CONTRACT_NOT_ALLOWED!>contract<!> {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
     return block()
