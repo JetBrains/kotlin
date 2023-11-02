@@ -16836,6 +16836,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("newTvFromLamdaAreNotCountedAsProper.kt")
+                public void testNewTvFromLamdaAreNotCountedAsProper() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/newTvFromLamdaAreNotCountedAsProper.kt");
+                }
+
+                @Test
                 @TestMetadata("noBuilderInferenceRestrictionReceiverInconsistency.kt")
                 public void testNoBuilderInferenceRestrictionReceiverInconsistency() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/noBuilderInferenceRestrictionReceiverInconsistency.kt");
