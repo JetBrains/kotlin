@@ -165,7 +165,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         return buildPrimaryConstructor {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Plugin(ScopesGenerator.DataFramePlugin)
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             returnTypeRef = buildResolvedTypeRef {
                 type = ConeClassLikeTypeImpl(
                     lookupTag,

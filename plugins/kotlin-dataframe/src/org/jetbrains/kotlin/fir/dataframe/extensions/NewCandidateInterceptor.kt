@@ -78,7 +78,7 @@ class NewCandidateInterceptor(
     val refinedToOriginal: MutableMap<Name, FirBasedSymbol<*>>,
     val flag: FlagContainer,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
-    val Key = ScopesGenerator.DataFramePlugin
+    val Key = DataFramePlugin
 
     @OptIn(SymbolInternals::class)
     override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>): FirBasedSymbol<*>? {

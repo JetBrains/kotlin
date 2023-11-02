@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
-import org.jetbrains.kotlin.fir.dataframe.services.ObsoleteExtensionRegistrarConfigurator
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives

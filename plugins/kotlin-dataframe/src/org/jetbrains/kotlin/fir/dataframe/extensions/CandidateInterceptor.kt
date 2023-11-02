@@ -6,15 +6,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.FirMetaContext
 import org.jetbrains.kotlin.fir.dataframe.FlagContainer
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
-import org.jetbrains.kotlin.fir.dataframe.Mode
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.flatten
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameterCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
-import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameterCopy
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
@@ -28,30 +23,21 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.extensions.FirFunctionCallRefinementExtension
-import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
 import org.jetbrains.kotlin.fir.resolve.fqName
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRefCopy
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.types.type
@@ -74,12 +60,11 @@ class CandidateInterceptor(
     val callableState: MutableMap<Name, FirSimpleFunction>,
     val originalSymbol: MutableMap<Name, FirBasedSymbol<*>>,
     val nextName: (String) -> ClassId,
-    val mode: Mode,
     private val context: FirMetaContext,
     val refinedToOriginal: MutableMap<Name, FirBasedSymbol<*>>,
     val flag: FlagContainer,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
-    val Key = ScopesGenerator.DataFramePlugin
+    val Key = DataFramePlugin
 
     @OptIn(SymbolInternals::class)
     override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>): FirBasedSymbol<*>? {
@@ -133,55 +118,6 @@ class CandidateInterceptor(
         }
 
         val function = buildSimpleFunctionCopy(symbol.fir) {
-            when (mode) {
-                Mode.EXPERIMENTAL -> { }
-                Mode.OBSOLETE -> {
-                    moduleData = session.moduleData
-                    origin = FirDeclarationOrigin.Plugin(Key)
-                    source = null
-                    containerSource = null
-                    val substitutorMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
-                    typeParameters.replaceAll {
-                        val originalSymbol = it.symbol
-
-                        val newTypeParameterSymbol = FirTypeParameterSymbol()
-
-                        substitutorMap[originalSymbol] = ConeTypeParameterTypeImpl(
-                            ConeTypeParameterLookupTag(newTypeParameterSymbol),
-                            isNullable = false
-                        )
-
-                        buildTypeParameterCopy(it) {
-                            moduleData = session.moduleData
-                            source = null
-                            origin = FirDeclarationOrigin.Plugin(Key)
-                            this.symbol = newTypeParameterSymbol
-                            containingDeclarationSymbol = newSymbol
-                        }.also { newTypeParameterSymbol.bind(it) }
-                    }
-                    val substitutorByMap = substitutorByMap(substitutorMap, session)
-
-                    receiverParameter = buildReceiverParameterCopy(receiverParameter!!) {
-                        this.typeRef = buildResolvedTypeRefCopy(this.typeRef as FirResolvedTypeRef) {
-                            type = substitutorByMap.substituteOrSelf(type)
-                        }
-                    }
-
-                    valueParameters.replaceAll {
-                        buildValueParameterCopy(it) {
-                            moduleData = session.moduleData
-                            origin = FirDeclarationOrigin.Plugin(Key)
-                            val myReturnTypeRef = returnTypeRef
-                            if (myReturnTypeRef is FirResolvedTypeRef) {
-                                returnTypeRef = buildResolvedTypeRefCopy(myReturnTypeRef) {
-                                    type = substitutorByMap.substituteOrSelf(type)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
             name = generatedName.callableName
             body = null
             this.symbol = newSymbol

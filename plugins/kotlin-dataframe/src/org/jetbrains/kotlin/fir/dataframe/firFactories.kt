@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.fir.dataframe
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.dataframe.extensions.ScopesGenerator
+import org.jetbrains.kotlin.fir.dataframe.extensions.DataFramePlugin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -35,7 +35,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     return buildProperty {
         moduleData = session.moduleData
         resolvePhase = FirResolvePhase.BODY_RESOLVE
-        origin = FirDeclarationOrigin.Plugin(ScopesGenerator.DataFramePlugin)
+        origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
         status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
@@ -65,7 +65,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         getter = buildPropertyAccessor {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Plugin(ScopesGenerator.DataFramePlugin)
+            origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
             this.returnTypeRef = returnTypeRef
             dispatchReceiverType = receiverType
             this.symbol = firPropertyAccessorSymbol

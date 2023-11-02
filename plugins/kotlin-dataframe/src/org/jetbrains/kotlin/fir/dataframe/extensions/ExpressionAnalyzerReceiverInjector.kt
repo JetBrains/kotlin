@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.dataframe.extensions
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.cli.common.repl.replEscapeLineBreaks
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.*
 import org.jetbrains.kotlin.fir.dataframe.Names.COLUM_GROUP_CLASS_ID
 import org.jetbrains.kotlin.fir.dataframe.Names.DF_CLASS_ID
@@ -15,7 +13,6 @@ import org.jetbrains.kotlin.fir.dataframe.loadInterpreter
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -23,7 +20,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
 import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
@@ -32,38 +28,6 @@ import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
 import kotlin.math.abs
 
 class SchemaContext(val properties: List<SchemaProperty>)
-
-class ExpressionAnalyzerReceiverInjector(
-    session: FirSession,
-    private val scopeState: MutableMap<ClassId, SchemaContext>,
-    val tokenState: MutableMap<ClassId, SchemaContext>,
-    val path: String?,
-    val nextName: (String) -> ClassId,
-    val nextScope: (String) -> ClassId,
-) : FirExpressionResolutionExtension(session), KotlinTypeFacade {
-
-    override val resolutionPath: String?
-        get() = path
-
-    private val associatedScopes = mutableMapOf<ClassId, List<ConeKotlinType>>()
-
-    override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
-        val classId = runIf(functionCall.calleeReference.name == Name.identifier("injectAccessors")) {
-            ((functionCall.typeArguments.getOrNull(0) as? FirTypeProjectionWithVariance)?.typeRef?.coneType as? ConeClassLikeType)?.classId
-        }
-        val types =  buildList {
-            if (classId != null) {
-                associatedScopes[classId]?.let {
-                    addAll(it)
-                }
-            }
-            addAll(generateAccessorsScopesForRefinedCall(functionCall, scopeState, tokenState, associatedScopes, nextName = nextName, nextScope = nextScope))
-        }
-        return types
-    }
-
-    object DataFramePluginKey : GeneratedDeclarationKey()
-}
 
 fun KotlinTypeFacade.generateAccessorsScopesForRefinedCall(
     functionCall: FirFunctionCall,
@@ -173,7 +137,7 @@ fun KotlinTypeFacade.analyzeRefinedCallShape(call: FirFunctionCall, reporter: In
     }
 
     val origin = rootMarker.toSymbol(session)?.origin
-    val notFromPlugin = origin !is FirDeclarationOrigin.Plugin || origin.key != ExpressionAnalyzerReceiverInjector.DataFramePluginKey
+    val notFromPlugin = origin !is FirDeclarationOrigin.Plugin || origin.key != DataFramePlugin
     // temporary hack to workaround Token classes not existing when toSymbol is called
     val notToken = rootMarker.classId?.shortClassName?.asString()?.startsWith("Token") != true
     if (notFromPlugin && notToken) {
