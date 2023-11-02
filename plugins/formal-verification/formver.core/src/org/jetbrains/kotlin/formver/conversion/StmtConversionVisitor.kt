@@ -420,7 +420,11 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext<Re
         for (catchBlock in catchData.blocks) {
             data.withNewScope {
                 addStatement(catchBlock.entryLabel.toStmt(catchBlock.firCatch.source.asPosition))
-                registerLocalPropertyName(catchBlock.firCatch.parameter.name)
+                declareLocal(
+                    catchBlock.firCatch.parameter.name,
+                    embedType(catchBlock.firCatch.parameter.symbol.resolvedReturnType),
+                    null
+                )
                 convert(catchBlock.firCatch.block)
                 addStatement(catchData.exitLabel.toGoto(catchBlock.firCatch.source.asPosition))
             }

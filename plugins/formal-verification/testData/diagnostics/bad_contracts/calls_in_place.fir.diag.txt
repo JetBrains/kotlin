@@ -81,6 +81,12 @@ method global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(loca
 /calls_in_place.kt:(938,968): warning: Viper verification error: Postcondition of global$fun_incorrect_at_least_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int might not hold. Assertion local$f.special$function_object_call_counter > old(local$f.special$function_object_call_counter) might not hold.
 
 /calls_in_place.kt:(1150,1183): info: Generated Viper text for incorrect_exactly_once_with_catch:
+field pkg$kotlin$class_String$member_length: Int
+
+field pkg$kotlin$class_Throwable$member_cause: dom$Nullable[Ref]
+
+field pkg$kotlin$class_Throwable$member_message: dom$Nullable[Ref]
+
 method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -105,6 +111,7 @@ method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_
     goto label$try_exit$0
   }
   if (true) {
+    var local1$e: Ref
     label label$catch$0
     goto label$try_exit$0
   }
@@ -112,9 +119,19 @@ method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_
   label label$ret$0
 }
 
+method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
+
 /calls_in_place.kt:(1232,1261): warning: Viper verification error: Postcondition of global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion local$f.special$function_object_call_counter == old(local$f.special$function_object_call_counter) + 1 might not hold.
 
 /calls_in_place.kt:(1478,1519): info: Generated Viper text for incorrect_exactly_once_with_call_in_catch:
+field pkg$kotlin$class_String$member_length: Int
+
+field pkg$kotlin$class_Throwable$member_cause: dom$Nullable[Ref]
+
+field pkg$kotlin$class_Throwable$member_message: dom$Nullable[Ref]
+
 method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
   returns (ret: dom$Unit)
   requires acc(local$f.special$function_object_call_counter, write)
@@ -139,6 +156,7 @@ method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$r
     goto label$try_exit$0
   }
   if (true) {
+    var local1$e: Ref
     var anonymous$3: dom$Unit
     label label$catch$0
     special$invoke_function_object(local$f)
@@ -147,5 +165,9 @@ method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$r
   label label$try_exit$0
   label label$ret$0
 }
+
+method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
 
 /calls_in_place.kt:(1568,1597): warning: Viper verification error: Postcondition of global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion local$f.special$function_object_call_counter == old(local$f.special$function_object_call_counter) + 1 might not hold.

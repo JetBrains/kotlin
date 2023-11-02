@@ -64,3 +64,15 @@ fun <!VIPER_TEXT!>multiple_catches<!>() {
         call(3)
     }
 }
+
+@NeverConvert
+fun ignore(e: Exception) {}
+
+fun <!VIPER_TEXT!>use_exception<!>() {
+    try {
+        call(0)
+    }
+    catch (e: Exception) {
+        ignore(e)
+    }
+}
