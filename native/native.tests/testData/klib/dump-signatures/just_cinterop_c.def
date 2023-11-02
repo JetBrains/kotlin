@@ -3,23 +3,20 @@ language = C
 package = just_cinterop_c
 ---
 typedef struct my_struct {
+    signed char c;
     int i;
-    long l;
+    short s;
 } my_struct_t;
+
+static signed char do_signed_char(signed char x) {
+   return x;
+}
 
 static short do_short(short x) {
    return x;
 }
 
 static int do_int(int x) {
-   return x;
-}
-
-static long do_long(long x) {
-   return x;
-}
-
-static long long do_long_long(long long x) {
    return x;
 }
 
