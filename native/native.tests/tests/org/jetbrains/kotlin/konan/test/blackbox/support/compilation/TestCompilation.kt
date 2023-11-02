@@ -158,7 +158,6 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     expectedArtifact = expectedArtifact
 ) {
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        add("-repo", home.librariesDir.path)
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
