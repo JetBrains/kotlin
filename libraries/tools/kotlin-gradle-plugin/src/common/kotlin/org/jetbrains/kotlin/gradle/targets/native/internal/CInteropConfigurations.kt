@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.utils.copyAttributes
@@ -66,6 +67,10 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
 
 internal val KotlinNativeCompilation.cInteropDependencyConfigurationName: String
     get() = compilation.disambiguateName("CInterop")
+
+internal val SetupCInteropApiElementsConfigurationSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
+    target.project.locateOrCreateCInteropApiElementsConfiguration(target)
+}
 
 internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: KotlinTarget): Configuration {
     val configurationName = cInteropApiElementsConfigurationName(target)
