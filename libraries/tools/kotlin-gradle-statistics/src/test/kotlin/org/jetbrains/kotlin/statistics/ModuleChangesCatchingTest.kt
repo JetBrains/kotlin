@@ -30,7 +30,7 @@ private val SOURCE_FOLDER_EXPECTED_VERSION_AND_HASH =
         STRING_METRICS_EXPECTED_VERSION_AND_HASH.first +
                 BOOLEAN_METRICS_EXPECTED_VERSION_AND_HASH.first +
                 NUMERICAL_METRICS_EXPECTED_VERSION_AND_HASH.first,
-        "f29e701b7feebf67b184a74ec0cb543d"
+        "ce47debcab820f23e0ea1333d4124e9e"
     )
 private const val HASH_ALG = "MD5"
 
@@ -114,6 +114,7 @@ class ModuleChangesCatchingTest {
             .walk()
             .filter { file -> file.isFile }
             .filter { file -> !pathsToExclude.contains(file.absolutePath) }
+            .sorted()
             .map { file -> calculateMD5HashForFileContent(file.toPath()) }
             .fold(byteArrayOf()) { acc, fileHash -> acc + fileHash }
             .getMD5Hash()
