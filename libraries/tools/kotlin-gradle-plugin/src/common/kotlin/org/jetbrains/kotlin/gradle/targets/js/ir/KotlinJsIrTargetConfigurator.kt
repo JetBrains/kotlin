@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 open class KotlinJsIrTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinJsCompilation, KotlinJsIrTarget>(true) {
 
-    override val runtimeIncludesCompilationOutputs: Boolean = false
-
-
     internal companion object {
         internal fun KotlinJsCompilerOptions.configureJsDefaultOptions(
             platformType: KotlinPlatformType,
