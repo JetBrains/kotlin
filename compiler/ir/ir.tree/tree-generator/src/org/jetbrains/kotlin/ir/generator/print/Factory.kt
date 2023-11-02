@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
 import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
-import org.jetbrains.kotlin.ir.generator.config.UseFieldAsParameterInIrFactoryStrategy
 import org.jetbrains.kotlin.ir.generator.irFactoryType
 import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.ir.generator.stageControllerType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -255,10 +255,10 @@ private class FactoryMethod(val element: Element) {
 
     val name = "create" + element.name.capitalizeAsciiOnly()
 
-    val parameters = (element.allFieldsRecursively() + element.additionalFactoryMethodParameters)
+    val parameters = (element.allFieldsRecursively() + element.additionalIrFactoryMethodParameters)
         .filterNot { it.name in element.fieldsToSkipInIrFactoryMethod }
         .mapNotNull { field ->
-            (field.useInIrFactoryStrategy as? UseFieldAsParameterInIrFactoryStrategy.Yes)?.let {
+            (field.useInIrFactoryStrategy as? Field.UseFieldAsParameterInIrFactoryStrategy.Yes)?.let {
                 FunctionParameter(field.name, field.typeRef, it.defaultValue)
             }
         }
