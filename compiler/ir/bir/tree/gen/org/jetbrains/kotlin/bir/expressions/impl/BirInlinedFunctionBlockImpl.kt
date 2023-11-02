@@ -8,7 +8,12 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.*
+import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
+import org.jetbrains.kotlin.bir.BirImplChildElementList
+import org.jetbrains.kotlin.bir.BirStatement
+import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirFunctionAccessExpression
 import org.jetbrains.kotlin.bir.expressions.BirInlinedFunctionBlock
@@ -64,8 +69,8 @@ class BirInlinedFunctionBlockImpl(
             }
         }
 
-    override val statements: BirChildElementList<BirStatement> = BirChildElementList(this, 1,
-            false)
+    override val statements: BirChildElementList<BirStatement> =
+            BirImplChildElementList(this, 1, false)
 
     private var _origin: IrStatementOrigin? = origin
 

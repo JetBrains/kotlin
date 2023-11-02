@@ -11,14 +11,15 @@ package org.jetbrains.kotlin.bir.util
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.*
+import org.jetbrains.kotlin.bir.declarations.lazy.*
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.*
-import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirUninitializedType
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -178,7 +179,7 @@ class Ir2BirConverter(
         new.declarations.copyElements(old.declarations)
         new.annotations.copyElements(old.annotations)
         new.superTypes = old.superTypes.memoryOptimizedMap { remapType(it) }
-        new.valueClassRepresentation = old.valueClassRepresentation?.mapUnderlyingType { remapType(it) as BirSimpleType }
+        new.valueClassRepresentation = old.valueClassRepresentation?.mapUnderlyingType { remapSimpleType(it) }
         new.copyDynamicProperties(old)
     }
 
@@ -299,7 +300,7 @@ class Ir2BirConverter(
         copyReferencedElement(old, localDelegatedProperties, {
             BirLocalDelegatedPropertyImpl(
                 sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-                    descriptor = mapDescriptor { old.descriptor },
+                descriptor = mapDescriptor { old.descriptor },
                 origin = old.origin,
                 name = old.name,
                 type = BirUninitializedType,
@@ -1153,5 +1154,18 @@ class Ir2BirConverter(
         if (from is IrClass) {
             (this as BirClass)[SealedSubclasses] = from.sealedSubclasses.memoryOptimizedMap { remapSymbol(it) }
         }
+    }
+
+    override fun <Bir : BirElement> copyLazyElement(old: IrLazyDeclarationBase): Bir {
+        @Suppress("UNCHECKED_CAST")
+        return when (old) {
+            is IrClass -> BirLazyClass(old, this)
+            is IrSimpleFunction -> BirLazySimpleFunction(old, this)
+            is IrConstructor -> BirLazyConstructor(old, this)
+            is IrValueParameter -> BirLazyValueParameter(old, this)
+            is IrProperty -> BirLazyProperty(old, this)
+            is IrField -> BirLazyField(old, this)
+            else -> TODO(old.javaClass.simpleName)
+        } as Bir
     }
 }

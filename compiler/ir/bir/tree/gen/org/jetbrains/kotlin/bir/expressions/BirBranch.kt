@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
 
 /**
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.branch]
  */
-abstract class BirBranch : BirElementBase(), BirElement {
+abstract class BirBranch : BirImplElementBase(), BirElement {
     abstract var condition: BirExpression
 
     abstract var result: BirExpression

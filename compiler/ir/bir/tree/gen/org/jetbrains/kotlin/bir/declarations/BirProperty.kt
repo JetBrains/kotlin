@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
@@ -20,32 +19,31 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.property]
  */
-abstract class BirProperty : BirElementBase(), BirDeclaration,
-        BirPossiblyExternalDeclaration, BirOverridableDeclaration<BirPropertySymbol>,
-        BirMetadataSourceOwner, BirAttributeContainer, BirMemberWithContainerSource,
-        BirPropertySymbol {
+interface BirProperty : BirDeclaration, BirPossiblyExternalDeclaration,
+        BirOverridableDeclaration<BirPropertySymbol>, BirMetadataSourceOwner, BirAttributeContainer,
+        BirMemberWithContainerSource, BirPropertySymbol {
     @ObsoleteDescriptorBasedAPI
-    abstract override val descriptor: PropertyDescriptor?
+    override val descriptor: PropertyDescriptor?
 
-    abstract var isVar: Boolean
+    var isVar: Boolean
 
-    abstract var isConst: Boolean
+    var isConst: Boolean
 
-    abstract var isLateinit: Boolean
+    var isLateinit: Boolean
 
-    abstract var isDelegated: Boolean
+    var isDelegated: Boolean
 
-    abstract var isExpect: Boolean
+    var isExpect: Boolean
 
-    abstract override var isFakeOverride: Boolean
+    override var isFakeOverride: Boolean
 
-    abstract var backingField: BirField?
+    var backingField: BirField?
 
-    abstract var getter: BirSimpleFunction?
+    var getter: BirSimpleFunction?
 
-    abstract var setter: BirSimpleFunction?
+    var setter: BirSimpleFunction?
 
-    abstract override var overriddenSymbols: List<BirPropertySymbol>
+    override var overriddenSymbols: List<BirPropertySymbol>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)

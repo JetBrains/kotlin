@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.symbols.BirLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.bir.types.BirType
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.localDelegatedProperty]
  */
-abstract class BirLocalDelegatedProperty : BirElementBase(), BirDeclaration,
+abstract class BirLocalDelegatedProperty : BirImplElementBase(), BirDeclaration,
         BirDeclarationWithName, BirSymbolOwner, BirMetadataSourceOwner,
         BirLocalDelegatedPropertySymbol {
     @ObsoleteDescriptorBasedAPI

@@ -11,6 +11,7 @@ package org.jetbrains.kotlin.bir.expressions.impl
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitorLite
+import org.jetbrains.kotlin.bir.BirImplChildElementList
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirConstantObject
@@ -81,7 +82,7 @@ class BirConstantObjectImpl(
         }
 
     override val valueArguments: BirChildElementList<BirConstantValue> =
-            BirChildElementList(this, 1, false)
+            BirImplChildElementList(this, 1, false)
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         valueArguments.acceptChildrenLite(visitor)

@@ -37,7 +37,7 @@ interface BirFunction : BirDeclaration, BirPossiblyExternalDeclaration,
 
     var extensionReceiverParameter: BirValueParameter?
 
-    var valueParameters: BirChildElementList<BirValueParameter>
+    val valueParameters: BirChildElementList<BirValueParameter>
 
     var contextReceiverParametersCount: Int
 

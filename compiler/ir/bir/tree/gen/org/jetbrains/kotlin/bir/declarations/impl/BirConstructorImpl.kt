@@ -39,7 +39,7 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
     contextReceiverParametersCount: Int,
     body: BirBody?,
     isPrimary: Boolean,
-) : BirElementBase(), BirConstructor {
+) : BirImplElementBase(), BirConstructor {
     override val owner: BirConstructorImpl
         get() = this
 
@@ -71,8 +71,8 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1, false)
+    override val annotations: BirChildElementList<BirConstructorCall> =
+            BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -130,8 +130,8 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 2, false)
+    override val typeParameters: BirChildElementList<BirTypeParameter> =
+            BirImplChildElementList(this, 2, false)
 
     private var _isInline: Boolean = isInline
 
@@ -205,8 +205,8 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var valueParameters: BirChildElementList<BirValueParameter> =
-            BirChildElementList(this, 3, false)
+    override val valueParameters: BirChildElementList<BirValueParameter> =
+            BirImplChildElementList(this, 3, false)
 
     private var _contextReceiverParametersCount: Int = contextReceiverParametersCount
 

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -32,6 +33,7 @@ import kotlin.collections.set
 abstract class Ir2BirConverterBase() {
     var appendElementAsForestRoot: (IrElement, BirElement) -> BirForest? = { _, _ -> null }
     var copyAncestorsForOrphanedElements = false
+    var expandLazyElementsIntoImpl = false
     var copyDescriptors = false
 
     private val collectedBirElementsWithoutParent = mutableListOf<BirElement>()
@@ -48,6 +50,7 @@ abstract class Ir2BirConverterBase() {
         IdentityHashMap<Ir, Bir>(expectedMaxSize)
 
     protected abstract fun <Bir : BirElement> copyElement(old: IrElement): Bir
+    protected abstract fun <Bir : BirElement> copyLazyElement(old: IrLazyDeclarationBase): Bir
 
     fun copyIrTree(irRootElements: List<IrElement>): List<BirElement> {
         return irRootElements.map { copyElement(it) }
@@ -71,6 +74,13 @@ abstract class Ir2BirConverterBase() {
         map[old]?.let {
             @Suppress("UNCHECKED_CAST")
             return it as SE
+        }
+
+        if (!expandLazyElementsIntoImpl && old is IrLazyDeclarationBase) {
+            val new = copyLazyElement<SE>(old)
+            map[old] = new
+            appendElementAsForestRoot(old, new)?.attachRootElement(new as BirElementBase)
+            return new
         }
 
         return doCopyElement(old) {
@@ -159,6 +169,8 @@ abstract class Ir2BirConverterBase() {
     }
 
     fun <Bir : BirElement> remapElement(old: IrElement): Bir = copyElement(old)
+    @JvmName("remapElementNullable")
+    fun <Bir : BirElement> remapElement(old: IrElement?): Bir? = if (old == null) null else copyElement(old)
 
     fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: IrS): BirS {
         return if (old.isBound) {
@@ -173,6 +185,9 @@ abstract class Ir2BirConverterBase() {
             convertExternalSymbol(old)
         }
     }
+
+    @JvmName("remapSymbolNullable")
+    fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: IrS?): BirS? = if (old == null) null else remapSymbol(old)
 
     private fun <BirS : ExternalBirSymbol<*>, IrS : IrSymbol> convertExternalSymbol(old: IrS): BirS {
         val signature = old.signature
@@ -259,6 +274,9 @@ abstract class Ir2BirConverterBase() {
         is IrErrorType -> remapErrorType(irType)
         else -> TODO(irType.toString())
     }
+
+    @JvmName("remapTypeNullable")
+    fun remapType(irType: IrType?): BirType? = if (irType == null) null else remapType(irType)
 
     fun remapSimpleType(irType: IrSimpleType): BirSimpleType {
         return BirSimpleTypeImpl(

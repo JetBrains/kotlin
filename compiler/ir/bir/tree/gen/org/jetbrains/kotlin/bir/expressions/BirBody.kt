@@ -9,13 +9,13 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.BirImplElementBase
 
 /**
  * A non-leaf IR tree element.
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.body]
  */
-abstract class BirBody : BirElementBase(), BirElement {
+abstract class BirBody : BirImplElementBase(), BirElement {
     companion object
 }

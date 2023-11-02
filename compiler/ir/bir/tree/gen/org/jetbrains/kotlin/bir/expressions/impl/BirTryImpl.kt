@@ -8,7 +8,12 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.*
+import org.jetbrains.kotlin.bir.BirChildElementList
+import org.jetbrains.kotlin.bir.BirElement
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
+import org.jetbrains.kotlin.bir.BirImplChildElementList
+import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirCatch
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -78,7 +83,8 @@ class BirTryImpl(
             }
         }
 
-    override val catches: BirChildElementList<BirCatch> = BirChildElementList(this, 1, false)
+    override val catches: BirChildElementList<BirCatch> = BirImplChildElementList(this, 1,
+            false)
 
     private var _finallyExpression: BirExpression? = finallyExpression
 

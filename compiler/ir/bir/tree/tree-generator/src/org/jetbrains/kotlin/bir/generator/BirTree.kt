@@ -359,6 +359,7 @@ object BirTree : AbstractTreeBuilder() {
         +listField("files", file, mutability = List, isChild = true)
     }
     val property: ElementConfig by element(Declaration) {
+        typeKind = TypeKind.Interface
         isForcedLeaf = true
 
         parent(declaration)

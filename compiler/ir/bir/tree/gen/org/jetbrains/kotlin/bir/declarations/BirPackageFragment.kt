@@ -8,7 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations
 
-import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.symbols.BirPackageFragmentSymbol
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.FqName
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.packageFragment]
  */
-abstract class BirPackageFragment : BirElementBase(), BirDeclarationContainer,
+abstract class BirPackageFragment : BirImplElementBase(), BirDeclarationContainer,
         BirSymbolOwner, BirPackageFragmentSymbol {
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PackageFragmentDescriptor?

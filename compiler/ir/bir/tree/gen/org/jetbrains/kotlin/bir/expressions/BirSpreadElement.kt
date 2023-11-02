@@ -8,8 +8,8 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
 
 /**
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.accept
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.spreadElement]
  */
-abstract class BirSpreadElement : BirElementBase(), BirVarargElement {
+abstract class BirSpreadElement : BirImplElementBase(), BirVarargElement {
     abstract var expression: BirExpression
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {

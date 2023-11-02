@@ -21,8 +21,8 @@ class BirForest : BirElementParent() {
     private var elementClassifier: BirElementIndexClassifier? = null
     private var currentElementsIndexSlotIterator: ElementsIndexSlotIterator<*>? = null
     private var currentIndexSlot = 0
-    private var bufferedElementWithInvalidatedIndex: BirElementBase? = null
-    private var elementCurrentlyBeingClassified: BirElementBase? = null
+    private var bufferedElementWithInvalidatedIndex: BirImplElementBase? = null
+    private var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
 
     private var isInsideSubtreeShuffleTransaction = false
     private val dirtyElementsInsideSubtreeShuffleTransaction = mutableListOf<BirElementBase>()
@@ -48,10 +48,11 @@ class BirForest : BirElementParent() {
     fun attachRootElement(element: BirElementBase) {
         val oldParent = element._parent
         if (oldParent != null) {
+            element as BirImplElementBase
             element.replacedWithInternal(null)
             element.setParentWithInvalidation(this)
             if (oldParent is BirElementBase) {
-                oldParent.invalidate()
+                (oldParent as BirImplElementBase).invalidate()
             }
 
             elementMoved(element, oldParent)
@@ -153,10 +154,12 @@ class BirForest : BirElementParent() {
 
         val backReferenceRecorder = BackReferenceRecorder()
 
-        assert(elementCurrentlyBeingClassified == null)
-        elementCurrentlyBeingClassified = element
+        assert(mutableElementCurrentlyBeingClassified == null)
+        if (element is BirImplElementBase) {
+            mutableElementCurrentlyBeingClassified = element
+        }
         val i = classifier.classify(element, currentIndexSlot + 1, backReferenceRecorder)
-        elementCurrentlyBeingClassified = null
+        mutableElementCurrentlyBeingClassified = null
 
         if (i != 0) {
             if (element.indexSlot.toInt() != i) {
@@ -200,7 +203,7 @@ class BirForest : BirElementParent() {
         //  than their ancestor (so start scanning from the index of the root one).
     }
 
-    internal fun elementIndexInvalidated(element: BirElementBase) {
+    internal fun elementIndexInvalidated(element: BirImplElementBase) {
         if (element !== bufferedElementWithInvalidatedIndex) {
             flushElementsWithInvalidatedIndexBuffer()
             bufferedElementWithInvalidatedIndex = element
@@ -214,9 +217,9 @@ class BirForest : BirElementParent() {
         }
     }
 
-    internal fun recordElementPropertyRead(element: BirElementBase) {
-        if (elementCurrentlyBeingClassified != null && element.root === this) {
-            element.registerDependentElement(elementCurrentlyBeingClassified!!)
+    internal fun recordElementPropertyRead(element: BirImplElementBase) {
+        if (mutableElementCurrentlyBeingClassified != null && element.root === this) {
+            element.registerDependentElement(mutableElementCurrentlyBeingClassified!!)
         }
     }
 

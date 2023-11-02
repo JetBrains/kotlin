@@ -23,7 +23,7 @@ object Packages {
     const val descriptors = "org.jetbrains.kotlin.descriptors"
 }
 
-val elementBaseType = type(tree, "BirElementBase", TypeKind.Class)
+val elementBaseType = type(tree, "BirImplElementBase", TypeKind.Class)
 val statementOriginType = type("org.jetbrains.kotlin.ir.expressions", "IrStatementOrigin")
 val elementVisitorType = type(visitors, "BirElementVisitor")
 val elementTransformerType = type(visitors, "BirElementTransformer")

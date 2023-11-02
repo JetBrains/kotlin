@@ -57,8 +57,8 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1, false)
+    override val annotations: BirChildElementList<BirConstructorCall> =
+            BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 
