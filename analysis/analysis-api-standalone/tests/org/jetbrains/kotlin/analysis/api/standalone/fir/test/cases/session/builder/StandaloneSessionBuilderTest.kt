@@ -209,16 +209,6 @@ class StandaloneSessionBuilderTest {
     }
 
 
-    private fun KtCallExpression.assertIsCallOf(callableId: CallableId) {
-        analyze(this) {
-            val ktCallInfo = resolveCall()
-            Assertions.assertInstanceOf(KtSuccessCallInfo::class.java, ktCallInfo); ktCallInfo as KtSuccessCallInfo
-            val symbol = ktCallInfo.successfulFunctionCallOrNull()?.symbol
-            Assertions.assertInstanceOf(KtFunctionSymbol::class.java, symbol); symbol as KtFunctionSymbol
-            Assertions.assertEquals(callableId, symbol.callableIdIfNonLocal)
-        }
-    }
-
     private fun KtTypeReference.assertIsReferenceTo(classId: ClassId) {
         analyze(this) {
             val actualClassId = getKtType().expandedClassSymbol?.classIdIfNonLocal
