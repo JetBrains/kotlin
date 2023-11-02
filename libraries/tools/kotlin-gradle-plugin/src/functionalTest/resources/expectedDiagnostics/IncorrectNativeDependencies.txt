@@ -1,0 +1,11 @@
+[IncorrectNativeDependenciesWarning | WARNING] A compileOnly dependency is used in the Kotlin/Native target 'linuxArm64':
+Compilation: main
+
+Dependencies:
+my:library:1.0.0
+----
+[IncorrectNativeDependenciesWarning | WARNING] A compileOnly dependency is used in the Kotlin/Native target 'linuxX64':
+Compilation: main
+
+Dependencies:
+my:library:1.0.0

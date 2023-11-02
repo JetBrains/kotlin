@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
@@ -677,6 +678,18 @@ object KotlinToolingDiagnostics {
                         " which means that `srcMain` and `sRcMain` are considered the same source set."
             )
         }
+    }
+
+    object IncorrectNativeDependenciesWarning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(targetName: String, compilationName: String, dependencies: List<String>) = build(
+            """
+                A compileOnly dependency is used in the Kotlin/Native target '${targetName}':
+                Compilation: $compilationName
+                
+                Dependencies:
+                ${dependencies.joinToString(separator = "\n")}
+            """.trimIndent()
+        )
     }
 }
 
