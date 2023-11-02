@@ -6,22 +6,39 @@
 package org.jetbrains.kotlin.ir.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.ir.generator.config.ElementConfig
-import org.jetbrains.kotlin.ir.generator.config.FieldConfig
+import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
+import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 class Element(
-    config: ElementConfig,
     override val name: String,
-    override val packageName: String,
-    override val params: List<TypeVariable>,
-    override val fields: MutableSet<Field>,
-    val additionalFactoryMethodParameters: MutableList<Field>,
+    override val propertyName: String,
+    category: Category,
 ) : AbstractElement<Element, Field>() {
-    override var elementParents: List<ElementRef> = emptyList()
+
+    enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
+        Expression("expressions", "expression"),
+        Declaration("declarations", "declaration"),
+        Other("", "element");
+
+        val packageName: String get() = BASE_PACKAGE + if (packageDir.isNotEmpty()) ".$packageDir" else ""
+    }
+
+    override val packageName: String = category.packageName
+
+    override val elementParents = mutableListOf<ElementRef>()
     override var otherParents: MutableList<ClassRef<*>> = mutableListOf()
+
+    override val params = mutableListOf<TypeVariable>()
+
+    override val fields = mutableSetOf<Field>()
+
+    val additionalIrFactoryMethodParameters = mutableListOf<Field>()
+    var generateIrFactoryMethod = category == Category.Declaration
+    val fieldsToSkipInIrFactoryMethod = hashSetOf<String>()
+
 
     override val allFields: List<Field>
         get() = fields.toList()
@@ -38,26 +55,46 @@ class Element(
     override var parentInVisitor: Element? = null
     var transformerReturnType: Element? = null
 
-    override var kind: ImplementationKind? = when (config.typeKind) {
-        TypeKind.Class -> ImplementationKind.AbstractClass
-        TypeKind.Interface -> ImplementationKind.Interface
-        null -> null
-    }
+    var typeKind: TypeKind? = null
+        set(value) {
+            kind = when (value) {
+                TypeKind.Class -> ImplementationKind.AbstractClass
+                TypeKind.Interface -> ImplementationKind.Interface
+                null -> null
+            }
+            field = value
+        }
+
+    override var kind: ImplementationKind? = null
 
     override val typeName
         get() = elementName2typeName(name)
 
-    var isLeaf = config.isForcedLeaf
-    val childrenOrderOverride: List<String>? = config.childrenOrderOverride
+    /**
+     * Whether this element is semantically a leaf element in the hierarchy.
+     *
+     * This is set automatically by the [markLeaves] function for all true leaves, but can also be set manually to `true` if
+     * this element should be considered a leaf semantically.
+     *
+     * For example, we only generate [org.jetbrains.kotlin.ir.declarations.IrFactory] methods for leaf elements.
+     * If we want to generate a method for this element, but it has subclasses, it can be done by manually setting this property to `true`.
+     */
+    var isLeaf = false
+
+    var childrenOrderOverride: List<String>? = null
     override var walkableChildren: List<Field> = emptyList()
     override val transformableChildren get() = walkableChildren.filter { it.transformable }
 
-    override val visitFunctionName = "visit" + (config.visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
-    override val visitorParameterName = config.visitorParam ?: config.category.defaultVisitorParam
+    var visitorName: String? = null
 
-    override var hasAcceptMethod = config.accept
+    override val visitFunctionName: String
+        get() = "visit" + (visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
 
-    override val hasTransformMethod = config.transform
+    override var visitorParameterName = category.defaultVisitorParam
+
+    override var hasAcceptMethod = false // By default, accept is generated only for leaves.
+
+    override var hasTransformMethod = false
 
     override val hasAcceptChildrenMethod: Boolean
         get() = ownsChildren && (isRootElement || walkableChildren.isNotEmpty())
@@ -65,17 +102,14 @@ class Element(
     override val hasTransformChildrenMethod: Boolean
         get() = ownsChildren && (isRootElement || transformableChildren.isNotEmpty())
 
-    val transformByChildren = config.transformByChildren
-    val ownsChildren = config.ownsChildren
-    val generateIrFactoryMethod = config.generateIrFactoryMethod
-    val fieldsToSkipInIrFactoryMethod = config.fieldsToSkipInIrFactoryMethod
+    var transformByChildren = false
+    var ownsChildren = true // If false, acceptChildren/transformChildren will NOT be generated.
 
-    val generationCallback = config.generationCallback
-    override val propertyName = config.propertyName
+    var generationCallback: (context(ImportCollector) SmartPrinter.() -> Unit)? = null
 
-    override val kDoc = config.kDoc
+    override var kDoc: String? = null
 
-    val usedTypes: List<Importable> = config.usedTypes
+    val usedTypes = mutableListOf<Importable>()
 
     override fun toString() = name
 
@@ -105,30 +139,38 @@ class Element(
             .distinctBy { it.name }
             .asReversed()
     }
+
+    operator fun TypeVariable.unaryPlus() = apply {
+        params.add(this)
+    }
+
+    operator fun Field.unaryPlus() = apply {
+        fields.add(this)
+    }
 }
 
 typealias ElementRef = GenericElementRef<Element, Field>
 typealias ElementOrRef = GenericElementOrRef<Element, Field>
 
-@Suppress("LeakingThis")
 sealed class Field(
-    config: FieldConfig,
     override val name: String,
     override var isMutable: Boolean,
     val isChild: Boolean,
 ) : AbstractField() {
-    abstract val baseDefaultValue: String?
-    abstract val baseGetter: String?
+    var baseDefaultValue: String? = null
+    var baseGetter: String? = null
+
     abstract val transformable: Boolean
 
-    val useInIrFactoryStrategy = config.useFieldInIrFactoryStrategy
+    sealed class UseFieldAsParameterInIrFactoryStrategy {
 
-    init {
-        kDoc = config.kDoc
-        optInAnnotation = config.optInAnnotation
-        deprecation = config.deprecation
-        visibility = config.visibility
+        data object No : UseFieldAsParameterInIrFactoryStrategy()
+
+        data class Yes(val defaultValue: String?) : UseFieldAsParameterInIrFactoryStrategy()
     }
+
+    var useInIrFactoryStrategy =
+        if (isChild) UseFieldAsParameterInIrFactoryStrategy.No else UseFieldAsParameterInIrFactoryStrategy.Yes(null)
 
     override val withGetter: Boolean
         get() = baseGetter != null
@@ -136,7 +178,7 @@ sealed class Field(
     override val defaultValueInImplementation: String?
         get() = baseGetter ?: baseDefaultValue
 
-    override val customSetter: String? = config.customSetter
+    override var customSetter: String? = null
 
     override fun toString() = "$name: $typeRef"
 
@@ -154,29 +196,32 @@ sealed class Field(
 }
 
 class SingleField(
-    config: FieldConfig,
     name: String,
     override var typeRef: TypeRefWithNullability,
     mutable: Boolean,
     isChild: Boolean,
-    override val baseDefaultValue: String?,
-    override val baseGetter: String?,
-) : Field(config, name, mutable, isChild) {
+) : Field(name, mutable, isChild) {
     override val transformable: Boolean
         get() = isMutable
 }
 
 class ListField(
-    config: FieldConfig,
     name: String,
     var elementType: TypeRef,
+    private val isNullable: Boolean,
     private val listType: ClassRef<PositionTypeParameterRef>,
     mutable: Boolean,
     isChild: Boolean,
     override val transformable: Boolean,
-    override val baseDefaultValue: String?,
-    override val baseGetter: String?,
-) : Field(config, name, mutable, isChild) {
+) : Field(name, mutable, isChild) {
+
     override val typeRef: TypeRefWithNullability
-        get() = listType.withArgs(elementType)
+        get() = listType.withArgs(elementType).copy(isNullable)
+
+    enum class Mutability {
+        Immutable,
+        Var,
+        List,
+        Array
+    }
 }
