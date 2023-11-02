@@ -35,7 +35,7 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
     isStatic: Boolean,
     initializer: BirExpressionBody?,
     correspondingPropertySymbol: BirPropertySymbol?,
-) : BirElementBase(), BirField {
+) : BirImplElementBase(), BirField {
     override val owner: BirFieldImpl
         get() = this
 
@@ -67,8 +67,8 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1, false)
+    override val annotations: BirChildElementList<BirConstructorCall> =
+            BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 

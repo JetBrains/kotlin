@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.bir.util
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.*
 import org.jetbrains.kotlin.bir.expressions.*
@@ -115,7 +116,7 @@ open class BirTreeDeepCopier {
     }
 
     protected open fun BirElement.copyAuxData(from: BirElement) {
-        this as BirElementBase
+        this as BirImplElementBase
         copyDynamicProperties(from as BirElementBase)
     }
 

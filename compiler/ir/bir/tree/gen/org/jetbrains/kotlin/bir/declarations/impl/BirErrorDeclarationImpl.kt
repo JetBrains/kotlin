@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirErrorDeclaration
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -57,8 +54,8 @@ class BirErrorDeclarationImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1, false)
+    override val annotations: BirChildElementList<BirConstructorCall> =
+            BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 

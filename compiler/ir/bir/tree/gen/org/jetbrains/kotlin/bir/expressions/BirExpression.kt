@@ -8,7 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions
 
-import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.BirStatement
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.types.BirType
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.bir.types.BirType
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.expression]
  */
-abstract class BirExpression : BirElementBase(), BirStatement, BirVarargElement,
+abstract class BirExpression : BirImplElementBase(), BirStatement, BirVarargElement,
         BirAttributeContainer {
     abstract var type: BirType
 

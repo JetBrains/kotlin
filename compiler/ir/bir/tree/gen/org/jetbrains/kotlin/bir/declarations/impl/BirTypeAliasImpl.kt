@@ -8,10 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirTypeAlias
 import org.jetbrains.kotlin.bir.declarations.BirTypeParameter
 import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
@@ -65,8 +62,8 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var annotations: BirChildElementList<BirConstructorCall> =
-            BirChildElementList(this, 1, false)
+    override val annotations: BirChildElementList<BirConstructorCall> =
+            BirImplChildElementList(this, 1, false)
 
     private var _origin: IrDeclarationOrigin = origin
 
@@ -110,8 +107,8 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
             }
         }
 
-    override var typeParameters: BirChildElementList<BirTypeParameter> =
-            BirChildElementList(this, 2, false)
+    override val typeParameters: BirChildElementList<BirTypeParameter> =
+            BirImplChildElementList(this, 2, false)
 
     private var _isActual: Boolean = isActual
 
