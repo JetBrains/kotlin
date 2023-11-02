@@ -107,7 +107,7 @@ internal class KtFirReferenceShortener(
             callableShortenStrategy = { callableShortenStrategy(buildSymbol(it) as KtCallableSymbol) },
             firResolveSession,
         )
-        firDeclaration.accept(collector)
+        firDeclaration.accept(CollectingVisitor(collector))
 
         val additionalImports = AdditionalImports(
             collector.getNamesToImport(starImport = false).toSet(),
@@ -404,17 +404,7 @@ private class ShortenKDocQualifier(
     override val importAllInParent: Boolean = false
 ) : ElementToShorten()
 
-private class ElementsToShortenCollector(
-    private val shortenOptions: ShortenOptions,
-    private val shorteningContext: FirShorteningContext,
-    private val towerContextProvider: FirTowerContextProvider,
-    private val selection: TextRange,
-    private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
-    private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
-    private val firResolveSession: LLFirResolveSession,
-) : FirVisitorVoid() {
-    val typesToShorten: MutableList<ShortenType> = mutableListOf()
-    val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
+private class CollectingVisitor(private val collector: ElementsToShortenCollector) : FirVisitorVoid() {
     private val visitedProperty = mutableSetOf<FirProperty>()
 
     override fun visitValueParameter(valueParameter: FirValueParameter) {
@@ -445,7 +435,7 @@ private class ElementsToShortenCollector(
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        processTypeRef(resolvedTypeRef)
+        collector.processTypeRef(resolvedTypeRef)
 
         resolvedTypeRef.acceptChildren(this)
         resolvedTypeRef.delegatedTypeRef?.accept(this)
@@ -454,28 +444,41 @@ private class ElementsToShortenCollector(
     override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
         super.visitResolvedQualifier(resolvedQualifier)
 
-        processTypeQualifier(resolvedQualifier)
+        collector.processTypeQualifier(resolvedQualifier)
     }
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier) {
         super.visitErrorResolvedQualifier(errorResolvedQualifier)
 
-        processTypeQualifier(errorResolvedQualifier)
+        collector.processTypeQualifier(errorResolvedQualifier)
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall) {
         super.visitFunctionCall(functionCall)
 
-        processFunctionCall(functionCall)
+        collector.processFunctionCall(functionCall)
     }
 
     override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
         super.visitPropertyAccessExpression(propertyAccessExpression)
 
-        processPropertyAccess(propertyAccessExpression)
+        collector.processPropertyAccess(propertyAccessExpression)
     }
+}
 
-    private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
+private class ElementsToShortenCollector(
+    private val shortenOptions: ShortenOptions,
+    private val shorteningContext: FirShorteningContext,
+    private val towerContextProvider: FirTowerContextProvider,
+    private val selection: TextRange,
+    private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
+    private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
+    private val firResolveSession: LLFirResolveSession,
+) {
+    val typesToShorten: MutableList<ShortenType> = mutableListOf()
+    val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
+
+    fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         val typeElement = resolvedTypeRef.correspondingTypePsi ?: return
         if (typeElement.qualifier == null) return
 
@@ -540,7 +543,7 @@ private class ElementsToShortenCollector(
         return if (deepestTypeWithQualifier.hasFakeRootPrefix()) ShortenType(deepestTypeWithQualifier) else null
     }
 
-    private fun processTypeQualifier(resolvedQualifier: FirResolvedQualifier) {
+    fun processTypeQualifier(resolvedQualifier: FirResolvedQualifier) {
         if (resolvedQualifier.isImplicitDispatchReceiver) return
 
         val wholeClassQualifier = resolvedQualifier.classId ?: return
@@ -1040,7 +1043,7 @@ private class ElementsToShortenCollector(
                 candidatesWithinSamePriorityScopes.singleOrNull()?.isInBestCandidates == true
     }
 
-    private fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
+    fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
         // if explicit receiver is a property access or a function call, we cannot shorten it
         if (!canBePossibleToDropReceiver(firPropertyAccess)) return
 
@@ -1091,7 +1094,7 @@ private class ElementsToShortenCollector(
     private val FirPropertyAccessExpression.referencedSymbol: FirVariableSymbol<*>?
         get() = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*>
 
-    private fun processFunctionCall(functionCall: FirFunctionCall) {
+    fun processFunctionCall(functionCall: FirFunctionCall) {
         if (!canBePossibleToDropReceiver(functionCall)) return
 
         val qualifiedCallExpression = functionCall.psi as? KtDotQualifiedExpression ?: return
