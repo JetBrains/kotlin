@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAct
 import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeConfigureBinariesSideEffect
+import org.jetbrains.kotlin.gradle.targets.native.SetupEmbedAndSignAppleFrameworkTaskSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.internal.SetupCInteropApiElementsConfigurationSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.KotlinArtifactsExtensionSetupAction
@@ -119,6 +120,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, CreateDefaultTestRunSideEffect)
         register(project, ConfigureFrameworkExportSideEffect)
         register(project, SetupCInteropApiElementsConfigurationSideEffect)
+        register(project, SetupEmbedAndSignAppleFrameworkTaskSideEffect)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
