@@ -30,18 +30,6 @@ open class KonanLibrariesSpec(
     val artifactFiles: List<File>
         @InputFiles @PathSensitive(PathSensitivity.RELATIVE) get() = artifacts.map { it.artifact }
 
-    @Internal val explicitRepos = mutableSetOf<File>()
-
-    val repos: Set<File>
-        @Input get() = mutableSetOf<File>().apply {
-            addAll(explicitRepos)
-            add(task.destinationDir) // TODO: Check if task is a library - create a Library interface
-            add(task.destinationDir) // TODO: Check if task is a library - create a Library interface
-            add(task.project.konanLibsBaseDir.targetSubdir(target))
-            addAll(artifacts.flatMap { it.libraries.repos })
-            addAll(task.platformConfiguration.files.map { it.parentFile })
-        }
-
     val target: KonanTarget
         @Internal get() = task.konanTarget
 
@@ -117,13 +105,6 @@ open class KonanLibrariesSpec(
     fun allInteropLibrariesFrom(vararg libraryProjects: Project) = allArtifactsFromInternal(libraryProjects) {
         it is KonanInteropLibrary
     }
-
-    /** Add repo for library search */
-    fun useRepo(directory: Any) = explicitRepos.add(project.file(directory))
-    /** Add repos for library search */
-    fun useRepos(vararg directories: Any) = directories.forEach { useRepo(it) }
-    /** Add repos for library search */
-    fun useRepos(directories: Iterable<Any>) = directories.forEach { useRepo(it) }
 
     private fun Project.evaluationDependsOn(another: Project) {
         if (this != another) { evaluationDependsOn(another.path) }

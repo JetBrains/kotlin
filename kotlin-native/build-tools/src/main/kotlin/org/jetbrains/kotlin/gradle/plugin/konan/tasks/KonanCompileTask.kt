@@ -175,8 +175,6 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     /** Args passed to the compiler at both stages of the two-stage compilation and during the singe-stage compilation. */
     protected open fun buildCommonArgs() = mutableListOf<String>().apply {
-        addArgs("-repo", libraries.repos.map { it.canonicalPath })
-
         if (platformConfiguration.files.isNotEmpty()) {
             platformConfiguration.files.filter { it.name.endsWith(".klib") }.forEach {
                 // The library's directory is added in libraries.repos.
