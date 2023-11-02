@@ -164,6 +164,12 @@ open class FirTypeResolveTransformer(
         }
     }
 
+    override fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Any?): FirAnonymousInitializer {
+        return withScopeCleanup {
+            transformDeclaration(anonymousInitializer, data) as FirAnonymousInitializer
+        }
+    }
+
     override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Any?) =
         transformConstructor(errorPrimaryConstructor, data)
 

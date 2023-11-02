@@ -112,9 +112,10 @@ private class LLFirTypeTargetResolver(
             is FirTypeAlias,
             is FirScript,
             is FirRegularClass,
+            is FirAnonymousInitializer,
             -> rawResolve(target)
 
-            is FirFile, is FirAnonymousInitializer, is FirCodeFragment -> {}
+            is FirFile, is FirCodeFragment -> {}
             else -> errorWithAttachment("Unknown declaration ${target::class.simpleName}") {
                 withFirEntry("declaration", target)
             }
@@ -150,7 +151,9 @@ private class LLFirTypeTargetResolver(
                 target.accept(transformer, null)
             }
             is FirScript -> resolveScriptTypes(target)
-            is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias -> {
+            is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias,
+            is FirAnonymousInitializer,
+            -> {
                 target.accept(transformer, null)
             }
 
