@@ -38,9 +38,13 @@ fun Test(int: Int, %composer: Composer?, %changed: Int) {
         override fun invoke(<unused var>: Int, %composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(invoke):Test.kt")
-          if (%changed and 0b0001 != 0 || !%composer.skipping) {
+          val %dirty = %changed
+          if (%changed and 0b01110000 == 0) {
+            %dirty = %dirty or if (%composer.changed(<this>)) 0b00100000 else 0b00010000
+          }
+          if (%dirty and 0b01010001 != 0b00010000 || !%composer.skipping) {
             if (isTraceInProgress()) {
-              traceEventStart(<>, %changed, -1, <>)
+              traceEventStart(<>, %dirty, -1, <>)
             }
             Unit
             if (isTraceInProgress()) {

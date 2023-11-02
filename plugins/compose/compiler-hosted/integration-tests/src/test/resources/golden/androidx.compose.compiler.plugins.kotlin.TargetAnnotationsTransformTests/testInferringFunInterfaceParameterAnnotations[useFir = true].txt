@@ -103,9 +103,13 @@ fun Test(%composer: Composer?, %changed: Int) {
         override fun call(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(call)<Text("...>:Test.kt")
-          if (%changed and 0b0001 != 0 || !%composer.skipping) {
+          val %dirty = %changed
+          if (%changed and 0b1110 == 0) {
+            %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
+          }
+          if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
             if (isTraceInProgress()) {
-              traceEventStart(<>, %changed, -1, <>)
+              traceEventStart(<>, %dirty, -1, <>)
             }
             Text("Test", %composer, 0b0110)
             if (isTraceInProgress()) {
@@ -129,9 +133,13 @@ fun Test(%composer: Composer?, %changed: Int) {
         override fun call(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(call)<Text("...>:Test.kt")
-          if (%changed and 0b0001 != 0 || !%composer.skipping) {
+          val %dirty = %changed
+          if (%changed and 0b1110 == 0) {
+            %dirty = %dirty or if (%composer.changed(<this>)) 0b0100 else 0b0010
+          }
+          if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
             if (isTraceInProgress()) {
-              traceEventStart(<>, %changed, -1, <>)
+              traceEventStart(<>, %dirty, -1, <>)
             }
             Text("Test", %composer, 0b0110)
             if (isTraceInProgress()) {
