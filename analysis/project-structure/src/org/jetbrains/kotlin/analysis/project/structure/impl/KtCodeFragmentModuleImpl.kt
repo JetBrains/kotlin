@@ -11,13 +11,19 @@ import org.jetbrains.kotlin.analysis.project.structure.KtCodeFragmentModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import java.util.Objects
 
 public class KtCodeFragmentModuleImpl(
-    override val codeFragment: KtCodeFragment,
+    codeFragment: KtCodeFragment,
     override val contextModule: KtModule
 ) : KtCodeFragmentModule {
+    private val codeFragmentRef = codeFragment.createSmartPointer()
+
+    override val codeFragment: KtCodeFragment
+        get() = codeFragmentRef.element?.takeIf { it.isValid } ?: error("Code fragment module is invalid")
+
     override val project: Project
         get() = contextModule.project
 
@@ -46,13 +52,15 @@ public class KtCodeFragmentModuleImpl(
         if (this === other) return true
 
         if (other is KtCodeFragmentModuleImpl) {
-            return codeFragment == other.codeFragment && contextModule == other.contextModule
+            val selfCodeFragment = this.codeFragmentRef.element
+            val otherCodeFragment = other.codeFragmentRef.element
+            return selfCodeFragment != null && selfCodeFragment == otherCodeFragment && contextModule == other.contextModule
         }
 
         return false
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(codeFragment, contextModule)
+        return Objects.hash(codeFragmentRef.element, contextModule)
     }
 }
