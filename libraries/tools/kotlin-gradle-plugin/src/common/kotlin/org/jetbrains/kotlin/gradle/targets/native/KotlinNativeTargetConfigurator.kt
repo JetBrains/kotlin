@@ -9,17 +9,16 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.jetbrains.kotlin.gradle.artifacts.createKlibArtifact
+import org.jetbrains.kotlin.gradle.artifacts.klibOutputDirectory
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
-import org.jetbrains.kotlin.gradle.artifacts.createKlibArtifact
-import org.jetbrains.kotlin.gradle.artifacts.klibOutputDirectory
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newInstance
 
 open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotlinTargetConfigurator<T>(
@@ -96,7 +95,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
     // region Configuration.
     override fun configurePlatformSpecificModel(target: T) {
-        configureFrameworkExport(target)
         configureCInterops(target)
 
         if (target.konanTarget.family.isAppleFamily) {
@@ -114,37 +112,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             createCInteropTasks(compilation, compilation.cinterops)
             compilation.cinterops.all { cinterop ->
                 cinterop.dependencyFiles += locateOrCreateCInteropDependencyConfiguration(compilation)
-            }
-        }
-    }
-
-
-
-    fun configureFrameworkExport(target: KotlinNativeTarget) {
-        val project = target.project
-
-        target.compilations.all {
-            // Allow resolving api configurations directly to be able to check that
-            // all exported dependency are also added in the corresponding api configurations.
-            // The check is performed during a link task execution.
-            project.configurations.maybeCreate(it.apiConfigurationName).apply {
-                isCanBeResolved = true
-                usesPlatformOf(target)
-                attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-            }
-        }
-
-        target.binaries.withType(AbstractNativeLibrary::class.java).all { framework ->
-            project.configurations.maybeCreate(framework.exportConfigurationName).apply {
-                isVisible = false
-                isTransitive = false
-                isCanBeConsumed = false
-                isCanBeResolved = true
-                usesPlatformOf(target)
-                attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
-                attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-                description = "Dependenceis to be exported in framework ${framework.name} for target ${target.targetName}"
             }
         }
     }
