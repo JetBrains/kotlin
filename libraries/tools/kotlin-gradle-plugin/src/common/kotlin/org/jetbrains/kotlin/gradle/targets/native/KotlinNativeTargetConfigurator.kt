@@ -24,10 +24,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
     // region Configuration.
     override fun configurePlatformSpecificModel(target: T) {
-        if (target.konanTarget.family.isAppleFamily) {
-            registerEmbedAndSignAppleFrameworkTasks(target)
-        }
-
         if (PropertiesProvider(target.project).ignoreIncorrectNativeDependencies != true) {
             warnAboutIncorrectDependencies(target)
         }
@@ -35,12 +31,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
 
 
-    private fun registerEmbedAndSignAppleFrameworkTasks(target: KotlinNativeTarget) {
-        val project = target.project
-        target.binaries.withType(Framework::class.java).all { framework ->
-            project.registerEmbedAndSignAppleFrameworkTask(framework)
-        }
-    }
+
 
     private fun warnAboutIncorrectDependencies(target: KotlinNativeTarget) = target.project.launchInStage(ReadyForExecution) {
 
