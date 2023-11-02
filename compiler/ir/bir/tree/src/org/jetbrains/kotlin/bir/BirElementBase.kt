@@ -29,27 +29,12 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     internal var containingListId: Byte = 0
     private var flags: Byte = 0
     internal var indexSlot: UByte = 0u
-    private var dependentIndexedElements: Any? = null // null | BirElementBase | Array<BirElementBase?>
     private var backReferences: Any? = null // null | BirElementBase | Array<BirElementBase?>
-    private var dynamicProperties: Array<Any?>? = null
+    internal var dynamicProperties: Array<Any?>? = null
 
-    final override val parent: BirElementBase?
-        get() {
-            recordPropertyRead()
-            return _parent as? BirElementBase
-        }
+    abstract override val parent: BirElementBase?
 
-    internal fun getParentRecordingRead(): BirElementParent? {
-        recordPropertyRead()
-        return _parent
-    }
-
-    internal fun setParentWithInvalidation(new: BirElementParent?) {
-        if (_parent !== new) {
-            _parent = new
-            invalidate()
-        }
-    }
+    internal abstract fun setParentWithInvalidation(new: BirElementParent?)
 
     val attachedToTree
         get() = root != null
@@ -79,50 +64,6 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         return false
     }
 
-    protected fun throwChildElementRemoved(propertyName: String): Nothing {
-        throw IllegalStateException("The child property $propertyName has been removed from this element $this")
-    }
-
-
-    protected fun initChild(new: BirElement?) {
-        childReplaced(null, new)
-    }
-
-    internal fun childReplaced(old: BirElement?, new: BirElement?) {
-        if (old != null) {
-            old as BirElementBase
-
-            old.setParentWithInvalidation(null)
-            root?.elementDetached(old)
-        }
-
-        if (new != null) {
-            new as BirElementBase
-
-            val oldParent = new._parent
-            if (oldParent != null) {
-                new.replacedWithInternal(null)
-                new.setParentWithInvalidation(this)
-                if (oldParent is BirElementBase) {
-                    oldParent.invalidate()
-                }
-
-                root?.elementMoved(new, oldParent)
-            } else {
-                new.setParentWithInvalidation(this)
-                root?.elementAttached(new)
-            }
-        }
-    }
-
-
-    internal open fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        throwChildForReplacementNotFound(old)
-    }
-
-    protected fun throwChildForReplacementNotFound(old: BirElement): Nothing {
-        throw IllegalStateException("The child property $old not found in its parent $this")
-    }
 
     internal open fun getChildrenListById(id: Int): BirChildElementList<*> {
         throwChildrenListWithIdNotFound(id)
@@ -132,40 +73,6 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         throw IllegalStateException("The element $this does not have a children list with id $id")
     }
 
-
-    override fun replaceWith(new: BirElement?) {
-        if (this === new) return
-
-        val parent = replacedWithInternal(new as BirElementBase?)
-        if (parent is BirElementBase) {
-            parent.childReplaced(this, new)
-            parent.invalidate()
-        }
-    }
-
-    internal fun replacedWithInternal(new: BirElementBase?): BirElementParent? {
-        val parent = _parent
-        if (parent is BirElementBase) {
-            val list = getContainingList()
-            if (list != null) {
-                val found = if (new == null && !list.isNullable) {
-                    list.removeInternal(this)
-                } else {
-                    @Suppress("UNCHECKED_CAST")
-                    list as BirChildElementList<BirElementBase?>
-                    list.replaceInternal(this, new as BirElementBase?)
-                }
-
-                if (!found) {
-                    list.parent.throwChildForReplacementNotFound(this)
-                }
-            } else {
-                parent.replaceChildProperty(this, new)
-            }
-        }
-        return parent
-    }
-
     internal fun getContainingList(): BirChildElementList<*>? {
         val containingListId = containingListId.toInt()
         return if (containingListId == 0) null
@@ -173,8 +80,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     }
 
 
-    internal fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
-        recordPropertyRead()
+    internal open fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
         val arrayMap = dynamicProperties ?: return null
         val keyIndex = findDynamicPropertyIndex(arrayMap, token)
         if (keyIndex < 0) return null
@@ -182,15 +88,16 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         return arrayMap[keyIndex + 1] as T
     }
 
-    internal fun <T> setDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
+    internal open fun <T> setDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, value: T?): Boolean {
         val arrayMap = dynamicProperties
         if (arrayMap == null) {
             if (value == null) {
                 // optimization: next read will return null if the array is null, so no need to initialize it
-                return
+                return false
             }
 
             initializeDynamicProperties(token, value)
+            return true
         } else {
             val keyIndex = findDynamicPropertyIndex(arrayMap, token)
             if (keyIndex >= 0) {
@@ -198,40 +105,19 @@ abstract class BirElementBase : BirElementParent(), BirElement {
                 val old = arrayMap[valueIndex]
                 if (old != value) {
                     arrayMap[valueIndex] = value
-                    invalidate()
+                    return true
                 }
             } else {
                 val valueIndex = -keyIndex + 1
                 arrayMap[valueIndex] = value
-                invalidate()
+                return true
             }
         }
+
+        return false
     }
 
-    internal fun <T> getOrPutDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, compute: () -> T): T {
-        recordPropertyRead()
-
-        val arrayMap = dynamicProperties
-        if (arrayMap == null) {
-            val value = compute()
-            initializeDynamicProperties(token, value)
-            return value
-        }
-
-        val keyIndex = findDynamicPropertyIndex(arrayMap, token)
-        if (keyIndex >= 0) {
-            @Suppress("UNCHECKED_CAST")
-            return arrayMap[keyIndex + 1] as T
-        } else {
-            val value = compute()
-            val valueIndex = -keyIndex + 1
-            arrayMap[valueIndex] = value
-            invalidate()
-            return value
-        }
-    }
-
-    private fun <T> initializeDynamicProperties(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
+    protected fun <T> initializeDynamicProperties(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
         val size = token.manager.getInitialDynamicPropertyArraySize(javaClass)
         require(size != 0) { "This element is not supposed to store any dynamic properties" }
 
@@ -239,106 +125,14 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         arrayMap[0] = token
         arrayMap[1] = value
         this.dynamicProperties = arrayMap
-
-        invalidate()
     }
 
-    private fun findDynamicPropertyIndex(arrayMap: Array<Any?>, token: BirElementDynamicPropertyToken<*, *>): Int {
+    protected fun findDynamicPropertyIndex(arrayMap: Array<Any?>, token: BirElementDynamicPropertyToken<*, *>): Int {
         for (i in arrayMap.indices step 2) {
             val key = arrayMap[i] ?: return -i
             if (key === token) return i
         }
         return -1
-    }
-
-    // todo: fine-grained control of which data to copy
-    internal fun copyDynamicProperties(from: BirElementBase) {
-        dynamicProperties = from.dynamicProperties?.copyOf()
-    }
-
-
-    internal fun invalidate() {
-        root?.elementIndexInvalidated(this)
-    }
-
-    internal fun recordPropertyRead() {
-        root?.recordElementPropertyRead(this)
-    }
-
-    internal fun registerDependentElement(dependentElement: BirElementBase) {
-        if (dependentElement === this) {
-            return
-        }
-
-        val RESIZE_GRADUALITY = 4
-        var elementsOrSingle = dependentIndexedElements
-        when (elementsOrSingle) {
-            null -> {
-                dependentIndexedElements = dependentElement
-            }
-            is BirElementBase -> {
-                if (elementsOrSingle === dependentElement) {
-                    return
-                }
-
-                val elements = arrayOfNulls<BirElementBase>(RESIZE_GRADUALITY)
-                elements[0] = elementsOrSingle
-                elements[1] = dependentElement
-                dependentIndexedElements = elements
-            }
-            else -> {
-                @Suppress("UNCHECKED_CAST")
-                elementsOrSingle as Array<BirElementBase?>
-
-                var newIndex = 0
-                while (newIndex < elementsOrSingle.size) {
-                    val e = elementsOrSingle[newIndex]
-                    if (e == null) {
-                        break
-                    } else if (e === dependentElement) {
-                        return
-                    }
-                    newIndex++
-                }
-
-                if (newIndex == elementsOrSingle.size) {
-                    elementsOrSingle = elementsOrSingle.copyOf(elementsOrSingle.size + RESIZE_GRADUALITY)
-                    dependentIndexedElements = elementsOrSingle
-                }
-                elementsOrSingle[newIndex] = dependentElement
-            }
-        }
-    }
-
-    internal fun invalidateDependentElements() {
-        when (val elementsOrSingle = dependentIndexedElements) {
-            null -> {}
-            is BirElementBase -> {
-                dependentIndexedElements = null
-                elementsOrSingle.invalidate()
-            }
-            else -> {
-                @Suppress("UNCHECKED_CAST")
-                var array = elementsOrSingle as Array<BirElementBase?>
-                var arraySize = array.size
-                var i = 0
-                while (i < arraySize) {
-                    val e = array[i] ?: break
-                    val arrayIsFull = array[arraySize - 1] != null
-
-                    array[i] = null
-                    e.invalidate()
-
-                    if (arrayIsFull && array !== dependentIndexedElements) {
-                        @Suppress("UNCHECKED_CAST")
-                        array = dependentIndexedElements as Array<BirElementBase?>
-                        arraySize = array.size
-                    }
-
-                    i++
-                }
-            }
-        }
     }
 
 
@@ -425,14 +219,6 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         return results as List<E>
     }
 
-
-    fun unsafeDispose() {
-        acceptChildrenLite {
-            it.setParentWithInvalidation(null)
-            //childDetached(it)
-        }
-        // todo: mark as disposed
-    }
 
     companion object {
         const val FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION: Byte = (1 shl 0).toByte()

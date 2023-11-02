@@ -1,0 +1,65 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.bir.declarations.lazy
+
+import org.jetbrains.kotlin.bir.declarations.*
+import org.jetbrains.kotlin.bir.expressions.BirBody
+import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
+import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
+import org.jetbrains.kotlin.bir.types.BirType
+import org.jetbrains.kotlin.bir.util.Ir2BirConverter
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.name.Name
+
+class BirLazyConstructor(
+    override val originalElement: IrConstructor,
+    converter: Ir2BirConverter,
+) : BirLazyElementBase(converter), BirConstructor {
+    override val owner: BirConstructor
+        get() = this
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override val descriptor: ClassConstructorDescriptor
+        get() = originalElement.descriptor
+    override var isPrimary: Boolean
+        get() = originalElement.isPrimary
+        set(value) = mutationNotSupported()
+    override var isExternal: Boolean
+        get() = originalElement.isExternal
+        set(value) = mutationNotSupported()
+    override var name: Name
+        get() = originalElement.name
+        set(value) = mutationNotSupported()
+    override var visibility: DescriptorVisibility
+        get() = originalElement.visibility
+        set(value) = mutationNotSupported()
+    override var isInline: Boolean
+        get() = originalElement.isInline
+        set(value) = mutationNotSupported()
+    override var isExpect: Boolean
+        get() = originalElement.isExpect
+        set(value) = mutationNotSupported()
+    override var contextReceiverParametersCount: Int
+        get() = originalElement.contextReceiverParametersCount
+        set(value) = mutationNotSupported()
+    override var returnType: BirType by lazyVar<BirLazyConstructor, _> {
+        converter.remapType(originalElement.returnType)
+    }
+    override var dispatchReceiverParameter: BirValueParameter? by lazyVar<BirLazyConstructor, _> {
+        convertChild(originalElement.dispatchReceiverParameter)
+    }
+    override var extensionReceiverParameter: BirValueParameter? by lazyVar<BirLazyConstructor, _> {
+        convertChild(originalElement.extensionReceiverParameter)
+    }
+    override var body: BirBody? by lazyVar<BirLazyConstructor, _> {
+        convertChild(originalElement.body)
+    }
+    override val annotations = lazyChildElementList<BirLazyConstructor, BirConstructorCall>(1) { originalElement.annotations }
+    override val typeParameters = lazyChildElementList<BirLazyConstructor, BirTypeParameter>(2) { originalElement.typeParameters }
+    override val valueParameters = lazyChildElementList<BirLazyConstructor, BirValueParameter>(3) { originalElement.valueParameters }
+}

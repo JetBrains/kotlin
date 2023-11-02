@@ -9,8 +9,8 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.declarations.BirVariable
  *
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.catch]
  */
-abstract class BirCatch : BirElementBase(), BirElement {
+abstract class BirCatch : BirImplElementBase(), BirElement {
     abstract var catchParameter: BirVariable
 
     abstract var result: BirExpression
