@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.expression.debug
 
 import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
 import org.jetbrains.kotlin.formver.viper.ast.Label
 
@@ -16,4 +17,8 @@ val NamedFunctionSignature.nameAsDebugTreeView: TreeView
 val FieldEmbedding.debugTreeView: TreeView
     get() = NamedBranchingNode("Field", PlaintextLeaf(name.mangled))
 
-fun TreeView.withDesignation(name: String) = DesignatedNode(name, this)
+// TODO: implement something nicer for types.
+val TypeEmbedding.debugTreeView: TreeView
+    get() = PlaintextLeaf(name.mangled)
+
+fun TreeView.withDesignation(name: String) = designatedNode(name, this)

@@ -37,11 +37,7 @@ data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
     }
 
     override val debugTreeView: TreeView
-        get() = when (exps.size) {
-            0 -> PlaintextLeaf("EmptyBlock")
-            1 -> exps[0].debugTreeView
-            else -> NamedBranchingNode("Block", exps.map { it.debugTreeView })
-        }
+        get() = BlockNode(exps.map { it.debugTreeView })
 }
 
 data class If(val condition: ExpEmbedding, val thenBranch: ExpEmbedding, val elseBranch: ExpEmbedding, override val type: TypeEmbedding) :

@@ -118,7 +118,7 @@ sealed interface DefaultDebugTreeViewImplementation : ExpEmbedding {
             val anonymousSubtrees = debugAnonymousSubexpressions.map { it.debugTreeView }
             val namedSubtrees =
                 debugNamedSubexpressions.map {
-                    DesignatedNode(
+                    designatedNode(
                         it.key,
                         it.value.debugTreeView
                     )
@@ -313,6 +313,9 @@ data class Cast(override val inner: ExpEmbedding, override val type: TypeEmbeddi
     override fun toViper(ctx: LinearizationContext) = CastingDomain.cast(inner.toViper(ctx), type, ctx.source)
     override fun ignoringCasts(): ExpEmbedding = inner.ignoringCasts()
     override fun ignoringCastsAndMetaNodes(): ExpEmbedding = inner.ignoringCastsAndMetaNodes()
+
+    override val debugExtraSubtrees: List<TreeView>
+        get() = listOf(type.debugTreeView.withDesignation("target"))
 }
 
 data class FieldAccess(override val inner: ExpEmbedding, val field: FieldEmbedding) : UnaryDirectResultExpEmbedding {
@@ -355,7 +358,7 @@ data class PredicateAccessPermissions(val predicateName: MangledName, val args: 
         })
 }
 
-data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
+data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpEmbedding {
     override val type: TypeEmbedding = lhs.type
 
     override fun toViperSideEffects(ctx: LinearizationContext) {
@@ -368,8 +371,8 @@ data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpE
         }
     }
 
-    override val debugAnonymousSubexpressions: List<ExpEmbedding>
-        get() = listOf(lhs, rhs)
+    override val debugTreeView: TreeView
+        get() = OperatorNode(lhs.debugTreeView, ":=", rhs.debugTreeView)
 }
 
 data class Declare(val variable: VariableEmbedding, val initializer: ExpEmbedding?) : UnitResultExpEmbedding,
@@ -385,5 +388,5 @@ data class Declare(val variable: VariableEmbedding, val initializer: ExpEmbeddin
         get() = listOf()
 
     override val debugExtraSubtrees: List<TreeView>
-        get() = listOfNotNull(variable.debugTreeView, initializer?.debugTreeView)
+        get() = listOfNotNull(variable.debugTreeView, variable.type.debugTreeView, initializer?.debugTreeView)
 }

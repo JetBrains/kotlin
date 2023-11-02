@@ -5,12 +5,21 @@
 
 package org.jetbrains.kotlin.formver.embeddings.expression.debug
 
+import org.jetbrains.kotlin.formver.forEachWithIsLast
+import org.jetbrains.kotlin.formver.mapWithIsLast
+
 interface TreeView {
     // Width of the node if we assume it's all laid out on one line.
     val widthGuess: Int
 
     fun Printer.printImpl()
+
+    val Printer.fitsOnSingleLine: Boolean
+        get() = widthGuess <= availableSpace
 }
+
+val TreeView.pretty: String
+    get() = print()
 
 fun TreeView.print(): String {
     val printer = Printer()
@@ -21,37 +30,35 @@ fun TreeView.print(): String {
 class NamedBranchingNode(val name: String, val args: List<TreeView>) : TreeView {
     constructor(name: String, vararg args: TreeView) : this(name, args.toList())
 
-    // Characters for parentheses
-    private val fixedExtraWidth = 2
+    companion object {
+        private val scheme = SeparationSchemeImpl("(", ", ", ")")
+    }
 
-    // Characters for comma and space
-    private val perArgumentExtraWidth = 2
-
-    // We overcount by 2 since we assume there's a comma and space after the last character as well; it's probably not
-    // worth fixing at this point.
-    override val widthGuess: Int = name.length + fixedExtraWidth + args.map { it.widthGuess + perArgumentExtraWidth }.sum()
+    override val widthGuess: Int = name.length + scheme.guessWidth(args)
 
     override fun Printer.printImpl() {
-        val splitOverLines = availableSpace <= widthGuess
         print(name)
-        print("(")
-        if (splitOverLines) {
-            newLine()
-            indent()
-            for (arg in args) {
-                print(arg)
-                print(",")
-                newLine()
-            }
-            unindent()
-        } else if (args.isNotEmpty()) {
-            for (arg in args.take(args.size - 1)) {
-                print(arg)
-                print(", ")
-            }
-            print(args.last())
-        } // No else; if the args are empty, we don't need to do anything.
-        print(")")
+        printList(args, scheme, fitsOnSingleLine)
+    }
+}
+
+class BlockNode(args: List<TreeView>) : TreeView {
+    val flatArgs: List<TreeView> = args.flatMap {
+        when (it) {
+            is BlockNode -> it.flatArgs
+            else -> listOf(it)
+        }
+    }
+
+    companion object {
+        private val scheme = SeparationSchemeImpl("{ ", "; ", " }")
+    }
+
+    override val widthGuess: Int
+        get() = scheme.guessWidth(flatArgs)
+
+    override fun Printer.printImpl() {
+        printList(flatArgs, scheme, fitsOnSingleLine)
     }
 }
 
@@ -64,20 +71,73 @@ class PlaintextLeaf(val text: String) : TreeView {
     }
 }
 
+
+class OperatorNode(val left: TreeView, val op: String, val right: TreeView) : TreeView {
+    private val fixedExtraWidth = 2
+    override val widthGuess: Int = left.widthGuess + right.widthGuess + op.length + fixedExtraWidth
+
+    override fun Printer.printImpl() {
+        print(left)
+        print(" $op ")
+        print(right)
+    }
+}
+
 /**
  * Node with a label that refers to its purpose.
  *
  * `LabeledNode` would also be an appropriate name, but we already use the term "label" frequently.
  */
-class DesignatedNode(val label: String, val node: TreeView) : TreeView {
-    // Characters for equals sign separator.
-    private val fixedExtraWidth = 3
+fun designatedNode(label: String, node: TreeView) = OperatorNode(PlaintextLeaf(label), "=", node)
 
-    override val widthGuess: Int = label.length + fixedExtraWidth + node.widthGuess
+interface SeparationScheme {
+    val begin: String
+    val separator: String
+    val end: String
 
-    override fun Printer.printImpl() {
-        print(label)
-        print(" = ")
-        print(node)
+    fun trim(): SeparationScheme
+}
+
+private class SeparationSchemeImpl(override val begin: String, override val separator: String, override val end: String) :
+    SeparationScheme {
+    val trimmed = object : SeparationScheme {
+        override val begin: String = this@SeparationSchemeImpl.begin.trim()
+        override val separator: String = this@SeparationSchemeImpl.separator.trim()
+        override val end: String = this@SeparationSchemeImpl.end.trim()
+
+        override fun trim(): SeparationScheme = this
     }
+
+    override fun trim() = trimmed
+
+    fun guessWidth(args: List<TreeView>): Int =
+        if (args.isEmpty()) trimmed.begin.length + trimmed.end.length
+        else begin.length + end.length + args.mapWithIsLast { arg, isLast -> arg.widthGuess + if (!isLast) separator.length else 0 }.sum()
+}
+
+private fun Printer.printList(args: List<TreeView>, scheme: SeparationScheme, singleLine: Boolean) {
+    if (singleLine) singleLinePrintList(args, scheme)
+    else multiLinePrintList(args, scheme.trim())
+}
+
+private fun Printer.singleLinePrintList(args: List<TreeView>, scheme: SeparationScheme) {
+    print(scheme.begin)
+    args.forEachWithIsLast { arg, isLast ->
+        print(arg)
+        if (!isLast) print(scheme.separator)
+    }
+    print(scheme.end)
+}
+
+private fun Printer.multiLinePrintList(args: List<TreeView>, scheme: SeparationScheme) {
+    print(scheme.begin)
+    newLine()
+    indent()
+    for (arg in args) {
+        print(arg)
+        print(scheme.separator)
+        newLine()
+    }
+    unindent()
+    print(scheme.end)
 }

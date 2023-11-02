@@ -28,6 +28,9 @@ data class IntLit(val value: Int) : PureExpEmbedding {
 
     override val debugName: String
         get() = "Int"
+
+    override val debugExtraSubtrees: List<TreeView>
+        get() = listOf(PlaintextLeaf(value.toString()))
 }
 
 data class BooleanLit(val value: Boolean, override val sourceRole: SourceRole? = null) : PureExpEmbedding {
@@ -36,6 +39,9 @@ data class BooleanLit(val value: Boolean, override val sourceRole: SourceRole? =
 
     override val debugName: String
         get() = "Boolean"
+
+    override val debugExtraSubtrees: List<TreeView>
+        get() = listOf(PlaintextLeaf(value.toString()))
 }
 
 data class NullLit(val elemType: TypeEmbedding) : PureExpEmbedding {
