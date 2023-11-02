@@ -45,7 +45,7 @@ abstract class AbstractStdLibSourcesLazyDeclarationResolveTest : AbstractFirLazy
         val classDeclaration = findRegularClass(classId, module, resolveSession).findPsi() as KtClassOrObject
         val file = classDeclaration.containingFile as KtFile
 
-        doLazyResolveTest(file, testServices) { firSession ->
+        doLazyResolveTest(file, testServices, moduleStructure, renderAllFiles = false) { firSession ->
             val regularClass = findRegularClass(classId, module, firSession)
             val declarationToResolve = chooseMemberDeclarationIfNeeded(regularClass, moduleStructure, firSession)
             declarationToResolve.fir to fun(phase: FirResolvePhase) {

@@ -2,6 +2,17 @@ RAW_FIR:
 TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
 
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -13,6 +24,17 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 IMPORTS:
 TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
+
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -26,6 +48,17 @@ COMPILER_REQUIRED_ANNOTATIONS:
 TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
 
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -37,6 +70,17 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 COMPANION_GENERATION:
 TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
+
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -50,6 +94,17 @@ SUPER_TYPES:
 TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
 
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -61,6 +116,17 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 TYPES:
 TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
+
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -74,6 +140,17 @@ STATUS:
 TARGET: public abstract [ResolvedTo(STATUS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
 
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -85,6 +162,17 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 EXPECT_ACTUAL_MATCHING:
 TARGET: public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
+
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -98,6 +186,17 @@ CONTRACTS:
 TARGET: public abstract [ResolvedTo(CONTRACTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
 
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -109,6 +208,17 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
+
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
@@ -122,6 +232,17 @@ ANNOTATION_ARGUMENTS:
 TARGET: public abstract [ResolvedTo(ANNOTATION_ARGUMENTS)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
 
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
@@ -133,6 +254,17 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
 BODY_RESOLVE:
 TARGET: public abstract [ResolvedTo(BODY_RESOLVE)] [SubstitutedOverrideOriginalKey=/AbstractClass.property] val property: R|kotlin/Int|
 
+
+FILE: [ResolvedTo(IMPORTS)] AbstractClass.kt
+    public abstract [ResolvedTo(STATUS)] class AbstractClass<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] constructor<[ResolvedTo(STATUS)] T>(): R|AbstractClass<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public abstract [ResolvedTo(STATUS)] val property: R|T|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AbstractClass] get(): R|T|
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     public abstract [ResolvedTo(STATUS)] class SubClass : R|AbstractClass<kotlin/Int>| {

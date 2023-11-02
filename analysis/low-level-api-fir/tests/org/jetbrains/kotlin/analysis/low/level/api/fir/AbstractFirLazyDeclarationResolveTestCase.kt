@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveMultiDesignationCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.findElementIn
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -46,6 +47,8 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
     protected fun doLazyResolveTest(
         ktFile: KtFile,
         testServices: TestServices,
+        moduleStructure: TestModuleStructure,
+        renderAllFiles: Boolean,
         resolverProvider: (LLFirResolveSession) -> Pair<FirElementWithResolveState, ((FirResolvePhase) -> Unit)>,
     ) {
         val resultBuilder = StringBuilder()
@@ -54,10 +57,17 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
         resolveWithClearCaches(ktFile) { firResolveSession ->
             checkSession(firResolveSession)
 
-            val firFile = firResolveSession.getOrBuildFirFile(ktFile)
             val (elementToResolve, resolver) = resolverProvider(firResolveSession)
-            val designations = LLFirResolveMultiDesignationCollector.getDesignationsToResolve(elementToResolve)
-            val filesToRender = listOf(firFile).plus(designations.map { it.firFile }).distinct()
+            val filesToRender = if (renderAllFiles) {
+                moduleStructure.modules
+                    .flatMap(testServices.ktModuleProvider::getModuleFiles)
+                    .mapNotNull { file -> (file as? KtFile)?.let { firResolveSession.getOrBuildFirFile(it) } }
+            } else {
+                val firFile = firResolveSession.getOrBuildFirFile(ktFile)
+                val designations = LLFirResolveMultiDesignationCollector.getDesignationsToResolve(elementToResolve)
+                listOf(firFile).plus(designations.map { it.firFile }).distinct()
+            }
+
             val shouldRenderDeclaration = elementToResolve !is FirFile && filesToRender.all { file ->
                 findElementIn<FirElementWithResolveState>(file) {
                     it == elementToResolve

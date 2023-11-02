@@ -29,7 +29,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
     }
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        doLazyResolveTest(ktFile, testServices) { firResolveSession ->
+        doLazyResolveTest(ktFile, testServices, moduleStructure, renderAllFiles = true) { firResolveSession ->
             when {
                 Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives -> {
                     val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer!!

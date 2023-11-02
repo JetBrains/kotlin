@@ -1,6 +1,12 @@
 RAW_FIR:
 TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -13,6 +19,12 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 IMPORTS:
 TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -27,6 +39,12 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -39,6 +57,12 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 COMPANION_GENERATION:
 TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -53,6 +77,12 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 SUPER_TYPES:
 TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -65,6 +95,12 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 TYPES:
 TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -79,6 +115,12 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 STATUS:
 TARGET: public open [ResolvedTo(STATUS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -91,6 +133,12 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 EXPECT_ACTUAL_MATCHING:
 TARGET: public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -105,6 +153,12 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 CONTRACTS:
 TARGET: public open [ResolvedTo(CONTRACTS)] [CallableCopySubstitutionKey=CallableCopySubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType), DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): <implicit>
 
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -117,6 +171,14 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 TARGET: public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+            ^implicitType Int(42)
+        }
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
@@ -131,6 +193,14 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 ANNOTATION_ARGUMENTS:
 TARGET: public open [ResolvedTo(ANNOTATION_ARGUMENTS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
 
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+            ^implicitType Int(42)
+        }
+
+    }
+
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
@@ -143,6 +213,14 @@ FILE: [ResolvedTo(IMPORTS)] usage.kt
 
 BODY_RESOLVE:
 TARGET: public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] Interface.kt
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+            ^implicitType Int(42)
+        }
+
+    }
 
 FILE: [ResolvedTo(IMPORTS)] usage.kt
     public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
