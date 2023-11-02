@@ -42,6 +42,7 @@ class NewConstraintSystemImpl(
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
     override var typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>? = null
+    override var typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>? = null
 
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
@@ -66,6 +67,27 @@ class NewConstraintSystemImpl(
         val result = block()
 
         typeVariablesThatAreNotCountedAsProperTypes = null
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+
+        return result
+    }
+
+    override fun <R> withTypeVariablesThatAreCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> R): R {
+        checkState(State.BUILDING)
+        // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+
+        require(typeVariablesThatAreCountedAsProperTypes == null) {
+            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
+        }
+
+        typeVariablesThatAreCountedAsProperTypes = typeVariables
+
+        val result = block()
+
+        typeVariablesThatAreCountedAsProperTypes = null
         properTypesCache.clear()
         notProperTypesCache.clear()
 
@@ -399,6 +421,10 @@ class NewConstraintSystemImpl(
                 it
 
             if (typeToCheck == null) return@contains false
+            if (typeVariablesThatAreCountedAsProperTypes != null) {
+                if (typeVariablesThatAreCountedAsProperTypes!!.contains(typeToCheck.typeConstructor())) return@contains false
+            }
+
             if (typeVariablesThatAreNotCountedAsProperTypes != null) {
                 return@contains typeVariablesThatAreNotCountedAsProperTypes!!.contains(typeToCheck.typeConstructor())
             }

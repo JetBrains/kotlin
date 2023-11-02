@@ -51,6 +51,7 @@ class VariableFixationFinder(
          * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
          */
         val typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>?
+        val typeVariablesThatAreCountedAsProperTypes: Set<TypeConstructorMarker>?
 
         fun isReified(variable: TypeVariableMarker): Boolean
     }
@@ -218,9 +219,11 @@ class VariableFixationFinder(
         isProperTypeForFixation(type) { t -> !t.contains { isNotFixedRelevantVariable(it) } }
 
     private fun Context.isNotFixedRelevantVariable(it: KotlinTypeMarker): Boolean {
-        if (!notFixedTypeVariables.containsKey(it.typeConstructor())) return false
+        val key = it.typeConstructor()
+        if (!notFixedTypeVariables.containsKey(key)) return false
+        if (typeVariablesThatAreCountedAsProperTypes != null && typeVariablesThatAreCountedAsProperTypes!!.contains(key)) return false
         if (typeVariablesThatAreNotCountedAsProperTypes == null) return true
-        return typeVariablesThatAreNotCountedAsProperTypes!!.contains(it.typeConstructor())
+        return typeVariablesThatAreNotCountedAsProperTypes!!.contains(key)
     }
 
     private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
