@@ -372,24 +372,23 @@ class ComposerParamTransformer(
 
     private fun IrSimpleFunction.copy(): IrSimpleFunction {
         // TODO(lmr): use deepCopy instead?
-        return context.irFactory.createFunction(
-            startOffset,
-            endOffset,
-            origin,
-            IrSimpleFunctionSymbolImpl(),
-            name,
-            visibility,
-            modality,
-            returnType,
-            isInline,
-            isExternal,
-            isTailrec,
-            isSuspend,
-            isOperator,
-            isInfix,
-            isExpect,
-            isFakeOverride,
-            containerSource
+        return context.irFactory.createSimpleFunction(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = origin,
+            name = name,
+            visibility = visibility,
+            isInline = isInline,
+            isExpect = isExpect,
+            returnType = returnType,
+            modality = modality,
+            symbol = IrSimpleFunctionSymbolImpl(),
+            isTailrec = isTailrec,
+            isSuspend = isSuspend,
+            isOperator = isOperator,
+            isInfix = isInfix,
+            isExternal = isExternal,
+            containerSource = containerSource
         ).also { fn ->
             fn.copyAttributes(this)
             val propertySymbol = correspondingPropertySymbol

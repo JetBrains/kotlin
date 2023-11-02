@@ -251,7 +251,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
     companion object {
         fun checkCompilerVersion(configuration: CompilerConfiguration): Boolean {
             try {
-                val KOTLIN_VERSION_EXPECTATION = "1.9.10"
+                val KOTLIN_VERSION_EXPECTATION = "1.9.20"
                 KotlinCompilerVersion.getVersion()?.let { version ->
                     val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                     val suppressKotlinVersionCheck = configuration.get(

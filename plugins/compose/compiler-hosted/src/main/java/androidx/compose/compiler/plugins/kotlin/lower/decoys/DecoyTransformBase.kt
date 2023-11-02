@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer.TopLevelSymbolKind.FUNCTION_SYMBOL
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.ir.util.remapTypeParameters
+import org.jetbrains.kotlin.ir.util.toIrConst
 
 @JvmDefaultWithCompatibility
 internal interface DecoyTransformBase {
@@ -89,7 +89,9 @@ internal interface DecoyTransformBase {
             UNDEFINED_OFFSET,
             type = stringArrayType,
             varargElementType = context.irBuiltIns.stringType,
-            elements = valueArguments.map { it.toIrConst(context.irBuiltIns.stringType) }
+            elements = valueArguments.map {
+                it.toIrConst(context.irBuiltIns.stringType)
+            }
         )
     }
 
@@ -117,7 +119,8 @@ internal interface DecoyTransformBase {
             packageFqName = signature[0],
             declarationFqName = signature[1],
             id = signature[2].toLongOrNull(),
-            mask = signature[3].toLong()
+            mask = signature[3].toLong(),
+            description = "Composable decoy signature"
         )
 
         val linker = (context as IrPluginContextImpl).linker

@@ -165,9 +165,10 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFi
             listOfNotNull(
                 sources.absolutePath,
                 commonSources?.absolutePath,
-                commonSources?.absolutePath?.let("-Xcommon-sources="::plus)
-            ) +
-                "-Xmulti-platform" + mainArguments
+                commonSources?.absolutePath?.let("-Xcommon-sources="::plus),
+                "-Xmulti-platform",
+                "-Xexpect-actual-classes"
+            ) + mainArguments
         )
         appendLine("Exit code: $exitCode")
         appendLine("Output:")
