@@ -47,59 +47,10 @@ class Checker(private val generator: IGeneratedNames) : IGeneratedNames by gener
     }
 }
 
-class PredefinedNames : IGeneratedNames {
-
-    override val scopeState = mutableMapOf<ClassId, SchemaContext>()
-    override val tokenState = mutableMapOf<ClassId, SchemaContext>()
-    override val callableState = mutableMapOf<Name, FirSimpleFunction>()
-
-    private val _tokens = List(size) {
-        ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
-    }
-    override val tokens: MutableSet<ClassId> = _tokens.toMutableSet()
-    private val t = ArrayDeque(_tokens)
-    override fun nextName(s: String): ClassId {
-        val token = t.removeLast()
-        tokens.add(token)
-        return token
-    }
-
-    private val _callables = List(size) {
-        CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("refined_$it"))
-    }
-    override val callables: MutableSet<CallableId> = _callables.toMutableSet()
-    private val c = ArrayDeque(_callables)
-    override fun nextFunction(s: String): CallableId {
-        val name = c.removeLast()
-        callables.add(name)
-        return name
-    }
-
-    private val _scopes = List(size) {
-        ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Scope$it"))
-    }
-    override val scopes: MutableSet<ClassId> = _scopes.toMutableSet()
-    private val s = ArrayDeque(_scopes)
-    override fun nextScope(s: String): ClassId {
-        val scope = this.s.removeLast()
-        scopes.add(scope)
-        return scope
-    }
-
-}
-
 class GeneratedNames : IGeneratedNames {
     override val scopes = mutableSetOf<ClassId>()
     override val callables = mutableSetOf<CallableId>()
-//    val tokens = List(size) {
-//        ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
-//    }.toMutableSet()
-
     override val tokens = mutableSetOf<ClassId>()
-//    val callableNames = ArrayDeque(List(size) {
-//        CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("refined_$it"))
-//    })
-
     override val scopeState = mutableMapOf<ClassId, SchemaContext>()
     override val tokenState = mutableMapOf<ClassId, SchemaContext>()
     override val callableState = mutableMapOf<Name, FirSimpleFunction>()
@@ -125,9 +76,6 @@ class GeneratedNames : IGeneratedNames {
         id[s] = i + 1
         callables.add(callableId)
         return callableId
-//        val callableId = callableNames.removeLast()
-//        callables.add(callableId)
-//        return callableId
     }
 
 }
@@ -152,44 +100,24 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
     }
 }
 
-enum class Mode {
-    OBSOLETE, EXPERIMENTAL
-}
-
 class FirDataFrameExtensionRegistrar(
-    private val path: String?,
-    private val mode: Mode = Mode.OBSOLETE
+    private val path: String?
 ) : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
-        val flag = false
-        var generator = if (flag) PredefinedNames() else GeneratedNames()
         // if input data schema for refinement is also generated schema, maybe it'll be possible to save names to a set
-        generator = Checker(generator)
+        val generator = Checker(GeneratedNames())
         val refinedToOriginal = mutableMapOf<Name, FirBasedSymbol<*>>()
         with(generator) {
             +::ExtensionsGenerator
-            when (mode) {
-                Mode.OBSOLETE -> {
-                    +::ScopesGenerator
-                    +{ it: FirSession -> RefinedFunctionsGenerator(it, callables, callableState) }
-                    +{ it: FirSession ->
-                        ExpressionAnalyzerReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
-                    }
-                    +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
-                    +{ it: FirSession -> TokenGenerator(it) }
-                }
-                Mode.EXPERIMENTAL -> {
-                    +::ReturnTypeBasedReceiverInjector
-                    +{ it: FirSession ->
-                        val flag = FlagContainer(shouldIntercept = true)
-                        val templateCompiler = TemplateCompiler(flag)
-                        templateCompiler.session = it
-                        CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, mode, FirMetaContextImpl(it, templateCompiler), refinedToOriginal, flag)
-//                        NewCandidateInterceptor(it, ::nextFunction, this::nextName, refinedToOriginal, flag)
-                    }
-                    +::TokenGenerator
-                }
+            +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
+            +::ReturnTypeBasedReceiverInjector
+            +{ it: FirSession ->
+                val flag = FlagContainer(shouldIntercept = true)
+                val templateCompiler = TemplateCompiler(flag)
+                templateCompiler.session = it
+                CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, FirMetaContextImpl(it, templateCompiler), refinedToOriginal, flag)
             }
+            +::TokenGenerator
         }
     }
 }
@@ -199,7 +127,7 @@ class FlagContainer(var shouldIntercept: Boolean)
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(configuration.get(PATH), Mode.EXPERIMENTAL))
+        FirExtensionRegistrarAdapter.registerExtension(FirDataFrameExtensionRegistrar(configuration.get(PATH)))
         IrGenerationExtension.registerExtension(IrBodyFiller())
     }
 
