@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.formver.viper.errors
 
+import org.jetbrains.kotlin.formver.viper.ast.Info
 import org.jetbrains.kotlin.formver.viper.ast.Position
+import org.jetbrains.kotlin.formver.viper.ast.info
+import org.jetbrains.kotlin.formver.viper.ast.unwrapOr
 import viper.silver.verifier.errors
 
 
@@ -46,3 +49,19 @@ object ErrorAdapter {
         }
     }
 }
+
+/**
+ * Given a verification error, find embedded extra information of type `I` in the
+ * error's offending nodes.
+ * If the extra info is not found, return `null`.
+ * The information can be embedded either in the result's offending node,
+ * or in the reason's offending node.
+ * As an example, `PreconditionInCallFalse` errors have
+ * as offending node result the call-site of the called method.
+ * But the actual info we are interested in is on the pre-condition, contained in the reason's offending node.
+ */
+inline fun <reified I> VerificationError.getInfoOrNull(): I? =
+    Info.fromSilver(result.offendingNode().info).unwrapOr<I> {
+        Info.fromSilver(result.reason().offendingNode().info).unwrapOr<I> { null }
+    }
+

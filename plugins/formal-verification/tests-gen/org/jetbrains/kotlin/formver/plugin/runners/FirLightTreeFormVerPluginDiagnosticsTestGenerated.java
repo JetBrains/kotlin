@@ -88,6 +88,12 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
         }
 
         @Test
+        @TestMetadata("returns_not_null.kt")
+        public void testReturns_not_null() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/returns_not_null.kt");
+        }
+
+        @Test
         @TestMetadata("returns_null.kt")
         public void testReturns_null() throws Exception {
             runTest("plugins/formal-verification/testData/diagnostics/bad_contracts/returns_null.kt");

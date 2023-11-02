@@ -39,3 +39,6 @@ inline fun <I> Info.unwrapOr(orBlock: () -> I?): I? = when (this) {
     is Info.Wrapped -> info as I
     else -> orBlock()
 }
+
+val viper.silver.ast.Node.info: viper.silver.ast.Info
+    get() = prettyMetadata._2()

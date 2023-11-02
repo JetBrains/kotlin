@@ -18,24 +18,24 @@ object FormalVerificationPluginErrorMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
         )
         put(
-            PluginErrors.VIPER_CONSISTENCY_ERROR,
-            "Viper consistency error: {0}",
-            CommonRenderers.STRING,
-        )
-        put(
             PluginErrors.VIPER_VERIFICATION_ERROR,
             "Viper verification error: {0}",
             CommonRenderers.STRING,
         )
         put(
             PluginErrors.INTERNAL_ERROR,
-            "Formal verification internal error: {0}",
+            "An internal error has occurred.\nDetails: {0}\nPlease report this at https://github.com/jesyspa/kotlin",
             CommonRenderers.STRING,
         )
         put(
             PluginErrors.MINOR_INTERNAL_ERROR,
             "Formal verification non-fatal internal error: {0}",
             CommonRenderers.STRING,
+        )
+        put(
+            PluginErrors.UNEXPECTED_RETURNED_VALUE,
+            "Function may return a {0} value.",
+            CommonRenderers.STRING
         )
     }
 }

@@ -1,0 +1,13 @@
+/returns_not_null.kt:(121,133): info: Generated Viper text for returns_null:
+method global$fun_returns_null$fun_take$$return$NT_Int()
+  returns (ret$0: dom$Nullable[Int])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
+  ensures ret$0 != (dom$Nullable$null(): dom$Nullable[Int])
+{
+  ret$0 := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
+    dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+  goto label$ret$0
+  label label$ret$0
+}
+
+/returns_not_null.kt:(167,183): warning: Function may return a null value.

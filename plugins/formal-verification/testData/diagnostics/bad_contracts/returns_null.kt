@@ -12,7 +12,7 @@ fun <!VIPER_TEXT!>returns_null_unverifiable<!>(x: Int?): Int? {
 @OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>non_nullable_returns_null<!>(x: Int): Int {
     contract {
-        <!VIPER_VERIFICATION_ERROR!>returns(null)<!>
+        <!UNEXPECTED_RETURNED_VALUE!>returns(null)<!>
     }
     return x
 }

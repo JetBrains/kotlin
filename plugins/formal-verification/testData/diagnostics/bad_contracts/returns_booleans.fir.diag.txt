@@ -8,4 +8,16 @@ method global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean()
   label label$ret$0
 }
 
-/returns_booleans.kt:(183,196): warning: Viper verification error: Postcondition of global$fun_incorrectly_returns_false$fun_take$$return$T_Boolean might not hold. Assertion ret$0 == true might not hold.
+/returns_booleans.kt:(183,196): warning: Function may return a false value.
+
+/returns_booleans.kt:(264,288): info: Generated Viper text for incorrectly_returns_true:
+method global$fun_incorrectly_returns_true$fun_take$$return$T_Boolean()
+  returns (ret$0: Bool)
+  ensures ret$0 == false
+{
+  ret$0 := true
+  goto label$ret$0
+  label label$ret$0
+}
+
+/returns_booleans.kt:(325,339): warning: Function may return a true value.

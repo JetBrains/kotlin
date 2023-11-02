@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Position
 /**
  * Interface adapter between Kotlin and Silver.
  */
-interface VerifierError {
+sealed interface VerifierError {
     val id: String
     val msg: String
     val position: Position

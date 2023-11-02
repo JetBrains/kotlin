@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.formver
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -17,22 +16,14 @@ import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.formver.conversion.ProgramConverter
+import org.jetbrains.kotlin.formver.reporting.VerifierErrorInterpreter
 import org.jetbrains.kotlin.formver.viper.Verifier
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.formver.viper.ast.unwrapOr
-import org.jetbrains.kotlin.formver.viper.errors.ConsistencyError
-import org.jetbrains.kotlin.formver.viper.errors.VerificationError
 import org.jetbrains.kotlin.formver.viper.errors.VerifierError
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-
-private val VerifierError.asPluginError: KtDiagnosticFactory1<String>
-    get() = when (this) {
-        is ConsistencyError -> PluginErrors.VIPER_CONSISTENCY_ERROR
-        is VerificationError -> PluginErrors.VIPER_VERIFICATION_ERROR
-        else -> TODO("Unreachable")
-    }
 
 private val FirContractDescriptionOwner.hasContract: Boolean
     get() = when (val description = contractDescription) {
@@ -62,12 +53,11 @@ class ViperPoweredDeclarationChecker(private val session: FirSession, private va
             }
 
             val verifier = Verifier()
-
             val onFailure = { err: VerifierError ->
-                val source = err.position.unwrapOr {
-                    declaration.source
+                val source = err.position.unwrapOr { declaration.source }
+                with(VerifierErrorInterpreter()) {
+                    reporter.reportVerifierError(source, err, config.errorStyle, context)
                 }
-                reporter.reportOn(source, err.asPluginError, err.msg, context)
             }
 
             val consistent = verifier.checkConsistency(program, onFailure)
