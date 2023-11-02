@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.NativeForwardImplementationToApiElementsSideEffect
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetSetupAction
+import org.jetbrains.kotlin.gradle.targets.native.ConfigureFrameworkExportSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.CreateFatFrameworksSetupAction
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeConfigureBinariesSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizedCInteropApiElementsConfigurationsSetupAction
@@ -115,6 +116,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, ConfigureBuildSideEffect)
         register(project, KotlinNativeConfigureBinariesSideEffect)
         register(project, CreateDefaultTestRunSideEffect)
+        register(project, ConfigureFrameworkExportSideEffect)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
