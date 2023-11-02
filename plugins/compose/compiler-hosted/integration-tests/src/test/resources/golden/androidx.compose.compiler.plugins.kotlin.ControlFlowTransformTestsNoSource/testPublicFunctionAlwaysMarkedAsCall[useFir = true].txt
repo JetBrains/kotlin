@@ -21,16 +21,9 @@ fun Test() {
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)")
   if (%changed != 0 || !%composer.skipping) {
-    if (isTraceInProgress()) {
-      traceEventStart(<>, %changed, -1, <>)
-    }
     A(a, %composer, 0)
     A(b, %composer, 0)
-    if (isTraceInProgress()) {
-      traceEventEnd()
-    }
   } else {
     %composer.skipToGroupEnd()
   }

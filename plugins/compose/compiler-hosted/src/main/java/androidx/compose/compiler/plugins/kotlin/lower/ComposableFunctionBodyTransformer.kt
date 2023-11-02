@@ -455,7 +455,8 @@ class ComposableFunctionBodyTransformer(
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
-    sourceInformationEnabled: Boolean,
+    private val collectSourceInformation: Boolean,
+    private val traceMarkersEnabled: Boolean,
     private val intrinsicRememberEnabled: Boolean,
     private val strongSkippingEnabled: Boolean
 ) :
@@ -594,7 +595,8 @@ class ComposableFunctionBodyTransformer(
         }?.owner
     }
 
-    private val traceEventMarkersEnabled get() = traceEventEndFunction != null
+    private val traceEventMarkersEnabled get() =
+        traceMarkersEnabled && traceEventEndFunction != null
 
     private val sourceInformationMarkerEndFunction by guardedLazy {
         getTopLevelFunction(ComposeCallableIds.sourceInformationMarkerEnd).owner
@@ -653,8 +655,6 @@ class ComposableFunctionBodyTransformer(
     private val currentFunctionScope
         get() = currentScope.functionScope
             ?: error("Expected a FunctionScope but none exist. \n${printScopeStack()}")
-
-    private val collectSourceInformation = sourceInformationEnabled
 
     override fun visitClass(declaration: IrClass): IrStatement {
         if (declaration.isComposableSingletonClass()) {
@@ -1970,7 +1970,7 @@ class ComposableFunctionBodyTransformer(
         startGroup: IrExpression,
         scope: Scope.BlockScope
     ): IrExpression {
-        return if (scope.hasSourceInformation) {
+        return if (collectSourceInformation && scope.hasSourceInformation) {
             irBlock(statements = listOf(startGroup, irSourceInformation(scope)))
         } else startGroup
     }

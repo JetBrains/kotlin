@@ -28,10 +28,6 @@ fun Test(condition: Boolean) {
 @NonRestartableComposable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test)")
-  if (isTraceInProgress()) {
-    traceEventStart(<>, %changed, -1, <>)
-  }
   Text("Before outer", %composer, 0b0110)
   InlineLinearA({ %composer: Composer?, %changed: Int ->
     val tmp0_marker = %composer.currentMarker
@@ -51,8 +47,5 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
     %composer.endReplaceableGroup()
   }, %composer, 0)
   Text("Before outer", %composer, 0b0110)
-  if (isTraceInProgress()) {
-    traceEventEnd()
-  }
   %composer.endReplaceableGroup()
 }

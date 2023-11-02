@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 @Composable
 fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Varargs)")
   val %dirty = %changed
   %composer.startMovableGroup(<>, ints.size)
   val <iterator> = ints.iterator()
@@ -48,7 +47,6 @@ fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {
 @Composable
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)")
   if (%changed != 0 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
