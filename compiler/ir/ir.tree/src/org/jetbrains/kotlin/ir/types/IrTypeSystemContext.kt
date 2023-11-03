@@ -593,6 +593,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return IrTypeSubstitutor(emptyMap())
     }
 
+    override fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker {
+        error("Only for inference")
+    }
+
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
         require(this is AbstractIrTypeSubstitutor)
         require(type is IrType)
