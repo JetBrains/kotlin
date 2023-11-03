@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.substitution.NoSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
+import org.jetbrains.kotlin.fir.resolve.substitution.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
@@ -356,6 +353,15 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun createEmptySubstitutor(): ConeSubstitutor {
         return ConeSubstitutor.Empty
+    }
+
+    override fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker {
+        return object : AbstractConeSubstitutor(this) {
+            override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+                return ((type as? ConeStubTypeForTypeVariableInSubtyping)
+                    ?.constructor?.variable?.defaultType)?.withNullability(type.nullability, this@ConeInferenceContext)
+            }
+        }
     }
 
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
