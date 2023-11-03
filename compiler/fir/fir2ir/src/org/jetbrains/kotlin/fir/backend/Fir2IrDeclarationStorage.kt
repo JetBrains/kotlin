@@ -1129,8 +1129,16 @@ class Fir2IrDeclarationStorage(
 
     fun getOrCreateIrScript(script: FirScript): IrScript {
         getCachedIrScript(script)?.let { return it }
-        return callablesGenerator.createIrScript(script).also {
+        val symbol = createScriptSymbol(signatureComposer.composeSignature(script))
+        return callablesGenerator.createIrScript(script, symbol).also {
             scriptCache[script] = it
+        }
+    }
+
+    private fun createScriptSymbol(signature: IdSignature?): IrScriptSymbol {
+        return when {
+            signature != null -> symbolTable.referenceScript(signature)
+            else -> IrScriptSymbolImpl()
         }
     }
 

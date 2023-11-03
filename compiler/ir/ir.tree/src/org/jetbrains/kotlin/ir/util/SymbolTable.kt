@@ -59,6 +59,10 @@ open class SymbolTable(
         )
     }
 
+    fun referenceScript(signature: IdSignature): IrScriptSymbol {
+        return scriptSlice.referenced(signature) { IrScriptPublicSymbolImpl(signature) }
+    }
+
     // ------------------------------------ class ------------------------------------
 
     fun declareClass(

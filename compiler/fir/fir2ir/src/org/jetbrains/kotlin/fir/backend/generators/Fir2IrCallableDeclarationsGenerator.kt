@@ -928,16 +928,13 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
 
     // ------------------------------------ scripts ------------------------------------
 
-    fun createIrScript(script: FirScript): IrScript = script.convertWithOffsets { startOffset, endOffset ->
-        val signature = signatureComposer.composeSignature(script)!!
-        symbolTable.declareScript(signature, { IrScriptPublicSymbolImpl(signature) }) { symbol ->
-            IrScriptImpl(symbol, script.name, irFactory, startOffset, endOffset).also { irScript ->
-                irScript.origin = SCRIPT_K2_ORIGIN
-                irScript.metadata = FirMetadataSource.Script(script)
-                irScript.implicitReceiversParameters = emptyList()
-                irScript.providedProperties = emptyList()
-                irScript.providedPropertiesParameters = emptyList()
-            }
+    fun createIrScript(script: FirScript, symbol: IrScriptSymbol): IrScript = script.convertWithOffsets { startOffset, endOffset ->
+        IrScriptImpl(symbol, script.name, irFactory, startOffset, endOffset).also { irScript ->
+            irScript.origin = SCRIPT_K2_ORIGIN
+            irScript.metadata = FirMetadataSource.Script(script)
+            irScript.implicitReceiversParameters = emptyList()
+            irScript.providedProperties = emptyList()
+            irScript.providedPropertiesParameters = emptyList()
         }
     }
 
