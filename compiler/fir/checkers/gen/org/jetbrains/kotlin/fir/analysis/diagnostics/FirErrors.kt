@@ -488,6 +488,7 @@ object FirErrors {
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<KtExpression, FirCallableSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val CALLABLE_REFERENCE_LHS_NOT_A_CLASS by error0<KtExpression>()
     val CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR by error0<KtExpression>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
+    val ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE by error0<KtExpression>()
     val CLASS_LITERAL_LHS_NOT_A_CLASS by error0<KtExpression>()
     val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error0<KtExpression>()
     val EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error1<PsiElement, ConeKotlinType>()

@@ -1841,6 +1841,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CallableReferenceToAnnotationConstructor::class
     }
 
+    interface AdaptedCallableReferenceAgainstReflectionType : KtFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = AdaptedCallableReferenceAgainstReflectionType::class
+    }
+
     interface ClassLiteralLhsNotAClass : KtFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ClassLiteralLhsNotAClass::class
     }

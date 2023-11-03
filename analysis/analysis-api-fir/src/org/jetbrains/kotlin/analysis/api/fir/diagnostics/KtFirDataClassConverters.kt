@@ -2597,6 +2597,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE) { firDiagnostic ->
+        AdaptedCallableReferenceAgainstReflectionTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS) { firDiagnostic ->
         ClassLiteralLhsNotAClassImpl(
             firDiagnostic as KtPsiDiagnostic,

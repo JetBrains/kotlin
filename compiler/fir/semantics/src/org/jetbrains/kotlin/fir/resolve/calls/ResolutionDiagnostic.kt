@@ -146,3 +146,5 @@ class AmbiguousValuesForContextReceiverParameter(
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 object ResolutionResultOverridesOtherToPreserveCompatibility : ResolutionDiagnostic(RESOLVED)
+
+object AdaptedCallableReferenceIsUsedWithReflection : ResolutionDiagnostic(RESOLVED_WITH_ERROR)

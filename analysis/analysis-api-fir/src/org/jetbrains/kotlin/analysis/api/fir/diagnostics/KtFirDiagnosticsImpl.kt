@@ -2212,6 +2212,11 @@ internal class CallableReferenceToAnnotationConstructorImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.CallableReferenceToAnnotationConstructor
 
+internal class AdaptedCallableReferenceAgainstReflectionTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.AdaptedCallableReferenceAgainstReflectionType
+
 internal class ClassLiteralLhsNotAClassImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

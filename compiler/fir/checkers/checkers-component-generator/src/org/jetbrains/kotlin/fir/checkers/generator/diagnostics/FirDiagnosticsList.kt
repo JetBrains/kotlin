@@ -872,6 +872,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
         val CALLABLE_REFERENCE_LHS_NOT_A_CLASS by error<KtExpression>()
         val CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
+        val ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE by error<KtExpression>()
 
         val CLASS_LITERAL_LHS_NOT_A_CLASS by error<KtExpression>()
         val NULLABLE_TYPE_IN_CLASS_LITERAL_LHS by error<KtExpression>()

@@ -400,8 +400,9 @@ class FirCallResolver(
                 manager = TowerResolveManager(localCollector),
             )
         }
-        val isSuccess = result.currentApplicability.isSuccess
+
         val (reducedCandidates, newApplicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
+        val isSuccess = reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isSuccessful }
         val applicability = newApplicability ?: result.currentApplicability
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
