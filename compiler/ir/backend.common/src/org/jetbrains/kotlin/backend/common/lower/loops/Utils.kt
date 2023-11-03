@@ -50,6 +50,8 @@ internal fun IrExpression.decrement(): IrExpression {
         is Int -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Int, thisValue - 1)
         is Long -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Long, thisValue - 1)
         is Char -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Char, thisValue - 1)
+        is Short -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, (thisValue - 1).toShort())
+        is Byte -> IrConstImpl(startOffset, endOffset, type, IrConstKind.Byte, (thisValue - 1).toByte())
         else -> {
             val decFun = type.getClass()!!.functions.single {
                 it.name == OperatorNameConventions.DEC &&

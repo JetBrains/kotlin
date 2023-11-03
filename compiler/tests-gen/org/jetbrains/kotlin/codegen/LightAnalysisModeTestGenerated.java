@@ -33500,6 +33500,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/ranges/safeCallRangeTo.kt");
         }
 
+        @TestMetadata("stepUntilMinValue.kt")
+        public void testStepUntilMinValue() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/stepUntilMinValue.kt");
+        }
+
+        @TestMetadata("stepUntilSimpleConst.kt")
+        public void testStepUntilSimpleConst() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/stepUntilSimpleConst.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/ranges/contains")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

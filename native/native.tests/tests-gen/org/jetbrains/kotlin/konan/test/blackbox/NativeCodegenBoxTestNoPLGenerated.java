@@ -31325,6 +31325,18 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                 runTest("compiler/testData/codegen/box/ranges/safeCallRangeTo.kt");
             }
 
+            @Test
+            @TestMetadata("stepUntilMinValue.kt")
+            public void testStepUntilMinValue() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/stepUntilMinValue.kt");
+            }
+
+            @Test
+            @TestMetadata("stepUntilSimpleConst.kt")
+            public void testStepUntilSimpleConst() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/stepUntilSimpleConst.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/contains")
             @TestDataPath("$PROJECT_ROOT")

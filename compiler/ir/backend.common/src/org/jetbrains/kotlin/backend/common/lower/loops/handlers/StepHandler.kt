@@ -13,12 +13,11 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.addArgument
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isInt
-import org.jetbrains.kotlin.ir.types.isLong
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.shallowCopy
@@ -48,7 +47,8 @@ internal class StepHandler(
                 // underflow if "last" is MIN_VALUE. We will not support fully optimizing this scenario (e.g., `for (i in A until B step C`)
                 // for now. It will be partly optimized via DefaultProgressionHandler.
                 nestedInfo = nestedInfo.revertToLastInclusive()
-                    ?: return null
+                    ?: convertToLastInclusiveIfPossible(nestedInfo)
+                            ?: return null
             }
 
             val stepArg = expression.getValueArgument(0)!!
@@ -277,6 +277,42 @@ internal class StepHandler(
                 direction = nestedInfo.direction
             )
         }
+
+    private fun DeclarationIrBuilder.convertToLastInclusiveIfPossible(headerInfo: ProgressionHeaderInfo): ProgressionHeaderInfo? {
+        val originalLast = headerInfo.last as? IrConst<*> ?: return null
+
+        if (originalLast.type.isInt() && Int.MIN_VALUE == originalLast.value
+            || originalLast.type.isUInt() && UInt.MIN_VALUE.toInt() == originalLast.value
+            || originalLast.type.isShort() && Short.MIN_VALUE == originalLast.value
+            || originalLast.type.isUShort() && UShort.MIN_VALUE.toShort() == originalLast.value
+            || originalLast.type.isByte() && Byte.MIN_VALUE == originalLast.value
+            || originalLast.type.isUByte() && UByte.MIN_VALUE.toByte() == originalLast.value
+            || originalLast.type.isLong() && Long.MIN_VALUE == originalLast.value
+            || originalLast.type.isULong() && ULong.MIN_VALUE.toLong() == originalLast.value
+            || originalLast.type.isChar() && Char.MIN_VALUE == originalLast.value
+        ) {
+            return null
+        }
+
+        val lastInclusive =
+            callGetProgressionLastElementIfNecessary(
+                headerInfo.progressionType,
+                headerInfo.first,
+                headerInfo.last.decrement(),
+                headerInfo.step
+            )
+
+        return ProgressionHeaderInfo(
+            progressionType = headerInfo.progressionType,
+            first = headerInfo.first,
+            last = lastInclusive,
+            step = headerInfo.step,
+            isLastInclusive = true,
+            isReversed = headerInfo.isReversed,
+            direction = headerInfo.direction,
+            additionalStatements = headerInfo.additionalStatements
+        )
+    }
 
     private fun DeclarationIrBuilder.callGetProgressionLastElementIfNecessary(
         progressionType: ProgressionType,
