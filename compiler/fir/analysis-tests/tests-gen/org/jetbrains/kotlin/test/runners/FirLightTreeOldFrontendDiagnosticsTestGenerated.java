@@ -28444,6 +28444,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("lowPriority.kt")
+                public void testLowPriority() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/lowPriority.kt");
+                }
+
+                @Test
                 @TestMetadata("markedReceiverWithCapturedTypeArgument.kt")
                 public void testMarkedReceiverWithCapturedTypeArgument() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/dslMarker/markedReceiverWithCapturedTypeArgument.kt");

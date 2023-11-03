@@ -129,8 +129,15 @@ class Candidate(
         _diagnostics.clear()
     }
 
+    /**
+     * Note that [currentApplicability]`.isSuccessful == true` doesn't imply [isSuccessful].
+     *
+     * This is because [currentApplicability] is equal to the lowest [ResolutionDiagnostic.applicability] of all [diagnostics],
+     * but in presence of more than one diagnostic, the lowest one can be successful while a higher one isn't, e.g., the combination
+     * of [CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY] and [CandidateApplicability.RESOLVED_WITH_ERROR].
+     */
     val isSuccessful: Boolean
-        get() = currentApplicability.isSuccess && (!systemInitialized || !system.hasContradiction)
+        get() = diagnostics.all { it.applicability.isSuccess } && (!systemInitialized || !system.hasContradiction)
 
     var passedStages: Int = 0
 

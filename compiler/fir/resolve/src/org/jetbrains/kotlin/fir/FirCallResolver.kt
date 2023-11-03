@@ -776,18 +776,18 @@ class FirCallResolver(
 
             candidates.size > 1 -> ConeAmbiguityError(name, applicability, candidates)
 
-            !applicability.isSuccess -> {
+            else -> {
                 val candidate = candidates.single()
-                if (needTreatErrorCandidateAsResolved(candidate)) {
-                    @OptIn(CodeFragmentAdjustment::class)
-                    candidate.resetToResolved()
-                    null
-                } else {
-                    createConeDiagnosticForCandidateWithError(applicability, candidate)
+                runIf(!candidate.isSuccessful) {
+                    if (needTreatErrorCandidateAsResolved(candidate)) {
+                        @OptIn(CodeFragmentAdjustment::class)
+                        candidate.resetToResolved()
+                        null
+                    } else {
+                        createConeDiagnosticForCandidateWithError(applicability, candidate)
+                    }
                 }
             }
-
-            else -> null
         }
 
         if (diagnostic != null) {
