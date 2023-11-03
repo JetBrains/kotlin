@@ -7,12 +7,12 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import gnu.trove.THashMap
-import gnu.trove.THashSet
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAlias
+import org.jetbrains.kotlin.commonizer.utils.CommonizerMap
+import org.jetbrains.kotlin.commonizer.utils.CommonizerSet
 
 internal fun AssociatedClassifierIdsResolver(
     classifierIndices: TargetDependent<CirClassifierIndex>,
@@ -38,8 +38,8 @@ internal interface AssociatedClassifierIdsResolverCache {
     }
 
     private class Default : AssociatedClassifierIdsResolverCache {
-        private val cachedResults = THashMap<CirEntityId, AssociatedClassifierIds>()
-        private val cachedNullResults = THashSet<CirEntityId>()
+        private val cachedResults = CommonizerMap<CirEntityId, AssociatedClassifierIds>()
+        private val cachedNullResults = CommonizerSet<CirEntityId>()
 
         override fun set(id: CirEntityId, result: AssociatedClassifierIds?) {
             if (result == null) cachedNullResults.add(id)
@@ -67,10 +67,10 @@ private class AssociatedClassifierIdsResolverImpl(
     override fun resolveAssociatedIds(id: CirEntityId): AssociatedClassifierIds? {
         cache[id]?.let { return it }
 
-        val results = THashSet<CirEntityId>()
+        val results = CommonizerSet<CirEntityId>()
 
         /* Set of every classifier id that once was enqueued already */
-        val visited = THashSet<CirEntityId>()
+        val visited = CommonizerSet<CirEntityId>()
 
         /* Actual, current queue of classifiers to resolve */
         val queue = ArrayDeque<CirEntityId>()

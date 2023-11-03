@@ -239,21 +239,6 @@ class CodeConformanceTest : TestCase() {
                     "js/js.ast/src/org/jetbrains/kotlin/js/backend/JsReservedIdentifiers.java",
                     "js/js.ast/src/org/jetbrains/kotlin/js/backend/JsToStringGenerationVisitor.java",
                     "js/js.sourcemap/src/org/jetbrains/kotlin/js/sourceMap/SourceMap3Builder.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/TargetDependent.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/konan/NativeLibrary.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/AssociatedClassifierIdsResolver.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirClassNode.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirClassifierIndex.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirFictitiousFunctionClassifiers.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirKnownClassifiers.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirModuleNode.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirPackageNode.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirProvidedClassifiersByModules.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirRootNode.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirTypeSignature.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/metadata/CirDeserializers.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/metadata/CirTypeResolver.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/utils/misc.kt"
                 )
             ) { _, source ->
                 "gnu.trove" in source

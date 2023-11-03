@@ -31,7 +31,7 @@ dependencies {
     compileOnly(project(":native:frontend.native"))
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
     // This dependency is necessary to keep the right dependency record inside of POM file:
     publishedCompile(project(":kotlin-compiler"))

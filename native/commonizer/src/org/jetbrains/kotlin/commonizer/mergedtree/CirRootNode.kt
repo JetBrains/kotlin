@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.commonizer.mergedtree
 
-import gnu.trove.THashMap
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.commonizer.utils.CommonizerMap
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
 class CirRootNode(
@@ -16,7 +16,7 @@ class CirRootNode(
     override val targetDeclarations: CommonizedGroup<CirRoot>,
     override val commonDeclaration: NullableLazyValue<CirRoot>
 ) : CirNode<CirRoot, CirRoot> {
-    val modules: MutableMap<CirName, CirModuleNode> = THashMap()
+    val modules: MutableMap<CirName, CirModuleNode> = CommonizerMap()
 
     override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitRootNode(this, data)
