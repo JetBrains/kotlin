@@ -5,6 +5,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:J modality:OPEN visibility:pu
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.J.JInner
     CONSTRUCTOR IR_EXTERNAL_JAVA_DECLARATION_STUB visibility:public <> ($this:<root>.J) returnType:<root>.J.JInner [primary]
       $outer: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.J
+    FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:z type:kotlin.Int visibility:public
     FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:foo visibility:public modality:OPEN <> ($this:<root>.J.JInner) returnType:kotlin.Unit
       $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.J.JInner
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
@@ -20,6 +21,7 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB CLASS name:J modality:OPEN visibility:pu
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.Any
+  FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:x type:kotlin.Int visibility:public
   FUN IR_EXTERNAL_JAVA_DECLARATION_STUB name:bar visibility:public modality:OPEN <> ($this:<root>.J) returnType:kotlin.Unit
     $this: VALUE_PARAMETER IR_EXTERNAL_JAVA_DECLARATION_STUB name:<this> type:<root>.J
   FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

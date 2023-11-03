@@ -2851,6 +2851,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("MissingFieldInJavaClass.kt")
+        public void testMissingFieldInJavaClass() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/MissingFieldInJavaClass.kt");
+        }
+
+        @Test
         @TestMetadata("Modality.kt")
         public void testModality() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/Modality.kt");

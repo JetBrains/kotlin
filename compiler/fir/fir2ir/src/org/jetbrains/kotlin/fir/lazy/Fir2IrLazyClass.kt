@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
+import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -203,6 +204,9 @@ class Fir2IrLazyClass(
                 }
                 scope.processPropertiesByName(name) l@{ symbol ->
                     when {
+                        symbol is FirFieldSymbol && (symbol.isStatic || symbol.containingClassLookupTag() == ownerLookupTag) -> {
+                            result += declarationStorage.getOrCreateIrField(symbol.fir, this)
+                        }
                         symbol.isSubstitutionOrIntersectionOverride -> {}
                         !shouldBuildStub(symbol.fir) -> {}
                         symbol.containingClassLookupTag() != ownerLookupTag -> {}
@@ -223,7 +227,11 @@ class Fir2IrLazyClass(
         }
 
         for (name in scope.getCallableNames()) {
-            result += getFakeOverridesByName(name)
+            getFakeOverridesByName(name).forEach {
+                if (it !is IrField) { // All fields are being added from scopes that's why filter out fields to get rid of duplicates
+                    result += it
+                }
+            }
         }
 
         result
