@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.InjectedValue
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
@@ -95,4 +97,8 @@ class JvmFir2IrExtensions(
         irDeserializer.deserializeTopLevelClass(
             irClass, components.irBuiltIns, components.symbolTable, components.irProviders, this
         )
+
+    override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
+        // NOTE maybe there might be platform-specific logic, similar to JvmGeneratorExtensionsImpl.isPropertyWithPlatformField()
+        Fir2IrExtensions.Default.hasBackingField(property, session)
 }

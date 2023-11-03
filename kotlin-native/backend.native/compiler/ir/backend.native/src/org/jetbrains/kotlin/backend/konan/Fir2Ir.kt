@@ -22,8 +22,12 @@ import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
+import org.jetbrains.kotlin.fir.backend.native.interop.isExternalObjCClassProperty
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -51,6 +55,11 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
     override fun deserializeToplevelClass(irClass: IrClass, components: Fir2IrComponents) = false
     override fun registerDeclarations(symbolTable: SymbolTable) {}
     override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope) = null
+    override fun hasBackingField(property: FirProperty, session: FirSession): Boolean =
+            if (property.isExternalObjCClassProperty(session))
+                property.isLateInit
+            else
+                Fir2IrExtensions.Default.hasBackingField(property, session)
 }
 
 internal fun PhaseContext.fir2Ir(

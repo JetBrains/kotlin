@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
-import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Tag
@@ -26,9 +25,12 @@ abstract class BaseCInteropCheckersTest : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata(TEST_DATA_DIR)
     fun testBuilding() {
+        val defFile = File(TEST_DATA_DIR, DEF_FILE)
+        muteCInteropTestIfNecessary(defFile, targets.testTarget)
+
         val library = cinteropToLibrary(
             targets = targets,
-            defFile = File(TEST_DATA_DIR, DEF_FILE),
+            defFile = defFile,
             outputDir = buildDir,
             freeCompilerArgs = TestCompilerArgs.EMPTY
         ).assertSuccess().resultingArtifact
@@ -41,7 +43,6 @@ abstract class BaseCInteropCheckersTest : AbstractNativeSimpleTest() {
         )
         val compilationResult = compileToExecutable(testCase, library.asLibraryDependency()).assertSuccess()
     }
-
 
     companion object {
         const val TEST_DATA_DIR = "native/native.tests/testData/CInterop/KT-63048"

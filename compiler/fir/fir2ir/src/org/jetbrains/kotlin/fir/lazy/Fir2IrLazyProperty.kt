@@ -131,7 +131,7 @@ class Fir2IrLazyProperty(
                     }
                 }
             }
-            fir.hasBackingField && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
+            extensions.hasBackingField(fir, session) && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
                 with(declarationStorage) {
                     callablesGenerator.createBackingField(
                         this@Fir2IrLazyProperty,
