@@ -14,8 +14,8 @@ suspend fun bar(x: Int) {}
 
 fun test() {
     test0(::foo)
-    test1(::<!UNRESOLVED_REFERENCE!>foo<!>)
+    test1(::<!INAPPLICABLE_CANDIDATE!>foo<!>)
 
-    test0(::<!UNRESOLVED_REFERENCE!>bar<!>)
+    test0(::<!INAPPLICABLE_CANDIDATE!>bar<!>)
     test1(::bar)
 }

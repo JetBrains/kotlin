@@ -114,14 +114,14 @@ fun <T : Foo, R: Number, D: Int> main() {
     bar7(Foo::resolve) // OK
 
     // with LHS and sentension function expected type
-    bar10<D>(Int::<!UNRESOLVED_REFERENCE!>x1<!>) // ERROR before the fix in NI
+    bar10<D>(Int::<!INAPPLICABLE_CANDIDATE!>x1<!>) // ERROR before the fix in NI
     bar10<Int>(Int::x1) // OK
     bar10(Int::x1) // OK
 
     fun Int.ext() {
         // with LHS and sentension function expected type
-        bar10<D>(::<!UNRESOLVED_REFERENCE!>x1<!>) // ERROR before the fix in NI
-        bar10<Int>(::<!UNRESOLVED_REFERENCE!>x1<!>) // OK
-        bar10(::<!UNRESOLVED_REFERENCE!>x1<!>) // OK
+        bar10<D>(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // ERROR before the fix in NI
+        bar10<Int>(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // OK
+        bar10(::<!INAPPLICABLE_CANDIDATE!>x1<!>) // OK
     }
 }

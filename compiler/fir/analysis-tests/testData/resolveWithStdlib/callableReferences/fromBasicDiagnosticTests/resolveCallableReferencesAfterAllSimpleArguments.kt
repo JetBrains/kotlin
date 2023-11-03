@@ -7,6 +7,6 @@ fun <T> bar(f: (T) -> Unit, e: T) {}
 fun <T> baz(e: T, f: (T) -> Unit) {}
 
 fun test(a: A, b: B) {
-    baz(a, ::<!UNRESOLVED_REFERENCE!>fooB<!>)
-    bar(::<!UNRESOLVED_REFERENCE!>fooB<!>, a)
+    baz(a, ::<!INAPPLICABLE_CANDIDATE!>fooB<!>)
+    bar(::<!INAPPLICABLE_CANDIDATE!>fooB<!>, a)
 }

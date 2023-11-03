@@ -9,7 +9,7 @@ FILE: implicitTypes.reversed.kt
         ^bar Int(1)
     }
     public final fun loop1(): R|(ERROR CLASS: Cannot infer argument for type parameter T) -> ERROR CLASS: Cannot infer argument for type parameter R| {
-        ^loop1 R|/use<Inapplicable(INAPPLICABLE): /use>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(::<Unresolved reference: loop2>#)
+        ^loop1 R|/use<Inapplicable(INAPPLICABLE): /use>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(::<Inapplicable(INAPPLICABLE): /loop2>#)
     }
     public final fun loop2(): R|(ERROR CLASS: Cannot infer argument for type parameter T) -> ERROR CLASS: Cannot infer argument for type parameter R| {
         ^loop2 R|/loop1|()

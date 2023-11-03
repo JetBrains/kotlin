@@ -9,7 +9,7 @@ class ProcessorWithParent : Entity {
 }
 
 class ProcessorWithChildren : Entity {
-    var processors by children(ProcessorWithParent::class.java, ProcessorWithParent::<!UNRESOLVED_REFERENCE!>processor<!>)
+    var processors by children(ProcessorWithParent::class.java, ProcessorWithParent::<!INAPPLICABLE_CANDIDATE!>processor<!>)
 }
 
 class Processor2WithParent : Entity {

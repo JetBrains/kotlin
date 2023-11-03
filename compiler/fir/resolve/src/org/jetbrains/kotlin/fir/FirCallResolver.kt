@@ -414,11 +414,13 @@ class FirCallResolver(
             !isSuccess -> {
                 val errorReference = buildReferenceWithErrorCandidate(
                     info,
-                    if (applicability == CandidateApplicability.K2_UNSUPPORTED) {
-                        val unsupportedResolutionDiagnostic = reducedCandidates.firstOrNull()?.diagnostics?.firstOrNull() as? Unsupported
-                        ConeUnsupported(unsupportedResolutionDiagnostic?.message ?: "", unsupportedResolutionDiagnostic?.source)
-                    } else {
-                        ConeUnresolvedReferenceError(info.name)
+                    when {
+                        applicability == CandidateApplicability.K2_UNSUPPORTED -> {
+                            val unsupportedResolutionDiagnostic = reducedCandidates.firstOrNull()?.diagnostics?.firstOrNull() as? Unsupported
+                            ConeUnsupported(unsupportedResolutionDiagnostic?.message ?: "", unsupportedResolutionDiagnostic?.source)
+                        }
+                        reducedCandidates.size == 1 -> createConeDiagnosticForCandidateWithError(applicability, reducedCandidates.single())
+                        else -> ConeUnresolvedReferenceError(info.name)
                     },
                     callableReferenceAccess.source
                 )

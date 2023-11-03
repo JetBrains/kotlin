@@ -34,7 +34,7 @@ fun main() {
     <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo3<!>(KotlinClass::baz)
 
     // Type mismatch
-    foo1(KotlinClass::<!UNRESOLVED_REFERENCE!>bar<!>)
+    foo1(KotlinClass::<!INAPPLICABLE_CANDIDATE!>bar<!>)
     foo2(KotlinClass::bar)
     foo3(KotlinClass::bar)
 

@@ -18,7 +18,7 @@ FILE: kt50994.fir.kt
             super<R|kotlin/Any|>()
         }
 
-        public final var processors: R|kotlin/collections/MutableCollection<ProcessorWithParent>|by this@R|/ProcessorWithChildren|.R|/children<Inapplicable(INAPPLICABLE): /children>#|<R|ProcessorWithChildren|, R|ProcessorWithParent|>(<getClass>(Q|ProcessorWithParent|).R|kotlin/jvm/java|<R|ProcessorWithParent|>, Q|ProcessorWithParent|::<Unresolved reference: processor>#)
+        public final var processors: R|kotlin/collections/MutableCollection<ProcessorWithParent>|by this@R|/ProcessorWithChildren|.R|/children<Inapplicable(INAPPLICABLE): /children>#|<R|ProcessorWithChildren|, R|ProcessorWithParent|>(<getClass>(Q|ProcessorWithParent|).R|kotlin/jvm/java|<R|ProcessorWithParent|>, Q|ProcessorWithParent|::<Inapplicable(INAPPLICABLE): /ProcessorWithParent.processor>#)
             public get(): R|kotlin/collections/MutableCollection<ProcessorWithParent>| {
                 ^ this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<ProcessorWithParent>|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|)
             }

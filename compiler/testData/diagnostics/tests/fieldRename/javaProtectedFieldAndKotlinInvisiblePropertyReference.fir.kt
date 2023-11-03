@@ -56,7 +56,7 @@ class Derived : Intermediate() {
 
     fun bar() = a // Non-reference
 
-    fun baz() = this::<!UNRESOLVED_REFERENCE!>b<!> // Non-protected
+    fun baz() = this::<!INVISIBLE_REFERENCE!>b<!> // Non-protected
 }
 
 typealias Alias = Intermediate
@@ -90,5 +90,5 @@ class DirectlyDerived : BaseJava() {
 }
 
 fun test(d: Derived) {
-    d::<!UNRESOLVED_REFERENCE!>a<!> // Field is also invisible
+    d::<!INVISIBLE_REFERENCE!>a<!> // Field is also invisible
 }

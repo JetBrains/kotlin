@@ -9,7 +9,7 @@ class Foo<out T>(name: T) {
         val ok2 = this@Foo::prop
         val ok3 = object { val y: Any = this@Foo::prop }
 
-        val fail1 = Foo(prop)::<!UNRESOLVED_REFERENCE!>prop<!>
+        val fail1 = Foo(prop)::<!INVISIBLE_REFERENCE!>prop<!>
     }
 
     fun testFunc() {
@@ -17,7 +17,7 @@ class Foo<out T>(name: T) {
         val ok2 = this@Foo::func
         val ok3 = object { val y: Any = this@Foo::func }
 
-        val fail1 = Foo(prop)::<!UNRESOLVED_REFERENCE!>func<!>
+        val fail1 = Foo(prop)::<!INVISIBLE_REFERENCE!>func<!>
     }
 
     private fun func(t: T): T = t

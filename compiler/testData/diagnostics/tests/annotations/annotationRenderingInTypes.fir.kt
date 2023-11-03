@@ -3,7 +3,7 @@
 
 fun f1(x: String) {}
 fun f2(f: () -> Unit) {}
-fun test1() = f2(::<!UNRESOLVED_REFERENCE("f1")!>f1<!>)
+fun test1() = f2(::<!INAPPLICABLE_CANDIDATE("fun f1(x: String): Unit")!>f1<!>)
 
 
 @Target(AnnotationTarget.TYPE_PARAMETER,  AnnotationTarget.TYPE)

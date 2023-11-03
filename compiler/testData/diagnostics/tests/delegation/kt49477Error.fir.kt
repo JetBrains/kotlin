@@ -27,7 +27,7 @@ infix fun filter(filter: (R, Any?) -> Boolean): Delegate<R, T>
 class GitLabChangesProcessor: DatabaseEntity {
     var buildProcessors by child_many(
         GitLabBuildProcessor::class.java,
-        GitLabBuildProcessor::<!UNRESOLVED_REFERENCE!>processor<!>
+        GitLabBuildProcessor::<!INAPPLICABLE_CANDIDATE!>processor<!>
     )
 }
 
