@@ -86,7 +86,8 @@ data class BuildOptions(
         val cocoapodsConfiguration: String? = null,
         val cocoapodsArchs: String? = null,
         val distributionType: String? = null,
-        val distributionDownloadFromMaven: Boolean? = null,
+        // TODO(Dmitrii Krasnov): we can change false on null, when downloading konan from maven local will be possible KT-63198
+        val distributionDownloadFromMaven: Boolean? = false,
         val reinstall: Boolean? = null,
         val restrictedDistribution: Boolean? = null,
         val useXcodeMessageStyle: Boolean? = null,

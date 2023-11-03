@@ -9,15 +9,10 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion.Maturity.*
-import org.jetbrains.kotlin.tooling.core.buildNumber
-import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -33,11 +28,6 @@ import kotlin.io.path.appendText
 @DisplayName("Tests for K/N builds with native downloading and platform libs")
 @NativeGradlePluginTests
 class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
-
-    companion object {
-        private const val KOTLIN_SPACE_DEV = "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev"
-        private const val MAVEN_CENTRAL = "https://cache-redirector.jetbrains.com/maven-central"
-    }
 
     private val platformName: String = HostManager.platformName()
     private val currentCompilerVersion = NativeCompilerDownloader.DEFAULT_KONAN_VERSION
@@ -215,20 +205,15 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @DisplayName("Download prebuilt Native bundle with maven")
     @GradleTest
     fun shouldDownloadPrebuiltNativeBundleWithMaven(gradleVersion: GradleVersion) {
-        val maven = mavenUrl()
-        Assumptions.assumeTrue(
-            maven != MAVEN_CENTRAL,
-            "Don't run this test for build that are not yet published to central.\n" +
-                    " We won't public K/N into Maven central until this task is completed: KTI-1067"
-        )
 
         nativeProject("native-download-maven", gradleVersion = gradleVersion) {
-
-            buildGradleKts.replaceFirst("// <MavenPlaceholder>", "maven(\"${maven}\")")
-
             build(
                 "assemble",
-                buildOptions = defaultBuildOptions.copy(nativeOptions = defaultBuildOptions.nativeOptions.copy(distributionDownloadFromMaven = true))
+                buildOptions = defaultBuildOptions.copy(
+                    nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                        version = TestVersions.Kotlin.STABLE_RELEASE,
+                    )
+                )
             ) {
                 assertOutputContains("Unpack Kotlin/Native compiler to ")
                 assertOutputDoesNotContain("Generate platform libraries for ")
@@ -240,22 +225,14 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     @RequiredXCodeVersion(minSupportedMajor = 14, minSupportedMinor = 1)
     @GradleTest
     fun shouldDownloadLightNativeBundleWithMaven(gradleVersion: GradleVersion) {
-        val maven = mavenUrl()
-        Assumptions.assumeTrue(
-            maven != MAVEN_CENTRAL,
-            "Don't run this test for build that are not yet published to central.\n" +
-                    " We won't public K/N into Maven central until this task is completed: KTI-1067"
-        )
-
         nativeProject("native-download-maven", gradleVersion = gradleVersion) {
-            buildGradleKts.replaceFirst("// <MavenPlaceholder>", "maven(\"${maven}\")")
             val nativeOptions = defaultBuildOptions.nativeOptions.copy(
                 distributionType = "light",
-                distributionDownloadFromMaven = true
+                version = TestVersions.Kotlin.STABLE_RELEASE,
             )
             build(
                 "assemble",
-                buildOptions = defaultBuildOptions.copy(nativeOptions = nativeOptions)
+                buildOptions = defaultBuildOptions.copy(nativeOptions = nativeOptions),
             ) {
                 assertOutputContains("Unpack Kotlin/Native compiler to ")
                 assertOutputContains("Generate platform libraries for ")
@@ -369,15 +346,5 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
             ),
             assertions = assertions
         )
-
-    private fun mavenUrl(): String {
-        val kotlinToolingVersion = KotlinToolingVersion(currentCompilerVersion)
-        val maturity = kotlinToolingVersion.maturity
-        val buildNumber = kotlinToolingVersion.buildNumber
-        return when {
-            maturity == DEV || buildNumber != null -> KOTLIN_SPACE_DEV
-            else -> MAVEN_CENTRAL
-        }
-    }
 
 }

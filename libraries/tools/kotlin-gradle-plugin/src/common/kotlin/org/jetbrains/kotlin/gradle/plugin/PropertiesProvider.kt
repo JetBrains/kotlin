@@ -283,7 +283,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Makes downloader search for bundles in maven repositories specified in the project.
      */
     val nativeDownloadFromMaven: Boolean
-        get() = this.booleanProperty("kotlin.native.distribution.downloadFromMaven") ?: false
+        get() = this.booleanProperty("kotlin.native.distribution.downloadFromMaven") ?: true
 
     /**
      * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.

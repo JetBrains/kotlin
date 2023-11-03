@@ -133,7 +133,7 @@ class NativeCompilerDownloader(
                 mapOf(
                     "group" to KOTLIN_GROUP_ID,
                     "name" to dependencyName,
-                    "version" to compilerVersion.toString(),
+                    "version" to compilerVersion,
                     "classifier" to simpleOsName,
                     "ext" to archiveExtension
                 )
@@ -142,7 +142,7 @@ class NativeCompilerDownloader(
             project.dependencies.create(
                 mapOf(
                     "name" to "$dependencyName-$simpleOsName",
-                    "version" to compilerVersion.toString(),
+                    "version" to compilerVersion,
                     "ext" to archiveExtension
                 )
             )

@@ -9,6 +9,7 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import java.io.File
 
@@ -18,6 +19,9 @@ internal val konanHome: File by lazy {
         .build()
         .run {
             project.plugins.apply("kotlin-multiplatform")
+
+            // TODO(Dmitrii Krasnov): remove this, when KT-58303 is done
+            project.extraProperties.set("kotlin.native.distribution.downloadFromMaven","false")
 
             (project.kotlinExtension as KotlinMultiplatformExtension).apply {
                 macosX64()

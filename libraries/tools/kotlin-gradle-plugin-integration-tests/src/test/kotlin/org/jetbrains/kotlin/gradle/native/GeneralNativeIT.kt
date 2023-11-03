@@ -810,45 +810,29 @@ class GeneralNativeIT : KGPBaseTest() {
     }
 
     @DisplayName("Checks builds with changing compiler version")
-    @OptIn(EnvironmentalVariablesOverride::class)
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    @GradleTestVersions
     @GradleTest
     fun testCompilerVersionChange(gradleVersion: GradleVersion) {
-        if (KotlinToolingVersion(TestVersions.Kotlin.STABLE_RELEASE) < KotlinToolingVersion("1.9.20-Beta")) {
-            val konanDataDir = defaultBuildOptions.konanDataDir?.toAbsolutePath()?.normalize()?.absolutePathString()
-                ?: error("konanDataDir must not be null in this test. Please set a custom konanDataDir property.")
+        nativeProject("native-compiler-version", gradleVersion) {
+            val compileTasks = ":compileKotlinHost"
 
-            nativeProject(
-                "native-compiler-version",
-                gradleVersion,
-                environmentVariables = EnvironmentalVariables(mapOf("KONAN_DATA_DIR" to konanDataDir)),
-            ) {
-                val compileTasks = ":compileKotlinHost"
-
-                build(compileTasks) {
-                    assertTasksExecuted(compileTasks)
-                }
-
-                build(compileTasks) {
-                    assertTasksUpToDate(compileTasks)
-                }
-
-                // Check that changing K/N version lead to tasks rerun
-                build(
-                    compileTasks, buildOptions = defaultBuildOptions.copy(
-                        nativeOptions = defaultBuildOptions.nativeOptions.copy(version = TestVersions.Kotlin.STABLE_RELEASE)
-                    )
-                ) {
-                    assertTasksExecuted(compileTasks)
-                }
+            build(compileTasks) {
+                assertTasksExecuted(compileTasks)
             }
-        } else {
-            fail(
-                "Please remove setting KONAN_DATA_DIR environment variable," +
-                        " because Kotlin stable release now supports konan.data.dir Gradle property."
-            )
-        }
 
+            build(compileTasks) {
+                assertTasksUpToDate(compileTasks)
+            }
+
+            // Check that changing K/N version lead to tasks rerun
+            build(
+                compileTasks, buildOptions = defaultBuildOptions.copy(
+                    nativeOptions = defaultBuildOptions.nativeOptions.copy(version = TestVersions.Kotlin.STABLE_RELEASE)
+                )
+            ) {
+                assertTasksExecuted(compileTasks)
+            }
+        }
     }
 
     @DisplayName("Assert that a project with a native target can be configure")
