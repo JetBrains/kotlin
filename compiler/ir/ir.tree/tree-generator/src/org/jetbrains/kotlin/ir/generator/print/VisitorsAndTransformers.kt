@@ -133,7 +133,7 @@ private class TransformerVoidPrinter(
 
     // IrPackageFragment is treated as transformByChildren in IrElementTransformerVoid for historical reasons.
     private val Element.isPackageFragment: Boolean
-        get() = name == IrTree.packageFragment.name
+        get() = this == IrTree.packageFragment
 
     // Despite IrFile and IrExternalPackageFragment being transformByChildren, we treat them differently in IrElementTransformerVoid
     // than in IrElementTransformer for historical reasons.
@@ -146,12 +146,7 @@ private class TransformerVoidPrinter(
     // Some `visit` methods overrides should have a more concrete return type, but we have to keep the old return type
     // that was used before this class was auto-generated to preserve binary compatibility with compiler and IDE plugins.
     private val Element.useCompatibilityReturnType: Boolean
-        get() = name in setOf(
-            IrTree.packageFragment.name,
-            IrTree.functionReference.name,
-            IrTree.propertyReference.name,
-            IrTree.functionExpression.name,
-        )
+        get() = this in setOf(IrTree.packageFragment, IrTree.functionReference, IrTree.propertyReference, IrTree.functionExpression)
 
     override fun visitMethodReturnType(element: Element): Element =
         when {
@@ -335,11 +330,11 @@ private class TypeTransformerPrinter(
             }
 
             printBlock {
-                when (element.name) {
-                    IrTree.memberAccessExpression.name -> {
+                when (element) {
+                    IrTree.memberAccessExpression -> {
                         if (irTypeFields.singleOrNull()?.name != "typeArguments") {
                             error(
-                                """`Ir${IrTree.memberAccessExpression.name.capitalizeAsciiOnly()}` has unexpected fields with `IrType` type. 
+                                """`${IrTree.memberAccessExpression.typeName}` has unexpected fields with `IrType` type. 
                                         |Please adjust logic of `${visitorType.simpleName}`'s generation.""".trimMargin()
                             )
                         }
@@ -358,7 +353,7 @@ private class TypeTransformerPrinter(
                         }
                         println("}")
                     }
-                    IrTree.`class`.name -> {
+                    IrTree.`class` -> {
                         println(visitorParam, ".valueClassRepresentation?.mapUnderlyingType {")
                         withIndent {
                             println("transformType(", visitorParam, ", it, data)")

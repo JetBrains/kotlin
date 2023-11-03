@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Element.Category.*
-import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typeName
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.*
+import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Array
+import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.List
 import org.jetbrains.kotlin.ir.generator.model.SingleField
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -141,11 +142,11 @@ object IrTree : AbstractTreeBuilder() {
             kDoc = """
             The arbitrary metadata associated with this IR node.
             
-            @see ${elementName2typeName(this@element.name)}
+            @see $typeName
             """.trimIndent()
         }
         kDoc = """
-        An [${elementName2typeName(rootElement.name)}] capable of holding something which backends can use to write
+        An [${rootElement.typeName}] capable of holding something which backends can use to write
         as the metadata for the declaration.
         
         Technically, it can even be ± an array of bytes, but right now it's usually the frontend representation of the declaration,
@@ -224,7 +225,7 @@ object IrTree : AbstractTreeBuilder() {
             fun foo(defined: Int, ${'$'}extra: String) { /* ... */ }
             ```
 
-            If a compiler plugin adds parameters to an [${elementName2typeName(function.name)}],
+            If a compiler plugin adds parameters to an [${function.typeName}],
             the representations of the function in the frontend and in the backend may diverge, potentially causing signature mismatch and
             linkage errors (see [KT-40980](https://youtrack.jetbrains.com/issue/KT-40980)).
             We wouldn't want IR plugins to affect the frontend representation, since in an IDE you'd want to be able to see those
@@ -299,7 +300,7 @@ object IrTree : AbstractTreeBuilder() {
             If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
             Otherwise, this is an empty list.
             
-            NOTE: If this [${elementName2typeName(this@element.name)}] was deserialized from a klib, this list will always be empty!
+            NOTE: If this [$typeName] was deserialized from a klib, this list will always be empty!
             See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
             """.trimIndent()
         }

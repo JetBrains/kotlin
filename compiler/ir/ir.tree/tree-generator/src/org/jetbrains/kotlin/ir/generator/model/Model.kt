@@ -68,7 +68,7 @@ class Element(
     override var kind: ImplementationKind? = null
 
     override val typeName
-        get() = elementName2typeName(name)
+        get() = "Ir" + name.replaceFirstChar(Char::uppercaseChar)
 
     var isLeaf = false
     var childrenOrderOverride: List<String>? = null
@@ -102,10 +102,6 @@ class Element(
     val usedTypes = mutableListOf<Importable>()
 
     override fun toString() = name
-
-    companion object {
-        fun elementName2typeName(name: String) = "Ir" + name.replaceFirstChar(Char::uppercaseChar)
-    }
 
     fun elementParentsRecursively(): List<ElementRef> {
         val linkedSet = buildSet {
