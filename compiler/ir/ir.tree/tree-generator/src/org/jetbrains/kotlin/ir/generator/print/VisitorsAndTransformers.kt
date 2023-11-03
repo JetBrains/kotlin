@@ -133,7 +133,7 @@ private class TransformerVoidPrinter(
 
     // IrPackageFragment is treated as transformByChildren in IrElementTransformerVoid for historical reasons.
     private val Element.isPackageFragment: Boolean
-        get() = name == IrTree.packageFragment.name
+        get() = this == IrTree.packageFragment
 
     // Despite IrFile and IrExternalPackageFragment being transformByChildren, we treat them differently in IrElementTransformerVoid
     // than in IrElementTransformer for historical reasons. We want to preserve the historical semantics here.
@@ -325,11 +325,11 @@ private class TypeTransformerPrinter(
             }
 
             printBlock {
-                when (element.name) {
-                    IrTree.memberAccessExpression.name -> {
+                when (element) {
+                    IrTree.memberAccessExpression -> {
                         if (irTypeFields.singleOrNull()?.name != "typeArguments") {
                             error(
-                                """`Ir${IrTree.memberAccessExpression.name.capitalizeAsciiOnly()}` has unexpected fields with `IrType` type. 
+                                """`${IrTree.memberAccessExpression.typeName}` has unexpected fields with `IrType` type. 
                                         |Please adjust logic of `${visitorType.simpleName}`'s generation.""".trimMargin()
                             )
                         }
@@ -348,7 +348,7 @@ private class TypeTransformerPrinter(
                         }
                         println("}")
                     }
-                    IrTree.`class`.name -> {
+                    IrTree.`class` -> {
                         println(visitorParam, ".valueClassRepresentation?.mapUnderlyingType {")
                         withIndent {
                             println("transformType(", visitorParam, ", it, data)")
