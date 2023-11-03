@@ -83,6 +83,6 @@ public class PrintingLogger extends Logger {
     }
 
     @Override
-    public void setLevel(Level level) {
+    public void setLevel(@NotNull Level level) {
     }
 }
