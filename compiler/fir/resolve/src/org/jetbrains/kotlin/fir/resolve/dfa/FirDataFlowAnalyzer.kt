@@ -398,8 +398,12 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitComparisonExpression(comparisonExpression).mergeIncomingFlow()
     }
 
+    fun exitEqualityOperatorLhs() {
+        graphBuilder.exitEqualityOperatorLhs()
+    }
+
     fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {
-        val node = graphBuilder.exitEqualityOperatorCall(equalityOperatorCall)
+        val (lhsExitNode, node) = graphBuilder.exitEqualityOperatorCall(equalityOperatorCall)
         val operation = equalityOperatorCall.operation
         val leftOperand = equalityOperatorCall.arguments[0]
         val rightOperand = equalityOperatorCall.arguments[1]
@@ -431,7 +435,7 @@ abstract class FirDataFlowAnalyzer(
                 rightIsNull -> processEqNull(flow, equalityOperatorCall, leftOperand, operation.isEq())
                 leftConst != null -> processEqConst(flow, equalityOperatorCall, rightOperand, leftConst, operation.isEq())
                 rightConst != null -> processEqConst(flow, equalityOperatorCall, leftOperand, rightConst, operation.isEq())
-                else -> processEq(flow, equalityOperatorCall, leftOperand, rightOperand, operation)
+                else -> processEq(flow, lhsExitNode.flow, equalityOperatorCall, leftOperand, rightOperand, operation)
             }
         }
     }
@@ -476,6 +480,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun processEq(
         flow: MutableFlow,
+        lhsExitFlow: PersistentFlow,
         expression: FirExpression,
         leftOperand: FirExpression,
         rightOperand: FirExpression,
@@ -494,10 +499,11 @@ abstract class FirDataFlowAnalyzer(
             return
         }
 
-        // Ideally it should be `getOrCreateIfRealAndUnchanged(flow from LHS, flow, leftOperand)`, otherwise the statement will
-        //  be added even if the value has changed in the RHS. Currently, the only previous node is the RHS.
-        // But seems like everything works and with current implementation
-        val leftOperandVariable = variableStorage.getOrCreateIfReal(flow, leftOperand)
+        // Only consider the LHS variable if it has not been reassigned in the RHS.
+        val leftOperandVariable = variableStorage.getOrCreateIfReal(flow, leftOperand).takeIf {
+            val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(lhsExitFlow, leftOperand)
+            variable == null || logicSystem.isSameValueIn(lhsExitFlow, flow, variable)
+        }
         val rightOperandVariable = variableStorage.getOrCreateIfReal(flow, rightOperand)
         if (leftOperandVariable == null && rightOperandVariable == null) return
         val expressionVariable = variableStorage.createSynthetic(expression)

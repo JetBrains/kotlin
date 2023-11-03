@@ -109,6 +109,10 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     fun isSameValueIn(a: PersistentFlow, b: PersistentFlow, variable: RealVariable): Boolean =
         a.assignmentIndex[variable] == b.assignmentIndex[variable]
 
+    fun isSameValueIn(a: PersistentFlow, b: MutableFlow, variable: RealVariable): Boolean {
+        return a.assignmentIndex[variable] == b.assignmentIndex[variable]
+    }
+
     private fun MutableFlow.mergeAssignments(flows: Collection<PersistentFlow>) {
         // If a variable was reassigned in one branch, it was reassigned at the join point.
         val reassignedVariables = mutableMapOf<RealVariable, Int>()

@@ -80,6 +80,7 @@ class ControlFlowGraphBuilder {
     private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
     private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
     private val elvisRhsEnterNodes: Stack<ElvisRhsEnterNode> = stackOf()
+    private val equalityOperatorCallLhsExitNodes: Stack<CFGNode<*>> = stackOf()
 
     private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallNode>> = stackOf()
 
@@ -735,8 +736,19 @@ class ControlFlowGraphBuilder {
         return createComparisonExpressionNode(comparisonExpression).also { addNewSimpleNode(it) }
     }
 
-    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall): EqualityOperatorCallNode {
-        return createEqualityOperatorCallNode(equalityOperatorCall).also { addNewSimpleNode(it) }
+    fun exitEqualityOperatorLhs() {
+        equalityOperatorCallLhsExitNodes.push(lastNode)
+    }
+
+    /**
+     * Returns a pair of nodes, where the first is the last node of the LHS of the equality operator
+     * call, and the second is the exit node of the equality operator call. This allows DFA to
+     * determine if an assignment took place within the RHS of the equality operator call.
+     */
+    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall): Pair<CFGNode<*>, EqualityOperatorCallNode> {
+        val lhsExitNode = equalityOperatorCallLhsExitNodes.pop()
+        val node = createEqualityOperatorCallNode(equalityOperatorCall).also { addNewSimpleNode(it) }
+        return lhsExitNode to node
     }
 
     // ----------------------------------- Jump -----------------------------------

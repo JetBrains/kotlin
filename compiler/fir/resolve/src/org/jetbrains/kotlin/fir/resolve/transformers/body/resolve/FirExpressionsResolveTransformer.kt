@@ -803,6 +803,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         // In cases like materialize1() == materialize2() we add expected type just for the right argument.
         // One of the reasons is just consistency with K1 and with the desugared form `a.equals(b)`. See KT-47409 for clarifications.
         val leftArgumentTransformed: FirExpression = arguments[0].transform(transformer, ResolutionMode.ContextIndependent)
+        dataFlowAnalyzer.exitEqualityOperatorLhs()
         val rightArgumentTransformed: FirExpression = arguments[1].transform(transformer, withExpectedType(builtinTypes.nullableAnyType))
 
         equalityOperatorCall
