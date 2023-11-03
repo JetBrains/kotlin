@@ -18,7 +18,7 @@ fun Test(a: Int) {
 @Composable
 fun Test(a: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)<{>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b1110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
@@ -29,13 +29,14 @@ fun Test(a: Int, %composer: Composer?, %changed: Int) {
     }
     used(<block>{
       %composer.startReplaceableGroup(<>)
-      val tmpCache = %composer.cache(%composer.changed(a)) {
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
         {
           a
         }
       }
       %composer.endReplaceableGroup()
-      tmpCache
+      tmp0_group
     })
     if (isTraceInProgress()) {
       traceEventEnd()
