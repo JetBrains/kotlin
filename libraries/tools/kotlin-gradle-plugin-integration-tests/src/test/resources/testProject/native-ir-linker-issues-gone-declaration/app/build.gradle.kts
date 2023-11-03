@@ -10,7 +10,7 @@ repositories {
 
 configurations.all {
     resolutionStrategy {
-        preferProjectModules()
+        force("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
     }
 }
 
