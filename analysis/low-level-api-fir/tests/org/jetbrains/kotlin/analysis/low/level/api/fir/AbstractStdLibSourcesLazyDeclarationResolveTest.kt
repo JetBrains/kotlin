@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractStdLibSourcesLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTestCase() {
+abstract class AbstractStdLibSourcesLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
     override fun checkSession(firSession: LLFirResolveSession) {
         requireIsInstance<KtLibrarySourceModule>(firSession.useSiteKtModule)
     }
@@ -45,7 +45,7 @@ abstract class AbstractStdLibSourcesLazyDeclarationResolveTest : AbstractFirLazy
         val classDeclaration = findRegularClass(classId, module, resolveSession).findPsi() as KtClassOrObject
         val file = classDeclaration.containingFile as KtFile
 
-        doLazyResolveTest(file, testServices, moduleStructure, renderAllFiles = false) { firSession ->
+        doLazyResolveTest(file, testServices, renderAllFiles = false) { firSession ->
             val regularClass = findRegularClass(classId, module, firSession)
             val declarationToResolve = chooseMemberDeclarationIfNeeded(regularClass, moduleStructure, firSession)
             declarationToResolve.fir to fun(phase: FirResolvePhase) {

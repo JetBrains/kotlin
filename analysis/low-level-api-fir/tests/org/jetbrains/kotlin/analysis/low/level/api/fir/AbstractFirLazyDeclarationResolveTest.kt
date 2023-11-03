@@ -6,70 +6,31 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.NO_RUNTIME
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTestCase() {
+abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveOverAllPhasesTest() {
     override fun checkSession(firSession: LLFirResolveSession) {
         require(firSession.isSourceSession)
     }
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        doLazyResolveTest(ktFile, testServices, moduleStructure, renderAllFiles = true) { firResolveSession ->
-            when {
-                Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives -> {
-                    val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer!!
-                    val session = annotationContainer.moduleData.session as LLFirResolvableModuleSession
-                    annotationContainer to fun(phase: FirResolvePhase) {
-                        session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
-                            annotationContainer,
-                            session.getScopeSession(),
-                            phase,
-                        )
-                    }
-                }
-                Directives.RESOLVE_FILE in moduleStructure.allDirectives -> {
-                    val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
-                    val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                    file to fun(phase: FirResolvePhase) {
-                        file.lazyResolveToPhase(phase)
-                    }
-                }
-                else -> {
-                    val ktDeclaration = if (Directives.RESOLVE_SCRIPT in moduleStructure.allDirectives) {
-                        ktFile.script!!
-                    } else {
-                        testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
-                    }
-
-                    val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
-                    val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure, firResolveSession)
-                    firDeclaration.fir to fun(phase: FirResolvePhase) {
-                        firDeclaration.lazyResolveToPhase(phase)
-                    }
-                }
-            }
+        doLazyResolveTest(ktFile, testServices, renderAllFiles = true) { firResolveSession ->
+            findFirDeclarationToResolve(ktFile, moduleStructure, testServices, firResolveSession)
         }
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
-            forTestsNotMatching("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/*" ) {
+            forTestsNotMatching("analysis/low-level-api-fir/testData/lazyResolve/noRuntime/*") {
                 defaultDirectives {
                     +WITH_STDLIB
                 }
@@ -80,15 +41,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
                     +NO_RUNTIME
                 }
             }
-
-            useDirectives(Directives)
         }
-    }
-
-    private object Directives : SimpleDirectivesContainer() {
-        val RESOLVE_FILE_ANNOTATIONS by directive("Resolve file annotations instead of declaration at caret")
-        val RESOLVE_SCRIPT by directive("Resolve script instead of declaration at caret")
-        val RESOLVE_FILE by directive("Resolve file instead of declaration at caret")
     }
 }
 
