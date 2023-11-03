@@ -1,0 +1,25 @@
+warning: name is mangled when generating Objective-C header
+    (at class ClassClashWithObjCName defined in pkg.lib1)
+warning: name is mangled when generating Objective-C header
+    (at enum entry one defined in pkg.lib1.E)
+warning: name is mangled when generating Objective-C header
+    (at enum entry TWO defined in pkg.lib1.E)
+warning: name is mangled when generating Objective-C header
+    (at fun values(): Array<E> defined in pkg.lib1.E)
+warning: name is mangled when generating Objective-C header
+    (at val entries: EnumEntries<E> defined in pkg.lib1.E)
+warning: name is mangled when generating Objective-C header
+    (at val prop: String defined in pkg.lib1.I2)
+warning: name is mangled when generating Objective-C header
+    (at fun `<get-prop>`(): String defined in pkg.lib1.I2)
+warning: name is mangled when generating Objective-C header
+    (at interface InterfaceClashWithObjCName defined in pkg.lib1)
+warning: name is mangled when generating Objective-C header
+    (at class ClassClash defined in pkg.lib2)
+warning: name is mangled when generating Objective-C header
+    (at interface InterfaceClash defined in pkg.lib2)
+warning: name "TOCEDLib1Kt" is mangled when generating Objective-C header
+warning: name "Lib1Kt" is mangled when generating Objective-C header
+warning: name is mangled when generating Objective-C header
+    (at fun topLevel(arg: Long): Unit defined in pkg.lib1)
+OK

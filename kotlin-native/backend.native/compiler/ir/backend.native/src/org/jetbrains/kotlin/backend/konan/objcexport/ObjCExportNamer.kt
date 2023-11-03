@@ -58,6 +58,9 @@ interface ObjCExportNamer {
             get() = false
         val ignoreInterfaceMethodCollisions: Boolean
             get() = false
+
+        val reportNameCollisions: Boolean
+            get() = false
     }
 
     val topLevelNamePrefix: String
@@ -103,6 +106,7 @@ fun createNamer(
         (exportedDependencies + moduleDescriptor).toSet(),
         moduleDescriptor.builtIns,
         ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT),
+        ObjCExportProblemCollector.SILENT,
         topLevelNamePrefix,
         local = true
 )
@@ -273,6 +277,7 @@ internal class ObjCExportNamerImpl(
         private val configuration: ObjCExportNamer.Configuration,
         builtIns: KotlinBuiltIns,
         private val mapper: ObjCExportMapper,
+        private val problemCollector: ObjCExportProblemCollector,
         private val local: Boolean
 ) : ObjCExportNamer {
 
@@ -280,11 +285,13 @@ internal class ObjCExportNamerImpl(
             moduleDescriptors: Set<ModuleDescriptor>,
             builtIns: KotlinBuiltIns,
             mapper: ObjCExportMapper,
+            problemCollector: ObjCExportProblemCollector,
             topLevelNamePrefix: String,
             local: Boolean,
             objcGenerics: Boolean = false,
             disableSwiftMemberNameMangling: Boolean = false,
             ignoreInterfaceMethodCollisions: Boolean = false,
+            reportNameCollisions: Boolean = false,
     ) : this(
             object : ObjCExportNamer.Configuration {
                 override val topLevelNamePrefix: String
@@ -301,9 +308,13 @@ internal class ObjCExportNamerImpl(
 
                 override val ignoreInterfaceMethodCollisions: Boolean
                     get() = ignoreInterfaceMethodCollisions
+
+                override val reportNameCollisions: Boolean
+                    get() = reportNameCollisions
             },
             builtIns,
             mapper,
+            problemCollector,
             local
     )
 
@@ -826,9 +837,20 @@ internal class ObjCExportNamerImpl(
         inline fun getOrPut(element: T, nameCandidates: () -> Sequence<N>): N {
             getIfAssigned(element)?.let { return it }
 
+            var reportedCollision = false
+
             nameCandidates().forEach {
                 if (tryAssign(element, it)) {
                     return it
+                }
+
+                if (configuration.reportNameCollisions && !reportedCollision) {
+                    if (element is DeclarationDescriptor) {
+                        problemCollector.reportWarning(element, "name is mangled when generating Objective-C header")
+                    } else {
+                        problemCollector.reportWarning("name \"$it\" is mangled when generating Objective-C header")
+                    }
+                    reportedCollision = true
                 }
             }
 

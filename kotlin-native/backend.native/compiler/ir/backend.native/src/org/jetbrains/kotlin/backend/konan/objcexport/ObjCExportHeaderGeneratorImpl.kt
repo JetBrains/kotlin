@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.reportCompilationWarning
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -21,20 +22,21 @@ internal class ObjCExportHeaderGeneratorImpl(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
+        problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, ProblemCollector(context)) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector) {
 
     override val shouldExportKDoc = context.shouldExportKDoc()
 
-    private class ProblemCollector(val context: PhaseContext) : ObjCExportProblemCollector {
+    internal class ProblemCollector(val context: PhaseContext) : ObjCExportProblemCollector {
         override fun reportWarning(text: String) {
             context.reportCompilationWarning(text)
         }
 
-        override fun reportWarning(method: FunctionDescriptor, text: String) {
-            val psi = (method as? DeclarationDescriptorWithSource)?.source?.getPsi()
+        override fun reportWarning(declaration: DeclarationDescriptor, text: String) {
+            val psi = (declaration as? DeclarationDescriptorWithSource)?.source?.getPsi()
                     ?: return reportWarning(
-                            "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(method)})"
+                            "$text\n    (at ${DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(declaration)})"
                     )
 
             val location = MessageUtil.psiElementToMessageLocation(psi)

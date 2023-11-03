@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.LibraryCompilation
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.ObjCFrameworkCompilation
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -79,11 +81,39 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
     }
 
+    @Test
+    fun testObjCExportDiagnostics() {
+        Assumptions.assumeTrue(targets.hostTarget.family.isAppleFamily)
+
+        val rootDir = File("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
+        val settings = testRunSettings
+        val lib1 = compileLibrary(settings, rootDir.resolve("lib1.kt")).assertSuccess().resultingArtifact
+        val lib2 = compileLibrary(settings, rootDir.resolve("lib2.kt")).assertSuccess().resultingArtifact
+
+        val freeCompilerArgs = TestCompilerArgs(
+            "-Xinclude=${lib1.path}",
+            "-Xinclude=${lib2.path}",
+            "-Xbinary=objcExportReportNameCollisions=true"
+        )
+        val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnostics")
+
+        val compilationResult = ObjCFrameworkCompilation(
+            settings,
+            freeCompilerArgs,
+            sourceModules = emptyList(),
+            dependencies = emptyList(),
+            expectedArtifact
+        ).result
+        val goldenData = rootDir.resolve("output.txt")
+
+        KotlinTestUtils.assertEqualsToFile(goldenData, compilationResult.toOutput())
+    }
+
     private fun compileLibrary(
         settings: Settings,
         source: File,
-        freeCompilerArgs: List<String>,
-        dependencies: List<TestCompilationArtifact.KLIB>
+        freeCompilerArgs: List<String> = emptyList(),
+        dependencies: List<TestCompilationArtifact.KLIB> = emptyList(),
     ): TestCompilationResult<out TestCompilationArtifact.KLIB> {
         val testCase = generateTestCaseWithSingleModule(source, TestCompilerArgs(freeCompilerArgs))
         val compilation = LibraryCompilation(
