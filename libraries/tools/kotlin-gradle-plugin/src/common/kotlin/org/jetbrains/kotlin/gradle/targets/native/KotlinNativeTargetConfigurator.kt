@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.XcodeUtils
 import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.valueSourceProviderCompat
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
@@ -571,11 +572,18 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
     override fun configureTestTask(target: KotlinNativeTargetWithSimulatorTests, testTask: KotlinNativeSimulatorTest) {
         super.configureTestTask(target, testTask)
         if (isTestTaskEnabled(target)) {
-            val deviceIdProvider = testTask.project.provider {
-                XcodeUtils.getDefaultTestDeviceId(target.konanTarget)
-                    ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
+            val project = target.project
+            val deviceIdProvider = project.valueSourceProviderCompat(XcodeDefaultTestDevicesValueSource::class.java)
+            // Extract primitive values to avoid [target] capture in lambda
+            val konanTargetFamily = target.konanTarget.family
+            val konanTargetName = target.konanTarget.name
+
+            val defaultDevice = deviceIdProvider.map {
+                it[konanTargetFamily]
+                    ?: error("Xcode does not support simulator tests for ${konanTargetName}. Check that requested SDK is installed.")
             }
-            testTask.device.convention(deviceIdProvider).finalizeValueOnRead()
+
+            testTask.device.convention(defaultDevice).finalizeValueOnRead()
         }
         testTask.standalone.convention(true).finalizeValueOnRead()
     }

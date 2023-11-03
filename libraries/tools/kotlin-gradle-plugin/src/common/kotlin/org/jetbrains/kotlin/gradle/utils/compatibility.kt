@@ -21,20 +21,15 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.CopySpec
-import org.gradle.api.file.FileSystemOperations
-import org.gradle.api.file.FileTree
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.ValueSource
+import org.gradle.api.provider.ValueSourceParameters
 import org.gradle.api.specs.Spec
-import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.util.GradleVersion
 import java.io.File
-import java.io.Serializable
 
 const val minSupportedGradleVersion = "6.8.3"
 
@@ -100,3 +95,18 @@ internal fun ArtifactCollection.getResolvedArtifactsCompat(project: Project): Pr
     } else {
         project.provider { artifacts }
     }
+
+/**
+ * ValueSources are not well-supported with Configuration Cache in early Gradle versions
+ * Gradle 8.1 is discovered experimentally
+ */
+internal fun <T> Project.valueSourceProviderCompat(
+    clazz: Class<out ValueSource<T, ValueSourceParameters.None>>
+): Provider<T> {
+    return if (GradleVersion.current() < GradleVersion.version("8.1")) {
+        val vs = project.objects.newInstance(clazz)
+        project.provider { vs.obtain() }
+    } else {
+        providers.of(clazz) { }
+    }
+}
