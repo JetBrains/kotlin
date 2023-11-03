@@ -1184,7 +1184,7 @@ abstract class AbstractComposeLowering(
         returnType: IrType,
         invalid: IrExpression,
         calculation: IrExpression
-    ): IrExpression {
+    ): IrCall {
         val symbol = referenceFunction(cacheFunction.symbol)
         return IrCallImpl(
             startOffset,

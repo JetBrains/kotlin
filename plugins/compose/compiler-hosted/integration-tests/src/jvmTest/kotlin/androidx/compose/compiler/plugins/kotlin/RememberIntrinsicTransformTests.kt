@@ -467,6 +467,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """
     )
+
     @Test
     fun testRememberPropertyReference(): Unit = comparisonPropagation(
         """
@@ -680,5 +681,60 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val count = 0
                 class SomeUnstableClass(val a: Any = "abc")
             """
+    )
+
+    @Test
+    fun testRememberWithUnstableUnused_InInlineLambda() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Test(param: String, unstable: List<*>) {
+                InlineWrapper {
+                    remember(param) { param }
+                }
+            }
+        """,
+        extra = """
+                import androidx.compose.runtime.*
+
+                @Composable inline fun InlineWrapper(block: @Composable () -> Unit) {}
+            """,
+    )
+
+    @Test
+    fun testRememberWithUnstable_InInlineLambda() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Test(param: String, unstable: List<*>) {
+                println(unstable)
+                InlineWrapper {
+                    remember(param) { param }
+                }
+            }
+        """,
+        extra = """
+                import androidx.compose.runtime.*
+
+                @Composable inline fun InlineWrapper(block: @Composable () -> Unit) {}
+            """,
+    )
+
+    @Test
+    fun testRememberWithUnstable_inLambda() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable fun Test(param: String, unstable: List<*>) {
+                Wrapper {
+                    remember(param, unstable) { param }
+                }
+            }
+        """,
+        extra = """
+                import androidx.compose.runtime.*
+
+                @Composable fun Wrapper(block: @Composable () -> Unit) {}
+            """,
     )
 }
