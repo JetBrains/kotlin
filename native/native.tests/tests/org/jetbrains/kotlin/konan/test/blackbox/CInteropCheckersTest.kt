@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 
+@Tag("cinterop")
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 abstract class BaseCInteropCheckersTest : AbstractNativeSimpleTest() {
