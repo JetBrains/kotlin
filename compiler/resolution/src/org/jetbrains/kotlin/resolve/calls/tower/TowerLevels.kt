@@ -531,9 +531,10 @@ private fun ResolutionScope.getContributedObjectVariablesIncludeDeprecated(
     name: Name,
     location: LookupLocation
 ): Collection<DescriptorWithDeprecation<VariableDescriptor>> {
-    val (classifier, isOwnerDeprecated) = getContributedClassifierIncludeDeprecated(name, location) ?: return emptyList()
-    val objectDescriptor = getFakeDescriptorForObject(classifier) ?: return emptyList()
-    return listOf(DescriptorWithDeprecation(objectDescriptor, isOwnerDeprecated))
+    return getContributedClassifiersIncludeDeprecated(name, location).mapNotNull { (classifier, isOwnerDeprecated) ->
+        val objectDescriptor = getFakeDescriptorForObject(classifier) ?: return@mapNotNull null
+        DescriptorWithDeprecation(objectDescriptor, isOwnerDeprecated)
+    }
 }
 
 fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =

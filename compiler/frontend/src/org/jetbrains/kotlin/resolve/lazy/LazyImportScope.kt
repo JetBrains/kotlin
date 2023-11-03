@@ -295,6 +295,39 @@ class LazyImportScope(
             target
         }
 
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
+        return importResolver.getClassifiers(name, location).takeIf { it.isNotEmpty() }
+            ?: secondaryImportResolver?.getClassifiers(name, location)
+            ?: emptyList()
+    }
+
+    private fun LazyImportResolver<*>.getClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+        components.storageManager.compute {
+            val descriptors = indexedImports.importsForName(name).flatMap { directive ->
+                getImportScope(directive).getContributedClassifiers(name, location)
+            }
+            val result = mutableListOf<ClassifierDescriptor>()
+            var throwsResult: ClassifierDescriptor? = null
+
+            for (descriptor in descriptors) {
+                if (descriptor !is ClassDescriptor && descriptor !is TypeAliasDescriptor || !isClassifierVisible(descriptor))
+                    continue /* type parameters can't be imported */
+                if (descriptor in result || throwsResult == descriptor) {
+                    continue
+                }
+                if (!descriptor.isKotlinOrJvmThrows() && !descriptor.isKotlinOrNativeThrows()) {
+                    result.add(descriptor)
+                } else if (throwsResult == null || descriptor.isKotlinThrows()) {
+                    throwsResult = descriptor
+                }
+            }
+
+            when (throwsResult) {
+                null -> result
+                else -> result + listOf(throwsResult)
+            }
+        }
+
     private fun isKotlinOrJvmThrowsAmbiguity(c1: ClassifierDescriptor, c2: ClassifierDescriptor) =
         c1.isKotlinOrJvmThrows() && c2.isKotlinOrJvmThrows()
 

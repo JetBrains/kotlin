@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // KT-49200
 // FILE: first/KtNodeTypes.java
 
@@ -32,7 +31,7 @@ import third.OtherTypes.*
 
 fun test(arg: String): Boolean {
     return when (arg) {
-        <!OVERLOAD_RESOLUTION_AMBIGUITY!>SOME<!> -> true
+        <!DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY!>SOME<!> -> true
         else -> false
     }
 }

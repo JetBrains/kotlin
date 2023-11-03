@@ -222,24 +222,22 @@ class KotlinCallResolver(
         }
 
         if (maximallySpecificCandidates.size > 1) {
-            if (maximallySpecificCandidates.size == 2) {
-                val enumEntryCandidate = maximallySpecificCandidates.find {
-                    val descriptor = it.resolvedCall.candidateDescriptor
-                    descriptor is FakeCallableDescriptorForObject && descriptor.classDescriptor.kind == ClassKind.ENUM_ENTRY
+            val enumEntryCandidate = maximallySpecificCandidates.find {
+                val descriptor = it.resolvedCall.candidateDescriptor
+                descriptor is FakeCallableDescriptorForObject && descriptor.classDescriptor.kind == ClassKind.ENUM_ENTRY
+            }
+            if (enumEntryCandidate != null) {
+                val otherCandidate = maximallySpecificCandidates.find {
+                    val candidateDescriptor = it.resolvedCall.candidateDescriptor
+                    candidateDescriptor !is FakeCallableDescriptorForObject
                 }
-                if (enumEntryCandidate != null) {
-                    val otherCandidate = maximallySpecificCandidates.find {
-                        val candidateDescriptor = it.resolvedCall.candidateDescriptor
-                        candidateDescriptor !is FakeCallableDescriptorForObject
-                    }
-                    if (otherCandidate != null) {
-                        val propertyDescriptor = otherCandidate.resolvedCall.candidateDescriptor
-                        if (propertyDescriptor is PropertyDescriptor) {
-                            val enumEntryDescriptor =
-                                (enumEntryCandidate.resolvedCall.candidateDescriptor as FakeCallableDescriptorForObject).classDescriptor
-                            otherCandidate.addDiagnostic(EnumEntryAmbiguityWarning(propertyDescriptor, enumEntryDescriptor))
-                            return setOf(otherCandidate)
-                        }
+                if (otherCandidate != null) {
+                    val propertyDescriptor = otherCandidate.resolvedCall.candidateDescriptor
+                    if (propertyDescriptor is PropertyDescriptor) {
+                        val enumEntryDescriptor =
+                            (enumEntryCandidate.resolvedCall.candidateDescriptor as FakeCallableDescriptorForObject).classDescriptor
+                        otherCandidate.addDiagnostic(EnumEntryAmbiguityWarning(propertyDescriptor, enumEntryDescriptor))
+                        return setOf(otherCandidate)
                     }
                 }
             }

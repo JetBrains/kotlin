@@ -15,23 +15,23 @@ enum class SomeEnum {
     SOME;
 }
 
-// FILE: OtherEnum.kt
+// FILE: third/OtherTypes.java
 
 package third
 
-enum class SomeEnum {
-    SOME;
+public interface OtherTypes {
+    String SOME = "Other";
 }
 
 // FILE: test.kt
 
 import first.KtNodeTypes.*
 import second.SomeEnum.*
-import third.SomeEnum.*
+import third.OtherTypes.*
 
 fun test(arg: String): Boolean {
     return when (arg) {
-        <!DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY!>SOME<!> -> true
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>SOME<!> -> true
         else -> false
     }
 }
