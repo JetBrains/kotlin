@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
+import org.jetbrains.kotlin.resolve.scopes.getContributedClassifier
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.getValue
@@ -388,10 +389,10 @@ open class LazyClassMemberScope(
 
     private fun addSyntheticNestedClasses(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
         result.addAll(c.syntheticResolveExtension.getSyntheticNestedClassNames(thisDescriptor).mapNotNull {
-            getContributedClassifier(
+            getContributedClassifiers(
                 it,
                 location
-            )
+            ).singleOrNull()
         }.toList())
     }
 

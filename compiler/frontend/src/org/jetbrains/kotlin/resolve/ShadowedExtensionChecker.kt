@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
+import org.jetbrains.kotlin.resolve.scopes.getContributedClassifier
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.util.OperatorNameConventions
 

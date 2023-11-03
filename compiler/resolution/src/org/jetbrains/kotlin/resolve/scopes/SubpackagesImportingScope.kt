@@ -40,7 +40,7 @@ class SubpackagesImportingScope(
     override fun getContributedFunctions(name: Name, location: LookupLocation) = super.getContributedFunctions(name, location)
 
     //TODO: kept old behavior, but it seems very strange (super call seems more applicable)
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> = emptyList()
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,

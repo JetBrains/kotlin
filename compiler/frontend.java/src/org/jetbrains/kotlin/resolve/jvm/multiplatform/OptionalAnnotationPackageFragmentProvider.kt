@@ -109,7 +109,8 @@ private class PackageFragmentForOptionalAnnotations(
     classDescriptors: NotNullLazyValue<Map<Name, ClassDescriptor>>,
 ) : PackageFragmentDescriptorImpl(module, fqName) {
     private val scope = object : MemberScopeImpl() {
-        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classDescriptors()[name]
+        override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+            listOfNotNull(classDescriptors()[name])
 
         override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter,

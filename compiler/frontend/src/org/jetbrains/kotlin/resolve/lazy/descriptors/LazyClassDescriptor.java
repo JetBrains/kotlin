@@ -63,6 +63,7 @@ import static org.jetbrains.kotlin.name.NameUtils.contextReceiverName;
 import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
+import static org.jetbrains.kotlin.resolve.scopes.ResolutionScopeKt.getContributedClassifier;
 
 public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDescriptorWithResolutionScopes, LazyEntity {
     private static final Function1<KotlinType, Boolean> VALID_SUPERTYPE = type -> {
@@ -538,7 +539,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         Name name = ((KtClassOrObjectInfo) companionObjectInfo).getName();
         assert name != null;
-        getUnsubstitutedMemberScope().getContributedClassifier(name, NoLookupLocation.WHEN_GET_COMPANION_OBJECT);
+        getContributedClassifier(getUnsubstitutedMemberScope(), name, NoLookupLocation.WHEN_GET_COMPANION_OBJECT);
         ClassDescriptor companionObjectDescriptor = c.getTrace().get(BindingContext.CLASS, companionObject);
         if (companionObjectDescriptor instanceof ClassDescriptorWithResolutionScopes) {
             assert DescriptorUtils.isCompanionObject(companionObjectDescriptor) : "Not a companion object: " + companionObjectDescriptor;

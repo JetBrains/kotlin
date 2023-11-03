@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isNonCompanionObject;
+import static org.jetbrains.kotlin.resolve.scopes.ResolutionScopeKt.getContributedClassifier;
 
 public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTestWithEnvironment {
     private static final DescriptorRenderer WITH_ANNOTATION_ARGUMENT_TYPES = DescriptorRenderer.Companion.withOptions(
@@ -225,7 +226,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     @NotNull
     protected static ClassDescriptor getClassDescriptor(@NotNull PackageFragmentDescriptor packageView, @NotNull String name) {
         Name className = Name.identifier(name);
-        ClassifierDescriptor aClass = packageView.getMemberScope().getContributedClassifier(className, NoLookupLocation.FROM_TEST);
+        ClassifierDescriptor aClass = getContributedClassifier(packageView.getMemberScope(), className, NoLookupLocation.FROM_TEST);
         assertNotNull("Failed to find class: " + packageView.getName() + "." + className, aClass);
         assert aClass instanceof ClassDescriptor : "Not a class: " + aClass;
         return (ClassDescriptor) aClass;
@@ -235,7 +236,7 @@ public abstract class AbstractAnnotationDescriptorResolveTest extends KotlinTest
     private static ClassDescriptor getInnerClassDescriptor(@NotNull ClassDescriptor classDescriptor, @NotNull String name) {
         Name propertyName = Name.identifier(name);
         MemberScope memberScope = classDescriptor.getMemberScope(Collections.emptyList());
-        ClassifierDescriptor innerClass = memberScope.getContributedClassifier(propertyName, NoLookupLocation.FROM_TEST);
+        ClassifierDescriptor innerClass = getContributedClassifier(memberScope, propertyName, NoLookupLocation.FROM_TEST);
         assert innerClass instanceof ClassDescriptor : "Failed to find inner class " +
                                                        propertyName +
                                                        " in class " +

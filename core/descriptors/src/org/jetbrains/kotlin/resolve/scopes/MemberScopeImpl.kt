@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.alwaysTrue
 import org.jetbrains.kotlin.utils.filterIsInstanceMapTo
 
 abstract class MemberScopeImpl : MemberScope {
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> = emptyList()
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<@JvmWildcard PropertyDescriptor> =
         emptyList()

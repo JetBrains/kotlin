@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.utils.Printer
 open class ErrorScope(val kind: ErrorScopeKind, vararg formatParams: String) : MemberScope {
     protected val debugMessage = kind.debugMessage.format(*formatParams)
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor =
-        ErrorClassDescriptor(Name.special(ErrorEntity.ERROR_CLASS.debugText.format(name)))
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+        ErrorClassDescriptor(Name.special(ErrorEntity.ERROR_CLASS.debugText.format(name))).let(::listOf)
 
-    override fun getContributedClassifierIncludeDeprecated(
+    override fun getContributedClassifiersIncludeDeprecated(
         name: Name, location: LookupLocation
-    ): DescriptorWithDeprecation<ClassifierDescriptor>? = null
+    ): List<DescriptorWithDeprecation<ClassifierDescriptor>> = emptyList()
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Set<PropertyDescriptor> = ErrorUtils.errorPropertyGroup
 

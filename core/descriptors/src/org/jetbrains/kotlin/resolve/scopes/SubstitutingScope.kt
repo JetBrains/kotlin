@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.Substitutable
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -78,8 +79,8 @@ class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: 
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = substitute(workerScope.getContributedVariables(name, location))
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) =
-            workerScope.getContributedClassifier(name, location)?.let { substitute(it) }
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+        workerScope.getContributedClassifiers(name, location).map { substitute(it) }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) = substitute(workerScope.getContributedFunctions(name, location))
 

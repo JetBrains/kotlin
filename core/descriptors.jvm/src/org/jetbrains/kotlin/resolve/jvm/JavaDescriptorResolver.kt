@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
+import org.jetbrains.kotlin.resolve.scopes.getContributedClassifier
 
 class JavaDescriptorResolver(
     val packageFragmentProvider: LazyJavaPackageFragmentProvider,

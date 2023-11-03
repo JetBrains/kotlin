@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.getContributedClassifier
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -239,7 +240,8 @@ class ForwardDeclarationsPackageFragmentDescriptor(
             }
         }
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation) = declarations(name)
+        override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+            listOf(declarations(name))
 
         override fun printScopeStructure(p: Printer) {
             p.println(this::class.java.simpleName, "{}")

@@ -63,6 +63,7 @@ import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isLibrary
 import static org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject;
 import static org.jetbrains.kotlin.js.translate.utils.JsAstUtils.pureFqn;
 import static org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getSuperclass;
+import static org.jetbrains.kotlin.resolve.scopes.ResolutionScopeKt.getContributedClassifier;
 
 /**
  * Aggregates all the static parts of the context.
@@ -902,7 +903,7 @@ public final class StaticContext {
                 rootPackage.getMemberScope(), Name.identifier(name));
         if (functionDescriptor != null) return functionDescriptor;
 
-        ClassifierDescriptor cls = rootPackage.getMemberScope().getContributedClassifier(
+        ClassifierDescriptor cls = getContributedClassifier(rootPackage.getMemberScope(),
                 Name.identifier(name), NoLookupLocation.FROM_BACKEND);
         if (cls != null) return cls;
 

@@ -71,7 +71,7 @@ protected constructor(
         return result.toList()
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
         recordLookup(name, location)
         // NB we should resolve type alias descriptors even if a class descriptor with corresponding name is present
         val classes = classDescriptors(name)
@@ -79,17 +79,17 @@ protected constructor(
         // See getFirstClassifierDiscriminateHeaders()
         var result: ClassifierDescriptor? = null
         for (klass in classes) {
-            if (!klass.isExpect) return klass
+            if (!klass.isExpect) return listOf(klass)
             if (result == null) result = klass
         }
         for (typeAlias in typeAliases) {
-            if (!typeAlias.isExpect) return typeAlias
+            if (!typeAlias.isExpect) return listOf(typeAlias)
             if (result == null) result = typeAlias
         }
         if ((result?.source as? KotlinSourceElement)?.psi?.isValid == false) {
             throw AssertionError("PSI is invalidated for contributed classifier ${result.fqNameSafe}")
         }
-        return result
+        return listOfNotNull(result)
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {

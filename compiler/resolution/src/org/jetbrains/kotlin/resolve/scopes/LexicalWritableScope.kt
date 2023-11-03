@@ -73,18 +73,19 @@ class LexicalWritableScope(
         override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean) =
             addedDescriptors.subList(0, descriptorLimit)
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation) =
-            variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor
+        override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+            listOfNotNull(variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor)
 
         // NB. This is important to have this explicit override, otherwise calls will be delegated to `this`-delegate,
         // which will use default implementation from `ResolutionScope`, which will call `getContributedClassifier` on
         // the `LexicalWritableScope` instead of calling it on this snapshot
-        override fun getContributedClassifierIncludeDeprecated(
+        override fun getContributedClassifiersIncludeDeprecated(
             name: Name,
             location: LookupLocation
-        ): DescriptorWithDeprecation<ClassifierDescriptor>? {
+        ): List<DescriptorWithDeprecation<ClassifierDescriptor>> {
             return (variableOrClassDescriptorByName(name, descriptorLimit) as? ClassifierDescriptor)
                 ?.let { DescriptorWithDeprecation.createNonDeprecated(it) }
+                .let(::listOfNotNull)
         }
 
         override fun getContributedVariables(name: Name, location: LookupLocation) =

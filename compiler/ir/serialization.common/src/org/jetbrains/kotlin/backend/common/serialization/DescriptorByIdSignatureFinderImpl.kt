@@ -94,7 +94,7 @@ class DescriptorByIdSignatureFinderImpl(
 
     private fun MemberScope.loadDescriptors(name: String, isLeaf: Boolean): Collection<DeclarationDescriptor> {
         val descriptorName = Name.guessByFirstCharacter(name)
-        val classifier = getContributedClassifier(descriptorName, NoLookupLocation.FROM_BACKEND)
+        val classifier = getContributedClassifiers(descriptorName, NoLookupLocation.FROM_BACKEND).singleOrNull()
         if (!isLeaf) {
             return listOfNotNull(classifier)
         }
@@ -145,7 +145,7 @@ class DescriptorByIdSignatureFinderImpl(
                 val isLeaf = i == lastIndex
                 val memberScope = classDescriptor.unsubstitutedMemberScope
 
-                val classifier = memberScope.getContributedClassifier(current, NoLookupLocation.FROM_BACKEND)
+                val classifier = memberScope.getContributedClassifiers(current, NoLookupLocation.FROM_BACKEND).singleOrNull()
                 if (!isLeaf) {
                     classifier?.let { listOf(it) } ?: emptyList()
                 } else {

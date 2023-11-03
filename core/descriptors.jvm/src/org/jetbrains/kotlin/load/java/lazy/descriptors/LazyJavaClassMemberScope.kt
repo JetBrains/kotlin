@@ -854,10 +854,10 @@ class LazyJavaClassMemberScope(
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? =
         DescriptorUtils.getDispatchReceiverParameterIfNeeded(ownerDescriptor)
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
         recordLookup(name, location)
-
-        return (mainScope as LazyJavaClassMemberScope?)?.nestedClasses?.invoke(name) ?: nestedClasses(name)
+        val nestedClass = (mainScope as LazyJavaClassMemberScope?)?.nestedClasses?.invoke(name) ?: nestedClasses(name)
+        return listOfNotNull(nestedClass)
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {

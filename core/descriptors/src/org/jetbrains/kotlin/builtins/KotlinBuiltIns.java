@@ -36,6 +36,7 @@ import java.util.*;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.builtins.StandardNames.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
+import static org.jetbrains.kotlin.resolve.scopes.ResolutionScopeKt.getContributedClassifier;
 
 public abstract class KotlinBuiltIns {
     private ModuleDescriptorImpl builtInsModule;
@@ -88,7 +89,7 @@ public abstract class KotlinBuiltIns {
         this.builtInClassesByName = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
             @Override
             public ClassDescriptor invoke(Name name) {
-                ClassifierDescriptor classifier = getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
+                ClassifierDescriptor classifier = getContributedClassifier(getBuiltInsPackageScope(), name, NoLookupLocation.FROM_BUILTINS);
                 if (classifier == null) {
                     throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(name) + " is not found");
                 }

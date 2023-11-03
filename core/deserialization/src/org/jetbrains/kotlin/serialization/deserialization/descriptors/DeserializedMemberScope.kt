@@ -133,11 +133,11 @@ abstract class DeserializedMemberScope protected constructor(
         return result.compact()
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
         when {
-            hasClass(name) -> deserializeClass(name)
-            name in impl.typeAliasNames -> getTypeAliasByName(name)
-            else -> null
+            hasClass(name) -> listOfNotNull(deserializeClass(name))
+            name in impl.typeAliasNames -> listOfNotNull(getTypeAliasByName(name))
+            else -> emptyList()
         }
 
     private fun deserializeClass(name: Name): ClassDescriptor? =

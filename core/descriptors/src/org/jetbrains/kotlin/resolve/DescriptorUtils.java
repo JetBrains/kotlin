@@ -31,6 +31,7 @@ import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*;
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
+import static org.jetbrains.kotlin.resolve.scopes.ResolutionScopeKt.getContributedClassifier;
 
 public class DescriptorUtils {
     // This JVM-specific class FQ name is declared here only because it's used in MainFunctionDetector which is in frontend
@@ -419,7 +420,7 @@ public class DescriptorUtils {
     @Nullable
     public static ClassDescriptor getInnerClassByName(@NotNull ClassDescriptor classDescriptor, @NotNull String innerClassName, @NotNull LookupLocation location) {
         ClassifierDescriptor classifier =
-                classDescriptor.getDefaultType().getMemberScope().getContributedClassifier(Name.identifier(innerClassName), location);
+                getContributedClassifier(classDescriptor.getDefaultType().getMemberScope(), Name.identifier(innerClassName), location);
         assert classifier instanceof ClassDescriptor :
                 "Inner class " + innerClassName + " in " + classDescriptor + " should be instance of ClassDescriptor, but was: "
                 + (classifier == null ? "null" : classifier.getClass());

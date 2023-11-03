@@ -59,9 +59,9 @@ open class DeserializedPackageMemberScope(
 
     override fun createClassId(name: Name) = ClassId(packageFqName, name)
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
         recordLookup(name, location)
-        return super.getContributedClassifier(name, location)
+        return super.getContributedClassifiers(name, location)
     }
 
     override fun recordLookup(name: Name, location: LookupLocation) {

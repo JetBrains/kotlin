@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.utils.Printer
 
 class ThrowingScope(kind: ErrorScopeKind, vararg formatParams: String) : ErrorScope(kind, *formatParams) {
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor =
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
         throw IllegalStateException("$debugMessage, required name: $name")
 
-    override fun getContributedClassifierIncludeDeprecated(
+    override fun getContributedClassifiersIncludeDeprecated(
         name: Name, location: LookupLocation
-    ): DescriptorWithDeprecation<ClassifierDescriptor> = throw IllegalStateException("$debugMessage, required name: $name")
+    ): List<DescriptorWithDeprecation<ClassifierDescriptor>> = throw IllegalStateException("$debugMessage, required name: $name")
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Set<PropertyDescriptor> =
         throw IllegalStateException("$debugMessage, required name: $name")

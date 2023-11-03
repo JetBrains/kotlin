@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedWithKotlinRepeatable
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformAnnotationFeaturesSupport
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.scopes.getContributedClassifier
 import org.jetbrains.kotlin.types.TypeUtils
 
 class RepeatableAnnotationChecker(

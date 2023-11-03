@@ -45,8 +45,8 @@ abstract class LexicalScopeStorage(
     private var functionsByName: MutableMap<Name, IntList>? = null
     private var variablesAndClassifiersByName: MutableMap<Name, IntList>? = null
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) =
-        variableOrClassDescriptorByName(name) as? ClassifierDescriptor
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+        listOfNotNull(variableOrClassDescriptorByName(name) as? ClassifierDescriptor)
 
     override fun getContributedVariables(name: Name, location: LookupLocation) =
         listOfNotNull(variableOrClassDescriptorByName(name) as? VariableDescriptor)

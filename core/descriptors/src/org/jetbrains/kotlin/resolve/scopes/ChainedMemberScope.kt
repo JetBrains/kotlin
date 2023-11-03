@@ -31,8 +31,8 @@ class ChainedMemberScope private constructor(
     private val scopes: Array<out MemberScope>
 ) : MemberScope {
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-        getFirstClassifierDiscriminateHeaders(scopes) { it.getContributedClassifier(name, location) }
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+        getFirstClassifierDiscriminateHeaders(scopes) { it.getContributedClassifiers(name, location) }.let(::listOfNotNull)
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> =
         getFromAllScopes(scopes) { it.getContributedVariables(name, location) }

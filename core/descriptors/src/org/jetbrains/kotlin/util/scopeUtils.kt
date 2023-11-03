@@ -87,11 +87,14 @@ fun listOfNonEmptyScopes(vararg scopes: MemberScope?): SmartList<MemberScope> =
 fun listOfNonEmptyScopes(scopes: Iterable<MemberScope?>): SmartList<MemberScope> =
     scopes.filterTo(SmartList<MemberScope>()) { it != null && it !== MemberScope.Empty }
 
-inline fun <Scope, T : ClassifierDescriptor> getFirstClassifierDiscriminateHeaders(scopes: Array<Scope>, callback: (Scope) -> T?): T? {
+inline fun <Scope, T : ClassifierDescriptor> getFirstClassifierDiscriminateHeaders(
+    scopes: Array<Scope>,
+    callback: (Scope) -> List<T>?,
+): T? {
     // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
     var result: T? = null
     for (scope in scopes) {
-        val newResult = callback(scope)
+        val newResult = callback(scope)?.singleOrNull()
         if (newResult != null) {
             if (newResult is ClassifierDescriptorWithTypeParameters && newResult.isExpect) {
                 if (result == null) result = newResult

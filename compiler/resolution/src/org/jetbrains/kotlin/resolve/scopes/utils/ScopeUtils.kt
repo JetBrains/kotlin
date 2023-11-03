@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
 import org.jetbrains.kotlin.types.error.ErrorEntity
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.SmartList
@@ -86,7 +85,7 @@ fun LexicalScope.findLocalVariable(name: Name): VariableDescriptor? {
 }
 
 fun HierarchicalScope.findClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-    findFirstFromMeAndParent { it.getContributedClassifier(name, location) }
+    findFirstFromMeAndParent { it.getContributedClassifiers(name, location).singleOrNull() }
 
 fun DeclarationDescriptor.canBeResolvedWithoutDeprecation(
     scopeForResolution: HierarchicalScope,
@@ -116,7 +115,7 @@ fun HierarchicalScope.findFirstClassifierWithDeprecationStatus(
     name: Name,
     location: LookupLocation
 ): DescriptorWithDeprecation<ClassifierDescriptor>? {
-    return findFirstFromMeAndParent { it.getContributedClassifierIncludeDeprecated(name, location) }
+    return findFirstFromMeAndParent { it.getContributedClassifiersIncludeDeprecated(name, location).singleOrNull() }
 }
 
 fun HierarchicalScope.findPackage(name: Name): PackageViewDescriptor? = findFirstFromImportingScopes { it.getContributedPackage(name) }
@@ -164,7 +163,8 @@ private class MemberScopeToImportingScopeAdapter(override val parent: ImportingS
         changeNamesForAliased: Boolean
     ) = memberScope.getContributedDescriptors(kindFilter, nameFilter)
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = memberScope.getContributedClassifier(name, location)
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+        memberScope.getContributedClassifiers(name, location)
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = memberScope.getContributedVariables(name, location)
 
@@ -308,7 +308,7 @@ class ErrorLexicalScope : LexicalScope {
             p.print(ErrorEntity.PARENT_OF_ERROR_SCOPE.debugText)
         }
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+        override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> = emptyList()
 
         override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptySet()
 
@@ -331,7 +331,7 @@ class ErrorLexicalScope : LexicalScope {
     override val contextReceiversGroup: List<ReceiverParameterDescriptor> = emptyList()
     override val kind: LexicalScopeKind = LexicalScopeKind.THROWING
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> = emptyList()
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptySet()
 

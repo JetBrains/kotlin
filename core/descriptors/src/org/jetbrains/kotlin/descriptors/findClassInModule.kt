@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.getResolutionAnchorIfAny
+import org.jetbrains.kotlin.resolve.scopes.getContributedClassifier
 
 fun ModuleDescriptor.findClassifierAcrossModuleDependencies(classId: ClassId): ClassifierDescriptor? = withResolutionAnchor {
     val packageViewDescriptor = getPackage(classId.packageFqName)

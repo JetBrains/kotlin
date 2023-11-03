@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.*
@@ -38,7 +35,7 @@ class StaticScopeForKotlinEnum(
         assert(containingClass.kind == ClassKind.ENUM_CLASS) { "Class should be an enum: $containingClass" }
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = null // TODO
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> = emptyList() // TODO
 
     private val functions: List<SimpleFunctionDescriptor> by storageManager.createLazyValue {
         listOf(createEnumValueOfMethod(containingClass), createEnumValuesMethod(containingClass))

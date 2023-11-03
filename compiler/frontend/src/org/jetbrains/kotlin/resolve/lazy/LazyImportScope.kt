@@ -188,7 +188,7 @@ class LazyImportResolverForKtImportDirective(
             val alias = importInfo.importedName
             if (alias != null) {
                 val lookupLocation = KotlinLookupLocation(importInfo)
-                if (scope.getContributedClassifier(alias, lookupLocation) != null) {
+                if (scope.getContributedClassifiers(alias, lookupLocation).singleOrNull() != null) {
                     explicitClassImports.put(alias.asString(), importInfo)
                 }
             }
@@ -266,35 +266,6 @@ class LazyImportScope(
         ) == includeVisible
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        return importResolver.getClassifier(name, location) ?: secondaryImportResolver?.getClassifier(name, location)
-    }
-
-    private fun LazyImportResolver<*>.getClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-        components.storageManager.compute {
-            val imports = indexedImports.importsForName(name)
-
-            var target: ClassifierDescriptor? = null
-            for (directive in imports) {
-                val descriptor = getImportScope(directive).getContributedClassifier(name, location)
-                if (descriptor !is ClassDescriptor && descriptor !is TypeAliasDescriptor || !isClassifierVisible(descriptor))
-                    continue /* type parameters can't be imported */
-                if (target != null && target != descriptor) {
-                    if (isKotlinOrJvmThrowsAmbiguity(descriptor, target) || isKotlinOrNativeThrowsAmbiguity(descriptor, target)) {
-                        if (descriptor.isKotlinThrows()) {
-                            target = descriptor
-                        }
-                    } else {
-                        return@compute null // ambiguity
-                    }
-                } else {
-                    target = descriptor
-                }
-            }
-
-            target
-        }
-
     override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
         return importResolver.getClassifiers(name, location).takeIf { it.isNotEmpty() }
             ?: secondaryImportResolver?.getClassifiers(name, location)
@@ -327,12 +298,6 @@ class LazyImportScope(
                 else -> result + listOf(throwsResult)
             }
         }
-
-    private fun isKotlinOrJvmThrowsAmbiguity(c1: ClassifierDescriptor, c2: ClassifierDescriptor) =
-        c1.isKotlinOrJvmThrows() && c2.isKotlinOrJvmThrows()
-
-    private fun isKotlinOrNativeThrowsAmbiguity(c1: ClassifierDescriptor, c2: ClassifierDescriptor) =
-        c1.isKotlinOrNativeThrows() && c2.isKotlinOrNativeThrows()
 
     private fun ClassifierDescriptor.isKotlinThrows() = fqNameOrNull() == KOTLIN_THROWS_ANNOTATION_FQ_NAME
     private fun ClassifierDescriptor.isKotlinOrJvmThrows(): Boolean {

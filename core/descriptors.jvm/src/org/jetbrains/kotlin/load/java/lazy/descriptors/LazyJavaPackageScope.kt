@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -133,7 +130,8 @@ class LazyJavaPackageScope(
         override fun hashCode() = name.hashCode()
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = findClassifier(name, null)
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+        listOfNotNull(findClassifier(name, null))
 
     private fun findClassifier(name: Name, javaClass: JavaClass?): ClassDescriptor? {
         if (!SpecialNames.isSafeIdentifier(name)) return null

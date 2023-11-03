@@ -11,23 +11,23 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 
 class DeprecatedLexicalScope(private val workerScope: LexicalScope) : LexicalScope by workerScope {
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> = emptyList()
 
-    override fun getContributedClassifierIncludeDeprecated(
+    override fun getContributedClassifiersIncludeDeprecated(
         name: Name,
         location: LookupLocation
-    ): DescriptorWithDeprecation<ClassifierDescriptor>? {
-        return workerScope.getContributedClassifier(name, location)?.let { DescriptorWithDeprecation.createDeprecated(it) }
+    ): List<DescriptorWithDeprecation<ClassifierDescriptor>> {
+        return workerScope.getContributedClassifiers(name, location).map { DescriptorWithDeprecation.createDeprecated(it) }
     }
 }
 
 class DeprecatedMemberScope(private val workerScope: MemberScope) : MemberScope by workerScope {
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> = emptyList()
 
-    override fun getContributedClassifierIncludeDeprecated(
+    override fun getContributedClassifiersIncludeDeprecated(
         name: Name,
         location: LookupLocation
-    ): DescriptorWithDeprecation<ClassifierDescriptor>? {
-        return workerScope.getContributedClassifier(name, location)?.let { DescriptorWithDeprecation.createDeprecated(it) }
+    ): List<DescriptorWithDeprecation<ClassifierDescriptor>> {
+        return workerScope.getContributedClassifiers(name, location).map { DescriptorWithDeprecation.createDeprecated(it) }
     }
 }

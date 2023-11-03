@@ -367,7 +367,7 @@ internal open class ScopeBasedTowerLevel protected constructor(
         }
 
         // Add constructors of deprecated classifier with an additional diagnostic
-        val descriptorWithDeprecation = resolutionScope.getContributedClassifierIncludeDeprecated(name, location)
+        val descriptorWithDeprecation = resolutionScope.getContributedClassifiersIncludeDeprecated(name, location).singleOrNull()
         if (descriptorWithDeprecation != null && descriptorWithDeprecation.isDeprecated) {
             getConstructorsOfClassifier(descriptorWithDeprecation.descriptor).mapTo(result) {
                 createCandidateDescriptor(
@@ -453,7 +453,7 @@ internal class HidesMembersTowerLevel(scopeTower: ImplicitScopeTower) : Abstract
 private fun KotlinType.getClassifierFromMeAndSuperclasses(name: Name, location: LookupLocation): ClassifierDescriptor? {
     var superclass: KotlinType? = this
     while (superclass != null) {
-        superclass.memberScope.getContributedClassifier(name, location)?.let { return it }
+        superclass.memberScope.getContributedClassifiers(name, location).singleOrNull()?.let { return it }
         superclass = superclass.getImmediateSuperclassNotAny()
     }
     return null
@@ -475,7 +475,7 @@ private fun ResolutionScope.getContributedFunctionsAndConstructors(
 
     val result = ArrayList<FunctionDescriptor>(contributedFunctions)
 
-    getContributedClassifier(name, location)?.let {
+    getContributedClassifiers(name, location).singleOrNull()?.let {
         result.addAll(getConstructorsOfClassifier(it))
         result.addAll(scopeTower.syntheticScopes.collectSyntheticConstructors(it, location))
     }
@@ -523,8 +523,7 @@ private fun getConstructorsOfClassifier(classifier: ClassifierDescriptor?): List
 }
 
 private fun ResolutionScope.getContributedObjectVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
-    val objectDescriptor = getFakeDescriptorForObject(getContributedClassifier(name, location))
-    return listOfNotNull(objectDescriptor)
+    return getContributedClassifiers(name, location).mapNotNull { getFakeDescriptorForObject(it) }
 }
 
 private fun ResolutionScope.getContributedObjectVariablesIncludeDeprecated(

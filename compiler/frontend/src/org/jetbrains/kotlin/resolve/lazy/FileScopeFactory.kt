@@ -266,15 +266,17 @@ class FileScopeFactory(
 
             override fun getContributedPackage(name: Name): Nothing? = null
 
-            override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-                if (name in excludedNames) return null
-                val classifier = scope.getContributedClassifier(name, location) ?: return null
-                val visible = DescriptorVisibilityUtils.isVisibleIgnoringReceiver(
-                    classifier as DeclarationDescriptorWithVisibility,
-                    fromDescriptor,
-                    components.languageVersionSettings
-                )
-                return classifier.takeIf { filteringKind == if (visible) FilteringKind.VISIBLE_CLASSES else FilteringKind.INVISIBLE_CLASSES }
+            override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
+                if (name in excludedNames) return emptyList()
+                val classifiers = scope.getContributedClassifiers(name, location)
+                return classifiers.filter {
+                    val visible = DescriptorVisibilityUtils.isVisibleIgnoringReceiver(
+                        it as DeclarationDescriptorWithVisibility,
+                        fromDescriptor,
+                        components.languageVersionSettings
+                    )
+                    filteringKind == if (visible) FilteringKind.VISIBLE_CLASSES else FilteringKind.INVISIBLE_CLASSES
+                }
             }
 
             override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {

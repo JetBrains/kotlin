@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 // see utils/ScopeUtils.kt
 
@@ -147,7 +146,7 @@ abstract class BaseHierarchicalScope(override val parent: HierarchicalScope?) : 
         nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> = emptyList()
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> = emptyList()
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
 
@@ -205,8 +204,10 @@ class CompositePrioritizedImportingScope(
         p.println(primaryScope::class.java.simpleName)
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-        return primaryScope.getContributedClassifier(name, location) ?: secondaryScope.getContributedClassifier(name, location)
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
+        return primaryScope.getContributedClassifiers(name, location).takeIf { it.size == 1 }
+            ?: secondaryScope.getContributedClassifiers(name, location).takeIf { it.size == 1 }
+            ?: emptyList()
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {

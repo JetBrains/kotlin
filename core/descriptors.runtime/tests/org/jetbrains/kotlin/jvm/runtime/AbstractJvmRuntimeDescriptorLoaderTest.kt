@@ -245,7 +245,8 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             }
         }
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = classifierMap[name]
+        override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+            listOfNotNull(classifierMap[name])
 
         override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter,

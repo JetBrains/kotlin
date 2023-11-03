@@ -136,7 +136,7 @@ internal class KtFe10ScopeProvider(
         override fun getClassifierNames(): Set<Name>? {
             if (forDelegatedMembersOnly) return null
             return allMemberScope.getClassifierNames()?.filterTo(mutableSetOf()) { name ->
-                getContributedClassifier(name, NoLookupLocation.FROM_IDE) != null
+                getContributedClassifiers(name, NoLookupLocation.FROM_IDE).singleOrNull() != null
             }
         }
 
@@ -144,9 +144,9 @@ internal class KtFe10ScopeProvider(
             allMemberScope.printScopeStructure(p)
         }
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
-            if (forDelegatedMembersOnly) return null
-            return allMemberScope.getContributedClassifier(name, location)?.takeIf { it.isDeclaredInOwner() }
+        override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
+            if (forDelegatedMembersOnly) return emptyList()
+            return allMemberScope.getContributedClassifiers(name, location).filter { it.isDeclaredInOwner() }
         }
 
         override fun getContributedDescriptors(

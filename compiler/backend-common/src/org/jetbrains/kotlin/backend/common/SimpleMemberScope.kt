@@ -15,9 +15,10 @@ import org.jetbrains.kotlin.utils.atMostOne
 
 class SimpleMemberScope(val members: List<DeclarationDescriptor>) : MemberScopeImpl() {
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
         members.filterIsInstance<ClassifierDescriptor>()
             .atMostOne { it.name == name }
+            .let(::listOfNotNull)
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> =
         members.filterIsInstance<PropertyDescriptor>()

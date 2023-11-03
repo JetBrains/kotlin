@@ -121,10 +121,10 @@ class TypeAliasQualifier(
                 .getContributedDescriptors(kindFilter, nameFilter)
                 .filter { DescriptorUtils.isEnumEntry(it) }
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+        override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
             classDescriptor.unsubstitutedInnerClassesScope
-                .getContributedClassifier(name, location)
-                ?.takeIf { DescriptorUtils.isEnumEntry(it) }
+                .getContributedClassifiers(name, location)
+                .filter { DescriptorUtils.isEnumEntry(it) }
 
         override fun printScopeStructure(p: Printer) {
             p.println(this::class.java.simpleName, " {")

@@ -49,13 +49,13 @@ class JvmPackageScope(
         ).toTypedArray()
     }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
         recordLookup(name, location)
 
-        val javaClassifier = javaScope.getContributedClassifier(name, location)
-        if (javaClassifier != null) return javaClassifier
+        val javaClassifier = javaScope.getContributedClassifiers(name, location)
+        if (javaClassifier.isNotEmpty()) return javaClassifier
 
-        return getFirstClassifierDiscriminateHeaders(kotlinScopes) { it.getContributedClassifier(name, location) }
+        return getFirstClassifierDiscriminateHeaders(kotlinScopes) { it.getContributedClassifiers(name, location) }.let(::listOfNotNull)
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {

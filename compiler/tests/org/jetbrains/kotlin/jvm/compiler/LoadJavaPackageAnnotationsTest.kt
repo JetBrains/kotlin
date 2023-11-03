@@ -63,7 +63,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
         val moduleDescriptor = JvmResolveUtil.analyze(environment).moduleDescriptor
 
         val packageFragmentDescriptor = moduleDescriptor.getPackage(FqName("test")).fragments
-            .singleOrNull { it.getMemberScope().getContributedClassifier(Name.identifier("A"), NoLookupLocation.FROM_TEST) != null }
+            .singleOrNull { it.getMemberScope().getContributedClassifiers(Name.identifier("A"), NoLookupLocation.FROM_TEST).singleOrNull() != null }
             .let { assertInstanceOf(it, LazyJavaPackageFragment::class.java) }
 
         val annotation = packageFragmentDescriptor.annotations.findAnnotation(FqName("test.Ann"))

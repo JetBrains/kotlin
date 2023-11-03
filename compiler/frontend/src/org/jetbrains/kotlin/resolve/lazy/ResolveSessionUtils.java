@@ -37,6 +37,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.function.Predicate;
 
+import static org.jetbrains.kotlin.resolve.scopes.ResolutionScopeKt.getContributedClassifier;
+
 public class ResolveSessionUtils {
 
     private ResolveSessionUtils() {
@@ -85,7 +87,7 @@ public class ResolveSessionUtils {
         MemberScope scope = packageScope;
         ClassifierDescriptor classifier = null;
         for (Name name : path.pathSegments()) {
-            classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_FIND_BY_FQNAME);
+            classifier = getContributedClassifier(scope, name, NoLookupLocation.WHEN_FIND_BY_FQNAME);
             if (!(classifier instanceof ClassDescriptor)) return null;
             scope = ((ClassDescriptor) classifier).getUnsubstitutedInnerClassesScope();
         }

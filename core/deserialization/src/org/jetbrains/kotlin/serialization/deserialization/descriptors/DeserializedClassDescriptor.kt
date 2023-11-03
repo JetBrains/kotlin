@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum
+import org.jetbrains.kotlin.resolve.scopes.getContributedClassifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.*
@@ -368,10 +369,10 @@ class DeserializedClassDescriptor(
             }
         }
 
-        override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
+        override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
             recordLookup(name, location)
-            classDescriptor.enumEntries?.findEnumEntry(name)?.let { return it }
-            return super.getContributedClassifier(name, location)
+            classDescriptor.enumEntries?.findEnumEntry(name)?.let { return listOf(it) }
+            return super.getContributedClassifiers(name, location)
         }
 
         override fun createClassId(name: Name) = classId.createNestedClassId(name)

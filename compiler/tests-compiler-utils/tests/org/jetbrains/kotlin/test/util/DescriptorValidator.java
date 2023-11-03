@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static org.jetbrains.kotlin.resolve.scopes.ResolutionScopeKt.getContributedClassifier;
+
 public class DescriptorValidator {
 
     public static void validate(@NotNull ValidationVisitor validationStrategy, DeclarationDescriptor descriptor) {
@@ -420,7 +422,7 @@ public class DescriptorValidator {
         public Void visitTypeParameterDescriptor(
                 TypeParameterDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
+            assertFound(scope, descriptor, getContributedClassifier(scope, descriptor.getName(), NoLookupLocation.FROM_TEST), true);
             return null;
         }
 
@@ -428,7 +430,7 @@ public class DescriptorValidator {
         public Void visitClassDescriptor(
                 ClassDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
+            assertFound(scope, descriptor, getContributedClassifier(scope, descriptor.getName(), NoLookupLocation.FROM_TEST), true);
             return null;
         }
 

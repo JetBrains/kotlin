@@ -99,7 +99,7 @@ class OverloadResolver(
             overloadFilter
         ) { scope, name ->
             val functions = scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
-            val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
+            val classifier = scope.getContributedClassifiers(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS).singleOrNull()
             when (classifier) {
                 is ClassDescriptor ->
                     if (!classifier.kind.isSingleton)
@@ -115,7 +115,7 @@ class OverloadResolver(
 
         collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values, overloadFilter) { scope, name ->
             val variables = scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
-            val classifier = scope.getContributedClassifier(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
+            val classifier = scope.getContributedClassifiers(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS).singleOrNull()
             variables + listOfNotNull(classifier)
         }
 

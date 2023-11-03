@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
 class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl() {
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-            workerScope.getContributedClassifier(name, location)?.let {
+    override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> =
+            workerScope.getContributedClassifiers(name, location).mapNotNull {
                 it as? ClassDescriptor ?: it as? TypeAliasDescriptor
             }
 
