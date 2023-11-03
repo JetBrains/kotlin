@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.*
@@ -18,9 +19,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJsCo
 
 class KotlinJsIrCompilationFactory internal constructor(
     override val target: KotlinJsIrTarget,
-) : KotlinCompilationFactory<KotlinJsIrCompilation> {
-    override val itemClass: Class<KotlinJsIrCompilation>
-        get() = KotlinJsIrCompilation::class.java
+) : KotlinCompilationFactory<KotlinJsCompilation> {
+    override val itemClass: Class<KotlinJsCompilation>
+        get() = KotlinJsCompilation::class.java
 
     private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
         compilerOptionsFactory = KotlinJsCompilerOptionsFactory,
@@ -38,7 +39,7 @@ class KotlinJsIrCompilationFactory internal constructor(
         },
     )
 
-    override fun create(name: String): KotlinJsIrCompilation = target.project.objects.newInstance(
+    override fun create(name: String): KotlinJsCompilation = target.project.objects.newInstance(
         itemClass, compilationImplFactory.create(target, name)
     )
 }

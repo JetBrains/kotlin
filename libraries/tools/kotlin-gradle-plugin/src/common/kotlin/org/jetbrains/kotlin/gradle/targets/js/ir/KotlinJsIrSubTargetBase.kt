@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -15,7 +16,7 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
 
     protected val runTaskName = disambiguateCamelCased("run")
 
-    override fun configureRun(compilation: KotlinJsIrCompilation) {
+    override fun configureRun(compilation: KotlinJsCompilation) {
         compilation.binaries
             .withType(JsIrBinary::class.java)
             .matching { it is Executable }
@@ -40,7 +41,7 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
 
     protected abstract fun locateOrRegisterRunTask(binary: JsIrBinary, name: String)
 
-    override fun configureBuild(compilation: KotlinJsIrCompilation) {
+    override fun configureBuild(compilation: KotlinJsCompilation) {
         compilation.binaries
             .getIrBinaries(KotlinJsBinaryMode.PRODUCTION)
             .matching { it is Executable }
@@ -49,7 +50,7 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
             }
     }
 
-    override fun configureLibrary(compilation: KotlinJsIrCompilation) {
+    override fun configureLibrary(compilation: KotlinJsCompilation) {
         super.configureLibrary(compilation)
 
         compilation.binaries

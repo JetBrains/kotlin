@@ -65,7 +65,7 @@ interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
-    override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
+    override val compilations: NamedDomainObjectContainer<KotlinJsCompilation>
 }
 
 interface KotlinTargetWithNodeJsDsl {

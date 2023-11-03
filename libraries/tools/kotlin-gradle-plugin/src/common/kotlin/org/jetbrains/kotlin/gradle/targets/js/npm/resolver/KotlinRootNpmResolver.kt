@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
@@ -68,7 +67,7 @@ class KotlinRootNpmResolver internal constructor(
         check(mainCompilations.size <= maxMainCompilationsCount) { errorMessage }
         for (npmResolver in mainCompilations) {
             when (val compilation = npmResolver.compilation) {
-                is KotlinJsIrCompilation -> {
+                is KotlinJsCompilation -> {
                     if (compilation.platformType == KotlinPlatformType.wasm) {
                         val jsTarget = compilation.target as KotlinJsIrTarget
                         if (jsTarget.wasmTargetType == KotlinWasmTargetType.JS) {

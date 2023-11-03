@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
@@ -78,7 +77,7 @@ class KotlinCompilationNpmResolver(
             it.npmResolutionManager.value(npmResolutionManager)
                 .disallowChanges()
 
-            it.jsIrCompilation.set(compilation is KotlinJsIrCompilation)
+            it.jsIrCompilation.set(true)
             it.npmProjectName.set(npmProject.name)
             it.npmProjectMain.set(npmProject.main)
             it.esModules.set(compilation.compilerOptions.options.moduleKind.get() == JsModuleKind.MODULE_ES)

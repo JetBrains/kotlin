@@ -46,7 +46,7 @@ constructor(
     project: Project,
     platformType: KotlinPlatformType,
 ) :
-    KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
+    KotlinTargetWithBinaries<KotlinJsCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
     KotlinWasmJsTargetDsl,
@@ -127,7 +127,7 @@ constructor(
         )
 
     override val binaries: KotlinJsBinaryContainer
-        get() = compilations.withType(KotlinJsIrCompilation::class.java)
+        get() = compilations.withType(KotlinJsCompilation::class.java)
             .named(MAIN_COMPILATION_NAME)
             .map { it.binaries }
             .get()

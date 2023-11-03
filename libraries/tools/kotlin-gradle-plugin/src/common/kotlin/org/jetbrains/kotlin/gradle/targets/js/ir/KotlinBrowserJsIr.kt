@@ -15,6 +15,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.utils.archivesName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -104,7 +105,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureRun(
-        compilation: KotlinJsIrCompilation
+        compilation: KotlinJsCompilation
     ) {
         val commonRunTask = registerSubTargetTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
@@ -171,7 +172,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureBuild(
-        compilation: KotlinJsIrCompilation
+        compilation: KotlinJsCompilation
     ) {
         val project = compilation.target.project
 
