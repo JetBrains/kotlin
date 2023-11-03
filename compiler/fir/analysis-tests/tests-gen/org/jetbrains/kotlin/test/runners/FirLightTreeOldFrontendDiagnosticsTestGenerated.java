@@ -20949,6 +20949,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("kt62197.kt")
+            public void testKt62197() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/kt62197.kt");
+            }
+
+            @Test
             @TestMetadata("kt6720_abstractProperty.kt")
             public void testKt6720_abstractProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/kt6720_abstractProperty.kt");

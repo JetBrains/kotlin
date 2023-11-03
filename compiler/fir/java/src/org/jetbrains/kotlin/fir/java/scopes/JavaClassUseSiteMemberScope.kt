@@ -393,12 +393,19 @@ class JavaClassUseSiteMemberScope(
         destination: MutableCollection<FirNamedFunctionSymbol>
     ) {
         val resultsOfIntersectionToSaveInCache = mutableListOf<ResultOfIntersection<FirNamedFunctionSymbol>>()
+        // The special override checker is needed for the case when we're trying to consider e.g. explicitly defined `Long toLong()`
+        // as an override of `long toLong()` which is an enhanced version of `long longValue()`. K1 in such cases used
+        // LazyJavaClassMemberScope.doesOverride, that ignores the return type, so we reproduce the behavior here.
+        // See the test testData/diagnostics/tests/j+k/kt62197.kt and the issue KT-62197 for more details.
+        // TODO: consider some more transparent approach
+        val overrideCheckerForSpecialFunctions =
+            JavaOverrideChecker(session, klass.javaTypeParameterStack, superTypeScopes, considerReturnTypeKinds = false)
         val intersectionResults =
             supertypeScopeContext.convertGroupedCallablesToIntersectionResults(functionsFromSupertypesWithRequestedName)
         for (resultOfIntersectionWithNaturalName in intersectionResults) {
             val someSymbolWithNaturalNameFromSuperType = resultOfIntersectionWithNaturalName.extractSomeSymbolFromSuperType()
             val explicitlyDeclaredFunctionWithNaturalName = explicitlyDeclaredFunctionsWithNaturalName.firstOrNull {
-                overrideChecker.isOverriddenFunction(it, someSymbolWithNaturalNameFromSuperType)
+                overrideCheckerForSpecialFunctions.isOverriddenFunction(it, someSymbolWithNaturalNameFromSuperType)
             }
             val jvmName = resultOfIntersectionWithNaturalName.overriddenMembers.firstNotNullOfOrNull {
                 it.member.getJvmMethodNameIfSpecial(it.baseScope, session)
