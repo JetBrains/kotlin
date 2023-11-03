@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeAliasSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
@@ -347,15 +344,24 @@ class Fir2IrClassifierStorage(
         } else {
             irParent.origin
         }
+        val symbol = createEnumEntrySymbol(enumEntry)
         return classifiersGenerator.createIrEnumEntry(
             enumEntry,
             irParent = irParent,
+            symbol,
             predefinedOrigin = predefinedOrigin
         ).also {
             enumEntryCache[enumEntry] = it
         }
     }
 
+    private fun createEnumEntrySymbol(enumEntry: FirEnumEntry): IrEnumEntrySymbol {
+        val signature = signatureComposer.composeSignature(enumEntry)
+        return when {
+            signature != null -> symbolTable.referenceEnumEntry(signature)
+            else -> IrEnumEntrySymbolImpl()
+        }
+    }
 
     // ------------------------------------ typealiases ------------------------------------
 

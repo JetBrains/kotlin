@@ -342,43 +342,34 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
 
     // ------------------------------------ enum entries ------------------------------------
 
-    private fun declareIrEnumEntry(signature: IdSignature?, factory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry {
-        return if (signature == null)
-            factory(IrEnumEntrySymbolImpl())
-        else
-            symbolTable.declareEnumEntry(signature, { IrEnumEntryPublicSymbolImpl(signature) }, factory)
-    }
-
     fun createIrEnumEntry(
         enumEntry: FirEnumEntry,
         irParent: IrClass,
+        symbol: IrEnumEntrySymbol,
         predefinedOrigin: IrDeclarationOrigin? = null,
     ): IrEnumEntry {
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
-            val signature = signatureComposer.composeSignature(enumEntry)
-            declareIrEnumEntry(signature) { symbol ->
-                val origin = enumEntry.computeIrOrigin(predefinedOrigin)
-                irFactory.createEnumEntry(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = enumEntry.name,
-                    symbol = symbol,
-                ).apply {
-                    declarationStorage.enterScope(this.symbol)
-                    setParent(irParent)
-                    addDeclarationToParent(this, irParent)
-                    if (isEnumEntryWhichRequiresSubclass(enumEntry)) {
-                        // An enum entry with its own members requires an anonymous object generated.
-                        // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
-                        // which will be translated via visitor later.
-                        val klass = classifierStorage.getIrAnonymousObjectForEnumEntry(
-                            (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject, enumEntry.name, irParent
-                        )
-                        this.correspondingClass = klass
-                    }
-                    declarationStorage.leaveScope(this.symbol)
+            val origin = enumEntry.computeIrOrigin(predefinedOrigin)
+            irFactory.createEnumEntry(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = enumEntry.name,
+                symbol = symbol,
+            ).apply {
+                declarationStorage.enterScope(this.symbol)
+                setParent(irParent)
+                addDeclarationToParent(this, irParent)
+                if (isEnumEntryWhichRequiresSubclass(enumEntry)) {
+                    // An enum entry with its own members requires an anonymous object generated.
+                    // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
+                    // which will be translated via visitor later.
+                    val klass = classifierStorage.getIrAnonymousObjectForEnumEntry(
+                        (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject, enumEntry.name, irParent
+                    )
+                    this.correspondingClass = klass
                 }
+                declarationStorage.leaveScope(this.symbol)
             }
         }
     }
