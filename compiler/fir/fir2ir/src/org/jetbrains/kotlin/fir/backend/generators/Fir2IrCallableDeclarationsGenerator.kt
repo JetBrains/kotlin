@@ -84,6 +84,7 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
     fun createIrFunction(
         function: FirFunction,
         irParent: IrDeclarationParent?,
+        symbol: IrSimpleFunctionSymbol,
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -109,26 +110,9 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 fakeOverrideOwnerLookupTag
             )
         }
-        val parentIsExternal = irParent.isExternalParent()
-        // We don't generate signatures for local classes
-        // We attempt to avoid signature generation for non-local classes, with the following exceptions:
-        // - special mode (generateSignatures) oriented on special backend modes
-        // - lazy classes (they still use signatures)
-        // - primitive types (they can be from built-ins and don't have FIR counterpart)
-        // - overrides and fake overrides (sometimes we perform "receiver replacement" in FIR2IR breaking FIR->IR relation,
-        // or FIR counterpart can be just created on the fly)
-        val signature =
-            runUnless(
-                isLocal ||
-                        !configuration.linkViaSignatures && !parentIsExternal &&
-                        function.dispatchReceiverType?.isPrimitive != true && function.containerSource == null &&
-                        updatedOrigin != IrDeclarationOrigin.FAKE_OVERRIDE && !function.isOverride
-            ) {
-                signatureComposer.composeSignature(function, fakeOverrideOwnerLookupTag)
-            }
-        if (parentIsExternal && signature != null) {
+        if (irParent.isExternalParent()) {
             // For private functions signature is null, fallback to non-lazy function
-            return lazyDeclarationsGenerator.createIrLazyFunction(function as FirSimpleFunction, signature, irParent!!, updatedOrigin)
+            return lazyDeclarationsGenerator.createIrLazyFunction(function as FirSimpleFunction, symbol, irParent!!, updatedOrigin)
         }
         val name = simpleFunction?.name
             ?: if (isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
@@ -138,44 +122,42 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(session) == true
             else function.isSuspend
         val created = function.convertWithOffsets { startOffset, endOffset ->
-            declareIrSimpleFunction(signature) { symbol ->
-                classifierStorage.preCacheTypeParameters(function, symbol)
-                irFactory.createSimpleFunction(
-                    startOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
-                    endOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else endOffset,
-                    origin = updatedOrigin,
-                    name = name,
-                    visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                    isInline = simpleFunction?.isInline == true,
-                    isExpect = simpleFunction?.isExpect == true,
-                    returnType = function.returnTypeRef.toIrType(),
-                    modality = simpleFunction?.modality ?: Modality.FINAL,
-                    symbol = symbol,
-                    isTailrec = simpleFunction?.isTailRec == true,
-                    isSuspend = isSuspend,
-                    isOperator = simpleFunction?.isOperator == true,
-                    isInfix = simpleFunction?.isInfix == true,
-                    isExternal = simpleFunction?.isExternal == true,
-                    containerSource = simpleFunction?.containerSource,
-                ).apply {
-                    metadata = FirMetadataSource.Function(function)
-                    declarationStorage.withScope(symbol) {
-                        /*
-                         * `isLocal = true` indicates that a function is local or member of a local class
-                         * containingClassLookupTag allows to distinguish those two cases
-                         */
-                        setParent(irParent)
-                        if (!(isLocal && function.containingClassLookupTag() == null)) {
-                            addDeclarationToParent(this, irParent)
-                        }
-                        declareParameters(
-                            function, irParent,
-                            dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
-                            isStatic = simpleFunction?.isStatic == true,
-                            forSetter = false,
-                        )
-                        convertAnnotationsForNonDeclaredMembers(function, origin)
+            classifierStorage.preCacheTypeParameters(function, symbol)
+            irFactory.createSimpleFunction(
+                startOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else startOffset,
+                endOffset = if (updatedOrigin == IrDeclarationOrigin.DELEGATED_MEMBER) SYNTHETIC_OFFSET else endOffset,
+                origin = updatedOrigin,
+                name = name,
+                visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                isInline = simpleFunction?.isInline == true,
+                isExpect = simpleFunction?.isExpect == true,
+                returnType = function.returnTypeRef.toIrType(),
+                modality = simpleFunction?.modality ?: Modality.FINAL,
+                symbol = symbol,
+                isTailrec = simpleFunction?.isTailRec == true,
+                isSuspend = isSuspend,
+                isOperator = simpleFunction?.isOperator == true,
+                isInfix = simpleFunction?.isInfix == true,
+                isExternal = simpleFunction?.isExternal == true,
+                containerSource = simpleFunction?.containerSource,
+            ).apply {
+                metadata = FirMetadataSource.Function(function)
+                declarationStorage.withScope(symbol) {
+                    /*
+                     * `isLocal = true` indicates that a function is local or member of a local class
+                     * containingClassLookupTag allows to distinguish those two cases
+                     */
+                    setParent(irParent)
+                    if (!(isLocal && function.containingClassLookupTag() == null)) {
+                        addDeclarationToParent(this, irParent)
                     }
+                    declareParameters(
+                        function, irParent,
+                        dispatchReceiverType = computeDispatchReceiverType(this, simpleFunction, irParent),
+                        isStatic = simpleFunction?.isStatic == true,
+                        forSetter = false,
+                    )
+                    convertAnnotationsForNonDeclaredMembers(function, origin)
                 }
             }
         }

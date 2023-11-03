@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
@@ -312,9 +313,14 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrSimpleFunction {
+        val signature = runIf(!isLocal && configuration.linkViaSignatures) {
+            signatureComposer.composeSignature(function, fakeOverrideOwnerLookupTag)
+        }
+
         val irFunction = callablesGenerator.createIrFunction(
             function,
             irParent,
+            createFunctionSymbol(signature),
             predefinedOrigin,
             isLocal = isLocal,
             fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag
@@ -322,6 +328,13 @@ class Fir2IrDeclarationStorage(
         cacheIrFunction(function, irFunction, fakeOverrideOwnerLookupTag)
 
         return irFunction
+    }
+
+    internal fun createFunctionSymbol(signature: IdSignature?): IrSimpleFunctionSymbol {
+        return when {
+            signature != null -> symbolTable.referenceSimpleFunction(signature)
+            else -> IrSimpleFunctionSymbolImpl()
+        }
     }
 
     private fun cacheIrFunction(function: FirFunction, irFunction: IrSimpleFunction, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {

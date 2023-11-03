@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyPublicSymbolImpl
@@ -23,25 +24,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
     internal fun createIrLazyFunction(
         fir: FirSimpleFunction,
-        signature: IdSignature,
+        symbol: IrSimpleFunctionSymbol,
         lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrSimpleFunction {
-        val symbol = symbolTable.referenceSimpleFunction(signature)
         val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareSimpleFunction(signature, { symbol }) {
-                val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
-                val isFakeOverride = fir.isFakeOverride(firContainingClass)
-                Fir2IrLazySimpleFunction(
-                    components, startOffset, endOffset, declarationOrigin,
-                    fir, firContainingClass, symbol, isFakeOverride
-                ).apply {
-                    this.parent = lazyParent
-                }
+            val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
+            val isFakeOverride = fir.isFakeOverride(firContainingClass)
+            Fir2IrLazySimpleFunction(
+                components, startOffset, endOffset, declarationOrigin,
+                fir, firContainingClass, symbol, isFakeOverride
+            ).apply {
+                this.parent = lazyParent
+                prepareTypeParameters()
             }
         }
-        // NB: this is needed to prevent recursions in case of self bounds
-        (irFunction as Fir2IrLazySimpleFunction).prepareTypeParameters()
         return irFunction
     }
 
