@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.formver
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
-import org.jetbrains.kotlin.diagnostics.error1
-import org.jetbrains.kotlin.diagnostics.info2
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.warning1
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 object PluginErrors {
     val VIPER_VERIFICATION_ERROR by warning1<PsiElement, String>()
@@ -18,6 +16,7 @@ object PluginErrors {
     val INTERNAL_ERROR by error1<PsiElement, String>()
     val MINOR_INTERNAL_ERROR by error1<PsiElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val UNEXPECTED_RETURNED_VALUE by warning1<PsiElement, String>()
+    val INVALID_INVOCATION_TYPE by warning2<PsiElement, FirBasedSymbol<*>, String>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FormalVerificationPluginErrorMessages)

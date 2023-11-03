@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.formver.reporting
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -34,6 +35,8 @@ class VerifierErrorInterpreter {
                 reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "non-null", context)
             error is PostconditionViolated && role is SourceRole.ReturnsNotNullEffect ->
                 reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "null", context)
+            error is PostconditionViolated && role is SourceRole.CallsInPlaceEffect ->
+                reportOn(source, PluginErrors.INVALID_INVOCATION_TYPE, role.paramSymbol, role.kind.asUserFriendlyMessage, context)
             else -> reportVerificationErrorOriginalViper(source, error, context)
         }
     }
@@ -81,4 +84,13 @@ class VerifierErrorInterpreter {
         is ConsistencyError -> reportConsistencyError(source, error, context)
         is VerificationError -> reportVerificationError(source, error, errorStyle, context)
     }
+
+    private val EventOccurrencesRange.asUserFriendlyMessage: String
+        get() = when (this) {
+            EventOccurrencesRange.AT_MOST_ONCE -> "at most once"
+            EventOccurrencesRange.EXACTLY_ONCE -> "exactly once"
+            EventOccurrencesRange.AT_LEAST_ONCE -> "at least once"
+            EventOccurrencesRange.MORE_THAN_ONCE -> "more than once"
+            else -> TODO("Unreachable")
+        }
 }

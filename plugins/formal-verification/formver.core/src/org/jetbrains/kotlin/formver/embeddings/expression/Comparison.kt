@@ -27,15 +27,19 @@ data class LtCmp(
 data class LeCmp(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
+    override val sourceRole: SourceRole? = null,
 ) : ComparisonExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.LeCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override fun toViper(ctx: LinearizationContext) =
+        Exp.LeCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition, sourceRole.asInfo)
 }
 
 data class GtCmp(
     override val left: ExpEmbedding,
     override val right: ExpEmbedding,
+    override val sourceRole: SourceRole? = null,
 ) : ComparisonExpression {
-    override fun toViper(ctx: LinearizationContext) = Exp.GtCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition)
+    override fun toViper(ctx: LinearizationContext) =
+        Exp.GtCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition, sourceRole.asInfo)
 }
 
 data class GeCmp(

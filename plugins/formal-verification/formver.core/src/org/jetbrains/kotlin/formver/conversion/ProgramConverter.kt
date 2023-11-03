@@ -185,7 +185,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         return object : FullNamedFunctionSignature, NamedFunctionSignature by subSignature {
             override fun getPreconditions(returnVariable: VariableEmbedding) = subSignature.formalArgs.flatMap { it.pureInvariants() } +
                     subSignature.formalArgs.flatMap { it.accessInvariants() } +
-                    contractVisitor.getPreconditions(symbol) +
+                    contractVisitor.getPreconditions(ContractVisitorContext(returnVariable, symbol)) +
                     subSignature.stdLibPreConditions()
 
             override fun getPostconditions(returnVariable: VariableEmbedding) = subSignature.formalArgs.flatMap { it.accessInvariants() } +
@@ -193,7 +193,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     returnVariable.pureInvariants() +
                     returnVariable.provenInvariants() +
                     returnVariable.accessInvariants() +
-                    contractVisitor.getPostconditions(symbol, ContractVisitorContext(returnVariable)) +
+                    contractVisitor.getPostconditions(ContractVisitorContext(returnVariable, symbol)) +
                     subSignature.stdLibPostConditions(returnVariable)
         }
     }
