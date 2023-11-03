@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
     // ------------------------------------ type parameters ------------------------------------
@@ -62,16 +61,10 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
 
     // ------------------------------------ classes ------------------------------------
 
-    fun declareIrClass(signature: IdSignature?, factory: (IrClassSymbol) -> IrClass): IrClass {
-        return if (signature == null)
-            factory(IrClassSymbolImpl())
-        else
-            symbolTable.declareClass(signature, { IrClassPublicSymbolImpl(signature) }, factory)
-    }
-
     fun createIrClass(
         regularClass: FirRegularClass,
         parent: IrDeclarationParent,
+        symbol: IrClassSymbol,
         predefinedOrigin: IrDeclarationOrigin? = null
     ): IrClass {
         val visibility = regularClass.visibility
@@ -80,31 +73,26 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
             ClassKind.ANNOTATION_CLASS -> Modality.OPEN
             else -> regularClass.modality ?: Modality.FINAL
         }
-        val signature = runUnless(regularClass.isLocal || !configuration.linkViaSignatures) {
-            signatureComposer.composeSignature(regularClass)
-        }
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
-            declareIrClass(signature) { symbol ->
-                irFactory.createClass(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = regularClass.computeIrOrigin(predefinedOrigin),
-                    name = regularClass.name,
-                    visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                    symbol = symbol,
-                    kind = regularClass.classKind,
-                    modality = modality,
-                    isExternal = regularClass.isExternal,
-                    isCompanion = regularClass.isCompanion,
-                    isInner = regularClass.isInner,
-                    isData = regularClass.isData,
-                    isValue = regularClass.isInline,
-                    isExpect = regularClass.isExpect,
-                    isFun = regularClass.isFun,
-                    hasEnumEntries = regularClass.hasEnumEntries,
-                ).apply {
-                    metadata = FirMetadataSource.Class(regularClass)
-                }
+            irFactory.createClass(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = regularClass.computeIrOrigin(predefinedOrigin),
+                name = regularClass.name,
+                visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                symbol = symbol,
+                kind = regularClass.classKind,
+                modality = modality,
+                isExternal = regularClass.isExternal,
+                isCompanion = regularClass.isCompanion,
+                isInner = regularClass.isInner,
+                isData = regularClass.isData,
+                isValue = regularClass.isInline,
+                isExpect = regularClass.isExpect,
+                isFun = regularClass.isFun,
+                hasEnumEntries = regularClass.hasEnumEntries,
+            ).apply {
+                metadata = FirMetadataSource.Class(regularClass)
             }
         }
         /*
@@ -326,40 +314,37 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
 
     // ------------------------------------ code fragments ------------------------------------
 
-    fun createCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile): IrClass {
+    fun createCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile, symbol: IrClassSymbol): IrClass {
         val conversionData = codeFragment.conversionData
-        val signature = signatureComposer.composeSignature(codeFragment)
 
         val irClass = codeFragment.convertWithOffsets { startOffset, endOffset ->
-            declareIrClass(signature) { symbol ->
-                irFactory.createClass(
-                    startOffset,
-                    endOffset,
-                    IrDeclarationOrigin.DEFINED,
-                    conversionData.classId.shortClassName,
-                    DescriptorVisibilities.PUBLIC,
-                    symbol,
-                    ClassKind.CLASS,
-                    Modality.FINAL,
-                    isExternal = false,
-                    isCompanion = false,
-                    isInner = false,
-                    isData = false,
-                    isValue = false,
-                    isExpect = false,
-                    isFun = false,
-                    hasEnumEntries = false,
-                ).apply {
-                    metadata = FirMetadataSource.CodeFragment(codeFragment)
-                    setParent(containingFile)
-                    addDeclarationToParent(this, containingFile)
-                    typeParameters = emptyList()
-                    thisReceiver = declareThisReceiverParameter(
-                        thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
-                        thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
-                    )
-                    superTypes = listOf(irBuiltIns.anyType)
-                }
+            irFactory.createClass(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                conversionData.classId.shortClassName,
+                DescriptorVisibilities.PUBLIC,
+                symbol,
+                ClassKind.CLASS,
+                Modality.FINAL,
+                isExternal = false,
+                isCompanion = false,
+                isInner = false,
+                isData = false,
+                isValue = false,
+                isExpect = false,
+                isFun = false,
+                hasEnumEntries = false,
+            ).apply {
+                metadata = FirMetadataSource.CodeFragment(codeFragment)
+                setParent(containingFile)
+                addDeclarationToParent(this, containingFile)
+                typeParameters = emptyList()
+                thisReceiver = declareThisReceiverParameter(
+                    thisType = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList()),
+                    thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
+                )
+                superTypes = listOf(irBuiltIns.anyType)
             }
         }
         return irClass

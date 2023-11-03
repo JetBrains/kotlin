@@ -13,12 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFieldPublicSymbolImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
     internal fun createIrLazyFunction(
@@ -82,15 +80,11 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
     fun createIrLazyClass(
         firClass: FirRegularClass,
         irParent: IrDeclarationParent,
-    ): IrClass = firClass.convertWithOffsets { startOffset, endOffset ->
+        symbol: IrClassSymbol
+    ): Fir2IrLazyClass = firClass.convertWithOffsets { startOffset, endOffset ->
         val firClassOrigin = firClass.irOrigin(session.firProvider)
-        val signature = runIf(configuration.linkViaSignatures) {
-            signatureComposer.composeSignature(firClass)
-        }
-        classifiersGenerator.declareIrClass(signature) { symbol ->
-            Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol).apply {
-                parent = irParent
-            }
+        Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol).apply {
+            parent = irParent
         }
     }
 

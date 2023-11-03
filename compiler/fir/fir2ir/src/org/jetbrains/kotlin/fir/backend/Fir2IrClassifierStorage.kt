@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
-import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -21,14 +21,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class Fir2IrClassifierStorage(
     private val components: Fir2IrComponents,
@@ -162,9 +166,24 @@ class Fir2IrClassifierStorage(
         parent: IrDeclarationParent,
         predefinedOrigin: IrDeclarationOrigin? = null
     ): IrClass {
-        return classifiersGenerator.createIrClass(regularClass, parent, predefinedOrigin).also {
+        val symbol = createClassSymbol(regularClass)
+        return classifiersGenerator.createIrClass(regularClass, parent, symbol, predefinedOrigin).also {
             @OptIn(LeakedDeclarationCaches::class)
             cacheIrClass(regularClass, it)
+        }
+    }
+
+    private fun createClassSymbol(regularClass: FirRegularClass): IrClassSymbol {
+        val signature = runIf(!regularClass.isLocal && configuration.linkViaSignatures) {
+            signatureComposer.composeSignature(regularClass)
+        }
+        return createClassSymbol(signature)
+    }
+
+    private fun createClassSymbol(signature: IdSignature?): IrClassSymbol {
+        return when {
+            signature != null -> symbolTable.referenceClass(signature)
+            else -> IrClassSymbolImpl()
         }
     }
 
@@ -217,10 +236,11 @@ class Fir2IrClassifierStorage(
         // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
         classifierStorage.getCachedIrClass(firClass)?.let { return it }
 
-        val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent)
+        val symbol = createClassSymbol(firClass)
+        val irClass = lazyDeclarationsGenerator.createIrLazyClass(firClass, irParent, symbol)
         classCache[firClass] = irClass
         // NB: this is needed to prevent recursions in case of self bounds
-        (irClass as Fir2IrLazyClass).prepareTypeParameters()
+        irClass.prepareTypeParameters()
 
         return irClass
 
@@ -359,7 +379,9 @@ class Fir2IrClassifierStorage(
     }
 
     fun createAndCacheCodeFragmentClass(codeFragment: FirCodeFragment, containingFile: IrFile): IrClass {
-        return classifiersGenerator.createCodeFragmentClass(codeFragment, containingFile).also {
+        val signature = signatureComposer.composeSignature(codeFragment)
+        val symbol = createClassSymbol(signature)
+        return classifiersGenerator.createCodeFragmentClass(codeFragment, containingFile, symbol).also {
             codeFragmentCache[codeFragment] = it
         }
     }
