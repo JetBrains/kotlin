@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.isCurrentHost
 import org.jetbrains.kotlin.gradle.targets.KotlinTestRunFactory
+import org.jetbrains.kotlin.gradle.targets.native.internal.XcodeDefaultTestDevicesValueSource
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.XcodeUtils
+import org.jetbrains.kotlin.gradle.utils.valueSourceProviderCompat
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -65,10 +67,15 @@ private inline fun <reified T : KotlinNativeTest> KotlinNativeTarget.registerNat
 
 private fun KotlinNativeSimulatorTest.configureDeviceId(konanTarget: KonanTarget) {
     if (!isEnabled) return
-    val deviceIdProvider = project.provider {
-        XcodeUtils.getDefaultTestDeviceId(konanTarget) ?: error(
-            "Xcode does not support simulator tests for ${konanTarget.name}. Check that requested SDK is installed."
-        )
+    val deviceIdProvider = project.valueSourceProviderCompat(XcodeDefaultTestDevicesValueSource::class.java)
+
+    // Extract primitive values to avoid [target] capture in lambda
+    val konanTargetFamily = konanTarget.family
+    val konanTargetName = konanTarget.name
+
+    val defaultDevice = deviceIdProvider.map {
+        it[konanTargetFamily]
+            ?: error("Xcode does not support simulator tests for ${konanTargetName}. Check that requested SDK is installed.")
     }
-    device.convention(deviceIdProvider).finalizeValueOnRead()
+    device.convention(defaultDevice).finalizeValueOnRead()
 }

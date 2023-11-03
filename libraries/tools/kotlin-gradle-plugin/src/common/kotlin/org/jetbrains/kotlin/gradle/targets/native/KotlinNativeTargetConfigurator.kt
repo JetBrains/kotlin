@@ -6,38 +6,21 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
-import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.Exec
-import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
 import org.jetbrains.kotlin.gradle.artifacts.createKlibArtifact
 import org.jetbrains.kotlin.gradle.artifacts.klibOutputDirectory
-import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
-import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
-import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
-import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.whenEvaluated
-import org.jetbrains.kotlin.gradle.utils.XcodeUtils
 import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.konan.target.HostManager
 
 open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotlinTargetConfigurator<T>(
     createTestCompilation = true
