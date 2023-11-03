@@ -16674,6 +16674,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("innerTvFixationFromLowerConstraints.kt")
+                public void testInnerTvFixationFromLowerConstraints() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/innerTvFixationFromLowerConstraints.kt");
+                }
+
+                @Test
                 @TestMetadata("invalidateKeys.kt")
                 public void testInvalidateKeys() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/invalidateKeys.kt");
