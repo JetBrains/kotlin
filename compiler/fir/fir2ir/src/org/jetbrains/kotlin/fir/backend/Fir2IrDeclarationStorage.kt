@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.classId
@@ -419,7 +420,22 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
     ): IrConstructor {
         // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
-        return callablesGenerator.createIrConstructor(constructor, irParent(), predefinedOrigin, isLocal)
+        val signature = runIf(!isLocal && configuration.linkViaSignatures) {
+            signatureComposer.composeSignature(constructor)
+        }
+        return callablesGenerator.createIrConstructor(
+            constructor,
+            irParent(),
+            createConstructorSymbol(signature),
+            predefinedOrigin
+        )
+    }
+
+    private fun createConstructorSymbol(signature: IdSignature?): IrConstructorSymbol {
+        return when {
+            signature != null -> symbolTable.referenceConstructor(signature)
+            else -> IrConstructorSymbolImpl()
+        }
     }
 
     @LeakedDeclarationCaches

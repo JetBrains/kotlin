@@ -178,29 +178,16 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
 
     // ------------------------------------ constructors ------------------------------------
 
-    private fun declareIrConstructor(signature: IdSignature?, factory: (IrConstructorSymbol) -> IrConstructor): IrConstructor {
-        return if (signature == null)
-            factory(IrConstructorSymbolImpl())
-        else
-            symbolTable.declareConstructor(signature, { IrConstructorPublicSymbolImpl(signature) }, factory)
-    }
-
     fun createIrConstructor(
         constructor: FirConstructor,
         irParent: IrClass,
+        symbol: IrConstructorSymbol,
         predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false,
     ): IrConstructor = convertCatching(constructor) {
         val origin = constructor.computeIrOrigin(predefinedOrigin, irParent.origin)
         val isPrimary = constructor.isPrimary
-        // we need to compose signature even if `linkViaSignatures` set to false, because otherwise we will never
-        // create lazy constructor (it requires not nullable signature)
-        val signature = runUnless(isLocal) {
-            signatureComposer.composeSignature(constructor)
-        }
-
-        if (irParent is Fir2IrLazyClass && signature != null) {
-            val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, signature, origin, irParent) as Fir2IrLazyConstructor
+        if (irParent is Fir2IrLazyClass) {
+            val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent) as Fir2IrLazyConstructor
             // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
             // with the annotation itself.
             @OptIn(LeakedDeclarationCaches::class)
@@ -210,32 +197,30 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }
         val visibility = if (irParent.isAnonymousObject) Visibilities.Public else constructor.visibility
         return constructor.convertWithOffsets { startOffset, endOffset ->
-            declareIrConstructor(signature.takeIf { components.configuration.linkViaSignatures }) { symbol ->
-                classifierStorage.preCacheTypeParameters(constructor, symbol)
-                irFactory.createConstructor(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = SpecialNames.INIT,
-                    visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                    isInline = false,
-                    isExpect = constructor.isExpect,
-                    returnType = constructor.returnTypeRef.toIrType(),
-                    symbol = symbol,
-                    isPrimary = isPrimary,
-                    isExternal = false,
-                ).apply {
-                    metadata = FirMetadataSource.Function(constructor)
-                    annotationGenerator.generate(this, constructor)
-                    // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
-                    // with the annotation itself.
-                    @OptIn(LeakedDeclarationCaches::class)
-                    declarationStorage.cacheIrConstructor(constructor, this)
-                    declarationStorage.withScope(symbol) {
-                        setParent(irParent)
-                        addDeclarationToParent(this, irParent)
-                        declareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)
-                    }
+            classifierStorage.preCacheTypeParameters(constructor, symbol)
+            irFactory.createConstructor(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = SpecialNames.INIT,
+                visibility = components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                isInline = false,
+                isExpect = constructor.isExpect,
+                returnType = constructor.returnTypeRef.toIrType(),
+                symbol = symbol,
+                isPrimary = isPrimary,
+                isExternal = false,
+            ).apply {
+                metadata = FirMetadataSource.Function(constructor)
+                annotationGenerator.generate(this, constructor)
+                // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
+                // with the annotation itself.
+                @OptIn(LeakedDeclarationCaches::class)
+                declarationStorage.cacheIrConstructor(constructor, this)
+                declarationStorage.withScope(symbol) {
+                    setParent(irParent)
+                    addDeclarationToParent(this, irParent)
+                    declareParameters(constructor, irParent, dispatchReceiverType = null, isStatic = false, forSetter = false)
                 }
             }
         }
