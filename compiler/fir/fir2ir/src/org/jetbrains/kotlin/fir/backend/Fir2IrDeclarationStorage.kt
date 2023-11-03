@@ -578,7 +578,7 @@ class Fir2IrDeclarationStorage(
         }
 
         val backingFieldSymbol = runIf(property.delegate != null || property.hasBackingField) {
-            createFieldSymbol()
+            createFieldSymbol(signature = null)
         }
 
         return PropertySymbols(propertySymbol, getterSymbol, setterSymbol, backingFieldSymbol)
@@ -798,8 +798,12 @@ class Fir2IrDeclarationStorage(
         type: ConeKotlinType = field.returnTypeRef.coneType,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     ): IrField {
-        val irField = callablesGenerator.createIrField(field, irParent, type, origin)
         val containingClassLookupTag = (irParent as IrClass?)?.classId?.toLookupTag()
+        val signature = signatureComposer.composeSignature(field, containingClassLookupTag)
+        val symbol = createFieldSymbol(signature)
+
+        val irField = callablesGenerator.createIrField(field, irParent, symbol, type, origin)
+
         val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(field, containingClassLookupTag)
         if (staticFakeOverrideKey == null) {
             fieldCache[field] = irField.symbol
@@ -809,8 +813,11 @@ class Fir2IrDeclarationStorage(
         return irField
     }
 
-    private fun createFieldSymbol(): IrFieldSymbol {
-        return IrFieldSymbolImpl()
+    private fun createFieldSymbol(signature: IdSignature?): IrFieldSymbol {
+        return when {
+            signature != null -> symbolTable.referenceField(signature)
+            else -> IrFieldSymbolImpl()
+        }
     }
 
     // This function returns null if this field/ownerClassId combination does not describe static fake override

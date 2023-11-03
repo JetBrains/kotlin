@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldPublicSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -95,16 +96,14 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
 
     fun createIrLazyField(
         fir: FirField,
-        signature: IdSignature,
+        symbol: IrFieldSymbol,
         lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrField {
         return fir.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareField(signature, symbolFactory = { IrFieldPublicSymbolImpl(signature) }) { symbol ->
-                Fir2IrLazyField(
-                    components, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol
-                )
-            }
+            Fir2IrLazyField(
+                components, startOffset, endOffset, declarationOrigin, fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol
+            )
         }
     }
 }

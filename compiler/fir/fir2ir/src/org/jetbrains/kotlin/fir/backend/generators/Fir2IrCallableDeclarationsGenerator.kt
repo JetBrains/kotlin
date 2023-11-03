@@ -549,56 +549,35 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
     internal fun createIrField(
         field: FirField,
         irParent: IrDeclarationParent?,
+        symbol: IrFieldSymbol,
         type: ConeKotlinType = field.returnTypeRef.coneType,
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     ): IrField = convertCatching(field) {
         val irType = type.toIrType()
-        val classId = (irParent as? IrClass)?.classId
-        val containingClassLookupTag = classId?.toLookupTag()
-        val signature = signatureComposer.composeSignature(field, containingClassLookupTag)
 
         val parentIsExternal = irParent.isExternalParent()
-        if (field is FirJavaField && field.isStatic && field.isFinal && parentIsExternal && signature != null) {
+        if (field is FirJavaField && field.isStatic && field.isFinal && parentIsExternal) {
             // We are going to create IR for Java static final fields lazily because they can refer to some Kotlin const.
             // This way we delay const evaluation of Java fields until IR tree is fully built, and we can run IR interpreter.
-            return lazyDeclarationsGenerator.createIrLazyField(field, signature, irParent!!, origin).apply {
+            return lazyDeclarationsGenerator.createIrLazyField(field, symbol, irParent!!, origin).apply {
                 setParent(irParent)
                 addDeclarationToParent(this, irParent)
             }
         }
 
         return field.convertWithOffsets { startOffset, endOffset ->
-            if (signature != null) {
-                symbolTable.declareField(
-                    signature, symbolFactory = { IrFieldPublicSymbolImpl(signature) }
-                ) { symbol ->
-                    irFactory.createField(
-                        startOffset = startOffset,
-                        endOffset = endOffset,
-                        origin = origin,
-                        name = field.name,
-                        visibility = components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
-                        symbol = symbol,
-                        type = irType,
-                        isFinal = field.modality == Modality.FINAL,
-                        isStatic = field.isStatic,
-                        isExternal = false
-                    )
-                }
-            } else {
-                irFactory.createField(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = field.name,
-                    visibility = components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
-                    symbol = IrFieldSymbolImpl(),
-                    type = irType,
-                    isFinal = field.modality == Modality.FINAL,
-                    isStatic = field.isStatic,
-                    isExternal = false
-                )
-            }.apply {
+            irFactory.createField(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = field.name,
+                visibility = components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
+                symbol = symbol,
+                type = irType,
+                isFinal = field.modality == Modality.FINAL,
+                isStatic = field.isStatic,
+                isExternal = false
+            ).apply {
                 metadata = FirMetadataSource.Field(field)
                 val initializer = field.unwrapFakeOverrides().initializer
                 if (initializer is FirConstExpression<*>) {
