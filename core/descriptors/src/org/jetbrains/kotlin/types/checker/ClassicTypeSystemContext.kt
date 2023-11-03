@@ -618,6 +618,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
+    override fun createSubstitutionFromSubtypingStubTypesToTypeVariables(): TypeSubstitutorMarker {
+        error("Only for K2")
+    }
+
     override fun TypeSubstitutorMarker.safeSubstitute(type: KotlinTypeMarker): KotlinTypeMarker {
         require(type is UnwrappedType, type::errorMessage)
         require(this is TypeSubstitutor, this::errorMessage)
