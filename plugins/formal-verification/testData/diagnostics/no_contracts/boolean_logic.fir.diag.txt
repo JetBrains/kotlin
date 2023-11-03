@@ -12,12 +12,10 @@ method global$fun_conjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(loca
   local$y: Bool)
   returns (ret$0: Bool)
 {
-  var anonymous$0: Bool
   if (local$x) {
-    anonymous$0 := local$y
+    ret$0 := local$y
   } else {
-    anonymous$0 := false}
-  ret$0 := anonymous$0
+    ret$0 := false}
   goto label$ret$0
   label label$ret$0
 }
@@ -28,15 +26,11 @@ method global$fun_conjunction_side_effects$fun_take$T_Boolean$T_Boolean$return$T
   returns (ret$0: Bool)
 {
   var anonymous$0: Bool
-  var anonymous$1: Bool
   anonymous$0 := global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$x)
   if (anonymous$0) {
-    var anonymous$2: Bool
-    anonymous$2 := global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$y)
-    anonymous$1 := anonymous$2
+    ret$0 := global$fun_negation$fun_take$T_Boolean$return$T_Boolean(local$y)
   } else {
-    anonymous$1 := false}
-  ret$0 := anonymous$1
+    ret$0 := false}
   goto label$ret$0
   label label$ret$0
 }
@@ -50,12 +44,10 @@ method global$fun_disjunction$fun_take$T_Boolean$T_Boolean$return$T_Boolean(loca
   local$y: Bool)
   returns (ret$0: Bool)
 {
-  var anonymous$0: Bool
   if (local$x) {
-    anonymous$0 := true
+    ret$0 := true
   } else {
-    anonymous$0 := local$y}
-  ret$0 := anonymous$0
+    ret$0 := local$y}
   goto label$ret$0
   label label$ret$0
 }

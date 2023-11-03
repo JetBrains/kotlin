@@ -21,12 +21,10 @@ method global$fun_initialization$fun_take$T_class_pkg$kotlin$collections$global$
   ensures local$l.special$size >= 0
 {
   var local0$myList: Ref
-  var anonymous$0: Ref
   var local0$myEmptyList: Ref
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
   local0$myList := local$l
-  anonymous$0 := pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
-  local0$myEmptyList := anonymous$0
+  local0$myEmptyList := pkg$kotlin$collections$global$fun_emptyList$fun_take$$return$T_class_pkg$kotlin$collections$global$class_List()
   label label$ret$0
 }
 
@@ -49,14 +47,12 @@ method global$fun_add_get$fun_take$T_class_pkg$kotlin$collections$global$class_M
   ensures local$l.special$size >= 0
 {
   var anonymous$0: Bool
-  var anonymous$1: Int
   var local0$n: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_MutableList())
   anonymous$0 := pkg$kotlin$collections$class_MutableList$fun_add$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Boolean(local$l,
     1)
-  anonymous$1 := pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(local$l,
+  local0$n := pkg$kotlin$collections$class_MutableList$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_MutableList$T_Int$return$T_Int(local$l,
     0)
-  local0$n := anonymous$1
   label label$ret$0
 }
 
@@ -93,23 +89,19 @@ method global$fun_last_or_null$fun_take$T_class_pkg$kotlin$collections$global$cl
   ensures local$l.special$size >= 0
   ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
 {
-  var anonymous$0: Int
   var local0$size: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
-  anonymous$0 := local$l.special$size
-  local0$size := anonymous$0
-  if (true) {
-    if (!(local0$size == 0)) {
-      var anonymous$1: Int
-      anonymous$1 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
-        local0$size - 1)
-      ret$0 := (dom$Casting$cast(anonymous$1, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
-      goto label$ret$0
-    } else {
-      ret$0 := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
-        dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
-      goto label$ret$0
-    }
+  local0$size := local$l.special$size
+  if (!(local0$size == 0)) {
+    var anonymous$0: Int
+    anonymous$0 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
+      local0$size - 1)
+    ret$0 := (dom$Casting$cast(anonymous$0, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+    goto label$ret$0
+  } else {
+    ret$0 := (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
+      dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
+    goto label$ret$0
   }
   label label$ret$0
 }
@@ -136,20 +128,14 @@ method global$fun_is_empty$fun_take$T_class_pkg$kotlin$collections$global$class_
   ensures acc(local$l.special$size, write)
   ensures local$l.special$size >= 0
 {
-  var anonymous$0: Int
+  var anonymous$0: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$pkg$kotlin$collections$global$class_List())
-  if (true) {
-    var anonymous$1: Bool
-    anonymous$1 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$l)
-    if (!anonymous$1) {
-      var anonymous$2: Int
-      anonymous$2 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
-        0)
-      anonymous$0 := anonymous$2
-    } else {
-      anonymous$0 := 1}
-  }
-  ret$0 := anonymous$0
+  anonymous$0 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean(local$l)
+  if (!anonymous$0) {
+    ret$0 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int(local$l,
+      0)
+  } else {
+    ret$0 := 1}
   goto label$ret$0
   label label$ret$0
 }
@@ -193,33 +179,28 @@ method global$fun_nullable_list$fun_take$NT_class_pkg$kotlin$collections$global$
     (dom$Casting$cast(local$l, dom$Type$pkg$kotlin$collections$global$class_List()): Ref).special$size >=
     0
 {
+  var anonymous$0: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$l): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$collections$global$class_List()))
-  if (true) {
-    var anonymous$0: Bool
-    if (!(local$l == (dom$Nullable$null(): dom$Nullable[Ref]) &&
-    (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
-    (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
-    local$l != (dom$Nullable$null(): dom$Nullable[Ref]) &&
-    (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
-    (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
-    (dom$Casting$cast(local$l, dom$Type$pkg$kotlin$collections$global$class_List()): Ref) ==
-    (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$collections$global$class_List()): Ref))) {
-      var anonymous$1: Bool
-      anonymous$1 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean((dom$Casting$cast(local$l,
-        dom$Type$pkg$kotlin$collections$global$class_List()): Ref))
-      anonymous$0 := !anonymous$1
-    } else {
-      anonymous$0 := false}
-    if (anonymous$0) {
-      var anonymous$2: Int
-      var anonymous$3: Int
-      var local4$x: Int
-      anonymous$2 := (dom$Casting$cast(local$l, dom$Type$pkg$kotlin$collections$global$class_List()): Ref).special$size
-      anonymous$3 := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int((dom$Casting$cast(local$l,
-        dom$Type$pkg$kotlin$collections$global$class_List()): Ref), anonymous$2 -
-        1)
-      local4$x := anonymous$3
-    }
+  if (!(local$l == (dom$Nullable$null(): dom$Nullable[Ref]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
+  local$l != (dom$Nullable$null(): dom$Nullable[Ref]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
+  (dom$Casting$cast(local$l, dom$Type$pkg$kotlin$collections$global$class_List()): Ref) ==
+  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$collections$global$class_List()): Ref))) {
+    var anonymous$1: Bool
+    anonymous$1 := pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin$collections$global$class_List$return$T_Boolean((dom$Casting$cast(local$l,
+      dom$Type$pkg$kotlin$collections$global$class_List()): Ref))
+    anonymous$0 := !anonymous$1
+  } else {
+    anonymous$0 := false}
+  if (anonymous$0) {
+    var local2$x: Int
+    local2$x := pkg$kotlin$collections$class_List$fun_get$fun_take$T_class_pkg$kotlin$collections$global$class_List$T_Int$return$T_Int((dom$Casting$cast(local$l,
+      dom$Type$pkg$kotlin$collections$global$class_List()): Ref), (dom$Casting$cast(local$l,
+      dom$Type$pkg$kotlin$collections$global$class_List()): Ref).special$size -
+      1)
   }
   label label$ret$0
 }
@@ -245,3 +226,4 @@ method pkg$kotlin$collections$class_List$fun_isEmpty$fun_take$T_class_pkg$kotlin
   ensures this.special$size == old(this.special$size)
   ensures ret ==> this.special$size == 0
   ensures !ret ==> this.special$size > 0
+

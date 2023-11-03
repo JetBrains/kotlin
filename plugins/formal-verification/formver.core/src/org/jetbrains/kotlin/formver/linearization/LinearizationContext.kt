@@ -23,7 +23,6 @@ interface LinearizationContext : SeqnBuildContext {
 
     fun freshAnonVar(type: TypeEmbedding): Exp.LocalVar
 
-    fun inhaleForThisStatement(assumption: Exp)
     fun asBlock(action: LinearizationContext.() -> Unit): Stmt.Seqn
     fun <R> withPosition(newSource: KtSourceElement, action: LinearizationContext.() -> R): R
 }

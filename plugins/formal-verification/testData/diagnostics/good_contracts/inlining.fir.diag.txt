@@ -8,33 +8,29 @@ method global$fun_call_invoke$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(
   ensures local$g.special$function_object_call_counter >
     old(local$g.special$function_object_call_counter)
 {
-  var ret$1: Int
   var local0$z: Int
+  var ret$1: Int
+  var local1$x: Int
+  var anonymous$0: Int
+  var anonymous$1: Int
   var ret$2: Int
+  var local2$x: Int
+  var anonymous$2: Int
+  var anonymous$3: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
-  if (true) {
-    var anonymous$0: Int
-    var local1$x: Int
-    var anonymous$1: Int
-    special$invoke_function_object(local$g)
-    local1$x := anonymous$0
-    special$invoke_function_object(local$g)
-    ret$1 := anonymous$1
-    goto label$ret$1
-    label label$ret$1
-  }
+  special$invoke_function_object(local$g)
+  local1$x := anonymous$0
+  special$invoke_function_object(local$g)
+  ret$1 := anonymous$1
+  goto label$ret$1
+  label label$ret$1
   local0$z := ret$1
-  if (true) {
-    var anonymous$2: Int
-    var local2$x: Int
-    var anonymous$3: Int
-    special$invoke_function_object(local$g)
-    local2$x := anonymous$2
-    special$invoke_function_object(local$g)
-    ret$2 := anonymous$3
-    goto label$ret$2
-    label label$ret$2
-  }
+  special$invoke_function_object(local$g)
+  local2$x := anonymous$2
+  special$invoke_function_object(local$g)
+  ret$2 := anonymous$3
+  goto label$ret$2
+  label label$ret$2
   ret$0 := ret$2
   goto label$ret$0
   label label$ret$0
@@ -50,33 +46,31 @@ method global$fun_call_invoke_with_int$fun_take$fun_take$T_Int$return$T_Int$retu
   ensures local$g.special$function_object_call_counter >
     old(local$g.special$function_object_call_counter)
 {
+  var local0$z: Int
   var ret$1: Int
   var anonymous$0: Int
-  var local0$z: Int
+  var local1$x: Int
   var anonymous$2: Int
   var ret$2: Int
+  var anonymous$1: Int
+  var anonymous$3: Int
+  var local2$x: Int
+  var anonymous$4: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$g): dom$Type), dom$Type$Function())
   anonymous$0 := 1
-  if (true) {
-    var local1$x: Int
-    var anonymous$1: Int
-    local1$x := anonymous$0 + anonymous$0
-    special$invoke_function_object(local$g)
-    ret$1 := anonymous$1
-    goto label$ret$1
-    label label$ret$1
-  }
+  local1$x := anonymous$0 + anonymous$0
+  special$invoke_function_object(local$g)
+  ret$1 := anonymous$2
+  goto label$ret$1
+  label label$ret$1
   local0$z := ret$1
   special$invoke_function_object(local$g)
-  if (true) {
-    var local2$x: Int
-    var anonymous$3: Int
-    local2$x := anonymous$2 + anonymous$2
-    special$invoke_function_object(local$g)
-    ret$2 := anonymous$3
-    goto label$ret$2
-    label label$ret$2
-  }
+  anonymous$1 := anonymous$3
+  local2$x := anonymous$1 + anonymous$1
+  special$invoke_function_object(local$g)
+  ret$2 := anonymous$4
+  goto label$ret$2
+  label label$ret$2
   ret$0 := ret$2
   goto label$ret$0
   label label$ret$0
@@ -92,31 +86,27 @@ method global$fun_name_clashes$fun_take$fun_take$T_Int$return$T_Int$return$T_Int
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var ret$1: Int
   var local0$x: Int
+  var ret$1: Int
+  var local1$x: Int
+  var anonymous$0: Int
+  var anonymous$1: Int
   var ret$2: Int
+  var local2$x: Int
+  var anonymous$2: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  if (true) {
-    var anonymous$0: Int
-    var local1$x: Int
-    var anonymous$1: Int
-    special$invoke_function_object(local$f)
-    local1$x := anonymous$0
-    special$invoke_function_object(local$f)
-    ret$1 := anonymous$1
-    goto label$ret$1
-    label label$ret$1
-  }
+  special$invoke_function_object(local$f)
+  local1$x := anonymous$0
+  special$invoke_function_object(local$f)
+  ret$1 := anonymous$1
+  goto label$ret$1
+  label label$ret$1
   local0$x := ret$1
-  if (true) {
-    var local2$x: Int
-    var anonymous$2: Int
-    local2$x := local0$x + local0$x
-    special$invoke_function_object(local$f)
-    ret$2 := anonymous$2
-    goto label$ret$2
-    label label$ret$2
-  }
+  local2$x := local0$x + local0$x
+  special$invoke_function_object(local$f)
+  ret$2 := anonymous$2
+  goto label$ret$2
+  label label$ret$2
   ret$0 := ret$2
   goto label$ret$0
   label label$ret$0
@@ -132,34 +122,32 @@ method global$fun_different_return_type$fun_take$fun_take$T_Int$return$T_Int$ret
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var ret$1: Int
   var local0$x: Int
+  var ret$1: Int
+  var local1$x: Int
+  var anonymous$0: Int
+  var anonymous$1: Int
+  var anonymous$2: Int
   var ret$2: Int
+  var local2$x: Int
+  var anonymous$3: Int
+  var anonymous$4: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  if (true) {
-    var anonymous$0: Int
-    var local1$x: Int
-    var anonymous$1: Int
-    special$invoke_function_object(local$f)
-    local1$x := anonymous$0
-    special$invoke_function_object(local$f)
-    ret$1 := anonymous$1
-    goto label$ret$1
-    label label$ret$1
-  }
+  special$invoke_function_object(local$f)
+  local1$x := anonymous$0
+  special$invoke_function_object(local$f)
+  ret$1 := anonymous$1
+  goto label$ret$1
+  label label$ret$1
   local0$x := ret$1
-  if (true) {
-    var anonymous$2: Int
-    var local2$x: Int
-    var anonymous$3: Int
-    special$invoke_function_object(local$f)
-    local2$x := anonymous$2
-    special$invoke_function_object(local$f)
-    ret$2 := anonymous$3
-    goto label$ret$2
-    label label$ret$2
-  }
-  ret$0 := local0$x == ret$2
+  special$invoke_function_object(local$f)
+  local2$x := anonymous$3
+  special$invoke_function_object(local$f)
+  ret$2 := anonymous$4
+  goto label$ret$2
+  label label$ret$2
+  anonymous$2 := ret$2
+  ret$0 := local0$x == anonymous$2
   goto label$ret$0
   label label$ret$0
 }

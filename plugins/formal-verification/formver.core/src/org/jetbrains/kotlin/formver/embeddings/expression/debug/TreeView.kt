@@ -18,9 +18,6 @@ interface TreeView {
         get() = widthGuess <= availableSpace
 }
 
-val TreeView.pretty: String
-    get() = print()
-
 fun TreeView.print(): String {
     val printer = Printer()
     printer.print(this)
@@ -71,14 +68,12 @@ class PlaintextLeaf(val text: String) : TreeView {
     }
 }
 
-
 class OperatorNode(val left: TreeView, val op: String, val right: TreeView) : TreeView {
-    private val fixedExtraWidth = 2
-    override val widthGuess: Int = left.widthGuess + right.widthGuess + op.length + fixedExtraWidth
+    override val widthGuess: Int = left.widthGuess + right.widthGuess + op.length
 
     override fun Printer.printImpl() {
         print(left)
-        print(" $op ")
+        print(op)
         print(right)
     }
 }
@@ -88,7 +83,7 @@ class OperatorNode(val left: TreeView, val op: String, val right: TreeView) : Tr
  *
  * `LabeledNode` would also be an appropriate name, but we already use the term "label" frequently.
  */
-fun designatedNode(label: String, node: TreeView) = OperatorNode(PlaintextLeaf(label), "=", node)
+fun designatedNode(label: String, node: TreeView) = OperatorNode(PlaintextLeaf(label), " = ", node)
 
 interface SeparationScheme {
     val begin: String

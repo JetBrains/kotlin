@@ -43,21 +43,19 @@ method global$fun_returns_null_with_if$fun_take$NT_Int$NT_Int$NT_Int$return$NT_I
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$y): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$z): dom$Type), dom$Type$special$Nullable(dom$Type$Int()))
-  if (true) {
-    if (local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
-    (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
-    (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
-    local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
-    (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
-    (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
-    (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
-    (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)) {
-      ret$0 := local$y
-      goto label$ret$0
-    } else {
-      ret$0 := local$z
-      goto label$ret$0
-    }
+  if (local$x == (dom$Nullable$null(): dom$Nullable[Int]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
+  local$x != (dom$Nullable$null(): dom$Nullable[Int]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
+  (dom$Casting$cast(local$x, dom$Type$Int()): Int) ==
+  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$Int()): Int)) {
+    ret$0 := local$y
+    goto label$ret$0
+  } else {
+    ret$0 := local$z
+    goto label$ret$0
   }
   label label$ret$0
 }

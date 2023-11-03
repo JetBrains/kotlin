@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.formver.linearization
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.debug.print
 import org.jetbrains.kotlin.formver.viper.ast.Declaration
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
@@ -27,10 +28,6 @@ class PureLinearizer(override val source: KtSourceElement?) : LinearizationConte
 
     override fun freshAnonVar(type: TypeEmbedding): Exp.LocalVar {
         throw PureLinearizerMisuseException("newVar")
-    }
-
-    override fun inhaleForThisStatement(assumption: Exp) {
-        throw PureLinearizerMisuseException("inhaleForThisStatement")
     }
 
     override fun asBlock(action: LinearizationContext.() -> Unit): Stmt.Seqn {
@@ -54,7 +51,7 @@ fun ExpEmbedding.pureToViper(source: KtSourceElement? = null): Exp {
         return toViper(PureLinearizer(source))
     } catch (e: PureLinearizerMisuseException) {
         val msg =
-            "PureLinearizer used to convert non-pure ExpEmbedding $this; operation ${e.offendingFunction} is not supported in a pure context."
+            "PureLinearizer used to convert non-pure ExpEmbedding; operation ${e.offendingFunction} is not supported in a pure context.\nEmbedding debug view:\n${debugTreeView.print()}"
         throw IllegalStateException(msg)
     }
 }

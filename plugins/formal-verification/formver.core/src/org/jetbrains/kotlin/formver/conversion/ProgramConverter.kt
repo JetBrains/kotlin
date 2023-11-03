@@ -21,14 +21,15 @@ import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.*
+import org.jetbrains.kotlin.formver.embeddings.expression.FunctionExp
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
+import org.jetbrains.kotlin.formver.linearization.Linearizer
 import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
-import org.jetbrains.kotlin.formver.linearization.pureToViper
+import org.jetbrains.kotlin.formver.linearization.SharedLinearizationState
 import org.jetbrains.kotlin.formver.names.*
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Method
 import org.jetbrains.kotlin.formver.viper.ast.Program
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 /**
@@ -43,13 +44,13 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     private val classes: MutableMap<MangledName, ClassTypeEmbedding> = mutableMapOf()
     private val properties: MutableMap<MangledName, PropertyEmbedding> = mutableMapOf()
 
-    override val anonNameProducer = simpleFreshEntityProducer { AnonymousName(it) }
     override val whileIndexProducer = indexProducer()
     override val catchLabelNameProducer = simpleFreshEntityProducer { CatchLabelName(it) }
     override val tryExitLabelNameProducer = simpleFreshEntityProducer { TryExitLabelName(it) }
     override val scopeIndexProducer = indexProducer()
 
-    // For some reason, type deduction does not seem to work here.
+    // The type annotation is necessary for the code to compile.
+    override val anonVarProducer = FreshEntityProducer { n, type: TypeEmbedding -> VariableEmbedding(AnonymousName(n), type) }
     override val returnTargetProducer = FreshEntityProducer { n, type: TypeEmbedding -> ReturnTarget(n, type) }
 
     val program: Program
@@ -273,19 +274,11 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                     RootParameterResolver(this, signature.sourceName, returnTarget),
                     scopeIndexProducer.getFresh(),
                 )
-            val stmtCtx = StmtConverter(methodCtx, SeqnBuilder(it.source), NoopResultTrackerFactory)
-            signature.formalArgs.forEach { arg ->
-                // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
-                // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
-                // provenInvariants don't contain permissions.
-                arg.provenInvariants().forEach { invariant ->
-                    stmtCtx.addStatement(Stmt.Inhale(invariant.pureToViper()))
-                }
-            }
-            stmtCtx.addDeclaration(returnTarget.label.toDecl())
-            stmtCtx.convert(it)
-            stmtCtx.addStatement(returnTarget.label.toStmt())
-            stmtCtx.block
+            val stmtCtx = StmtConverter(methodCtx)
+            val bodyExp = FunctionExp(signature, stmtCtx.convert(it), returnTarget.label)
+            val linearizer = Linearizer(SharedLinearizationState(anonVarProducer), SeqnBuilder(declaration.source), declaration.source)
+            bodyExp.toViperUnusedResult(linearizer)
+            linearizer.block
         }
 
         return signature.toViperMethod(body, returnTarget.variable, declaration.source.asPosition)

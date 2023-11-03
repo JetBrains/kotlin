@@ -15,14 +15,10 @@ method class_IntWrapper$getter_succ(this: Ref) returns (ret: Int)
 method global$fun_testGetter$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var local0$wrapper: Ref
-  var anonymous$1: Int
   var local0$succ: Int
-  anonymous$0 := class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
-  local0$wrapper := anonymous$0
-  anonymous$1 := class_IntWrapper$getter_succ(local0$wrapper)
-  local0$succ := anonymous$1
+  local0$wrapper := class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
+  local0$succ := class_IntWrapper$getter_succ(local0$wrapper)
   label label$ret$0
 }
 
@@ -54,29 +50,21 @@ method class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Fo
 method global$fun_testCascadeGetter$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var local0$foo: Ref
-  var anonymous$1: Ref
   var local0$bar: Ref
-  var anonymous$2: Ref
-  var anonymous$3: Int
   var local0$bfa: Int
-  var anonymous$4: Ref
-  var anonymous$5: Int
+  var anonymous$0: Ref
   var local0$bfb: Int
-  anonymous$0 := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
+  var anonymous$1: Ref
+  local0$foo := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
     20)
-  local0$foo := anonymous$0
-  anonymous$1 := class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local0$foo)
-  local0$bar := anonymous$1
-  anonymous$2 := local0$bar.class_Bar$member_f
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$global$class_Foo())
-  anonymous$3 := anonymous$2.class_Foo$member_a
-  local0$bfa := anonymous$3
-  anonymous$4 := local0$bar.class_Bar$member_f
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$4): dom$Type), dom$Type$global$class_Foo())
-  anonymous$5 := anonymous$4.class_Foo$member_b
-  local0$bfb := anonymous$5
+  local0$bar := class_Bar$constructor$fun_take$T_class_global$class_Foo$return$T_class_global$class_Bar(local0$foo)
+  anonymous$0 := local0$bar.class_Bar$member_f
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Foo())
+  local0$bfa := anonymous$0.class_Foo$member_a
+  anonymous$1 := local0$bar.class_Bar$member_f
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$global$class_Foo())
+  local0$bfb := anonymous$1.class_Foo$member_b
   label label$ret$0
 }
 
@@ -107,18 +95,14 @@ method class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWr
 method global$fun_testCascadeCustomGetters$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
-  var anonymous$1: Ref
   var local0$wrapper: Ref
-  var anonymous$2: Ref
-  var anonymous$3: Int
+  var anonymous$0: Ref
   var local0$succ: Int
+  var anonymous$1: Ref
   anonymous$0 := class_IntWrapper$constructor$fun_take$T_Int$return$T_class_global$class_IntWrapper(42)
-  anonymous$1 := class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(anonymous$0)
-  local0$wrapper := anonymous$1
-  anonymous$2 := local0$wrapper.class_IntWrapperContainer$member_i
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$global$class_IntWrapper())
-  anonymous$3 := class_IntWrapper$getter_succ(anonymous$2)
-  local0$succ := anonymous$3
+  local0$wrapper := class_IntWrapperContainer$constructor$fun_take$T_class_global$class_IntWrapper$return$T_class_global$class_IntWrapperContainer(anonymous$0)
+  anonymous$1 := local0$wrapper.class_IntWrapperContainer$member_i
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$global$class_IntWrapper())
+  local0$succ := class_IntWrapper$getter_succ(anonymous$1)
   label label$ret$0
 }

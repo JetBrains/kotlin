@@ -23,31 +23,19 @@ method class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(loca
 method global$fun_onlySecondConstructors$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var local0$f1: Ref
-  var anonymous$1: Int
   var local0$shouldBeOne: Int
-  var anonymous$2: Ref
   var local0$f2: Ref
-  var anonymous$3: Int
   var local0$shouldBeAnswer: Int
-  var anonymous$4: Ref
   var local0$f3: Ref
-  var anonymous$5: Int
   var local0$test: Int
-  anonymous$0 := class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(true)
-  local0$f1 := anonymous$0
-  anonymous$1 := local0$f1.class_Foo$member_a
-  local0$shouldBeOne := anonymous$1
-  anonymous$2 := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
-  local0$f2 := anonymous$2
-  anonymous$3 := local0$f2.class_Foo$member_a
-  local0$shouldBeAnswer := anonymous$3
-  anonymous$4 := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
+  local0$f1 := class_Foo$constructor$fun_take$T_Boolean$return$T_class_global$class_Foo(true)
+  local0$shouldBeOne := local0$f1.class_Foo$member_a
+  local0$f2 := class_Foo$constructor$fun_take$T_Int$return$T_class_global$class_Foo(42)
+  local0$shouldBeAnswer := local0$f2.class_Foo$member_a
+  local0$f3 := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
     32)
-  local0$f3 := anonymous$4
-  anonymous$5 := local0$f3.class_Foo$member_a
-  local0$test := anonymous$5
+  local0$test := local0$f3.class_Foo$member_a
   label label$ret$0
 }
 
@@ -69,21 +57,13 @@ method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(loca
 method global$fun_primaryAndSecondConstructor$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var local0$b1: Ref
-  var anonymous$1: Int
   var local0$shouldBeZero: Int
-  var anonymous$2: Ref
   var local0$b2: Ref
-  var anonymous$3: Int
   var local0$shouldBeAnswer: Int
-  anonymous$0 := class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(false)
-  local0$b1 := anonymous$0
-  anonymous$1 := local0$b1.class_Bar$member_a
-  local0$shouldBeZero := anonymous$1
-  anonymous$2 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(42)
-  local0$b2 := anonymous$2
-  anonymous$3 := local0$b2.class_Bar$member_a
-  local0$shouldBeAnswer := anonymous$3
+  local0$b1 := class_Bar$constructor$fun_take$T_Boolean$return$T_class_global$class_Bar(false)
+  local0$shouldBeZero := local0$b1.class_Bar$member_a
+  local0$b2 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(42)
+  local0$shouldBeAnswer := local0$b2.class_Bar$member_a
   label label$ret$0
 }

@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.domains.CastingDomain
-import org.jetbrains.kotlin.formver.domains.TypeDomain
-import org.jetbrains.kotlin.formver.domains.TypeOfDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.*
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
+import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.PermExp
@@ -285,46 +283,67 @@ sealed interface UnitResultExpEmbedding : OnlyToViperExpEmbedding {
 
 fun List<ExpEmbedding>.toViper(ctx: LinearizationContext): List<Exp> = map { it.toViper(ctx) }
 
-fun ExpEmbedding.withType(newType: TypeEmbedding): ExpEmbedding =
-    if (newType == type) this else Cast(this, newType)
+/**
+ * Field access that does not care about permissions.
+ *
+ * This is convenient to have for implementing the other operations.
+ */
+data class PrimitiveFieldAccess(override val inner: ExpEmbedding, val field: FieldEmbedding) : UnaryDirectResultExpEmbedding {
+    override val type: TypeEmbedding
+        get() = this.field.type
 
-fun ExpEmbedding.withPosition(source: KtSourceElement?): ExpEmbedding =
-    when {
-        // Inner position is more specific anyway
-        this is WithPosition -> this
-        source == null -> this
-        else -> WithPosition(this, source)
+    override fun toViper(ctx: LinearizationContext): Exp = Exp.FieldAccess(inner.toViper(ctx), field.toViper(), ctx.source.asPosition)
+
+    override val debugTreeView: TreeView
+        get() = OperatorNode(inner.debugTreeView, ".", this.field.debugTreeView)
+}
+
+data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : DefaultMaybeStoringInExpEmbedding {
+    override val type: TypeEmbedding = field.type
+    private val accessInvariant = field.accessInvariantForAccess()
+    private val noInvariants: Boolean
+        get() = accessInvariant == null
+
+    override fun toViper(ctx: LinearizationContext): Exp {
+        if (noInvariants) return Exp.FieldAccess(receiver.toViper(ctx), field.toViper(), ctx.source.asPosition)
+
+        val variable = ctx.freshAnonVar(type)
+        toViperStoringIn(variable, ctx)
+        return variable
     }
 
-fun List<ExpEmbedding>.toConjunction(): ExpEmbedding =
-    if (isEmpty()) BooleanLit(true)
-    else reduce { l, r -> And(l, r) }
+    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+        val receiverViper = receiver.toViper(ctx)
+        val fieldAccess = PrimitiveFieldAccess(ExpWrapper(receiverViper, receiver.type), field)
+        val invariant = accessInvariant?.fillHole(ExpWrapper(receiverViper, receiver.type))?.pureToViper(ctx.source)
+        invariant?.let { ctx.addStatement(Stmt.Inhale(it, ctx.source.asPosition)) }
+        ctx.addStatement(Stmt.LocalVarAssign(result, fieldAccess.pureToViper(ctx.source), ctx.source.asPosition))
+        invariant?.let { ctx.addStatement(Stmt.Exhale(it, ctx.source.asPosition)) }
+    }
 
+    override fun toViperUnusedResult(ctx: LinearizationContext) {
+        receiver.toViperUnusedResult(ctx)
+    }
 
-data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbedding) : UnaryDirectResultExpEmbedding {
-    override val type = BooleanTypeEmbedding
-
-    override fun toViper(ctx: LinearizationContext) =
-        TypeDomain.isSubtype(TypeOfDomain.typeOf(inner.toViper(ctx)), comparisonType.runtimeType, pos = ctx.source.asPosition)
+    override val debugTreeView: TreeView
+        get() = OperatorNode(receiver.debugTreeView, ".", this.field.debugTreeView)
 }
 
-// TODO: probably casts need to be more flexible when it comes to containing result-less nodes.
-data class Cast(override val inner: ExpEmbedding, override val type: TypeEmbedding) : UnaryDirectResultExpEmbedding {
-    override fun toViper(ctx: LinearizationContext) = CastingDomain.cast(inner.toViper(ctx), type, ctx.source)
-    override fun ignoringCasts(): ExpEmbedding = inner.ignoringCasts()
-    override fun ignoringCastsAndMetaNodes(): ExpEmbedding = inner.ignoringCastsAndMetaNodes()
+/**
+ * Represents a combination of `Assign` + `FieldAccess`.
+ */
+data class FieldModification(val receiver: ExpEmbedding, val field: FieldEmbedding, val newValue: ExpEmbedding) : UnitResultExpEmbedding {
+    override fun toViperSideEffects(ctx: LinearizationContext) {
+        val receiverViper = receiver.toViper(ctx)
+        val newValueViper = newValue.withType(field.type).toViper(ctx)
+        val invariant = field.accessInvariantForAccess()?.fillHole(ExpWrapper(receiverViper, receiver.type))?.pureToViper(ctx.source)
+        invariant?.let { ctx.addStatement(Stmt.Inhale(it, ctx.source.asPosition)) }
+        ctx.addStatement(Stmt.FieldAssign(Exp.FieldAccess(receiverViper, field.toViper()), newValueViper, ctx.source.asPosition))
+        invariant?.let { ctx.addStatement(Stmt.Exhale(it, ctx.source.asPosition)) }
+    }
 
-    override val debugExtraSubtrees: List<TreeView>
-        get() = listOf(type.debugTreeView.withDesignation("target"))
-}
-
-data class FieldAccess(override val inner: ExpEmbedding, val field: FieldEmbedding) : UnaryDirectResultExpEmbedding {
-    override val type: TypeEmbedding = field.type
-    override fun toViper(ctx: LinearizationContext) = Exp.FieldAccess(inner.toViper(ctx), field.toViper(), ctx.source.asPosition)
-
-    // field collides with the field context-sensitive keyword.
-    override val debugExtraSubtrees: List<TreeView>
-        get() = listOf(this.field.debugTreeView)
+    override val debugTreeView: TreeView
+        get() = OperatorNode(OperatorNode(receiver.debugTreeView, ".", this.field.debugTreeView), " := ", newValue.debugTreeView)
 }
 
 data class FieldAccessPermissions(override val inner: ExpEmbedding, val field: FieldEmbedding, val perm: PermExp) :
@@ -332,14 +351,12 @@ data class FieldAccessPermissions(override val inner: ExpEmbedding, val field: F
     // We consider access permissions to have type Boolean, though this is a bit questionable.
     override val type: TypeEmbedding = BooleanTypeEmbedding
 
-    override fun toViper(ctx: LinearizationContext): Exp {
-        val expViper = inner.toViper(ctx)
-        return expViper.fieldAccessPredicate(field.toViper(), perm, ctx.source.asPosition)
-    }
+    override fun toViper(ctx: LinearizationContext): Exp =
+        inner.toViper(ctx).fieldAccessPredicate(field.toViper(), perm, ctx.source.asPosition)
 
     // field collides with the field context-sensitive keyword.
     override val debugExtraSubtrees: List<TreeView>
-        get() = listOf(this.field.debugTreeView)
+        get() = listOf(this.field.debugTreeView, perm.debugTreeView)
 }
 
 // Ideally we would use the predicate, but due to the possibility of recursion this is inconvenient at present.
@@ -367,12 +384,12 @@ data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpE
             rhs.withType(lhs.type).toViperStoringIn(lhsViper, ctx)
         } else {
             val rhsViper = rhs.withType(lhs.type).toViper(ctx)
-            ctx.addStatement(Stmt.assign(lhsViper, rhsViper))
+            ctx.addStatement(Stmt.assign(lhsViper, rhsViper, ctx.source.asPosition))
         }
     }
 
     override val debugTreeView: TreeView
-        get() = OperatorNode(lhs.debugTreeView, ":=", rhs.debugTreeView)
+        get() = OperatorNode(lhs.debugTreeView, " := ", rhs.debugTreeView)
 }
 
 data class Declare(val variable: VariableEmbedding, val initializer: ExpEmbedding?) : UnitResultExpEmbedding,
@@ -380,7 +397,7 @@ data class Declare(val variable: VariableEmbedding, val initializer: ExpEmbeddin
     override val type: TypeEmbedding = UnitTypeEmbedding
 
     override fun toViperSideEffects(ctx: LinearizationContext) {
-        ctx.addDeclaration(variable.toLocalVarDecl())
+        ctx.addDeclaration(variable.toLocalVarDecl(ctx.source.asPosition))
         initializer?.toViperStoringIn(variable.toLocalVarUse(), ctx)
     }
 

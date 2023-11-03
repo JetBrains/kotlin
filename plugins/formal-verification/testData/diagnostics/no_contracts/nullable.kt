@@ -31,7 +31,7 @@ fun <!VIPER_TEXT!>elvis_operator_complex<!>(x: Int?): Int {
     return pass_nullable_parameter(x) ?: elvis_operator(2)
 }
 
-fun <!VIPER_TEXT!>evlis_operator_return<!>(x: Int?): Int {
+fun <!VIPER_TEXT!>elvis_operator_return<!>(x: Int?): Int {
     val y = x ?: return 0
     return y
 }

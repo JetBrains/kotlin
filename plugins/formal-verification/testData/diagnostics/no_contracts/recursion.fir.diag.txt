@@ -2,9 +2,7 @@
 method global$fun_recursive$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: dom$Unit
-  anonymous$0 := global$fun_recursive$fun_take$$return$T_Unit()
-  ret$0 := anonymous$0
+  ret$0 := global$fun_recursive$fun_take$$return$T_Unit()
   goto label$ret$0
   label label$ret$0
 }

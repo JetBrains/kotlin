@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 
 interface GetterEmbedding {
-    fun getValue(receiver: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>, source: KtSourceElement?): ExpEmbedding
+    fun getValue(receiver: ExpEmbedding, ctx: StmtConversionContext): ExpEmbedding
 }

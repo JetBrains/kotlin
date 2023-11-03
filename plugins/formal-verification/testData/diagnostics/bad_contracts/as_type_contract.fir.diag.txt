@@ -8,21 +8,19 @@ method global$fun_getX$fun_take$T_Any$return$NT_Int(local$a: dom$Any)
     !dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$global$class_IntHolder())
 {
   var anonymous$0: dom$Nullable[Ref]
-  var anonymous$1: dom$Nullable[Int]
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$Any())
-  if (dom$Type$isSubtype((dom$TypeOf$typeOf(local$a): dom$Type), dom$Type$global$class_IntHolder())) {
+  if ((dom$Casting$cast(local$a, dom$Type$special$Nullable(dom$Type$Any())): dom$Nullable[dom$Any]) !=
+  (dom$Nullable$null(): dom$Nullable[dom$Any])) {
     anonymous$0 := (dom$Casting$cast(local$a, dom$Type$special$Nullable(dom$Type$global$class_IntHolder())): dom$Nullable[Ref])
-    inhale acc((dom$Casting$cast(anonymous$0, dom$Type$global$class_IntHolder()): Ref).class_IntHolder$member_x, wildcard)
   } else {
     anonymous$0 := (dom$Nullable$null(): dom$Nullable[Ref])}
-  if (anonymous$0 == (dom$Nullable$null(): dom$Nullable[Ref])) {
-    anonymous$1 := (dom$Nullable$null(): dom$Nullable[Int])
+  inhale anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref]) ==>
+    acc((dom$Casting$cast(anonymous$0, dom$Type$global$class_IntHolder()): Ref).class_IntHolder$member_x, wildcard)
+  if (anonymous$0 != (dom$Nullable$null(): dom$Nullable[Ref])) {
+    ret$0 := (dom$Casting$cast((dom$Casting$cast(anonymous$0, dom$Type$global$class_IntHolder()): Ref).class_IntHolder$member_x,
+      dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
   } else {
-    var anonymous$2: Int
-    anonymous$2 := (dom$Casting$cast(anonymous$0, dom$Type$global$class_IntHolder()): Ref).class_IntHolder$member_x
-    anonymous$1 := (dom$Casting$cast(anonymous$2, dom$Type$special$Nullable(dom$Type$Int())): dom$Nullable[Int])
-  }
-  ret$0 := anonymous$1
+    ret$0 := (dom$Nullable$null(): dom$Nullable[Int])}
   goto label$ret$0
   label label$ret$0
 }

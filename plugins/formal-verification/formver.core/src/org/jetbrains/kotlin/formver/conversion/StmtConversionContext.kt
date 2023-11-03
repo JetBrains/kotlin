@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirCatch
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.formver.calleeSymbol
-import org.jetbrains.kotlin.formver.embeddings.*
+import org.jetbrains.kotlin.formver.embeddings.ClassPropertyAccess
+import org.jetbrains.kotlin.formver.embeddings.PropertyAccessEmbedding
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.asPropertyAccess
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
-import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.LambdaExp
-import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
-import org.jetbrains.kotlin.formver.linearization.SeqnBuildContext
-import org.jetbrains.kotlin.formver.linearization.pureToViper
-import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.embeddings.expression.*
 import org.jetbrains.kotlin.formver.viper.ast.Label
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.name.Name
  * - Functions that return a new `StmtConversionContext` should describe what change they make (`addResult`, `removeResult`...)
  * - Functions that take a lambda to execute should describe what extra state the lambda will have (`withResult`...)
  */
-interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConversionContext, SeqnBuildContext, ResultTrackingContext {
-    val resultCtx: RTC
+interface StmtConversionContext : MethodConversionContext {
     val whenSubject: VariableEmbedding?
 
     /**
@@ -45,106 +44,69 @@ interface StmtConversionContext<out RTC : ResultTrackingContext> : MethodConvers
     fun breakLabel(targetName: String? = null): Label
     fun addLoopName(targetName: String)
     fun convert(stmt: FirStatement): ExpEmbedding
-    fun store(exp: ExpEmbedding): VariableEmbedding
 
-    fun removeResult(): StmtConversionContext<NoopResultTracker>
-    fun addResult(variable: VariableEmbedding): StmtConversionContext<VarResultTrackingContext>
+    fun <R> withNewScope(action: StmtConversionContext.() -> R): R
+    fun <R> withMethodCtx(factory: MethodContextFactory, action: StmtConversionContext.() -> R): R
 
-    fun withNewScopeToBlock(action: StmtConversionContext<RTC>.() -> Unit): Stmt.Seqn
-    fun <R> withMethodCtx(factory: MethodContextFactory, action: StmtConversionContext<RTC>.() -> R): R
-
-    fun <R> withFreshWhile(action: StmtConversionContext<RTC>.() -> R): R
-    fun <R> withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> R): R
-    fun <R> withCheckedSafeCallSubject(subject: ExpEmbedding?, action: StmtConversionContext<RTC>.() -> R): R
-    fun withCatches(
+    fun <R> withFreshWhile(label: FirLabel?, action: StmtConversionContext.() -> R): R
+    fun <R> withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext.() -> R): R
+    fun <R> withCheckedSafeCallSubject(subject: ExpEmbedding?, action: StmtConversionContext.() -> R): R
+    fun <R> withCatches(
         catches: List<FirCatch>,
-        action: StmtConversionContext<RTC>.(catchBlockListData: CatchBlockListData) -> Unit,
-    ): CatchBlockListData
+        action: StmtConversionContext.(catchBlockListData: CatchBlockListData) -> R,
+    ): Pair<CatchBlockListData, R>
 }
 
-fun <RTC : ResultTrackingContext> StmtConversionContext<RTC>.nonDeterministically(action: StmtConversionContext<RTC>.() -> Unit) {
-    val branchVar = freshAnonVar(BooleanTypeEmbedding)
-    addDeclaration(branchVar.toLocalVarDecl())
-    addStatement(Stmt.If(branchVar.pureToViper(), withNewScopeToBlock(action), Stmt.Seqn()))
-}
-
-fun StmtConversionContext<ResultTrackingContext>.convertAndStore(exp: FirExpression): VariableEmbedding = store(convert(exp))
-
-fun StmtConversionContext<ResultTrackingContext>.convertAndCapture(exp: FirExpression) {
-    resultCtx.capture(convert(exp))
-}
-
-fun StmtConversionContext<ResultTrackingContext>.declareLocal(
+fun StmtConversionContext.declareLocal(
     name: Name,
     type: TypeEmbedding,
     initializer: ExpEmbedding?,
-    pos: KtSourceElement? = null,
-): VariableEmbedding {
+): Declare {
     registerLocalPropertyName(name)
     val varEmb = VariableEmbedding(resolveLocalPropertyName(name), type)
-    addDeclaration(varEmb.toLocalVarDecl())
-    initializer?.let { varEmb.setValue(it, this, pos) }
-    return varEmb
+    return Declare(varEmb, initializer)
 }
 
-fun StmtConversionContext<ResultTrackingContext>.embedPropertyAccess(symbol: FirPropertyAccessExpression): PropertyAccessEmbedding =
-    when (val calleeSymbol = symbol.calleeSymbol) {
+fun StmtConversionContext.declareAnonLocal(
+    type: TypeEmbedding,
+    initializer: ExpEmbedding?,
+): Declare = Declare(freshAnonVar(type), initializer)
+
+fun StmtConversionContext.embedPropertyAccess(accessExpression: FirPropertyAccessExpression): PropertyAccessEmbedding =
+    when (val calleeSymbol = accessExpression.calleeSymbol) {
         is FirValueParameterSymbol -> embedParameter(calleeSymbol).asPropertyAccess()
         is FirPropertySymbol -> when {
-            symbol.dispatchReceiver != null -> {
+            accessExpression.dispatchReceiver != null -> {
                 val property = embedProperty(calleeSymbol)
-                ClassPropertyAccess(convert(symbol.dispatchReceiver!!), property)
+                ClassPropertyAccess(convert(accessExpression.dispatchReceiver!!), property)
             }
-            symbol.extensionReceiver != null -> {
+            accessExpression.extensionReceiver != null -> {
                 val property = embedProperty(calleeSymbol)
-                ClassPropertyAccess(convert(symbol.extensionReceiver!!), property)
+                ClassPropertyAccess(convert(accessExpression.extensionReceiver!!), property)
             }
             else -> embedLocalProperty(calleeSymbol)
         }
         else -> throw IllegalStateException("Property access symbol $calleeSymbol has unsupported type.")
     }
 
-fun StmtConversionContext<ResultTrackingContext>.addResult(type: TypeEmbedding): StmtConversionContext<VarResultTrackingContext> =
-    addResult(freshAnonVar(type))
-
-fun StmtConversionContext<ResultTrackingContext>.withResult(
-    type: TypeEmbedding,
-    action: StmtConversionContext<VarResultTrackingContext>.() -> Unit,
-): VariableEmbedding = withResult(freshAnonVar(type), action)
-
-fun StmtConversionContext<ResultTrackingContext>.withResult(
-    variable: VariableEmbedding,
-    action: StmtConversionContext<VarResultTrackingContext>.() -> Unit,
-): VariableEmbedding {
-    val ctx = addResult(variable)
-    ctx.action()
-    return ctx.resultCtx.resultVar
-}
-
-fun <RTC : ResultTrackingContext, R> StmtConversionContext<RTC>.withNewScope(action: StmtConversionContext<RTC>.() -> R): R {
-    // Funny, if we could put a contract on `withNewScopeToBlock` we could do this with `val`, but we can't because of inheritance.
-    var result: R? = null
-    val block = withNewScopeToBlock {
-        result = action()
-    }
-    // NOTE: Putting the block inside the then branch of an if-true statement is a little hack to make Viper respect the scoping
-    addStatement(Stmt.If(Exp.BoolLit(true), block, Stmt.Seqn()))
-    return result!!
-}
-
-fun StmtConversionContext<ResultTrackingContext>.getInlineFunctionCallArgs(
+fun StmtConversionContext.getInlineFunctionCallArgs(
     args: List<ExpEmbedding>,
-): List<ExpEmbedding> = args.map { exp ->
-    when (exp.ignoringMetaNodes()) {
-        is VariableEmbedding -> exp
-        is LambdaExp -> exp
-        else -> withResult(exp.type) {
-            resultCtx.resultVar.setValue(exp, this, null)
+): Pair<List<Declare>, List<ExpEmbedding>> {
+    val declarations = mutableListOf<Declare>()
+    val storedArgs = args.map { arg ->
+        when (arg.ignoringMetaNodes()) {
+            is VariableEmbedding, is LambdaExp -> arg
+            else -> {
+                val paramVarDecl = declareAnonLocal(arg.type, arg)
+                declarations.add(paramVarDecl)
+                paramVarDecl.variable
+            }
         }
     }
+    return Pair(declarations, storedArgs)
 }
 
-fun StmtConversionContext<ResultTrackingContext>.insertInlineFunctionCall(
+fun StmtConversionContext.insertInlineFunctionCall(
     calleeSignature: FunctionSignature,
     paramNames: List<Name>,
     args: List<ExpEmbedding>,
@@ -152,20 +114,24 @@ fun StmtConversionContext<ResultTrackingContext>.insertInlineFunctionCall(
     returnTargetName: String?,
     parentCtx: MethodConversionContext? = null,
 ): ExpEmbedding {
+    // TODO: It seems like it may be possible to avoid creating a local here, but it is not clear how.
     val returnTarget = returnTargetProducer.getFresh(calleeSignature.returnType)
-    return withResult(returnTarget.variable) {
-        val callArgs = getInlineFunctionCallArgs(args)
-        val subs = paramNames.zip(callArgs).toMap()
-        val methodCtxFactory = MethodContextFactory(
-            calleeSignature,
-            InlineParameterResolver(subs, returnTargetName, returnTarget),
-            parentCtx,
+    val (declarations, callArgs) = getInlineFunctionCallArgs(args)
+    val subs = paramNames.zip(callArgs).toMap()
+    val methodCtxFactory = MethodContextFactory(
+        calleeSignature,
+        InlineParameterResolver(subs, returnTargetName, returnTarget),
+        parentCtx,
+    )
+    return withMethodCtx(methodCtxFactory) {
+        Block(
+            buildList {
+                add(Declare(returnTarget.variable, null))
+                addAll(declarations)
+                add(FunctionExp(null, convert(body), returnTarget.label))
+                add(returnTarget.variable)
+            }
         )
-        withMethodCtx(methodCtxFactory) {
-            convert(body)
-            addDeclaration(returnTarget.label.toDecl())
-            addStatement(returnTarget.label.toStmt())
-        }
     }
 }
 

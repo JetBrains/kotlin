@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.embeddings.NothingTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
@@ -24,7 +25,7 @@ data class ExpWrapper(val value: Exp, override val type: TypeEmbedding) : PureEx
 data object ErrorExp : NoResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override val type: TypeEmbedding = NothingTypeEmbedding
     override fun toViperUnusedResult(ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.Inhale(Exp.BoolLit(false)))
+        ctx.addStatement(Stmt.Inhale(Exp.BoolLit(false), ctx.source.asPosition))
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -33,7 +34,7 @@ data object ErrorExp : NoResultExpEmbedding, DefaultDebugTreeViewImplementation 
 
 data class Assert(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.Assert(exp.toViper(ctx)))
+        ctx.addStatement(Stmt.Assert(exp.toViper(ctx), ctx.source.asPosition))
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -48,18 +49,10 @@ data class Assert(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugT
  */
 data class InhaleDirect(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperSideEffects(ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.Inhale(exp.toViper(ctx)))
+        ctx.addStatement(Stmt.Inhale(exp.toViper(ctx), ctx.source.asPosition))
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
         get() = listOf(exp)
 }
 
-data class ExhaleDirect(val exp: ExpEmbedding) : UnitResultExpEmbedding, DefaultDebugTreeViewImplementation {
-    override fun toViperSideEffects(ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.Exhale(exp.toViper(ctx)))
-    }
-
-    override val debugAnonymousSubexpressions: List<ExpEmbedding>
-        get() = listOf(exp)
-}

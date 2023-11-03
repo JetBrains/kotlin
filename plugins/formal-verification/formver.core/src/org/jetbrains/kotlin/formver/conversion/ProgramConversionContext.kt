@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
-import org.jetbrains.kotlin.formver.names.AnonymousName
 import org.jetbrains.kotlin.formver.names.CatchLabelName
 import org.jetbrains.kotlin.formver.names.TryExitLabelName
 
@@ -25,12 +24,12 @@ interface ProgramConversionContext {
     val config: PluginConfiguration
     val errorCollector: ErrorCollector
 
-    val anonNameProducer: SimpleFreshEntityProducer<AnonymousName>
     val whileIndexProducer: SimpleFreshEntityProducer<Int>
     val catchLabelNameProducer: SimpleFreshEntityProducer<CatchLabelName>
     val tryExitLabelNameProducer: SimpleFreshEntityProducer<TryExitLabelName>
     val scopeIndexProducer: SimpleFreshEntityProducer<Int>
 
+    val anonVarProducer: FreshEntityProducer<VariableEmbedding, TypeEmbedding>
     val returnTargetProducer: FreshEntityProducer<ReturnTarget, TypeEmbedding>
 
     fun embedFunction(symbol: FirFunctionSymbol<*>): FunctionEmbedding
@@ -41,4 +40,4 @@ interface ProgramConversionContext {
     fun embedProperty(symbol: FirPropertySymbol): PropertyEmbedding
 }
 
-fun ProgramConversionContext.freshAnonVar(type: TypeEmbedding): VariableEmbedding = VariableEmbedding(anonNameProducer.getFresh(), type)
+fun ProgramConversionContext.freshAnonVar(type: TypeEmbedding): VariableEmbedding = anonVarProducer.getFresh(type)

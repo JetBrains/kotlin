@@ -2,13 +2,11 @@
 method global$fun_simple_if$fun_take$$return$T_Int() returns (ret$0: Int)
 {
   if (true) {
-    if (true) {
-      ret$0 := 0
-      goto label$ret$0
-    } else {
-      ret$0 := 1
-      goto label$ret$0
-    }
+    ret$0 := 0
+    goto label$ret$0
+  } else {
+    ret$0 := 1
+    goto label$ret$0
   }
   label label$ret$0
 }
@@ -17,14 +15,12 @@ method global$fun_simple_if$fun_take$$return$T_Int() returns (ret$0: Int)
 method global$fun_if_on_parameter$fun_take$T_Boolean$return$T_Int(local$b: Bool)
   returns (ret$0: Int)
 {
-  if (true) {
-    if (local$b) {
-      ret$0 := 0
-      goto label$ret$0
-    } else {
-      ret$0 := 1
-      goto label$ret$0
-    }
+  if (local$b) {
+    ret$0 := 0
+    goto label$ret$0
+  } else {
+    ret$0 := 1
+    goto label$ret$0
   }
   label label$ret$0
 }
@@ -34,20 +30,16 @@ method global$fun_if_as_expression$fun_take$$return$T_Boolean()
   returns (ret$0: Bool)
 {
   var local0$b: Bool
-  var anonymous$0: Bool
   local0$b := false
-  if (true) {
-    if (local0$b) {
-      var anonymous$1: Int
-      anonymous$1 := global$fun_simple_if$fun_take$$return$T_Int()
-      anonymous$0 := false
-    } else {
-      var anonymous$2: Int
-      anonymous$2 := global$fun_if_on_parameter$fun_take$T_Boolean$return$T_Int(local0$b)
-      anonymous$0 := true
-    }
+  if (local0$b) {
+    var anonymous$0: Int
+    anonymous$0 := global$fun_simple_if$fun_take$$return$T_Int()
+    ret$0 := false
+  } else {
+    var anonymous$1: Int
+    anonymous$1 := global$fun_if_on_parameter$fun_take$T_Boolean$return$T_Int(local0$b)
+    ret$0 := true
   }
-  ret$0 := anonymous$0
   goto label$ret$0
   label label$ret$0
 }
@@ -57,3 +49,4 @@ method global$fun_if_on_parameter$fun_take$T_Boolean$return$T_Int(local$b: Bool)
 
 
 method global$fun_simple_if$fun_take$$return$T_Int() returns (ret: Int)
+

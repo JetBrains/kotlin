@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.withType
@@ -17,16 +15,15 @@ import org.jetbrains.kotlin.formver.embeddings.expression.withType
  * Should be used exclusively through `insertCall` below.
  */
 interface CallableEmbedding : CallableSignature {
-    fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext<ResultTrackingContext>, source: KtSourceElement?): ExpEmbedding
+    fun insertCallImpl(args: List<ExpEmbedding>, ctx: StmtConversionContext): ExpEmbedding
 }
 
 fun CallableEmbedding.insertCall(
     args: List<ExpEmbedding>,
-    ctx: StmtConversionContext<ResultTrackingContext>,
-    source: KtSourceElement?,
+    ctx: StmtConversionContext,
 ): ExpEmbedding {
     return args.zip(formalArgTypes)
         .map { (arg, type) -> arg.withType(type) }
-        .let { insertCallImpl(it, ctx, source) }
+        .let { insertCallImpl(it, ctx) }
         .withType(returnType)
 }

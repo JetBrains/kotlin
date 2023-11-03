@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.expression.*
-import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.names.ClassKotlinName
 import org.jetbrains.kotlin.formver.names.GlobalScope
 import org.jetbrains.kotlin.formver.names.ScopedKotlinName
 import org.jetbrains.kotlin.formver.names.embedFunctionName
 import org.jetbrains.kotlin.formver.viper.ast.Method
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -54,8 +50,7 @@ object KotlinContractFunction : SpecialKotlinFunction {
 
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
+        ctx: StmtConversionContext,
     ): ExpEmbedding = UnitLit
 }
 
@@ -72,8 +67,7 @@ object KotlinIntPlusFunctionImplementation : KotlinIntSpecialFunction() {
     override val name: String = "plus"
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
+        ctx: StmtConversionContext,
     ): ExpEmbedding =
         Add(args[0], args[1])
 }
@@ -82,8 +76,7 @@ object KotlinIntMinusFunctionImplementation : KotlinIntSpecialFunction() {
     override val name: String = "minus"
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
+        ctx: StmtConversionContext,
     ): ExpEmbedding =
         Sub(args[0], args[1])
 }
@@ -92,8 +85,7 @@ object KotlinIntTimesFunctionImplementation : KotlinIntSpecialFunction() {
     override val name: String = "times"
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
+        ctx: StmtConversionContext,
     ): ExpEmbedding =
         Mul(args[0], args[1])
 }
@@ -102,12 +94,9 @@ object KotlinIntDivFunctionImplementation : KotlinIntSpecialFunction() {
     override val name: String = "div"
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
-    ): ExpEmbedding {
-        ctx.addStatement(Stmt.Inhale(NeCmp(args[1], IntLit(0)).pureToViper()))
-        return Div(args[0], args[1])
-    }
+        ctx: StmtConversionContext,
+        // TODO: implement this properly, we don't want to evaluate args[1] twice.
+    ): ExpEmbedding = Block(InhaleDirect(NeCmp(args[1], IntLit(0))), Div(args[0], args[1]))
 }
 
 abstract class KotlinBooleanSpecialFunction : SpecialKotlinFunction {
@@ -123,8 +112,7 @@ object KotlinBooleanNotFunctionImplementation : KotlinBooleanSpecialFunction() {
     override val name: String = "not"
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
+        ctx: StmtConversionContext,
     ): ExpEmbedding =
         Not(args[0])
 }
@@ -140,15 +128,14 @@ object KotlinRunSpecialFunction : SpecialKotlinFunction {
 
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?
+        ctx: StmtConversionContext,
     ): ExpEmbedding {
         val lambda = when (val arg = args[0].ignoringCastsAndMetaNodes()) {
             is LambdaExp -> arg
             else -> throw IllegalStateException("kotlin.run must be called with a lambda argument at the moment")
         }
 
-        return lambda.insertCallImpl(listOf(), ctx, source)
+        return lambda.insertCallImpl(listOf(), ctx)
     }
 }
 

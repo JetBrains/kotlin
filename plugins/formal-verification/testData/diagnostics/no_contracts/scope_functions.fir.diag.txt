@@ -4,9 +4,7 @@ method global$fun_use_run$fun_take$$return$T_Unit()
 {
   var local0$x: Int
   var ret$1: dom$Unit
-  if (true) {
-    local0$x := 0
-    label label$ret$1
-  }
+  local0$x := 0
+  label label$ret$1
   label label$ret$0
 }

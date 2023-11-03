@@ -13,9 +13,9 @@ method global$fun_test_properties$fun_take$T_class_global$class_Foo$return$T_Uni
   returns (ret$0: dom$Unit)
 {
   var anonymous$0: dom$Unit
+  var local0$x: Int
   var anonymous$1: Int
   var anonymous$2: Int
-  var local0$x: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
   anonymous$0 := class_Foo$setter_varProp(local$foo, 0)
   anonymous$1 := class_Foo$getter_varProp(local$foo)

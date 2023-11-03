@@ -17,19 +17,13 @@ method global$fun_createFoo$fun_take$$return$T_class_global$class_Foo()
   ensures acc(ret$0.class_Foo$member_a, wildcard)
   ensures acc(ret$0.class_Foo$member_b, wildcard)
 {
-  var anonymous$0: Ref
   var local0$f: Ref
-  var anonymous$1: Int
   var local0$fa: Int
-  var anonymous$2: Int
   var local0$fb: Int
-  anonymous$0 := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
+  local0$f := class_Foo$constructor$fun_take$T_Int$T_Int$return$T_class_global$class_Foo(10,
     20)
-  local0$f := anonymous$0
-  anonymous$1 := local0$f.class_Foo$member_a
-  local0$fa := anonymous$1
-  anonymous$2 := local0$f.class_Foo$member_b
-  local0$fb := anonymous$2
+  local0$fa := local0$f.class_Foo$member_a
+  local0$fb := local0$f.class_Foo$member_b
   ret$0 := local0$f
   goto label$ret$0
   label label$ret$0
@@ -51,10 +45,8 @@ method class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_g
 method global$fun_createBar$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var local0$b: Ref
-  anonymous$0 := class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_global$class_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
+  local0$b := class_Bar$constructor$fun_take$NT_class_global$class_Bar$return$T_class_global$class_Bar((dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]),
     dom$Type$special$Nullable(dom$Type$global$class_Bar())): dom$Nullable[Ref]))
-  local0$b := anonymous$0
   label label$ret$0
 }

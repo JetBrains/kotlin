@@ -67,3 +67,5 @@ data class NeCmp(
         Exp.NeCmp(left.toViper(ctx), right.toViper(ctx), ctx.source.asPosition, sourceRole.asInfo)
 }
 
+fun ExpEmbedding.notNullCmp(): ExpEmbedding = NeCmp(withType(type.getNullable()), type.getNullable().nullVal)
+

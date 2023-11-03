@@ -23,14 +23,10 @@ method global$fun_while_function_condition$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
   var anonymous$0: Bool
-  var anonymous$1: Bool
   label label$continue$0
-  anonymous$1 := global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(true)
-  anonymous$0 := anonymous$1
+  anonymous$0 := global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(true)
   while (anonymous$0) {
-    var anonymous$2: Bool
-    anonymous$2 := global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(true)
-    anonymous$0 := anonymous$2
+    anonymous$0 := global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(true)
   }
   label label$break$0
   label label$ret$0
@@ -38,3 +34,4 @@ method global$fun_while_function_condition$fun_take$$return$T_Unit()
 
 method global$fun_while_loop$fun_take$T_Boolean$return$T_Boolean(local$b: Bool)
   returns (ret: Bool)
+

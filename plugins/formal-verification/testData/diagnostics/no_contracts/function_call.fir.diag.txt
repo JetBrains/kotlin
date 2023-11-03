@@ -24,8 +24,8 @@ method global$fun_function_call_nested$fun_take$$return$T_Unit()
   var anonymous$0: Int
   var anonymous$1: Int
   var anonymous$2: Int
-  anonymous$0 := global$fun_f$fun_take$T_Int$return$T_Int(0)
-  anonymous$1 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$0)
-  anonymous$2 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$1)
+  anonymous$2 := global$fun_f$fun_take$T_Int$return$T_Int(0)
+  anonymous$1 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$2)
+  anonymous$0 := global$fun_f$fun_take$T_Int$return$T_Int(anonymous$1)
   label label$ret$0
 }

@@ -2,23 +2,23 @@
 method global$fun_quadruple$fun_take$T_Int$return$T_Int(local$x: Int)
   returns (ret$0: Int)
 {
+  var anonymous$0: Int
   var ret$1: Int
+  var local1$y: Int
+  var anonymous$1: Int
   var ret$2: Int
-  if (true) {
-    var local1$y: Int
-    local1$y := local$x + local$x
-    ret$1 := local1$y
-    goto label$ret$1
-    label label$ret$1
-  }
-  if (true) {
-    var local2$y: Int
-    local2$y := local$x + local$x
-    ret$2 := local2$y
-    goto label$ret$2
-    label label$ret$2
-  }
-  ret$0 := ret$1 + ret$2
+  var local2$y: Int
+  local1$y := local$x + local$x
+  ret$1 := local1$y
+  goto label$ret$1
+  label label$ret$1
+  anonymous$0 := ret$1
+  local2$y := local$x + local$x
+  ret$2 := local2$y
+  goto label$ret$2
+  label label$ret$2
+  anonymous$1 := ret$2
+  ret$0 := anonymous$0 + anonymous$1
   goto label$ret$0
   label label$ret$0
 }
@@ -27,37 +27,33 @@ method global$fun_quadruple$fun_take$T_Int$return$T_Int(local$x: Int)
 method global$fun_use_branching$fun_take$$return$T_Int()
   returns (ret$0: Int)
 {
+  var anonymous$2: Int
   var ret$1: Int
   var anonymous$0: Bool
+  var anonymous$3: Int
   var ret$2: Int
   var anonymous$1: Bool
   anonymous$0 := false
-  if (true) {
-    if (true) {
-      if (anonymous$0) {
-        ret$1 := 1
-        goto label$ret$1
-      } else {
-        ret$1 := 0
-        goto label$ret$1
-      }
-    }
-    label label$ret$1
+  if (anonymous$0) {
+    ret$1 := 1
+    goto label$ret$1
+  } else {
+    ret$1 := 0
+    goto label$ret$1
   }
+  label label$ret$1
+  anonymous$2 := ret$1
   anonymous$1 := true
-  if (true) {
-    if (true) {
-      if (anonymous$1) {
-        ret$2 := 1
-        goto label$ret$2
-      } else {
-        ret$2 := 0
-        goto label$ret$2
-      }
-    }
-    label label$ret$2
+  if (anonymous$1) {
+    ret$2 := 1
+    goto label$ret$2
+  } else {
+    ret$2 := 0
+    goto label$ret$2
   }
-  ret$0 := ret$1 + ret$2
+  label label$ret$2
+  anonymous$3 := ret$2
+  ret$0 := anonymous$2 + anonymous$3
   goto label$ret$0
   label label$ret$0
 }

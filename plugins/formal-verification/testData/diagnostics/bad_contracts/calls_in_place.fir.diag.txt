@@ -61,10 +61,8 @@ method global$fun_incorrect_at_least_once$fun_take$fun_take$T_Int$return$T_Int$r
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var anonymous$0: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  anonymous$0 := global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f)
-  ret$0 := anonymous$0
+  ret$0 := global$fun_unknown$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f)
   goto label$ret$0
   label label$ret$0
 }
@@ -96,25 +94,21 @@ method global$fun_incorrect_exactly_once_with_catch$fun_take$fun_take$$return$T_
   ensures local$f.special$function_object_call_counter ==
     old(local$f.special$function_object_call_counter) + 1
 {
+  var anonymous$0: Bool
+  var anonymous$1: dom$Unit
+  var anonymous$2: Bool
+  var local2$e: Ref
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  if (true) {
-    var anonymous$0: Bool
-    var anonymous$1: dom$Unit
-    var anonymous$2: Bool
-    if (anonymous$0) {
-      goto label$catch$0
-    }
-    special$invoke_function_object(local$f)
-    if (anonymous$2) {
-      goto label$catch$0
-    }
-    goto label$try_exit$0
+  if (anonymous$0) {
+    goto label$catch$0
   }
-  if (true) {
-    var local4$e: Ref
-    label label$catch$0
-    goto label$try_exit$0
+  special$invoke_function_object(local$f)
+  if (anonymous$2) {
+    goto label$catch$0
   }
+  goto label$try_exit$0
+  label label$catch$0
+  goto label$try_exit$0
   label label$try_exit$0
   label label$ret$0
 }
@@ -141,27 +135,23 @@ method global$fun_incorrect_exactly_once_with_call_in_catch$fun_take$fun_take$$r
   ensures local$f.special$function_object_call_counter ==
     old(local$f.special$function_object_call_counter) + 1
 {
+  var anonymous$0: Bool
+  var anonymous$1: dom$Unit
+  var anonymous$2: Bool
+  var local2$e: Ref
+  var anonymous$3: dom$Unit
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  if (true) {
-    var anonymous$0: Bool
-    var anonymous$1: dom$Unit
-    var anonymous$2: Bool
-    if (anonymous$0) {
-      goto label$catch$0
-    }
-    special$invoke_function_object(local$f)
-    if (anonymous$2) {
-      goto label$catch$0
-    }
-    goto label$try_exit$0
+  if (anonymous$0) {
+    goto label$catch$0
   }
-  if (true) {
-    var local4$e: Ref
-    var anonymous$3: dom$Unit
-    label label$catch$0
-    special$invoke_function_object(local$f)
-    goto label$try_exit$0
+  special$invoke_function_object(local$f)
+  if (anonymous$2) {
+    goto label$catch$0
   }
+  goto label$try_exit$0
+  label label$catch$0
+  special$invoke_function_object(local$f)
+  goto label$try_exit$0
   label label$try_exit$0
   label label$ret$0
 }

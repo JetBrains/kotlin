@@ -21,3 +21,11 @@ data class WithPosition(override val inner: ExpEmbedding, val source: KtSourceEl
         get() = inner.debugTreeView
 }
 
+fun ExpEmbedding.withPosition(source: KtSourceElement?): ExpEmbedding =
+    when {
+        // Inner position is more specific anyway
+        this is WithPosition -> this
+        source == null -> this
+        else -> WithPosition(this, source)
+    }
+

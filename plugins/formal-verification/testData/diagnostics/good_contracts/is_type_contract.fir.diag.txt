@@ -86,18 +86,16 @@ method global$fun_typeOfField$fun_take$T_class_global$class_Foo$return$T_Boolean
   ensures acc(local$foo.class_Foo$member_bar, wildcard)
   ensures ret$0 == true
 {
+  var anonymous$0: Ref
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$foo): dom$Type), dom$Type$global$class_Foo())
-  if (true) {
-    var anonymous$0: Ref
-    anonymous$0 := local$foo.class_Foo$member_bar
-    inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())
-    if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())) {
-      ret$0 := true
-      goto label$ret$0
-    } else {
-      ret$0 := false
-      goto label$ret$0
-    }
+  anonymous$0 := local$foo.class_Foo$member_bar
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())
+  if (dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$0): dom$Type), dom$Type$global$class_Bar())) {
+    ret$0 := true
+    goto label$ret$0
+  } else {
+    ret$0 := false
+    goto label$ret$0
   }
   label label$ret$0
 }

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.callables.CallableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionEmbedding
@@ -16,19 +14,15 @@ import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 class CustomGetter(val getterMethod: FunctionEmbedding) : GetterEmbedding {
     override fun getValue(
         receiver: ExpEmbedding,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
+        ctx: StmtConversionContext,
     ): ExpEmbedding =
-        getterMethod.insertCall(listOf(receiver), ctx, source)
+        getterMethod.insertCall(listOf(receiver), ctx)
 }
 
 class CustomSetter(val setterMethod: CallableEmbedding) : SetterEmbedding {
     override fun setValue(
         receiver: ExpEmbedding,
         value: ExpEmbedding,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
-    ) {
-        setterMethod.insertCall(listOf(receiver, value), ctx, source)
-    }
+        ctx: StmtConversionContext,
+    ): ExpEmbedding = setterMethod.insertCall(listOf(receiver, value), ctx)
 }

@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.formver.embeddings.expression
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.formver.conversion.MethodConversionContext
-import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.conversion.insertInlineFunctionCall
 import org.jetbrains.kotlin.formver.embeddings.FunctionTypeEmbedding
@@ -35,8 +33,7 @@ class LambdaExp(
 
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?,
+        ctx: StmtConversionContext,
     ): ExpEmbedding {
         val inlineBody = function.body ?: throw IllegalArgumentException("Lambda $function has a null body")
         val paramNames = function.valueParameters.map { it.name }

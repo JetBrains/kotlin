@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 
 // We assume that thanks to the checks done by the Kotlin compiler, a property with a
 // missing getter or setter will never be accessed.
-class ClassPropertyAccess(val receiver: ExpEmbedding, val property: PropertyEmbedding) :
-    PropertyAccessEmbedding {
-    override fun getValue(ctx: StmtConversionContext<ResultTrackingContext>, source: KtSourceElement?): ExpEmbedding = property.getter!!.getValue(receiver, ctx, source)
+class ClassPropertyAccess(val receiver: ExpEmbedding, val property: PropertyEmbedding) : PropertyAccessEmbedding {
+    override fun getValue(ctx: StmtConversionContext): ExpEmbedding = property.getter!!.getValue(receiver, ctx)
 
-    override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>, source: KtSourceElement?) {
-        property.setter!!.setValue(receiver, value, ctx, source)
-    }
+    override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext): ExpEmbedding =
+        property.setter!!.setValue(receiver, value, ctx)
 }

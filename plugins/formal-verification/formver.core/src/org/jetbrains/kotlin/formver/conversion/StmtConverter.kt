@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.expressions.FirCatch
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.expression.withPosition
-import org.jetbrains.kotlin.formver.linearization.SeqnBuildContext
-import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
 import org.jetbrains.kotlin.formver.names.BreakLabelName
 import org.jetbrains.kotlin.formver.names.ContinueLabelName
 import org.jetbrains.kotlin.formver.viper.ast.Label
-import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
 /**
  * Tracks the results of converting a block of statements.
@@ -26,53 +24,21 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
  *
  * NOTE: If you add parameters, be sure to update the `withResultFactory` function!
  */
-data class StmtConverter<out RTC : ResultTrackingContext>(
+data class StmtConverter(
     private val methodCtx: MethodConversionContext,
-    private val seqnCtx: SeqnBuildContext,
-    private val resultCtxFactory: ResultTrackerFactory<RTC>,
     private val whileIndex: Int = 0,
     override val whenSubject: VariableEmbedding? = null,
     override val checkedSafeCallSubject: ExpEmbedding? = null,
     private val scopeIndex: Int = 0,
     override val activeCatchLabels: List<Label> = listOf(),
-) : StmtConversionContext<RTC>, SeqnBuildContext by seqnCtx, MethodConversionContext by methodCtx, ResultTrackingContext {
-    private fun <NewRTC : ResultTrackingContext> withResultFactory(newFactory: ResultTrackerFactory<NewRTC>): StmtConverter<NewRTC> =
-        StmtConverter(this, seqnCtx, newFactory, whileIndex, whenSubject, checkedSafeCallSubject, scopeIndex, activeCatchLabels)
-
-    override val resultCtx: RTC
-        get() = resultCtxFactory.build(this)
-
+) : StmtConversionContext, MethodConversionContext by methodCtx {
     override fun convert(stmt: FirStatement): ExpEmbedding =
         stmt.accept(StmtConversionVisitorExceptionWrapper, this).withPosition(stmt.source)
 
-    override fun store(exp: ExpEmbedding): VariableEmbedding =
-        when (val inner = exp.ignoringMetaNodes()) {
-            is VariableEmbedding -> inner
-            else -> withResult(exp.type) { capture(exp) }
-        }
+    override fun <R> withNewScope(action: StmtConversionContext.() -> R): R = withNewScopeImpl(action)
 
-    override fun removeResult(): StmtConversionContext<NoopResultTracker> = withResultFactory(NoopResultTrackerFactory)
-
-    override fun addResult(variable: VariableEmbedding): StmtConverter<VarResultTrackingContext> {
-        addDeclaration(variable.toLocalVarDecl())
-        return withResultFactory(VarResultTrackerFactory(variable))
-    }
-
-    override fun withNewScopeToBlock(action: StmtConversionContext<RTC>.() -> Unit): Stmt.Seqn {
-        val newScopeIndex = scopeIndexProducer.getFresh()
-        val inner = copy(seqnCtx = SeqnBuilder(), scopeIndex = newScopeIndex)
-        inner.withScopeImpl(newScopeIndex) { inner.action() }
-        return inner.block
-    }
-
-    override fun <R> withMethodCtx(factory: MethodContextFactory, action: StmtConversionContext<RTC>.() -> R): R =
+    override fun <R> withMethodCtx(factory: MethodContextFactory, action: StmtConversionContext.() -> R): R =
         copy(methodCtx = factory.create(this, scopeIndex)).withNewScope { action() }
-
-    // We can't implement these members using `by` due to Kotlin shenanigans.
-    override val resultExp: ExpEmbedding
-        get() = resultCtx.resultExp
-
-    override fun capture(exp: ExpEmbedding) = resultCtx.capture(exp)
 
     private fun resolveWhileIndex(targetName: String?) =
         if (targetName != null) {
@@ -95,35 +61,38 @@ data class StmtConverter<out RTC : ResultTrackingContext>(
         methodCtx.addLoopIdentifier(targetName, whileIndex)
     }
 
-    override fun <R> withFreshWhile(action: StmtConversionContext<RTC>.() -> R): R {
-        val freshIndex = whileIndexProducer.getFresh()
-        val ctx = copy(whileIndex = freshIndex)
-        addDeclaration(ctx.continueLabel().toDecl())
-        addStatement(ctx.continueLabel().toStmt())
-        val result = ctx.action()
-        addDeclaration(ctx.breakLabel().toDecl())
-        addStatement(ctx.breakLabel().toStmt())
-        return result
-    }
+    override fun <R> withFreshWhile(label: FirLabel?, action: StmtConversionContext.() -> R): R =
+        withNewScopeImpl {
+            val freshIndex = whileIndexProducer.getFresh()
+            val ctx = copy(whileIndex = freshIndex)
+            label?.let { ctx.addLoopName(it.name) }
+            ctx.action()
+        }
 
-    override fun <R> withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext<RTC>.() -> R): R =
+    override fun <R> withWhenSubject(subject: VariableEmbedding?, action: StmtConversionContext.() -> R): R =
         copy(whenSubject = subject).action()
 
-    override fun <R> withCheckedSafeCallSubject(subject: ExpEmbedding?, action: StmtConversionContext<RTC>.() -> R): R =
+    override fun <R> withCheckedSafeCallSubject(subject: ExpEmbedding?, action: StmtConversionContext.() -> R): R =
         copy(checkedSafeCallSubject = subject).action()
 
-    override fun withCatches(
+    override fun <R> withCatches(
         catches: List<FirCatch>,
-        action: StmtConversionContext<RTC>.(catchBlockListData: CatchBlockListData) -> Unit,
-    ): CatchBlockListData {
+        action: StmtConversionContext.(catchBlockListData: CatchBlockListData) -> R,
+    ): Pair<CatchBlockListData, R> {
         val newCatchLabels = catches.map { Label(catchLabelNameProducer.getFresh(), listOf()) }
-        newCatchLabels.forEach { addDeclaration(it.toDecl()) }
         val exitLabel = Label(tryExitLabelNameProducer.getFresh(), listOf())
-        addDeclaration(exitLabel.toDecl())
         val ctx = copy(activeCatchLabels = activeCatchLabels + newCatchLabels)
         val catchBlockListData =
             CatchBlockListData(exitLabel, newCatchLabels.zip(catches).map { (label, firCatch) -> CatchBlockData(label, firCatch) })
-        ctx.action(catchBlockListData)
-        return catchBlockListData
+        val result = ctx.action(catchBlockListData)
+        return Pair(catchBlockListData, result)
+    }
+
+    private fun <R> withNewScopeImpl(action: StmtConverter.() -> R): R {
+        val newScopeIndex = scopeIndexProducer.getFresh()
+        val inner = copy(scopeIndex = newScopeIndex)
+        var result: R? = null
+        inner.withScopeImpl(newScopeIndex) { result = inner.action() }
+        return result!!
     }
 }

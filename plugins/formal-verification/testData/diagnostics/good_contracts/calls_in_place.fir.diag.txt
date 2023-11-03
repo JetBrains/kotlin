@@ -61,10 +61,8 @@ method global$fun_at_least_once$fun_take$fun_take$T_Int$return$T_Int$return$T_In
   ensures local$f.special$function_object_call_counter >
     old(local$f.special$function_object_call_counter)
 {
-  var anonymous$0: Int
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
-  anonymous$0 := global$fun_exactly_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f)
-  ret$0 := anonymous$0
+  ret$0 := global$fun_exactly_once$fun_take$fun_take$T_Int$return$T_Int$return$T_Int(local$f)
   goto label$ret$0
   label label$ret$0
 }
@@ -122,9 +120,11 @@ method global$fun_loopUntil$fun_take$fun_take$$return$T_Boolean$return$T_Unit(lo
 {
   var anonymous$0: Bool
   var anonymous$1: Bool
+  var anonymous$2: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$lambda): dom$Type), dom$Type$Function())
   label label$continue$0
   special$invoke_function_object(local$lambda)
+  anonymous$1 := anonymous$2
   anonymous$0 := !anonymous$1
   while (anonymous$0)
     invariant acc(local$lambda.special$function_object_call_counter, write)
@@ -133,9 +133,11 @@ method global$fun_loopUntil$fun_take$fun_take$$return$T_Boolean$return$T_Unit(lo
     invariant local$lambda.special$function_object_call_counter >
       old(local$lambda.special$function_object_call_counter)
   {
-    var anonymous$2: Bool
+    var anonymous$3: Bool
+    var anonymous$4: Bool
     special$invoke_function_object(local$lambda)
-    anonymous$0 := !anonymous$2
+    anonymous$3 := anonymous$4
+    anonymous$0 := !anonymous$3
   }
   label label$break$0
   label label$ret$0

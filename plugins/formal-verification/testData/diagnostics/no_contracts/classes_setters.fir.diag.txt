@@ -18,15 +18,13 @@ method class_AlwaysPlusOne$setter_num(this: Ref, local$value: Int)
 method global$fun_testCustomSetter$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var local0$f: Ref
-  var anonymous$1: dom$Unit
-  anonymous$0 := class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
-  local0$f := anonymous$0
+  var anonymous$0: dom$Unit
+  local0$f := class_AlwaysPlusOne$constructor$fun_take$$return$T_class_global$class_AlwaysPlusOne()
   inhale acc(local0$f.class_AlwaysPlusOne$member_b, write)
   local0$f.class_AlwaysPlusOne$member_b := 1
   exhale acc(local0$f.class_AlwaysPlusOne$member_b, write)
-  anonymous$1 := class_AlwaysPlusOne$setter_num(local0$f, 1)
+  anonymous$0 := class_AlwaysPlusOne$setter_num(local0$f, 1)
   label label$ret$0
 }
 
@@ -41,16 +39,14 @@ method class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Perso
 method global$fun_testSetter$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var local0$person: Ref
-  var anonymous$1: Int
-  anonymous$0 := class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(19)
-  local0$person := anonymous$0
+  var anonymous$0: Int
+  local0$person := class_Person$constructor$fun_take$T_Int$return$T_class_global$class_Person(19)
   inhale acc(local0$person.class_Person$member_age, write)
-  anonymous$1 := local0$person.class_Person$member_age
+  anonymous$0 := local0$person.class_Person$member_age
   exhale acc(local0$person.class_Person$member_age, write)
   inhale acc(local0$person.class_Person$member_age, write)
-  local0$person.class_Person$member_age := anonymous$1 + 1
+  local0$person.class_Person$member_age := anonymous$0 + 1
   exhale acc(local0$person.class_Person$member_age, write)
   label label$ret$0
 }
@@ -73,20 +69,18 @@ method class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_gl
 method global$fun_testSetterCascade$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
+  var local0$f: Ref
   var anonymous$0: Ref
   var anonymous$1: Ref
-  var local0$f: Ref
-  var anonymous$2: Ref
   anonymous$0 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(10)
-  anonymous$1 := class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(anonymous$0)
-  local0$f := anonymous$1
+  local0$f := class_Foo$constructor$fun_take$T_class_global$class_Bar$return$T_class_global$class_Foo(anonymous$0)
   inhale acc(local0$f.class_Foo$member_b, write)
-  anonymous$2 := local0$f.class_Foo$member_b
-  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$2): dom$Type), dom$Type$global$class_Bar())
+  anonymous$1 := local0$f.class_Foo$member_b
   exhale acc(local0$f.class_Foo$member_b, write)
-  inhale acc(anonymous$2.class_Bar$member_a, write)
-  anonymous$2.class_Bar$member_a := 42
-  exhale acc(anonymous$2.class_Bar$member_a, write)
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(anonymous$1): dom$Type), dom$Type$global$class_Bar())
+  inhale acc(anonymous$1.class_Bar$member_a, write)
+  anonymous$1.class_Bar$member_a := 42
+  exhale acc(anonymous$1.class_Bar$member_a, write)
   label label$ret$0
 }
 
@@ -108,12 +102,10 @@ method class_Baz$setter_a(this: Ref, local$value: Int)
 method global$fun_testSetterNoBackingField$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var local0$baz: Ref
-  var anonymous$1: dom$Unit
-  anonymous$0 := class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
-  local0$baz := anonymous$0
-  anonymous$1 := class_Baz$setter_a(local0$baz, 42)
+  var anonymous$0: dom$Unit
+  local0$baz := class_Baz$constructor$fun_take$$return$T_class_global$class_Baz()
+  anonymous$0 := class_Baz$setter_a(local0$baz, 42)
   label label$ret$0
 }
 
@@ -128,14 +120,12 @@ method class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(loca
 method global$fun_testSetterLambda$fun_take$$return$T_Unit()
   returns (ret$0: dom$Unit)
 {
-  var anonymous$0: Ref
   var ret$1: dom$Unit
+  var anonymous$0: Ref
   anonymous$0 := class_Bar$constructor$fun_take$T_Int$return$T_class_global$class_Bar(0)
-  if (true) {
-    inhale acc(anonymous$0.class_Bar$member_a, write)
-    anonymous$0.class_Bar$member_a := 42
-    exhale acc(anonymous$0.class_Bar$member_a, write)
-    label label$ret$1
-  }
+  inhale acc(anonymous$0.class_Bar$member_a, write)
+  anonymous$0.class_Bar$member_a := 42
+  exhale acc(anonymous$0.class_Bar$member_a, write)
+  label label$ret$1
   label label$ret$0
 }

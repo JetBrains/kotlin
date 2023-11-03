@@ -42,3 +42,7 @@ data class Not(
     override val type = BooleanTypeEmbedding
     override fun toViper(ctx: LinearizationContext) = Exp.Not(inner.toViper(ctx), ctx.source.asPosition)
 }
+
+fun List<ExpEmbedding>.toConjunction(): ExpEmbedding =
+    if (isEmpty()) BooleanLit(true)
+    else reduce { l, r -> And(l, r) }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.asPosition
-import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.PropertyAccessEmbedding
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.formver.embeddings.expression.debug.NamedBranchingNo
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.PlaintextLeaf
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
 import org.jetbrains.kotlin.formver.embeddings.fillHoles
-import org.jetbrains.kotlin.formver.linearization.pureToViper
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
@@ -37,18 +35,8 @@ class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding)
 
     override fun toViper(source: KtSourceElement?): Exp.LocalVar = Exp.LocalVar(name, type.viperType, source.asPosition)
 
-    fun toFieldAccess(
-        field: Field,
-        pos: Position = Position.NoPosition,
-        info: Info = Info.NoInfo,
-        trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.FieldAccess = Exp.FieldAccess(toLocalVarUse(), field, pos, info, trafos)
-
-    override fun getValue(ctx: StmtConversionContext<ResultTrackingContext>, source: KtSourceElement?): ExpEmbedding = this
-
-    override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext<ResultTrackingContext>, source: KtSourceElement?) {
-        ctx.addStatement(Stmt.LocalVarAssign(toLocalVarUse(), value.withType(type).pureToViper(), source.asPosition))
-    }
+    override fun getValue(ctx: StmtConversionContext): ExpEmbedding = this
+    override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext): ExpEmbedding = Assign(this, value)
 
     fun pureInvariants(): List<ExpEmbedding> = type.pureInvariants().fillHoles(this)
     fun provenInvariants(): List<ExpEmbedding> = type.provenInvariants().fillHoles(this)

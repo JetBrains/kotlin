@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.formver.embeddings.callables
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.formver.conversion.ResultTrackingContext
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.conversion.insertInlineFunctionCall
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
@@ -20,8 +18,7 @@ class InlineNamedFunction(
 ) : ViperAwareCallableEmbedding, FullNamedFunctionSignature by signature {
     override fun insertCallImpl(
         args: List<ExpEmbedding>,
-        ctx: StmtConversionContext<ResultTrackingContext>,
-        source: KtSourceElement?
+        ctx: StmtConversionContext,
     ): ExpEmbedding {
         val paramNames = symbol.valueParameterSymbols.map { it.name }
         return ctx.insertInlineFunctionCall(signature, paramNames, args, body, signature.sourceName)

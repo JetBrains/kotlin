@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.formver.embeddings.UnitTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.callables.FullNamedFunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.callables.InvokeFunctionObjectMethod
 import org.jetbrains.kotlin.formver.embeddings.callables.NamedFunctionSignature
+import org.jetbrains.kotlin.formver.embeddings.callables.toMethodCall
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.*
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.addLabel
@@ -44,8 +45,8 @@ data class If(val condition: ExpEmbedding, val thenBranch: ExpEmbedding, val els
     OptionalResultExpEmbedding, DefaultDebugTreeViewImplementation {
     override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
         val condViper = condition.toViper(ctx)
-        val thenViper = ctx.asBlock { thenBranch.toViperMaybeStoringIn(result, this) }
-        val elseViper = ctx.asBlock { elseBranch.toViperMaybeStoringIn(result, this) }
+        val thenViper = ctx.asBlock { thenBranch.withType(type).toViperMaybeStoringIn(result, this) }
+        val elseViper = ctx.asBlock { elseBranch.withType(type).toViperMaybeStoringIn(result, this) }
         ctx.addStatement(Stmt.If(condViper, thenViper, elseViper, ctx.source.asPosition))
     }
 
@@ -149,7 +150,7 @@ data class MethodCall(val method: NamedFunctionSignature, val args: List<ExpEmbe
     override val type: TypeEmbedding = method.returnType
 
     override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
-        TODO("Need to modify conversion code to get this working.")
+        ctx.addStatement(method.toMethodCall(args.map { it.toViper(ctx) }, result, ctx.source.asPosition))
     }
 
     override val debugTreeView: TreeView
@@ -203,7 +204,7 @@ data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: Exp
             // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
             // provenInvariants don't contain permissions.
             arg.provenInvariants().forEach { invariant ->
-                ctx.addStatement(Stmt.Inhale(invariant.pureToViper()))
+                ctx.addStatement(Stmt.Inhale(invariant.pureToViper(), ctx.source.asPosition))
             }
         }
         body.toViperMaybeStoringIn(result, ctx)
@@ -219,4 +220,17 @@ data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: Exp
                 returnLabel.debugTreeView.withDesignation("return")
             )
         )
+}
+
+data class Elvis(val left: ExpEmbedding, val right: ExpEmbedding, override val type: TypeEmbedding) : StoredResultExpEmbedding,
+    DefaultDebugTreeViewImplementation {
+    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+        val leftViper = left.toViper(ctx)
+        val leftWrapped = ExpWrapper(leftViper, left.type)
+        val conditional = If(leftWrapped.notNullCmp(), leftWrapped, right, type)
+        conditional.toViperStoringIn(result, ctx)
+    }
+
+    override val debugAnonymousSubexpressions: List<ExpEmbedding>
+        get() = listOf(left, right)
 }

@@ -8,21 +8,17 @@ method global$fun_dynamic_lambda_invariant$fun_take$fun_take$$return$T_Int$retur
     local$f.special$function_object_call_counter
 {
   var anonymous$0: Bool
-  var anonymous$1: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   label label$continue$0
-  anonymous$1 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  anonymous$0 := anonymous$1
+  anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   while (anonymous$0)
     invariant acc(local$f.special$function_object_call_counter, write)
     invariant old(local$f.special$function_object_call_counter) <=
       local$f.special$function_object_call_counter
   {
-    var anonymous$2: Int
-    var anonymous$3: Bool
+    var anonymous$1: Int
     special$invoke_function_object(local$f)
-    anonymous$3 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-    anonymous$0 := anonymous$3
+    anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   }
   label label$break$0
   label label$ret$0
@@ -43,22 +39,18 @@ method global$fun_function_assignment$fun_take$fun_take$$return$T_Int$return$T_U
 {
   var local0$g: Ref
   var anonymous$0: Bool
-  var anonymous$1: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   local0$g := local$f
   label label$continue$0
-  anonymous$1 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  anonymous$0 := anonymous$1
+  anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   while (anonymous$0)
     invariant acc(local$f.special$function_object_call_counter, write)
     invariant old(local$f.special$function_object_call_counter) <=
       local$f.special$function_object_call_counter
   {
-    var anonymous$2: Int
-    var anonymous$3: Bool
+    var anonymous$1: Int
     special$invoke_function_object(local0$g)
-    anonymous$3 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-    anonymous$0 := anonymous$3
+    anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   }
   label label$break$0
   label label$ret$0
@@ -83,23 +75,17 @@ method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$r
   ensures old(local$h.special$function_object_call_counter) <=
     local$h.special$function_object_call_counter
 {
-  var anonymous$0: Ref
   var local0$g: Ref
-  var anonymous$1: Bool
-  var anonymous$2: Bool
+  var anonymous$0: Bool
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$f): dom$Type), dom$Type$Function())
   inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$h): dom$Type), dom$Type$Function())
-  if (true) {
-    if (local$b) {
-      anonymous$0 := local$f
-    } else {
-      anonymous$0 := local$h}
-  }
-  local0$g := anonymous$0
+  if (local$b) {
+    local0$g := local$f
+  } else {
+    local0$g := local$h}
   label label$continue$0
-  anonymous$2 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-  anonymous$1 := anonymous$2
-  while (anonymous$1)
+  anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
+  while (anonymous$0)
     invariant acc(local$f.special$function_object_call_counter, write)
     invariant acc(local$h.special$function_object_call_counter, write)
     invariant old(local$f.special$function_object_call_counter) <=
@@ -107,11 +93,9 @@ method global$fun_conditional_function_assignment$fun_take$T_Boolean$fun_take$$r
     invariant old(local$h.special$function_object_call_counter) <=
       local$h.special$function_object_call_counter
   {
-    var anonymous$3: Int
-    var anonymous$4: Bool
+    var anonymous$1: Int
     special$invoke_function_object(local0$g)
-    anonymous$4 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
-    anonymous$1 := anonymous$4
+    anonymous$0 := global$fun_returns_boolean$fun_take$$return$T_Boolean()
   }
   label label$break$0
   label label$ret$0
