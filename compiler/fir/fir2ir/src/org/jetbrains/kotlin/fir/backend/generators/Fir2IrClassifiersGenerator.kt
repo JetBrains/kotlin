@@ -36,60 +36,21 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
     fun createIrTypeParameterWithoutBounds(
         typeParameter: FirTypeParameter,
         index: Int,
-        ownerSymbol: IrSymbol,
+        symbol: IrTypeParameterSymbol
     ): IrTypeParameter {
         require(index >= 0)
         val origin = typeParameter.computeIrOrigin()
-        val irTypeParameter = with(typeParameter) {
-            convertWithOffsets { startOffset, endOffset ->
-                signatureComposer.composeTypeParameterSignature(
-                    index, ownerSymbol.signature
-                )?.let { signature ->
-                    if (ownerSymbol is IrClassifierSymbol) {
-                        symbolTable.declareGlobalTypeParameter(
-                            signature,
-                            symbolFactory = { IrTypeParameterPublicSymbolImpl(signature) }
-                        ) { symbol ->
-                            irFactory.createTypeParameter(
-                                startOffset = startOffset,
-                                endOffset = endOffset,
-                                origin = origin,
-                                name = name,
-                                symbol = symbol,
-                                variance = variance,
-                                index = index,
-                                isReified = isReified,
-                            )
-                        }
-                    } else {
-                        symbolTable.declareScopedTypeParameter(
-                            signature,
-                            symbolFactory = { IrTypeParameterPublicSymbolImpl(signature) }
-                        ) { symbol ->
-                            irFactory.createTypeParameter(
-                                startOffset = startOffset,
-                                endOffset = endOffset,
-                                origin = origin,
-                                name = name,
-                                symbol = symbol,
-                                variance = variance,
-                                index = index,
-                                isReified = isReified,
-                            )
-                        }
-
-                    }
-                } ?: irFactory.createTypeParameter(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = origin,
-                    name = name,
-                    symbol = IrTypeParameterSymbolImpl(),
-                    variance = variance,
-                    index = index,
-                    isReified = isReified,
-                )
-            }
+        val irTypeParameter = typeParameter.convertWithOffsets { startOffset, endOffset ->
+            irFactory.createTypeParameter(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = typeParameter.name,
+                symbol = symbol,
+                variance = typeParameter.variance,
+                index = index,
+                isReified = typeParameter.isReified,
+            )
         }
         annotationGenerator.generate(irTypeParameter, typeParameter)
         return irTypeParameter

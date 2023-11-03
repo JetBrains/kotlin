@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -93,7 +94,8 @@ class Fir2IrClassifierStorage(
         ownerSymbol: IrSymbol,
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
     ): IrTypeParameter {
-        val irTypeParameter = classifiersGenerator.createIrTypeParameterWithoutBounds(typeParameter, index, ownerSymbol)
+        val symbol = createTypeParameterSymbol(ownerSymbol, index)
+        val irTypeParameter = classifiersGenerator.createIrTypeParameterWithoutBounds(typeParameter, index, symbol)
         // Cache the type parameter BEFORE processing its bounds/supertypes, to properly handle recursive type bounds.
         if (typeOrigin.forSetter) {
             typeParameterCacheForSetter[typeParameter] = irTypeParameter
@@ -101,6 +103,13 @@ class Fir2IrClassifierStorage(
             typeParameterCache[typeParameter] = irTypeParameter
         }
         return irTypeParameter
+    }
+
+    private fun createTypeParameterSymbol(ownerSymbol: IrSymbol, index: Int): IrTypeParameterSymbol {
+        if (ownerSymbol !is IrClassifierSymbol) return IrTypeParameterSymbolImpl()
+        val signature = signatureComposer.composeTypeParameterSignature(index, ownerSymbol.signature)
+            ?: return IrTypeParameterSymbolImpl()
+        return symbolTable.referenceTypeParameter(signature)
     }
 
     internal fun getCachedIrTypeParameter(
