@@ -914,11 +914,9 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         irParent: IrClass
     ): IrAnonymousInitializer = convertCatching(anonymousInitializer) {
         return anonymousInitializer.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.descriptorExtension.declareAnonymousInitializer(
-                startOffset,
-                endOffset,
-                IrDeclarationOrigin.DEFINED,
-                irParent.descriptor
+            irFactory.createAnonymousInitializer(
+                startOffset, endOffset, IrDeclarationOrigin.DEFINED,
+                IrAnonymousInitializerSymbolImpl()
             ).apply {
                 setParent(irParent)
                 addDeclarationToParent(this, irParent)
