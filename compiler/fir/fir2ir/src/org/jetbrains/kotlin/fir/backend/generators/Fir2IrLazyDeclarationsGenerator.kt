@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.convertWithOffsets
-import org.jetbrains.kotlin.fir.backend.irOrigin
 import org.jetbrains.kotlin.fir.backend.isStubPropertyForPureField
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.*
@@ -16,9 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyPublicSymbolImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -50,39 +47,24 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
 
     internal fun createIrLazyProperty(
         fir: FirProperty,
-        signature: IdSignature,
         lazyParent: IrDeclarationParent,
+        symbols: PropertySymbols,
         declarationOrigin: IrDeclarationOrigin
     ): IrProperty {
-        val symbol = IrPropertyPublicSymbolImpl(signature)
-        fun create(startOffset: Int, endOffset: Int, isPropertyForField: Boolean): Fir2IrLazyProperty {
-            val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
-            val isFakeOverride = !isPropertyForField && fir.isFakeOverride(firContainingClass)
-            // It is really required to create those properties with DEFINED origin
-            // Using `declarationOrigin` here (IR_EXTERNAL_JAVA_DECLARATION_STUB in particular) causes some tests to fail, including
-            // FirPsiBlackBoxCodegenTestGenerated.Reflection.Properties.testJavaStaticField
-            val originForProperty = if (isPropertyForField) IrDeclarationOrigin.DEFINED else declarationOrigin
-            return Fir2IrLazyProperty(
-                components, startOffset, endOffset, originForProperty,
-                fir, firContainingClass, symbol, isFakeOverride
+        val isPropertyForField = fir.isStubPropertyForPureField == true
+        val firContainingClass = (lazyParent as? Fir2IrLazyClass)?.fir
+        val isFakeOverride = !isPropertyForField && fir.isFakeOverride(firContainingClass)
+        // It is really required to create those properties with DEFINED origin
+        // Using `declarationOrigin` here (IR_EXTERNAL_JAVA_DECLARATION_STUB in particular) causes some tests to fail, including
+        // FirPsiBlackBoxCodegenTestGenerated.Reflection.Properties.testJavaStaticField
+        val originForProperty = if (isPropertyForField) IrDeclarationOrigin.DEFINED else declarationOrigin
+        return fir.convertWithOffsets { startOffset, endOffset ->
+            Fir2IrLazyProperty(
+                components, startOffset, endOffset, originForProperty, fir, firContainingClass, symbols, isFakeOverride
             ).apply {
                 this.parent = lazyParent
             }
         }
-
-        val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
-            if (fir.isStubPropertyForPureField == true) {
-                // Very special case when two similar properties can exist so conflicts in SymbolTable are possible.
-                // See javaCloseFieldAndKotlinProperty.kt in BB tests
-                symbolTable.declarePropertyWithSignature(signature, symbol)
-                create(startOffset, endOffset, isPropertyForField = true)
-            } else {
-                symbolTable.declareProperty(signature, { symbol }) {
-                    create(startOffset, endOffset, isPropertyForField = false)
-                }
-            }
-        }
-        return irProperty
     }
 
     fun createIrLazyConstructor(

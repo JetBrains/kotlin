@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -27,19 +25,14 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.createParameterDeclarations
@@ -543,9 +536,52 @@ class Fir2IrDeclarationStorage(
     ): IrProperty {
         @Suppress("NAME_SHADOWING")
         val property = prepareProperty(property)
-        val irProperty = callablesGenerator.createIrProperty(property, irParent, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
+
+        val signature = runIf(!isLocal && configuration.linkViaSignatures) {
+            signatureComposer.composeSignature(property, fakeOverrideOwnerLookupTag)
+        }
+
+        val symbols = createPropertySymbols(signature, property, fakeOverrideOwnerLookupTag)
+        val irProperty = callablesGenerator.createIrProperty(
+            property, irParent, symbols, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag
+        )
         cacheIrProperty(property, irProperty, fakeOverrideOwnerLookupTag)
         return irProperty
+    }
+
+    private fun createPropertySymbols(
+        signature: IdSignature?,
+        property: FirProperty,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+    ): PropertySymbols {
+        val propertySymbol = when {
+            signature != null -> when (property.isStubPropertyForPureField) {
+                // Very special case when two similar properties can exist so conflicts in SymbolTable are possible.
+                // See javaCloseFieldAndKotlinProperty.kt in BB tests
+                true -> IrPropertyPublicSymbolImpl(signature).also {
+                    symbolTable.declarePropertyWithSignature(signature, it)
+                }
+                else -> symbolTable.referenceProperty(signature)
+            }
+            else -> IrPropertySymbolImpl()
+        }
+        val getterSignature = runIf(signature != null) {
+            signatureComposer.composeAccessorSignature(property, isSetter = false, fakeOverrideOwnerLookupTag)
+        }
+        val getterSymbol = createFunctionSymbol(getterSignature)
+
+        val setterSymbol = runIf(property.isVar) {
+            val setterSignature = runIf(signature != null) {
+                signatureComposer.composeAccessorSignature(property, isSetter = true, fakeOverrideOwnerLookupTag)
+            }
+            createFunctionSymbol(setterSignature)
+        }
+
+        val backingFieldSymbol = runIf(property.delegate != null || property.hasBackingField) {
+            createFieldSymbol()
+        }
+
+        return PropertySymbols(propertySymbol, getterSymbol, setterSymbol, backingFieldSymbol)
     }
 
     private fun cacheIrProperty(
@@ -773,6 +809,10 @@ class Fir2IrDeclarationStorage(
         return irField
     }
 
+    private fun createFieldSymbol(): IrFieldSymbol {
+        return IrFieldSymbolImpl()
+    }
+
     // This function returns null if this field/ownerClassId combination does not describe static fake override
     private fun getFieldStaticFakeOverrideKey(field: FirField, ownerLookupTag: ConeClassLikeLookupTag?): FieldStaticOverrideKey? {
         if (ownerLookupTag == null || !field.isStatic ||
@@ -825,13 +865,23 @@ class Fir2IrDeclarationStorage(
         property: FirProperty,
         irParent: IrDeclarationParent
     ): IrLocalDelegatedProperty {
-        val irProperty = callablesGenerator.createIrLocalDelegatedProperty(property, irParent)
+        val symbols = createLocalDelegatedPropertySymbols(property)
+        val irProperty = callablesGenerator.createIrLocalDelegatedProperty(property, irParent, symbols)
         val symbol = irProperty.symbol
         delegateVariableForPropertyCache[symbol] = irProperty.delegate.symbol
         getterForPropertyCache[symbol] = irProperty.getter.symbol
         irProperty.setter?.let { setterForPropertyCache[symbol] = it.symbol }
         localStorage.putDelegatedProperty(property, irProperty)
         return irProperty
+    }
+
+    private fun createLocalDelegatedPropertySymbols(property: FirProperty): LocalDelegatedPropertySymbols {
+        val propertySymbol = IrLocalDelegatedPropertySymbolImpl()
+        val getterSymbol = createFunctionSymbol(signature = null)
+        val setterSymbol = runIf(property.isVar) {
+            createFunctionSymbol(signature = null)
+        }
+        return LocalDelegatedPropertySymbols(propertySymbol, getterSymbol, setterSymbol)
     }
 
     // ------------------------------------ variables ------------------------------------
@@ -1244,3 +1294,16 @@ annotation class GetOrCreateSensitiveAPI
 internal fun <D : IrDeclaration> IrBindableSymbol<*, D>.ownerIfBound(): D? {
     return runIf(isBound) { owner }
 }
+
+data class PropertySymbols(
+    val propertySymbol: IrPropertySymbol,
+    val getterSymbol: IrSimpleFunctionSymbol,
+    val setterSymbol: IrSimpleFunctionSymbol?,
+    val backingFieldSymbol: IrFieldSymbol?,
+)
+
+data class LocalDelegatedPropertySymbols(
+    val propertySymbol: IrLocalDelegatedPropertySymbol,
+    val getterSymbol: IrSimpleFunctionSymbol,
+    val setterSymbol: IrSimpleFunctionSymbol?,
+)

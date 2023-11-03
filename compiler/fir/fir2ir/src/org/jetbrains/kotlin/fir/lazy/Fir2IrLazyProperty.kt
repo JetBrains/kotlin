@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -39,9 +38,11 @@ class Fir2IrLazyProperty(
     override var origin: IrDeclarationOrigin,
     override val fir: FirProperty,
     val containingClass: FirRegularClass?,
-    override val symbol: IrPropertySymbol,
+    symbols: PropertySymbols,
     override var isFakeOverride: Boolean
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by components {
+    override val symbol: IrPropertySymbol = symbols.propertySymbol
+
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir, symbol)
@@ -111,54 +112,51 @@ class Fir2IrLazyProperty(
     override var backingField: IrField? by lazyVar(lock) {
         when {
             fir.hasExplicitBackingField -> {
-                with(declarationStorage) {
-                    val backingFieldType = with(typeConverter) {
-                        fir.backingField?.returnTypeRef?.toIrType()
-                    }
-                    val initializer = fir.backingField?.initializer ?: fir.initializer
-                    val visibility = fir.backingField?.visibility ?: fir.visibility
-                    callablesGenerator.createBackingField(
-                        this@Fir2IrLazyProperty,
-                        fir,
-                        IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                        components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                        fir.name,
-                        fir.isVal,
-                        initializer,
-                        backingFieldType
-                    ).also { field ->
-                        field.initializer = toIrInitializer(initializer)
-                    }
+                val backingFieldType = with(typeConverter) {
+                    fir.backingField?.returnTypeRef?.toIrType()
+                }
+                val initializer = fir.backingField?.initializer ?: fir.initializer
+                val visibility = fir.backingField?.visibility ?: fir.visibility
+                callablesGenerator.createBackingField(
+                    this@Fir2IrLazyProperty,
+                    fir,
+                    IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                    symbols.backingFieldSymbol!!,
+                    components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                    fir.name,
+                    fir.isVal,
+                    initializer,
+                    backingFieldType
+                ).also { field ->
+                    field.initializer = toIrInitializer(initializer)
                 }
             }
             extensions.hasBackingField(fir, session) && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
-                with(declarationStorage) {
-                    callablesGenerator.createBackingField(
-                        this@Fir2IrLazyProperty,
-                        fir,
-                        IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                        fir.name,
-                        fir.isVal,
-                        fir.initializer,
-                        type
-                    ).also { field ->
-                        field.initializer = toIrInitializer(fir.initializer)
-                    }
+                callablesGenerator.createBackingField(
+                    this@Fir2IrLazyProperty,
+                    fir,
+                    IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                    symbols.backingFieldSymbol!!,
+                    components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                    fir.name,
+                    fir.isVal,
+                    fir.initializer,
+                    type
+                ).also { field ->
+                    field.initializer = toIrInitializer(fir.initializer)
                 }
             }
             fir.delegate != null -> {
-                with(declarationStorage) {
-                    callablesGenerator.createBackingField(
-                        this@Fir2IrLazyProperty,
-                        fir,
-                        IrDeclarationOrigin.PROPERTY_DELEGATE,
-                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                        NameUtils.propertyDelegateName(fir.name),
-                        true,
-                        fir.delegate
-                    )
-                }
+                callablesGenerator.createBackingField(
+                    this@Fir2IrLazyProperty,
+                    fir,
+                    IrDeclarationOrigin.PROPERTY_DELEGATE,
+                    symbols.backingFieldSymbol!!,
+                    components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                    NameUtils.propertyDelegateName(fir.name),
+                    true,
+                    fir.delegate
+                )
             }
             else -> {
                 null
@@ -172,25 +170,18 @@ class Fir2IrLazyProperty(
     }
 
     override var getter: IrSimpleFunction? by lazyVar(lock) {
-        val signature = signatureComposer.composeAccessorSignature(
-            fir,
-            isSetter = false,
-            containingClass?.symbol?.toLookupTag()
-        )!!
-        symbolTable.declareSimpleFunction(signature, symbolFactory = { IrSimpleFunctionPublicSymbolImpl(signature) }) { symbol ->
-            Fir2IrLazyPropertyAccessor(
-                components, startOffset, endOffset,
-                when {
-                    origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                    fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                    origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
-                    origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
-                    fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                    else -> origin
-                },
-                fir.getter, isSetter = false, fir, containingClass, symbol, isFakeOverride, this.symbol
-            )
-        }.apply {
+        Fir2IrLazyPropertyAccessor(
+            components, startOffset, endOffset,
+            when {
+                origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
+                fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
+                fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                else -> origin
+            },
+            fir.getter, isSetter = false, fir, containingClass, symbols.getterSymbol, isFakeOverride, this.symbol
+        ).apply {
             parent = this@Fir2IrLazyProperty.parent
             correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
             classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT)
@@ -198,31 +189,22 @@ class Fir2IrLazyProperty(
     }
 
     override var setter: IrSimpleFunction? by lazyVar(lock) {
-        if (!fir.isVar) null
-        else {
-            val signature = signatureComposer.composeAccessorSignature(
-                fir,
-                isSetter = true,
-                containingClass?.symbol?.toLookupTag()
-            )!!
-            symbolTable.declareSimpleFunction(signature, symbolFactory = { IrSimpleFunctionPublicSymbolImpl(signature) }) { symbol ->
-                Fir2IrLazyPropertyAccessor(
-                    components, startOffset, endOffset,
-                    when {
-                        origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                        fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                        origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
-                        origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
-                        fir.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                        else -> origin
-                    },
-                    fir.setter, isSetter = true, fir, containingClass, symbol, isFakeOverride, this.symbol
-                ).apply {
-                    parent = this@Fir2IrLazyProperty.parent
-                    correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
-                    classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.SETTER)
-                }
-            }
+        if (!fir.isVar) return@lazyVar null
+        Fir2IrLazyPropertyAccessor(
+            components, startOffset, endOffset,
+            when {
+                origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
+                fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
+                fir.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                else -> origin
+            },
+            fir.setter, isSetter = true, fir, containingClass, symbols.setterSymbol!!, isFakeOverride, this.symbol
+        ).apply {
+            parent = this@Fir2IrLazyProperty.parent
+            correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
+            classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.SETTER)
         }
     }
 
