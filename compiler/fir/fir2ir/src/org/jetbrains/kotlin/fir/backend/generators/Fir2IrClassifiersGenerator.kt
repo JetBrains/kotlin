@@ -279,36 +279,26 @@ class Fir2IrClassifiersGenerator(val components: Fir2IrComponents) : Fir2IrCompo
 
     // ------------------------------------ typealiases ------------------------------------
 
-    private fun declareIrTypeAlias(signature: IdSignature?, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias {
-        return if (signature == null)
-            factory(IrTypeAliasSymbolImpl())
-        else
-            symbolTable.declareTypeAlias(signature, { IrTypeAliasPublicSymbolImpl(signature) }, factory)
-    }
-
     fun createIrTypeAlias(
         typeAlias: FirTypeAlias,
-        parent: IrDeclarationParent
+        parent: IrDeclarationParent,
+        symbol: IrTypeAliasSymbol,
     ): IrTypeAlias = typeAlias.convertWithOffsets { startOffset, endOffset ->
-        val signature = signatureComposer.composeSignature(typeAlias)
-        declareIrTypeAlias(signature) { symbol ->
-            classifierStorage.preCacheTypeParameters(typeAlias, symbol)
-            val irTypeAlias = irFactory.createTypeAlias(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = IrDeclarationOrigin.DEFINED,
-                name = typeAlias.name,
-                visibility = components.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
-                symbol = symbol,
-                isActual = typeAlias.isActual,
-                expandedType = typeAlias.expandedTypeRef.toIrType(),
-            ).apply {
-                this.parent = parent
-                setTypeParameters(this, typeAlias)
-                setParent(parent)
-                addDeclarationToParent(this, parent)
-            }
-            irTypeAlias
+        classifierStorage.preCacheTypeParameters(typeAlias, symbol)
+        irFactory.createTypeAlias(
+            startOffset = startOffset,
+            endOffset = endOffset,
+            origin = IrDeclarationOrigin.DEFINED,
+            name = typeAlias.name,
+            visibility = components.visibilityConverter.convertToDescriptorVisibility(typeAlias.visibility),
+            symbol = symbol,
+            isActual = typeAlias.isActual,
+            expandedType = typeAlias.expandedTypeRef.toIrType(),
+        ).apply {
+            this.parent = parent
+            setTypeParameters(this, typeAlias)
+            setParent(parent)
+            addDeclarationToParent(this, parent)
         }
     }
 

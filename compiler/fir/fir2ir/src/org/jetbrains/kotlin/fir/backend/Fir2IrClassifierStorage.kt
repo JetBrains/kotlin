@@ -21,12 +21,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrTypeAliasSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -365,8 +363,17 @@ class Fir2IrClassifierStorage(
         typeAlias: FirTypeAlias,
         parent: IrDeclarationParent
     ): IrTypeAlias {
-        return classifiersGenerator.createIrTypeAlias(typeAlias, parent).also {
+        val symbol = createTypeAliasSymbol(typeAlias)
+        return classifiersGenerator.createIrTypeAlias(typeAlias, parent, symbol).also {
             typeAliasCache[typeAlias] = it
+        }
+    }
+
+    private fun createTypeAliasSymbol(typeAlias: FirTypeAlias): IrTypeAliasSymbol {
+        val signature = signatureComposer.composeSignature(typeAlias)
+        return when {
+            signature != null -> symbolTable.referenceTypeAlias(signature)
+            else -> IrTypeAliasSymbolImpl()
         }
     }
 
