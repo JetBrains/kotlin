@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.superTypes
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
@@ -25,6 +29,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.supertypes
+import org.jetbrains.kotlin.utils.DFS
 
 private fun IrFunction.isFakeOverrideInProgressOfBuilding() = this is IrFunctionWithLateBinding && !isBound && isFakeOverride
 
@@ -53,6 +58,12 @@ private fun IrClass.selfOrAnySuperClass(pred: (IrClass) -> Boolean): Boolean {
 
 fun IrClass.isObjCClass() = this.packageFqName != interopPackageName &&
         selfOrAnySuperClass { it.hasEqualFqName(objCObjectFqName) }
+
+fun IrType.isObjCObjectType(): Boolean = DFS.ifAny(
+    /* nodes = */ listOf(this.classifierOrFail),
+    /* neighbors = */ { current -> current.superTypes().map { it.classifierOrFail } },
+    /* predicate = */ { (it as? IrClassSymbol)?.owner?.hasEqualFqName(objCObjectFqName) == true }
+)
 
 fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         this.parentsWithSelf.filterIsInstance<ClassDescriptor>().any {

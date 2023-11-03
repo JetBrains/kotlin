@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.ir.objcinterop.isObjCObjectType
 
 internal fun IrType.isCEnumType(): Boolean {
     if (isNullable()) return false
