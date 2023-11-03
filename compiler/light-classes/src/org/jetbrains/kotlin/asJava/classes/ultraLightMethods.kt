@@ -320,7 +320,7 @@ internal class KtUltraLightMethodForDescriptor(
 
         val returnType = if (methodDescriptor is ConstructorDescriptor) {
             delegate.isConstructor = true
-            PsiType.VOID
+            PsiTypes.voidType()
         } else {
             support.mapType(methodDescriptor.returnType, this) { typeMapper, signatureWriter ->
                 typeMapper.mapReturnType(methodDescriptor, signatureWriter)

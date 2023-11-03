@@ -6,13 +6,7 @@
 package org.jetbrains.kotlin.analysis.decompiled.light.classes.origin
 
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.psi.PsiArrayType
-import com.intellij.psi.PsiField
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiParameterList
-import com.intellij.psi.PsiPrimitiveType
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getAllModifierLists
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.getQualifiedName
@@ -89,10 +83,10 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
         return when (member) {
             is PsiMethod -> {
                 val names = SmartList(memberName)
-                val setter = if (JvmAbi.isGetterName(memberName) && !PsiType.VOID.equals(member.returnType)) {
+                val setter = if (JvmAbi.isGetterName(memberName) && !PsiTypes.voidType().equals(member.returnType)) {
                     propertyNameByGetMethodName(Name.identifier(memberName))?.let { names.add(it.identifier) }
                     false
-                } else if (JvmAbi.isSetterName(memberName) && PsiType.VOID.equals(member.returnType)) {
+                } else if (JvmAbi.isSetterName(memberName) && PsiTypes.voidType().equals(member.returnType)) {
                     propertyNamesBySetMethodName(Name.identifier(memberName)).forEach { names.add(it.identifier) }
                     true
                 } else null

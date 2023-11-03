@@ -497,12 +497,12 @@ internal class Kapt4StubGenerator {
                     val rawValue = propertyInitializer.value
                     val rawNumberValue = rawValue as? Number
                     val actualValue = when (type) {
-                        PsiType.BYTE -> rawNumberValue?.toByte()
-                        PsiType.SHORT -> rawNumberValue?.toShort()
-                        PsiType.INT -> rawNumberValue?.toInt()
-                        PsiType.LONG -> rawNumberValue?.toLong()
-                        PsiType.FLOAT -> rawNumberValue?.toFloat()
-                        PsiType.DOUBLE -> rawNumberValue?.toDouble()
+                        PsiTypes.byteType() -> rawNumberValue?.toByte()
+                        PsiTypes.shortType() -> rawNumberValue?.toShort()
+                        PsiTypes.intType() -> rawNumberValue?.toInt()
+                        PsiTypes.longType() -> rawNumberValue?.toLong()
+                        PsiTypes.floatType() -> rawNumberValue?.toFloat()
+                        PsiTypes.doubleType() -> rawNumberValue?.toDouble()
                         else -> null
                     } ?: rawValue
                     convertValueOfPrimitiveTypeOrString(actualValue)
@@ -574,14 +574,14 @@ internal class Kapt4StubGenerator {
 
 
     private fun getDefaultValue(type: PsiType): Any? = when (type) {
-        PsiType.BYTE -> 0
-        PsiType.BOOLEAN -> false
-        PsiType.CHAR -> '\u0000'
-        PsiType.SHORT -> 0
-        PsiType.INT -> 0
-        PsiType.LONG -> 0L
-        PsiType.FLOAT -> 0.0F
-        PsiType.DOUBLE -> 0.0
+        PsiTypes.byteType() -> 0
+        PsiTypes.booleanType() -> false
+        PsiTypes.charType() -> '\u0000'
+        PsiTypes.shortType() -> 0
+        PsiTypes.intType() -> 0
+        PsiTypes.longType() -> 0L
+        PsiTypes.floatType() -> 0.0F
+        PsiTypes.doubleType() -> 0.0
         else -> null
     }
 
@@ -625,7 +625,7 @@ internal class Kapt4StubGenerator {
 
         val name = method.name
         if (!isConstructor && !isValidIdentifier(name)) return null
-        val returnType = method.returnType ?: PsiType.VOID
+        val returnType = method.returnType ?: PsiTypes.voidType()
         val modifiers = convertModifiers(
             containingClass,
             if (containingClass.isEnum && isConstructor)
@@ -636,7 +636,7 @@ internal class Kapt4StubGenerator {
             packageFqName,
             method.annotations.toList(),
             metadata = null,
-            excludeNullabilityAnnotations = returnType == PsiType.VOID
+            excludeNullabilityAnnotations = returnType == PsiTypes.voidType()
         )
 
         if (method.hasModifierProperty(PsiModifier.DEFAULT)) {
@@ -703,7 +703,7 @@ internal class Kapt4StubGenerator {
                 JavacList.nil()
             }
             treeMaker.Block(0, superClassConstructorCall)
-        } else if (returnType == PsiType.VOID) {
+        } else if (returnType == PsiTypes.voidType()) {
             treeMaker.Block(0, JavacList.nil())
         } else {
             val returnStatement = treeMaker.Return(convertLiteralExpression(getDefaultValue(returnType)))

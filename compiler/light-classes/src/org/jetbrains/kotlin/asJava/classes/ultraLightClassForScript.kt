@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiTypes
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -70,7 +71,7 @@ class KtUltraLightClassForScript(
         val methodBuilder = LightMethodBuilder(manager, language, "main").apply {
             isConstructor = false
             addModifiers(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
-            setMethodReturnType(PsiType.VOID)
+            setMethodReturnType(PsiTypes.voidType())
         }
 
         val mainMethod = KtUltraLightMethodForSourceDeclaration(

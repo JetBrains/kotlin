@@ -257,7 +257,7 @@ internal class UltraLightMembersCreator(
         if (ktDeclaration is KtNamedFunction &&
             ktDeclaration.hasBlockBody() &&
             !ktDeclaration.hasDeclaredReturnType()
-        ) return PsiType.VOID
+        ) return PsiTypes.voidType()
 
         val desc =
             ktDeclaration.resolve()?.getterIfProperty() as? CallableDescriptor
@@ -531,7 +531,7 @@ internal class UltraLightMembersCreator(
                 auxiliaryOrigin,
                 forceStatic = onlyJvmStatic || forceStatic,
                 forceNonFinal = forceNonFinal,
-            ).setMethodReturnType(PsiType.VOID)
+            ).setMethodReturnType(PsiTypes.voidType())
 
             val setterWrapper = KtUltraLightMethodForSourceDeclaration(
                 setterPrototype,

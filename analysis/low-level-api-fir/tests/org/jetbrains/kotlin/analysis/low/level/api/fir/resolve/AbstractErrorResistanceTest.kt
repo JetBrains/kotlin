@@ -155,7 +155,7 @@ private class BrokenClass(
 
             val projectScope = GlobalSearchScope.allScope(manager.project)
             addParameter("first", PsiType.getJavaLangString(manager, projectScope))
-            addParameter("second", PsiType.INT)
+            addParameter("second", PsiTypes.intType())
         }
     }
 
@@ -163,7 +163,7 @@ private class BrokenClass(
         init {
             containingClass = owner
             setModifiers(PsiModifier.PUBLIC)
-            setMethodReturnType(PsiType.BOOLEAN)
+            setMethodReturnType(PsiTypes.booleanType())
         }
 
         override fun getTypeParameterList(): PsiTypeParameterList? {
