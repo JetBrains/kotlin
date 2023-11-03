@@ -48,6 +48,10 @@ internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithValue(
     initialValue: Provider<Iterable<T>>
 ) = setProperty<T>().value(initialValue)
 
+internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithValue(
+    initialValue: Iterable<T>
+) = setProperty<T>().value(initialValue)
+
 internal inline fun <reified T : Any?> ObjectFactory.setPropertyWithLazyValue(
     noinline lazyValue: () -> Iterable<T>
 ) = setPropertyWithValue(providerWithLazyConvention(lazyValue))
@@ -96,6 +100,12 @@ internal fun <PropType : Any?, T : Property<PropType>> T.chainedDisallowChanges(
     apply {
         disallowChanges()
     }
+
+internal fun <PropType : Any?, T : SetProperty<PropType>> T.chainedDisallowChanges(): T =
+    apply {
+        disallowChanges()
+    }
+
 
 // Before 5.0 fileProperty is created via ProjectLayout
 // https://docs.gradle.org/current/javadoc/org/gradle/api/model/ObjectFactory.html#fileProperty--

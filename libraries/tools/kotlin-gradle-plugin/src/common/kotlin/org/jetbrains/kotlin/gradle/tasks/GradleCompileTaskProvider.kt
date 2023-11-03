@@ -12,12 +12,15 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.kotlinErrorsDir
-import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
@@ -55,9 +58,19 @@ abstract class GradleCompileTaskProvider @Inject constructor(
         .property(incrementalModuleInfoProvider)
 
     @get:Internal
-    val errorsFile: Provider<File> = objectFactory
-        .property(
-            project.kotlinErrorsDir.also { it.mkdirs() }
-                .resolve("errors-${System.currentTimeMillis()}.log")
+    val errorsFiles: SetProperty<File> = objectFactory
+        .setPropertyWithValue<File>(
+            setOfNotNull(
+                project.kotlinErrorsDir
+                    .errorFile,
+                if (!project.kotlinPropertiesProvider.kotlinProjectPersistentDirGradleDisableWrite) {
+                    project.rootDir
+                        .resolve(".gradle/kotlin/errors/")
+                        .errorFile
+                } else null,
+            )
         )
+        .chainedDisallowChanges()
 }
+
+private val File.errorFile get() = resolve("errors-${System.currentTimeMillis()}.log")

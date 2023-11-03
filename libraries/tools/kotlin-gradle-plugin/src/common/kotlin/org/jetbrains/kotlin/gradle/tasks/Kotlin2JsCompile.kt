@@ -348,7 +348,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             environment,
             taskOutputsBackup
         )
-        compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
+        compilerRunner.errorsFiles?.let { gradleMessageCollector.flush(it) }
 
     }
 

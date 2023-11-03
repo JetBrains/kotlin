@@ -277,7 +277,10 @@ class BuildReportsIT : KGPBaseTest() {
         ) {
 
             val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
-            val kotlinErrorPath = projectPersistentCache.resolve("errors")
+            val kotlinErrorPaths = setOf(
+                projectPersistentCache.resolve("errors"),
+                projectPath.resolve(".gradle/kotlin/errors")
+            )
 
             buildGradle.appendText(
                 """
@@ -290,26 +293,29 @@ class BuildReportsIT : KGPBaseTest() {
             )
 
             build("compileKotlin") {
-                assertTrue { kotlinErrorPath.listDirectoryEntries().isEmpty() }
+                for (kotlinErrorPath in kotlinErrorPaths) {
+                    assertDirectoryDoesNotExist(kotlinErrorPath)
+                }
                 assertOutputDoesNotContain("errors were stored into file")
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
             buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputContains("errors were stored into file")
-                val files = kotlinErrorPath.listDirectoryEntries()
-                assertTrue { files.first().exists() }
-                files.first().bufferedReader().use { reader ->
-                    val kotlinVersion = reader.readLine()
-                    assertTrue("kotlin version should be in the error file") {
-                        kotlinVersion != null && kotlinVersion.trim().equals("kotlin version: ${buildOptions.kotlinVersion}")
-                    }
-                    val errorMessage = reader.readLine()
-                    assertTrue("Error message should start with 'error message: ' to parse it on IDEA side") {
-                        errorMessage != null && errorMessage.trim().startsWith("error message:")
+                kotlinErrorPaths.forEach { kotlinErrorPath ->
+                    val files = kotlinErrorPath.listDirectoryEntries()
+                    assertFileExists(files.single())
+                    files.single().bufferedReader().use { reader ->
+                        val kotlinVersion = reader.readLine()
+                        assertTrue("kotlin version should be in the error file") {
+                            kotlinVersion != null && kotlinVersion.trim().equals("kotlin version: ${buildOptions.kotlinVersion}")
+                        }
+                        val errorMessage = reader.readLine()
+                        assertTrue("Error message should start with 'error message: ' to parse it on IDEA side") {
+                            errorMessage != null && errorMessage.trim().startsWith("error message:")
+                        }
                     }
                 }
-
             }
         }
     }
@@ -326,17 +332,72 @@ class BuildReportsIT : KGPBaseTest() {
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
         ) {
-            val kotlinErrorPath = projectPersistentCache.resolve("errors")
+            val kotlinErrorPaths = setOf(
+                projectPersistentCache.resolve("errors"),
+                projectPath.resolve(".gradle/kotlin/errors")
+            )
 
             build("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputDoesNotContain("errors were stored into file")
-                assertTrue { kotlinErrorPath.listDirectoryEntries().isEmpty() }
+                for (kotlinErrorPath in kotlinErrorPaths) {
+                    assertDirectoryDoesNotExist(kotlinErrorPath)
+                }
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
             kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
             buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputDoesNotContain("errors were stored into file")
-                assertTrue { kotlinErrorPath.listDirectoryEntries().isEmpty() }
+                for (kotlinErrorPath in kotlinErrorPaths) {
+                    assertDirectoryDoesNotExist(kotlinErrorPath)
+                }
+            }
+        }
+    }
+
+    @DisplayName("Error file is not written into .gradle/kotlin/errors")
+    @GradleTest
+    fun testDisableWritingErrorsIntoGradleProjectDir(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+        ) {
+            val kotlinErrorPath = projectPersistentCache.resolve("errors")
+            val gradleErrorPath = projectPath.resolve(".gradle/kotlin/errors")
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.project.persistent.dir.gradle.disableWrite=true
+                """.trimMargin()
+            )
+
+            val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |tasks.named("compileKotlin") {
+                |    doLast {
+                |       new File("${lookupsTab.toUri().path}").write("Invalid contents")
+                |   }
+                |}
+                """.trimMargin()
+            )
+
+            build("compileKotlin") {
+                assertDirectoryDoesNotExist(kotlinErrorPath.toAbsolutePath())
+                assertDirectoryDoesNotExist(gradleErrorPath.toAbsolutePath())
+            }
+
+            val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
+            kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
+            buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertOutputContains("errors were stored into file")
+                assertDirectoryExists(kotlinErrorPath.toAbsolutePath())
+                val errorFiles = kotlinErrorPath.listDirectoryEntries()
+                assertFileExists(errorFiles.single())
+
+                assertDirectoryDoesNotExist(gradleErrorPath.toAbsolutePath())
             }
         }
     }

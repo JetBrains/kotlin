@@ -144,6 +144,6 @@ abstract class KotlinCompileCommon @Inject constructor(
             outputFiles = allOutputFiles()
         )
         compilerRunner.runMetadataCompilerAsync(args, environment)
-        compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
+        compilerRunner.errorsFiles?.let { gradleMessageCollector.flush(it) }
     }
 }

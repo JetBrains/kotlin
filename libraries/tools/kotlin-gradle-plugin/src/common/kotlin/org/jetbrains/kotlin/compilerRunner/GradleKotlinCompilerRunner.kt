@@ -110,7 +110,7 @@ internal open class GradleCompilerRunner(
     internal val sessionDirProvider = taskProvider.sessionsDir.get()
     internal val projectNameProvider = taskProvider.projectName.get()
     internal val incrementalModuleInfoProvider = taskProvider.buildModulesInfo
-    internal val errorsFile = taskProvider.errorsFile.get()
+    internal val errorsFiles = taskProvider.errorsFiles.get()
 
     /**
      * Compiler might be executed asynchronously. Do not do anything requiring end of compilation after this function is called.
@@ -231,7 +231,7 @@ internal open class GradleCompilerRunner(
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors,
             compilerExecutionSettings = compilerExecutionSettings,
-            errorsFile = errorsFile,
+            errorsFiles = errorsFiles,
             kotlinPluginVersion = getKotlinPluginVersion(loggerProvider),
             //no need to log warnings in MessageCollector hear it will be logged by compiler
             kotlinLanguageVersion = parseLanguageVersion(compilerArgs.languageVersion, compilerArgs.useK2)

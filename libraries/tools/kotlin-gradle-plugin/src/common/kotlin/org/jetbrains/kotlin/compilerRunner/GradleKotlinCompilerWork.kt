@@ -74,7 +74,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val kotlinScriptExtensions: Array<String>,
     val allWarningsAsErrors: Boolean,
     val compilerExecutionSettings: CompilerExecutionSettings,
-    val errorsFile: File?,
+    val errorsFiles: Set<File>?,
     val kotlinPluginVersion: String,
     val kotlinLanguageVersion: KotlinVersion,
 ) : Serializable {
@@ -112,7 +112,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val metrics = if (reportingSettings.buildReportOutputs.isNotEmpty()) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
     private var icLogLines: List<String> = emptyList()
     private val compilerExecutionSettings = config.compilerExecutionSettings
-    private val errorsFile = config.errorsFile
+    private val errorsFiles = config.errorsFiles
     private val kotlinPluginVersion = config.kotlinPluginVersion
     private val kotlinLanguageVersion = config.kotlinLanguageVersion
 
@@ -131,7 +131,9 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
                 incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
             }
-            errorsFile?.also { gradleMessageCollector.flush(it) }
+            errorsFiles?.let {
+                gradleMessageCollector.flush(it)
+            }
 
             throwExceptionIfCompilationFailed(exitCode, executionStrategy)
         } finally {

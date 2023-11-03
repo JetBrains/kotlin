@@ -350,7 +350,7 @@ abstract class KotlinCompile @Inject constructor(
             defaultKotlinJavaToolchain.get().buildJvm.get().javaHome,
             taskOutputsBackup
         )
-        compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
+        compilerRunner.errorsFiles?.let { gradleMessageCollector.flush(it) }
     }
 
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
