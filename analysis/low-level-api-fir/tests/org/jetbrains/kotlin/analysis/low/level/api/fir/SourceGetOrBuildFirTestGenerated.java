@@ -1272,6 +1272,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("lambdaAsSAMInterfaceWithAnnotation.kt")
+        public void testLambdaAsSAMInterfaceWithAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/lambdaAsSAMInterfaceWithAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("localClass.kt")
         public void testLocalClass() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/localClass.kt");

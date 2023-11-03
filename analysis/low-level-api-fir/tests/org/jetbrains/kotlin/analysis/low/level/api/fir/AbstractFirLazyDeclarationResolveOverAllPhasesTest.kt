@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirLazyDeclarationResolveTestCase() {
     abstract fun checkSession(firSession: LLFirResolveSession)
 
+    protected open val outputExtension: String get() = ".txt"
+
     protected fun doLazyResolveTest(
         ktFile: KtFile,
         testServices: TestServices,
@@ -78,6 +80,9 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
             renderer.renderElementAsString(firFile)
         }
 
-        testServices.assertions.assertEqualsToTestDataFileSibling(resultBuilder.toString())
+        testServices.assertions.assertEqualsToTestDataFileSibling(
+            resultBuilder.toString(),
+            extension = outputExtension,
+        )
     }
 }

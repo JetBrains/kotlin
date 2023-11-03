@@ -175,33 +175,15 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     }
 
     @Test
-    @TestMetadata("delegateFieldWithAnnotationClashScript.kts")
-    public void testDelegateFieldWithAnnotationClashScript() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/lazyResolve/delegateFieldWithAnnotationClashScript.kts");
-    }
-
-    @Test
     @TestMetadata("delegateWithImplicitTypeScript.kts")
     public void testDelegateWithImplicitTypeScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/delegateWithImplicitTypeScript.kts");
     }
 
     @Test
-    @TestMetadata("delegatedFieldNestedNameClashAndAnnotationsScript.kts")
-    public void testDelegatedFieldNestedNameClashAndAnnotationsScript() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashAndAnnotationsScript.kts");
-    }
-
-    @Test
     @TestMetadata("delegatedFieldNestedNameClashScript.kts")
     public void testDelegatedFieldNestedNameClashScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashScript.kts");
-    }
-
-    @Test
-    @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts")
-    public void testDelegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript() throws Exception {
-        runTest("analysis/low-level-api-fir/testData/lazyResolve/delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts");
     }
 
     @Test
@@ -688,24 +670,6 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         }
 
         @Test
-        @TestMetadata("delegateFieldWithAnnotationClashScript.kts")
-        public void testDelegateFieldWithAnnotationClashScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/delegateFieldWithAnnotationClashScript.kts");
-        }
-
-        @Test
-        @TestMetadata("delegatedFieldNestedNameClashAndAnnotationsScript.kts")
-        public void testDelegatedFieldNestedNameClashAndAnnotationsScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/delegatedFieldNestedNameClashAndAnnotationsScript.kts");
-        }
-
-        @Test
-        @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts")
-        public void testDelegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsScript.kts");
-        }
-
-        @Test
         @TestMetadata("functionInValueClassScript.kts")
         public void testFunctionInValueClassScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/functionInValueClassScript.kts");
@@ -778,18 +742,6 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         }
 
         @Test
-        @TestMetadata("superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts")
-        public void testSuperTypeCallNameClashWithAnnotationImplicitConstructorScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallNameClashWithAnnotationScript.kts")
-        public void testSuperTypeCallNameClashWithAnnotationScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNameClashWithAnnotationScript.kts");
-        }
-
-        @Test
         @TestMetadata("superTypeCallNestedNameClashImplicitConstructorScript.kts")
         public void testSuperTypeCallNestedNameClashImplicitConstructorScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashImplicitConstructorScript.kts");
@@ -799,18 +751,6 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         @TestMetadata("superTypeCallNestedNameClashScript.kts")
         public void testSuperTypeCallNestedNameClashScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashScript.kts");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts")
-        public void testSuperTypeCallNestedNameClashWithAnnotationImplicitConstructorScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallNestedNameClashWithAnnotationScript.kts")
-        public void testSuperTypeCallNestedNameClashWithAnnotationScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/superTypeCallNestedNameClashWithAnnotationScript.kts");
         }
 
         @Nested
@@ -823,21 +763,9 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
             }
 
             @Test
-            @TestMetadata("component1TypeCollisionAndAnnotationsScript.kts")
-            public void testComponent1TypeCollisionAndAnnotationsScript() throws Exception {
-                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/component1TypeCollisionAndAnnotationsScript.kts");
-            }
-
-            @Test
             @TestMetadata("component1TypeCollisionScript.kts")
             public void testComponent1TypeCollisionScript() throws Exception {
                 runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/component1TypeCollisionScript.kts");
-            }
-
-            @Test
-            @TestMetadata("copyTypeCollisionAndAnnotationsScript.kts")
-            public void testCopyTypeCollisionAndAnnotationsScript() throws Exception {
-                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/copyTypeCollisionAndAnnotationsScript.kts");
             }
 
             @Test
@@ -847,21 +775,9 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
             }
 
             @Test
-            @TestMetadata("parameterTypeCollisionAndAnnotationsScript.kts")
-            public void testParameterTypeCollisionAndAnnotationsScript() throws Exception {
-                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollisionAndAnnotationsScript.kts");
-            }
-
-            @Test
             @TestMetadata("parameterTypeCollisionScript.kts")
             public void testParameterTypeCollisionScript() throws Exception {
                 runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/parameterTypeCollisionScript.kts");
-            }
-
-            @Test
-            @TestMetadata("propertyTypeCollisionAndAnnotationsScript.kts")
-            public void testPropertyTypeCollisionAndAnnotationsScript() throws Exception {
-                runTest("analysis/low-level-api-fir/testData/lazyResolve/classes/dataClass/propertyTypeCollisionAndAnnotationsScript.kts");
             }
 
             @Test
@@ -901,18 +817,6 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         @TestMetadata("contractScript2.kts")
         public void testContractScript2() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/contractScript2.kts");
-        }
-
-        @Test
-        @TestMetadata("delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts")
-        public void testDelegatedFieldNestedNameClashAndAnnotationsAsConstructorScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/delegatedFieldNestedNameClashAndAnnotationsAsConstructorScript.kts");
-        }
-
-        @Test
-        @TestMetadata("delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts")
-        public void testDelegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/delegatedFieldNestedNameClashWithNestedTypesAndAnnotationsAsConstructorScript.kts");
         }
 
         @Test
@@ -988,18 +892,6 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         }
 
         @Test
-        @TestMetadata("superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts")
-        public void testSuperTypeCallNameClashWithAnnotationImplicitConstructorScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashWithAnnotationImplicitConstructorScript.kts");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallNameClashWithAnnotationScript.kts")
-        public void testSuperTypeCallNameClashWithAnnotationScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNameClashWithAnnotationScript.kts");
-        }
-
-        @Test
         @TestMetadata("superTypeCallNestedNameClashImplicitConstructorScript.kts")
         public void testSuperTypeCallNestedNameClashImplicitConstructorScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashImplicitConstructorScript.kts");
@@ -1009,18 +901,6 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         @TestMetadata("superTypeCallNestedNameClashScript.kts")
         public void testSuperTypeCallNestedNameClashScript() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashScript.kts");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts")
-        public void testSuperTypeCallNestedNameClashWithAnnotationImplicitConstructorScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashWithAnnotationImplicitConstructorScript.kts");
-        }
-
-        @Test
-        @TestMetadata("superTypeCallNestedNameClashWithAnnotationScript.kts")
-        public void testSuperTypeCallNestedNameClashWithAnnotationScript() throws Exception {
-            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/superTypeCallNestedNameClashWithAnnotationScript.kts");
         }
     }
 
