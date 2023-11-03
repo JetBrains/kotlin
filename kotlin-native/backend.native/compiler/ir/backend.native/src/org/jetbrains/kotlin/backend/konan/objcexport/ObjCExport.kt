@@ -50,17 +50,23 @@ internal fun produceObjCExportInterface(
     val objcGenerics = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
     val disableSwiftMemberNameMangling = config.configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
     val ignoreInterfaceMethodCollisions = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
+    val reportNameCollisions = config.configuration.getBoolean(BinaryOptions.objcExportReportNameCollisions)
+
+    val problemCollector = ObjCExportHeaderGeneratorImpl.ProblemCollector(context)
+
     val namer = ObjCExportNamerImpl(
             moduleDescriptors.toSet(),
             moduleDescriptor.builtIns,
             mapper,
+            problemCollector,
             topLevelNamePrefix,
             local = false,
             objcGenerics = objcGenerics,
             disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
             ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
+            reportNameCollisions = reportNameCollisions,
     )
-    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
+    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, problemCollector, objcGenerics)
     headerGenerator.translateModule()
     return headerGenerator.buildInterface()
 }
@@ -128,6 +134,7 @@ internal class ObjCExport(
                 setOf(moduleDescriptor),
                 moduleDescriptor.builtIns,
                 mapper,
+                ObjCExportProblemCollector.SILENT,
                 topLevelNamePrefix,
                 local = false
         )

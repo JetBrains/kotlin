@@ -42,12 +42,12 @@ interface ObjCExportTranslator {
 
 interface ObjCExportProblemCollector {
     fun reportWarning(text: String)
-    fun reportWarning(method: FunctionDescriptor, text: String)
+    fun reportWarning(declaration: DeclarationDescriptor, text: String)
     fun reportException(throwable: Throwable)
 
     object SILENT : ObjCExportProblemCollector {
         override fun reportWarning(text: String) {}
-        override fun reportWarning(method: FunctionDescriptor, text: String) {}
+        override fun reportWarning(declaration: DeclarationDescriptor, text: String) {}
         override fun reportException(throwable: Throwable) {}
     }
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportLazyImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.dumpObjCHeader
 import org.jetbrains.kotlin.container.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
@@ -23,7 +24,7 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
         useImpl<ObjCExportLazyImpl>()
         useInstance(object : ObjCExportProblemCollector {
             override fun reportWarning(text: String) {}
-            override fun reportWarning(method: FunctionDescriptor, text: String) {}
+            override fun reportWarning(declaration: DeclarationDescriptor, text: String) {}
             override fun reportException(throwable: Throwable) = throw throwable
         })
 
