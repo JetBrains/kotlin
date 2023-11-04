@@ -26,10 +26,11 @@ class JvmBirBackendContext @OptIn(ObsoleteDescriptorBasedAPI::class) constructor
     irContext: JvmBackendContext,
     module: ModuleDescriptor,
     compiledBir: BirForest,
+    externalModulesBir: BirForest,
     ir2BirConverter: Ir2BirConverter,
     dynamicPropertyManager: BirElementDynamicPropertyManager,
     phaseConfig: List<(JvmBirBackendContext) -> BirLoweringPhase>,
-) : BirBackendContext(compiledBir, dynamicPropertyManager, irContext.configuration) {
+) : BirBackendContext(compiledBir, externalModulesBir, dynamicPropertyManager, irContext.configuration) {
     val config: JvmBackendConfig = irContext.state.config
     override val builtIns = irContext.builtIns
     val generationState: GenerationState = irContext.state

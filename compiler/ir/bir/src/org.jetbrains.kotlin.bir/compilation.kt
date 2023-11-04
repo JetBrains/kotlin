@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.bir.backend.jvm.JvmBirBackendContext
 import org.jetbrains.kotlin.bir.backend.lower.*
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
+import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.bir.util.countAllElementsInTree
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -203,7 +204,7 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
     override fun phaseBody(context: JvmBackendContext, input: IrModuleFragment): BirCompilationBundle {
         val dynamicPropertyManager = BirElementDynamicPropertyManager()
 
-        val externalDependenciesBir = BirForest()
+        val externalModulesBir = BirForest()
         val compiledBir = BirForest()
 
         val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
@@ -211,7 +212,8 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
         ir2BirConverter.appendElementAsForestRoot = { old, new ->
             when {
                 old === input -> compiledBir
-                new is BirModuleFragment || new is BirExternalPackageFragment -> externalDependenciesBir
+                new is BirModuleFragment || new is BirExternalPackageFragment -> externalModulesBir
+                new is BirLazyElementBase -> externalModulesBir
                 else -> null
             }
         }
@@ -223,6 +225,7 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
                 context,
                 input.descriptor,
                 compiledBir,
+                externalModulesBir,
                 ir2BirConverter,
                 dynamicPropertyManager,
                 birPhases,
@@ -262,18 +265,23 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
         input: BirCompilationBundle,
     ): BirCompilationBundle {
         val compiledBir = input.backendContext.compiledBir
+        val externalBir = input.backendContext.externalModulesBir
         val profile = input.profile
 
         invokePhaseMeasuringTime(profile, "!BIR - applyNewRegisteredIndices") {
             compiledBir.applyNewRegisteredIndices()
+            externalBir.applyNewRegisteredIndices()
         }
         repeat(1) {
             invokePhaseMeasuringTime(profile, "!BIR - baseline tree traversal") {
                 input.birModule.countAllElementsInTree()
             }
 
-            invokePhaseMeasuringTime(profile, "!BIR - reindexAllElements") {
+            invokePhaseMeasuringTime(profile, "!BIR - index compiled BIR") {
                 compiledBir.reindexAllElements()
+            }
+            invokePhaseMeasuringTime(profile, "!BIR - index external BIR") {
+                externalBir.reindexAllElements()
             }
             //Thread.sleep(100)
         }
