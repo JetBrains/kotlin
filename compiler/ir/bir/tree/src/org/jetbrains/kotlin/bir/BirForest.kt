@@ -21,7 +21,7 @@ class BirForest : BirElementParent() {
     private var elementClassifier: BirElementIndexClassifier? = null
     private var currentElementsIndexSlotIterator: ElementsIndexSlotIterator<*>? = null
     private var currentIndexSlot = 0
-    private var bufferedElementWithInvalidatedIndex: BirImplElementBase? = null
+    private var bufferedElementWithInvalidatedIndex: BirElementBase? = null
     internal var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
         private set
 
@@ -207,7 +207,7 @@ class BirForest : BirElementParent() {
     internal val isInsideElementClassification: Boolean
         get() = mutableElementCurrentlyBeingClassified != null
 
-    internal fun elementIndexInvalidated(element: BirImplElementBase) {
+    internal fun elementIndexInvalidated(element: BirElementBase) {
         if (element !== bufferedElementWithInvalidatedIndex) {
             flushElementsWithInvalidatedIndexBuffer()
             bufferedElementWithInvalidatedIndex = element
@@ -217,7 +217,8 @@ class BirForest : BirElementParent() {
     private fun flushElementsWithInvalidatedIndexBuffer() {
         bufferedElementWithInvalidatedIndex?.let {
             addElementToIndex(it)
-            it.invalidateDependentElements()
+            (it as? BirImplElementBase)?.invalidateDependentElements()
+            bufferedElementWithInvalidatedIndex = null
         }
     }
 
@@ -311,28 +312,13 @@ class BirForest : BirElementParent() {
         var array = emptyArray<BirElementBase?>()
             private set
         var size = 0
-        var currentIterator: ElementsIndexSlotIterator<*>? = null
 
         fun add(element: BirElementBase) {
             var array = array
             val size = size
 
             if (array.isEmpty()) {
-                for (i in 1..<currentIndexSlot) {
-                    val slot = elementIndexSlots[i] ?: continue
-                    if (slot.array.size > size) {
-                        // Steal a nice, preallocated and nulled-out array from some previous slot.
-                        // It won't use it anyway.
-                        array = slot.array
-                        slot.array = emptyArray<BirElementBase?>()
-                        break
-                    }
-                }
-
-                if (array.isEmpty()) {
-                    array = arrayOfNulls(8)
-                }
-
+                array = acquireNewArray(size)
                 this.array = array
             } else if (size == array.size) {
                 array = array.copyOf(size * 2)
@@ -342,6 +328,21 @@ class BirForest : BirElementParent() {
             array[size] = element
             this.size = size + 1
         }
+
+        private fun acquireNewArray(size: Int): Array<BirElementBase?> {
+            for (i in 1..<currentIndexSlot) {
+                val slot = elementIndexSlots[i] ?: continue
+                if (slot.array.size > size) {
+                    // Steal a nice, preallocated and nulled-out array from some previous slot.
+                    // It won't use it anyway.
+                    val array = slot.array
+                    slot.array = emptyArray<BirElementBase?>()
+                    return array
+                }
+            }
+
+            return arrayOfNulls(8)
+        }
     }
 
     private inner class ElementsIndexSlotIterator<E : BirElement>(
@@ -350,6 +351,7 @@ class BirForest : BirElementParent() {
         private var canceled = false
         var mainListIdx = 0
             private set
+        private val slotIndex = slot.index
         private var next: BirElementBase? = null
 
         override fun hasNext(): Boolean {
@@ -372,14 +374,16 @@ class BirForest : BirElementParent() {
             require(!canceled) { "Iterator was cancelled" }
             val array = slot.array
 
-            while (true) {
-                flushElementsWithInvalidatedIndexBuffer()
+            // An operation after last computeNext might have invalidated
+            // some element which we are about to yield here, so check for that.
+            flushElementsWithInvalidatedIndexBuffer()
 
+            while (true) {
                 val idx = mainListIdx
                 var element: BirElementBase? = null
                 while (idx < slot.size) {
                     element = array[idx]!!
-                    if (element.indexSlot.toInt() == slot.index) {
+                    if (element.indexSlot.toInt() == slotIndex) {
                         array[idx] = null
                         break
                     } else {
@@ -395,6 +399,11 @@ class BirForest : BirElementParent() {
                 }
 
                 if (element != null) {
+                    // Element classification stops at the first successful match.
+                    // Now that the element has matched this particular index, we always
+                    // have to check whether it will also match some proceeding one.
+                    elementIndexInvalidated(element)
+
                     mainListIdx++
                     return element
                 } else {

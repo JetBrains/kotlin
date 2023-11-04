@@ -26,7 +26,6 @@ abstract class BirElementBase : BirElementParent(), BirElement {
      */
     internal var root: BirForest? = null
     internal var _parent: BirElementParent? = null
-    //internal var containingListId: Byte = 0
     private var flags: Byte = 0
     internal var indexSlot: UByte = 0u
     private var backReferences: Any? = null // null | BirElementBase | Array<BirElementBase?>

@@ -33,7 +33,7 @@ private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirProvisionalFunctionExpressionLowering,
     ::BirJvmOverloadsAnnotationLowering,
     ::BirMainMethodGenerationLowering,
-    ::BirAnnotationLowering,
+    //::BirAnnotationLowering,
     ::BirPolymorphicSignatureLowering,
     ::BirVarargLowering,
     ::BirJvmLateinitLowering,
@@ -41,7 +41,12 @@ private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirInlineCallableReferenceToLambdaLowering,
 )
 
-private val excludedStandardPhases = setOf<String>()
+private val excludedStandardPhases = setOf<String>(
+    // This phase removes annotation constructors, but they are still being used,
+    // which causes an exception in BIR. It works in IR because removed constructors
+    // still have their parent property set.
+    "Annotation"
+)
 
 fun lowerWithBir(
     phases: SameTypeNamedCompilerPhase<JvmBackendContext, IrModuleFragment>,
@@ -73,7 +78,7 @@ fun lowerWithBir(
 
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
-        enabled += compoundPhase.toPhaseMap().values.toSet()
+        enabled += compoundPhase.toPhaseMap().values.filter { it.name !in excludedStandardPhases }.toSet()
         verbose += context.phaseConfig.verbose
         toDumpStateBefore += context.phaseConfig.toDumpStateBefore
         toDumpStateAfter += context.phaseConfig.toDumpStateAfter
@@ -82,12 +87,6 @@ fun lowerWithBir(
         checkConditions = context.phaseConfig.checkConditions
         checkStickyConditions = context.phaseConfig.checkStickyConditions
     }.build()
-
-    val standardPhasesByName = newPhases.associateBy { (it as AnyNamedPhase).name }
-    excludedStandardPhases.forEach {
-        val phase = standardPhasesByName[it] as AnyNamedPhase
-        phaseConfig.disable(phase)
-    }
 
     compoundPhase.invokeToplevel(phaseConfig, context, irModuleFragment)
 }
@@ -161,7 +160,10 @@ class CustomPerFileAggregateLoweringPhase(
                 }
                 context.inVerbosePhase = phaseConfig.isVerbose(filePhase)
 
-                invokePhaseMeasuringTime(profile, (filePhase as? AbstractNamedCompilerPhase<*, *, *>)?.name ?: filePhase.javaClass.simpleName) {
+                invokePhaseMeasuringTime(
+                    profile,
+                    (filePhase as? AbstractNamedCompilerPhase<*, *, *>)?.name ?: filePhase.javaClass.simpleName
+                ) {
                     for (irFile in input.files) {
                         filePhase.phaseBody(phaseConfig, filePhaserState, context, irFile)
                     }
