@@ -38,13 +38,13 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(8)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(8)
             }
         }
 
@@ -52,13 +52,13 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(9)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(9)
             }
         }
 
@@ -69,13 +69,13 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -83,13 +83,13 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var name: Name
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -97,13 +97,13 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var visibility: DescriptorVisibility
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _visibility
         }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -114,13 +114,13 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isActual: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _isActual
         }
         set(value) {
             if (_isActual != value) {
                 _isActual = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -128,13 +128,13 @@ class BirTypeAliasImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var expandedType: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _expandedType
         }
         set(value) {
             if (_expandedType != value) {
                 _expandedType = value
-                invalidate()
+                invalidate(7)
             }
         }
 

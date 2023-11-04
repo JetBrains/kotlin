@@ -8,12 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirCatch
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -30,13 +25,13 @@ class BirTryImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -44,13 +39,13 @@ class BirTryImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -58,13 +53,13 @@ class BirTryImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -72,14 +67,14 @@ class BirTryImpl(
 
     override var tryResult: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _tryResult ?: throwChildElementRemoved("tryResult")
         }
         set(value) {
             if (_tryResult != value) {
                 childReplaced(_tryResult, value)
                 _tryResult = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -90,14 +85,14 @@ class BirTryImpl(
 
     override var finallyExpression: BirExpression?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _finallyExpression
         }
         set(value) {
             if (_finallyExpression != value) {
                 childReplaced(_finallyExpression, value)
                 _finallyExpression = value
-                invalidate()
+                invalidate(3)
             }
         }
     init {

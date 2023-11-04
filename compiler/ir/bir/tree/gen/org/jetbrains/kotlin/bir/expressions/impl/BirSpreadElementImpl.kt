@@ -23,13 +23,13 @@ class BirSpreadElementImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -37,14 +37,14 @@ class BirSpreadElementImpl(
 
     override var expression: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _expression ?: throwChildElementRemoved("expression")
         }
         set(value) {
             if (_expression != value) {
                 childReplaced(_expression, value)
                 _expression = value
-                invalidate()
+                invalidate(1)
             }
         }
     init {

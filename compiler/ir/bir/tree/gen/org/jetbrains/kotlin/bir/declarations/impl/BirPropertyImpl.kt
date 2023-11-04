@@ -34,7 +34,7 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     visibility: DescriptorVisibility,
     modality: Modality,
     isFakeOverride: Boolean,
-    override var overriddenSymbols: List<BirPropertySymbol>,
+    overriddenSymbols: List<BirPropertySymbol>,
     isVar: Boolean,
     isConst: Boolean,
     isLateinit: Boolean,
@@ -51,13 +51,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -65,13 +65,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -82,13 +82,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -96,13 +96,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var name: Name
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate()
+                invalidate(7)
             }
         }
 
@@ -110,13 +110,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isExternal: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(8)
             return _isExternal
         }
         set(value) {
             if (_isExternal != value) {
                 _isExternal = value
-                invalidate()
+                invalidate(8)
             }
         }
 
@@ -124,13 +124,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var visibility: DescriptorVisibility
         get() {
-            recordPropertyRead()
+            recordPropertyRead(9)
             return _visibility
         }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
-                invalidate()
+                invalidate(9)
             }
         }
 
@@ -138,13 +138,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var modality: Modality
         get() {
-            recordPropertyRead()
+            recordPropertyRead(10)
             return _modality
         }
         set(value) {
             if (_modality != value) {
                 _modality = value
-                invalidate()
+                invalidate(10)
             }
         }
 
@@ -152,13 +152,27 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isFakeOverride: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(11)
             return _isFakeOverride
         }
         set(value) {
             if (_isFakeOverride != value) {
                 _isFakeOverride = value
-                invalidate()
+                invalidate(11)
+            }
+        }
+
+    private var _overriddenSymbols: List<BirPropertySymbol> = overriddenSymbols
+
+    override var overriddenSymbols: List<BirPropertySymbol>
+        get() {
+            recordPropertyRead(12)
+            return _overriddenSymbols
+        }
+        set(value) {
+            if (_overriddenSymbols != value) {
+                _overriddenSymbols = value
+                invalidate(12)
             }
         }
 
@@ -166,13 +180,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -180,13 +194,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isVar: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(13)
             return _isVar
         }
         set(value) {
             if (_isVar != value) {
                 _isVar = value
-                invalidate()
+                invalidate(13)
             }
         }
 
@@ -194,13 +208,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isConst: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _isConst
         }
         set(value) {
             if (_isConst != value) {
                 _isConst = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -208,13 +222,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isLateinit: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _isLateinit
         }
         set(value) {
             if (_isLateinit != value) {
                 _isLateinit = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -222,13 +236,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isDelegated: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _isDelegated
         }
         set(value) {
             if (_isDelegated != value) {
                 _isDelegated = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -236,13 +250,13 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isExpect: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _isExpect
         }
         set(value) {
             if (_isExpect != value) {
                 _isExpect = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -250,14 +264,14 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var backingField: BirField?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _backingField
         }
         set(value) {
             if (_backingField != value) {
                 childReplaced(_backingField, value)
                 _backingField = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -265,14 +279,14 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var getter: BirSimpleFunction?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _getter
         }
         set(value) {
             if (_getter != value) {
                 childReplaced(_getter, value)
                 _getter = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -280,14 +294,14 @@ class BirPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var setter: BirSimpleFunction?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _setter
         }
         set(value) {
             if (_setter != value) {
                 childReplaced(_setter, value)
                 _setter = value
-                invalidate()
+                invalidate(4)
             }
         }
     init {

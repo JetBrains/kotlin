@@ -8,12 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirDynamicOperatorExpression
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -30,13 +25,13 @@ class BirDynamicOperatorExpressionImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -44,13 +39,13 @@ class BirDynamicOperatorExpressionImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -58,13 +53,13 @@ class BirDynamicOperatorExpressionImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -72,13 +67,13 @@ class BirDynamicOperatorExpressionImpl(
 
     override var operator: IrDynamicOperator
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _operator
         }
         set(value) {
             if (_operator != value) {
                 _operator = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -86,14 +81,14 @@ class BirDynamicOperatorExpressionImpl(
 
     override var receiver: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _receiver ?: throwChildElementRemoved("receiver")
         }
         set(value) {
             if (_receiver != value) {
                 childReplaced(_receiver, value)
                 _receiver = value
-                invalidate()
+                invalidate(2)
             }
         }
 

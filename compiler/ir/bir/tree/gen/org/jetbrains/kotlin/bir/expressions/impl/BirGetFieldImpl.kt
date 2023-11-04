@@ -32,13 +32,13 @@ class BirGetFieldImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(7)
             }
         }
 
@@ -46,13 +46,13 @@ class BirGetFieldImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -60,13 +60,13 @@ class BirGetFieldImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -74,13 +74,13 @@ class BirGetFieldImpl(
 
     override var symbol: BirFieldSymbol
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _symbol
         }
         set(value) {
             if (_symbol != value) {
                 _symbol = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -88,13 +88,13 @@ class BirGetFieldImpl(
 
     override var superQualifierSymbol: BirClassSymbol?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _superQualifierSymbol
         }
         set(value) {
             if (_superQualifierSymbol != value) {
                 _superQualifierSymbol = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -102,14 +102,14 @@ class BirGetFieldImpl(
 
     override var receiver: BirExpression?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _receiver
         }
         set(value) {
             if (_receiver != value) {
                 childReplaced(_receiver, value)
                 _receiver = value
-                invalidate()
+                invalidate(1)
             }
         }
 
@@ -117,13 +117,13 @@ class BirGetFieldImpl(
 
     override var origin: IrStatementOrigin?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(6)
             }
         }
     init {
