@@ -27,13 +27,13 @@ class BirDynamicMemberExpressionImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -41,13 +41,13 @@ class BirDynamicMemberExpressionImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -55,13 +55,13 @@ class BirDynamicMemberExpressionImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -69,13 +69,13 @@ class BirDynamicMemberExpressionImpl(
 
     override var memberName: String
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _memberName
         }
         set(value) {
             if (_memberName != value) {
                 _memberName = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -83,14 +83,14 @@ class BirDynamicMemberExpressionImpl(
 
     override var receiver: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _receiver ?: throwChildElementRemoved("receiver")
         }
         set(value) {
             if (_receiver != value) {
                 childReplaced(_receiver, value)
                 _receiver = value
-                invalidate()
+                invalidate(1)
             }
         }
     init {

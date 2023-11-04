@@ -24,13 +24,13 @@ class BirRawFunctionReferenceImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -38,13 +38,13 @@ class BirRawFunctionReferenceImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(1)
             }
         }
 
@@ -52,13 +52,13 @@ class BirRawFunctionReferenceImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -66,13 +66,13 @@ class BirRawFunctionReferenceImpl(
 
     override var symbol: BirFunctionSymbol
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _symbol
         }
         set(value) {
             if (_symbol != value) {
                 _symbol = value
-                invalidate()
+                invalidate(3)
             }
         }
 

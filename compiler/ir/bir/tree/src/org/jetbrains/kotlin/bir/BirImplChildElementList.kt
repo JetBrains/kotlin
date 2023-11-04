@@ -13,27 +13,27 @@ class BirImplChildElementList<E : BirElement?>(
 
     override val size: Int
         get() {
-            parent.recordPropertyRead()
+            recordRead()
             return _size
         }
 
     override fun get(index: Int): E {
-        parent.recordPropertyRead()
+        recordRead()
         return super.get(index)
     }
 
     override fun contains(element: E): Boolean {
-        parent.recordPropertyRead()
+        recordRead()
         return super.contains(element)
     }
 
     override fun indexOf(element: E): Int {
-        parent.recordPropertyRead()
+        recordRead()
         return super.indexOf(element)
     }
 
     override fun lastIndexOf(element: E): Int {
-        parent.recordPropertyRead()
+        recordRead()
         return super.lastIndexOf(element)
     }
 
@@ -241,12 +241,16 @@ class BirImplChildElementList<E : BirElement?>(
         invalidate()
     }
 
+    private fun recordRead() {
+        parent.recordPropertyRead(id)
+    }
+    
     private fun invalidate() {
-        parent.invalidate()
+        parent.invalidate(id)
     }
 
     override fun iterator(): MutableIterator<E> {
-        parent.recordPropertyRead()
+        recordRead()
         return IteratorImpl<E>(this)
     }
 

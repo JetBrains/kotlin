@@ -8,12 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
-import org.jetbrains.kotlin.bir.acceptLite
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
@@ -29,7 +24,7 @@ class BirCallImpl(
     dispatchReceiver: BirExpression?,
     extensionReceiver: BirExpression?,
     origin: IrStatementOrigin?,
-    override var typeArguments: List<BirType?>,
+    typeArguments: List<BirType?>,
     contextReceiversCount: Int,
     superQualifierSymbol: BirClassSymbol?,
 ) : BirCall() {
@@ -37,13 +32,13 @@ class BirCallImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(11)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(11)
             }
         }
 
@@ -51,13 +46,13 @@ class BirCallImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -65,13 +60,13 @@ class BirCallImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -79,13 +74,13 @@ class BirCallImpl(
 
     override var symbol: BirSimpleFunctionSymbol
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _symbol
         }
         set(value) {
             if (_symbol != value) {
                 _symbol = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -93,14 +88,14 @@ class BirCallImpl(
 
     override var dispatchReceiver: BirExpression?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _dispatchReceiver
         }
         set(value) {
             if (_dispatchReceiver != value) {
                 childReplaced(_dispatchReceiver, value)
                 _dispatchReceiver = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -108,14 +103,14 @@ class BirCallImpl(
 
     override var extensionReceiver: BirExpression?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _extensionReceiver
         }
         set(value) {
             if (_extensionReceiver != value) {
                 childReplaced(_extensionReceiver, value)
                 _extensionReceiver = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -123,30 +118,44 @@ class BirCallImpl(
 
     override var origin: IrStatementOrigin?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(7)
             }
         }
 
     override val valueArguments: BirChildElementList<BirExpression?> =
             BirImplChildElementList(this, 1, true)
 
+    private var _typeArguments: List<BirType?> = typeArguments
+
+    override var typeArguments: List<BirType?>
+        get() {
+            recordPropertyRead(8)
+            return _typeArguments
+        }
+        set(value) {
+            if (_typeArguments != value) {
+                _typeArguments = value
+                invalidate(8)
+            }
+        }
+
     private var _contextReceiversCount: Int = contextReceiversCount
 
     override var contextReceiversCount: Int
         get() {
-            recordPropertyRead()
+            recordPropertyRead(9)
             return _contextReceiversCount
         }
         set(value) {
             if (_contextReceiversCount != value) {
                 _contextReceiversCount = value
-                invalidate()
+                invalidate(9)
             }
         }
 
@@ -154,13 +163,13 @@ class BirCallImpl(
 
     override var superQualifierSymbol: BirClassSymbol?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(10)
             return _superQualifierSymbol
         }
         set(value) {
             if (_superQualifierSymbol != value) {
                 _superQualifierSymbol = value
-                invalidate()
+                invalidate(10)
             }
         }
     init {

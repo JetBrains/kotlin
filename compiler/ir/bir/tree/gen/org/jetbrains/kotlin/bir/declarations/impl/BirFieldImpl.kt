@@ -43,13 +43,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(11)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(11)
             }
         }
 
@@ -57,13 +57,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(12)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(12)
             }
         }
 
@@ -74,13 +74,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -88,13 +88,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var name: Name
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -102,13 +102,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isExternal: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _isExternal
         }
         set(value) {
             if (_isExternal != value) {
                 _isExternal = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -116,13 +116,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var visibility: DescriptorVisibility
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _visibility
         }
         set(value) {
             if (_visibility != value) {
                 _visibility = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -130,13 +130,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(7)
             }
         }
 
@@ -144,13 +144,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isFinal: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(8)
             return _isFinal
         }
         set(value) {
             if (_isFinal != value) {
                 _isFinal = value
-                invalidate()
+                invalidate(8)
             }
         }
 
@@ -158,13 +158,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isStatic: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(9)
             return _isStatic
         }
         set(value) {
             if (_isStatic != value) {
                 _isStatic = value
-                invalidate()
+                invalidate(9)
             }
         }
 
@@ -172,14 +172,14 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var initializer: BirExpressionBody?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _initializer
         }
         set(value) {
             if (_initializer != value) {
                 childReplaced(_initializer, value)
                 _initializer = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -187,13 +187,13 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var correspondingPropertySymbol: BirPropertySymbol?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(10)
             return _correspondingPropertySymbol
         }
         set(value) {
             if (_correspondingPropertySymbol != value) {
                 _correspondingPropertySymbol = value
-                invalidate()
+                invalidate(10)
             }
         }
     init {

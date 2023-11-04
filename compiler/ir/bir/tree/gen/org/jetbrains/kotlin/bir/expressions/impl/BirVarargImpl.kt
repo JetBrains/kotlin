@@ -8,11 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirVararg
 import org.jetbrains.kotlin.bir.expressions.BirVarargElement
@@ -27,13 +23,13 @@ class BirVarargImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -41,13 +37,13 @@ class BirVarargImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -55,13 +51,13 @@ class BirVarargImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -69,13 +65,13 @@ class BirVarargImpl(
 
     override var varargElementType: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _varargElementType
         }
         set(value) {
             if (_varargElementType != value) {
                 _varargElementType = value
-                invalidate()
+                invalidate(4)
             }
         }
 

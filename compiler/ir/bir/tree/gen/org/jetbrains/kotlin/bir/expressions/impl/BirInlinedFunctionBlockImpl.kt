@@ -8,12 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.BirStatement
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirFunctionAccessExpression
 import org.jetbrains.kotlin.bir.expressions.BirInlinedFunctionBlock
@@ -31,13 +26,13 @@ class BirInlinedFunctionBlockImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(7)
             }
         }
 
@@ -45,13 +40,13 @@ class BirInlinedFunctionBlockImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -59,13 +54,13 @@ class BirInlinedFunctionBlockImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -76,13 +71,13 @@ class BirInlinedFunctionBlockImpl(
 
     override var origin: IrStatementOrigin?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -90,13 +85,13 @@ class BirInlinedFunctionBlockImpl(
 
     override var inlineCall: BirFunctionAccessExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _inlineCall
         }
         set(value) {
             if (_inlineCall != value) {
                 _inlineCall = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -104,13 +99,13 @@ class BirInlinedFunctionBlockImpl(
 
     override var inlinedElement: BirElement
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _inlinedElement
         }
         set(value) {
             if (_inlinedElement != value) {
                 _inlinedElement = value
-                invalidate()
+                invalidate(4)
             }
         }
 

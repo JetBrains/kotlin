@@ -27,13 +27,13 @@ class BirSuspendableExpressionImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -41,13 +41,13 @@ class BirSuspendableExpressionImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -55,13 +55,13 @@ class BirSuspendableExpressionImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -69,14 +69,14 @@ class BirSuspendableExpressionImpl(
 
     override var suspensionPointId: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _suspensionPointId ?: throwChildElementRemoved("suspensionPointId")
         }
         set(value) {
             if (_suspensionPointId != value) {
                 childReplaced(_suspensionPointId, value)
                 _suspensionPointId = value
-                invalidate()
+                invalidate(1)
             }
         }
 
@@ -84,14 +84,14 @@ class BirSuspendableExpressionImpl(
 
     override var result: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _result ?: throwChildElementRemoved("result")
         }
         set(value) {
             if (_result != value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate()
+                invalidate(2)
             }
         }
     init {
