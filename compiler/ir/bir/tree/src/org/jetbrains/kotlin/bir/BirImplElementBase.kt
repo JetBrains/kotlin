@@ -120,7 +120,8 @@ abstract class BirImplElementBase : BirElementBase() {
     }
 
     internal fun <T> getOrPutDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, compute: () -> T): T {
-        recordPropertyRead()
+        // todo: why asserts do run?
+        //assert(root?.isInsideElementClassification != true)
 
         val arrayMap = dynamicProperties
         if (arrayMap == null) {
