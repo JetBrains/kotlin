@@ -27,7 +27,7 @@ private external fun wasiRawArgsSizesGet(
 ): Int
 
 @OptIn(UnsafeWasmMemoryApi::class)
-internal fun getArguments(): List<String> = withScopedMemoryAllocator { allocator ->
+internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { allocator ->
     val numberOfArgumentsPtr = allocator.allocate(4)
     val sizeOfArgumentStringPtr = allocator.allocate(4)
     val argNumRes = wasiRawArgsSizesGet(

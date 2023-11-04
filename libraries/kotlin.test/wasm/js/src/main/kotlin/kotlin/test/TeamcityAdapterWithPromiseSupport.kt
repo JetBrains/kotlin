@@ -14,7 +14,7 @@ private external fun d8Arguments(): String
 @JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2).join(' ') : ''")
 private external fun nodeArguments(): String
 
-internal fun getArguments(): List<String> = (d8Arguments().ifEmpty { nodeArguments() }).split(' ')
+internal actual fun getArguments(): List<String> = (d8Arguments().ifEmpty { nodeArguments() }).split(' ')
 
 internal class TeamcityAdapterWithPromiseSupport : TeamcityAdapter() {
     private var scheduleNextTaskAfter: Promise<JsAny?>? = null

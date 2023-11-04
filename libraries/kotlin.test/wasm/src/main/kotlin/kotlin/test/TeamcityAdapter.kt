@@ -7,6 +7,8 @@ package kotlin.test
 
 import kotlin.math.abs
 
+internal expect fun getArguments(): List<String>
+
 internal open class TeamcityAdapter : FrameworkAdapter {
     protected open fun runOrScheduleNext(block: () -> Unit) = block()
     protected open fun runOrScheduleNextWithResult(block: () -> Any?) = block()

@@ -7,6 +7,9 @@ package kotlin.test
 
 import kotlin.wasm.WasmExport
 
+
+internal expect fun adapter(): FrameworkAdapter
+
 /**
  * The functions below are used by the compiler to describe the tests structure, e.g.
  *

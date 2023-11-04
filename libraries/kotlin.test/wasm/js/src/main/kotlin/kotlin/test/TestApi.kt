@@ -20,7 +20,7 @@ internal var currentAdapter: FrameworkAdapter? = null
 private fun isJasmine(): Boolean =
     js("typeof describe === 'function' && typeof it === 'function'")
 
-internal fun adapter(): FrameworkAdapter {
+internal actual fun adapter(): FrameworkAdapter {
     val result = currentAdapter ?: if (isJasmine()) JasmineLikeAdapter() else TeamcityAdapterWithPromiseSupport()
     currentAdapter = result
     return result
