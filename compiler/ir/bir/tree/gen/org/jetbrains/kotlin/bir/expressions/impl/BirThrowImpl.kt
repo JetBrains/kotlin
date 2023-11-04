@@ -86,10 +86,11 @@ class BirThrowImpl(
         _value?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._value === old -> this._value = new as BirExpression?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._value === old -> {
+            this._value = new as BirExpression?
+            1
         }
+        else -> throwChildForReplacementNotFound(old)
     }
 }

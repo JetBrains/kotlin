@@ -185,13 +185,20 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
         _setter?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._delegate === old -> this._delegate = new as BirVariable?
-            this._getter === old -> this._getter = new as BirSimpleFunction?
-            this._setter === old -> this._setter = new as BirSimpleFunction?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._delegate === old -> {
+            this._delegate = new as BirVariable?
+            2
         }
+        this._getter === old -> {
+            this._getter = new as BirSimpleFunction?
+            3
+        }
+        this._setter === old -> {
+            this._setter = new as BirSimpleFunction?
+            4
+        }
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {

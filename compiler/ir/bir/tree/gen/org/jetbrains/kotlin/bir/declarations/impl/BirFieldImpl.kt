@@ -211,11 +211,12 @@ class BirFieldImpl @ObsoleteDescriptorBasedAPI constructor(
         _initializer?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._initializer === old -> this._initializer = new as BirExpressionBody?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._initializer === old -> {
+            this._initializer = new as BirExpressionBody?
+            2
         }
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
