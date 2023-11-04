@@ -68,7 +68,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
                         initializer("%M(this, %L, %L)", childElementListImpl, childrenLists.indexOf(field) + 1, (field.elementType as TypeRefWithNullability).nullable)
-                    } else if (field is SingleField && field.isMutable) {
+                    } else if (field.isReadWriteTrackedProperty) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, if (field.isChild) poetType.copy(nullable = true) else poetType)
                                 .mutable(true)
@@ -87,7 +87,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         if (field.initializeToThis) initializer("this") else initializer("%N", field.name)
                     }
 
-                    if (field is SingleField && field.isMutable) {
+                    if (field.isReadWriteTrackedProperty) {
                         getter(
                             FunSpec.getterBuilder()
                                 .apply {
