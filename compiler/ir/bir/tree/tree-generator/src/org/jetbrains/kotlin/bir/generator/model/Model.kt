@@ -102,11 +102,15 @@ sealed class Field(
     var needsDescriptorApiAnnotation = false
 
     var passViaConstructorParameter = false
+    var isReadWriteTrackedProperty = false
     val initializeToThis = (config as? SimpleFieldConfig)?.initializeToThis ?: false
 
     val kdoc = config.kdoc
     val printProperty = config.printProperty
     val generationCallback = config.generationCallback
+
+    val backingFieldName: String
+        get() = "_$name"
 
     override fun toString() = "$name: $typeRef"
 
@@ -130,10 +134,7 @@ class SingleField(
     mutable: Boolean,
     isChild: Boolean,
     override val baseDefaultValue: CodeBlock?,
-) : Field(config, name, mutable, isChild) {
-    val backingFieldName: String
-        get() = "_$name"
-}
+) : Field(config, name, mutable, isChild)
 
 class ListField(
     config: FieldConfig,

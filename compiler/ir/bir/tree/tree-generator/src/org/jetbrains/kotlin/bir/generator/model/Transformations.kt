@@ -255,6 +255,11 @@ private fun computeAllFields(elements: List<Element>) {
 
         for (field in allFields) {
             field.passViaConstructorParameter = !(field is ListField && field.isChild) && !field.initializeToThis
+            field.isReadWriteTrackedProperty = field.isMutable && !(field is ListField && field.isChild)
+
+            if (field.isReadWriteTrackedProperty) {
+                field.propertyId = (nextPropertyId++).coerceAtMost(14) // see [BirImplElementBase] for this maximum value
+            }
         }
     }
 }
