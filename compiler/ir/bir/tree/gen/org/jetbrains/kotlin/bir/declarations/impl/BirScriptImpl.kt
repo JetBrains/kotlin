@@ -33,11 +33,11 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     name: Name,
     thisReceiver: BirValueParameter?,
     baseClass: BirType?,
-    override var providedProperties: List<BirPropertySymbol>,
+    providedProperties: List<BirPropertySymbol>,
     resultProperty: BirPropertySymbol?,
     earlierScriptsParameter: BirValueParameter?,
-    override var importedScripts: List<BirScriptSymbol>?,
-    override var earlierScripts: List<BirScriptSymbol>?,
+    importedScripts: List<BirScriptSymbol>?,
+    earlierScripts: List<BirScriptSymbol>?,
     targetClass: BirClassSymbol?,
     constructor: BirConstructor?,
 ) : BirScript() {
@@ -48,13 +48,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -62,13 +62,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -79,13 +79,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(9)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(9)
             }
         }
 
@@ -93,13 +93,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var name: Name
         get() {
-            recordPropertyRead()
+            recordPropertyRead(10)
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate()
+                invalidate(10)
             }
         }
 
@@ -110,14 +110,14 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var thisReceiver: BirValueParameter?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _thisReceiver
         }
         set(value) {
             if (_thisReceiver != value) {
                 childReplaced(_thisReceiver, value)
                 _thisReceiver = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -125,13 +125,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var baseClass: BirType?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(11)
             return _baseClass
         }
         set(value) {
             if (_baseClass != value) {
                 _baseClass = value
-                invalidate()
+                invalidate(11)
             }
         }
 
@@ -141,6 +141,20 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
     override val implicitReceiversParameters: BirChildElementList<BirValueParameter> =
             BirImplChildElementList(this, 4, false)
 
+    private var _providedProperties: List<BirPropertySymbol> = providedProperties
+
+    override var providedProperties: List<BirPropertySymbol>
+        get() {
+            recordPropertyRead(12)
+            return _providedProperties
+        }
+        set(value) {
+            if (_providedProperties != value) {
+                _providedProperties = value
+                invalidate(12)
+            }
+        }
+
     override val providedPropertiesParameters: BirChildElementList<BirValueParameter> =
             BirImplChildElementList(this, 5, false)
 
@@ -148,13 +162,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var resultProperty: BirPropertySymbol?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(13)
             return _resultProperty
         }
         set(value) {
             if (_resultProperty != value) {
                 _resultProperty = value
-                invalidate()
+                invalidate(13)
             }
         }
 
@@ -162,14 +176,42 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var earlierScriptsParameter: BirValueParameter?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _earlierScriptsParameter
         }
         set(value) {
             if (_earlierScriptsParameter != value) {
                 childReplaced(_earlierScriptsParameter, value)
                 _earlierScriptsParameter = value
-                invalidate()
+                invalidate(7)
+            }
+        }
+
+    private var _importedScripts: List<BirScriptSymbol>? = importedScripts
+
+    override var importedScripts: List<BirScriptSymbol>?
+        get() {
+            recordPropertyRead(14)
+            return _importedScripts
+        }
+        set(value) {
+            if (_importedScripts != value) {
+                _importedScripts = value
+                invalidate(14)
+            }
+        }
+
+    private var _earlierScripts: List<BirScriptSymbol>? = earlierScripts
+
+    override var earlierScripts: List<BirScriptSymbol>?
+        get() {
+            recordPropertyRead(14)
+            return _earlierScripts
+        }
+        set(value) {
+            if (_earlierScripts != value) {
+                _earlierScripts = value
+                invalidate(14)
             }
         }
 
@@ -177,13 +219,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var targetClass: BirClassSymbol?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(14)
             return _targetClass
         }
         set(value) {
             if (_targetClass != value) {
                 _targetClass = value
-                invalidate()
+                invalidate(14)
             }
         }
 
@@ -191,13 +233,13 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var constructor: BirConstructor?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(8)
             return _constructor
         }
         set(value) {
             if (_constructor != value) {
                 _constructor = value
-                invalidate()
+                invalidate(8)
             }
         }
     init {

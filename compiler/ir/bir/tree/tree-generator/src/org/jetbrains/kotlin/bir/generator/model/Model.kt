@@ -34,7 +34,9 @@ class Element(
     var isLeaf = config.isForcedLeaf
     var ownerSymbolType: TypeRef? = null
     val childrenOrderOverride: List<String>? = config.childrenOrderOverride
-    override var allFields: List<Field> = emptyList()
+    override val allFields: List<Field>
+        get() = fieldImpls.map { it.field }
+    var fieldImpls: List<FieldImpl> = emptyList()
     val allChildren get() = allFields.filter { it.isChild }
 
     override val walkableChildren: List<Field> get() = emptyList()
@@ -147,4 +149,10 @@ class ListField(
 ) : Field(config, name, mutable, isChild) {
     override val typeRef: TypeRefWithNullability
         get() = listType.withArgs(elementType)
+}
+
+class FieldImpl(
+    val field: Field
+) {
+    var propertyId = -1
 }

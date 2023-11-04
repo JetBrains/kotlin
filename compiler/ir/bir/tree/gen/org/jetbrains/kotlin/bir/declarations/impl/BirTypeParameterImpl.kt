@@ -29,7 +29,7 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
     variance: Variance,
     index: Int,
     isReified: Boolean,
-    override var superTypes: List<BirType>,
+    superTypes: List<BirType>,
 ) : BirTypeParameter() {
     override val owner: BirTypeParameterImpl
         get() = this
@@ -38,13 +38,13 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(8)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(8)
             }
         }
 
@@ -52,13 +52,13 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(9)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(9)
             }
         }
 
@@ -69,13 +69,13 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -83,13 +83,13 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var name: Name
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -97,13 +97,13 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var variance: Variance
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _variance
         }
         set(value) {
             if (_variance != value) {
                 _variance = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -111,13 +111,13 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var index: Int
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _index
         }
         set(value) {
             if (_index != value) {
                 _index = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -125,13 +125,27 @@ class BirTypeParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isReified: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _isReified
         }
         set(value) {
             if (_isReified != value) {
                 _isReified = value
-                invalidate()
+                invalidate(6)
+            }
+        }
+
+    private var _superTypes: List<BirType> = superTypes
+
+    override var superTypes: List<BirType>
+        get() {
+            recordPropertyRead(7)
+            return _superTypes
+        }
+        set(value) {
+            if (_superTypes != value) {
+                _superTypes = value
+                invalidate(7)
             }
         }
 
