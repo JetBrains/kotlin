@@ -42,13 +42,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(12)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(12)
             }
         }
 
@@ -56,13 +56,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(13)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(13)
             }
         }
 
@@ -73,13 +73,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -87,13 +87,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var name: Name
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -101,13 +101,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -115,13 +115,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isAssignable: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _isAssignable
         }
         set(value) {
             if (_isAssignable != value) {
                 _isAssignable = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -129,13 +129,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var index: Int
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _index
         }
         set(value) {
             if (_index != value) {
                 _index = value
-                invalidate()
+                invalidate(7)
             }
         }
 
@@ -143,13 +143,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var varargElementType: BirType?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(8)
             return _varargElementType
         }
         set(value) {
             if (_varargElementType != value) {
                 _varargElementType = value
-                invalidate()
+                invalidate(8)
             }
         }
 
@@ -157,13 +157,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isCrossinline: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(9)
             return _isCrossinline
         }
         set(value) {
             if (_isCrossinline != value) {
                 _isCrossinline = value
-                invalidate()
+                invalidate(9)
             }
         }
 
@@ -171,13 +171,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isNoinline: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(10)
             return _isNoinline
         }
         set(value) {
             if (_isNoinline != value) {
                 _isNoinline = value
-                invalidate()
+                invalidate(10)
             }
         }
 
@@ -185,13 +185,13 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isHidden: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(11)
             return _isHidden
         }
         set(value) {
             if (_isHidden != value) {
                 _isHidden = value
-                invalidate()
+                invalidate(11)
             }
         }
 
@@ -199,14 +199,14 @@ class BirValueParameterImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var defaultValue: BirExpressionBody?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _defaultValue
         }
         set(value) {
             if (_defaultValue != value) {
                 childReplaced(_defaultValue, value)
                 _defaultValue = value
-                invalidate()
+                invalidate(2)
             }
         }
     init {

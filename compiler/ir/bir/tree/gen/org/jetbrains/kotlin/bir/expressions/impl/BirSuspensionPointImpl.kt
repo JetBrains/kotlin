@@ -29,13 +29,13 @@ class BirSuspensionPointImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -43,13 +43,13 @@ class BirSuspensionPointImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -57,13 +57,13 @@ class BirSuspensionPointImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -71,7 +71,7 @@ class BirSuspensionPointImpl(
 
     override var suspensionPointIdParameter: BirVariable
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _suspensionPointIdParameter ?:
                     throwChildElementRemoved("suspensionPointIdParameter")
         }
@@ -79,7 +79,7 @@ class BirSuspensionPointImpl(
             if (_suspensionPointIdParameter != value) {
                 childReplaced(_suspensionPointIdParameter, value)
                 _suspensionPointIdParameter = value
-                invalidate()
+                invalidate(1)
             }
         }
 
@@ -87,14 +87,14 @@ class BirSuspensionPointImpl(
 
     override var result: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _result ?: throwChildElementRemoved("result")
         }
         set(value) {
             if (_result != value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -102,14 +102,14 @@ class BirSuspensionPointImpl(
 
     override var resumeResult: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _resumeResult ?: throwChildElementRemoved("resumeResult")
         }
         set(value) {
             if (_resumeResult != value) {
                 childReplaced(_resumeResult, value)
                 _resumeResult = value
-                invalidate()
+                invalidate(3)
             }
         }
     init {

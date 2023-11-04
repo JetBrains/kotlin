@@ -8,11 +8,7 @@
 
 package org.jetbrains.kotlin.bir.declarations.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirDeclaration
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -36,13 +32,13 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -53,13 +49,13 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -67,13 +63,13 @@ class BirExternalPackageFragmentImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var packageFqName: FqName
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _packageFqName
         }
         set(value) {
             if (_packageFqName != value) {
                 _packageFqName = value
-                invalidate()
+                invalidate(2)
             }
         }
 

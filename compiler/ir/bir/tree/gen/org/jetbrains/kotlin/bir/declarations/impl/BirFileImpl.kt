@@ -33,13 +33,13 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -50,13 +50,13 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -64,13 +64,13 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var packageFqName: FqName
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _packageFqName
         }
         set(value) {
             if (_packageFqName != value) {
                 _packageFqName = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -81,13 +81,13 @@ class BirFileImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var fileEntry: IrFileEntry
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _fileEntry
         }
         set(value) {
             if (_fileEntry != value) {
                 _fileEntry = value
-                invalidate()
+                invalidate(4)
             }
         }
 

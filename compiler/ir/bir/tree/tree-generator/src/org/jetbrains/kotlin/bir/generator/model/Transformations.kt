@@ -55,7 +55,8 @@ fun config2model(config: Config): Model {
     markLeaves(elements)
     configureDescriptorApiAnnotation(elements)
     processFieldOverrides(elements)
-    computeAllFields(elements)
+    computeFieldProperties(elements)
+    computeFieldImpls(elements)
 
     return Model(elements, rootElement)
 }
@@ -231,9 +232,18 @@ private fun processFieldOverrides(elements: List<Element>) {
     }
 }
 
-
-private fun computeAllFields(elements: List<Element>) {
+private fun computeFieldProperties(elements: List<Element>) {
     for (element in elements) {
+        for (field in element.fields) {
+            field.passViaConstructorParameter = !(field is ListField && field.isChild) && !field.initializeToThis
+            field.isReadWriteTrackedProperty = field.isMutable && !(field is ListField && field.isChild)
+        }
+    }
+}
+
+
+private fun computeFieldImpls(elements: List<Element>) {
+    for (element in elements.filter { it.isLeaf }) {
         val allFieldsMap = mutableMapOf<String, Field>()
         val visitedParents = hashSetOf<Element>()
         fun visitParents(visited: Element) {
@@ -249,18 +259,27 @@ private fun computeAllFields(elements: List<Element>) {
         }
 
         visitParents(element)
-        val allFields = allFieldsMap.values.toList()
+        val allFieldImpls = allFieldsMap.values.map { FieldImpl(it) }
+        element.fieldImpls = allFieldImpls
 
-        element.allFields = allFields
-
-        for (field in allFields) {
-            field.passViaConstructorParameter = !(field is ListField && field.isChild) && !field.initializeToThis
-            field.isReadWriteTrackedProperty = field.isMutable && !(field is ListField && field.isChild)
-
-            if (field.isReadWriteTrackedProperty) {
-                field.propertyId = (nextPropertyId++).coerceAtMost(14) // see [BirImplElementBase] for this maximum value
+        var nextPropertyId = allFieldImpls.count { it.field is ListField && it.field.isChild } + 1
+        allFieldImpls
+            .filter { it.field.isReadWriteTrackedProperty }
+            .sortedBy {
+                val field = it.field
+                // order by the most likely to change
+                when {
+                    field.isChild -> 1
+                    field.typeRef is GenericElementRef<*, *> -> 2
+                    field is ListField && field.elementType is GenericElementRef<*, *> -> 3
+                    field.name == "sourceSpan" -> 11
+                    field.name == "signature" -> 12
+                    else -> 10
+                }
             }
-        }
+            .forEach {
+                it.propertyId = (nextPropertyId++).coerceAtMost(14) // see [BirImplElementBase] for this maximum value
+            }
     }
 }
 

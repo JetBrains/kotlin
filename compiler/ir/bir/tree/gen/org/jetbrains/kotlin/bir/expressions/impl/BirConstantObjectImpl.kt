@@ -8,11 +8,7 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirChildElementList
-import org.jetbrains.kotlin.bir.BirElement
-import org.jetbrains.kotlin.bir.BirElementVisitorLite
-import org.jetbrains.kotlin.bir.BirImplChildElementList
-import org.jetbrains.kotlin.bir.SourceSpan
+import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.BirAttributeContainer
 import org.jetbrains.kotlin.bir.expressions.BirConstantObject
 import org.jetbrains.kotlin.bir.expressions.BirConstantValue
@@ -23,19 +19,19 @@ class BirConstantObjectImpl(
     sourceSpan: SourceSpan,
     type: BirType,
     constructor: BirConstructorSymbol,
-    override var typeArguments: List<BirType>,
+    typeArguments: List<BirType>,
 ) : BirConstantObject() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -43,13 +39,13 @@ class BirConstantObjectImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -57,13 +53,13 @@ class BirConstantObjectImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -71,18 +67,32 @@ class BirConstantObjectImpl(
 
     override var constructor: BirConstructorSymbol
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _constructor
         }
         set(value) {
             if (_constructor != value) {
                 _constructor = value
-                invalidate()
+                invalidate(4)
             }
         }
 
     override val valueArguments: BirChildElementList<BirConstantValue> =
             BirImplChildElementList(this, 1, false)
+
+    private var _typeArguments: List<BirType> = typeArguments
+
+    override var typeArguments: List<BirType>
+        get() {
+            recordPropertyRead(5)
+            return _typeArguments
+        }
+        set(value) {
+            if (_typeArguments != value) {
+                _typeArguments = value
+                invalidate(5)
+            }
+        }
 
     override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
         valueArguments.acceptChildrenLite(visitor)

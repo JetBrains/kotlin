@@ -26,13 +26,13 @@ class BirGetValueImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -40,13 +40,13 @@ class BirGetValueImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(1)
             }
         }
 
@@ -54,13 +54,13 @@ class BirGetValueImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -68,13 +68,13 @@ class BirGetValueImpl(
 
     override var symbol: BirValueDeclaration
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _symbol
         }
         set(value) {
             if (_symbol != value) {
                 _symbol = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -82,13 +82,13 @@ class BirGetValueImpl(
 
     override var origin: IrStatementOrigin?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(4)
             }
         }
 

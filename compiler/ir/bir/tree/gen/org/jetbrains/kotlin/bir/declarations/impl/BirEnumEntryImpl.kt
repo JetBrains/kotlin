@@ -36,13 +36,13 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -50,13 +50,13 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(7)
             }
         }
 
@@ -67,13 +67,13 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -81,13 +81,13 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var name: Name
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -95,14 +95,14 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var initializerExpression: BirExpressionBody?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _initializerExpression
         }
         set(value) {
             if (_initializerExpression != value) {
                 childReplaced(_initializerExpression, value)
                 _initializerExpression = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -110,14 +110,14 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var correspondingClass: BirClass?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _correspondingClass
         }
         set(value) {
             if (_correspondingClass != value) {
                 childReplaced(_correspondingClass, value)
                 _correspondingClass = value
-                invalidate()
+                invalidate(3)
             }
         }
     init {

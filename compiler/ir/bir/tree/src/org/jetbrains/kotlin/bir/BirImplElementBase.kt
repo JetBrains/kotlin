@@ -5,24 +5,28 @@
 
 package org.jetbrains.kotlin.bir
 
+import kotlin.experimental.or
+
 abstract class BirImplElementBase : BirElementBase() {
+    // bits reservation: 0 - parent, 1-n - child element lists, n-14 - all other properties, 15 - dynamic properties
+    private var observedPropertiesBitSet: Short = 0
     private var dependentIndexedElements: Any? = null // null | BirImplElementBase | Array<BirImplElementBase?>
 
     final override val parent: BirImplElementBase?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(PARENT_PROPERTY_ID)
             return _parent as? BirImplElementBase
         }
 
     internal fun getParentRecordingRead(): BirElementParent? {
-        recordPropertyRead()
+        recordPropertyRead(PARENT_PROPERTY_ID)
         return _parent
     }
 
     final override fun setParentWithInvalidation(new: BirElementParent?) {
         if (_parent !== new) {
             _parent = new
-            invalidate()
+            invalidate(PARENT_PROPERTY_ID)
         }
     }
 
@@ -107,14 +111,14 @@ abstract class BirImplElementBase : BirElementBase() {
 
 
     final override fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
-        recordPropertyRead()
+        recordPropertyRead(DYNAMIC_PROPERTY_ID)
         return super.getDynamicProperty(token)
     }
 
     final override fun <T> setDynamicProperty(token: BirElementDynamicPropertyToken<*, T>, value: T?): Boolean {
         val changed = super.setDynamicProperty(token, value)
         if (changed) {
-            invalidate()
+            invalidate(DYNAMIC_PROPERTY_ID)
         }
         return changed
     }
@@ -127,7 +131,7 @@ abstract class BirImplElementBase : BirElementBase() {
         if (arrayMap == null) {
             val value = compute()
             initializeDynamicProperties(token, value)
-            invalidate()
+            invalidate(DYNAMIC_PROPERTY_ID)
             return value
         }
 
@@ -139,14 +143,14 @@ abstract class BirImplElementBase : BirElementBase() {
             val value = compute()
             val valueIndex = -keyIndex + 1
             arrayMap[valueIndex] = value
-            invalidate()
+            invalidate(DYNAMIC_PROPERTY_ID)
             return value
         }
     }
 
     // todo: fine-grained control of which data to copy
     internal fun copyDynamicProperties(from: BirElementBase) {
-        invalidate()
+        invalidate(DYNAMIC_PROPERTY_ID)
         dynamicProperties = from.dynamicProperties?.copyOf()
     }
 
@@ -155,12 +159,23 @@ abstract class BirImplElementBase : BirElementBase() {
         root?.elementIndexInvalidated(this)
     }
 
-    internal fun recordPropertyRead() {
-        root?.recordElementPropertyRead(this)
+    internal fun invalidate(propertyId: Int) {
+        if ((observedPropertiesBitSet.toInt() and (1 shl propertyId)) != 0) {
+            root?.elementIndexInvalidated(this)
+        }
     }
 
+    internal fun recordPropertyRead(propertyId: Int) {
+        val root = root ?: return
+        val classifiedElement = root.mutableElementCurrentlyBeingClassified ?: return
+        if (classifiedElement === this) {
+            observedPropertiesBitSet = observedPropertiesBitSet or (1 shl propertyId).toShort()
+        } else {
+            registerDependentElement(classifiedElement)
+        }
+    }
 
-    internal fun registerDependentElement(dependentElement: BirImplElementBase) {
+    private fun registerDependentElement(dependentElement: BirImplElementBase) {
         if (dependentElement === this) {
             return
         }
@@ -243,5 +258,10 @@ abstract class BirImplElementBase : BirElementBase() {
             //childDetached(it)
         }
         // todo: mark as disposed
+    }
+
+    companion object {
+        private const val PARENT_PROPERTY_ID = 0
+        private const val DYNAMIC_PROPERTY_ID = 15
     }
 }

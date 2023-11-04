@@ -33,13 +33,13 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -47,13 +47,13 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -64,13 +64,13 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -78,13 +78,13 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isStatic: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _isStatic
         }
         set(value) {
             if (_isStatic != value) {
                 _isStatic = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -92,14 +92,14 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var body: BirBlockBody
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _body ?: throwChildElementRemoved("body")
         }
         set(value) {
             if (_body != value) {
                 childReplaced(_body, value)
                 _body = value
-                invalidate()
+                invalidate(2)
             }
         }
     init {

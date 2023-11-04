@@ -21,13 +21,13 @@ class BirSyntheticBodyImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -35,13 +35,13 @@ class BirSyntheticBodyImpl(
 
     override var kind: IrSyntheticBodyKind
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _kind
         }
         set(value) {
             if (_kind != value) {
                 _kind = value
-                invalidate()
+                invalidate(1)
             }
         }
 

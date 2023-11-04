@@ -42,11 +42,12 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 
             val ctor = FunSpec.constructorBuilder()
 
-            val allFields = element.allFields
-            val allChildren = allFields.filter { it.isChild }
-            val childrenLists = allChildren.filterIsInstance<ListField>()
+            val fieldImpls = element.fieldImpls
+            val allChildren = fieldImpls.filter { it.field.isChild }
+            val childrenLists = allChildren.filter { it.field is ListField }
 
-            allFields.forEach { field ->
+            fieldImpls.forEach { fieldImpl ->
+                val field = fieldImpl.field
                 val poetType = field.typeRef.toPoet().copy(nullable = field.nullable)
 
                 if (field.passViaConstructorParameter) {
@@ -67,7 +68,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        initializer("%M(this, %L, %L)", childElementListImpl, childrenLists.indexOf(field) + 1, (field.elementType as TypeRefWithNullability).nullable)
+                        initializer("%M(this, %L, %L)", childElementListImpl, childrenLists.indexOf(fieldImpl) + 1, (field.elementType as TypeRefWithNullability).nullable)
                     } else if (field.isReadWriteTrackedProperty) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, if (field.isChild) poetType.copy(nullable = true) else poetType)
@@ -91,7 +92,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         getter(
                             FunSpec.getterBuilder()
                                 .apply {
-                                    addCode("recordPropertyRead()\n")
+                                    addCode("recordPropertyRead(%L)\n", fieldImpl.propertyId)
                                     addCode("return ${field.backingFieldName}")
                                     if (field.isChild && !field.nullable) {
                                         addCode(" ?: throwChildElementRemoved(%S)", field.name)
@@ -107,7 +108,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                                         addCode("    childReplaced(${field.backingFieldName}, value)\n")
                                     }
                                     addCode("    ${field.backingFieldName} = value\n")
-                                    addCode("    invalidate()\n")
+                                    addCode("    invalidate(%L)\n", fieldImpl.propertyId)
                                     addCode("}\n")
                                 }.build()
                         )
@@ -115,13 +116,13 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                 }.build())
             }
 
-            if (allFields.any { it.needsDescriptorApiAnnotation }) {
+            if (fieldImpls.any { it.field.needsDescriptorApiAnnotation }) {
                 ctor.addAnnotation(descriptorApiAnnotation)
             }
 
-            allChildren.forEachIndexed { fieldIndex, child ->
-                if (child is SingleField) {
-                    ctor.addCode("initChild(${child.backingFieldName})\n")
+            allChildren.forEach { child ->
+                if (child.field is SingleField) {
+                    ctor.addCode("initChild(${child.field.backingFieldName})\n")
                 }
             }
 
@@ -160,7 +161,8 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     .addParameter("new", rootElement.toPoet().copy(nullable = true))
                     .apply {
                         addCode("when {\n")
-                        allChildren.forEach { field ->
+                        allChildren.forEach { fieldImpl ->
+                            val field = fieldImpl.field
                             if (field is SingleField) {
                                 addCode(
                                     "    this.%N === old -> this.%N = new as %T\n",
@@ -183,8 +185,8 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         .returns(childElementList.toPoet().tryParameterizedBy(STAR))
                         .apply {
                             addCode("return when(id) {\n")
-                            childrenLists.forEachIndexed { index, field ->
-                                addCode("    %L -> this.%N\n", index + 1, field.name)
+                            childrenLists.forEachIndexed { index, fieldImpl ->
+                                addCode("    %L -> this.%N\n", index + 1, fieldImpl.field.name)
                             }
                             addCode("    else -> throwChildrenListWithIdNotFound(id)\n")
                             addCode("}\n")

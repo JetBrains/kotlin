@@ -26,13 +26,13 @@ class BirThrowImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(4)
             }
         }
 
@@ -40,13 +40,13 @@ class BirThrowImpl(
 
     override var attributeOwnerId: BirAttributeContainer
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _attributeOwnerId
         }
         set(value) {
             if (_attributeOwnerId != value) {
                 _attributeOwnerId = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -54,13 +54,13 @@ class BirThrowImpl(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -68,14 +68,14 @@ class BirThrowImpl(
 
     override var value: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _value ?: throwChildElementRemoved("value")
         }
         set(value) {
             if (_value != value) {
                 childReplaced(_value, value)
                 _value = value
-                invalidate()
+                invalidate(1)
             }
         }
     init {

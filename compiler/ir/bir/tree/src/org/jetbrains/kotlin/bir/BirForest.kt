@@ -22,7 +22,8 @@ class BirForest : BirElementParent() {
     private var currentElementsIndexSlotIterator: ElementsIndexSlotIterator<*>? = null
     private var currentIndexSlot = 0
     private var bufferedElementWithInvalidatedIndex: BirImplElementBase? = null
-    private var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
+    internal var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
+        private set
 
     private var isInsideSubtreeShuffleTransaction = false
     private val dirtyElementsInsideSubtreeShuffleTransaction = mutableListOf<BirElementBase>()
@@ -217,12 +218,6 @@ class BirForest : BirElementParent() {
         bufferedElementWithInvalidatedIndex?.let {
             addElementToIndex(it)
             it.invalidateDependentElements()
-        }
-    }
-
-    internal fun recordElementPropertyRead(element: BirImplElementBase) {
-        if (mutableElementCurrentlyBeingClassified != null && element.root === this) {
-            element.registerDependentElement(mutableElementCurrentlyBeingClassified!!)
         }
     }
 

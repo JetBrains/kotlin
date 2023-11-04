@@ -24,13 +24,13 @@ class BirElseBranchImpl(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -38,14 +38,14 @@ class BirElseBranchImpl(
 
     override var condition: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(1)
             return _condition ?: throwChildElementRemoved("condition")
         }
         set(value) {
             if (_condition != value) {
                 childReplaced(_condition, value)
                 _condition = value
-                invalidate()
+                invalidate(1)
             }
         }
 
@@ -53,14 +53,14 @@ class BirElseBranchImpl(
 
     override var result: BirExpression
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _result ?: throwChildElementRemoved("result")
         }
         set(value) {
             if (_result != value) {
                 childReplaced(_result, value)
                 _result = value
-                invalidate()
+                invalidate(2)
             }
         }
     init {

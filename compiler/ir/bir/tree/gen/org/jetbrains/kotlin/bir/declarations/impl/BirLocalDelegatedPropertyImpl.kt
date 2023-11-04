@@ -40,13 +40,13 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var sourceSpan: SourceSpan
         get() {
-            recordPropertyRead()
+            recordPropertyRead(9)
             return _sourceSpan
         }
         set(value) {
             if (_sourceSpan != value) {
                 _sourceSpan = value
-                invalidate()
+                invalidate(9)
             }
         }
 
@@ -54,13 +54,13 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var signature: IdSignature?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(10)
             return _signature
         }
         set(value) {
             if (_signature != value) {
                 _signature = value
-                invalidate()
+                invalidate(10)
             }
         }
 
@@ -71,13 +71,13 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var origin: IrDeclarationOrigin
         get() {
-            recordPropertyRead()
+            recordPropertyRead(5)
             return _origin
         }
         set(value) {
             if (_origin != value) {
                 _origin = value
-                invalidate()
+                invalidate(5)
             }
         }
 
@@ -85,13 +85,13 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var name: Name
         get() {
-            recordPropertyRead()
+            recordPropertyRead(6)
             return _name
         }
         set(value) {
             if (_name != value) {
                 _name = value
-                invalidate()
+                invalidate(6)
             }
         }
 
@@ -99,13 +99,13 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var type: BirType
         get() {
-            recordPropertyRead()
+            recordPropertyRead(7)
             return _type
         }
         set(value) {
             if (_type != value) {
                 _type = value
-                invalidate()
+                invalidate(7)
             }
         }
 
@@ -113,13 +113,13 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var isVar: Boolean
         get() {
-            recordPropertyRead()
+            recordPropertyRead(8)
             return _isVar
         }
         set(value) {
             if (_isVar != value) {
                 _isVar = value
-                invalidate()
+                invalidate(8)
             }
         }
 
@@ -127,14 +127,14 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var delegate: BirVariable
         get() {
-            recordPropertyRead()
+            recordPropertyRead(2)
             return _delegate ?: throwChildElementRemoved("delegate")
         }
         set(value) {
             if (_delegate != value) {
                 childReplaced(_delegate, value)
                 _delegate = value
-                invalidate()
+                invalidate(2)
             }
         }
 
@@ -142,14 +142,14 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var getter: BirSimpleFunction
         get() {
-            recordPropertyRead()
+            recordPropertyRead(3)
             return _getter ?: throwChildElementRemoved("getter")
         }
         set(value) {
             if (_getter != value) {
                 childReplaced(_getter, value)
                 _getter = value
-                invalidate()
+                invalidate(3)
             }
         }
 
@@ -157,14 +157,14 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     override var setter: BirSimpleFunction?
         get() {
-            recordPropertyRead()
+            recordPropertyRead(4)
             return _setter
         }
         set(value) {
             if (_setter != value) {
                 childReplaced(_setter, value)
                 _setter = value
-                invalidate()
+                invalidate(4)
             }
         }
     init {
