@@ -263,13 +263,16 @@ class BirScriptImpl @ObsoleteDescriptorBasedAPI constructor(
         _earlierScriptsParameter?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._thisReceiver === old -> this._thisReceiver = new as BirValueParameter?
-            this._earlierScriptsParameter === old -> this._earlierScriptsParameter = new as
-                BirValueParameter?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._thisReceiver === old -> {
+            this._thisReceiver = new as BirValueParameter?
+            6
         }
+        this._earlierScriptsParameter === old -> {
+            this._earlierScriptsParameter = new as BirValueParameter?
+            7
+        }
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {

@@ -68,7 +68,12 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                     }
 
                     if (field is ListField && field.isChild && !field.passViaConstructorParameter) {
-                        initializer("%M(this, %L, %L)", childElementListImpl, childrenLists.indexOf(fieldImpl) + 1, (field.elementType as TypeRefWithNullability).nullable)
+                        initializer(
+                            "%M(this, %L, %L)",
+                            childElementListImpl,
+                            childrenLists.indexOf(fieldImpl) + 1,
+                            (field.elementType as TypeRefWithNullability).nullable
+                        )
                     } else if (field.isReadWriteTrackedProperty) {
                         addProperty(
                             PropertySpec.builder(field.backingFieldName, if (field.isChild) poetType.copy(nullable = true) else poetType)
@@ -128,7 +133,7 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 
             primaryConstructor(ctor.build())
 
-            if (element.allChildren.isNotEmpty()) {
+            if (allChildren.isNotEmpty()) {
                 addFunction(
                     FunSpec
                         .builder("acceptChildrenLite")
@@ -151,30 +156,34 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
                         }
                         .build()
                 )
-            }
 
-            addFunction(
-                FunSpec
-                    .builder("replaceChildProperty")
-                    .addModifiers(KModifier.OVERRIDE)
-                    .addParameter("old", rootElement.toPoet())
-                    .addParameter("new", rootElement.toPoet().copy(nullable = true))
-                    .apply {
-                        addCode("when {\n")
-                        allChildren.forEach { fieldImpl ->
-                            val field = fieldImpl.field
-                            if (field is SingleField) {
-                                addCode(
-                                    "    this.%N === old -> this.%N = new as %T\n",
-                                    field.backingFieldName, field.backingFieldName, field.typeRef.toPoet().copy(nullable = true)
-                                )
+                addFunction(
+                    FunSpec
+                        .builder("replaceChildProperty")
+                        .addModifiers(KModifier.OVERRIDE)
+                        .addParameter("old", rootElement.toPoet())
+                        .addParameter("new", rootElement.toPoet().copy(nullable = true))
+                        .returns(INT)
+                        .apply {
+                            addCode("return when {\n")
+                            allChildren.forEach { fieldImpl ->
+                                val field = fieldImpl.field
+                                if (field is SingleField) {
+                                    addCode("    this.%N === old -> {\n", field.backingFieldName)
+                                    addCode(
+                                        "        this.%N = new as %T\n",
+                                        field.backingFieldName, field.typeRef.toPoet().copy(nullable = true)
+                                    )
+                                    addCode("        %L\n", fieldImpl.propertyId)
+                                    addCode("    }\n")
+                                }
                             }
+                            addCode("    else -> throwChildForReplacementNotFound(old)\n")
+                            addCode("}\n")
                         }
-                        addCode("    else -> throwChildForReplacementNotFound(old)\n")
-                        addCode("}\n")
-                    }
-                    .build()
-            )
+                        .build()
+                )
+            }
 
             if (childrenLists.isNotEmpty()) {
                 addFunction(

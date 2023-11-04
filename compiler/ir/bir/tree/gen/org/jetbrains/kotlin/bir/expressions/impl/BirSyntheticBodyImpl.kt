@@ -8,7 +8,6 @@
 
 package org.jetbrains.kotlin.bir.expressions.impl
 
-import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.SourceSpan
 import org.jetbrains.kotlin.bir.expressions.BirSyntheticBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
@@ -44,10 +43,4 @@ class BirSyntheticBodyImpl(
                 invalidate(1)
             }
         }
-
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            else -> throwChildForReplacementNotFound(old)
-        }
-    }
 }

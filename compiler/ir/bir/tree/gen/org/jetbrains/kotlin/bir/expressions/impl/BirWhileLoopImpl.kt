@@ -135,11 +135,15 @@ class BirWhileLoopImpl(
         _condition?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._body === old -> this._body = new as BirExpression?
-            this._condition === old -> this._condition = new as BirExpression?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._body === old -> {
+            this._body = new as BirExpression?
+            1
         }
+        this._condition === old -> {
+            this._condition = new as BirExpression?
+            2
+        }
+        else -> throwChildForReplacementNotFound(old)
     }
 }

@@ -48,10 +48,10 @@ abstract class BirImplElementBase : BirElementBase() {
 
             val oldParent = new._parent
             if (oldParent != null) {
-                new.replacedWithInternal(null)
+                val propertyId = new.replacedWithInternal(null)
                 new.setParentWithInvalidation(this)
                 if (oldParent is BirImplElementBase) {
-                    oldParent.invalidate()
+                    oldParent.invalidate(propertyId)
                 }
 
                 root?.elementMoved(new, oldParent)
@@ -63,7 +63,7 @@ abstract class BirImplElementBase : BirElementBase() {
     }
 
 
-    internal open fun replaceChildProperty(old: BirElement, new: BirElement?) {
+    internal open fun replaceChildProperty(old: BirElement, new: BirElement?): Int {
         throwChildForReplacementNotFound(old)
     }
 
@@ -75,34 +75,40 @@ abstract class BirImplElementBase : BirElementBase() {
     override fun replaceWith(new: BirElement?) {
         if (this === new) return
 
-        val parent = replacedWithInternal(new as BirImplElementBase?)
+        val parent = _parent
+        val propertyId = replacedWithInternal(new as BirImplElementBase?)
         if (parent is BirImplElementBase) {
             parent.childReplaced(this, new)
-            parent.invalidate()
+            parent.invalidate(propertyId)
         }
     }
 
-    internal fun replacedWithInternal(new: BirImplElementBase?): BirElementParent? {
+    internal fun replacedWithInternal(new: BirImplElementBase?): Int {
         val parent = _parent
         if (parent is BirImplElementBase) {
-            val list = getContainingList() as BirImplChildElementList<*>?
-            if (list != null) {
-                val found = if (new == null && !list.isNullable) {
-                    list.removeInternal(this)
+            val containingListId = containingListId
+            val containingList = if (containingListId == 0) null
+            else (parent as? BirElementBase)?.getChildrenListById(containingListId)
+
+            if (containingList != null) {
+                containingList as BirImplChildElementList<*>
+                val found = if (new == null && !containingList.isNullable) {
+                    containingList.removeInternal(this)
                 } else {
                     @Suppress("UNCHECKED_CAST")
-                    list as BirChildElementList<BirImplElementBase?>
-                    list.replaceInternal(this, new)
+                    containingList as BirChildElementList<BirImplElementBase?>
+                    containingList.replaceInternal(this, new)
                 }
 
                 if (!found) {
-                    list.parent.throwChildForReplacementNotFound(this)
+                    containingList.parent.throwChildForReplacementNotFound(this)
                 }
+                return containingListId
             } else {
-                parent.replaceChildProperty(this, new)
+                return parent.replaceChildProperty(this, new)
             }
         }
-        return parent
+        return -1
     }
 
     protected fun throwChildElementRemoved(propertyName: String): Nothing {
