@@ -26,7 +26,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
      */
     internal var root: BirForest? = null
     internal var _parent: BirElementParent? = null
-    internal var containingListId: Byte = 0
+    //internal var containingListId: Byte = 0
     private var flags: Byte = 0
     internal var indexSlot: UByte = 0u
     private var backReferences: Any? = null // null | BirElementBase | Array<BirElementBase?>
@@ -46,6 +46,12 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     internal fun setFlag(flag: Byte, value: Boolean) {
         flags = if (value) flags or flag else flags and flag.inv()
     }
+
+    internal var containingListId: Int
+        get() = flags.toInt() shr (8 - CONTAINING_LIST_ID_BITS)
+        set(value) {
+            flags = (flags and (-1 ushr (32 - 8 + CONTAINING_LIST_ID_BITS)).toByte()) or (value shl (8 - CONTAINING_LIST_ID_BITS)).toByte()
+        }
 
 
     internal open fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
@@ -74,7 +80,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     }
 
     internal fun getContainingList(): BirChildElementList<*>? {
-        val containingListId = containingListId.toInt()
+        val containingListId = containingListId
         return if (containingListId == 0) null
         else (parent as? BirElementBase)?.getChildrenListById(containingListId)
     }
@@ -222,5 +228,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
     companion object {
         const val FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION: Byte = (1 shl 0).toByte()
+
+        const val CONTAINING_LIST_ID_BITS = 3
     }
 }
