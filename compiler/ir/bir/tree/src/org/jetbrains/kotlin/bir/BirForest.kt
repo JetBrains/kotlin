@@ -18,6 +18,7 @@ class BirForest : BirElementParent() {
     private val elementIndexSlots = arrayOfNulls<ElementsIndexSlot>(256)
     private var elementIndexSlotCount = 0
     private val registeredIndexers = mutableListOf<BirElementGeneralIndexerKey>()
+    private val indexerIndexes = mutableMapOf<BirElementGeneralIndexerKey, Int>()
     private var elementClassifier: BirElementIndexClassifier? = null
     private var currentElementsIndexSlotIterator: ElementsIndexSlotIterator<*>? = null
     private var currentIndexSlot = 0
@@ -52,9 +53,7 @@ class BirForest : BirElementParent() {
             element as BirImplElementBase
             val propertyId = element.replacedWithInternal(null)
             element.setParentWithInvalidation(this)
-            if (oldParent is BirElementBase) {
-                (oldParent as BirImplElementBase).invalidate(propertyId)
-            }
+            (oldParent as? BirImplElementBase)?.invalidate(propertyId)
 
             elementMoved(element, oldParent)
         } else {
@@ -174,9 +173,7 @@ class BirForest : BirElementParent() {
         }
 
         val recordedRef = backReferenceRecorder.recordedRef
-        if (recordedRef != null && recordedRef.root === this) {
-            recordedRef.registerBackReference(element)
-        }
+        recordedRef?.registerBackReference(element)
     }
 
     internal class BackReferenceRecorder() : BirElementBackReferenceRecorderScope {
@@ -234,25 +231,25 @@ class BirForest : BirElementParent() {
         require(!isInsideSubtreeShuffleTransaction)
 
         if (registeredIndexers.size != elementIndexSlotCount) {
-            val indexers = registeredIndexers.mapIndexed { i, indexer ->
+            val indexers = registeredIndexers.mapIndexed { i, indexerKey ->
                 val index = i + 1
-                when (indexer) {
+                when (indexerKey) {
                     is BirElementsIndexKey<*> -> {
-                        indexer.index = index
-                        val slot = ElementsIndexSlot(index, indexer.condition, indexer.elementClass)
+                        indexerIndexes[indexerKey] = index
+                        val slot = ElementsIndexSlot(index, indexerKey.condition, indexerKey.elementClass)
                         elementIndexSlots[index] = slot
                         BirElementIndexClassifierFunctionGenerator.Indexer(
                             BirElementGeneralIndexer.Kind.IndexMatcher,
-                            indexer.condition,
-                            indexer.elementClass,
+                            indexerKey.condition,
+                            indexerKey.elementClass,
                             index
                         )
                     }
                     is BirElementBackReferencesKey<*> -> {
                         BirElementIndexClassifierFunctionGenerator.Indexer(
                             BirElementGeneralIndexer.Kind.BackReferenceRecorder,
-                            indexer.recorder,
-                            indexer.elementClass,
+                            indexerKey.recorder,
+                            indexerKey.elementClass,
                             index
                         )
                     }
@@ -276,7 +273,7 @@ class BirForest : BirElementParent() {
         }
     }
 
-    fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): Iterator<E> {
+    fun <E : BirElement> getElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
         require(!isInsideSubtreeShuffleTransaction)
 
         flushElementsWithInvalidatedIndexBuffer()
@@ -289,7 +286,7 @@ class BirForest : BirElementParent() {
             // nothing
         }
 
-        val cacheSlotIndex = key.index
+        val cacheSlotIndex = indexerIndexes.getValue(key)
         require(cacheSlotIndex == currentIndexSlot)
         val slot = elementIndexSlots[cacheSlotIndex]!!
 
@@ -347,7 +344,7 @@ class BirForest : BirElementParent() {
 
     private inner class ElementsIndexSlotIterator<E : BirElement>(
         private val slot: ElementsIndexSlot,
-    ) : Iterator<E>, AutoCloseable {
+    ) : Iterator<E>, Sequence<E>, AutoCloseable {
         private var canceled = false
         var mainListIdx = 0
             private set
@@ -409,6 +406,7 @@ class BirForest : BirElementParent() {
                 } else {
                     mainListIdx = 0
                     slot.size = 0
+                    canceled = true
                     return null
                 }
             }
@@ -425,6 +423,11 @@ class BirForest : BirElementParent() {
             slot.size = 0
             next = null
             canceled = true
+        }
+
+        override fun iterator(): Iterator<E> {
+            require(!canceled) { "Iterator was cancelled" }
+            return this
         }
     }
 }

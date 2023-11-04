@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.bir.backend.lower
 
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
+import org.jetbrains.kotlin.bir.BirElementBase
 import org.jetbrains.kotlin.bir.backend.BirLoweringPhase
 import org.jetbrains.kotlin.bir.backend.builders.*
 import org.jetbrains.kotlin.bir.backend.builders.copyAttributes
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.bir.backend.jvm.isInlineFunctionCall
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.declarations.impl.BirSimpleFunctionImpl
 import org.jetbrains.kotlin.bir.expressions.*
+import org.jetbrains.kotlin.bir.get
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirTypeProjection
 import org.jetbrains.kotlin.bir.util.*
@@ -27,15 +29,15 @@ import org.jetbrains.kotlin.name.Name
 
 context(JvmBirBackendContext)
 class BirInlineCallableReferenceToLambdaLowering : BirLoweringPhase() {
-    // todo: replace with function index in all modules and back references
-    private val functionAccesses = registerIndexKey<BirFunctionAccessExpression>(false)
+    private val inlineFunctions = registerIndexKey<BirFunction>(true) { it.isInlineFunctionCall() }
+    private val functionAccesses = registerBackReferencesKey<BirFunctionAccessExpression> { recordReference(it.symbol.owner) }
 
     override fun invoke(module: BirModuleFragment) {
-        compiledBir.getElementsWithIndex(functionAccesses).forEach { access ->
-            val function = access.symbol.owner
-            if (function.isInlineFunctionCall()) {
-                for (parameter in function.valueParameters) {
-                    if (parameter.isInlineParameter()) {
+        getAllElementsWithIndex(inlineFunctions).forEach { function ->
+            val accesses by lazy { (function as BirElementBase).getBackReferences(functionAccesses) }
+            for (parameter in function.valueParameters) {
+                if (parameter.isInlineParameter()) {
+                    accesses.forEach { access ->
                         transferInlineArgument(access.valueArguments[parameter.index])
                     }
                 }

@@ -42,7 +42,7 @@ class BirJvmStaticInObjectLowering : BirLoweringPhase() {
 
     override fun invoke(module: BirModuleFragment) {
         compiledBir.getElementsWithIndex(functionsWithStaticAnnotationKey).forEach { function ->
-            val parent = (function.correspondingPropertySymbol?.owner as? BirProperty)?.parent
+            val parent = function.correspondingPropertySymbol?.owner?.parent
                 ?: function.parent as? BirClass
             if (parent is BirClass && parent.kind == ClassKind.OBJECT && !parent.isCompanion) {
                 function.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->

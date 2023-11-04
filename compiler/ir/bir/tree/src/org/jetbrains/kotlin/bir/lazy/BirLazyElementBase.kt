@@ -12,36 +12,56 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.util.IdSignature
+import kotlin.concurrent.Volatile
 
 abstract class BirLazyElementBase(
     internal val converter: Ir2BirConverter,
 ) : BirElementBase(), BirDeclaration {
     protected abstract val originalElement: IrDeclaration
 
-    final override val parent: BirElementBase? by lazyVar<BirLazyElementBase, _> {
-        converter.remapElement(originalElement.parent)
-    }
+    @Volatile
+    private var parentInitialized = false
+
+    final override val parent: BirElementBase
+        get() {
+            if (parentInitialized) return _parent as BirElementBase
+            synchronized(this) {
+                if (!parentInitialized) {
+                    _parent = converter.remapElement<BirElementBase>(originalElement.parent)
+                    parentInitialized = true
+                }
+
+                return _parent as BirElementBase
+            }
+        }
 
     final override fun setParentWithInvalidation(new: BirElementParent?) {
-        _parent = new
+        require(!parentInitialized)
+        _parent = new!!
+        if (new is BirElementBase) {
+            parentInitialized = true
+        }
     }
 
     internal fun initChild(new: BirElementBase?) {
         if (new != null) {
             new._parent = this
+            (new as? BirLazyElementBase)?.parentInitialized = true
             root?.elementAttached(new)
         }
     }
 
-    protected fun<Bir : BirElementBase> convertChild(originalChild: IrElement): Bir {
+    protected fun <Bir : BirElementBase> convertChild(originalChild: IrElement): Bir {
         val new = converter.remapElement<Bir>(originalChild)
         initChild(new)
         return new
     }
 
     @JvmName("convertChildNullable")
-    protected fun<Bir : BirElementBase> convertChild(originalChild: IrElement?): Bir? = if(originalChild == null) null else convertChild(originalChild)
+    protected fun <Bir : BirElementBase> convertChild(originalChild: IrElement?): Bir? =
+        if (originalChild == null) null else convertChild(originalChild)
 
     protected fun <P : BirLazyElementBase, T> lazyVar(initializer: P.() -> T): SynchronizedLazyBirElementVar<P, T> =
         SynchronizedLazyBirElementVar(this, initializer)

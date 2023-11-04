@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.name.FqName
 
 abstract class BirBackendContext(
     val compiledBir: BirForest,
+    val externalModulesBir: BirForest,
     val dynamicPropertyManager: BirElementDynamicPropertyManager,
     val configuration: CompilerConfiguration
 ) {

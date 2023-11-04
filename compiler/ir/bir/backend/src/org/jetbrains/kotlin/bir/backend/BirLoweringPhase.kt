@@ -21,21 +21,25 @@ abstract class BirLoweringPhase {
     abstract operator fun invoke(module: BirModuleFragment)
 
     protected inline fun <reified E : BirElement> registerIndexKey(
-        includeOtherModules: Boolean,
+        includeExternalModules: Boolean,
         crossinline condition: (E) -> Boolean,
     ): BirElementsIndexKey<E> =
-        registerIndexKey<E>(includeOtherModules, { element -> condition(element as E) }, E::class.java)
+        registerIndexKey<E>(includeExternalModules, { element -> condition(element as E) }, E::class.java)
 
-    protected inline fun <reified E : BirElement> registerIndexKey(includeOtherModules: Boolean): BirElementsIndexKey<E> =
-        registerIndexKey<E>(includeOtherModules, null, E::class.java)
+    protected inline fun <reified E : BirElement> registerIndexKey(includeExternalModules: Boolean): BirElementsIndexKey<E> =
+        registerIndexKey<E>(includeExternalModules, null, E::class.java)
 
     protected fun <E : BirElement> registerIndexKey(
-        includeOtherModules: Boolean,
+        includeExternalModules: Boolean,
         condition: BirElementIndexMatcher?,
         elementClass: Class<*>,
     ): BirElementsIndexKey<E> {
-        val key = BirElementsIndexKey<E>(condition, elementClass, includeOtherModules)
+        val key = BirElementsIndexKey<E>(condition, elementClass)
         compiledBir.registerElementIndexingKey(key)
+        if (includeExternalModules) {
+            externalModulesBir.registerElementIndexingKey(key)
+        }
+
         return key
     }
 
@@ -56,6 +60,11 @@ abstract class BirLoweringPhase {
         val key = BirElementBackReferencesKey<E>(block, elementClass)
         compiledBir.registerElementBackReferencesKey(key)
         return key
+    }
+
+
+    protected fun <E : BirElement> getAllElementsWithIndex(key: BirElementsIndexKey<E>): Sequence<E> {
+        return compiledBir.getElementsWithIndex(key) + externalModulesBir.getElementsWithIndex(key)
     }
 
 
