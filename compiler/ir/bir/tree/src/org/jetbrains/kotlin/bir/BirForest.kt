@@ -203,6 +203,9 @@ class BirForest : BirElementParent() {
         //  than their ancestor (so start scanning from the index of the root one).
     }
 
+    internal val isInsideElementClassification: Boolean
+        get() = mutableElementCurrentlyBeingClassified != null
+
     internal fun elementIndexInvalidated(element: BirImplElementBase) {
         if (element !== bufferedElementWithInvalidatedIndex) {
             flushElementsWithInvalidatedIndexBuffer()
