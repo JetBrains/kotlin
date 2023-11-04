@@ -15,10 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class BirElementsIndexKey<E : BirElement>(
     val condition: BirElementIndexMatcher?,
     val elementClass: Class<*>,
-    val includeOtherModules: Boolean, // todo: use it
-) : BirElementGeneralIndexerKey {
-    internal var index = -1
-}
+) : BirElementGeneralIndexerKey
 
 fun interface BirElementIndexMatcher : BirElementGeneralIndexer {
     fun matches(element: BirElementBase): Boolean
