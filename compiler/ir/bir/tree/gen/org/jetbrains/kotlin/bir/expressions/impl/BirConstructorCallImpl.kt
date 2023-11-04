@@ -203,12 +203,16 @@ class BirConstructorCallImpl(
         valueArguments.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._dispatchReceiver === old -> this._dispatchReceiver = new as BirExpression?
-            this._extensionReceiver === old -> this._extensionReceiver = new as BirExpression?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._dispatchReceiver === old -> {
+            this._dispatchReceiver = new as BirExpression?
+            2
         }
+        this._extensionReceiver === old -> {
+            this._extensionReceiver = new as BirExpression?
+            3
+        }
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {
