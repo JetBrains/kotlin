@@ -33,7 +33,7 @@ abstract class BirChildElementList<E : BirElement?>(
     }
 
     override fun contains(element: E): Boolean {
-        return element != null && element.parent === parent && (element as BirElementBase).containingListId.toInt() == id
+        return element != null && element.parent === parent && (element as BirElementBase).containingListId == id
     }
 
     override fun indexOf(element: E): Int {
@@ -80,7 +80,7 @@ abstract class BirChildElementList<E : BirElement?>(
     }
 
     protected fun BirElementBase.setContainingList() {
-        containingListId = id.toByte()
+        containingListId = id
     }
 
     protected fun BirElementBase.resetContainingList() {
