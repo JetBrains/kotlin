@@ -12,10 +12,10 @@ abstract class BirImplElementBase : BirElementBase() {
     private var observedPropertiesBitSet: Short = 0
     private var dependentIndexedElements: Any? = null // null | BirImplElementBase | Array<BirImplElementBase?>
 
-    final override val parent: BirImplElementBase?
+    final override val parent: BirElementBase?
         get() {
             recordPropertyRead(PARENT_PROPERTY_ID)
-            return _parent as? BirImplElementBase
+            return _parent as? BirElementBase
         }
 
     internal fun getParentRecordingRead(): BirElementParent? {
@@ -92,11 +92,11 @@ abstract class BirImplElementBase : BirElementBase() {
                 } else {
                     @Suppress("UNCHECKED_CAST")
                     list as BirChildElementList<BirImplElementBase?>
-                    list.replaceInternal(this, new as BirImplElementBase?)
+                    list.replaceInternal(this, new)
                 }
 
                 if (!found) {
-                    (list.parent as BirImplElementBase).throwChildForReplacementNotFound(this)
+                    list.parent.throwChildForReplacementNotFound(this)
                 }
             } else {
                 parent.replaceChildProperty(this, new)
@@ -161,7 +161,7 @@ abstract class BirImplElementBase : BirElementBase() {
 
     internal fun invalidate(propertyId: Int) {
         if ((observedPropertiesBitSet.toInt() and (1 shl propertyId)) != 0) {
-            root?.elementIndexInvalidated(this)
+            invalidate()
         }
     }
 
