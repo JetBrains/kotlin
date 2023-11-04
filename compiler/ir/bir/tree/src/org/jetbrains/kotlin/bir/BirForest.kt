@@ -50,10 +50,10 @@ class BirForest : BirElementParent() {
         val oldParent = element._parent
         if (oldParent != null) {
             element as BirImplElementBase
-            element.replacedWithInternal(null)
+            val propertyId = element.replacedWithInternal(null)
             element.setParentWithInvalidation(this)
             if (oldParent is BirElementBase) {
-                (oldParent as BirImplElementBase).invalidate()
+                (oldParent as BirImplElementBase).invalidate(propertyId)
             }
 
             elementMoved(element, oldParent)

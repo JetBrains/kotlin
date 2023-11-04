@@ -87,10 +87,8 @@ class BirWhenImpl(
         branches.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            else -> throwChildForReplacementNotFound(old)
-        }
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {

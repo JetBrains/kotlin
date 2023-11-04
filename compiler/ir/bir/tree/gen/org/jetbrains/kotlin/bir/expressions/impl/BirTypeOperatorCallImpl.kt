@@ -117,10 +117,11 @@ class BirTypeOperatorCallImpl(
         _argument?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._argument === old -> this._argument = new as BirExpression?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._argument === old -> {
+            this._argument = new as BirExpression?
+            1
         }
+        else -> throwChildForReplacementNotFound(old)
     }
 }

@@ -136,13 +136,16 @@ class BirEnumEntryImpl @ObsoleteDescriptorBasedAPI constructor(
         _correspondingClass?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._initializerExpression === old -> this._initializerExpression = new as
-                BirExpressionBody?
-            this._correspondingClass === old -> this._correspondingClass = new as BirClass?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._initializerExpression === old -> {
+            this._initializerExpression = new as BirExpressionBody?
+            2
         }
+        this._correspondingClass === old -> {
+            this._correspondingClass = new as BirClass?
+            3
+        }
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {

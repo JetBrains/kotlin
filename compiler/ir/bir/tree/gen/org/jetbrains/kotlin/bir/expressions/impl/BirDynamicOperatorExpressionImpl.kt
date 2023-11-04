@@ -108,11 +108,12 @@ class BirDynamicOperatorExpressionImpl(
         arguments.acceptChildrenLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._receiver === old -> this._receiver = new as BirExpression?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._receiver === old -> {
+            this._receiver = new as BirExpression?
+            2
         }
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {

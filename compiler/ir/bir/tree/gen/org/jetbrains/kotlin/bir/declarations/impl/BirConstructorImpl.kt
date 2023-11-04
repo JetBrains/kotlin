@@ -271,15 +271,20 @@ class BirConstructorImpl @ObsoleteDescriptorBasedAPI constructor(
         _body?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._dispatchReceiverParameter === old -> this._dispatchReceiverParameter = new as
-                BirValueParameter?
-            this._extensionReceiverParameter === old -> this._extensionReceiverParameter = new as
-                BirValueParameter?
-            this._body === old -> this._body = new as BirBody?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._dispatchReceiverParameter === old -> {
+            this._dispatchReceiverParameter = new as BirValueParameter?
+            4
         }
+        this._extensionReceiverParameter === old -> {
+            this._extensionReceiverParameter = new as BirValueParameter?
+            5
+        }
+        this._body === old -> {
+            this._body = new as BirBody?
+            6
+        }
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {

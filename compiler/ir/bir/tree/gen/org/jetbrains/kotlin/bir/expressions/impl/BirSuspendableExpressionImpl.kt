@@ -104,11 +104,15 @@ class BirSuspendableExpressionImpl(
         _result?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._suspensionPointId === old -> this._suspensionPointId = new as BirExpression?
-            this._result === old -> this._result = new as BirExpression?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._suspensionPointId === old -> {
+            this._suspensionPointId = new as BirExpression?
+            1
         }
+        this._result === old -> {
+            this._result = new as BirExpression?
+            2
+        }
+        else -> throwChildForReplacementNotFound(old)
     }
 }

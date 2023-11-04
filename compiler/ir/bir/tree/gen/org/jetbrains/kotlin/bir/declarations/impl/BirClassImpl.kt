@@ -347,11 +347,12 @@ class BirClassImpl @ObsoleteDescriptorBasedAPI constructor(
         _thisReceiver?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._thisReceiver === old -> this._thisReceiver = new as BirValueParameter?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._thisReceiver === old -> {
+            this._thisReceiver = new as BirValueParameter?
+            4
         }
+        else -> throwChildForReplacementNotFound(old)
     }
 
     override fun getChildrenListById(id: Int): BirChildElementList<*> = when(id) {

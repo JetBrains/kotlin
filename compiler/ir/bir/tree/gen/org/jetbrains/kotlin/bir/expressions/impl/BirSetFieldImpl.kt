@@ -152,11 +152,15 @@ class BirSetFieldImpl(
         _value?.acceptLite(visitor)
     }
 
-    override fun replaceChildProperty(old: BirElement, new: BirElement?) {
-        when {
-            this._receiver === old -> this._receiver = new as BirExpression?
-            this._value === old -> this._value = new as BirExpression?
-            else -> throwChildForReplacementNotFound(old)
+    override fun replaceChildProperty(old: BirElement, new: BirElement?): Int = when {
+        this._receiver === old -> {
+            this._receiver = new as BirExpression?
+            1
         }
+        this._value === old -> {
+            this._value = new as BirExpression?
+            2
+        }
+        else -> throwChildForReplacementNotFound(old)
     }
 }
