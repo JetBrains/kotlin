@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.OS
-import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
 
@@ -78,6 +76,8 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
 
     @MppGradlePluginTests
     @GradleTest
+    // Required Gradle APIs to avoid buildDir early capture only available since 7.4
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @DisplayName("Changing build directory after task configuration doesn't lead to failures")
     fun changingBuildDirInMpp(gradleVersion: GradleVersion) {
         project("new-mpp-lib-with-tests", gradleVersion) {
@@ -95,7 +95,6 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
                 } catch (e: AssertionError) {
                     val expectedTopLevelSubdirectoriesMapping = mapOf(
                         "js" to "KT-61294",
-                        "reports" to "KT-61295",
                     )
                     val expectedTopLevelSubdirectories = expectedTopLevelSubdirectoriesMapping.keys
                     val actualTopLevelDirectories =
