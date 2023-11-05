@@ -12,6 +12,10 @@ env:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        tryK2: [false, true]
+
     name: "Build"
     runs-on: ubuntu-latest
     steps:
@@ -32,7 +36,7 @@ jobs:
       - name: Build Sample
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: build
+          arguments: build -Pkotlin.experimental.tryK2=${{ matrix.tryK2 }}
           build-root-directory: sample
 
       - name: Publish Test Report
