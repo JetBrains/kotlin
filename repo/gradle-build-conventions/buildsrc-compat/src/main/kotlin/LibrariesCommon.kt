@@ -23,18 +23,21 @@ fun Project.configureJava9Compilation(
     moduleName: String,
     moduleOutputs: Collection<FileCollection> = setOf(sourceSets["main"].output),
     compileClasspathConfiguration: Configuration = configurations["compileClasspath"],
+    sourceSetName: String = "java9"
 ) {
-    configurations["java9CompileClasspath"].extendsFrom(compileClasspathConfiguration)
+    val sourceSetNameC = sourceSetName.capitalize()
+    val java9CompileClasspath = configurations["${sourceSetName}CompileClasspath"]
+    java9CompileClasspath.extendsFrom(compileClasspathConfiguration)
 
-    tasks.withType(KotlinCompile::class.java).matching {
-        it.name == "compileJava9Kotlin" || it.name == "compileJava9KotlinJvm"
-    }.configureEach {
+    val kotlinCompileTaskNames = setOf("compile${sourceSetNameC}Kotlin", "compile${sourceSetNameC}KotlinJvm")
+
+    tasks.withType(KotlinCompile::class.java).matching { it.name in kotlinCompileTaskNames }.configureEach {
         configureTaskToolchain(JdkMajorVersion.JDK_9_0)
         @Suppress("DEPRECATION")
         kotlinOptions.jvmTarget = JdkMajorVersion.JDK_9_0.targetName
     }
 
-    tasks.named("compileJava9Java", JavaCompile::class.java) {
+    tasks.named("compile${sourceSetNameC}Java", JavaCompile::class.java) {
         dependsOn(moduleOutputs)
 
         targetCompatibility = JavaVersion.VERSION_1_9.toString()
@@ -42,12 +45,13 @@ fun Project.configureJava9Compilation(
         configureTaskToolchain(JdkMajorVersion.JDK_9_0)
 
         // module-info.java should be in java9 source set by convention
-        val java9SourceSet = sourceSets["java9"].java
+        val java9SourceSet = sourceSets[sourceSetName].java
         destinationDirectory.set(java9SourceSet.destinationDirectory.asFile.get().resolve("META-INF/versions/9"))
         options.sourcepath = files(java9SourceSet.srcDirs)
-        val compileClasspath = configurations["java9CompileClasspath"]
+        val compileClasspath = java9CompileClasspath
         val moduleFiles = objects.fileCollection().from(moduleOutputs)
         val modulePath = compileClasspath.filter { it !in moduleFiles.files }
+        dependsOn(modulePath)
         classpath = objects.fileCollection().from()
         options.compilerArgumentProviders.add(
             Java9AdditionalArgumentsProvider(
