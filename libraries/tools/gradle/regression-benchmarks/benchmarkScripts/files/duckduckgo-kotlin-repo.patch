@@ -1,95 +1,34 @@
-diff --git a/build.gradle b/build.gradle
-index b445a8d6a..851f36283 100644
---- a/build.gradle
-+++ b/build.gradle
-@@ -3,20 +3,20 @@
- buildscript {
- 
-     ext {
--        kotlin_version = '1.8.10'
-         spotless = '6.1.2'
--        anvil_version = '2.4.4'
--        gradle_plugin = '7.4.2' // When updating, also update lint_version
-+        anvil_version = '2.4.7'
-+        gradle_plugin = '8.1.1' // When updating, also update lint_version
-         lint_version = '30.4.2' // This value must always be gradle_plugin + 23
-         min_sdk = 23
-         target_sdk = 33
--        compile_sdk = 33
-+        compile_sdk = 34
-         fladle_version = '0.17.4'
-         kotlinter_version = '3.12.0'
-         dokka_version = '1.8.20'
-     }
- 
-     repositories {
-+        mavenLocal()
-         google()
-         mavenCentral()
-         maven { url "https://plugins.gradle.org/m2/" }
-@@ -25,7 +25,7 @@ buildscript {
-         classpath "com.android.tools.build:gradle:$gradle_plugin"
-         classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotless"
-         classpath "com.squareup.anvil:gradle-plugin:$anvil_version"
--        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
- 
-         // NOTE: Do not place your application dependencies here; they belong
-         // in the individual module build.gradle files
-@@ -40,6 +40,7 @@ plugins {
- 
- allprojects {
-     repositories {
-+        mavenLocal()
-         google()
-         mavenCentral()
-     }
-@@ -148,4 +149,4 @@ fladle {
-     }
- }
- 
--apply plugin: 'android-reporting'
+diff --git a/ad-click/ad-click-impl/build.gradle b/ad-click/ad-click-impl/build.gradle
+index 6ad090e5f..ba40ee4a3 100644
+--- a/ad-click/ad-click-impl/build.gradle
++++ b/ad-click/ad-click-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++   apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     anvil {
+         generateDaggerFactories = true // default is false
+@@ -93,4 +98,4 @@ dependencies {
+     testImplementation Testing.robolectric
+
+     testImplementation project(path: ':common-test')
+-}
 \ No newline at end of file
-+apply plugin: 'android-reporting'
-diff --git a/gradle.properties b/gradle.properties
-index 709ee46cd..272c1dd8f 100644
---- a/gradle.properties
-+++ b/gradle.properties
-@@ -23,3 +23,4 @@ org.gradle.caching=true
- android.defaults.buildfeatures.buildconfig=true
- android.nonFinalResIds=false
- 
-+kotlinVersion=<kotlin_version>
-diff --git a/versions.properties b/versions.properties
-index b6fea38be..fcd8cdb7b 100644
---- a/versions.properties
-+++ b/versions.properties
-@@ -31,7 +31,7 @@ version.androidx.legacy=1.0.0
- 
- version.androidx.lifecycle=2.5.1
- 
--version.androidx.room=2.5.0
-+version.androidx.room=2.6.0-beta01
- 
- version.androidx.swiperefreshlayout=1.1.0
- 
-@@ -73,7 +73,7 @@ version.com.nhaarman.mockitokotlin2..mockito-kotlin=2.2.0
- 
- version.google.android.material=1.7.0
- 
--version.google.dagger=2.46.1
-+version.google.dagger=2.47
- 
- version.jakewharton.rxrelay2=2.0.0
- 
++}
 diff --git a/ad-click/ad-click-store/build.gradle b/ad-click/ad-click-store/build.gradle
 index 6e316a4a6..459044b4b 100644
 --- a/ad-click/ad-click-store/build.gradle
 +++ b/ad-click/ad-click-store/build.gradle
 @@ -22,6 +22,8 @@ plugins {
- 
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
 +android.namespace = "com.duckduckgo.adclick.store"
 +
  dependencies {
@@ -109,26 +48,48 @@ index 9e79cda18..8074ffc9f 100644
 @@ -15,7 +15,4 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.adclick.store">
 -
 -</manifest>
 \ No newline at end of file
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android"/>
+diff --git a/anrs/anrs-impl/build.gradle b/anrs/anrs-impl/build.gradle
+index 8abf0db4a..112caaaf9 100644
+--- a/anrs/anrs-impl/build.gradle
++++ b/anrs/anrs-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     implementation project(':app-build-config-api')
+     implementation project(':anrs-api')
 diff --git a/app-tracking-protection/vpn-impl/build.gradle b/app-tracking-protection/vpn-impl/build.gradle
-index cfdbf2a68..6878cd5d0 100644
+index cfdbf2a68..e5496e02a 100644
 --- a/app-tracking-protection/vpn-impl/build.gradle
 +++ b/app-tracking-protection/vpn-impl/build.gradle
-@@ -24,6 +24,7 @@ plugins {
+@@ -23,7 +23,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++   languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++   apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
  android {
 +    namespace = "com.duckduckgo.mobile.android.vpn"
      lintOptions {
          baseline file("lint-baseline.xml")
      }
-@@ -132,4 +133,4 @@ dependencies {
+@@ -132,4 +138,4 @@ dependencies {
      testImplementation Testing.robolectric
      testImplementation project(':common-test')
      testImplementation project(':vpn-api-test')
@@ -144,13 +105,13 @@ index fc9ebbc6d..91c6c81c7 100644
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.mobile.android.vpn">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
      <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 @@ -134,4 +133,4 @@
- 
+
      </application>
- 
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
@@ -160,7 +121,7 @@ index 79a28f03e..10eedfdd2 100644
 +++ b/app-tracking-protection/vpn-internal/build.gradle
 @@ -23,6 +23,7 @@ plugins {
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
  android {
 +    namespace = "com.duckduckgo.mobile.android.vpn"
      lintOptions {
@@ -182,23 +143,29 @@ index 334cd9396..cefa04a4f 100644
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.vpn.internal">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
      <application>
 @@ -14,4 +13,4 @@
- 
+
      </application>
- 
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
 diff --git a/app/build.gradle b/app/build.gradle
-index 2c2f0d413..74b7e7c93 100644
+index 2c2f0d413..6a35d3108 100644
 --- a/app/build.gradle
 +++ b/app/build.gradle
-@@ -12,6 +12,7 @@ ext {
+@@ -11,7 +11,13 @@ ext {
+     CI_HOME_DIR = "${System.getenv('HOME')}/jenkins_static/com.duckduckgo.mobile.android"
  }
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
  android {
 +    namespace = "com.duckduckgo.app.browser"
      defaultConfig {
@@ -214,7 +181,7 @@ index ca4c830b1..87dd5f113 100644
      xmlns:tools="http://schemas.android.com/tools"
 -    package="com.duckduckgo.app.browser">
 +    >
- 
+
      <uses-permission android:name="android.permission.INTERNET" />
      <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 diff --git a/app/src/main/java/com/duckduckgo/app/cta/ui/CtaViewModel.kt b/app/src/main/java/com/duckduckgo/app/cta/ui/CtaViewModel.kt
@@ -230,12 +197,12 @@ index beb37d2cc..1ebbf42cc 100644
  import kotlinx.coroutines.withContext
  import timber.log.Timber
 @@ -76,12 +75,12 @@ class CtaViewModel @Inject constructor(
- 
+
      @ExperimentalCoroutinesApi
      @VisibleForTesting
 -    val isFireButtonPulseAnimationFlowEnabled = ConflatedBroadcastChannel(true)
 +    val isFireButtonPulseAnimationFlowEnabled = MutableStateFlow(true)
- 
+
      @FlowPreview
      @ExperimentalCoroutinesApi
      val showFireButtonPulseAnimation: Flow<Boolean> =
@@ -264,19 +231,19 @@ index 34b9808f1..f9595dc95 100644
 -import kotlinx.coroutines.channels.BroadcastChannel
  import kotlinx.coroutines.flow.*
  import kotlinx.coroutines.launch
- 
+
 @@ -68,7 +67,7 @@ class WelcomePage : OnboardingPageFragment(R.layout.content_onboarding_welcome)
      private var welcomeAnimationFinished = false
- 
+
      // we use a BroadcastChannel because we don't want to emit the last value upon subscription
 -    private val events = BroadcastChannel<WelcomePageView.Event>(1)
 +    private val events = MutableSharedFlow<WelcomePageView.Event>(1)
- 
+
      private val welcomePageViewModel: WelcomePageViewModel by lazy {
          ViewModelProvider(this, viewModelFactory).get(WelcomePageViewModel::class.java)
 @@ -87,7 +86,7 @@ class WelcomePage : OnboardingPageFragment(R.layout.content_onboarding_welcome)
          setSkipAnimationListener()
- 
+
          lifecycleScope.launch {
 -            events.asFlow()
 +            events
@@ -284,28 +251,33 @@ index 34b9808f1..f9595dc95 100644
                  .collect(::render)
          }
 @@ -116,7 +115,7 @@ class WelcomePage : OnboardingPageFragment(R.layout.content_onboarding_welcome)
- 
+
      private fun event(event: WelcomePageView.Event) {
          lifecycleScope.launch {
 -            events.send(event)
 +            events.emit(event)
          }
      }
- 
+
 diff --git a/autoconsent/autoconsent-impl/build.gradle b/autoconsent/autoconsent-impl/build.gradle
-index 03aa1317b..903f5783c 100644
+index 03aa1317b..dfa9be9a2 100644
 --- a/autoconsent/autoconsent-impl/build.gradle
 +++ b/autoconsent/autoconsent-impl/build.gradle
-@@ -22,6 +22,8 @@ plugins {
- 
+@@ -22,6 +22,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
 +android.namespace = "com.duckduckgo.autoconsent.impl"
 +
  dependencies {
      anvil project(path: ':anvil-compiler')
      implementation project(path: ':anvil-annotations')
-@@ -91,4 +93,4 @@ android {
+@@ -91,4 +98,4 @@ android {
              includeAndroidResources = true
          }
      }
@@ -319,7 +291,7 @@ index 59799ae04..b9acb93b8 100644
 @@ -14,8 +14,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.autoconsent.impl">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -334,13 +306,18 @@ index 59799ae04..b9acb93b8 100644
 \ No newline at end of file
 +</manifest>
 diff --git a/autofill/autofill-impl/build.gradle b/autofill/autofill-impl/build.gradle
-index fc3858c2f..bd0a0a759 100644
+index fc3858c2f..d02e5ac4a 100644
 --- a/autofill/autofill-impl/build.gradle
 +++ b/autofill/autofill-impl/build.gradle
-@@ -22,6 +22,8 @@ plugins {
- 
+@@ -22,6 +22,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
 +android.namespace = "com.duckduckgo.autofill.impl"
 +
  dependencies {
@@ -353,37 +330,90 @@ index 8a18ef859..148e24fba 100644
 @@ -14,8 +14,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.autofill.impl">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <application>
          <activity
 @@ -26,4 +25,4 @@
      </application>
- 
- 
+
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/build.gradle b/build.gradle
+index b445a8d6a..5b66cf35c 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -3,20 +3,20 @@
+ buildscript {
+
+     ext {
+-        kotlin_version = '1.8.10'
+         spotless = '6.1.2'
+-        anvil_version = '2.4.4'
+-        gradle_plugin = '7.4.2' // When updating, also update lint_version
++        anvil_version = '2.4.7'
++        gradle_plugin = '8.2.0-rc02' // When updating, also update lint_version
+         lint_version = '30.4.2' // This value must always be gradle_plugin + 23
+         min_sdk = 23
+         target_sdk = 33
+-        compile_sdk = 33
++        compile_sdk = 34
+         fladle_version = '0.17.4'
+         kotlinter_version = '3.12.0'
+         dokka_version = '1.8.20'
+     }
+
+     repositories {
++        mavenLocal()
+         google()
+         mavenCentral()
+         maven { url "https://plugins.gradle.org/m2/" }
+@@ -25,7 +25,7 @@ buildscript {
+         classpath "com.android.tools.build:gradle:$gradle_plugin"
+         classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotless"
+         classpath "com.squareup.anvil:gradle-plugin:$anvil_version"
+-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
++        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+@@ -40,6 +40,7 @@ plugins {
+
+ allprojects {
+     repositories {
++        mavenLocal()
+         google()
+         mavenCentral()
+     }
+@@ -148,4 +149,4 @@ fladle {
+     }
+ }
+
+-apply plugin: 'android-reporting'
+\ No newline at end of file
++apply plugin: 'android-reporting'
 diff --git a/common/common-test/build.gradle b/common/common-test/build.gradle
 index 0d7ec015d..b4ef05e64 100644
 --- a/common/common-test/build.gradle
 +++ b/common/common-test/build.gradle
 @@ -5,6 +5,8 @@ plugins {
- 
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
 +android.namespace = "com.duckduckgo.app.test"
 +
  dependencies {
- 
+
      // Dependencies for this Module
 @@ -22,4 +24,4 @@ dependencies {
      }
      implementation Testing.junit4
- 
+
 -}
 \ No newline at end of file
 +}
@@ -394,33 +424,39 @@ index 5ddb1f65b..b271bf909 100644
 @@ -15,8 +15,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.app.test">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <instrumentation
          android:name="androidx.test.runner.AndroidJUnitRunner"
 @@ -24,4 +23,4 @@
          android:label="Test for common"
          />
- 
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
 diff --git a/common/common-ui/build.gradle b/common/common-ui/build.gradle
-index 2de7f9661..60bb54b46 100644
+index 2de7f9661..b1db0e19a 100644
 --- a/common/common-ui/build.gradle
 +++ b/common/common-ui/build.gradle
-@@ -23,6 +23,7 @@ plugins {
+@@ -22,7 +22,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
  android {
 +    namespace = "com.duckduckgo.mobile.android"
      anvil {
          generateDaggerFactories = true // default is false
      }
-@@ -63,4 +64,4 @@ dependencies {
+@@ -63,4 +69,4 @@ dependencies {
      testImplementation 'app.cash.turbine:turbine:_'
      testImplementation Testing.robolectric
      testImplementation project(path: ':common-test')
@@ -434,27 +470,33 @@ index 3051093c4..69e22b019 100644
 @@ -14,8 +14,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.mobile.android">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <application>
- 
+
 @@ -28,4 +27,4 @@
              android:resource="@array/preloaded_fonts" />
      </application>
- 
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
 diff --git a/common/common-utils/build.gradle b/common/common-utils/build.gradle
-index 85586cccb..3839b239e 100644
+index 85586cccb..4dc293c05 100644
 --- a/common/common-utils/build.gradle
 +++ b/common/common-utils/build.gradle
-@@ -24,6 +24,7 @@ plugins {
+@@ -23,7 +23,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
  android {
 +    namespace = "com.duckduckgo.app.global"
      lintOptions {
@@ -467,28 +509,184 @@ index 918e07788..6c9af1677 100644
 @@ -15,8 +15,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.app.global">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <instrumentation
          android:name="androidx.test.runner.AndroidJUnitRunner"
 @@ -24,4 +23,4 @@
          android:label="Test for common"
          />
- 
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/content-scope-scripts/content-scope-scripts-api/build.gradle b/content-scope-scripts/content-scope-scripts-api/build.gradle
+index 459fc8431..dc1339589 100644
+--- a/content-scope-scripts/content-scope-scripts-api/build.gradle
++++ b/content-scope-scripts/content-scope-scripts-api/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     implementation project(':di')
+     implementation project(':common-utils')
+diff --git a/content-scope-scripts/content-scope-scripts-impl/build.gradle b/content-scope-scripts/content-scope-scripts-impl/build.gradle
+index 867b248c1..0ea87708d 100644
+--- a/content-scope-scripts/content-scope-scripts-impl/build.gradle
++++ b/content-scope-scripts/content-scope-scripts-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     implementation project(':di')
+     implementation project(':common-utils')
+diff --git a/cookies/cookies-api/build.gradle b/cookies/cookies-api/build.gradle
+index 985d3c834..3e80e0c72 100644
+--- a/cookies/cookies-api/build.gradle
++++ b/cookies/cookies-api/build.gradle
+@@ -28,6 +28,11 @@ dependencies {
+     implementation AndroidX.core.ktx
+ }
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     namespace 'com.duckduckgo.cookies.api'
+ }
+diff --git a/cookies/cookies-impl/build.gradle b/cookies/cookies-impl/build.gradle
+index d65fbf432..5d1a0ea81 100644
+--- a/cookies/cookies-impl/build.gradle
++++ b/cookies/cookies-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(':anvil-compiler')
+     implementation project(':anvil-annotations')
+@@ -81,4 +86,4 @@ android {
+         }
+     }
+     namespace 'com.duckduckgo.cookies.impl'
+-}
+\ No newline at end of file
++}
+diff --git a/device-auth/device-auth-impl/build.gradle b/device-auth/device-auth-impl/build.gradle
+index 32920e289..f017c0e71 100644
+--- a/device-auth/device-auth-impl/build.gradle
++++ b/device-auth/device-auth-impl/build.gradle
+@@ -23,6 +23,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     implementation project(path: ':app-build-config-api')
+     implementation project(path: ':device-auth-api')
+@@ -46,4 +51,4 @@ android {
+         }
+     }
+   namespace 'com.duckduckgo.deviceauth.impl'
+-}
+\ No newline at end of file
++}
+diff --git a/di/build.gradle b/di/build.gradle
+index 2643fecda..75d368838 100644
+--- a/di/build.gradle
++++ b/di/build.gradle
+@@ -29,6 +29,11 @@ android {
+     namespace 'com.duckduckgo.di'
+ }
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     implementation Kotlin.stdlib.jdk7
+     implementation AndroidX.fragment.ktx
+diff --git a/downloads/downloads-impl/build.gradle b/downloads/downloads-impl/build.gradle
+index 3256725cc..3d927a7dc 100644
+--- a/downloads/downloads-impl/build.gradle
++++ b/downloads/downloads-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     anvil {
+         generateDaggerFactories = true // default is false
+@@ -87,4 +92,4 @@ dependencies {
+     testImplementation 'app.cash.turbine:turbine:_'
+     testImplementation Testing.robolectric
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
+diff --git a/element-hiding/element-hiding-impl/build.gradle b/element-hiding/element-hiding-impl/build.gradle
+index b28604bd8..f996184ef 100644
+--- a/element-hiding/element-hiding-impl/build.gradle
++++ b/element-hiding/element-hiding-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     anvil {
+         generateDaggerFactories = true // default is false
+@@ -89,4 +94,4 @@ dependencies {
+     testImplementation Testing.robolectric
+
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
 diff --git a/element-hiding/element-hiding-store/build.gradle b/element-hiding/element-hiding-store/build.gradle
 index 136b0011a..d5907c9f4 100644
 --- a/element-hiding/element-hiding-store/build.gradle
 +++ b/element-hiding/element-hiding-store/build.gradle
 @@ -22,6 +22,8 @@ plugins {
- 
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
 +android.namespace = "com.duckduckgo.elementhiding.store"
 +
  dependencies {
@@ -508,21 +706,60 @@ index 58f99753e..8074ffc9f 100644
 @@ -15,7 +15,4 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.elementhiding.store">
 -
 -</manifest>
 \ No newline at end of file
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android"/>
+diff --git a/feature-toggles/feature-toggles-impl/build.gradle b/feature-toggles/feature-toggles-impl/build.gradle
+index 226b11a26..c1ede781a 100644
+--- a/feature-toggles/feature-toggles-impl/build.gradle
++++ b/feature-toggles/feature-toggles-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(':anvil-compiler')
+     implementation project(':anvil-annotations')
+diff --git a/fingerprint-protection/fingerprint-protection-impl/build.gradle b/fingerprint-protection/fingerprint-protection-impl/build.gradle
+index 3a128c496..1225d8b83 100644
+--- a/fingerprint-protection/fingerprint-protection-impl/build.gradle
++++ b/fingerprint-protection/fingerprint-protection-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     anvil {
+         generateDaggerFactories = true // default is false
+@@ -94,4 +99,4 @@ dependencies {
+     testImplementation Testing.robolectric
+
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
 diff --git a/fingerprint-protection/fingerprint-protection-store/build.gradle b/fingerprint-protection/fingerprint-protection-store/build.gradle
 index 7d4c939e3..29749aa51 100644
 --- a/fingerprint-protection/fingerprint-protection-store/build.gradle
 +++ b/fingerprint-protection/fingerprint-protection-store/build.gradle
 @@ -22,6 +22,8 @@ plugins {
- 
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
 +android.namespace = "com.duckduckgo.fingerprintprotection.store"
 +
  dependencies {
@@ -542,21 +779,86 @@ index 917eee29a..311bf3593 100644
 @@ -15,7 +15,4 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.fingerprintprotection.store">
 -
 -</manifest>
 \ No newline at end of file
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android" />
+diff --git a/gradle.properties b/gradle.properties
+index 530c09b94..193c8d1ad 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -23,3 +23,4 @@ org.gradle.configureondemand=true
+ android.defaults.buildfeatures.buildconfig=true
+ android.nonFinalResIds=false
+
++kotlinVersion=2.0.255-SNAPSHOT
+diff --git a/gradle/wrapper/gradle-wrapper.properties b/gradle/wrapper/gradle-wrapper.properties
+index 70763969c..0cb617059 100644
+--- a/gradle/wrapper/gradle-wrapper.properties
++++ b/gradle/wrapper/gradle-wrapper.properties
+@@ -1,6 +1,6 @@
+ #Fri Apr 29 21:22:50 BST 2022
+ distributionBase=GRADLE_USER_HOME
+-distributionUrl=https\://services.gradle.org/distributions/gradle-8.1.1-bin.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-8.2.1-bin.zip
+ distributionPath=wrapper/dists
+ zipStorePath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+diff --git a/httpsupgrade/httpsupgrade-impl/build.gradle b/httpsupgrade/httpsupgrade-impl/build.gradle
+index 3da7b5c09..15c47c1d7 100644
+--- a/httpsupgrade/httpsupgrade-impl/build.gradle
++++ b/httpsupgrade/httpsupgrade-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(':anvil-compiler')
+     implementation project(':anvil-annotations')
+diff --git a/installation/installation-impl/build.gradle b/installation/installation-impl/build.gradle
+index 31e38d832..461ddf802 100644
+--- a/installation/installation-impl/build.gradle
++++ b/installation/installation-impl/build.gradle
+@@ -23,6 +23,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(path: ':anvil-compiler')
+     implementation project(path: ':anvil-annotations')
+@@ -56,4 +61,4 @@ android {
+         }
+     }
+   namespace 'com.duckduckgo.installation.impl'
+-}
+\ No newline at end of file
++}
 diff --git a/macos/macos-impl/build.gradle b/macos/macos-impl/build.gradle
-index 63a9de7f6..f5c7b0f1d 100644
+index 63a9de7f6..4a51bb4c6 100644
 --- a/macos/macos-impl/build.gradle
 +++ b/macos/macos-impl/build.gradle
-@@ -22,6 +22,8 @@ plugins {
- 
+@@ -22,6 +22,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
 +android.namespace = "com.duckduckgo.macos_impl"
 +
  dependencies {
@@ -569,11 +871,11 @@ index c54d4aa07..65859660d 100644
 @@ -14,8 +14,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.macos_impl">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <application android:supportsRtl="true">
          <activity
 @@ -27,4 +26,4 @@
@@ -583,13 +885,53 @@ index c54d4aa07..65859660d 100644
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/navigation/navigation-impl/build.gradle b/navigation/navigation-impl/build.gradle
+index 9c0f77efa..bc801493f 100644
+--- a/navigation/navigation-impl/build.gradle
++++ b/navigation/navigation-impl/build.gradle
+@@ -22,6 +22,12 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
++
+ dependencies {
+     anvil project(':anvil-compiler')
+
+diff --git a/network-protection/network-protection-impl/build.gradle b/network-protection/network-protection-impl/build.gradle
+index 4ab7caa01..38ad079b2 100644
+--- a/network-protection/network-protection-impl/build.gradle
++++ b/network-protection/network-protection-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(':anvil-compiler')
+     implementation project(':anvil-annotations')
+@@ -95,4 +100,4 @@ android {
+     defaultConfig {
+         buildConfigField "String", "NETP_DEBUG_SERVER_TOKEN", "\"${NETP_DEBUG_SERVER_TOKEN}\""
+     }
+-}
+\ No newline at end of file
++}
 diff --git a/network-protection/network-protection-internal/build.gradle b/network-protection/network-protection-internal/build.gradle
 index cacfd8d4f..2ae79ed78 100644
 --- a/network-protection/network-protection-internal/build.gradle
 +++ b/network-protection/network-protection-internal/build.gradle
 @@ -23,6 +23,7 @@ plugins {
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
  android {
 +    namespace = "com.duckduckgo.networkprotection.internal"
      lintOptions {
@@ -611,16 +953,32 @@ index 2864be38b..245555caf 100644
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools"
 -          package="com.duckduckgo.networkprotection.internal">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
- 
+
      <!-- This is also in the :app module, so it is not a new permission. We add it so that lint doesn't blow   -->
      <uses-permission
 @@ -25,4 +24,4 @@
              android:exported="false" />
      </application>
- 
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/privacy-config/privacy-config-impl/build.gradle b/privacy-config/privacy-config-impl/build.gradle
+index 992bd47f8..b96814a2a 100644
+--- a/privacy-config/privacy-config-impl/build.gradle
++++ b/privacy-config/privacy-config-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(path: ':anvil-compiler')
+     implementation project(path: ':anvil-annotations')
 diff --git a/privacy-config/privacy-config-internal/build.gradle b/privacy-config/privacy-config-internal/build.gradle
 index 77133a6cf..a698d9350 100644
 --- a/privacy-config/privacy-config-internal/build.gradle
@@ -649,29 +1007,34 @@ index 79e806000..ec94fcb12 100644
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.privacy.config.internal">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <application>
          <activity android:name="PrivacyConfigInternalSettingsActivity" android:exported="false"/>
      </application>
- 
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
 diff --git a/privacy-dashboard/privacy-dashboard-impl/build.gradle b/privacy-dashboard/privacy-dashboard-impl/build.gradle
-index fc809ba2b..eb7001ec1 100644
+index fc809ba2b..f64c4144f 100644
 --- a/privacy-dashboard/privacy-dashboard-impl/build.gradle
 +++ b/privacy-dashboard/privacy-dashboard-impl/build.gradle
-@@ -22,6 +22,8 @@ plugins {
- 
+@@ -22,6 +22,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
 +android.namespace = "com.duckduckgo.privacy.dashboard.impl"
 +
  dependencies {
      anvil project(':anvil-compiler')
      implementation project(':anvil-annotations')
-@@ -88,4 +90,4 @@ fulladleModuleConfig {
- 
+@@ -88,4 +95,4 @@ fulladleModuleConfig {
+
  tasks.register('androidTestsBuild') {
      dependsOn 'assembleDebugAndroidTest'
 -}
@@ -684,7 +1047,7 @@ index 787089a36..8d387592a 100644
 @@ -15,8 +15,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.privacy.dashboard.impl">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -698,14 +1061,99 @@ index 787089a36..8d387592a 100644
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/remote-messaging/remote-messaging-impl/build.gradle b/remote-messaging/remote-messaging-impl/build.gradle
+index 058e1d1f4..b96cb6330 100644
+--- a/remote-messaging/remote-messaging-impl/build.gradle
++++ b/remote-messaging/remote-messaging-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     lintOptions {
+         baseline file("lint-baseline.xml")
+@@ -84,4 +89,4 @@ android {
+         }
+     }
+     namespace 'com.duckduckgo.remote.messaging.impl'
+-}
+\ No newline at end of file
++}
+diff --git a/request-filterer/request-filterer-api/build.gradle b/request-filterer/request-filterer-api/build.gradle
+index 48cb0b1b9..8719e1c7a 100644
+--- a/request-filterer/request-filterer-api/build.gradle
++++ b/request-filterer/request-filterer-api/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     implementation Kotlin.stdlib.jdk7
+     implementation KotlinX.coroutines.core
+diff --git a/request-filterer/request-filterer-impl/build.gradle b/request-filterer/request-filterer-impl/build.gradle
+index 20126cadf..267b7a0c6 100644
+--- a/request-filterer/request-filterer-impl/build.gradle
++++ b/request-filterer/request-filterer-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(':anvil-compiler')
+     implementation project(':anvil-annotations')
+@@ -76,4 +81,4 @@ android {
+         }
+     }
+     namespace 'com.duckduckgo.request.filterer.impl'
+-}
+\ No newline at end of file
++}
+diff --git a/runtime-checks/runtime-checks-impl/build.gradle b/runtime-checks/runtime-checks-impl/build.gradle
+index 46bd7069a..ac438fcd8 100644
+--- a/runtime-checks/runtime-checks-impl/build.gradle
++++ b/runtime-checks/runtime-checks-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     anvil {
+         generateDaggerFactories = true // default is false
+@@ -89,4 +94,4 @@ dependencies {
+     testImplementation Testing.robolectric
+
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
 diff --git a/runtime-checks/runtime-checks-store/build.gradle b/runtime-checks/runtime-checks-store/build.gradle
 index 2d9ad2e90..94c342bd2 100644
 --- a/runtime-checks/runtime-checks-store/build.gradle
 +++ b/runtime-checks/runtime-checks-store/build.gradle
 @@ -22,6 +22,8 @@ plugins {
- 
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
 +android.namespace = "com.duckduckgo.runtimechecks.store"
 +
  dependencies {
@@ -725,21 +1173,99 @@ index 0af574d93..75e2ad68e 100644
 @@ -15,7 +15,4 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.runtimechecks.store">
 -
 -</manifest>
 \ No newline at end of file
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android"/>
+diff --git a/saved-sites/saved-sites-impl/build.gradle b/saved-sites/saved-sites-impl/build.gradle
+index 2d7c9ce22..0a47c8c7f 100644
+--- a/saved-sites/saved-sites-impl/build.gradle
++++ b/saved-sites/saved-sites-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++   languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     implementation project(path: ':di')
+     implementation project(path: ':statistics')
+diff --git a/secure-storage/secure-storage-impl/build.gradle b/secure-storage/secure-storage-impl/build.gradle
+index 874368a1d..f02f58f25 100644
+--- a/secure-storage/secure-storage-impl/build.gradle
++++ b/secure-storage/secure-storage-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     implementation project(path: ':app-build-config-api')
+     implementation project(path: ':common-utils')
+@@ -52,4 +57,4 @@ android {
+         generateDaggerFactories = true // default is false
+     }
+   namespace 'com.duckduckgo.securestorage.impl'
+-}
+\ No newline at end of file
++}
+diff --git a/site-permissions/site-permissions-impl/build.gradle b/site-permissions/site-permissions-impl/build.gradle
+index 83ba767f0..512eb0fdc 100644
+--- a/site-permissions/site-permissions-impl/build.gradle
++++ b/site-permissions/site-permissions-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+
+     implementation project(path: ':app-build-config-api')
+@@ -61,4 +66,4 @@ android {
+         generateDaggerFactories = true // default is false
+     }
+     namespace 'com.duckduckgo.site.permissions.impl'
+-}
+\ No newline at end of file
++}
+diff --git a/statistics/build.gradle b/statistics/build.gradle
+index 17ae6f641..1507cfb26 100644
+--- a/statistics/build.gradle
++++ b/statistics/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++   languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(path: ':anvil-compiler')
+
 diff --git a/subscriptions/subscriptions-impl/build.gradle b/subscriptions/subscriptions-impl/build.gradle
 index 0bca5288a..0e9f42326 100644
 --- a/subscriptions/subscriptions-impl/build.gradle
 +++ b/subscriptions/subscriptions-impl/build.gradle
 @@ -22,6 +22,8 @@ plugins {
- 
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
 +android.namespace = "com.duckduckgo.subscriptions.impl"
 +
  dependencies {
@@ -759,7 +1285,7 @@ index 17acd697d..735f972e5 100644
 @@ -14,8 +14,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.subscriptions.impl">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
@@ -774,13 +1300,18 @@ index 17acd697d..735f972e5 100644
 \ No newline at end of file
 +</manifest>
 diff --git a/sync/sync-impl/build.gradle b/sync/sync-impl/build.gradle
-index 7168d7e18..52e0e6b22 100644
+index 7168d7e18..b2e671fda 100644
 --- a/sync/sync-impl/build.gradle
 +++ b/sync/sync-impl/build.gradle
-@@ -22,6 +22,8 @@ plugins {
- 
+@@ -22,6 +22,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
 +android.namespace = "com.duckduckgo.sync.impl"
 +
  dependencies {
@@ -793,12 +1324,12 @@ index 25c4b626f..ea2e8042c 100644
 @@ -14,7 +14,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest package="com.duckduckgo.sync.impl"
 +<manifest
      xmlns:android="http://schemas.android.com/apk/res/android"
      xmlns:tools="http://schemas.android.com/tools">
- 
+
 @@ -78,4 +78,4 @@
              android:screenOrientation="portrait"
              tools:replace="screenOrientation" />
@@ -812,7 +1343,7 @@ index 2c5ab2d63..df95c58c2 100644
 +++ b/traces/traces-impl/build.gradle
 @@ -23,6 +23,7 @@ plugins {
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
  android {
 +    namespace = "com.duckduckgo.app.traces"
      anvil {
@@ -825,28 +1356,117 @@ index 1d6155ca4..ef5a9e403 100644
 @@ -15,8 +15,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -          package="com.duckduckgo.app.traces">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
- 
+
      <application>
          <provider
 @@ -26,4 +25,4 @@
              android:exported="false" />
      </application>
- 
+
 -</manifest>
 \ No newline at end of file
 +</manifest>
+diff --git a/versions.properties b/versions.properties
+index aa4e40d93..660ba8d6c 100644
+--- a/versions.properties
++++ b/versions.properties
+@@ -31,7 +31,7 @@ version.androidx.legacy=1.0.0
+
+ version.androidx.lifecycle=2.5.1
+
+-version.androidx.room=2.5.0
++version.androidx.room=2.6.0-beta01
+
+ version.androidx.swiperefreshlayout=1.1.0
+
+@@ -75,7 +75,7 @@ version.com.nhaarman.mockitokotlin2..mockito-kotlin=2.2.0
+
+ version.google.android.material=1.7.0
+
+-version.google.dagger=2.46.1
++version.google.dagger=2.47
+
+ version.jakewharton.rxrelay2=2.0.0
+
+diff --git a/voice-search/voice-search-impl/build.gradle b/voice-search/voice-search-impl/build.gradle
+index 2e0b90d0e..953b4ac87 100644
+--- a/voice-search/voice-search-impl/build.gradle
++++ b/voice-search/voice-search-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     lintOptions {
+         baseline file("lint-baseline.xml")
+@@ -65,4 +70,4 @@ android {
+         generateDaggerFactories = true // default is false
+     }
+   namespace 'com.duckduckgo.voice.impl'
+-}
+\ No newline at end of file
++}
+diff --git a/vpn-network/vpn-network-impl/build.gradle b/vpn-network/vpn-network-impl/build.gradle
+index 79b706a03..29f8c72ba 100644
+--- a/vpn-network/vpn-network-impl/build.gradle
++++ b/vpn-network/vpn-network-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ dependencies {
+     anvil project(':anvil-compiler')
+     implementation project(':anvil-annotations')
+diff --git a/web-compat/web-compat-impl/build.gradle b/web-compat/web-compat-impl/build.gradle
+index 9c4fb9721..4bc40348f 100644
+--- a/web-compat/web-compat-impl/build.gradle
++++ b/web-compat/web-compat-impl/build.gradle
+@@ -22,6 +22,11 @@ plugins {
+
+ apply from: "$rootProject.projectDir/gradle/android-library.gradle"
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
+ android {
+     anvil {
+         generateDaggerFactories = true // default is false
+@@ -66,4 +71,4 @@ dependencies {
+     testImplementation Testing.junit4
+
+     testImplementation project(path: ':common-test')
+-}
+\ No newline at end of file
++}
 diff --git a/windows/windows-impl/build.gradle b/windows/windows-impl/build.gradle
-index 0fc212a9a..8ada81187 100644
+index 0fc212a9a..ae155bc25 100644
 --- a/windows/windows-impl/build.gradle
 +++ b/windows/windows-impl/build.gradle
-@@ -22,6 +22,8 @@ plugins {
- 
+@@ -22,6 +22,13 @@ plugins {
+
  apply from: "$rootProject.projectDir/gradle/android-library.gradle"
- 
+
++kotlin.compilerOptions {
++    languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++    apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_9
++}
++
 +android.namespace = "com.duckduckgo.windows.impl"
 +
  dependencies {
@@ -859,7 +1479,7 @@ index 1dbe65989..6e68259cb 100644
 @@ -14,8 +14,7 @@
    ~ limitations under the License.
    -->
- 
+
 -<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 -    package="com.duckduckgo.windows.impl">
 +<manifest xmlns:android="http://schemas.android.com/apk/res/android">
