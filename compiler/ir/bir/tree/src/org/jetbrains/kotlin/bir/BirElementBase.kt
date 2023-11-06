@@ -225,7 +225,8 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
 
     companion object {
-        const val FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION: Byte = (1 shl 0).toByte()
+        const val FLAG_IN_INVALIDATE_INDEX_BUFFER: Byte = (1 shl 0).toByte()
+        const val FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION: Byte = (1 shl 1).toByte()
 
         const val CONTAINING_LIST_ID_BITS = 3
     }

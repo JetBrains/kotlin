@@ -227,7 +227,7 @@ abstract class BirImplElementBase : BirElementBase() {
             null -> {}
             is BirImplElementBase -> {
                 dependentIndexedElements = null
-                elementsOrSingle.invalidate()
+                root?.invalidateElement(elementsOrSingle)
             }
             else -> {
                 @Suppress("UNCHECKED_CAST")
@@ -239,7 +239,7 @@ abstract class BirImplElementBase : BirElementBase() {
                     val arrayIsFull = array[arraySize - 1] != null
 
                     array[i] = null
-                    e.invalidate()
+                    root?.invalidateElement(e)
 
                     if (arrayIsFull && array !== dependentIndexedElements) {
                         @Suppress("UNCHECKED_CAST")
