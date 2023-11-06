@@ -182,10 +182,6 @@ abstract class BirImplElementBase : BirElementBase() {
     }
 
     private fun registerDependentElement(dependentElement: BirImplElementBase) {
-        if (dependentElement === this) {
-            return
-        }
-
         val RESIZE_GRADUALITY = 4
         var elementsOrSingle = dependentIndexedElements
         when (elementsOrSingle) {
