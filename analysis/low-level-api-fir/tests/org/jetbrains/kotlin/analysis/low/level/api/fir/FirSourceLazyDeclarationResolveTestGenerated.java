@@ -529,6 +529,24 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("substitutionFakeOverrideConstructor.kt")
+    public void testSubstitutionFakeOverrideConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("substitutionFakeOverrideFunction.kt")
+    public void testSubstitutionFakeOverrideFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("substitutionFakeOverrideFunctionWithImplicitType.kt")
+    public void testSubstitutionFakeOverrideFunctionWithImplicitType() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionWithImplicitType.kt");
+    }
+
+    @Test
     @TestMetadata("substitutionFakeOverrideInDifferentModules.kt")
     public void testSubstitutionFakeOverrideInDifferentModules() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideInDifferentModules.kt");
@@ -538,6 +556,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("substitutionFakeOverrideWithImplicitType.kt")
     public void testSubstitutionFakeOverrideWithImplicitType() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitType.kt");
+    }
+
+    @Test
+    @TestMetadata("substitutionFakeOverrideWithImplicitTypeAndReceiver.kt")
+    public void testSubstitutionFakeOverrideWithImplicitTypeAndReceiver() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeAndReceiver.kt");
     }
 
     @Test

@@ -2,5 +2,5 @@
 abstract class S<caret>ubClass: AbstractClass<Int>()
 
 abstract class AbstractClass<T> {
-    abstract val property: T
+    abstract val T.property: T
 }

@@ -158,8 +158,13 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiLa
                         declarations += it
                     }
                 }
-            }
 
+                typeScope.processDeclaredConstructors {
+                    if (filter(it)) {
+                        declarations += it
+                    }
+                }
+            }
         }
 
         return declarations.singleOrNull() ?: error("Can't choose from:\n${declarations.joinToString("\n")}")

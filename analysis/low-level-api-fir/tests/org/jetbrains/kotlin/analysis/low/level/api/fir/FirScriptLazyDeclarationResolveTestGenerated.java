@@ -499,9 +499,33 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     }
 
     @Test
+    @TestMetadata("substitutionFakeOverrideConstructorScript.kts")
+    public void testSubstitutionFakeOverrideConstructorScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideConstructorScript.kts");
+    }
+
+    @Test
+    @TestMetadata("substitutionFakeOverrideFunctionScript.kts")
+    public void testSubstitutionFakeOverrideFunctionScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionScript.kts");
+    }
+
+    @Test
+    @TestMetadata("substitutionFakeOverrideFunctionWithImplicitTypeScript.kts")
+    public void testSubstitutionFakeOverrideFunctionWithImplicitTypeScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideFunctionWithImplicitTypeScript.kts");
+    }
+
+    @Test
     @TestMetadata("substitutionFakeOverrideScript.kts")
     public void testSubstitutionFakeOverrideScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideScript.kts");
+    }
+
+    @Test
+    @TestMetadata("substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts")
+    public void testSubstitutionFakeOverrideWithImplicitTypeAndReceiverScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/substitutionFakeOverrideWithImplicitTypeAndReceiverScript.kts");
     }
 
     @Test

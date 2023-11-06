@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -37,7 +38,7 @@ open class FirDeclarationRendererWithAttributes : FirDeclarationRenderer() {
     private fun Any.renderAsDeclarationAttributeValue() = when (this) {
         is FirCallableSymbol<*> -> callableId.toString()
         is FirClassLikeSymbol<*> -> classId.asString()
-        is FirProperty -> symbol.callableId.toString()
+        is FirCallableDeclaration -> symbol.callableId.toString()
         is Lazy<*> -> value.toString()
         else -> toString()
     }
