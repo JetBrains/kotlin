@@ -38894,6 +38894,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts"), Pattern.compile("^(.+)\\.(kt|kts)$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
             }
 
+            @Test
+            @TestMetadata("complexConditionWithSafeCall.kt")
+            public void testComplexConditionWithSafeCall() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/complexConditionWithSafeCall.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/controlflow")
             @TestDataPath("$PROJECT_ROOT")
