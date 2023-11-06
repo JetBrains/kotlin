@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,28 +8,26 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeIn
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.types.Variance
 
-abstract class AbstractFunctionClassKindTest : AbstractAnalysisApiSingleFileTest() {
-
+abstract class AbstractDoubleColonReceiverTypeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
-        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(ktFile) as KtExpression
+        val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypeAtCaret(ktFile) as KtDoubleColonExpression
 
-        val (type, functionClassKind) = executeOnPooledThreadInReadAction {
+        val type = executeOnPooledThreadInReadAction {
             analyseForTest(expressionAtCaret) {
-                val functionType = expressionAtCaret.getExpectedType()
-                functionType?.render(position = Variance.INVARIANT) to functionType?.functionTypeKind
+                expressionAtCaret.getReceiverKtType()?.render(position = Variance.INVARIANT)
             }
         }
+
         val actual = buildString {
             appendLine("expression: ${expressionAtCaret.text}")
-            appendLine("expected type: $type")
-            appendLine("functionClassKind: $functionClassKind")
+            appendLine("receiver:: type: $type")
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }

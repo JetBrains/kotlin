@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -173,11 +174,18 @@ internal class KtFirTypeProvider(
 
     override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? {
         return when (val fir = expression.getOrBuildFir(firResolveSession)) {
-            is FirGetClassCall ->
+            is FirGetClassCall -> {
                 fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
-            is FirCallableReferenceAccess ->
-                fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
-            else -> throwUnexpectedFirElementError(fir, expression)
+            }
+            is FirCallableReferenceAccess -> {
+                when (val explicitReceiver = fir.explicitReceiver) {
+                    is FirPropertyAccessExpression -> explicitReceiver.resolvedType.asKtType()
+                    else -> fir.resolvedType.getReceiverOfReflectionType()?.asKtType()
+                }
+            }
+            else -> {
+                throwUnexpectedFirElementError(fir, expression)
+            }
         }
     }
 
