@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNCHECKED_CAST
 
 context(Any)
-fun f(g: context(Any) () -> Unit, value: Any): context(A) () -> Unit {
-    return value as (context(A) () -> Unit)
+fun f(g: <!UNSUPPORTED_FEATURE!>context(Any) () -> Unit<!>, value: Any): <!UNSUPPORTED_FEATURE!>context(A) () -> Unit<!> {
+    return value as <!UNSUPPORTED_FEATURE!>(context(A) () -> Unit)<!>
 }
 
 fun f(g: () -> Unit, value: Any) : () -> Unit {
