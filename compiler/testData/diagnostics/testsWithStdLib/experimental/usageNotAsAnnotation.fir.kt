@@ -45,34 +45,45 @@ fun f5() {}
 
 // Usages of markers as types should be errors
 
-@RequiresOptIn
-annotation class Marker {
-    class NestedClass
+object A {
+    @RequiresOptIn
+    annotation class Marker {
+        class NestedClass() {
+            class NestedClass2
 
-    companion object {
-        const val value = 42
+            fun f12(m: NestedClass2){}
+        }
+
+        companion object {
+            const val value = 42
+        }
     }
 }
 
-fun f6(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker<!>) {}
-fun f7(): List<<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker<!>>? = null
-fun f8(): <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>test.Marker?<!> = null
+fun f6(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker<!>) {}
+fun f7(): List<<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker<!>>? = null
+fun f8(): <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>test.A.Marker?<!> = null
 
-typealias Marker0 = <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker<!>
+typealias Marker0 = <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker<!>
 
 fun f9(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker0<!>) {}
 
 
 // Usages of markers as qualifiers are errors as well (we can lift this restriction for select cases)
 
-fun f10(m: Marker.NestedClass) {
-    Marker.value
+fun f10(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker.NestedClass<!>) {
+    A.Marker.value
 }
+
+fun f11(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker.NestedClass.NestedClass2<!>) {}
+
 
 // FILE: usage-from-other-file.kt
 
 // Usages of markers in import statements should be OK, but not as qualifiers to import their nested classes
 
-import test.Marker
-import test.Marker.NestedClass
-import test.Marker.Companion
+import test.A.Marker
+import test.A.Marker.NestedClass
+import test.A.Marker.Companion
+
+fun f12(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>test.A.Marker.NestedClass.NestedClass2<!>) {}
