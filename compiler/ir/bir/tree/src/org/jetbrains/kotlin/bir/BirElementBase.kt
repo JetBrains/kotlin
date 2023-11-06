@@ -197,7 +197,6 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
         val results = ArrayList<BirElementBase>(array.size)
         val backReferenceRecorder = BirForest.BackReferenceRecorder()
-        val root = root
 
         var j = 0
         for (i in array.indices) {
@@ -209,7 +208,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
             val recordedRef = backReferenceRecorder.recordedRef
             backReferenceRecorder.recordedRef = null
-            if (recordedRef != null && recordedRef.root === root) {
+            if (recordedRef != null && recordedRef.attachedToTree) {
                 if (recordedRef === this) {
                     results += backRef
                 }
