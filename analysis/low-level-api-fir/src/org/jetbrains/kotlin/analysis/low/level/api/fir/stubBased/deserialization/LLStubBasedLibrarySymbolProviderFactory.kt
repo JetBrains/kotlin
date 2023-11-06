@@ -83,7 +83,11 @@ class LLStubBasedLibrarySymbolProviderFactory(private val project: Project) : LL
         moduleDataProvider: SingleModuleDataProvider,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
-        return emptyList() // TODO(kirpichenkov)
+        return listOf(
+            createStubBasedFirSymbolProviderForKotlinNativeMetadataFiles(
+                project, scope, session, moduleDataProvider, kotlinScopeProvider
+            ),
+        )
     }
 
     override fun createBuiltinsSymbolProvider(
