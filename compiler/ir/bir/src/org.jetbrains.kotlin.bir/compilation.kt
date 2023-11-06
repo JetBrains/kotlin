@@ -46,7 +46,9 @@ private val excludedStandardPhases = setOf<String>(
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
     // still have their parent property set.
-    "Annotation"
+    "Annotation",
+    // This phase is not implemented, as it is hardly ever relevant.
+    "AnnotationImplementation",
 )
 
 fun lowerWithBir(
