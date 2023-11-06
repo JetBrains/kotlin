@@ -417,7 +417,7 @@ class BirForest : BirElementParent() {
             for (i in maxOf(0, mainListIdx - 1)..<slot.size) {
                 val element = array[i]!!
                 array[i] = null
-                addElementToIndex(element)
+                elementIndexInvalidated(element)
             }
 
             slot.size = 0
