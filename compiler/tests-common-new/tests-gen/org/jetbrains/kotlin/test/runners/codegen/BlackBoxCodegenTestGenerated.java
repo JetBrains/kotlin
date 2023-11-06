@@ -15784,6 +15784,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("computeIfAbsent.kt")
+        public void testComputeIfAbsent() throws Exception {
+            runTest("compiler/testData/codegen/box/delegation/computeIfAbsent.kt");
+        }
+
+        @Test
         @TestMetadata("defaultOverride.kt")
         public void testDefaultOverride() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/defaultOverride.kt");
