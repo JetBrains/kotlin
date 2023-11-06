@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtThisExpression
 
 internal class KtFe10ReferenceShortener(
     override val analysisSession: KtFe10AnalysisSession,
@@ -41,6 +42,7 @@ internal class KtFe10ReferenceShortener(
             override val starImportsToAdd: Set<FqName> get() = emptySet()
             override val listOfTypeToShortenInfo: List<TypeToShortenInfo> get() = emptyList()
             override val listOfQualifierToShortenInfo: List<QualifierToShortenInfo> get() = emptyList()
+            override val thisLabelsToShorten: List<ThisLabelToShortenInfo> = emptyList()
             override val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>> get() = emptyList()
 
             override val isEmpty: Boolean get() = true

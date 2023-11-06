@@ -80,6 +80,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleReferenceShortenerTestGenerat
         public void testAllFilesPresentInThisReference() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference"), Pattern.compile("^(.+)\\.kts$"), null, true);
         }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/withLabel")
+        @TestDataPath("$PROJECT_ROOT")
+        public class WithLabel {
+            @Test
+            public void testAllFilesPresentInWithLabel() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/thisReference/withLabel"), Pattern.compile("^(.+)\\.kts$"), null, true);
+            }
+        }
     }
 
     @Nested

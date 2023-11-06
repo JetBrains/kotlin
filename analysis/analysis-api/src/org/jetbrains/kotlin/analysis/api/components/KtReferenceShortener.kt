@@ -18,19 +18,23 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.psi.KtUserType
 
 /**
  * @property removeThis If set to `true`, reference shortener will detect redundant `this` qualifiers
- * and will collect them to [ShortenCommand.qualifiersToShorten].
+ * and will collect them to [ShortenCommand.listOfQualifierToShortenInfo].
+ * @property removeThisLabels If set to `true`, reference shortener will detect redundant labels on `this` expressions,
+ * and will collect them to [ShortenCommand.thisLabelsToShorten]
  */
 public data class ShortenOptions(
     public val removeThis: Boolean = false,
+    public val removeThisLabels: Boolean = false,
 ) {
     public companion object {
         public val DEFAULT: ShortenOptions = ShortenOptions()
 
-        public val ALL_ENABLED: ShortenOptions = ShortenOptions(removeThis = true)
+        public val ALL_ENABLED: ShortenOptions = ShortenOptions(removeThis = true, removeThisLabels = true)
     }
 }
 
@@ -179,14 +183,26 @@ public data class QualifierToShortenInfo(
     val shortenedReference: String?,
 )
 
+/**
+ * A class with a reference to [KtThisExpression] with a label qualifier ([KtThisExpression.labelQualifier]) that can be safely removed
+ * without changing the semantics of the code.
+ */
+public data class ThisLabelToShortenInfo(
+    val labelToShorten: SmartPsiElementPointer<KtThisExpression>,
+)
+
 public interface ShortenCommand {
     public val targetFile: SmartPsiElementPointer<KtFile>
     public val importsToAdd: Set<FqName>
     public val starImportsToAdd: Set<FqName>
     public val listOfTypeToShortenInfo: List<TypeToShortenInfo>
     public val listOfQualifierToShortenInfo: List<QualifierToShortenInfo>
+    public val thisLabelsToShorten: List<ThisLabelToShortenInfo>
     public val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>>
 
     public val isEmpty: Boolean
-        get() = listOfTypeToShortenInfo.isEmpty() && listOfQualifierToShortenInfo.isEmpty() && kDocQualifiersToShorten.isEmpty()
+        get() = listOfTypeToShortenInfo.isEmpty() &&
+                listOfQualifierToShortenInfo.isEmpty() &&
+                thisLabelsToShorten.isEmpty() &&
+                kDocQualifiersToShorten.isEmpty()
 }

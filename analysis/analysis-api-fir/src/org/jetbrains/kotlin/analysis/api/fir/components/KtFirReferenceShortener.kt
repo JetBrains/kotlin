@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpressio
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
@@ -91,6 +92,7 @@ internal class KtFirReferenceShortener(
             starImportsToAdd = emptySet(),
             listOfTypeToShortenInfo = emptyList(),
             listOfQualifierToShortenInfo = emptyList(),
+            thisLabelsToShorten = emptyList(),
             kDocQualifiersToShorten = emptyList(),
         )
 
@@ -132,8 +134,8 @@ internal class KtFirReferenceShortener(
             additionalImports.simpleImports,
             additionalImports.starImports,
             collector.typesToShorten.distinctBy { it.element }.map { TypeToShortenInfo(it.element.createSmartPointer(), it.shortenedRef) },
-            collector.qualifiersToShorten.distinctBy { it.element }
-                .map { QualifierToShortenInfo(it.element.createSmartPointer(), it.shortenedRef) },
+            collector.qualifiersToShorten.distinctBy { it.element }.map { QualifierToShortenInfo(it.element.createSmartPointer(), it.shortenedRef) },
+            collector.labelsToShorten.distinctBy { it.element }.map { ThisLabelToShortenInfo(it.element.createSmartPointer()) },
             kDocCollector.kDocQualifiersToShorten.distinctBy { it.element }.map { it.element.createSmartPointer() },
         )
     }
@@ -399,6 +401,13 @@ private class ShortenQualifier(
     override val importAllInParent: Boolean = false
 ) : ElementToShorten()
 
+private class ShortenThisLabel(
+    override val element: KtThisExpression,
+) : ElementToShorten() {
+    override val nameToImport: FqName? = null
+    override val importAllInParent: Boolean = false
+}
+
 /**
  * N.B. Does not subclass [ElementToShorten] because currently
  * there's no reason to do that.
@@ -467,6 +476,12 @@ private class CollectingVisitor(private val collector: ElementsToShortenCollecto
 
         collector.processPropertyAccess(propertyAccessExpression)
     }
+
+    override fun visitThisReference(thisReference: FirThisReference) {
+        super.visitThisReference(thisReference)
+
+        collector.processThisReference(thisReference)
+    }
 }
 
 private class ElementsToShortenCollector(
@@ -480,6 +495,7 @@ private class ElementsToShortenCollector(
 ) {
     val typesToShorten: MutableList<ShortenType> = mutableListOf()
     val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
+    val labelsToShorten: MutableList<ShortenThisLabel> = mutableListOf()
 
     fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
         val typeElement = resolvedTypeRef.correspondingTypePsi ?: return
@@ -859,6 +875,7 @@ private class ElementsToShortenCollector(
         return when (element) {
             is KtUserType -> ShortenType(element, shortenedRef, nameToImport, importAllInParent)
             is KtDotQualifiedExpression -> ShortenQualifier(element, shortenedRef, nameToImport, importAllInParent)
+            is KtThisExpression -> ShortenThisLabel(element)
             else -> error("Unexpected ${element::class}")
         }
     }
@@ -1178,10 +1195,14 @@ private class ElementsToShortenCollector(
     }
 
     private fun canBePossibleToDropReceiver(qualifiedAccess: FirQualifiedAccessExpression): Boolean {
-        return when {
-            qualifiedAccess.explicitReceiver is FirThisReceiverExpression -> shortenOptions.removeThis
+        return when (val explicitReceiver = qualifiedAccess.explicitReceiver) {
+            is FirThisReceiverExpression -> {
+                shortenOptions.removeThis &&
+                        !explicitReceiver.isImplicit &&
+                        explicitReceiver.calleeReference.referencesClosestReceiver()
+            }
 
-            qualifiedAccess.explicitReceiver is FirResolvedQualifier -> qualifiedAccess.extensionReceiver == null
+            is FirResolvedQualifier -> qualifiedAccess.extensionReceiver == null
 
             else -> false
         }
@@ -1219,6 +1240,63 @@ private class ElementsToShortenCollector(
         return if (deepestQualifier.hasFakeRootPrefix()) createElementToShorten(deepestQualifier) else null
     }
 
+    /**
+     * Checks whether `this` expression references the closest receiver in the current position.
+     *
+     * If it is the case, then we can safely remove the label from it (if it exists).
+     */
+    private fun FirThisReference.referencesClosestReceiver(): Boolean {
+        require(!isImplicit) {
+            "It doesn't make sense to handle implicit this references"
+        }
+
+        if (labelName == null) return true
+
+        val psi = psi as? KtThisExpression ?: return false
+        val implicitReceivers = towerContextProvider.getClosestAvailableParentContext(psi)?.implicitReceiverStack ?: return false
+        val closestImplicitReceiver = implicitReceivers.lastOrNull() ?: return false
+
+        return boundSymbol == closestImplicitReceiver.boundSymbol
+    }
+
+    private fun canBePossibleToDropLabel(thisReference: FirThisReference): Boolean {
+        return shortenOptions.removeThisLabels && thisReference.labelName != null
+    }
+
+    /**
+     * This method intentionally mirrors the appearance
+     * of the [classShortenStrategy] and [callableShortenStrategy] filters,
+     * but ATM we don't have a way to properly handle
+     * [FirThisReference]s through the existing filters.
+     *
+     * We need a better way to decide shortening strategy
+     * for labeled and regular `this` expressions (KT-63555).
+     */
+    private fun thisLabelShortenStrategy(thisReference: FirThisReference): ShortenStrategy {
+        val referencedSymbol = thisReference.boundSymbol
+
+        val strategy = when (referencedSymbol) {
+            is FirClassLikeSymbol<*> -> classShortenStrategy(referencedSymbol)
+            is FirCallableSymbol<*> -> callableShortenStrategy(referencedSymbol)
+            else -> ShortenStrategy.DO_NOT_SHORTEN
+        }
+
+        return strategy
+    }
+
+    fun processThisReference(thisReference: FirThisReference) {
+        if (!canBePossibleToDropLabel(thisReference)) return
+
+        val labeledThisPsi = thisReference.psi as? KtThisExpression ?: return
+        if (!labeledThisPsi.inSelection) return
+
+        if (thisLabelShortenStrategy(thisReference) == ShortenStrategy.DO_NOT_SHORTEN) return
+
+        if (thisReference.referencesClosestReceiver()) {
+            addElementToShorten(createElementToShorten(labeledThisPsi))
+        }
+    }
+
     private fun KtElement.isInsideOf(another: KtElement): Boolean = another.textRange.contains(textRange)
 
     /**
@@ -1246,6 +1324,7 @@ private class ElementsToShortenCollector(
             when (elementInfoToShorten) {
                 is ShortenType -> typesToShorten.add(elementInfoToShorten)
                 is ShortenQualifier -> qualifiersToShorten.add(elementInfoToShorten)
+                is ShortenThisLabel -> labelsToShorten.add(elementInfoToShorten)
             }
         }
     }
@@ -1283,6 +1362,9 @@ private class ElementsToShortenCollector(
             val selectorReference = getQualifiedElementSelector() ?: return false
             return selectorReference.textRange.intersects(selection)
         }
+
+    private val KtThisExpression.inSelection: Boolean
+        get() = textRange.intersects(selection)
 
     private val ClassId.outerClassesWithSelf: Sequence<ClassId>
         get() = generateSequence(this) { it.outerClassId }
@@ -1393,6 +1475,7 @@ private class ShortenCommandImpl(
     override val starImportsToAdd: Set<FqName>,
     override val listOfTypeToShortenInfo: List<TypeToShortenInfo>,
     override val listOfQualifierToShortenInfo: List<QualifierToShortenInfo>,
+    override val thisLabelsToShorten: List<ThisLabelToShortenInfo>,
     override val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>>,
 ) : ShortenCommand
 
@@ -1408,5 +1491,6 @@ internal fun KtSimpleNameExpression.getDotQualifiedExpressionForSelector(): KtDo
 private fun KtElement.getQualifier(): KtElement? = when (this) {
     is KtUserType -> qualifier
     is KtDotQualifiedExpression -> receiverExpression
+    is KtThisExpression -> labelQualifier
     else -> error("Unexpected ${this::class}")
 }

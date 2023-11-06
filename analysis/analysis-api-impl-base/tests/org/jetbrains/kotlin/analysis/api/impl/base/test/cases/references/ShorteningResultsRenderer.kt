@@ -24,6 +24,11 @@ internal object ShorteningResultsRenderer {
                 appendLine("[qualifier] $it${shortenedRef?.let { ref -> " -> $ref" } ?: ""}")
             }
         }
+        shortening.thisLabelsToShorten.forEach { thisLabel ->
+            thisLabel.labelToShorten.element?.text?.let {
+                appendLine("[thisLabel] $it")
+            }
+        }
         shortening.kDocQualifiersToShorten.forEach { kdoc ->
             kdoc.element?.text?.let {
                 appendLine("[kdoc] $it")
