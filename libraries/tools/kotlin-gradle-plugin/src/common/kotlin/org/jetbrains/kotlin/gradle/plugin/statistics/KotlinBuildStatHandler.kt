@@ -115,10 +115,26 @@ class KotlinBuildStatHandler {
 
     }
 
+    internal fun collectTaskConfigurationTimeMetrics(project: Project, taskNames: List<String>): MetricContainer {
+        val configurationTimeMetrics = MetricContainer()
+        configurationTimeMetrics.put(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
+        configurationTimeMetrics.put(
+            NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
+            taskNames.count { name ->
+                try {
+                    project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
+                } catch (_: Exception) {
+                    true
+                }
+            }.toLong()
+        )
+        return configurationTimeMetrics
+    }
+
     internal fun collectProjectConfigurationTimeMetrics(
         project: Project,
         sessionLogger: BuildSessionLogger,
-        isProjectIsolationEnabled: Boolean,
+        isProjectIsolationEnabled: Boolean
     ): MetricContainer {
         val configurationTimeMetrics = MetricContainer()
 
@@ -180,22 +196,9 @@ class KotlinBuildStatHandler {
 
             configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
 
-            val taskNames = project.tasks.names.toList()
-
             configurationTimeMetrics.put(
                 BooleanMetrics.KOTLIN_KTS_USED,
                 project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
-            )
-            configurationTimeMetrics.put(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
-            configurationTimeMetrics.put(
-                NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
-                taskNames.count { name ->
-                    try {
-                        project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
-                    } catch (_: Exception) {
-                        true
-                    }
-                }.toLong()
             )
 
             if (project.name == "buildSrc") {

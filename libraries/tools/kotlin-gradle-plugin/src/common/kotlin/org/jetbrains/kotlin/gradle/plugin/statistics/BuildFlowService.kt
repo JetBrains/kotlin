@@ -41,6 +41,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
     interface Parameters : BuildServiceParameters {
         val configurationMetrics: ListProperty<MetricContainer>
         val fusStatisticsAvailable: Property<Boolean>
+        val taskNames: ListProperty<String>
     }
 
     companion object {
@@ -67,6 +68,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                     it.get().parameters.configurationMetrics.add(project.provider {
                         KotlinBuildStatsService.getInstance()?.collectProjectConfigurationMetrics(project, isProjectIsolationEnabled)
                     })
+                    it.get().parameters.taskNames.addAll(project.provider { project.tasks.names } )
                 }
             }
 
@@ -124,6 +126,8 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
 
     internal fun recordBuildFinished(action: String?, buildFailed: Boolean) {
         KotlinBuildStatsService.applyIfInitialised {
+            parameters.taskNames.finalizeValueOnRead()
+            it.report(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, parameters.taskNames.get().size.toLong())
             it.recordBuildFinish(action, buildFailed, parameters.configurationMetrics.orElse(emptyList()).get())
         }
     }
