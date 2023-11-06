@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.fragments
 
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -112,6 +112,26 @@ open class FragmentDeclarationGenerator(
     }
 
     private fun declareParameter(descriptor: ValueParameterDescriptor, parameterInfo: EvaluatorFragmentParameterInfo): IrValueParameter {
+        // We must manually bind type parameters of outer declaration if it has any.
+        // These type parameters will not be created automatically because we are not compiling
+        // outer declaration, it comes as dependency.
+        val typeParameters = (parameterInfo.descriptor.containingDeclaration as? CallableDescriptor)?.typeParameters
+        typeParameters?.forEach { typeParameterDescriptor ->
+            context.symbolTable.descriptorExtension.declareGlobalTypeParameter(typeParameterDescriptor) {
+                context.irFactory.createTypeParameter(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.DEFINED,
+                    typeParameterDescriptor.name,
+                    it,
+                    typeParameterDescriptor.variance,
+                    typeParameterDescriptor.index,
+                    typeParameterDescriptor.isReified,
+                ).apply {
+                    this.superTypes += context.irBuiltIns.anyNType
+                }
+            }
+        }
+
         // Parameter must be _assignable_ if written by the fragment:
         // These parameters model the captured variables of the fragment. The
         // captured _values_ are extracted from the call stack of the JVM being
