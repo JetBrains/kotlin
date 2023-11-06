@@ -68,6 +68,7 @@ package test {
     }
     public typealias Experimental0 = kotlin.RequiresOptIn
     public typealias Marker0 = test.A.Marker
+    public typealias Marker1 = test.Marker0
     public typealias OptIn0 = kotlin.OptIn
 }
 

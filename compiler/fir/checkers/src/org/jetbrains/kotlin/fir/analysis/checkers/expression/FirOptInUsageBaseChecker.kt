@@ -151,6 +151,10 @@ object FirOptInUsageBaseChecker {
     )
 
     @OptIn(SymbolInternals::class)
+    fun FirClassLikeSymbol<*>.isExperimentalMarker(session: FirSession) =
+        this is FirRegularClassSymbol && fir.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) != null
+
+    @OptIn(SymbolInternals::class)
     private fun FirBasedSymbol<*>.loadExperimentalities(
         context: CheckerContext,
         knownExperimentalities: SmartSet<Experimentality>?,

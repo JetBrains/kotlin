@@ -66,6 +66,8 @@ fun f8(): <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>
 
 typealias Marker0 = <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker<!>
 
+typealias Marker1 = <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker0<!>
+
 fun f9(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>Marker0<!>) {}
 
 
@@ -83,7 +85,17 @@ fun f11(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!
 // Usages of markers in import statements should be OK, but not as qualifiers to import their nested classes
 
 import test.A.Marker
-import test.A.Marker.NestedClass
-import test.A.Marker.Companion
+<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>import test.A.Marker.NestedClass<!>
+<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>import test.A.Marker.NestedClass.NestedClass2<!>
+<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>import test.A.Marker.Companion<!>
+<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>import test.A.Marker.Companion.value<!>
+
+// FILE: usage-from-other-file-2.kt
+import test.Marker0
+<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>import test.Marker0.NestedClass<!>
+
+// FILE: usage-from-other-file-3.kt
+import test.Marker1
+<!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>import test.Marker1.NestedClass<!>
 
 fun f12(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>test.A.Marker.NestedClass.NestedClass2<!>) {}
