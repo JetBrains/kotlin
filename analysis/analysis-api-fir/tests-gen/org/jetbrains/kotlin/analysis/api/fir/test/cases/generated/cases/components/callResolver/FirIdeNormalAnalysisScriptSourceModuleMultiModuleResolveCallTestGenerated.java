@@ -45,4 +45,14 @@ public class FirIdeNormalAnalysisScriptSourceModuleMultiModuleResolveCallTestGen
     public void testAllFilesPresentInResolveCall() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithTestCompilerPluginEnabled {
+        @Test
+        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+    }
 }

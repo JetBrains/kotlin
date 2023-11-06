@@ -29,7 +29,18 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         private val MATERIALIZE_NAME = Name.identifier("materialize")
         private val NESTED_NAME = Name.identifier("Nested")
 
-        private val PREDICATE = LookupPredicate.create { annotated("NestedClassAndMaterializeMember".fqn()) }
+        /**
+         * This annotation does not exist in 'plugin-annotations' module/jar; instead,
+         * it's supposed to be defined in the user's (or test case) code.
+         *
+         * We need this to test that the generation extensions and annotation resolvers
+         * properly work with such annotations and with the declarations marked by them.
+         */
+        private val MY_ANNOTATION = AnnotationFqn("foo.MyAnnotation")
+
+        private val PREDICATE = LookupPredicate.create {
+            annotated("NestedClassAndMaterializeMember".fqn()) or annotated(MY_ANNOTATION)
+        }
     }
 
     private val predicateBasedProvider = session.predicateBasedProvider

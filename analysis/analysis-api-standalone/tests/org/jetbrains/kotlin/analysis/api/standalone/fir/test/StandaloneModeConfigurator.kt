@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.SealedClassesInheritorsCaclulatorPreAnalysisHandler
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.configureOptionalTestCompilerPlugin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
@@ -33,6 +34,7 @@ object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
             useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
             useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
+            configureOptionalTestCompilerPlugin()
             useConfigurators(::ExternalAnnotationsEnvironmentConfigurator)
             useSourcePreprocessor(::ExternalAnnotationsSourcePreprocessor)
         }

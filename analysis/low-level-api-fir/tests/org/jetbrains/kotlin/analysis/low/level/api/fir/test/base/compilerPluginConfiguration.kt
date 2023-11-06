@@ -29,7 +29,7 @@ private object CompilerPluginsDirectives : SimpleDirectivesContainer() {
     )
 }
 
-internal fun TestConfigurationBuilder.configureOptionalTestCompilerPlugin() {
+fun TestConfigurationBuilder.configureOptionalTestCompilerPlugin() {
     useDirectives(CompilerPluginsDirectives)
 
     useConfigurators(

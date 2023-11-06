@@ -57,4 +57,20 @@ public class FirStandaloneNormalAnalysisSourceModuleMultiModuleResolveCallTestGe
     public void testUnitTypeFromOtherModule() throws Exception {
         runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/unitTypeFromOtherModule.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WithTestCompilerPluginEnabled {
+        @Test
+        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("annotationFromOtherModule.kt")
+        public void testAnnotationFromOtherModule() throws Exception {
+            runTest("analysis/analysis-api/testData/components/multiModuleCallResolver/resolveCall/withTestCompilerPluginEnabled/annotationFromOtherModule.kt");
+        }
+    }
 }
