@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
 
-private fun ConstPointer.add(index: LLVMValueRef): ConstPointer {
-    return constPointer(LLVMConstGEP(llvm, cValuesOf(index), 1)!!)
+private fun ConstPointer.addBits(llvm: CodegenLlvmHelpers, type: LLVMTypeRef, bits: Int): ConstPointer {
+    val rawPtr = LLVMConstBitCast(this.llvm, llvm.int8PtrType)
+    // Only pointer arithmetic via GEP works on constant pointers in LLVM.
+    val withBits = LLVMConstGEP2(llvm.int8Type, rawPtr, cValuesOf(llvm.int32(bits)), 1)!!
+    val withType = LLVMConstBitCast(withBits, type)!!
+    return constPointer(withType)
 }
 
 internal class KotlinStaticData(override val generationState: NativeGenerationState, override val llvm: CodegenLlvmHelpers, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
@@ -20,8 +24,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 
     // Must match OBJECT_TAG_PERMANENT_CONTAINER in C++.
     private fun permanentTag(typeInfo: ConstPointer): ConstPointer {
-        // Only pointer arithmetic via GEP works on constant pointers in LLVM.
-        return typeInfo.bitcast(llvm.int8PtrType).add(llvm.int32(1)).bitcast(kTypeInfoPtr)
+        return typeInfo.addBits(llvm, kTypeInfoPtr, 1)
     }
 
 
