@@ -9,9 +9,7 @@ object SourceElementPositioningStrategies {
     val DEFAULT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DEFAULT,
         PositioningStrategies.DEFAULT
-    ).also {
-        AbstractSourceElementPositioningStrategy.setDefault(it)
-    }
+    )
 
     val VAL_OR_VAR_NODE = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.VAL_OR_VAR_NODE,

@@ -1,4 +1,4 @@
-FILE: AnnotatedErrorTypeRef.fir.kt
+FILE: AnnotatedErrorTypeRef.kt
     public final fun main(): R|kotlin/Unit| {
         lval x: @R|kotlin/SinceKotlin|(version = String(2.0)) <ERROR TYPE REF: Incomplete code>
     }

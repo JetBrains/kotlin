@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS: -DEBUG_INFO_MISSING_UNRESOLVED
 interface I
 fun <E> foo() where E: I {}

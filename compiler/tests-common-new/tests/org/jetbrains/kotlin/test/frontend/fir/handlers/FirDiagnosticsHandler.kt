@@ -449,7 +449,7 @@ private class DebugDiagnosticConsumer(
         val factory = KtDiagnosticFactory0(
             name = debugFactory.name,
             severity = debugFactory.severity,
-            defaultPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT,
+            defaultPositioningStrategy = SourceElementPositioningStrategies.DEFAULT,
             psiType = PsiElement::class
         )
 
@@ -490,7 +490,7 @@ private class DebugDiagnosticConsumer(
         val factory = KtDiagnosticFactory1<String>(
             name = debugFactory.name,
             severity = debugFactory.severity,
-            defaultPositioningStrategy = AbstractSourceElementPositioningStrategy.DEFAULT,
+            defaultPositioningStrategy = SourceElementPositioningStrategies.DEFAULT,
             psiType = PsiElement::class
         )
 
