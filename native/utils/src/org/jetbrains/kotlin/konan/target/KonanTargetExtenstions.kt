@@ -165,7 +165,7 @@ fun KonanTarget.hasAddressDependencyInMemoryModel(): Boolean =
      }
 
 val KonanTarget.supportsGrandCentralDispatch
-    get() = when(family) {
-        Family.WATCHOS, Family.IOS, Family.TVOS, Family.OSX -> true
-        else -> false
-    }
+    get() = family.isAppleFamily
+
+val KonanTarget.supportsSignposts
+    get() = family.isAppleFamily
