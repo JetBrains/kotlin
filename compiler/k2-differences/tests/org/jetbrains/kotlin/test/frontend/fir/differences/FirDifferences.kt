@@ -104,6 +104,8 @@ val equivalentDiagnostics = listOf(
         "NO_CONSTRUCTOR",
         "SUPERTYPE_INITIALIZED_IN_INTERFACE",
         "ANNOTATION_ARGUMENT_MUST_BE_CONST",
+        "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION",
+        "CONST_VAL_WITH_NON_CONST_INITIALIZER",
         "OPT_IN_USAGE_ERROR",
         "EXPRESSION_EXPECTED_PACKAGE_FOUND",
         "ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE",
@@ -143,6 +145,7 @@ val equivalentDiagnostics = listOf(
         "INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING",
         "INITIALIZATION_BEFORE_DECLARATION",
         "UNREACHABLE_CODE",
+        "UNSAFE_OPERATOR_CALL",
 //    ),
 //    listOf(
         "SMARTCAST_IMPOSSIBLE",
@@ -225,10 +228,6 @@ val equivalentDiagnostics = listOf(
         "NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY",
     ),
     listOf(
-        "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION",
-        "CONST_VAL_WITH_NON_CONST_INITIALIZER",
-    ),
-    listOf(
         "SEALED_SUPERTYPE",
         "SEALED_SUPERTYPE_IN_LOCAL_CLASS",
     ),
@@ -264,6 +263,10 @@ val equivalentDiagnostics = listOf(
         "ACTUAL_MISSING",
         "AMBIGUOUS_ACTUALS",
         "IMPLICIT_JVM_ACTUALIZATION",
+    ),
+    listOf(
+        "OPERATOR_MODIFIER_REQUIRED",
+        "OPERATOR_CALL_ON_CONSTRUCTOR",
     ),
 )
 

@@ -620,6 +620,9 @@ private val mutableKnownIntroducedDiagnostics = mutableMapOf(
     "DEFAULT_ARGUMENTS_IN_EXPECT_ACTUALIZED_BY_FAKE_OVERRIDE" to IssueInfo("25-4850867", 62430),
     "CYCLIC_INHERITANCE_HIERARCHY" to IssueInfo("25-4874959", 62737),
     "EXPOSED_SUPER_INTERFACE" to IssueInfo("25-4874960", 62738),
+    "JSCODE_ARGUMENT_NON_CONST_EXPRESSION" to IssueInfo("25-4912722", 63199),
+    "JSCODE_CAN_NOT_VERIFY_JAVASCRIPT" to IssueInfo("25-4912723", 63200),
+    "JSCODE_WARNING" to IssueInfo("25-4912724", 63201),
     //<::>knownIntroducedDiagnostics
 )
 
