@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.k1k2uicomparator.test
 
+import junit.framework.AssertionFailedError
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,6 +77,8 @@ fun main() = EventQueue.invokeLater {
         val result = try {
             processSource(sourceInitially)
         } catch (e: Exception) {
+            e.message ?: "<error>"
+        } catch (e: AssertionFailedError) {
             e.message ?: "<error>"
         }
 
