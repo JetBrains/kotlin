@@ -1,13 +1,6 @@
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
+// OUTPUT_DATA_FILE: mainOverloading.out
 
-package runtime.basic.entry0
-
-fun fail() {
-    println("Test failed, this is a wrong main() function.")
-}
+import kotlin.test.*
 
 fun main() {
     fail()
@@ -32,6 +25,5 @@ class Foo {
 }
 
 fun main(args: Array<String>) {
-    println("Hello.")
+    println("OK")
 }
-

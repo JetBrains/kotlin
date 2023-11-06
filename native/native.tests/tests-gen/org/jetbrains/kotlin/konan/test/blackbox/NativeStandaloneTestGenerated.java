@@ -85,4 +85,53 @@ public class NativeStandaloneTestGenerated extends AbstractNativeBlackBoxTest {
             runTest("native/native.tests/testData/standalone/console/readlnOrNullEmpty.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/standalone/entryPoint")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("standalone")
+    @EnforcedProperty(property = ClassLevelProperty.TEST_KIND, propertyValue = "STANDALONE_NO_TR")
+    @UseStandardTestCaseGroupProvider()
+    public class EntryPoint {
+        @Test
+        public void testAllFilesPresentInEntryPoint() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/standalone/entryPoint"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("args.kt")
+        public void testArgs() throws Exception {
+            runTest("native/native.tests/testData/standalone/entryPoint/args.kt");
+        }
+
+        @Test
+        @TestMetadata("differentEntry.kt")
+        public void testDifferentEntry() throws Exception {
+            runTest("native/native.tests/testData/standalone/entryPoint/differentEntry.kt");
+        }
+
+        @Test
+        @TestMetadata("differentEntryMultiModule.kt")
+        public void testDifferentEntryMultiModule() throws Exception {
+            runTest("native/native.tests/testData/standalone/entryPoint/differentEntryMultiModule.kt");
+        }
+
+        @Test
+        @TestMetadata("differentEntryNoArgs.kt")
+        public void testDifferentEntryNoArgs() throws Exception {
+            runTest("native/native.tests/testData/standalone/entryPoint/differentEntryNoArgs.kt");
+        }
+
+        @Test
+        @TestMetadata("mainOverloading.kt")
+        public void testMainOverloading() throws Exception {
+            runTest("native/native.tests/testData/standalone/entryPoint/mainOverloading.kt");
+        }
+
+        @Test
+        @TestMetadata("mainOverloadingNoArgs.kt")
+        public void testMainOverloadingNoArgs() throws Exception {
+            runTest("native/native.tests/testData/standalone/entryPoint/mainOverloadingNoArgs.kt");
+        }
+    }
 }

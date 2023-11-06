@@ -622,36 +622,6 @@ standaloneTest('enumEquals') {
     flags = ['-XXLanguage:-ProhibitComparisonOfIncompatibleEnums', '-e', 'runtime.basic.enum_equals.main']
 }
 
-standaloneTest("entry0") {
-    useGoldenData = true
-    source = "runtime/basic/entry0.kt"
-    flags = ["-entry", "runtime.basic.entry0.main"]
-}
-
-standaloneTest("entry1") {
-    useGoldenData = true
-    source = "runtime/basic/entry1.kt"
-    flags = ["-entry", "foo"]
-}
-
-linkTest("entry2") {
-    useGoldenData = true
-    source = "runtime/basic/entry2.kt"
-    lib = "runtime/basic/libentry2.kt"
-    flags = ["-entry", "foo"]
-}
-
-standaloneTest("entry3") {
-    useGoldenData = true
-    source = "runtime/basic/entry3.kt"
-    flags = ["-entry", "bar"]
-}
-
-standaloneTest("entry4") {
-    useGoldenData = true
-    source = "runtime/basic/entry4.kt"
-}
-
 standaloneTest("cleaner_basic") {
     enabled = !isNoopGC
     source = "runtime/basic/cleaner_basic.kt"
@@ -2363,12 +2333,6 @@ tasks.register("break_continue", KonanLocalTest) {
 tasks.register("break1", KonanLocalTest) {
     useGoldenData = true
     source = "codegen/controlflow/break1.kt"
-}
-
-standaloneTest("args0") {
-    arguments = ["AAA", "BB", "C"]
-    useGoldenData = true
-    source = "runtime/basic/args0.kt"
 }
 
 standaloneTest("devirtualization_lateinitInterface") {
