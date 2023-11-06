@@ -1918,6 +1918,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
         }
 
         @Test
+        @TestMetadata("kotlinPackageAllowed.kt")
+        public void testKotlinPackageAllowed() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/kotlinPackage/kotlinPackageAllowed.kt");
+        }
+
+        @Test
+        @TestMetadata("kotlinPackageNotAllowed.kt")
+        public void testKotlinPackageNotAllowed() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/kotlinPackage/kotlinPackageNotAllowed.kt");
+        }
+
+        @Test
         @TestMetadata("kotlinxPackage.kt")
         public void testKotlinxPackage() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/kotlinPackage/kotlinxPackage.kt");

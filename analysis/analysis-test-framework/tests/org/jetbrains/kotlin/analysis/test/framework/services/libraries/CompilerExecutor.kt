@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -57,6 +57,10 @@ object CompilerExecutor {
 
         module.directives[LanguageSettingsDirectives.LANGUAGE].firstOrNull()?.let {
             add("-XXLanguage:$it")
+        }
+
+        if (LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE in module.directives) {
+            add(CommonCompilerArguments::allowKotlinPackage.cliArgument)
         }
 
         module.directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()?.let { jvmTarget ->
