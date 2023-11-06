@@ -10,6 +10,8 @@ dependencies {
     testImplementation(project(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":native:native.tests"))
+    testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(project(":kotlin-native:utilities:basic-utils"))
 
     testImplementation(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
