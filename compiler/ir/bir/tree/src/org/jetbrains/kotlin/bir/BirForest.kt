@@ -22,7 +22,8 @@ class BirForest : BirElementParent() {
     private var elementClassifier: BirElementIndexClassifier? = null
     private var currentElementsIndexSlotIterator: ElementsIndexSlotIterator<*>? = null
     private var currentIndexSlot = 0
-    private var bufferedElementWithInvalidatedIndex: BirElementBase? = null
+    private val elementsWithInvalidatedIndexBuffer = arrayOfNulls<BirElementBase>(64)
+    private var elementsWithInvalidatedIndexBufferSize = 0
     internal var mutableElementCurrentlyBeingClassified: BirImplElementBase? = null
         private set
 
@@ -205,18 +206,39 @@ class BirForest : BirElementParent() {
         get() = mutableElementCurrentlyBeingClassified != null
 
     internal fun elementIndexInvalidated(element: BirElementBase) {
-        if (element !== bufferedElementWithInvalidatedIndex) {
-            flushElementsWithInvalidatedIndexBuffer()
-            bufferedElementWithInvalidatedIndex = element
+        if (!element.hasFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER)) {
+            var size = elementsWithInvalidatedIndexBufferSize
+            val buffer = elementsWithInvalidatedIndexBuffer
+            if (size == buffer.size) {
+                flushElementsWithInvalidatedIndexBuffer()
+                size = elementsWithInvalidatedIndexBufferSize
+            }
+
+            buffer[size] = element
+            elementsWithInvalidatedIndexBufferSize = size + 1
+            element.setFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER, true)
         }
     }
 
     private fun flushElementsWithInvalidatedIndexBuffer() {
-        bufferedElementWithInvalidatedIndex?.let {
-            addElementToIndex(it)
-            (it as? BirImplElementBase)?.invalidateDependentElements()
-            bufferedElementWithInvalidatedIndex = null
+        val size = elementsWithInvalidatedIndexBufferSize
+        if (size > 0) {
+            val buffer = elementsWithInvalidatedIndexBuffer
+            for (i in 0 until size) {
+                val element = buffer[i]!!
+                if (element.hasFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER)) {
+                    invalidateElement(element)
+                }
+                buffer[i] = null
+            }
+            elementsWithInvalidatedIndexBufferSize = 0
         }
+    }
+
+    internal fun invalidateElement(element: BirElementBase) {
+        addElementToIndex(element)
+        (element as? BirImplElementBase)?.invalidateDependentElements()
+        element.setFlag(BirElementBase.FLAG_IN_INVALIDATE_INDEX_BUFFER, false)
     }
 
     fun registerElementIndexingKey(key: BirElementsIndexKey<*>) {
