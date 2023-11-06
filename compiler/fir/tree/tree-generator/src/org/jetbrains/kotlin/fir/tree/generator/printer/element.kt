@@ -23,16 +23,14 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
     override fun SmartPrinter.printAdditionalMethods(element: Element) {
         val kind = element.kind ?: error("Expected non-null element kind")
         with(element) {
-            // TODO: Add a kDoc for `accept`
-            printAcceptMethod(element, firVisitorType, hasImplementation = true, kDoc = null)
+            printAcceptMethod(element, firVisitorType, hasImplementation = true, treeName = "FIR")
 
-            // TODO: Add a kDoc for `transform`
             printTransformMethod(
                 element = element,
                 transformerClass = firTransformerType,
                 implementation = "transformer.transform${element.name}(this, data)",
                 returnType = TypeVariable("E", listOf(AbstractFirTreeBuilder.baseFirElement)),
-                kDoc = null,
+                treeName = "FIR",
             )
 
             fun Field.replaceDeclaration(override: Boolean, overridenType: TypeRefWithNullability? = null, forceNullable: Boolean = false) {
@@ -72,14 +70,20 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 println()
                 println("fun accept(visitor: ", firVisitorVoidType.render(), ") = accept(visitor, null)")
 
-                // TODO: Add a kDoc for `acceptChildren`
-                printAcceptChildrenMethod(element, firVisitorType, visitorResultType = TypeVariable("R"), kDoc = null)
+                printAcceptChildrenMethod(
+                    element = element,
+                    visitorClass = firVisitorType,
+                    visitorResultType = TypeVariable("R"),
+                )
                 println()
                 println()
                 println("fun acceptChildren(visitor: ", firVisitorVoidType.render(), ") = acceptChildren(visitor, null)")
 
-                // TODO: Add a kDoc for `transformChildren`
-                printTransformChildrenMethod(element, firTransformerType, returnType = AbstractFirTreeBuilder.baseFirElement, kDoc = null)
+                printTransformChildrenMethod(
+                    element = element,
+                    transformerClass = firTransformerType,
+                    returnType = AbstractFirTreeBuilder.baseFirElement,
+                )
                 println()
             }
         }
