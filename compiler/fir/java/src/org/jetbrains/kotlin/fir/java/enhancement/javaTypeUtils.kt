@@ -108,6 +108,8 @@ private fun ConeSimpleKotlinType.enhanceInflexibleType(
     return if (effectiveQualifiers.isNullabilityQualifierForWarning && enhanced != null) {
         val newAttributes = attributes.plus(EnhancedTypeForWarningAttribute(enhanced))
 
+        // TODO if the arguments of `enhanced` are error-level annotated, we're losing them here for compatibility with K1,
+        // a fix requires a deprecation cycle, see KT-63208
         if (enhancedTag != lookupTag) {
             // Handle case when mutability was enhanced and nullability was enhanced for warning.
             enhancedTag.constructType(typeArguments, isNullable, newAttributes)
