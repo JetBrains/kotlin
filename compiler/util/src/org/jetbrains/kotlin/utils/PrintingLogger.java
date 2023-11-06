@@ -82,6 +82,7 @@ public class PrintingLogger extends Logger {
         }
     }
 
+    @SuppressWarnings({"deprecation", "RedundantSuppression"})
     @Override
     public void setLevel(@NotNull Level level) {
     }
