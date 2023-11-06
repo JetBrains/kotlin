@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 class Fir2IrImplicitCastInserter(
     private val components: Fir2IrComponents
@@ -313,7 +314,13 @@ class Fir2IrImplicitCastInserter(
                 receiver === extensionReceiver -> {
                     val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
                     val substitutor = createSubstitutorFromTypeArguments(selector, referencedDeclaration)
-                    substitutor.substituteOrSelf(extensionReceiverType)
+                    val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
+                    // Frontend may write captured types as type arguments (by design), so we need to approximate receiver type after substitution
+                    val approximatedType = session.typeApproximator.approximateToSuperType(
+                        substitutedType,
+                        TypeApproximatorConfiguration.InternalTypesApproximation
+                    )
+                    approximatedType ?: substitutedType
                 }
                 else -> return null
             }

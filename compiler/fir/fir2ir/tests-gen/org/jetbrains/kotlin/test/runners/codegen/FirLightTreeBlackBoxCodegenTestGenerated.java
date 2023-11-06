@@ -50734,6 +50734,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("smartcastToStarType.kt")
+        public void testSmartcastToStarType() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/smartcastToStarType.kt");
+        }
+
+        @Test
         @TestMetadata("toStringOnReceiverWIthSmartcast.kt")
         public void testToStringOnReceiverWIthSmartcast() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/toStringOnReceiverWIthSmartcast.kt");
