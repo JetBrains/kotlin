@@ -39,7 +39,7 @@ internal fun IrExpression.negate(): IrExpression {
                 typeArgumentsCount = 0
             ).apply {
                 dispatchReceiver = this@negate
-            }.implicitCastIfNeededTo(type)
+            }
         }
     }
 }

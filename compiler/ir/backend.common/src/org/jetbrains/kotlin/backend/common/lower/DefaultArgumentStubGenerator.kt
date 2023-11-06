@@ -16,14 +16,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -211,7 +205,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 val paramType = irFunction.valueParameters[i].type
                 // The JVM backend doesn't introduce new variables, and hence may have incompatible types here.
                 val value = if (!paramType.isNullable() && variable.type.isNullable()) {
-                    irImplicitCast(irGet(variable), paramType)
+                    irImplicitCast(irGet(variable), variable.type.makeNotNull())
                 } else {
                     irGet(variable)
                 }
@@ -309,7 +303,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                 }
             }
 
-            +irCastIfNeeded(newCall, expression.type)
+            +newCall
         }.unwrapBlock()
     }
 
@@ -363,8 +357,11 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         val typeParametersToRemove = if (needsTypeArgumentOffset(declaration)) declaration.parentAsClass.typeParameters.size else 0
         with(expression) {
             return visitFunctionAccessExpression(expression) {
+                val returnType = (it as IrSimpleFunctionSymbol).owner.returnType
+                val callType = expression.type.takeIf { returnType.classifierOrNull is IrTypeParameterSymbol }
+                    ?: returnType
                 IrCallImpl(
-                    startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
+                    startOffset, endOffset, callType, it,
                     typeArgumentsCount = typeArgumentsCount - typeParametersToRemove,
                     valueArgumentsCount = it.owner.valueParameters.size,
                     origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
