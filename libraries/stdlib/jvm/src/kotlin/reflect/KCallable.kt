@@ -10,7 +10,6 @@ package kotlin.reflect
  *
  * @param R return type of the callable.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual interface KCallable<out R> : KAnnotatedElement {
     /**
      * The name of this callable as it was declared in the source code.
@@ -28,19 +27,16 @@ public actual interface KCallable<out R> : KAnnotatedElement {
      * If this callable requires a `this` instance or an extension receiver parameter,
      * they come first in the list in that order.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public val parameters: List<KParameter>
 
     /**
      * The type of values returned by this callable.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public val returnType: KType
 
     /**
      * The list of type parameters of this callable.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val typeParameters: List<KTypeParameter>
 
@@ -49,7 +45,6 @@ public actual interface KCallable<out R> : KAnnotatedElement {
      * Throws an exception if the number of specified arguments is not equal to the size of [parameters],
      * or if their types do not match the types of the parameters.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public fun call(vararg args: Any?): R
 
     /**
@@ -57,41 +52,35 @@ public actual interface KCallable<out R> : KAnnotatedElement {
      * If a parameter is not found in the mapping and is not optional (as per [KParameter.isOptional]),
      * or its type does not match the type of the provided value, an exception is thrown.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public fun callBy(args: Map<KParameter, Any?>): R
 
     /**
      * Visibility of this callable, or `null` if its visibility cannot be represented in Kotlin.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val visibility: KVisibility?
 
     /**
      * `true` if this callable is `final`.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isFinal: Boolean
 
     /**
      * `true` if this callable is `open`.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isOpen: Boolean
 
     /**
      * `true` if this callable is `abstract`.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isAbstract: Boolean
 
     /**
      * `true` if this is a suspending function.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.3")
     public val isSuspend: Boolean
 }

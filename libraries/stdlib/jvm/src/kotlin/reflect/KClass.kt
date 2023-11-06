@@ -13,7 +13,6 @@ package kotlin.reflect
  *
  * @param T the type of the class.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KClassifier {
     /**
      * The simple name of the class as it was declared in the source code,
@@ -31,25 +30,21 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
      * All functions and properties accessible in this class, including those declared in this class
      * and all of its superclasses. Does not include constructors.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     override val members: Collection<KCallable<*>>
 
     /**
      * All constructors declared in this class.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public val constructors: Collection<KFunction<T>>
 
     /**
      * All classes declared inside this class. This includes both inner and static nested classes.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public val nestedClasses: Collection<KClass<*>>
 
     /**
      * The instance of the object declaration, or `null` if this class is not an object declaration.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public val objectInstance: T?
 
     /**
@@ -61,49 +56,42 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     /**
      * The list of type parameters of this class. This list does *not* include type parameters of outer classes.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val typeParameters: List<KTypeParameter>
 
     /**
      * The list of immediate supertypes of this class, in the order they are listed in the source code.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val supertypes: List<KType>
 
     /**
      * The list of the immediate subclasses if this class is a sealed class, or an empty list otherwise.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.3")
     public val sealedSubclasses: List<KClass<out T>>
 
     /**
      * Visibility of this class, or `null` if its visibility cannot be represented in Kotlin.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val visibility: KVisibility?
 
     /**
      * `true` if this class is `final`.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isFinal: Boolean
 
     /**
      * `true` if this class is `open`.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isOpen: Boolean
 
     /**
      * `true` if this class is `abstract`.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isAbstract: Boolean
 
@@ -112,7 +100,6 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/sealed-classes.html)
      * for more information.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isSealed: Boolean
 
@@ -122,7 +109,6 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
      * [data object](https://kotlinlang.org/docs/object-declarations.html#data-objects)
      * in the Kotlin language documentation.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isData: Boolean
 
@@ -131,7 +117,6 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/nested-classes.html#inner-classes)
      * for more information.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isInner: Boolean
 
@@ -140,21 +125,18 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/object-declarations.html#companion-objects)
      * for more information.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isCompanion: Boolean
 
     /**
      * `true` if this class is a Kotlin functional interface.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.4")
     public val isFun: Boolean
 
     /**
      * `true` if this class is a value class.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.5")
     public val isValue: Boolean
 

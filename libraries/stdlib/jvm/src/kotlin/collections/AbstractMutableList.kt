@@ -13,7 +13,6 @@ import java.util.AbstractList
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
 @SinceKotlin("1.1")
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual abstract class AbstractMutableList<E> protected actual constructor() : MutableList<E>, AbstractList<E>() {
     /**
      * Replaces the element at the specified position in this list with the specified element.

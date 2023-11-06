@@ -12,7 +12,6 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the collection. The collection is invariant in its element type.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual abstract class AbstractMutableCollection<E> protected actual constructor() : AbstractCollection<E>(), MutableCollection<E> {
 
     actual abstract override fun add(element: E): Boolean
@@ -57,7 +56,6 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
         }
     }
 
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @Deprecated("Provided so that subclasses inherit this function", level = DeprecationLevel.HIDDEN)
     @JsName("toJSON")
     protected fun toJSON(): Any = this.toArray()
@@ -67,7 +65,6 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
      * This method is called every time when a mutating method is called on this mutable collection.
      * Mutable collections that are built (frozen) must throw `UnsupportedOperationException`.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     internal open fun checkIsMutable(): Unit { }
 }
 

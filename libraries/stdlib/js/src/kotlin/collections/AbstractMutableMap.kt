@@ -18,12 +18,9 @@ package kotlin.collections
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The map is invariant in its value type.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : AbstractMap<K, V>(), MutableMap<K, V> {
 
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     internal open fun createKeysView(): MutableSet<K> = HashMapKeysDefault(this)
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     internal open fun createValuesView(): MutableCollection<V> = HashMapValuesDefault(this)
 
     private var keysView: MutableSet<K>? = null
@@ -68,6 +65,5 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
      * This method is called every time when a mutating method is called on this mutable map.
      * Mutable maps that are built (frozen) must throw `UnsupportedOperationException`.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     internal open fun checkIsMutable() {}
 }

@@ -17,12 +17,7 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
-@Suppress(
-    "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING",
-    "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING"
-) // Can be dropped after bootstrap update
 public actual abstract class AbstractMutableList<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableList<E> {
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     protected var modCount: Int = 0
 
     abstract override fun add(index: Int, element: E): Unit
@@ -86,7 +81,6 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     /**
      * Removes the range of elements from this list starting from [fromIndex] and ending with but not including [toIndex].
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     protected open fun removeRange(fromIndex: Int, toIndex: Int) {
         val iterator = listIterator(fromIndex)
         repeat(toIndex - fromIndex) {

@@ -15,14 +15,12 @@ package kotlin.reflect
  *
  * @param V the type of the property value.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual interface KProperty<out V> : KCallable<V> {
     /**
      * `true` if this property is `lateinit`.
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/properties.html#late-initialized-properties)
      * for more information.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isLateinit: Boolean
 
@@ -31,12 +29,10 @@ public actual interface KProperty<out V> : KCallable<V> {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/properties.html#compile-time-constants)
      * for more information.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public val isConst: Boolean
 
     /** The getter of this property, used to obtain the value of the property. */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public val getter: Getter<V>
 
     /**
@@ -60,10 +56,8 @@ public actual interface KProperty<out V> : KCallable<V> {
 /**
  * Represents a property declared as a `var`.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual interface KMutableProperty<V> : KProperty<V> {
     /** The setter of this mutable property, used to change the value of the property. */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     public val setter: Setter<V>
 
     /**
@@ -78,7 +72,7 @@ public actual interface KMutableProperty<V> : KProperty<V> {
  * Such property is either originally declared in a receiverless context such as a package,
  * or has the receiver bound to it.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
+@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'setter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KProperty0<out V> : KProperty<V>, () -> V {
     /**
      * Returns the current value of the property.
@@ -90,7 +84,6 @@ public actual interface KProperty0<out V> : KProperty<V>, () -> V {
      * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/delegated-properties.html)
      * for more information.
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public fun getDelegate(): Any?
 
@@ -135,7 +128,7 @@ public actual interface KMutableProperty0<V> : KProperty0<V>, KMutableProperty<V
  * @param T the type of the receiver which should be used to obtain the value of the property.
  * @param V the type of the property value.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
+@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'getter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KProperty1<T, out V> : KProperty<V>, (T) -> V {
     /**
      * Returns the current value of the property.
@@ -160,7 +153,6 @@ public actual interface KProperty1<T, out V> : KProperty<V>, (T) -> V {
      *
      * @see [kotlin.reflect.full.getExtensionDelegate] // [KProperty1.getExtensionDelegate]
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public fun getDelegate(receiver: T): Any?
 
@@ -212,7 +204,7 @@ public actual interface KMutableProperty1<T, V> : KProperty1<T, V>, KMutableProp
  *        the type of the extension receiver.
  * @param V the type of the property value.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
+@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Covariant 'getter' override. The suppress can be dropped in K2 KT-61184
 public actual interface KProperty2<D, E, out V> : KProperty<V>, (D, E) -> V {
     /**
      * Returns the current value of the property. In case of the extension property in a class,
@@ -236,7 +228,6 @@ public actual interface KProperty2<D, E, out V> : KProperty<V>, (D, E) -> V {
      *
      * @see [kotlin.reflect.full.getExtensionDelegate] // [KProperty2.getExtensionDelegate]
      */
-    @Suppress("NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION_WARNING") // Can be dropped after bootstrap update
     @SinceKotlin("1.1")
     public fun getDelegate(receiver1: D, receiver2: E): Any?
 

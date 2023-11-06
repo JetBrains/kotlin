@@ -13,7 +13,6 @@ package kotlin.reflect
  *
  * @param T the type of the class.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement, KClassifier {
     /**
      * The simple name of the class as it was declared in the source code,

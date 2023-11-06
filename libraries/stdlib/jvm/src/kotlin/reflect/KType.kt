@@ -9,7 +9,6 @@ package kotlin.reflect
  * Represents a type. Type is usually either a class with optional type arguments,
  * or a type parameter of some declaration, plus nullability.
  */
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 public actual interface KType : KAnnotatedElement {
     /**
      * The declaration of the classifier used in this type.

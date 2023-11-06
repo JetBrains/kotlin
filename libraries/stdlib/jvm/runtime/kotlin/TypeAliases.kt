@@ -28,5 +28,4 @@ package kotlin
 @Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
 @SinceKotlin("1.3") public actual typealias ConcurrentModificationException = java.util.ConcurrentModificationException
 
-@Suppress("ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING", "ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER_WARNING") // Can be dropped after bootstrap update
 @SinceKotlin("1.1") public actual typealias Comparator<T> = java.util.Comparator<T>
