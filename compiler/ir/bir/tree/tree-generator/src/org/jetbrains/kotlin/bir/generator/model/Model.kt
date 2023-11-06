@@ -62,6 +62,13 @@ class Element(
 
     override fun toString() = name
 
+    override val visitFunctionName: String
+        get() = error("Not used")
+    override val visitorParameterName: String
+        get() = error("Not used")
+    override val parentInVisitor: Element?
+        get() = error("Not used")
+
     companion object {
         fun elementName2typeName(name: String) = "Bir" + name.replaceFirstChar(Char::uppercaseChar)
     }
