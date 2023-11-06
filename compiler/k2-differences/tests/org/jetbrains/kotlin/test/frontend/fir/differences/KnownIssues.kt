@@ -497,6 +497,8 @@ private val mutableKnownDisappearedDiagnostics = mutableMapOf(
     "INLINE_EXTERNAL_DECLARATION" to IssueInfo("25-4874953", 62734),
     "EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER" to IssueInfo("25-4874955", 62735),
     "NESTED_JS_EXPORT" to IssueInfo("25-4874957", 62736),
+    "JSCODE_NO_JAVASCRIPT_PRODUCED" to IssueInfo("25-4912778", 63204),
+    "JSCODE_ERROR" to IssueInfo("25-4912779", 63205),
     //<::>knownDisappearedDiagnostics
 )
 

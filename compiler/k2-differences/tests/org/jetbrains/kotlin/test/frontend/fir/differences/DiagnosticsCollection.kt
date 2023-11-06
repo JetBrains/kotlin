@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.plugin.checkers.PluginErrors
+import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs
 import org.jetbrains.kotlin.noarg.diagnostic.ErrorsNoArg
 import org.jetbrains.kotlin.noarg.fir.KtErrorsNoArg
@@ -94,7 +95,7 @@ fun collectAllK1NonErrors(): Set<String> {
 val k2DiagnosticsLists = listOf(
     FirErrors, FirJvmErrors, FirJsErrors, FirNativeErrors, FirSyntaxErrors,
     KtErrorsParcelize, FirSerializationErrors, KtErrorsNoArg, FirErrorsAssignmentPlugin,
-    PluginErrors, JvmBackendErrors,
+    PluginErrors, JvmBackendErrors, JsKlibErrors,
 )
 
 fun collectAllK2NonErrors(): Set<String> {
