@@ -15,11 +15,15 @@ plugins {
 }
 
 val nodeDir = buildDir.resolve("node")
+val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
 node {
     download.set(true)
     version.set(nodejsVersion)
     nodeProjectDir.set(nodeDir)
+    if (cacheRedirectorEnabled) {
+        distBaseUrl.set("https://cache-redirector.jetbrains.com/nodejs.org/dist")
+    }
 }
 
 val antLauncherJar by configurations.creating
