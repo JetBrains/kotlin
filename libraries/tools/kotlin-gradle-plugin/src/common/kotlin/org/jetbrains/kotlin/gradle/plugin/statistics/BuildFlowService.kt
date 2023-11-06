@@ -62,6 +62,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
 
             val isProjectIsolationEnabled = project.isProjectIsolationEnabled
 
+            val fusStatisticsAvailable = fusStatisticsAvailable(project)
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
                 return (it.service as Provider<BuildFlowService>).also {
@@ -72,7 +73,6 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                 }
             }
 
-            val fusStatisticsAvailable = fusStatisticsAvailable(project)
             val buildReportOutputs = reportingSettings(project).buildReportOutputs
             val buildScanReportEnabled = buildReportOutputs.contains(BuildReportType.BUILD_SCAN)
 
@@ -84,6 +84,8 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
                     KotlinBuildStatsService.applyIfInitialised {
                         it.recordProjectsEvaluated(project.gradle)
                     }
+                    spec.parameters.taskNames.addAll(project.provider { project.tasks.names })
+                    spec.parameters.taskNames.finalizeValueOnRead()
                 }
 
                 spec.parameters.configurationMetrics.add(project.provider {
@@ -126,7 +128,6 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
 
     internal fun recordBuildFinished(action: String?, buildFailed: Boolean) {
         KotlinBuildStatsService.applyIfInitialised {
-            parameters.taskNames.finalizeValueOnRead()
             it.report(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, parameters.taskNames.get().size.toLong())
             it.recordBuildFinish(action, buildFailed, parameters.configurationMetrics.orElse(emptyList()).get())
         }
