@@ -114,7 +114,7 @@ internal class KtFe10TypeProvider(
 
     override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? {
         val bindingContext = analysisContext.analyze(expression, AnalysisMode.PARTIAL)
-        val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, expression] ?: return null
+        val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, expression.receiverExpression] ?: return null
         return lhs.type.toKtType(analysisContext)
     }
 

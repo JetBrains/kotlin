@@ -1,0 +1,2 @@
+expression: x::class
+receiver:: type: MyInterface
