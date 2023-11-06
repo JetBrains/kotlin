@@ -227,11 +227,14 @@ class KotlinCallResolver(
                 descriptor is FakeCallableDescriptorForObject && descriptor.classDescriptor.kind == ClassKind.ENUM_ENTRY
             }
             if (enumEntryCandidate != null) {
-                val otherCandidate = maximallySpecificCandidates.find {
+                val otherCandidates = maximallySpecificCandidates.filter {
                     val candidateDescriptor = it.resolvedCall.candidateDescriptor
                     candidateDescriptor !is FakeCallableDescriptorForObject
                 }
-                if (otherCandidate != null) {
+                // If there are more than 1, it will lead to another diagnostic later,
+                // possibly, OVERLOAD_RESOLUTION_AMBIGUITY.
+                if (otherCandidates.size == 1) {
+                    val otherCandidate = otherCandidates.single()
                     val propertyDescriptor = otherCandidate.resolvedCall.candidateDescriptor
                     if (propertyDescriptor is PropertyDescriptor) {
                         val enumEntryDescriptor =
