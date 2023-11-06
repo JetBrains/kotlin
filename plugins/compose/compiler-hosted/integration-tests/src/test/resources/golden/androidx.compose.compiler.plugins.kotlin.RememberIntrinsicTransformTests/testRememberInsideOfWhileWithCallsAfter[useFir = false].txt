@@ -23,7 +23,7 @@ fun Test(items: List<Int>) {
 @Composable
 fun Test(items: List<Int>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)*<rememb...>,<A()>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -32,7 +32,7 @@ fun Test(items: List<Int>, %composer: Composer?, %changed: Int) {
     val item = <iterator>.next()
     val foo = <block>{
       %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(Test)*<A()>:Test.kt")
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         Foo()
       }
