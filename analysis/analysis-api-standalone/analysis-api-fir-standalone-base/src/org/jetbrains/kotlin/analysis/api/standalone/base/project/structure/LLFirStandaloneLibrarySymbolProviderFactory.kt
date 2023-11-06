@@ -11,7 +11,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -23,12 +22,18 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.KlibBasedSymbolProvider
 import org.jetbrains.kotlin.fir.session.MetadataSymbolProvider
 import org.jetbrains.kotlin.fir.session.NativeForwardDeclarationsSymbolProvider
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import java.lang.IllegalStateException
+import java.nio.file.Path
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.extension
+import kotlin.io.path.isDirectory
 
 class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) : LLFirLibrarySymbolProviderFactory() {
     override fun createJvmLibrarySymbolProvider(
@@ -115,7 +120,7 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
     override fun createBuiltinsSymbolProvider(
         session: FirSession,
         moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider
+        kotlinScopeProvider: FirKotlinScopeProvider,
     ): List<FirSymbolProvider> {
         return listOf(
             FirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider)
@@ -126,12 +131,19 @@ class LLFirStandaloneLibrarySymbolProviderFactory(private val project: Project) 
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
         val ktLibraryModule = ktModule as? KtLibraryModule ?: return emptyList()
 
-        val resolveResult = CommonKLibResolver.resolve(
-            ktLibraryModule.getBinaryRoots().map { it.toString() },
-            IntellijLogBasedLogger,
-            lenient = true,
-        )
-        return resolveResult.getFullResolvedList().map { it.library }
+        return ktLibraryModule.getBinaryRoots()
+            .filter { it.isDirectory() || it.extension == KLIB_FILE_EXTENSION }
+            .mapNotNull { it.tryResolveAsKLib() }
+    }
+
+    private fun Path.tryResolveAsKLib(): KotlinLibrary? {
+        return try {
+            val konanFile = org.jetbrains.kotlin.konan.file.File(absolutePathString())
+            ToolingSingleFileKlibResolveStrategy.tryResolve(konanFile, IntellijLogBasedLogger)
+        } catch (e: Exception) {
+            LOG.warn("Cannot resolve a KLib $this", e)
+            null
+        }
     }
 
     companion object {

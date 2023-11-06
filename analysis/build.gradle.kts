@@ -14,4 +14,8 @@ tasks.register("analysisAllTests") {
         ":analysis:low-level-api-fir:test",
         ":analysis:symbol-light-classes:test"
     )
+
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        dependsOn(":analysis:analysis-api-standalone:analysis-api-standalone-native:test")
+    }
 }

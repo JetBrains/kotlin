@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.processCompilerOutput
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -20,7 +21,7 @@ import kotlin.time.measureTime
 import kotlin.time.measureTimedValue
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
-internal data class CompilationToolCallResult(
+data class CompilationToolCallResult(
     val exitCode: ExitCode,
     val toolOutput: String,
     val toolOutputHasErrors: Boolean,
@@ -72,6 +73,12 @@ internal fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: 
     }
 
     return CompilationToolCallResult(exitCode, compilerOutput, messageCollector.hasErrors(), duration)
+}
+
+
+fun callCompilerWithoutOutputInterceptor(compilerArgs: Array<String>): CompilationToolCallResult {
+    val compilerClassLoader = NativeTestSupport.computeNativeClassLoader(parent = null).classLoader
+    return callCompilerWithoutOutputInterceptor(compilerArgs, compilerClassLoader)
 }
 
 internal fun callCompilerWithoutOutputInterceptor(

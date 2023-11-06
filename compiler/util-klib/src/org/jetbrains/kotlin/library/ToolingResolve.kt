@@ -27,6 +27,10 @@ import java.io.IOException
  */
 object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
     override fun resolve(libraryFile: File, logger: Logger): KotlinLibrary =
+        tryResolve(libraryFile, logger)
+            ?: fakeLibrary(libraryFile)
+
+    fun tryResolve(libraryFile: File, logger: Logger): KotlinLibrary? =
         withSafeAccess(libraryFile) { localRoot ->
             if (localRoot.looksLikeKlibComponent) {
                 // old style library
@@ -49,7 +53,7 @@ object ToolingSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
                     }
                 }
             }
-        } ?: fakeLibrary(libraryFile)
+        }
 
     private const val NONEXISTENT_COMPONENT_NAME = "__nonexistent_component_name__"
 

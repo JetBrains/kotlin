@@ -94,7 +94,8 @@ fun Project.nativeTest(
     requirePlatformLibs: Boolean = false,
     customCompilerDependencies: List<Configuration> = emptyList(),
     customTestDependencies: List<Configuration> = emptyList(),
-    compilerPluginDependencies: List<Configuration> = emptyList()
+    compilerPluginDependencies: List<Configuration> = emptyList(),
+    body: Test.() -> Unit = {},
 ) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
@@ -227,4 +228,5 @@ fun Project.nativeTest(
                 """.trimIndent()
             )
         }
+    body()
 }

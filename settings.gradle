@@ -579,7 +579,8 @@ include ":generators:analysis-api-generator",
 
 if (buildProperties.isKotlinNativeEnabled) {
     include ":generators:analysis-api-generator:generator-kotlin-native",
-            ":analysis:low-level-api-fir:low-level-api-fir-native"
+            ":analysis:low-level-api-fir:low-level-api-fir-native",
+            ":analysis:analysis-api-standalone:analysis-api-standalone-native"
 }
 
 
