@@ -16,15 +16,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublishedModuleCoordinatesPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.utils.buildPathCompat
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmMavenModuleIdentifier
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
+import org.jetbrains.kotlin.gradle.utils.future
 
 internal object ModuleIds {
     fun fromDependency(dependency: Dependency): ModuleDependencyIdentifier = when (dependency) {
-        is ProjectDependency -> idOfRootModule(dependency.dependencyProject)
+        is ProjectDependency -> @Suppress("DEPRECATION") idOfRootModule(dependency.dependencyProject)
         else -> ModuleDependencyIdentifier(dependency.group, dependency.name)
     }
 
@@ -54,9 +56,13 @@ internal object ModuleIds {
         else
             fromComponentId(thisProject, component.id)
 
-    fun idOfRootModule(project: Project): ModuleDependencyIdentifier =
+    // TODO KT-62911: Replace unsafe idOfRootModule with suspendable version idRootModule
+    @Deprecated("Use suspendable version if possible", replaceWith = ReplaceWith("idOfRootModuleSafe(project)"))
+    fun idOfRootModule(project: Project): ModuleDependencyIdentifier = project.future { idOfRootModuleSafe(project) }.getOrThrow()
+
+    suspend fun idOfRootModuleSafe(project: Project): ModuleDependencyIdentifier =
         if (project.multiplatformExtensionOrNull != null) {
-            val rootPublication = project.multiplatformExtension.rootSoftwareComponent.publicationDelegate
+            val rootPublication = project.kotlinMultiplatformRootPublication.await()
             val group = rootPublication?.groupId ?: project.group.toString()
             val name = rootPublication?.artifactId ?: project.name
             ModuleDependencyIdentifier(group, name)
@@ -68,6 +74,7 @@ internal object ModuleIds {
         ModuleDependencyIdentifier(null, name)
 
     private fun idOfRootModuleByProjectPath(thisProject: Project, projectPath: String): ModuleDependencyIdentifier =
+        @Suppress("DEPRECATION")
         idOfRootModule(thisProject.project(projectPath))
 
     // FIXME use capabilities to point to auxiliary modules

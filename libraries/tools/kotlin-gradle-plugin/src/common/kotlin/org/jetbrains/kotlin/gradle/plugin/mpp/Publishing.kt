@@ -26,28 +26,44 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
+import org.jetbrains.kotlin.gradle.utils.CompletableFuture
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.projectStoredProperty
+import org.jetbrains.kotlin.gradle.utils.withPluginId
+
+private val Project.completableFutureForKotlinMultiplatformRootPublication: CompletableFuture<MavenPublication?>
+        by projectStoredProperty { CompletableFuture() }
+internal val Project.kotlinMultiplatformRootPublication: Future<MavenPublication?>
+    get() = completableFutureForKotlinMultiplatformRootPublication
 
 internal fun configurePublishingWithMavenPublish(project: Project) = project.pluginManager.withPlugin("maven-publish") {
-    if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
-        project.extensions.configure(PublishingExtension::class.java) { publishing ->
-            createRootPublication(project, publishing)
-            createTargetPublications(project, publishing)
-        }
-    }
+    project.withPluginId(
+        pluginId = "maven-publish",
+        whenApplied = {
+            if (project.kotlinPropertiesProvider.createDefaultMultiplatformPublications) {
+                project.extensions.configure(PublishingExtension::class.java) { publishing ->
+                    createRootPublication(project, publishing)
+                        .also { project.completableFutureForKotlinMultiplatformRootPublication.complete(it) }
+                    createTargetPublications(project, publishing)
+                }
+            } else {
+                project.completableFutureForKotlinMultiplatformRootPublication.complete(null)
+            }
 
-    project.components.add(project.multiplatformExtension.rootSoftwareComponent)
-}
+            project.components.add(project.multiplatformExtension.rootSoftwareComponent)
+        },
+        whenNotApplied = { project.completableFutureForKotlinMultiplatformRootPublication.complete(null) }
+    )}
 
 /**
  * The root publication that references the platform specific publications as its variants
  */
-private fun createRootPublication(project: Project, publishing: PublishingExtension) {
+private fun createRootPublication(project: Project, publishing: PublishingExtension): MavenPublication {
     val kotlinSoftwareComponent = project.multiplatformExtension.rootSoftwareComponent
 
-    publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
+    return publishing.publications.create("kotlinMultiplatform", MavenPublication::class.java).apply {
         from(kotlinSoftwareComponent)
         (this as MavenPublicationInternal).publishWithOriginalFileName()
-        kotlinSoftwareComponent.publicationDelegate = this@apply
 
         addKotlinToolingMetadataArtifactIfNeeded(project)
     }

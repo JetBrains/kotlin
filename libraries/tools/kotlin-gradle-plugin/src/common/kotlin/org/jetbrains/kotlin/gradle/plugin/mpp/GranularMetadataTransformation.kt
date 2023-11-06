@@ -340,15 +340,7 @@ private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransf
                This double deferral ensures that the value indeed is accessed as late as possible.
                Unwrapping the lazy before the buildscript is evaluated will fail with 'future not completed'
              */
-        val moduleId = if (currentProject.kotlinExtensionOrNull != null) currentProject.future {
-            KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
-            ModuleIds.idOfRootModule(currentProject)
-        }.lenient else CompletableFuture<Lazy<ModuleDependencyIdentifier>>().apply {
-            currentProject.whenEvaluated {
-                complete(lazy { ModuleIds.idOfRootModule(currentProject) })
-            }
-        }.map { it.value }.lenient
-
+        val moduleId = currentProject.future { ModuleIds.idOfRootModuleSafe(currentProject) }.lenient
 
         GranularMetadataTransformation.ProjectData(
             path = path,
