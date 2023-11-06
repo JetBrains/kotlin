@@ -114,11 +114,9 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Mism
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.DIAGNOSTICS_LIST]
  */
-
 object FirErrors {
     // Meta-errors
     val UNSUPPORTED by error1<PsiElement, String>()

@@ -22,11 +22,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParameter
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JS_DIAGNOSTICS_LIST]
  */
-
 object FirJsErrors {
     // Annotations
     val WRONG_JS_QUALIFIER by error0<KtElement>()

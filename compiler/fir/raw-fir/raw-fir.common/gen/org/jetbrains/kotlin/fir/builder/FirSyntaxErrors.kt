@@ -9,11 +9,9 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.builder.SYNTAX_DIAGNOSTIC_LIST]
  */
-
 object FirSyntaxErrors {
     // Syntax
     val SYNTAX by error1<PsiElement, String>()

@@ -25,11 +25,9 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.JVM_DIAGNOSTICS_LIST]
  */
-
 object FirJvmErrors {
     // Declarations
     val OVERRIDE_CANNOT_BE_STATIC by error0<PsiElement>()

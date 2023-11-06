@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model
 import org.jetbrains.kotlin.fir.checkers.generator.*
 import org.jetbrains.kotlin.fir.checkers.generator.printCopyright
 import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.generators.tree.printer.printKDoc
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
 import kotlin.reflect.KClass
@@ -39,7 +40,7 @@ object ErrorListDiagnosticListRenderer : DiagnosticListRenderer() {
         println("package $packageName")
         println()
         collectAndPrintImports(diagnosticList, packageName, starImportsToAdd)
-        printGeneratedMessage()
+        printKDoc(diagnosticList.extendedKDoc())
         printErrorsObject(diagnosticList)
     }
 

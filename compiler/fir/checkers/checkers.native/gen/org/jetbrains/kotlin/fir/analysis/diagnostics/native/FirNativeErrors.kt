@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 
-/*
- * This file was generated automatically
- * DO NOT MODIFY IT MANUALLY
+/**
+ * Generated from: [org.jetbrains.kotlin.fir.checkers.generator.diagnostics.NATIVE_DIAGNOSTICS_LIST]
  */
-
 object FirNativeErrors {
     // All
     val THROWS_LIST_EMPTY by error0<KtElement>()

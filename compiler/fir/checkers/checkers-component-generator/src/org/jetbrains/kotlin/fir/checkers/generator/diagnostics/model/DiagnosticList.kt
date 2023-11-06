@@ -14,6 +14,9 @@ import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
 abstract class DiagnosticList(internal val objectName: String) {
+
+    val diagnosticListDefinitionFQN = this::class.qualifiedName
+
     @Suppress("PropertyName")
     @PrivateForInline
     val _groups = mutableListOf<AbstractDiagnosticGroup>()
@@ -134,4 +137,12 @@ sealed class DiagnosticBuilder(
     companion object {
         const val MAX_DIAGNOSTIC_PARAMETER_COUNT = 4
     }
+}
+
+fun DiagnosticList.extendedKDoc(defaultKDoc: String? = null): String = buildString {
+    if (defaultKDoc != null) {
+        appendLine(defaultKDoc)
+        appendLine()
+    }
+    append("Generated from: [$diagnosticListDefinitionFQN]")
 }
