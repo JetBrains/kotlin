@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DAT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.LLDB_TRACE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck.OutputDataFile
@@ -179,6 +180,13 @@ internal object TestDirectives : SimpleDirectivesContainer() {
         """
             Usage: // IGNORE_NATIVE_K2: property1=value1[ && property2=value2][ && property3=value3]
             Declares this test is expected to fail in described run configuration on K2 frontend.
+        """.trimIndent()
+    )
+
+    val PROGRAM_ARGS by stringDirective(
+        description = """
+            Command line arguments to pass to the executable.
+            Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR
         """.trimIndent()
     )
 }
@@ -385,6 +393,8 @@ private fun parseFileBasedDirective(
 
     return file
 }
+
+internal fun parseProgramArguments(registeredDirectives: RegisteredDirectives): List<String> = registeredDirectives[PROGRAM_ARGS]
 
 internal class Location(private val testDataFile: File, val lineNumber: Int? = null) {
     override fun toString() = buildString {

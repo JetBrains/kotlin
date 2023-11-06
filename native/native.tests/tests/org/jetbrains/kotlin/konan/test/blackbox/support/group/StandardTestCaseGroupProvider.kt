@@ -230,7 +230,8 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
                 TestKind.STANDALONE_NO_TR -> {
                     NoTestRunnerExtras(
                         entryPoint = parseEntryPoint(registeredDirectives, location),
-                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
+                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location),
+                        arguments = parseProgramArguments(registeredDirectives)
                     )
                 }
                 TestKind.REGULAR, TestKind.STANDALONE -> {

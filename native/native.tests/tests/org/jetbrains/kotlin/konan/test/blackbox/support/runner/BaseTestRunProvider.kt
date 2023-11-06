@@ -37,7 +37,9 @@ internal open class BaseTestRunProvider {
             }
             TestKind.STANDALONE_NO_TR -> {
                 assertTrue(testName == null)
-                addIfNotNull(testCase.extras<NoTestRunnerExtras>().inputDataFile?.let(TestRunParameter::WithInputData))
+                val extras = testCase.extras<NoTestRunnerExtras>()
+                addIfNotNull(extras.inputDataFile?.let(TestRunParameter::WithInputData))
+                add(TestRunParameter.WithFreeCommandLineArguments(extras.arguments))
             }
             TestKind.STANDALONE -> {
                 add(TestRunParameter.WithTCTestLogger)
