@@ -69,4 +69,19 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
         val deprecatedTargets = setOf(WATCHOS_X86, IOS_ARM32, LINUX_ARM32_HFP, MINGW_X86, LINUX_MIPS32, LINUX_MIPSEL32, WASM32)
         val toleratedDeprecatedTargets = setOf(LINUX_ARM32_HFP)
     }
+
+    override fun equals(other: Any?): Boolean {
+        return when {
+            this === other -> true
+            other !is KonanTarget -> false
+            else -> this.name == other.name && this.family == other.family && this.architecture == other.architecture
+        }
+    }
+
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + family.hashCode()
+        result = 31 * result + architecture.hashCode()
+        return result
+    }
 }
