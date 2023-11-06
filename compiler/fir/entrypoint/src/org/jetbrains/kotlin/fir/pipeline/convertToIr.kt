@@ -9,20 +9,15 @@ import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -64,22 +59,6 @@ data class Fir2IrActualizedResult(
     val components: Fir2IrComponents,
     val pluginContext: Fir2IrPluginContext,
     val irActualizedResult: IrActualizedResult?,
-)
-
-fun FirResult.convertToIrAndActualizeForJvm(
-    fir2IrExtensions: Fir2IrExtensions,
-    fir2IrConfiguration: Fir2IrConfiguration,
-    irGeneratorExtensions: Collection<IrGenerationExtension>,
-): Fir2IrActualizedResult = this.convertToIrAndActualize(
-    fir2IrExtensions,
-    fir2IrConfiguration,
-    irGeneratorExtensions,
-    signatureComposer = signatureComposerForJvmFir2Ir(fir2IrConfiguration.linkViaSignatures),
-    irMangler = JvmIrMangler,
-    firMangler = FirJvmKotlinMangler(),
-    visibilityConverter = FirJvmVisibilityConverter,
-    kotlinBuiltIns = DefaultBuiltIns.Instance,
-    actualizerTypeContextProvider = ::JvmIrTypeSystemContext,
 )
 
 fun signatureComposerForJvmFir2Ir(generateSignatures: Boolean): IdSignatureComposer {

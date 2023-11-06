@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.toLogger
-import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.FirKotlinToJvmBytecodeCompiler.runFrontend
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -178,9 +178,8 @@ object KotlinToJVMBytecodeCompiler {
             // K2/PSI: FIR2IR
             val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
             val irGenerationExtensions = IrGenerationExtension.getInstances(project)
-            val fir2IrAndIrActualizerResult = convertToIrAndActualizeForJvm(
-                firResult, diagnosticsReporter, fir2IrExtensions, irGenerationExtensions
-            )
+            val fir2IrAndIrActualizerResult =
+                firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, configuration, diagnosticsReporter, irGenerationExtensions)
             val (factory, input) = fir2IrAndIrActualizerResult.codegenFactoryWithJvmIrBackendInput(configuration)
             return BackendInputForMultiModuleChunk(
                 factory,

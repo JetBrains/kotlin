@@ -29,17 +29,17 @@ import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.*
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
+import org.jetbrains.kotlin.cli.jvm.compiler.forAllFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
+import org.jetbrains.kotlin.cli.jvm.compiler.writeOutputsIfNeeded
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
@@ -271,20 +271,9 @@ open class IncrementalFirJvmCompilerRunner(
             performanceManager?.notifyIRTranslationStarted()
 
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
-            val fir2IrConfiguration = Fir2IrConfiguration(
-                languageVersionSettings = configuration.languageVersionSettings,
-                diagnosticReporter = compilerEnvironment.diagnosticsReporter,
-                linkViaSignatures = false,
-                evaluatedConstTracker = configuration
-                    .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-                inlineConstTracker = configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-                expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-                allowNonCachedDeclarations = false,
-                useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
-            )
             val irGenerationExtensions = projectEnvironment.project.let { IrGenerationExtension.getInstances(it) }
             val (irModuleFragment, components, pluginContext, irActualizedResult) = cycleResult.convertToIrAndActualizeForJvm(
-                extensions, fir2IrConfiguration, irGenerationExtensions,
+                extensions, configuration, compilerEnvironment.diagnosticsReporter, irGenerationExtensions,
             )
 
             performanceManager?.notifyIRTranslationFinished()

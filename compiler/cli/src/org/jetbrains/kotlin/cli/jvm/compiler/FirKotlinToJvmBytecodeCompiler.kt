@@ -17,21 +17,17 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.ModuleCompilerEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.ModuleCompilerIrBackendInput
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.generateCodeFromIr
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.constant.EvaluatedConstTracker
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -41,7 +37,6 @@ import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isArrayType
@@ -163,9 +158,8 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyIRTranslationStarted()
 
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
-        val fir2IrAndIrActualizerResult = convertToIrAndActualizeForJvm(
-            firResult, diagnosticsReporter, fir2IrExtensions, irGenerationExtensions
-        )
+        val fir2IrAndIrActualizerResult =
+            firResult.convertToIrAndActualizeForJvm(fir2IrExtensions, configuration, diagnosticsReporter, irGenerationExtensions)
 
         performanceManager?.notifyIRTranslationFinished()
 
@@ -228,30 +222,6 @@ object FirKotlinToJvmBytecodeCompiler {
         }
 
         return runUnless(syntaxErrors || diagnosticsReporter.hasErrors) { FirResult(outputs) }
-    }
-
-    fun FrontendContext.convertToIrAndActualizeForJvm(
-        firResult: FirResult,
-        diagnosticsReporter: DiagnosticReporter,
-        fir2IrExtensions: JvmFir2IrExtensions,
-        irGenerationExtensions: Collection<IrGenerationExtension>,
-    ): Fir2IrActualizedResult {
-        val fir2IrConfiguration = Fir2IrConfiguration(
-            languageVersionSettings = configuration.languageVersionSettings,
-            diagnosticReporter = diagnosticsReporter,
-            linkViaSignatures = configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
-            evaluatedConstTracker = configuration
-                .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-            inlineConstTracker = configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-            expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-            allowNonCachedDeclarations = false,
-            useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
-        )
-        return firResult.convertToIrAndActualizeForJvm(
-            fir2IrExtensions,
-            fir2IrConfiguration,
-            irGenerationExtensions,
-        )
     }
 
     private fun CompilationContext.runBackend(

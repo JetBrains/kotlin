@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -41,16 +43,14 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
-import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualizeForJvm
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -172,25 +172,13 @@ fun convertAnalyzedFirToIr(
 ): ModuleCompilerIrBackendInput {
     val extensions = JvmFir2IrExtensions(input.configuration, JvmIrDeserializerImpl(), JvmIrMangler)
 
-    // fir2ir
     val irGenerationExtensions =
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
-    val fir2IrConfiguration = Fir2IrConfiguration(
-        languageVersionSettings = input.configuration.languageVersionSettings,
-        diagnosticReporter = environment.diagnosticsReporter,
-        linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
-        evaluatedConstTracker = input.configuration
-            .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-        inlineConstTracker = input.configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
-        expectActualTracker = input.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
-        allowNonCachedDeclarations = false,
-        useIrFakeOverrideBuilder = input.configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
-    )
     val (moduleFragment, components, pluginContext, irActualizedResult) =
         analysisResults.convertToIrAndActualizeForJvm(
-            extensions, fir2IrConfiguration, irGenerationExtensions,
+            extensions, input.configuration, environment.diagnosticsReporter, irGenerationExtensions,
         )
 
     return ModuleCompilerIrBackendInput(
@@ -201,6 +189,37 @@ fun convertAnalyzedFirToIr(
         components,
         pluginContext,
         irActualizedResult
+    )
+}
+
+fun FirResult.convertToIrAndActualizeForJvm(
+    fir2IrExtensions: Fir2IrExtensions,
+    configuration: CompilerConfiguration,
+    diagnosticsReporter: DiagnosticReporter,
+    irGeneratorExtensions: Collection<IrGenerationExtension>,
+): Fir2IrActualizedResult {
+    val fir2IrConfiguration = Fir2IrConfiguration(
+        languageVersionSettings = configuration.languageVersionSettings,
+        diagnosticReporter = diagnosticsReporter,
+        linkViaSignatures = configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
+        evaluatedConstTracker = configuration
+            .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+        inlineConstTracker = configuration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
+        expectActualTracker = configuration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
+        allowNonCachedDeclarations = false,
+        useIrFakeOverrideBuilder = configuration.getBoolean(CommonConfigurationKeys.USE_IR_FAKE_OVERRIDE_BUILDER),
+    )
+
+    return convertToIrAndActualize(
+        fir2IrExtensions,
+        fir2IrConfiguration,
+        irGeneratorExtensions,
+        signatureComposerForJvmFir2Ir(fir2IrConfiguration.linkViaSignatures),
+        JvmIrMangler,
+        FirJvmKotlinMangler(),
+        FirJvmVisibilityConverter,
+        DefaultBuiltIns.Instance,
+        ::JvmIrTypeSystemContext,
     )
 }
 
