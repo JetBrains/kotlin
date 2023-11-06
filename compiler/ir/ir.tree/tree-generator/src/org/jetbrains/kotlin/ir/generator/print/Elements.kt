@@ -36,36 +36,20 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
     override fun SmartPrinter.printAdditionalMethods(element: Element) {
         element.generationCallback?.invoke(this@ImportCollector, this)
 
-        if (element.hasAcceptMethod) {
-            printAcceptMethod(
-                element = element,
-                visitorClass = elementVisitorType,
-                hasImplementation = !element.isRootElement,
-                kDoc = """
-                Runs the provided [visitor] on the IR subtree with the root at this node.
-                
-                @param visitor The visitor to accept.
-                @param data An arbitrary context to pass to each invocation of [visitor]'s methods.
-                @return The value returned by the topmost `visit*` invocation.
-                """.trimIndent().takeIf { element.isRootElement }
-            )
-        }
+        printAcceptMethod(
+            element = element,
+            visitorClass = elementVisitorType,
+            hasImplementation = !element.isRootElement,
+            treeName = "IR",
+        )
 
-        if (element.hasTransformMethod) {
-            printTransformMethod(
-                element = element,
-                transformerClass = elementTransformerType,
-                implementation = "accept(transformer, data)".takeIf { !element.isRootElement },
-                returnType = element,
-                kDoc = """
-                    Runs the provided [transformer] on the IR subtree with the root at this node.
-        
-                    @param transformer The transformer to use.
-                    @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
-                    @return The transformed node.
-                    """.trimIndent().takeIf { element.isRootElement }
-            )
-        }
+        printTransformMethod(
+            element = element,
+            transformerClass = elementTransformerType,
+            implementation = "accept(transformer, data)".takeIf { !element.isRootElement },
+            returnType = element,
+            treeName = "IR",
+        )
 
         if (element.hasAcceptChildrenMethod) {
             printAcceptChildrenMethod(
@@ -73,16 +57,6 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 visitorClass = elementVisitorType,
                 visitorResultType = StandardTypes.unit,
                 override = !element.isRootElement,
-                kDoc = """
-                    Runs the provided [visitor] on subtrees with roots in this node's children.
-                    
-                    Basically, calls `accept(visitor, data)` on each child of this node.
-                    
-                    Does **not** run [visitor] on this node itself.
-                    
-                    @param visitor The visitor for children to accept.
-                    @param data An arbitrary context to pass to each invocation of [visitor]'s methods.
-                    """.trimIndent().takeIf { element.isRootElement }
             )
 
             if (!element.isRootElement) {
@@ -116,16 +90,6 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 transformerClass = elementTransformerType,
                 returnType = StandardTypes.unit,
                 override = !element.isRootElement,
-                kDoc = """
-                    Recursively transforms this node's children *in place* using [transformer].
-                    
-                    Basically, executes `this.child = this.child.transform(transformer, data)` for each child of this node.
-                    
-                    Does **not** run [transformer] on this node itself.
-                    
-                    @param transformer The transformer to use for transforming the children.
-                    @param data An arbitrary context to pass to each invocation of [transformer]'s methods.
-                    """.trimIndent().takeIf { element.isRootElement }
             )
             if (!element.isRootElement) {
                 println(" {")

@@ -152,7 +152,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             fun Field.acceptString(): String = "${name}${call()}accept(visitor, data)"
 
             if (hasAcceptChildrenMethod) {
-                printAcceptChildrenMethod(this, firVisitorType, TypeVariable("R"), override = true, kDoc = null)
+                printAcceptChildrenMethod(this, firVisitorType, TypeVariable("R"), override = true)
                 print(" {")
 
                 val walkableFields = walkableChildren
@@ -222,7 +222,6 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     this,
                     modality = Modality.ABSTRACT.takeIf { isAbstract },
                     override = true,
-                    kDoc = null,
                 )
                 if (!isInterface && !isAbstract) {
                     println(" {")
