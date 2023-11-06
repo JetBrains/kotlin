@@ -19,7 +19,7 @@ fun Test(condition: Boolean) {
 @Composable
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)<rememb...>,<rememb...>,<Text("...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b1110 == 0) {
     %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
@@ -30,7 +30,7 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
     }
     val value = <block>{
       %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(Test)<Text("...>:Test.kt")
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         mutableStateOf(
           value = false
@@ -50,7 +50,7 @@ fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
     }
     val value2 = <block>{
       %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(Test):Test.kt")
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
       val tmp1_group = %composer.cache(false) {
         mutableStateOf(
           value = false

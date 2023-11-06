@@ -19,14 +19,14 @@ fun Test(a: Int): Foo {
 @Composable
 fun Test(a: Int, %composer: Composer?, %changed: Int): Foo {
   %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   val b = someInt()
   val tmp0 = <block>{
     %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "C(Test):Test.kt")
+    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
     val tmp1_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(a) || %changed and 0b0110 == 0b0100 or %composer.changed(b)) {
       Foo(a, b)
     }

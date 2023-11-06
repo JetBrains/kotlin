@@ -23,15 +23,16 @@ fun app(x: Boolean) {
 @NonRestartableComposable
 fun app(x: Boolean, %composer: Composer?, %changed: Int) {
   %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(app):Test.kt")
+  sourceInformation(%composer, "C(app)<rememb...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
   val a = <block>{
     %composer.startReplaceableGroup(<>)
+    sourceInformation(%composer, "<rememb...>")
     val tmp1_group = if (x) {
       %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(app):Test.kt")
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         1
       }
@@ -45,7 +46,7 @@ fun app(x: Boolean, %composer: Composer?, %changed: Int) {
   }
   val b = <block>{
     %composer.startReplaceableGroup(<>)
-    sourceInformation(%composer, "C(app):Test.kt")
+    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
     val tmp2_group = %composer.cache(false) {
       2
     }
