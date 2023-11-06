@@ -13,8 +13,8 @@ class PluginConfiguration(
     val verificationSelection: TargetsSelection,
 ) {
     init {
-        if (conversionSelection < verificationSelection) {
-            throw IllegalArgumentException("Conversion options may not be stricter than verification options; converting $conversionSelection but verifying $verificationSelection.")
+        require(conversionSelection >= verificationSelection) {
+            "Conversion options may not be stricter than verification options; converting $conversionSelection but verifying $verificationSelection."
         }
     }
 }

@@ -91,6 +91,6 @@ class FormalVerificationCommandLineProcessor : CommandLineProcessor {
                 else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
             }
         } catch (e: IllegalArgumentException) {
-            throw CliOptionProcessingException("Value $value is not a valid argument for option ${option.optionName}.")
+            throw CliOptionProcessingException("Value $value is not a valid argument for option ${option.optionName}.", e)
         }
 }

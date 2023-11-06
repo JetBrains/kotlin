@@ -42,7 +42,7 @@ fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName =
 fun CallableId.embedPropertyName(scope: Int): ScopedKotlinName = when {
     isLocal -> ScopedKotlinName(LocalScope(scope), SimpleKotlinName(callableName))
     className != null -> embedMemberPropertyName()
-    else -> throw IllegalStateException("Name is neither local nor bound to a class; we do not know how to handle this.")
+    else -> error("Name is neither local nor bound to a class; we do not know how to handle this.")
 }
 
 fun FirValueParameterSymbol.embedName(): ScopedKotlinName = ScopedKotlinName(ParameterScope, SimpleKotlinName(name))
@@ -50,12 +50,12 @@ fun FirPropertyAccessorSymbol.embedName(ctx: ProgramConversionContext): ScopedKo
     true -> when {
         isGetter -> propertySymbol.callableId.embedExtensionGetterName(ctx.embedType(this))
         isSetter -> propertySymbol.callableId.embedExtensionSetterName(ctx.embedType(this))
-        else -> throw IllegalStateException("An extension property must be a setter or a getter!")
+        else -> error("An extension property must be a setter or a getter!")
     }
     false -> when {
         isGetter -> propertySymbol.callableId.embedGetterName()
         isSetter -> propertySymbol.callableId.embedSetterName()
-        else -> throw IllegalStateException("A property accessor must be a setter or a getter!")
+        else -> error("A property accessor must be a setter or a getter!")
     }
 }
 

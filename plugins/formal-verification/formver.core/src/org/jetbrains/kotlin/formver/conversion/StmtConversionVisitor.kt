@@ -125,8 +125,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         equalityOperatorCall: FirEqualityOperatorCall,
         data: StmtConversionContext,
     ): ExpEmbedding {
-        if (equalityOperatorCall.arguments.size != 2) {
-            throw IllegalArgumentException("Invalid equality comparison $equalityOperatorCall, can only compare 2 elements.")
+        require(equalityOperatorCall.arguments.size == 2) {
+            "Invalid equality comparison $equalityOperatorCall, can only compare 2 elements."
         }
         val left = data.convert(equalityOperatorCall.arguments[0])
         val right = data.convert(equalityOperatorCall.arguments[1])
@@ -173,13 +173,11 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         comparisonExpression: FirComparisonExpression,
         data: StmtConversionContext,
     ): ExpEmbedding {
-        val dispatchReceiver = comparisonExpression.compareToCall.dispatchReceiver
-        val arg = comparisonExpression.compareToCall.argumentList.arguments.firstOrNull()
-        if (dispatchReceiver == null) {
-            throw IllegalArgumentException("found compareTo call with null receiver")
+        val dispatchReceiver = checkNotNull(comparisonExpression.compareToCall.dispatchReceiver) {
+            "found 'compareTo' call with null receiver"
         }
-        if (arg == null) {
-            throw IllegalArgumentException("found compareTo call with no argument at position 0")
+        val arg = checkNotNull(comparisonExpression.compareToCall.argumentList.arguments.firstOrNull()) {
+            "found `compareTo` call with no argument at position 0"
         }
         val left = data.convert(dispatchReceiver)
         val right = data.convert(arg)

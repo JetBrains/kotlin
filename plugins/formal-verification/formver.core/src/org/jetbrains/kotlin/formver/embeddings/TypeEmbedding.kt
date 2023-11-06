@@ -235,25 +235,25 @@ data class FunctionTypeEmbedding(val signature: CallableSignatureData) : Unspeci
 data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
     private var _superTypes: List<TypeEmbedding>? = null
     val superTypes: List<TypeEmbedding>
-        get() = _superTypes ?: throw IllegalStateException("Super types of $className have not been initialised yet.")
+        get() = _superTypes ?: error("Super types of $className have not been initialised yet.")
 
     private val classSuperTypes: List<ClassTypeEmbedding>
         get() = superTypes.filterIsInstance<ClassTypeEmbedding>()
 
     fun initSuperTypes(newSuperTypes: List<TypeEmbedding>) {
-        if (_superTypes != null) throw IllegalStateException("Super types of $className are already initialised.")
+        check(_superTypes == null) { "Super types of $className are already initialised." }
         _superTypes = newSuperTypes
     }
 
     private var _fields: Map<SimpleKotlinName, FieldEmbedding>? = null
     private var _predicate: Predicate? = null
     val fields: Map<SimpleKotlinName, FieldEmbedding>
-        get() = _fields ?: throw IllegalStateException("Fields of $className have not been initialised yet.")
+        get() = _fields ?: error("Fields of $className have not been initialised yet.")
     val predicate: Predicate
-        get() = _predicate ?: throw IllegalStateException("Predicate of $className has not been initialised yet.")
+        get() = _predicate ?: error("Predicate of $className has not been initialised yet.")
 
     fun initFields(newFields: Map<SimpleKotlinName, FieldEmbedding>) {
-        if (_fields != null) throw IllegalStateException("Fields of $className are already initialised.")
+        check(_fields == null) { "Fields of $className are already initialised." }
         _fields = newFields
         _predicate = initPredicate()
     }

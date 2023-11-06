@@ -122,7 +122,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     }
 
     override fun embedType(type: ConeKotlinType): TypeEmbedding = when {
-        type is ConeErrorType -> throw IllegalArgumentException("Encountered an erroneous type: $type")
+        type is ConeErrorType -> error("Encountered an erroneous type: $type")
         type is ConeTypeParameterType -> NullableTypeEmbedding(AnyTypeEmbedding)
         type.isUnit -> UnitTypeEmbedding
         type.isInt -> IntTypeEmbedding
@@ -159,7 +159,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     } else {
         // Ensure that the class has been processed.
         embedType(symbol.dispatchReceiverType!!)
-        properties[symbol.callableId.embedMemberPropertyName()] ?: throw IllegalStateException("Unknown property ${symbol.callableId}")
+        properties[symbol.callableId.embedMemberPropertyName()] ?: error("Unknown property ${symbol.callableId}")
     }
 
     override fun embedFunctionSignature(symbol: FirFunctionSymbol<*>): FunctionSignature {

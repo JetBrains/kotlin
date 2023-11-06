@@ -20,7 +20,7 @@ fun ExpEmbedding.asPropertyAccess() = when (this) {
             this@asPropertyAccess
 
         override fun setValue(value: ExpEmbedding, ctx: StmtConversionContext): ExpEmbedding {
-            throw IllegalStateException("Property does not have a settable value")
+            error("Property does not have a settable value")
         }
     }
 }

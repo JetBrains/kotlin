@@ -132,7 +132,7 @@ object KotlinRunSpecialFunction : SpecialKotlinFunction {
     ): ExpEmbedding {
         val lambda = when (val arg = args[0].ignoringCastsAndMetaNodes()) {
             is LambdaExp -> arg
-            else -> throw IllegalStateException("kotlin.run must be called with a lambda argument at the moment")
+            else -> error("kotlin.run must be called with a lambda argument at the moment")
         }
 
         return lambda.insertCallImpl(listOf(), ctx)
