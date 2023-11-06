@@ -43,9 +43,28 @@ abstract class BaseCInteropCheckersTest : AbstractNativeSimpleTest() {
         val compilationResult = compileToExecutable(testCase, library.asLibraryDependency()).assertSuccess()
     }
 
+    @Test
+    @TestMetadata(TEST_DATA_DIR_3)
+    fun testNoInitLoweringError() {
+        val library = cinteropToLibrary(
+            targets = targets,
+            defFile = File(TEST_DATA_DIR_3, DEF_FILE),
+            outputDir = buildDir,
+            freeCompilerArgs = TestCompilerArgs.EMPTY
+        ).assertSuccess().resultingArtifact
+
+        val testCase = generateTestCaseWithSingleFile(
+            sourceFile = File(TEST_DATA_DIR_3, KT_FILE),
+            freeCompilerArgs = TestCompilerArgs(testRunSettings.get<PipelineType>().compilerFlags),
+            testKind = TestKind.STANDALONE_NO_TR,
+            extras = TestCase.NoTestRunnerExtras("main")
+        )
+        val compilationResult = compileToExecutable(testCase, library.asLibraryDependency()).assertSuccess()
+    }
 
     companion object {
         const val TEST_DATA_DIR = "native/native.tests/testData/CInterop/KT-63048"
+        const val TEST_DATA_DIR_3 = "native/native.tests/testData/CInterop/KT-63049"
         const val DEF_FILE = "library.def"
         const val KT_FILE = "usage.kt"
     }

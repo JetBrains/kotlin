@@ -1,0 +1,7 @@
+depends = Foundation
+language = Objective-C
+
+---
+
+@interface WithClassProperty
+@end
