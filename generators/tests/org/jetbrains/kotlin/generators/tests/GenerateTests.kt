@@ -50,6 +50,22 @@ import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJvmIrTest
 import org.junit.jupiter.api.Tag
 
+
+private class ExcludePattern {
+    companion object {
+        private const val MEMBER_ALIAS = "(^removeMemberTypeAlias)|(^addMemberTypeAlias)"
+
+        private const val ALL_EXPECT = "(^.*Expect.*)"
+        private const val COMPANION_CONSTANT = "(^companionConstantChanged)"
+
+        internal val forK2 = listOf(
+            ALL_EXPECT, // KT-63125 - Partially related to single-module expect-actual tests, but regexp is really wide
+            MEMBER_ALIAS, // KT-55195 - Invalid for K2
+            COMPANION_CONSTANT // KT-56242 - Work in progress
+        ).joinToString("|")
+    }
+}
+
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
@@ -69,9 +85,7 @@ fun main(args: Array<String>) {
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
                     folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to "(^.*Expect.*)"
-                                + "|(^removeMemberTypeAlias)|(^addMemberTypeAlias)" //KT-55195
-                                + "|(^companionConstantChanged)" //KT-56242
+                        PURE_KOTLIN to ExcludePattern.forK2
                     )
                 )
             )
@@ -80,9 +94,7 @@ fun main(args: Array<String>) {
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
                     folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to "(^.*Expect.*)"
-                                + "|(^removeMemberTypeAlias)|(^addMemberTypeAlias)" //KT-55195
-                                + "|(^companionConstantChanged)", //KT-56242
+                        PURE_KOTLIN to ExcludePattern.forK2,
                         WITH_JAVA to "^classToPackageFacade" // KT-56698
                     )
                 )
@@ -91,14 +103,12 @@ fun main(args: Array<String>) {
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
                     folderToExcludePatternMap = mapOf(
-                        PURE_KOTLIN to "(^.*Expect.*)"
-                                + "|(^removeMemberTypeAlias)|(^addMemberTypeAlias)" //KT-55195
-                                + "|(^companionConstantChanged)" //KT-56242
+                        PURE_KOTLIN to ExcludePattern.forK2
                     )
                 )
             )
 
-            testClass<AbstractIncrementalK1JsKlibCompilerRunnerTest>() {
+            testClass<AbstractIncrementalK1JsKlibCompilerRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "(^sealed.*)|(.*SinceK2)")
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
@@ -124,16 +134,16 @@ fun main(args: Array<String>) {
             // TODO: https://youtrack.jetbrains.com/issue/KT-61602/JS-K2-ICL-Fix-muted-tests
             testClass<AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
-                model("incremental/pureKotlin", extension = null, recursive = false,
+                model(
+                    "incremental/pureKotlin", extension = null, recursive = false,
                     // TODO: 'fileWithConstantRemoved' should be fixed in https://youtrack.jetbrains.com/issue/KT-58824
                     excludedPattern = "^(sealed.*|fileWithConstantRemoved|propertyRedeclaration|funRedeclaration|funVsConstructorOverloadConflict)"
                 )
-                model("incremental/classHierarchyAffected", extension = null, recursive = false,
+                model(
+                    "incremental/classHierarchyAffected", extension = null, recursive = false,
                     excludedPattern = "secondaryConstructorAdded"
                 )
                 model("incremental/js", extension = null, excludeParentDirs = true)
-
-                //model("incremental/scopeExpansion", extension = null, excludeParentDirs = true)
             }
 
             testClass<AbstractIncrementalK1JsLegacyCompilerRunnerWithFriendModulesDisabledTest> {
@@ -142,11 +152,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIncrementalMultiplatformJvmCompilerRunnerTest> {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
-                model("incremental/mpp/jvmOnly", extension = null, excludeParentDirs = true)
+                model("incremental/mpp/jvmOnlyK1", extension = null, excludeParentDirs = true)
             }
             testClass<AbstractIncrementalK1JsLegacyMultiplatformJsCompilerRunnerTest> {
                 model("incremental/mpp/allPlatforms", extension = null, excludeParentDirs = true)
             }
+            //TODO: write a proper k2 multiplatform test runner KT-63183
         }
 
         testGroup(

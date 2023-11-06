@@ -109,8 +109,13 @@ class SimpleTestClassModel(
         val listFiles = rootFile.listFiles()
         if (listFiles != null && (deep == null || deep == 0)) {
             for (file in listFiles) {
-                val excluded = excludePattern != null && excludePattern.matcher(file.name).matches()
-                if (filenamePattern.matcher(file.name).matches() && !excluded) {
+                val excluded = let {
+                    val name = file.name
+                    val byPattern = excludePattern != null && excludePattern.matcher(name).matches()
+                    val byDirectory = file.isDirectory && (name in excludeDirs || name in excludeDirsRecursively)
+                    return@let byPattern || byDirectory
+                }
+                if (!excluded && filenamePattern.matcher(file.name).matches()) {
                     if (file.isDirectory && excludeParentDirs && dirHasSubDirs(file)) {
                         continue
                     }

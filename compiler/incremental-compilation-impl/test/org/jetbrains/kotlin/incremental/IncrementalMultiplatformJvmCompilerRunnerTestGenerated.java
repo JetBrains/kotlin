@@ -68,29 +68,29 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
         }
     }
 
-    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly")
+    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class JvmOnly extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
+    public static class JvmOnlyK1 extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInJvmOnly() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
+        public void testAllFilesPresentInJvmOnlyK1() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("multifilePartChanged")
         public void testMultifilePartChanged() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged/");
+            runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/multifilePartChanged/");
         }
 
         @TestMetadata("optionalExpectationWithActual")
         public void testOptionalExpectationWithActual() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual/");
+            runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/optionalExpectationWithActual/");
         }
 
-        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged")
+        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/multifilePartChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MultifilePartChanged extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
@@ -99,11 +99,11 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             }
 
             public void testAllFilesPresentInMultifilePartChanged() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual")
+        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/optionalExpectationWithActual")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class OptionalExpectationWithActual extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
@@ -112,7 +112,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             }
 
             public void testAllFilesPresentInOptionalExpectationWithActual() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly/optionalExpectationWithActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnlyK1/optionalExpectationWithActual"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
