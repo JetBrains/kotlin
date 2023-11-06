@@ -379,6 +379,16 @@ public class FirIdeDependentAnalysisScriptSourceModuleReferenceResolveTestGenera
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kotlinPackage")
+    @TestDataPath("$PROJECT_ROOT")
+    public class KotlinPackage {
+        @Test
+        public void testAllFilesPresentInKotlinPackage() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kotlinPackage"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/nestedTypes")
     @TestDataPath("$PROJECT_ROOT")
     public class NestedTypes {

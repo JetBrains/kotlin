@@ -2065,6 +2065,22 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/kotlinPackage")
+    @TestDataPath("$PROJECT_ROOT")
+    public class KotlinPackage {
+        @Test
+        public void testAllFilesPresentInKotlinPackage() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/kotlinPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("kotlinxPackage.kt")
+        public void testKotlinxPackage() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/kotlinPackage/kotlinxPackage.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/referenceResolve/nestedTypes")
     @TestDataPath("$PROJECT_ROOT")
     public class NestedTypes {
