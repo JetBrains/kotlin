@@ -51,11 +51,16 @@ object A {
         class NestedClass() {
             class NestedClass2
 
-            fun f12(m: NestedClass2){}
+            fun f12(m: NestedClass2){
+                val x = value
+                bar()
+            }
         }
 
         companion object {
             const val value = 42
+
+            fun bar(){}
         }
     }
 }
@@ -74,7 +79,10 @@ fun f9(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>
 // Usages of markers as qualifiers are errors as well (we can lift this restriction for select cases)
 
 fun f10(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker.NestedClass<!>) {
-    A.Marker.value
+    val a = <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker.value<!>
+    <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker.Companion.value<!>
+    <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker.bar()<!>
+    <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker.Companion.bar()<!>
 }
 
 fun f11(m: <!OPT_IN_MARKER_CAN_ONLY_BE_USED_AS_ANNOTATION_OR_ARGUMENT_IN_OPT_IN!>A.Marker.NestedClass.NestedClass2<!>) {}
