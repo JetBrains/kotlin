@@ -138,6 +138,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 actualContainingClass,
                 expectContainingClass,
                 expectActualMatchingContext,
+                context,
             )
         } else null
 
@@ -220,7 +221,8 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
         expectSymbol: FirBasedSymbol<*>,
         actualContainingClass: FirRegularClassSymbol?,
         expectContainingClass: FirRegularClassSymbol?,
-        context: FirExpectActualMatchingContext,
+        expectActualMatchingContext: FirExpectActualMatchingContext,
+        context: CheckerContext,
     ): ExpectActualCompatibility<FirBasedSymbol<*>> =
         when {
             actualSymbol is FirCallableSymbol<*> && expectSymbol is FirCallableSymbol<*> -> {
@@ -229,14 +231,16 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                     actualSymbol,
                     expectContainingClass,
                     actualContainingClass,
-                    context,
+                    expectActualMatchingContext,
+                    context.languageVersionSettings
                 )
             }
             actualSymbol is FirClassLikeSymbol<*> && expectSymbol is RegularClassSymbolMarker -> {
                 AbstractExpectActualChecker.getClassifiersCompatibility(
                     expectSymbol,
                     actualSymbol,
-                    context,
+                    expectActualMatchingContext,
+                    context.languageVersionSettings
                 )
             }
             else -> error("These expect/actual shouldn't have been matched by FirExpectActualResolver")

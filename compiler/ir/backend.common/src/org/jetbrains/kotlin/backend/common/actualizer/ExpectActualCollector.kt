@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
@@ -206,7 +207,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
         matchAndCheckExpectDeclaration(
             declaration.symbol,
             context.classActualizationInfo.actualTopLevels[callableId].orEmpty(),
-            context
+            context,
         )
     }
 
@@ -221,7 +222,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
     private fun matchAndCheckExpectDeclaration(
         expectSymbol: IrSymbol,
         actualSymbols: List<IrSymbol>,
-        context: MatchingContext
+        context: MatchingContext,
     ) {
         val matched = AbstractExpectActualMatcher.matchSingleExpectTopLevelDeclarationAgainstPotentialActuals(
             expectSymbol,
@@ -233,6 +234,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
                 expectSymbol,
                 matched,
                 context,
+                context.languageVersionSettings,
             )
         }
     }
@@ -251,6 +253,8 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
     ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
 
         private val currentExpectIoFile by lazy(LazyThreadSafetyMode.PUBLICATION) { currentExpectFile?.toIoFile() }
+
+        internal val languageVersionSettings: LanguageVersionSettings get() = diagnosticsReporter.languageVersionSettings
 
         fun withNewCurrentFile(newCurrentFile: IrFile) =
             MatchingContext(
