@@ -200,8 +200,6 @@ dependencies {
     if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         sources(kotlinStdlib(classifier = "sources"))
         sources("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion:sources")
-        distCommonContents(kotlinStdlib(classifier = "common"))
-        distCommonContents(kotlinStdlib(classifier = "common-sources"))
     } else {
         sources(project(":kotlin-stdlib", configuration = "distSources"))
         sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
@@ -209,8 +207,6 @@ dependencies {
 
         distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
-        distCommonContents(project(":kotlin-stdlib", configuration = "commonMainMetadataElements"))
-        distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))
     }
 
     distMavenContents(kotlinStdlib(classifier = "sources"))
