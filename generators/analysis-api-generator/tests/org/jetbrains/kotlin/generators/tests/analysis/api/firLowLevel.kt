@@ -47,11 +47,11 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractFirSourceLazyDeclarationResolveTest> {
-            model("lazyResolve", pattern = TestGeneratorUtil.KT)
+            model("lazyResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractFirOutOfContentRootLazyDeclarationResolveTest> {
-            model("lazyResolve", pattern = TestGeneratorUtil.KT)
+            model("lazyResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractFirScriptLazyDeclarationResolveTest> {
