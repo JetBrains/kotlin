@@ -57,6 +57,6 @@ FILE: main.kt
         R|/foo2|(Q|KotlinClass|::R|/JavaClass.bar|)
         R|/foo3|(Q|KotlinClass|::R|/JavaClass.bar|)
         R|/foo1|(Q|KotlinClass2|::R|/KotlinClass2.Companion.bar|)
-        R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(Q|KotlinClass2|::<Unresolved reference: bar>#)
+        R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(Q|KotlinClass2|::<Ambiguity: bar, [/KotlinClass2.bar, /KotlinClass2.Companion.bar]>#)
         R|/foo3|(Q|KotlinClass2|::R|/KotlinClass2.Companion.bar|)
     }

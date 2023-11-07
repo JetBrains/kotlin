@@ -402,7 +402,7 @@ class FirCallResolver(
         }
 
         val (reducedCandidates, newApplicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
-        val isSuccess = reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isSuccessful }
+        val nonEmptyAndAllSuccessful = reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isSuccessful }
         val applicability = newApplicability ?: result.currentApplicability
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
@@ -412,14 +412,16 @@ class FirCallResolver(
         resolvedCallableReferenceAtom.hasBeenResolvedOnce = true
 
         when {
-            !isSuccess -> {
+            !nonEmptyAndAllSuccessful -> {
                 val errorReference = buildReferenceWithErrorCandidate(
                     info,
                     when {
                         applicability == CandidateApplicability.K2_UNSUPPORTED -> {
-                            val unsupportedResolutionDiagnostic = reducedCandidates.firstOrNull()?.diagnostics?.firstOrNull() as? Unsupported
+                            val unsupportedResolutionDiagnostic =
+                                reducedCandidates.firstOrNull()?.diagnostics?.firstOrNull() as? Unsupported
                             ConeUnsupported(unsupportedResolutionDiagnostic?.message ?: "", unsupportedResolutionDiagnostic?.source)
                         }
+                        reducedCandidates.size > 1 -> ConeAmbiguityError(info.name, applicability, reducedCandidates)
                         reducedCandidates.size == 1 -> createConeDiagnosticForCandidateWithError(applicability, reducedCandidates.single())
                         else -> ConeUnresolvedReferenceError(info.name)
                     },

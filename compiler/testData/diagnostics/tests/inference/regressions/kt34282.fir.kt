@@ -5,5 +5,5 @@ fun foo(x: Float) = 10f
 fun foo(x: String) = ""
 
 fun main() {
-    bar(::<!UNRESOLVED_REFERENCE!>foo<!>) // no report about unresolved callable reference for `foo`
+    bar(::<!NONE_APPLICABLE!>foo<!>) // no report about unresolved callable reference for `foo`
 }

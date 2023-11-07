@@ -40,7 +40,7 @@ fun main() {
 
     foo1(KotlinClass2::bar)
     // Type mismatch
-    foo2(KotlinClass2::<!UNRESOLVED_REFERENCE!>bar<!>)
+    foo2(KotlinClass2::<!NONE_APPLICABLE!>bar<!>)
     foo3(KotlinClass2::bar)
 }
 

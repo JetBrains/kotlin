@@ -27,22 +27,22 @@ interface Foo {
     // CR on property with to receivers are forbidden
     fun <T: Foo> test() {
         // with LHS and property
-        bar8<T>(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
-        bar8<Foo>(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
-        bar8(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
+        bar8<T>(Foo::<!NONE_APPLICABLE!>x1<!>)
+        bar8<Foo>(Foo::<!NONE_APPLICABLE!>x1<!>)
+        bar8(Foo::<!NONE_APPLICABLE!>x1<!>)
 
         // with LHS and mutable property
-        bar8<T>(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
-        bar8<Foo>(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
-        bar8(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
+        bar8<T>(Foo::<!NONE_APPLICABLE!>x2<!>)
+        bar8<Foo>(Foo::<!NONE_APPLICABLE!>x2<!>)
+        bar8(Foo::<!NONE_APPLICABLE!>x2<!>)
 
         // with LHS and propery + mutable property (mixed)
-        bar8<T>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        bar8<Foo>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        bar8(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        bar9<T>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        bar9<Foo>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        bar9(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
+        bar8<T>(Foo::<!NONE_APPLICABLE!>x3<!>)
+        bar8<Foo>(Foo::<!NONE_APPLICABLE!>x3<!>)
+        bar8(Foo::<!NONE_APPLICABLE!>x3<!>)
+        bar9<T>(Foo::<!NONE_APPLICABLE!>x3<!>)
+        bar9<Foo>(Foo::<!NONE_APPLICABLE!>x3<!>)
+        bar9(Foo::<!NONE_APPLICABLE!>x3<!>)
     }
 }
 
