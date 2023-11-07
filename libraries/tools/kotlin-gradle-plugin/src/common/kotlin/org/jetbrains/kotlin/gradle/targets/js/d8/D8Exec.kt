@@ -10,8 +10,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
@@ -53,7 +53,7 @@ open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
 
     companion object {
         fun create(
-            compilation: KotlinJsCompilation,
+            compilation: KotlinJsIrCompilation,
             name: String,
             configuration: D8Exec.() -> Unit = {}
         ): TaskProvider<D8Exec> {

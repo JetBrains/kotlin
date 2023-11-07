@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuto
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -44,7 +44,7 @@ import java.io.File
 import java.nio.file.Path
 
 class KotlinKarma(
-    @Transient override val compilation: KotlinJsCompilation,
+    @Transient override val compilation: KotlinJsIrCompilation,
     private val services: () -> ServiceRegistry,
     private val basePath: String,
 ) : KotlinJsTestFramework {

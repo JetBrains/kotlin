@@ -19,13 +19,13 @@ import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
@@ -42,7 +42,7 @@ import java.io.Serializable
  */
 class KotlinCompilationNpmResolver(
     val projectResolver: KotlinProjectNpmResolver,
-    val compilation: KotlinJsCompilation,
+    val compilation: KotlinJsIrCompilation,
 ) : Serializable {
     var rootResolver = projectResolver.resolver
 
@@ -204,7 +204,7 @@ class KotlinCompilationNpmResolver(
 
             //TODO: rewrite when we get general way to have inter compilation dependencies
             if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
-                val main = compilation.target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJsCompilation
+                val main = compilation.target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJsIrCompilation
                 internalDependencies.add(
                     InternalDependency(
                         projectResolver.projectPath,

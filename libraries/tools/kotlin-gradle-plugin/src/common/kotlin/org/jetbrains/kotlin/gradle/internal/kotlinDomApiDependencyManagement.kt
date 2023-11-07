@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 import org.jetbrains.kotlin.gradle.utils.forAllTargets
 
@@ -45,7 +45,7 @@ private fun KotlinTarget.addKotlinDomApiDependency(
 ) {
     compilations.configureEach { compilation ->
         if (compilation.platformType != KotlinPlatformType.js) return@configureEach
-        if (compilation !is KotlinJsCompilation) return@configureEach
+        if (compilation !is KotlinJsIrCompilation) return@configureEach
 
         compilation.allKotlinSourceSets.forEach { kotlinSourceSet ->
             val scopeConfiguration = configurations

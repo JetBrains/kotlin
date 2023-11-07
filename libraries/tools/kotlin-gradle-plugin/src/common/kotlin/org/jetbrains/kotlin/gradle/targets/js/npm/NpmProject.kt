@@ -13,15 +13,19 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.io.Serializable
 
-val KotlinJsCompilation.npmProject: NpmProject
+val KotlinJsIrCompilation.npmProject: NpmProject
     get() = NpmProject(this)
+
+@Deprecated("Use npmProject for KotlinJsIrCompilation")
+val KotlinJsCompilation.npmProject: NpmProject
+    get() = NpmProject(this as KotlinJsIrCompilation)
 
 /**
  * Basic info for [NpmProject] created from [compilation].
@@ -29,7 +33,7 @@ val KotlinJsCompilation.npmProject: NpmProject
  *
  * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
-open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Serializable {
+open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Serializable {
     val compilationName = compilation.disambiguatedName
 
     private val extension by lazy {

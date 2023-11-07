@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.await
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.utils.copyAttributes
 import org.jetbrains.kotlin.gradle.utils.forAllTargets
-import org.jetbrains.kotlin.gradle.utils.targets
 
 
 /**
@@ -66,7 +65,7 @@ private val KotlinCompilation<*>.allOwnedConfigurationsNames
                 androidVariant.compileConfiguration.name,
                 androidVariant.runtimeConfiguration.name
             )
-            is KotlinJsCompilation -> listOfNotNull(npmAggregatedConfigurationName, publicPackageJsonConfigurationName)
+            is KotlinJsIrCompilation -> listOfNotNull(npmAggregatedConfigurationName, publicPackageJsonConfigurationName)
             else -> emptyList()
         }
 

@@ -15,7 +15,6 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
@@ -104,7 +103,7 @@ abstract class KotlinJsIrSubTarget(
             }
     }
 
-    private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsCompilation) {
+    private fun configureTestsRun(testRun: KotlinJsPlatformTestRun, compilation: KotlinJsIrCompilation) {
         fun KotlinJsPlatformTestRun.subtargetTestTaskName(): String = disambiguateCamelCased(
             lowerCamelCaseName(
                 name.takeIf { it != KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME },
@@ -193,14 +192,14 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    private fun configureMain(compilation: KotlinJsCompilation) {
+    private fun configureMain(compilation: KotlinJsIrCompilation) {
         configureRun(compilation)
         configureBuild(compilation)
     }
 
-    protected abstract fun configureRun(compilation: KotlinJsCompilation)
+    protected abstract fun configureRun(compilation: KotlinJsIrCompilation)
 
-    protected abstract fun configureBuild(compilation: KotlinJsCompilation)
+    protected abstract fun configureBuild(compilation: KotlinJsIrCompilation)
 
     private fun configureLibrary() {
         target.compilations.all { compilation ->
@@ -210,7 +209,7 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    protected open fun configureLibrary(compilation: KotlinJsCompilation) {
+    protected open fun configureLibrary(compilation: KotlinJsIrCompilation) {
         val project = compilation.target.project
 
         val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)

@@ -9,8 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsHelper
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsIrBinary
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -43,7 +43,7 @@ internal class KotlinJsIrSourceSetProcessor(
             it.dependsOn(kotlinTask)
         }
 
-        val compilation = compilationInfo.tcs.compilation as KotlinJsCompilation
+        val compilation = compilationInfo.tcs.compilation as KotlinJsIrCompilation
 
         compilation.binaries
             .withType(JsIrBinary::class.java)

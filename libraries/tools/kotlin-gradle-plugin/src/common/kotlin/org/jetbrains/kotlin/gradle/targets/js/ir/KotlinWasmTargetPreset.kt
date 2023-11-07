@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 class KotlinWasmTargetPreset(
     project: Project,
     private val targetType: KotlinWasmTargetType
-) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsCompilation>(project) {
+) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(project) {
     override val platformType: KotlinPlatformType = KotlinPlatformType.wasm
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
@@ -41,7 +40,7 @@ class KotlinWasmTargetPreset(
 
     public override fun createCompilationFactory(
         forTarget: KotlinJsIrTarget
-    ): KotlinCompilationFactory<KotlinJsCompilation> =
+    ): KotlinCompilationFactory<KotlinJsIrCompilation> =
         KotlinJsIrCompilationFactory(forTarget)
 
     companion object {

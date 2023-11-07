@@ -10,10 +10,10 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
@@ -28,7 +28,7 @@ open class NodeJsExec
 constructor(
     @Internal
     @Transient
-    override val compilation: KotlinJsCompilation,
+    override val compilation: KotlinJsIrCompilation,
 ) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
     @Transient
     @get:Internal
@@ -91,7 +91,7 @@ constructor(
 
     companion object {
         fun create(
-            compilation: KotlinJsCompilation,
+            compilation: KotlinJsIrCompilation,
             name: String,
             configuration: NodeJsExec.() -> Unit = {}
         ): TaskProvider<NodeJsExec> {

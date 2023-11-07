@@ -28,7 +28,7 @@ interface JsBinary {
 }
 
 sealed class JsIrBinary(
-    final override val compilation: KotlinJsCompilation,
+    final override val compilation: KotlinJsIrCompilation,
     final override val name: String,
     override val mode: KotlinJsBinaryMode
 ) : JsBinary {
@@ -85,7 +85,7 @@ sealed class JsIrBinary(
 }
 
 open class Executable(
-    compilation: KotlinJsCompilation,
+    compilation: KotlinJsIrCompilation,
     name: String,
     mode: KotlinJsBinaryMode
 ) : JsIrBinary(
@@ -109,7 +109,7 @@ open class Executable(
 }
 
 open class ExecutableWasm(
-    compilation: KotlinJsCompilation,
+    compilation: KotlinJsIrCompilation,
     name: String,
     mode: KotlinJsBinaryMode
 ) : Executable(
@@ -129,7 +129,7 @@ open class ExecutableWasm(
 }
 
 class Library(
-    compilation: KotlinJsCompilation,
+    compilation: KotlinJsIrCompilation,
     name: String,
     mode: KotlinJsBinaryMode
 ) : JsIrBinary(

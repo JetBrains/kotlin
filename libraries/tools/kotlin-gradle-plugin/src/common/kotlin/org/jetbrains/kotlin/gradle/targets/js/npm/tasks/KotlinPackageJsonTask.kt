@@ -14,7 +14,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
@@ -123,7 +123,7 @@ abstract class KotlinPackageJsonTask :
     }
 
     companion object {
-        fun create(compilation: KotlinJsCompilation): TaskProvider<KotlinPackageJsonTask> {
+        fun create(compilation: KotlinJsIrCompilation): TaskProvider<KotlinPackageJsonTask> {
             val target = compilation.target
             val project = target.project
             val npmProject = compilation.npmProject

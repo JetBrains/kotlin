@@ -9,11 +9,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 
 @Deprecated("The Kotlin/JS legacy target is deprecated and its support completely discontinued", level = DeprecationLevel.WARNING)
 abstract class KotlinJsTargetPreset(
     project: Project
-) : KotlinOnlyTargetPreset<KotlinOnlyTarget<KotlinJsCompilation>, KotlinJsCompilation>(
+) : KotlinOnlyTargetPreset<KotlinOnlyTarget<KotlinJsIrCompilation>, KotlinJsIrCompilation>(
     project
 )
 

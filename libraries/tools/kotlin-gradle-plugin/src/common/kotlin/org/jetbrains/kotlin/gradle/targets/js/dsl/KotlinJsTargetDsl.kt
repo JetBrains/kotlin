@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -65,7 +63,7 @@ interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
-    override val compilations: NamedDomainObjectContainer<KotlinJsCompilation>
+    override val compilations: NamedDomainObjectContainer<KotlinJsIrCompilation>
 }
 
 interface KotlinTargetWithNodeJsDsl {

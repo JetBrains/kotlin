@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
@@ -43,7 +43,7 @@ class KotlinRootNpmResolver internal constructor(
     internal operator fun get(projectPath: String) =
         projectResolvers[projectPath] ?: error("$projectPath is not configured for JS usage")
 
-    val compilations: Collection<KotlinJsCompilation>
+    val compilations: Collection<KotlinJsIrCompilation>
         get() = projectResolvers.values.flatMap { it.compilationResolvers.map { it.compilation } }
 
     internal fun findDependentResolver(src: Project, target: Project): List<KotlinCompilationNpmResolver>? {
@@ -67,7 +67,7 @@ class KotlinRootNpmResolver internal constructor(
         check(mainCompilations.size <= maxMainCompilationsCount) { errorMessage }
         for (npmResolver in mainCompilations) {
             when (val compilation = npmResolver.compilation) {
-                is KotlinJsCompilation -> {
+                is KotlinJsIrCompilation -> {
                     if (compilation.platformType == KotlinPlatformType.wasm) {
                         val jsTarget = compilation.target as KotlinJsIrTarget
                         if (jsTarget.wasmTargetType == KotlinWasmTargetType.JS) {

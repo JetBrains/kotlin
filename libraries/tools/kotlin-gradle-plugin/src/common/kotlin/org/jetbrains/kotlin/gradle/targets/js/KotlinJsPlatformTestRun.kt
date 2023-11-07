@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSource
 import org.jetbrains.kotlin.gradle.plugin.CompilationExecutionSourceSupport
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetTestRun
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.testing.KotlinReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.testing.KotlinTaskTestRun
@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.gradle.testing.requireCompilationOfTarget
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
-class JsCompilationExecutionSource(override val compilation: KotlinJsCompilation) :
-    CompilationExecutionSource<KotlinJsCompilation>
+class JsCompilationExecutionSource(override val compilation: KotlinJsIrCompilation) :
+    CompilationExecutionSource<KotlinJsIrCompilation>
 
 open class KotlinJsPlatformTestRun(testRunName: String, target: KotlinTarget) :
     KotlinTaskTestRun<JsCompilationExecutionSource, KotlinJsTest>(testRunName, target),
-    CompilationExecutionSourceSupport<KotlinJsCompilation> {
+    CompilationExecutionSourceSupport<KotlinJsIrCompilation> {
 
     private var _executionSource: JsCompilationExecutionSource by Delegates.notNull()
 
@@ -38,7 +38,7 @@ open class KotlinJsPlatformTestRun(testRunName: String, target: KotlinTarget) :
             _executionSource = value
         }
 
-    override fun setExecutionSourceFrom(compilation: KotlinJsCompilation) {
+    override fun setExecutionSourceFrom(compilation: KotlinJsIrCompilation) {
         requireCompilationOfTarget(compilation, target)
 
         executionSource = JsCompilationExecutionSource(compilation)
@@ -57,9 +57,9 @@ abstract class KotlinJsReportAggregatingTestRun @Inject constructor(
     override val target: KotlinJsSubTargetContainerDsl
 ) : KotlinReportAggregatingTestRun<JsCompilationExecutionSource, JsAggregatingExecutionSource, KotlinJsPlatformTestRun>(testRunName),
     KotlinTargetTestRun<JsAggregatingExecutionSource>,
-    CompilationExecutionSourceSupport<KotlinJsCompilation> {
+    CompilationExecutionSourceSupport<KotlinJsIrCompilation> {
 
-    override fun setExecutionSourceFrom(compilation: KotlinJsCompilation) = configureAllExecutions {
+    override fun setExecutionSourceFrom(compilation: KotlinJsIrCompilation) = configureAllExecutions {
         setExecutionSourceFrom(compilation)
     }
 

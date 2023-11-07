@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
@@ -25,7 +24,7 @@ import javax.inject.Inject
 open class KotlinJsBinaryContainer
 @Inject
 constructor(
-    val target: KotlinTargetWithBinaries<KotlinJsCompilation, KotlinJsBinaryContainer>,
+    val target: KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>,
     backingContainer: DomainObjectSet<JsBinary>,
 ) : DomainObjectSet<JsBinary> by backingContainer {
     val project: Project
@@ -33,10 +32,15 @@ constructor(
 
     private val binaryNames = mutableSetOf<String>()
 
-    private val defaultCompilation: KotlinJsCompilation
+    private val defaultCompilation: KotlinJsIrCompilation
         get() = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-    // For Groovy DSL
+    fun executable(
+        compilation: KotlinJsIrCompilation,
+    ): List<JsBinary> {
+        return executable(compilation as KotlinJsCompilation)
+    }
+
     @JvmOverloads
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation,
@@ -54,13 +58,13 @@ constructor(
                 (this as KotlinJsIrSubTarget).produceExecutable()
             }
 
-            return compilation.binaries.executableIrInternal(compilation)
+            return compilation.binaries.executableIrInternal(compilation as KotlinJsIrCompilation)
         }
 
         throw GradleException("Target should be KotlinJsIrTarget, but found $target")
     }
 
-    internal fun executableIrInternal(compilation: KotlinJsCompilation): List<JsBinary> = createBinaries(
+    internal fun executableIrInternal(compilation: KotlinJsIrCompilation): List<JsBinary> = createBinaries(
         compilation = compilation,
         jsBinaryType = KotlinJsBinaryType.EXECUTABLE,
         create = { compilation, name, mode ->
@@ -75,7 +79,7 @@ constructor(
     // For Groovy DSL
     @JvmOverloads
     fun library(
-        compilation: KotlinJsCompilation = defaultCompilation,
+        compilation: KotlinJsIrCompilation = defaultCompilation,
     ): List<JsBinary> {
         if (target is KotlinJsIrTarget) {
             target.whenBrowserConfigured {
@@ -112,10 +116,10 @@ constructor(
             .matching { it.mode == mode }
 
     private fun <T : JsBinary> createBinaries(
-        compilation: KotlinJsCompilation,
+        compilation: KotlinJsIrCompilation,
         modes: Collection<KotlinJsBinaryMode> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: KotlinJsBinaryType,
-        create: (compilation: KotlinJsCompilation, name: String, mode: KotlinJsBinaryMode) -> T,
+        create: (compilation: KotlinJsIrCompilation, name: String, mode: KotlinJsBinaryMode) -> T,
     ) =
         modes.map {
             createBinary(
@@ -127,10 +131,10 @@ constructor(
         }
 
     private fun <T : JsBinary> createBinary(
-        compilation: KotlinJsCompilation,
+        compilation: KotlinJsIrCompilation,
         mode: KotlinJsBinaryMode,
         jsBinaryType: KotlinJsBinaryType,
-        create: (compilation: KotlinJsCompilation, name: String, mode: KotlinJsBinaryMode) -> T,
+        create: (compilation: KotlinJsIrCompilation, name: String, mode: KotlinJsBinaryMode) -> T,
     ): JsBinary {
         val name = generateBinaryName(
             compilation,
