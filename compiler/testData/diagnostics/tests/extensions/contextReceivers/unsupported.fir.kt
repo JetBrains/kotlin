@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNCHECKED_CAST
 
-context(Any)
+<!UNSUPPORTED_FEATURE!>context(Any)<!>
 fun f(g: <!UNSUPPORTED_FEATURE!>context(Any) () -> Unit<!>, value: Any): <!UNSUPPORTED_FEATURE!>context(A) () -> Unit<!> {
     return value as <!UNSUPPORTED_FEATURE!>(context(A) () -> Unit)<!>
 }
@@ -9,19 +9,25 @@ fun f(g: () -> Unit, value: Any) : () -> Unit {
     return g
 }
 
-context(Any)
+<!UNSUPPORTED_FEATURE!>context(Any)<!>
 fun sameAsFWithoutNonContextualCounterpart(g: () -> Unit, value: Any) : () -> Unit {
     return g
 }
 
-context(Any) val p get() = 42
+<!UNSUPPORTED_FEATURE!>context(Any)<!> val p get() = 42
 
-context(String, Int)
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
+class D constructor(){}
+
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
+class C(){}
+
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
 class A {
-    context(Any)
+    <!UNSUPPORTED_FEATURE!>context(Any)<!>
     val p: Any get() = 42
 
-    context(String, Int)
+    <!UNSUPPORTED_FEATURE!>context(String, Int)<!>
     fun m() {}
 }
 

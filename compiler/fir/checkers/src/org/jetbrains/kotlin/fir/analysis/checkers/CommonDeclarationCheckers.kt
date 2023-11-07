@@ -37,6 +37,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirExpectConsistencyChecker,
             FirOptionalExpectationDeclarationChecker,
             FirMissingDependencySupertypeChecker.ForDeclarations,
+            FirContextReceiversDeclarationChecker,
         )
 
     override val classLikeCheckers: Set<FirClassLikeChecker>

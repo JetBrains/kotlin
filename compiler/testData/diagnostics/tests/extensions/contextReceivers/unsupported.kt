@@ -17,6 +17,12 @@ fun sameAsFWithoutNonContextualCounterpart(g: () -> Unit, value: Any) : () -> Un
 <!UNSUPPORTED_FEATURE!>context(Any)<!> val p get() = 42
 
 <!UNSUPPORTED_FEATURE!>context(String, Int)<!>
+class D constructor(){}
+
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
+class C(){}
+
+<!UNSUPPORTED_FEATURE!>context(String, Int)<!>
 class A {
     <!UNSUPPORTED_FEATURE!>context(Any)<!>
     val p: Any get() = 42

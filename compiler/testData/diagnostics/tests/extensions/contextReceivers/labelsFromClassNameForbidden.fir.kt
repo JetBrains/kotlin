@@ -3,11 +3,11 @@ fun List<Int>.f() {
     this@List.size
 }
 
-context(String)
+<!UNSUPPORTED_FEATURE!>context(String)<!>
 fun Int.f() {
     this@String.length
     this@Int.toDouble()
 }
 
-context(String)
+<!UNSUPPORTED_FEATURE!>context(String)<!>
 val p: String get() = this@String
