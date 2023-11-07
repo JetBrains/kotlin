@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 
 class CodegenWithIrFakeOverrideGeneratorSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
@@ -22,6 +24,9 @@ class CodegenWithIrFakeOverrideGeneratorSuppressor(testServices: TestServices) :
                         AssertionError("Looks like this test can be unmuted. Remove $IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION directive.").wrap()
                     )
                 else emptyList()
+            testServices.defaultsProvider.defaultTargetBackend
+                    in testServices.moduleStructure.allDirectives[CodegenTestDirectives.IGNORE_BACKEND_K2] ->
+                emptyList()
             else -> failedAssertions
         }
     }

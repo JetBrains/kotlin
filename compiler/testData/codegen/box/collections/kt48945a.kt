@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: in progress (M.G.), different structure of f/o
+// FIR status: different structure of fake overrides. Fixed in the IR fake override builder.
 // IGNORE_BACKEND: ANDROID
 //  ^ NSME: java.util.AbstractMap.remove
 // FULL_JDK

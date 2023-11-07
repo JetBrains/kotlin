@@ -128,13 +128,13 @@ class Fir2IrTypeConverter(
                         ?: return createErrorType()
 
                 when {
-                    hasEnhancedNullability -> {
-                        builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
+                    hasFlexibleNullability -> {
+                        builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
                             typeAnnotations += it
                         }
                     }
-                    hasFlexibleNullability -> {
-                        builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
+                    hasEnhancedNullability -> {
+                        builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
                             typeAnnotations += it
                         }
                     }
