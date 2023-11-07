@@ -4,7 +4,7 @@ fun foo(javaClass: JavaClass) {
     javaClass.<!VAL_REASSIGNMENT!>something2<!>++
     javaClass.<!VAL_REASSIGNMENT!>something3<!>++
     javaClass.<!VAL_REASSIGNMENT!>something4<!>++
-    javaClass.something5 = null
+    javaClass.<!VAL_REASSIGNMENT!>something5<!> = null
 }
 
 // FILE: JavaClass.java

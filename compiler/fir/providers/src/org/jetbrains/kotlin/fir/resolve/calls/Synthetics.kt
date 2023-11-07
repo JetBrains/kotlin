@@ -133,8 +133,9 @@ class FirSyntheticPropertiesScope private constructor(
                 if (matchingSetter != null) return
 
                 val setter = setterSymbol.fir
-                val parameter = setter.valueParameters.singleOrNull() ?: return
                 if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
+                val parameter = setter.valueParameters.singleOrNull() ?: return
+                if (parameter.isVararg) return
                 val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
                 if (!setterTypeIsConsistentWithGetterType(propertyName, getterSymbol, setterSymbol, parameterType)) return
                 matchingSetter = setterSymbol.fir
