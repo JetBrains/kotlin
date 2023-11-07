@@ -111,3 +111,20 @@ inline fun <reified T> assertIsInstance(value: Any?): T {
     if (value is T) return value
     fail("Expected $value to implement ${T::class.java}")
 }
+
+/**
+ * Assert that given consumable configuration [configurationName] depends on [expectedTaskNames] tasks
+ */
+fun Project.assertConfigurationsHaveTaskDependencies(
+    configurationName: String,
+    vararg expectedTaskNames: String
+) {
+    val actualNames = configurations
+        .getByName(configurationName)
+        .outgoing
+        .artifacts
+        .buildDependencies.getDependencies(null)
+        .map { it.path }
+
+    assertEquals(expectedTaskNames.toSet(), actualNames.toSet(), "Unexpected task dependencies for $configurationName")
+}
