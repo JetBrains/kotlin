@@ -16,8 +16,8 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
+import androidx.compose.compiler.plugins.kotlin.isComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.lower.decoys.isDecoy
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -58,9 +58,7 @@ import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -86,13 +84,20 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         }
 
         return super.visitSimpleFunction(declaration).also {
-            it.overriddenSymbols.forEach {
-                if (!it.isBound) {
+            it.overriddenSymbols.forEach { symbol ->
+                if (!symbol.isBound) {
                     // symbol will be rebound by deep copy on later iteration
                     return@forEach
                 }
-                if (it.owner.needsComposableRemapping() && !it.owner.isDecoy()) {
-                    it.owner.remapTypes(typeRemapper)
+                val overriddenFn = symbol.owner
+                if (overriddenFn.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB) {
+                    // this is external function that is in a different compilation unit,
+                    // so we potentially need to update composable types for it.
+                    // if the function is in the current module, it should be updated eventually
+                    // by this deep copy pass.
+                    if (overriddenFn.needsComposableRemapping() && !overriddenFn.isDecoy()) {
+                        overriddenFn.remapTypes(typeRemapper)
+                    }
                 }
             }
             it.correspondingPropertySymbol = declaration.correspondingPropertySymbol
@@ -219,7 +224,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
     private fun needsComposableRemapping(type: IrType?): Boolean {
         if (type == null) return false
         if (type !is IrSimpleType) return false
-        if (type.isComposable()) return true
+        if (type.hasComposableAnnotation()) return true
         if (type.arguments.any { needsComposableRemapping(it.typeOrNull) }) return true
         return false
     }
@@ -240,7 +245,7 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
                 // or function type is composable (K1)
                 containingClass.defaultType.isSyntheticComposableFunction() || (
                     containingClass.defaultType.isFunction() &&
-                        expression.dispatchReceiver?.type?.isComposable() == true
+                        expression.dispatchReceiver?.type?.hasComposableAnnotation() == true
                 )
             )
         ) {
@@ -402,10 +407,6 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
             dispatchReceiver = original.dispatchReceiver?.transform()
             extensionReceiver = original.extensionReceiver?.transform()
         }
-
-    private fun IrType.isComposable(): Boolean {
-        return annotations.hasAnnotation(ComposeFqNames.Composable)
-    }
 }
 
 class ComposerTypeRemapper(
@@ -505,9 +506,6 @@ class ComposerTypeRemapper(
             annotations
         )
 }
-
-private fun IrConstructorCall.isComposableAnnotation() =
-    this.symbol.owner.parent.fqNameForIrSerialization == ComposeFqNames.Composable
 
 private val KotlinFunctionsBuiltInsPackageFqName = StandardNames.BUILT_INS_PACKAGE_FQ_NAME
     .child(Name.identifier("jvm"))
