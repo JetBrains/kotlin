@@ -288,6 +288,7 @@ class Fir2IrDeclarationStorage(
         isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrSimpleFunction {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.ownerIfBound()?.let { return it }
         /*
          * Declaration storage doesn't know how to create lazy fake-overrides, it is responsibility of
@@ -298,6 +299,7 @@ class Fir2IrDeclarationStorage(
          */
         if (fakeOverrideOwnerLookupTag != function.containingClassLookupTag()) {
             generateLazyFakeOverrides(function.nameOrSpecialName, fakeOverrideOwnerLookupTag)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.ownerIfBound()?.let { return it }
         }
         return createAndCacheIrFunction(function, irParent(), predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
@@ -392,6 +394,7 @@ class Fir2IrDeclarationStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
     ): IrConstructor {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         getCachedIrConstructorSymbol(constructor)?.ownerIfBound()?.let { return it }
         return createAndCacheIrConstructor(constructor, irParent, predefinedOrigin, isLocal)
     }
@@ -476,10 +479,12 @@ class Fir2IrDeclarationStorage(
     ): IrProperty {
         @Suppress("NAME_SHADOWING")
         val property = prepareProperty(property)
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         getCachedIrPropertySymbol(property, fakeOverrideOwnerLookupTag)?.ownerIfBound()?.let { return it }
         // See comment in [getOrCreateIrFunction]
         if (fakeOverrideOwnerLookupTag != property.containingClassLookupTag()) {
             generateLazyFakeOverrides(property.name, fakeOverrideOwnerLookupTag)
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             getCachedIrPropertySymbol(property, fakeOverrideOwnerLookupTag)?.ownerIfBound()?.let { return it }
         }
         return createAndCacheIrProperty(property, irParent(), predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
@@ -626,6 +631,7 @@ class Fir2IrDeclarationStorage(
         val fir = firFieldSymbol.fir
         val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(fir, fakeOverrideOwnerLookupTag)
         if (staticFakeOverrideKey == null) {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
             fieldCache[fir]?.ownerIfBound()?.let { return it }
         } else {
             generateLazyFakeOverrides(fir.name, fakeOverrideOwnerLookupTag)
@@ -646,6 +652,7 @@ class Fir2IrDeclarationStorage(
     // TODO: there is a mess with methods for fields
     //   we have three (!) different functions to getOrCreate field in different circumstances
     fun getOrCreateIrField(field: FirField, irParent: IrDeclarationParent?): IrField {
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
         getCachedIrFieldSymbol(field, irParent)?.ownerIfBound()?.let { return it }
         return createAndCacheIrField(field, irParent)
     }
@@ -674,6 +681,7 @@ class Fir2IrDeclarationStorage(
                 if (fir.isLocal) {
                     return localStorage.getDelegatedProperty(fir)?.delegate?.symbol ?: getIrVariableSymbol(fir)
                 }
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
                 propertyCache[fir]?.ownerIfBound()?.let { return it.backingField!!.symbol }
                 val irParent = findIrParent(fir, fakeOverrideOwnerLookupTag = null)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
@@ -1198,7 +1206,12 @@ annotation class LeakedDeclarationCaches
 @RequiresOptIn
 annotation class GetOrCreateSensitiveAPI
 
-@OptIn(UnsafeDuringIrConstructionAPI::class)
+/**
+ * This function is introduced as preparation to publishing unbound symbols in fir2ir
+ * There is a probability that it won't be non needed in future, but for now it allows
+ *   to easily track all places left when we need to extract owner from symbol
+ */
+@UnsafeDuringIrConstructionAPI
 internal fun <D : IrDeclaration> IrBindableSymbol<*, D>.ownerIfBound(): D? {
     return runIf(isBound) { owner }
 }

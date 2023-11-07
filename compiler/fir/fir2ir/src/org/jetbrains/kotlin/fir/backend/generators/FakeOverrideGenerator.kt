@@ -272,13 +272,15 @@ class FakeOverrideGenerator(
             // Now we avoid this problem by signature caching,
             // so both FIR overrides correspond to one IR fake override
             signatureComposer.composeSignature(fakeOverrideFirDeclaration)
-        }?.takeIf { it.ownerIfBound()?.parent == irClass }
-            ?: createIrDeclaration(
-                fakeOverrideFirDeclaration,
-                irClass,
-                IrDeclarationOrigin.FAKE_OVERRIDE,
-                isLocal
-            ).symbol as IS
+        }?.takeIf {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            it.ownerIfBound()?.parent == irClass
+        } ?: createIrDeclaration(
+            fakeOverrideFirDeclaration,
+            irClass,
+            IrDeclarationOrigin.FAKE_OVERRIDE,
+            isLocal
+        ).symbol as IS
 
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val owner = irSymbol.owner
