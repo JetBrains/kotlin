@@ -13,5 +13,5 @@ fun lib(a: Int = 5): String {
 import lib.lib
 
 fun test() {
-    lib()
+    <caret>lib()
 }

@@ -69,9 +69,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
     }
 
     override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val mainModule = moduleStructure.modules.first { it.name == "main" }
-        val ktFiles = testServices.ktModuleProvider.getModuleFiles(mainModule).filterIsInstance<KtFile>()
-        val ktFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
+        val (mainModule, ktFile) = findTargetFile(moduleStructure, testServices)
 
         val irCollector = CollectingIrGenerationExtension()
 
@@ -117,6 +115,28 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 testServices.assertions.assertEqualsToTestDataFileSibling(irCollector.result, extension = ".ir.txt")
             }
         }
+    }
+
+    private fun findTargetFile(moduleStructure: TestModuleStructure, testServices: TestServices): Pair<TestModule, KtFile> {
+        if (moduleStructure.modules.size == 1) {
+            val testModule = moduleStructure.modules.single()
+            val psiFiles = testServices.ktModuleProvider.getModuleFiles(testModule)
+            val ktFiles = psiFiles.filterIsInstance<KtFile>()
+            if (ktFiles.size == 1) {
+                // In simpler whole-file compilation tests, do not require the '<caret>'
+                return testModule to ktFiles.single()
+            }
+        }
+
+        for (testModule in moduleStructure.modules) {
+            for (psiFile in testServices.ktModuleProvider.getModuleFiles(testModule)) {
+                if (psiFile is KtFile && testServices.expressionMarkerProvider.getCaretPositionOrNull(psiFile) != null) {
+                    return testModule to psiFile
+                }
+            }
+        }
+
+        error("Cannot find the main test file")
     }
 
     override fun configureTest(builder: TestConfigurationBuilder) {
