@@ -39,28 +39,26 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
             }
         }
 
-        compiledBir.subtreeShuffleTransaction {
-            val function = expression.function
-            val block = BirBlock.build {
-                this.sourceSpan = sourceSpan
-                type = expression.type
-                origin = expression.origin
+        val function = expression.function
+        val block = BirBlock.build {
+            this.sourceSpan = sourceSpan
+            type = expression.type
+            origin = expression.origin
 
-                statements += function
-                statements += BirFunctionReferenceImpl(
-                    sourceSpan = sourceSpan,
-                    type = expression.type,
-                    symbol = function,
-                    dispatchReceiver = null,
-                    extensionReceiver = null,
-                    origin = expression.origin,
-                    typeArguments = emptyList(),
-                    reflectionTarget = null,
-                ).apply {
-                    copyAttributes(expression)
-                }
+            statements += function
+            statements += BirFunctionReferenceImpl(
+                sourceSpan = sourceSpan,
+                type = expression.type,
+                symbol = function,
+                dispatchReceiver = null,
+                extensionReceiver = null,
+                origin = expression.origin,
+                typeArguments = emptyList(),
+                reflectionTarget = null,
+            ).apply {
+                copyAttributes(expression)
             }
-            expression.replaceWith(block)
         }
+        expression.replaceWith(block)
     }
 }

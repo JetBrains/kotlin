@@ -22,7 +22,8 @@ import kotlin.experimental.or
 
 abstract class BirElementBase : BirElementParent(), BirElement {
     /**
-     * It may get out-of-sync only inside [BirForest.subtreeShuffleTransaction]
+     * Root reference may be stale.
+     * To actualize it for all elements in a forest, call [BirForest.realizeTreeMovements]
      */
     internal var root: BirForest? = null
     internal var _parent: BirElementParent? = null
@@ -56,6 +57,8 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     internal open fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
 
     fun isAncestorOf(other: BirElementBase): Boolean {
+        root?.realizeTreeMovements()
+        other.root?.realizeTreeMovements()
         if (root !== other.root) {
             return false
         }
@@ -67,6 +70,19 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         }
 
         return false
+    }
+
+    internal fun findRootFromAncestors(): BirForest? {
+        var n = _parent
+        while (true) {
+            when (n) {
+                null -> break
+                is BirElementBase -> n = n._parent
+                is BirForest -> return n
+            }
+        }
+
+        return null
     }
 
 
@@ -183,6 +199,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     }
 
     fun <E : BirElement> getBackReferences(key: BirElementBackReferencesKey<E>): List<E> {
+        root?.flushElementsWithInvalidatedIndexBuffer()
         require(attachedToTree) { "Element must be attached to tree" }
 
         val array: Array<BirElementBase?>
@@ -226,7 +243,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
     companion object {
         const val FLAG_IN_INVALIDATE_INDEX_BUFFER: Byte = (1 shl 0).toByte()
-        const val FLAG_MARKED_DIRTY_IN_SUBTREE_SHUFFLE_TRANSACTION: Byte = (1 shl 1).toByte()
+        const val FLAG_IS_IN_MOVED_ELEMENTS_BUFFER: Byte = (1 shl 1).toByte()
 
         const val CONTAINING_LIST_ID_BITS = 3
     }
