@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendK
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator() {
     override val analyseInDependentSession: Boolean get() = false
@@ -39,7 +41,11 @@ object AnalysisApiFirLibraryBinaryTestConfigurator : AnalysisApiTestConfigurator
         builder.apply {
             useAdditionalService<TestModuleCompiler> { DispatchingTestModuleCompiler() }
             useAdditionalService<TestModuleDecompiler> { TestModuleDecompilerJar() }
-            useConfigurators(::AnalysisApiJvmEnvironmentConfigurator)
+            useConfigurators(
+                ::CommonEnvironmentConfigurator,
+                ::AnalysisApiJvmEnvironmentConfigurator,
+                ::JsEnvironmentConfigurator
+            )
         }
     }
 
