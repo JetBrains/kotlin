@@ -17,6 +17,9 @@ class UnstableDelegateProp {
     A(X(listOf(StableClass())))
     A(StableDelegateProp())
     A(UnstableDelegateProp())
+    A(SingleParamProp(0))
+    A(SingleParamNonProp(0))
+    A(SingleParamProp(Any()))
 }
 
 //
@@ -52,7 +55,7 @@ class UnstableDelegateProp {
 @Composable
 fun A(y: Any, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>:Test.kt")
+  sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>,<A(Sing...>,<A(Sing...>,<A(Sing...>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
@@ -60,6 +63,9 @@ fun A(y: Any, %composer: Composer?, %changed: Int) {
   A(X(listOf(StableClass())), %composer, 0b1000)
   A(StableDelegateProp(), %composer, 0)
   A(UnstableDelegateProp(), %composer, UnstableDelegate.%stable)
+  A(SingleParamProp(0), %composer, SingleParamProp.%stable or 0)
+  A(SingleParamNonProp(0), %composer, SingleParamNonProp.%stable)
+  A(SingleParamProp(Any()), %composer, 0b1000)
   if (isTraceInProgress()) {
     traceEventEnd()
   }
