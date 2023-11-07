@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.parcelize.ParcelizeNames.OLD_PARCELIZE_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELIZE_FQN
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCEL_ID
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
+import org.jetbrains.kotlin.parcelize.fir.diagnostics.checkParcelizeClassSymbols
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
@@ -106,18 +107,8 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
             classSymbol.rawStatus.modality == Modality.ABSTRACT || classSymbol.rawStatus.modality == Modality.SEALED -> emptySet()
-            classSymbol in matchedClasses && classSymbol.rawStatus.modality != Modality.SEALED -> parcelizeMethodsNames
-            else -> {
-                val hasAnnotatedSealedSuperType = classSymbol.resolvedSuperTypeRefs.any {
-                    val superSymbol = it.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
-                    superSymbol.rawStatus.modality == Modality.SEALED && superSymbol in matchedClasses
-                }
-                if (hasAnnotatedSealedSuperType) {
-                    parcelizeMethodsNames
-                } else {
-                    emptySet()
-                }
-            }
+            checkParcelizeClassSymbols(classSymbol, session) { it in matchedClasses } -> parcelizeMethodsNames
+            else -> emptySet()
         }
     }
 

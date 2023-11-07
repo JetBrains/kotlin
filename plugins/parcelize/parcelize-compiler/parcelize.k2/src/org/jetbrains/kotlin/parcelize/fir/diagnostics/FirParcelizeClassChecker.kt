@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.parcelize.fir.diagnostics
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -116,10 +116,27 @@ fun FirClassSymbol<*>?.isParcelize(session: FirSession): Boolean {
     }
 
     if (this == null) return false
-    if (this.annotations.any { it.toAnnotationClassId(session) in PARCELIZE_CLASS_CLASS_IDS }) return true
-    return resolvedSuperTypeRefs.any { superTypeRef ->
-        val symbol = superTypeRef.type.fullyExpandedType(session).toRegularClassSymbol(session) ?: return@any false
+    return checkParcelizeClassSymbols(this, session) { symbol ->
         symbol.annotations.any { it.toAnnotationClassId(session) in PARCELIZE_CLASS_CLASS_IDS }
+    }
+}
+
+/**
+ * Check all related [FirClassSymbol]s to the provided [symbol] which are valid locations for a
+ * `Parcelize` annotation to be present. This commonizes class symbol navigation between checker and
+ * generator, even though [predicate] implementation is different.
+ */
+inline fun checkParcelizeClassSymbols(
+    symbol: FirClassSymbol<*>,
+    session: FirSession,
+    predicate: (FirClassSymbol<*>) -> Boolean,
+): Boolean {
+    if (predicate(symbol)) return true
+    return symbol.resolvedSuperTypeRefs.any { superTypeRef ->
+        val superTypeSymbol = superTypeRef.type.toRegularClassSymbol(session)
+            ?.takeIf { it.rawStatus.modality == Modality.SEALED }
+            ?: return@any false
+        predicate(superTypeSymbol)
     }
 }
 
