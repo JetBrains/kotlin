@@ -76,6 +76,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     }
 
     @Test
+    @TestMetadata("main.kt")
+    public void testMain() throws Exception {
+        runTest("testData/box/main.kt");
+    }
+
+    @Test
     @TestMetadata("OuterClass.kt")
     public void testOuterClass() throws Exception {
         runTest("testData/box/OuterClass.kt");

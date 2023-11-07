@@ -29,7 +29,8 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     receiverType: ConeClassLikeTypeImpl,
     propertyName: Name,
     returnTypeRef: FirResolvedTypeRef,
-    symbol: FirClassSymbol<*>? = null
+    symbol: FirClassSymbol<*>? = null,
+    effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public
 ): FirProperty {
     val firPropertySymbol = FirPropertySymbol(callableId)
     return buildProperty {
@@ -39,7 +40,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
         status = FirResolvedDeclarationStatusImpl(
                 Visibilities.Public,
                 Modality.FINAL,
-                EffectiveVisibility.Public
+                effectiveVisibility
         )
         this.returnTypeRef = returnTypeRef
         receiverParameter = buildReceiverParameter {
@@ -74,7 +75,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
             status = FirResolvedDeclarationStatusImpl(
                     Visibilities.Public,
                     Modality.FINAL,
-                    EffectiveVisibility.Public
+                    effectiveVisibility
             )
         }.also { firPropertyAccessorSymbol.bind(it) }
         name = propertyName
