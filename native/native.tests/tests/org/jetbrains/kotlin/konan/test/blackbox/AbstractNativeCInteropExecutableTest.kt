@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
 import java.io.File
 
-@TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 abstract class AbstractNativeCInteropExecutableTest : AbstractNativeSimpleTest() {
     fun runTest(
