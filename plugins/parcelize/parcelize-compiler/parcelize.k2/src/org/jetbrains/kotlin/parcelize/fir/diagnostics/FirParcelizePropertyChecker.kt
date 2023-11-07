@@ -65,7 +65,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val type = property.returnTypeRef.coneType
+        val type = property.returnTypeRef.coneType.fullyExpandedType(context.session)
         if (type is ConeErrorType || containingClassSymbol.hasCustomParceler(context.session) || property.hasIgnoredOnParcel()) {
             return
         }
