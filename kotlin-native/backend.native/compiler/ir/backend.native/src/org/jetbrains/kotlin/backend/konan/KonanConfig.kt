@@ -405,6 +405,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val objCNativeLibrary: String =
             File(distribution.defaultNatives(target)).child("objc.bc").absolutePath
 
+    internal val xcTestLauncherNativeLibrary: String =
+            File(distribution.defaultNatives(target)).child("xctest_launcher.bc").absolutePath
+
     internal val exceptionsSupportNativeLibrary: String =
             File(distribution.defaultNatives(target)).child("exceptionsSupport.bc").absolutePath
 

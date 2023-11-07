@@ -7,6 +7,7 @@
 #define RUNTIME_RUNTIME_H
 
 #include "Porting.h"
+#include "Memory.h"
 
 #ifdef __cplusplus
 extern "C" {

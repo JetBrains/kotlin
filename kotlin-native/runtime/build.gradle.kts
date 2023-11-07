@@ -360,6 +360,15 @@ bitcode {
             }
         }
 
+        module("xctest_launcher") {
+            headersDirs.from(files("src/main/cpp"))
+
+            sourceSets {
+                main {}
+            }
+            onlyIf { target.family.isAppleFamily }
+        }
+
         testsGroup("custom_alloc_runtime_tests") {
             testedModules.addAll("custom_alloc")
             testSupportModules.addAll("main", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "concurrent_ms_gc_custom", "objc")

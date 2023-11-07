@@ -93,11 +93,14 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val additionalBitcodeFilesToLink = generationState.llvm.additionalProducedBitcodeFiles
     val exceptionsSupportNativeLibrary = listOf(config.exceptionsSupportNativeLibrary)
             .takeIf { config.produce == CompilerOutputKind.DYNAMIC_CACHE }.orEmpty()
+    val xcTestRunnerNativeLibrary = listOf(config.xcTestLauncherNativeLibrary)
+            .takeIf { config.produce == CompilerOutputKind.TEST_BUNDLE }.orEmpty()
     val additionalBitcodeFiles = nativeLibraries +
             generatedBitcodeFiles +
             additionalBitcodeFilesToLink +
             bitcodeLibraries +
-            exceptionsSupportNativeLibrary
+            exceptionsSupportNativeLibrary +
+            xcTestRunnerNativeLibrary
 
     val runtimeNativeLibraries = config.runtimeNativeLibraries
 
