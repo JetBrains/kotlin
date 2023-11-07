@@ -1465,6 +1465,9 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                 A(X(listOf(StableClass())))
                 A(StableDelegateProp())
                 A(UnstableDelegateProp())
+                A(SingleParamProp(0))
+                A(SingleParamNonProp(0))
+                A(SingleParamProp(Any()))
             }
         """
         )
