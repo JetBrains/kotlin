@@ -854,6 +854,24 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
         }
 
         @Test
+        @TestMetadata("resultWithPropagatedType.kts")
+        public void testResultWithPropagatedType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/resultWithPropagatedType.kts");
+        }
+
+        @Test
+        @TestMetadata("scriptWithResultWithPropagatedType.kts")
+        public void testScriptWithResultWithPropagatedType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/scriptWithResultWithPropagatedType.kts");
+        }
+
+        @Test
+        @TestMetadata("scriptWithTypeAnnotationsOnDeclaration.kts")
+        public void testScriptWithTypeAnnotationsOnDeclaration() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/scriptWithTypeAnnotationsOnDeclaration.kts");
+        }
+
+        @Test
         @TestMetadata("simpleLoopInOverride2Script.kts")
         public void testSimpleLoopInOverride2Script() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverride2Script.kts");
