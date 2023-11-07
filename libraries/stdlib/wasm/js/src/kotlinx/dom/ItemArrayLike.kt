@@ -6,8 +6,8 @@
 package org.w3c.dom
 
 public external interface ItemArrayLike<out T : JsAny?> : JsAny {
-    val length: Int
-    fun item(index: Int): T?
+    public val length: Int
+    public fun item(index: Int): T?
 }
 
 public fun <T : JsAny?> ItemArrayLike<T>.asList(): List<T> = object : AbstractList<T>() {

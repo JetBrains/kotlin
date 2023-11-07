@@ -21,7 +21,7 @@ public fun Node.clear() {
  * @return this element
  */
 @SinceKotlin("1.4")
-fun Element.appendText(text: String): Element {
+public fun Element.appendText(text: String): Element {
     appendChild(ownerDocument!!.createTextNode(text))
     return this
 }

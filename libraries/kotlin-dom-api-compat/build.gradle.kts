@@ -10,6 +10,7 @@ val jsStdlibSources = "${projectDir}/../stdlib/js/src"
 
 @Suppress("UNUSED_VARIABLE")
 kotlin {
+    explicitApi()
     js {
         sourceSets {
             val main by getting {
