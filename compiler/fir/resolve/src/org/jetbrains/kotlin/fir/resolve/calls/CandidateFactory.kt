@@ -125,7 +125,7 @@ class CandidateFactory private constructor(
         // There is no need to unwrap unary operators
         if (fir.valueParameters.isEmpty()) return this
         val original = fir.originalForWrappedIntegerOperator ?: return this
-        return if (callInfo.arguments.first().isIntegerLiteralOrOperatorCall()) {
+        return if (callInfo.arguments.firstOrNull()?.isIntegerLiteralOrOperatorCall() == true) {
             this
         } else {
             original

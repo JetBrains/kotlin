@@ -12295,6 +12295,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("incorrectCallOnILT.kt")
+            public void testIncorrectCallOnILT() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exceptions/incorrectCallOnILT.kt");
+            }
+
+            @Test
             @TestMetadata("kt24158.kt")
             public void testKt24158() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/exceptions/kt24158.kt");
