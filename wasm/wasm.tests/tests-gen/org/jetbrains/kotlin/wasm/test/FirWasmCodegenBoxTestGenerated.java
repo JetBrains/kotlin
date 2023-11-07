@@ -1887,6 +1887,436 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
             public void testKt60291simplified() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/issues/kt60291simplified.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt47989")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt47989 {
+                @Test
+                public void testAllFilesPresentInKt47989() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt47989"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt47989/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt49160")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt49160 {
+                @Test
+                public void testAllFilesPresentInKt49160() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt49160"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("alternative1.kt")
+                public void testAlternative1() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt49160/alternative1.kt");
+                }
+
+                @Test
+                @TestMetadata("alternative2.kt")
+                public void testAlternative2() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt49160/alternative2.kt");
+                }
+
+                @Test
+                @TestMetadata("alternative3.kt")
+                public void testAlternative3() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt49160/alternative3.kt");
+                }
+
+                @Test
+                @TestMetadata("alternative4.kt")
+                public void testAlternative4() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt49160/alternative4.kt");
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt49160/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt50827")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt50827 {
+                @Test
+                public void testAllFilesPresentInKt50827() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt50827"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("alternative.kt")
+                public void testAlternative() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt50827/alternative.kt");
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt50827/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt52757")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt52757 {
+                @Test
+                public void testAllFilesPresentInKt52757() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt52757"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt52757/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt53109")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt53109 {
+                @Test
+                public void testAllFilesPresentInKt53109() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt53109"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53109/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt53422")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt53422 {
+                @Test
+                public void testAllFilesPresentInKt53422() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt53422"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("alternative1.kt")
+                public void testAlternative1() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53422/alternative1.kt");
+                }
+
+                @Test
+                @TestMetadata("alternative2.kt")
+                public void testAlternative2() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53422/alternative2.kt");
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53422/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt53553")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt53553 {
+                @Test
+                public void testAllFilesPresentInKt53553() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt53553"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53553/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt53639")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt53639 {
+                @Test
+                public void testAllFilesPresentInKt53639() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt53639"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53639/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt53740")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt53740 {
+                @Test
+                public void testAllFilesPresentInKt53740() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt53740"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified1.kt")
+                public void testSimplified1() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53740/simplified1.kt");
+                }
+
+                @Test
+                @TestMetadata("simplified2.kt")
+                public void testSimplified2() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53740/simplified2.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt54400")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt54400 {
+                @Test
+                public void testAllFilesPresentInKt54400() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt54400"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt54400/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt54664")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt54664 {
+                @Test
+                public void testAllFilesPresentInKt54664() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt54664"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("alternative.kt")
+                public void testAlternative() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt54664/alternative.kt");
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt54664/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt54767")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt54767 {
+                @Test
+                public void testAllFilesPresentInKt54767() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt54767"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("original.kt")
+                public void testOriginal() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt54767/original.kt");
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt54767/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt55056")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt55056 {
+                @Test
+                public void testAllFilesPresentInKt55056() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt55056"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt55056/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt55057")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt55057 {
+                @Test
+                public void testAllFilesPresentInKt55057() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt55057"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt55057/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt55281")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt55281 {
+                @Test
+                public void testAllFilesPresentInKt55281() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt55281"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt55281/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt56949")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt56949 {
+                @Test
+                public void testAllFilesPresentInKt56949() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt56949"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt56949/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt57707")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt57707 {
+                @Test
+                public void testAllFilesPresentInKt57707() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt57707"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt57707/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt59426")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt59426 {
+                @Test
+                public void testAllFilesPresentInKt59426() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt59426"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt59426/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt59798")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt59798 {
+                @Test
+                public void testAllFilesPresentInKt59798() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt59798"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("alternative.kt")
+                public void testAlternative() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt59798/alternative.kt");
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt59798/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt60291")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt60291 {
+                @Test
+                public void testAllFilesPresentInKt60291() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt60291"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt60291/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt60447")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt60447 {
+                @Test
+                public void testAllFilesPresentInKt60447() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt60447"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("alternative1.kt")
+                public void testAlternative1() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt60447/alternative1.kt");
+                }
+
+                @Test
+                @TestMetadata("alternative2.kt")
+                public void testAlternative2() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt60447/alternative2.kt");
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt60447/simplified.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues/kt63648")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Kt63648 {
+                @Test
+                public void testAllFilesPresentInKt63648() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues/kt63648"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Test
+                @TestMetadata("simplified.kt")
+                public void testSimplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt63648/simplified.kt");
+                }
+            }
         }
 
         @Nested
