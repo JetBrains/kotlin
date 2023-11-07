@@ -131,7 +131,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
                 allowedWritingMemberExpectForActualMapping = true,
             )
             val actualContainingClass = context.containingDeclarations.lastOrNull()?.symbol as? FirRegularClassSymbol
-            val expectContainingClass = actualContainingClass?.getSingleExpectForActualOrNull() as? FirRegularClassSymbol
+            val expectContainingClass = actualContainingClass?.getSingleMatchedExpectForActualOrNull() as? FirRegularClassSymbol
             getCheckingCompatibility(
                 symbol,
                 expectedSingleCandidate,

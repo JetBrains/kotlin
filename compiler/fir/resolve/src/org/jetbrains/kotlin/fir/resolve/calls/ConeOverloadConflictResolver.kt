@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.getSingleExpectForActualOrNull
+import org.jetbrains.kotlin.fir.declarations.getSingleMatchedExpectForActualOrNull
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -297,7 +297,7 @@ class ConeOverloadConflictResolver(
         val expectForActualSymbols = candidates
             .mapNotNullTo(mutableSetOf()) {
                 val callableSymbol = it.symbol as? FirCallableSymbol<*> ?: return@mapNotNullTo null
-                runIf(callableSymbol.isActual) { callableSymbol.getSingleExpectForActualOrNull() }
+                runIf(callableSymbol.isActual) { callableSymbol.getSingleMatchedExpectForActualOrNull() }
             }
 
         return if (expectForActualSymbols.isEmpty()) {

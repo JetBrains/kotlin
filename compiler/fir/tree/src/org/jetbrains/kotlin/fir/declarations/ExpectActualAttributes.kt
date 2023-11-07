@@ -28,16 +28,22 @@ typealias ExpectForActualMatchingData = Map<ExpectActualMatchingCompatibility, L
 @SymbolInternals
 var FirDeclaration.expectForActual: ExpectForActualMatchingData? by FirDeclarationDataRegistry.data(ExpectForActualAttributeKey)
 
-/**
- * @see expectForActual
- */
+// Used in Compose. It's not clear for how long the compatibility must be preserved.
+// Please consult https://jetbrains.team/p/kti/documents/a/18Yt390c5HIq
+@Deprecated("Use getSingleMatchedExpectForActualOrNull instead", ReplaceWith("getSingleMatchedExpectForActualOrNull()"))
 fun FirFunctionSymbol<*>.getSingleExpectForActualOrNull(): FirFunctionSymbol<*>? =
-    (this as FirBasedSymbol<*>).getSingleExpectForActualOrNull() as? FirFunctionSymbol<*>
+    getSingleMatchedExpectForActualOrNull()
 
 /**
  * @see expectForActual
  */
-fun FirBasedSymbol<*>.getSingleExpectForActualOrNull(): FirBasedSymbol<*>? =
+fun FirFunctionSymbol<*>.getSingleMatchedExpectForActualOrNull(): FirFunctionSymbol<*>? =
+    (this as FirBasedSymbol<*>).getSingleMatchedExpectForActualOrNull() as? FirFunctionSymbol<*>
+
+/**
+ * @see expectForActual
+ */
+fun FirBasedSymbol<*>.getSingleMatchedExpectForActualOrNull(): FirBasedSymbol<*>? =
     expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully)?.singleOrNull()
 
 /**

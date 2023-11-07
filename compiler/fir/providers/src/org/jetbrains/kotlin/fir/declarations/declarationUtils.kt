@@ -116,7 +116,7 @@ private fun FirFunction.containsDefaultValue(index: Int): Boolean = valueParamet
  *  for this actual.
  */
 fun FirFunction.itOrExpectHasDefaultParameterValue(index: Int): Boolean =
-    containsDefaultValue(index) || symbol.getSingleExpectForActualOrNull()?.fir?.containsDefaultValue(index) == true
+    containsDefaultValue(index) || symbol.getSingleMatchedExpectForActualOrNull()?.fir?.containsDefaultValue(index) == true
 
 fun FirSimpleFunction.isEquals(session: FirSession): Boolean {
     if (name != OperatorNameConventions.EQUALS) return false
