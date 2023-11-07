@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.expression
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -58,6 +59,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
         checkAnnotationUsedAsAnnotationArgument(expression, context, reporter)
         checkNotAClass(expression, context, reporter)
         checkErrorSuppression(annotationClassId, argumentMapping, reporter, context)
+        checkContextFunctionTypeParams(expression.source, annotationClassId, reporter, context)
     }
 
     private fun checkAnnotationArgumentWithSubElements(
@@ -247,5 +249,21 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
             }
             reporter.reportOn(nameExpression.source, FirErrors.ERROR_SUPPRESSION, parameter, context)
         }
+    }
+
+    private fun checkContextFunctionTypeParams(
+        source: KtSourceElement?,
+        annotationClassId: ClassId?,
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) return
+        if (annotationClassId != StandardClassIds.Annotations.ContextFunctionTypeParams) return
+        reporter.reportOn(
+            source,
+            FirErrors.UNSUPPORTED_FEATURE,
+            LanguageFeature.ContextReceivers to context.languageVersionSettings,
+            context
+        )
     }
 }
