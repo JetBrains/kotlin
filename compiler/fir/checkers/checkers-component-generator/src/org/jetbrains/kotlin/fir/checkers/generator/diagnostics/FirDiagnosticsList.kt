@@ -168,7 +168,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ApiVersion>("currentVersion")
         }
 
-        val UNRESOLVED_REFERENCE_WRONG_RECEIVER by error<PsiElement> {
+        val UNRESOLVED_REFERENCE_WRONG_RECEIVER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<Symbol>>("candidates")
         }
         val UNRESOLVED_IMPORT by error<PsiElement>(PositioningStrategy.IMPORT_LAST_NAME) {

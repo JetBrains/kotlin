@@ -29,7 +29,7 @@ fun test() {
     oldAndNew %= 1
 
     val onlyOld = OnlyOld()
-    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOld %= 1<!>
+    onlyOld <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>%=<!> 1
 
     val onlyNew = OnlyNew()
     onlyNew %= 1
