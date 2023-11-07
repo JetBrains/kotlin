@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 class SomeClass
 
 @Suppress("CONFLICTING_OVERLOADS")

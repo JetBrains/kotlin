@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticColl
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -48,9 +48,7 @@ internal open class LLFirDiagnosticVisitor(
         checkCanceled()
         element.accept(components.reportCommitter, context)
 
-        if (element is FirRegularClass) {
-            suppressReportedDiagnosticsOnClassMembers(element)
-        }
+        commitPendingDiagnosticsOnNestedDeclarations(element)
     }
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Nothing?) {
@@ -84,13 +82,33 @@ internal open class LLFirDiagnosticVisitor(
     }
 
     /**
-     * Some FirClassChecker may report diagnostics on class member headers.
-     * That diagnostics should be suppressed if we have a `@Suppress` annotation on class member.
+     * File and class checkers may report diagnostics on top-level declarations and class members, such as conflicting overload errors.
+     * Because we are collecting diagnostics for each structure element separately, this visitor will not visit these nested declarations by
+     * default, as the file/class and its nested declarations are different structure elements. Instead, all diagnostics produced during the
+     * visitor run will be committed at the end (see [FileStructureElementDiagnosticsCollector.collectForStructureElement]).
+     *
+     * Skipping nested declarations circumvents error suppression with `@Suppress` on top-level declarations and class members. This is
+     * because suppression usually works as such: When a diagnostic is first reported on an element `E`, it is "pending". Once element `E`
+     * is visited by the diagnostic visitor, it commits all pending diagnostics for `E`, including those reported by a file/class checker.
+     * Diagnostics which are suppressed in the current context are instead removed. Without committing pending diagnostics on each element
+     * `E`, suppression cannot take effect.
+     *
+     * [commitPendingDiagnosticsOnNestedDeclarations] commits pending diagnostics for directly nested elements, allowing the report
+     * committer to take suppression into account.
+     *
+     * It suffices to commit pending diagnostics for directly nested declarations, because checkers can only report diagnostics on directly
+     * accessible children. For example, a file checker can report a diagnostic on a top-level class, but not its member function.
      */
-    private fun suppressReportedDiagnosticsOnClassMembers(element: FirRegularClass) {
-        for (member in element.declarations) {
-            withAnnotationContainer(member) {
-                member.accept(components.reportCommitter, context)
+    private fun commitPendingDiagnosticsOnNestedDeclarations(element: FirElement) {
+        val declarations = when (element) {
+            is FirFile -> element.declarations
+            is FirRegularClass -> element.declarations
+            else -> return
+        }
+
+        for (declaration in declarations) {
+            withAnnotationContainer(declaration) {
+                declaration.accept(components.reportCommitter, context)
             }
         }
     }
