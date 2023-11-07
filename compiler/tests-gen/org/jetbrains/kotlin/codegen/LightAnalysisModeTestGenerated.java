@@ -2403,6 +2403,44 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("compiler/testData/codegen/box/builderInference/issues")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Issues extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInIssues() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("kt52757simplified.kt")
+            public void testKt52757simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt52757simplified.kt");
+            }
+
+            @TestMetadata("kt53109simplified.kt")
+            public void testKt53109simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53109simplified.kt");
+            }
+
+            @TestMetadata("kt53639simplified.kt")
+            public void testKt53639simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53639simplified.kt");
+            }
+
+            @TestMetadata("kt55057simplified.kt")
+            public void testKt55057simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt55057simplified.kt");
+            }
+
+            @TestMetadata("kt60291simplified.kt")
+            public void testKt60291simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt60291simplified.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
