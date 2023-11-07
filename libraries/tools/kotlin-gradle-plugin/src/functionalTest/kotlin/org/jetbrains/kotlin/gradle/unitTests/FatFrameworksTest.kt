@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.util.assertConfigurationsHaveTaskDependencies
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.*
@@ -98,6 +99,32 @@ class FatFrameworksTest {
         val fooFat = project.assertConfigurationExists("fooDebugFrameworkIosFat")
         assertEquals("fooDebugFramework", fooFat.attributes.getAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute))
         assertEquals("barDebugFramework", barFat.attributes.getAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute))
+    }
+
+    @Test
+    fun `consumable configurations of frameworks have correct dependencies on producing tasks`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                iosX64 { binaries.framework("foo", listOf(DEBUG)) }
+                iosArm64 { binaries.framework("foo", listOf(DEBUG)) }
+            }
+        }
+        project.evaluate()
+
+        project.assertConfigurationsHaveTaskDependencies(
+            "fooDebugFrameworkIosX64",
+            ":linkFooDebugFrameworkIosX64"
+        )
+
+        project.assertConfigurationsHaveTaskDependencies(
+            "fooDebugFrameworkIosArm64",
+            ":linkFooDebugFrameworkIosArm64"
+        )
+
+        project.assertConfigurationsHaveTaskDependencies(
+            "fooDebugFrameworkIosFat",
+            ":linkFooDebugFrameworkIosFat"
+        )
     }
 
     private fun testFatFrameworkGrouping(
