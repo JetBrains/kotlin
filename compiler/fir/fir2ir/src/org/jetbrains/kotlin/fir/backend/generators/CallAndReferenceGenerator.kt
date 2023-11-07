@@ -1021,17 +1021,26 @@ class CallAndReferenceGenerator(
         parameter: FirValueParameter?,
         substitutor: ConeSubstitutor,
     ): IrExpression {
-        val parameterConeType = parameter?.returnTypeRef?.coneType
+        val unsubstitutedParameterType = parameter?.returnTypeRef?.coneType?.fullyExpandedType(session)
         // Normally argument type should be correct itself.
         // However, for deserialized annotations it's possible to have imprecise Array<Any> type
         // for empty integer literal arguments.
         // In this case we have to use parameter type itself which is more precise, like Array<String> or IntArray.
         // See KT-62598 and its fix for details.
-        val expectedType = parameterConeType.takeIf { visitor.annotationMode && parameterConeType?.isArrayType == true }
+        val expectedType = unsubstitutedParameterType.takeIf { visitor.annotationMode && unsubstitutedParameterType?.isArrayType == true }
         var irArgument = visitor.convertToIrExpression(argument, expectedType = expectedType)
-        if (parameterConeType != null) {
+        if (unsubstitutedParameterType != null) {
             with(visitor.implicitCastInserter) {
-                irArgument = irArgument.cast(argument, argument.resolvedType, parameterConeType)
+                val argumentType = argument.resolvedType.fullyExpandedType(session)
+                if (argument is FirSmartCastExpression) {
+                    val substitutedParameterType = substitutor.substituteOrSelf(unsubstitutedParameterType)
+                    // here we should use a substituted parameter type to properly choose the component of an intersection type
+                    //  to provide a proper cast to the smartcasted type
+                    irArgument = irArgument.insertCastForSmartcastWithIntersection(argumentType, substitutedParameterType)
+                }
+                // here we should pass unsubstituted parameter type to properly infer if the original type accepts null or not
+                // to properly insert nullability check
+                irArgument = irArgument.cast(argument, argumentType, unsubstitutedParameterType)
             }
         }
         with(adapterGenerator) {

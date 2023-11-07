@@ -38797,6 +38797,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("smartcastFromGenericToString.kt")
+            public void testSmartcastFromGenericToString() throws Exception {
+                runTest("compiler/testData/codegen/box/smartCasts/smartcastFromGenericToString.kt");
+            }
+
+            @Test
             @TestMetadata("smartcastToStarType.kt")
             public void testSmartcastToStarType() throws Exception {
                 runTest("compiler/testData/codegen/box/smartCasts/smartcastToStarType.kt");

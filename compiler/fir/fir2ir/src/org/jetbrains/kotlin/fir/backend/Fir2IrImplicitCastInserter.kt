@@ -234,6 +234,19 @@ class Fir2IrImplicitCastInserter(
         }
     }
 
+    internal fun IrExpression.insertCastForSmartcastWithIntersection(
+        argumentType: ConeKotlinType,
+        expectedType: ConeKotlinType
+    ): IrExpression {
+        if (argumentType !is ConeIntersectionType) return this
+        val approximatedArgumentType = argumentType.approximateForIrOrNull() ?: argumentType
+        if (approximatedArgumentType.isSubtypeOf(expectedType, session)) return this
+
+        return findComponentOfIntersectionForExpectedType(argumentType, expectedType)?.let {
+            implicitCast(this, it.toIrType())
+        } ?: this
+    }
+
     private fun ConeKotlinType.acceptsNullValues(): Boolean {
         return canBeNull || hasEnhancedNullability
     }
@@ -333,9 +346,15 @@ class Fir2IrImplicitCastInserter(
             }
         }
 
-        for (componentType in receiverExpressionType.intersectedTypes) {
-            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, componentType, receiverType)) {
-                return implicitCastOrExpression(originalIrReceiver, componentType, typeOrigin)
+        return findComponentOfIntersectionForExpectedType(receiverExpressionType, receiverType)?.let {
+            implicitCastOrExpression(originalIrReceiver, it, typeOrigin)
+        }
+    }
+
+    private fun findComponentOfIntersectionForExpectedType(type: ConeIntersectionType, expectedType: ConeKotlinType): ConeKotlinType? {
+        for (componentType in type.intersectedTypes) {
+            if (AbstractTypeChecker.isSubtypeOf(session.typeContext, componentType, expectedType)) {
+                return componentType
             }
         }
         return null
