@@ -832,22 +832,24 @@ fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
             is ConeErrorType -> return // Ignore error types
             is ConeLookupTagBasedType -> when (type) {
                 is ConeClassLikeType -> upperBounds.add(type)
-                is ConeTypeVariableType -> {
-                    val symbol = (type.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol ?: return
-                    symbol.resolvedBounds.forEach { collect(it.coneType) }
-                }
                 is ConeTypeParameterType -> {
                     val symbol = type.lookupTag.typeParameterSymbol
                     symbol.resolvedBounds.forEach { collect(it.coneType) }
                 }
-                else -> throw IllegalStateException("missing branch for ${javaClass.name}")
+                else -> error("missing branch for ${javaClass.name}")
+            }
+            is ConeTypeVariableType -> {
+                val symbol = (type.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol ?: return
+                symbol.resolvedBounds.forEach { collect(it.coneType) }
             }
             is ConeDefinitelyNotNullType -> collect(type.original)
             is ConeIntersectionType -> type.intersectedTypes.forEach(::collect)
             is ConeFlexibleType -> collect(type.upperBound)
             is ConeCapturedType -> type.constructor.supertypes?.forEach(::collect)
             is ConeIntegerConstantOperatorType -> upperBounds.add(type.getApproximatedType())
-            is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$type should not reach here")
+            is ConeStubType, is ConeIntegerLiteralConstantType -> {
+                error("$type should not reach here")
+            }
         }
     }
 

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtElement
@@ -312,8 +311,7 @@ internal object FirCompileTimeConstantEvaluator {
             is ConeCapturedType -> lowerType?.toConstantValueKind() ?: constructor.supertypes!!.first().toConstantValueKind()
             is ConeDefinitelyNotNullType -> original.toConstantValueKind()
             is ConeIntersectionType -> intersectedTypes.first().toConstantValueKind()
-            is ConeStubType -> null
-            is ConeIntegerLiteralType -> null
+            is ConeStubType, is ConeIntegerLiteralType, is ConeTypeVariableType -> null
         }
 
     private fun String.toConstantValueKind(): ConstantValueKind<*>? =

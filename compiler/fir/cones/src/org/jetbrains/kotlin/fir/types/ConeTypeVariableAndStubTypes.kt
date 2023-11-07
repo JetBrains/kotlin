@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.*
 
@@ -13,10 +12,9 @@ import org.jetbrains.kotlin.types.model.*
 
 class ConeTypeVariableType(
     override val nullability: ConeNullability,
-    override val lookupTag: ConeTypeVariableTypeConstructor,
+    val lookupTag: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
-    // TODO: Make ConeSimpleKotlinType. KT-62420
-) : ConeLookupTagBasedType() {
+) : ConeSimpleKotlinType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -39,9 +37,8 @@ class ConeTypeVariableType(
 class ConeTypeVariableTypeConstructor(
     val debugName: String,
     val originalTypeParameter: TypeParameterMarker?
-    // TODO: Remove ConeClassifierLookupTag supertype. KT-62420
-) : ConeClassifierLookupTag(), TypeVariableTypeConstructorMarker {
-    override val name: Name get() = Name.identifier(debugName)
+) : TypeVariableTypeConstructorMarker {
+    val name: Name get() = Name.identifier(debugName)
 
     var isContainedInInvariantOrContravariantPositions: Boolean = false
         private set
