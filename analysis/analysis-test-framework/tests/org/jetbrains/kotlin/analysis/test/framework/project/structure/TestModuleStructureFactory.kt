@@ -8,31 +8,28 @@ package org.jetbrains.kotlin.analysis.test.framework.project.structure
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleWithFiles
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
-import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.nio.file.Path
-import kotlin.io.path.absolute
+import java.nio.file.Paths
 import kotlin.io.path.exists
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
@@ -49,7 +46,7 @@ object TestModuleStructureFactory {
 
         val moduleEntriesByName = moduleEntries.associateByName()
 
-        val binaryModulesBySourceRoots = mutableMapOf<Set<Path>, KtBinaryModule>()
+        val libraryCache = mutableMapOf<Set<Path>, KtBinaryModule>()
 
         for (testModule in moduleStructure.modules) {
             val moduleWithFiles = moduleEntriesByName[testModule.name] ?: moduleEntriesByName.getValue(testModule.files.single().name)
@@ -58,61 +55,21 @@ object TestModuleStructureFactory {
                     // Not-under-content-root modules have no external dependencies on purpose
                 }
                 is KtModuleWithModifiableDependencies -> {
-                    if (ktModule is KtBinaryModule) {
-                        binaryModulesBySourceRoots.getOrPut(ktModule.getBinaryRoots().toSet()) { ktModule }
-                    }
-
                     addModuleDependencies(testModule, moduleEntriesByName, ktModule)
-                    stdlibAndSdkDependencies(ktModule, testModule, project, testServices).forEach { library ->
-                        val cachedLibrary = binaryModulesBySourceRoots.getOrPut(library.getBinaryRoots().toSet()) { library }
-                        ktModule.directRegularDependencies.add(cachedLibrary)
-                    }
+                    addLibraryDependencies(testModule, testServices, project, ktModule, libraryCache::getOrPut)
                 }
                 else -> error("Unexpected module type: " + ktModule.javaClass.name)
             }
         }
 
-        return KtModuleProjectStructure(moduleEntries, binaryModulesBySourceRoots.values)
+        return KtModuleProjectStructure(moduleEntries, libraryCache.values)
     }
 
-    private fun stdlibAndSdkDependencies(
-        module: KtModule,
+    private fun addModuleDependencies(
         testModule: TestModule,
-        project: Project,
-        testServices: TestServices,
-    ): List<KtBinaryModule> {
-        return when {
-            module.platform.isJvm() -> jvmStdlibAndJdkDependencies(testModule, project, testServices)
-            module.platform.isJs() -> jsStdlibDependencies(project, testServices)
-            module.platform.isCommon() -> jvmStdlibAndJdkDependencies(testModule, project, testServices) // TODO: KT-63769
-            else -> error("Unsupported platform ${module.platform} in this test")
-        }
-    }
-
-    private fun jvmStdlibAndJdkDependencies(testModule: TestModule, project: Project, testServices: TestServices): List<KtBinaryModule> {
-        return buildList {
-            addIfNotNull(getJdkModule(testModule, project, testServices))
-            addAll(getStdlibModules(testModule, project, testServices))
-            addAll(getLibraryModules(testServices, testModule, project))
-            addAll(createLibrariesByCompilerConfigurators(testModule, testServices, project))
-        }
-    }
-
-    @OptIn(TestInfrastructureInternals::class)
-    private fun createLibrariesByCompilerConfigurators(
-        testModule: TestModule,
-        testServices: TestServices,
-        project: Project
-    ): List<KtLibraryModuleImpl> {
-        val compilerConfiguration = createCompilerConfiguration(testModule, testServices.environmentConfigurators)
-        val contentRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, emptyList()]
-        return contentRoots
-            .filterIsInstance<JvmClasspathRoot>()
-            .map { root -> createKtLibraryModuleByJar(root.file.toPath(), testServices, project) }
-    }
-
-    private fun addModuleDependencies(testModule: TestModule, moduleByName: Map<String, KtModuleWithFiles>, ktModule: KtModule) {
-        requireIsInstance<KtModuleWithModifiableDependencies>(ktModule)
+        moduleByName: Map<String, KtModuleWithFiles>,
+        ktModule: KtModuleWithModifiableDependencies
+    ) {
         testModule.allDependencies.forEach { dependency ->
             val dependencyKtModule = moduleByName.getValue(dependency.moduleName).ktModule
             when (dependency.relation) {
@@ -123,104 +80,78 @@ object TestModuleStructureFactory {
         }
     }
 
-    private fun getLibraryModules(
-        testServices: TestServices,
+    private fun addLibraryDependencies(
         testModule: TestModule,
-        project: Project
-    ): List<KtLibraryModuleImpl> {
-        val configurationKind = JvmEnvironmentConfigurator.extractConfigurationKind(testModule.directives)
-        return JvmEnvironmentConfigurator
-            .getLibraryFilesExceptRealRuntime(testServices, configurationKind, testModule.directives)
-            .map { it.toPath().toAbsolutePath() }
-            .map { jar ->
-                createKtLibraryModuleByJar(
-                    jar,
-                    testServices,
-                    project,
-                )
+        testServices: TestServices,
+        project: Project,
+        ktModule: KtModuleWithModifiableDependencies,
+        libraryCache: (paths: Set<Path>, factory: () -> KtBinaryModule) -> KtBinaryModule
+    ) {
+        val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(testModule)
+
+        val classpathRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, emptyList()]
+            .mapNotNull { (it as? JvmClasspathRoot)?.file?.toPath() }
+
+        if (classpathRoots.isNotEmpty()) {
+            val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(testModule.directives)
+            val jdkHome = JvmEnvironmentConfigurator.getJdkHome(jdkKind)?.toPath()
+                ?: JvmEnvironmentConfigurator.getJdkClasspathRoot(jdkKind)?.toPath()
+                ?: Paths.get(System.getProperty("java.home"))
+
+            val (jdkRoots, libraryRoots) = classpathRoots.partition { jdkHome != null && it.startsWith(jdkHome) }
+
+            if (testModule.targetPlatform.isJvm() && jdkRoots.isNotEmpty()) {
+                val jdkModule = libraryCache(jdkRoots.toSet()) {
+                    val jdkScope = getScopeForLibraryByRoots(jdkRoots, testServices)
+                    KtJdkModuleImpl("jdk", JvmPlatforms.defaultJvmPlatform, jdkScope, project, jdkRoots)
+                }
+                ktModule.directRegularDependencies.add(jdkModule)
             }
-    }
 
-    private fun createKtLibraryModuleByJar(
-        jar: Path,
-        testServices: TestServices,
-        project: Project,
-        libraryName: String = jar.nameWithoutExtension,
-    ): KtLibraryModuleImpl {
-        check(jar.extension == "jar")
-        check(jar.exists()) {
-            "library $jar does not exist"
+            for (libraryRoot in libraryRoots) {
+                check(libraryRoot.extension == "jar")
+
+                val libraryModule = libraryCache(setOf(libraryRoot)) {
+                    createLibraryModule(project, libraryRoot, JvmPlatforms.defaultJvmPlatform, testServices)
+                }
+
+                ktModule.directRegularDependencies.add(libraryModule)
+            }
         }
-        return KtLibraryModuleImpl(
-            libraryName,
-            JvmPlatforms.defaultJvmPlatform,
-            StandaloneProjectFactory.createSearchScopeByLibraryRoots(
-                listOf(jar),
-                testServices.environmentManager.getProjectEnvironment()
-            ),
-            project,
-            listOf(jar),
-            librarySources = null,
-        )
+
+        val jsLibraryRootPaths = compilerConfiguration[JSConfigurationKeys.LIBRARIES].orEmpty()
+
+        if (jsLibraryRootPaths.isNotEmpty()) {
+            for (libraryRootPath in jsLibraryRootPaths) {
+                val libraryRoot = Paths.get(libraryRootPath)
+                check(libraryRoot.extension == KLIB_FILE_EXTENSION)
+
+                val libraryModule = libraryCache(setOf(libraryRoot)) {
+                    createLibraryModule(project, libraryRoot, JsPlatforms.defaultJsPlatform, testServices)
+                }
+
+                ktModule.directRegularDependencies.add(libraryModule)
+            }
+        }
     }
 
-    private fun getStdlibModules(
-        testModule: TestModule,
+    private fun createLibraryModule(
         project: Project,
+        libraryFile: Path,
+        platform: TargetPlatform,
         testServices: TestServices,
-    ): List<KtLibraryModule> {
-        val configurationKind = JvmEnvironmentConfigurator.extractConfigurationKind(testModule.directives)
-        if (!configurationKind.withRuntime) return emptyList()
-        val lib = testServices.standardLibrariesPathProvider.runtimeJarForTests().toPath().absolute()
-        return listOf(
-            createKtLibraryModuleByJar(lib, testServices, project, PathUtil.KOTLIN_JAVA_STDLIB_NAME),
-        )
+    ): KtLibraryModuleImpl {
+        check(libraryFile.exists()) { "Library $libraryFile does not exist" }
+
+        val libraryName = libraryFile.nameWithoutExtension
+        val libraryScope = getScopeForLibraryByRoots(listOf(libraryFile), testServices)
+        return KtLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null)
     }
 
-    private fun getJdkModule(
-        testModule: TestModule,
-        project: Project,
-        testServices: TestServices,
-    ): KtJdkModuleImpl? {
-        val jdkKind = JvmEnvironmentConfigurator.extractJdkKind(testModule.directives)
-
-        val jdkSourceRoots = buildList {
-            JvmEnvironmentConfigurator.getJdkHome(jdkKind)?.let { add(it.toPath()) }
-            JvmEnvironmentConfigurator.getJdkClasspathRoot(jdkKind)?.let { add(it.toPath()) }
-        }.mapTo(mutableListOf()) { it.toAbsolutePath() }
-
-        if (jdkSourceRoots.isEmpty()) return null
-
-        return KtJdkModuleImpl(
-            "jdk",
-            JvmPlatforms.defaultJvmPlatform,
-            StandaloneProjectFactory.createSearchScopeByLibraryRoots(
-                jdkSourceRoots,
-                testServices.environmentManager.getProjectEnvironment()
-            ),
-            project,
-            jdkSourceRoots
-        )
-    }
-
-    private fun jsStdlibDependencies(project: Project, testServices: TestServices): List<KtBinaryModule> {
-        return listOf(
-            jsStdlib(project, testServices),
-        )
-    }
-
-    private fun jsStdlib(project: Project, testServices: TestServices): KtBinaryModule {
-        val jar = testServices.standardLibrariesPathProvider.fullJsStdlib().toPath()
-        return KtLibraryModuleImpl(
-            PathUtil.JS_LIB_NAME,
-            JvmPlatforms.defaultJvmPlatform,
-            StandaloneProjectFactory.createSearchScopeByLibraryRoots(
-                listOf(jar),
-                testServices.environmentManager.getProjectEnvironment()
-            ),
-            project,
-            listOf(jar),
-            librarySources = null,
+    fun getScopeForLibraryByRoots(roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {
+        return StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+            roots,
+            testServices.environmentManager.getProjectEnvironment()
         )
     }
 
