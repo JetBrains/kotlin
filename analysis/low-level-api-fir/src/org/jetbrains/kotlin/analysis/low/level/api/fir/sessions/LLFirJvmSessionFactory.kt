@@ -91,6 +91,7 @@ internal class LLFirJvmSessionFactory(project: Project) : LLFirAbstractSessionFa
                     this,
                     providers = listOfNotNull(
                         firProvider.symbolProvider,
+                        switchableExtensionDeclarationsSymbolProvider,
                         syntheticFunctionInterfaceProvider,
                         javaSymbolProvider
                     ),

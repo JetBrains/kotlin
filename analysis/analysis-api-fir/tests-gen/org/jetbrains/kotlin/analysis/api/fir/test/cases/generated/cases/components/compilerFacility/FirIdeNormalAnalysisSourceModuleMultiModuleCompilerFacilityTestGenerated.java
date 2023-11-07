@@ -63,4 +63,20 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleCompilerFacilityTestGene
     public void testInternalUsage() throws Exception {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/internalUsage.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CodeFragments {
+        @Test
+        public void testAllFilesPresentInCodeFragments() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("compilerPluginUsage.kt")
+        public void testCompilerPluginUsage() throws Exception {
+            runTest("analysis/analysis-api/testData/components/compilerFacility/compilationMultiModule/codeFragments/compilerPluginUsage.kt");
+        }
+    }
 }
