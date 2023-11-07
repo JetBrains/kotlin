@@ -12307,6 +12307,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("keywordsInsteadOfIdentifiers.kt")
+            public void testKeywordsInsteadOfIdentifiers() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exceptions/keywordsInsteadOfIdentifiers.kt");
+            }
+
+            @Test
             @TestMetadata("kt24158.kt")
             public void testKt24158() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/exceptions/kt24158.kt");

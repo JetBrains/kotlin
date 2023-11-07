@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.model.PostponableKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
@@ -76,7 +76,7 @@ fun TypeConstructor.typeForTypeVariable(): SimpleType {
 
 class TypeVariableFromCallableDescriptor(
     val originalTypeParameter: TypeParameterDescriptor
-) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier, originalTypeParameter) {
+) : NewTypeVariable(originalTypeParameter.builtIns, SpecialNames.safeIdentifier(originalTypeParameter.name).identifier, originalTypeParameter) {
     override fun hasOnlyInputTypesAnnotation(): Boolean = originalTypeParameter.hasOnlyInputTypesAnnotation()
 }
 
