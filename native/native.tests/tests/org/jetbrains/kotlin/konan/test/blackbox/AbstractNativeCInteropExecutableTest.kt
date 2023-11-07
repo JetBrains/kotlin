@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
+import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -17,9 +18,8 @@ import java.io.File
 
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 abstract class AbstractNativeCInteropExecutableTest : AbstractNativeSimpleTest() {
-    fun runTest(
-        testDataDir: String,
-    ) {
+
+    protected fun runTest(@TestDataFile testDataDir: String) {
         val defFile = File(testDataDir, "library.def")
         muteCInteropTestIfNecessary(defFile, targets.testTarget)
 
@@ -30,10 +30,11 @@ abstract class AbstractNativeCInteropExecutableTest : AbstractNativeSimpleTest()
             targets = targets,
             defFile = defFile,
             outputDir = buildDir,
-            freeCompilerArgs = TestCompilerArgs(listOf(
-                "-compiler-option", "-I$testDataDir",
-                "-Xcompile-source", mFile.absolutePath,
-                "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=",
+            freeCompilerArgs = TestCompilerArgs(
+                listOf(
+                    "-compiler-option", "-I$testDataDir",
+                    "-Xcompile-source", mFile.absolutePath,
+                    "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=",
                 )
             )
         ).assertSuccess().resultingArtifact
