@@ -108,3 +108,8 @@ var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
 
 val LanguageVersionSettings.isLibraryToSourceAnalysisEnabled: Boolean
     get() = getFlag(AnalysisFlags.libraryToSourceAnalysis)
+
+val LanguageVersionSettings.muteExpectActualClassesWarning: Boolean
+    get() {
+        return getFlag(AnalysisFlags.muteExpectActualClassesWarning) || supportsFeature(LanguageFeature.ExpectActualClasses)
+    }
