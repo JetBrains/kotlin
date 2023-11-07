@@ -163,11 +163,13 @@ class BirImplChildElementList<E : BirElement?>(
     }
 
     private fun removeAtInternal(index: Int): BirElementBase? {
-        checkElementIndex(index, _size)
+        val size = _size
+        checkElementIndex(index, size)
 
         val elementArray = elementArray
         val element = elementArray[index]
-        elementArray.copyInto(elementArray, index, index + 1, _size)
+        elementArray.copyInto(elementArray, index, index + 1, size)
+        _size = size - 1
 
         element?.resetContainingList()
         return element
@@ -244,7 +246,7 @@ class BirImplChildElementList<E : BirElement?>(
     private fun recordRead() {
         parent.recordPropertyRead(id)
     }
-    
+
     private fun invalidate() {
         parent.invalidate(id)
     }
