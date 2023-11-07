@@ -34,28 +34,31 @@ import org.jetbrains.kotlin.lexer.KtTokens
 // See old FE's [DeclarationsChecker]
 object FirTopLevelPropertiesChecker : FirFileChecker() {
     override fun check(declaration: FirFile, context: CheckerContext, reporter: DiagnosticReporter) {
-        val info = declaration.collectionInitializationInfo(context, reporter)
-        for (innerDeclaration in declaration.declarations) {
-            if (innerDeclaration is FirProperty) {
-                val symbol = innerDeclaration.symbol
-                val isDefinitelyAssigned = info?.get(symbol)?.isDefinitelyVisited() == true
-                checkProperty(containingDeclaration = null, innerDeclaration, isDefinitelyAssigned, context, reporter, reachable = true)
-            }
+        val topLevelProperties = declaration.effectiveTopLevelProperties
+        val info = declaration.collectionInitializationInfo(topLevelProperties, context, reporter)
+        for (topLevelProperty in topLevelProperties) {
+            val symbol = topLevelProperty.symbol
+            val isDefinitelyAssigned = info?.get(symbol)?.isDefinitelyVisited() == true
+            checkProperty(containingDeclaration = null, topLevelProperty, isDefinitelyAssigned, context, reporter, reachable = true)
         }
     }
 
+    /**
+     * Scripts are nested as a single declaration under [FirFile]s and contain their own statements. To properly check all "top-level"
+     * properties, script statements need to be unwrapped.
+     */
+    private val FirFile.effectiveTopLevelProperties: List<FirProperty>
+        get() = when (val script = declarations.singleOrNull()) {
+            is FirScript -> script.statements.filterIsInstance<FirProperty>()
+            else -> declarations.filterIsInstance<FirProperty>()
+        }
+
     private fun FirFile.collectionInitializationInfo(
+        topLevelProperties: List<FirProperty>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ): PropertyInitializationInfo? {
         val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
-
-        // Scripts are nested as a single declaration under FirFiles and contain their own statements. To properly check all "top-level"
-        // properties, script statements need to be unwrapped.
-        val topLevelProperties = when (val script = declarations.singleOrNull()) {
-            is FirScript -> script.statements.filterIsInstance<FirProperty>()
-            else -> declarations.filterIsInstance<FirProperty>()
-        }
 
         val propertySymbols = topLevelProperties.mapNotNullTo(mutableSetOf()) { declaration ->
             declaration.symbol.takeIf { it.requiresInitialization(isForInitialization = true) }

@@ -32,9 +32,9 @@ val d: String by simpleDelegate(d)
 val e: String by inPlaceDelegate { e }
 val f: String by notInPlaceDelegate { f }
 
-val g: Int
+<!MUST_BE_INITIALIZED!>val g: Int<!>
 val h = 1.also { <!VAL_REASSIGNMENT!>g<!> = 2 }
-val i: Int
+<!MUST_BE_INITIALIZED!>val i: Int<!>
 val j by lazy { <!VAL_REASSIGNMENT!>i<!> = 2; 1 }
 val k: Int
     get() {
