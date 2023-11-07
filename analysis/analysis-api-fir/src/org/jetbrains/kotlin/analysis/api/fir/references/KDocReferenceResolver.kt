@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.references
 
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
 import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
@@ -147,7 +148,8 @@ internal object KDocReferenceResolver {
      */
     context(KtAnalysisSession)
     private fun getSymbolsFromParentMemberScopes(fqName: FqName, contextElement: KtElement): Collection<KtSymbol> {
-        for (ktDeclaration in contextElement.parentsOfType<KtDeclaration>(withSelf = true)) {
+        val declaration = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false) ?: return emptyList()
+        for (ktDeclaration in declaration.parentsOfType<KtDeclaration>(withSelf = true)) {
             if (fqName.pathSegments().size == 1) {
                 getSymbolsFromDeclaration(fqName.shortName(), ktDeclaration).ifNotEmpty { return this }
             }
@@ -179,7 +181,10 @@ internal object KDocReferenceResolver {
 
     context(KtAnalysisSession)
     private fun getSymbolsFromPackageScope(fqName: FqName, contextElement: KtElement): Collection<KtDeclarationSymbol> {
-        val packageFqName = contextElement.containingKtFile.packageFqName
+        //ensure file context is provided for "non-physical" code as well
+        var containingFile =
+            (PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false) ?: contextElement).containingKtFile
+        val packageFqName = containingFile.packageFqName
         val packageSymbol = getPackageSymbolIfPackageExists(packageFqName) ?: return emptyList()
         val packageScope = packageSymbol.getPackageScope()
         return getSymbolsFromMemberScope(fqName, packageScope)
