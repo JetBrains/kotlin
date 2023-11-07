@@ -55,7 +55,9 @@ internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTas
         }
     })
 
-    addFrameworkArtifact(frameworkConfiguration, linkTask.flatMap { it.outputFile })
+    // Can't use flatMap here because of https://github.com/gradle/gradle/issues/25645
+    val linkTaskOutputProvider = linkTask.map { it.outputFile.get() }
+    addFrameworkArtifact(frameworkConfiguration, linkTaskOutputProvider)
 }
 
 internal val CreateFatFrameworksSetupAction = KotlinProjectSetupCoroutine {
