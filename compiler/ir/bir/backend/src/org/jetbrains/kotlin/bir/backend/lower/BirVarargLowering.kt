@@ -50,15 +50,13 @@ class BirVarargLowering : BirLoweringPhase() {
         compiledBir.getElementsWithIndex(varargs).forEach { vararg ->
             if (vararg.isInsideAnnotation()) return@forEach
 
-            compiledBir.subtreeShuffleTransaction {
-                val array = birBodyScope {
-                    sourceSpan = vararg.sourceSpan
-                    birArray(vararg.type) {
-                        addVariableArgumentsToArray(vararg)
-                    }
+            val array = birBodyScope {
+                sourceSpan = vararg.sourceSpan
+                birArray(vararg.type) {
+                    addVariableArgumentsToArray(vararg)
                 }
-                vararg.replaceWith(array)
             }
+            vararg.replaceWith(array)
         }
     }
 
