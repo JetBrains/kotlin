@@ -6540,137 +6540,109 @@ public inline fun <T> kotlin.collections.Collection<T>.random(): T
 public fun <T> kotlin.collections.Collection<T>.random(random: kotlin.random.Random): T
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.Array<out T>.randomOrNull(): T?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.Array<out T>.randomOrNull(random: kotlin.random.Random): T?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.BooleanArray.randomOrNull(): kotlin.Boolean?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.BooleanArray.randomOrNull(random: kotlin.random.Random): kotlin.Boolean?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ByteArray.randomOrNull(): kotlin.Byte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ByteArray.randomOrNull(random: kotlin.random.Random): kotlin.Byte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharArray.randomOrNull(): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.CharArray.randomOrNull(random: kotlin.random.Random): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.DoubleArray.randomOrNull(): kotlin.Double?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.DoubleArray.randomOrNull(random: kotlin.random.Random): kotlin.Double?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.FloatArray.randomOrNull(): kotlin.Float?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.FloatArray.randomOrNull(random: kotlin.random.Random): kotlin.Float?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.IntArray.randomOrNull(): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.IntArray.randomOrNull(random: kotlin.random.Random): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.LongArray.randomOrNull(): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.LongArray.randomOrNull(random: kotlin.random.Random): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ShortArray.randomOrNull(): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ShortArray.randomOrNull(random: kotlin.random.Random): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.randomOrNull(): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UByteArray.randomOrNull(random: kotlin.random.Random): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.randomOrNull(): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UIntArray.randomOrNull(random: kotlin.random.Random): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.randomOrNull(): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ULongArray.randomOrNull(random: kotlin.random.Random): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.randomOrNull(): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.UShortArray.randomOrNull(random: kotlin.random.Random): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.collections.Collection<T>.randomOrNull(): T?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.Collection<T>.randomOrNull(random: kotlin.random.Random): T?
 
 public inline fun <S, T : S> kotlin.Array<out T>.reduce(operation: (acc: S, T) -> S): S
@@ -6807,67 +6779,53 @@ public inline fun kotlin.UShortArray.reduceIndexedOrNull(operation: (index: kotl
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.reduceIndexedOrNull(operation: (index: kotlin.Int, acc: S, T) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.Array<out T>.reduceOrNull(operation: (acc: S, T) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.BooleanArray.reduceOrNull(operation: (acc: kotlin.Boolean, kotlin.Boolean) -> kotlin.Boolean): kotlin.Boolean?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.ByteArray.reduceOrNull(operation: (acc: kotlin.Byte, kotlin.Byte) -> kotlin.Byte): kotlin.Byte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.CharArray.reduceOrNull(operation: (acc: kotlin.Char, kotlin.Char) -> kotlin.Char): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.DoubleArray.reduceOrNull(operation: (acc: kotlin.Double, kotlin.Double) -> kotlin.Double): kotlin.Double?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.FloatArray.reduceOrNull(operation: (acc: kotlin.Float, kotlin.Float) -> kotlin.Float): kotlin.Float?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.IntArray.reduceOrNull(operation: (acc: kotlin.Int, kotlin.Int) -> kotlin.Int): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.LongArray.reduceOrNull(operation: (acc: kotlin.Long, kotlin.Long) -> kotlin.Long): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.ShortArray.reduceOrNull(operation: (acc: kotlin.Short, kotlin.Short) -> kotlin.Short): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.reduceOrNull(operation: (acc: kotlin.UByte, kotlin.UByte) -> kotlin.UByte): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.reduceOrNull(operation: (acc: kotlin.UInt, kotlin.UInt) -> kotlin.UInt): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.reduceOrNull(operation: (acc: kotlin.ULong, kotlin.ULong) -> kotlin.ULong): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.reduceOrNull(operation: (acc: kotlin.UShort, kotlin.UShort) -> kotlin.UShort): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.reduceOrNull(operation: (acc: S, T) -> S): S?
 
 public inline fun <S, T : S> kotlin.Array<out T>.reduceRight(operation: (T, acc: S) -> S): S
@@ -7001,67 +6959,53 @@ public inline fun kotlin.UShortArray.reduceRightIndexedOrNull(operation: (index:
 public inline fun <S, T : S> kotlin.collections.List<T>.reduceRightIndexedOrNull(operation: (index: kotlin.Int, T, acc: S) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.Array<out T>.reduceRightOrNull(operation: (T, acc: S) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.BooleanArray.reduceRightOrNull(operation: (kotlin.Boolean, acc: kotlin.Boolean) -> kotlin.Boolean): kotlin.Boolean?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.ByteArray.reduceRightOrNull(operation: (kotlin.Byte, acc: kotlin.Byte) -> kotlin.Byte): kotlin.Byte?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.CharArray.reduceRightOrNull(operation: (kotlin.Char, acc: kotlin.Char) -> kotlin.Char): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.DoubleArray.reduceRightOrNull(operation: (kotlin.Double, acc: kotlin.Double) -> kotlin.Double): kotlin.Double?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.FloatArray.reduceRightOrNull(operation: (kotlin.Float, acc: kotlin.Float) -> kotlin.Float): kotlin.Float?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.IntArray.reduceRightOrNull(operation: (kotlin.Int, acc: kotlin.Int) -> kotlin.Int): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.LongArray.reduceRightOrNull(operation: (kotlin.Long, acc: kotlin.Long) -> kotlin.Long): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.ShortArray.reduceRightOrNull(operation: (kotlin.Short, acc: kotlin.Short) -> kotlin.Short): kotlin.Short?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByteArray.reduceRightOrNull(operation: (kotlin.UByte, acc: kotlin.UByte) -> kotlin.UByte): kotlin.UByte?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UIntArray.reduceRightOrNull(operation: (kotlin.UInt, acc: kotlin.UInt) -> kotlin.UInt): kotlin.UInt?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULongArray.reduceRightOrNull(operation: (kotlin.ULong, acc: kotlin.ULong) -> kotlin.ULong): kotlin.ULong?
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.reduceRightOrNull(operation: (kotlin.UShort, acc: kotlin.UShort) -> kotlin.UShort): kotlin.UShort?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.collections.List<T>.reduceRightOrNull(operation: (T, acc: S) -> S): S?
 
 @kotlin.SinceKotlin(version = "1.1")
@@ -7094,19 +7038,15 @@ public fun <T> kotlin.collections.MutableIterable<T>.removeAll(predicate: (T) ->
 public fun <T> kotlin.collections.MutableList<T>.removeAll(predicate: (T) -> kotlin.Boolean): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeFirst(): T
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeFirstOrNull(): T?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeLast(): T
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun <T> kotlin.collections.MutableList<T>.removeLastOrNull(): T?
 
 public fun <T : kotlin.Any> kotlin.Array<T?>.requireNoNulls(): kotlin.Array<T>
@@ -7407,7 +7347,6 @@ public inline fun <R> kotlin.UShortArray.runningFoldIndexed(initial: R, operatio
 public inline fun <T, R> kotlin.collections.Iterable<T>.runningFoldIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.Array<out T>.runningReduce(operation: (acc: S, T) -> S): kotlin.collections.List<S>
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -7463,7 +7402,6 @@ public inline fun kotlin.ULongArray.runningReduce(operation: (acc: kotlin.ULong,
 public inline fun kotlin.UShortArray.runningReduce(operation: (acc: kotlin.UShort, kotlin.UShort) -> kotlin.UShort): kotlin.collections.List<kotlin.UShort>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.runningReduce(operation: (acc: S, T) -> S): kotlin.collections.List<S>
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -7525,147 +7463,119 @@ public inline fun kotlin.UShortArray.runningReduceIndexed(operation: (index: kot
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.runningReduceIndexed(operation: (index: kotlin.Int, acc: S, T) -> S): kotlin.collections.List<S>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <T, R> kotlin.Array<out T>.scan(initial: R, operation: (acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.BooleanArray.scan(initial: R, operation: (acc: R, kotlin.Boolean) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ByteArray.scan(initial: R, operation: (acc: R, kotlin.Byte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.CharArray.scan(initial: R, operation: (acc: R, kotlin.Char) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.DoubleArray.scan(initial: R, operation: (acc: R, kotlin.Double) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.FloatArray.scan(initial: R, operation: (acc: R, kotlin.Float) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.IntArray.scan(initial: R, operation: (acc: R, kotlin.Int) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.LongArray.scan(initial: R, operation: (acc: R, kotlin.Long) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ShortArray.scan(initial: R, operation: (acc: R, kotlin.Short) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UByteArray.scan(initial: R, operation: (acc: R, kotlin.UByte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UIntArray.scan(initial: R, operation: (acc: R, kotlin.UInt) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ULongArray.scan(initial: R, operation: (acc: R, kotlin.ULong) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.scan(initial: R, operation: (acc: R, kotlin.UShort) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <T, R> kotlin.collections.Iterable<T>.scan(initial: R, operation: (acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <T, R> kotlin.Array<out T>.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.BooleanArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Boolean) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ByteArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Byte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.CharArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Char) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.DoubleArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Double) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.FloatArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Float) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.IntArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Int) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.LongArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Long) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ShortArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Short) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UByteArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UByte) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UIntArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UInt) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.ULongArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.ULong) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalUnsignedTypes
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UShort) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <T, R> kotlin.collections.Iterable<T>.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.internal.InlineOnly
@@ -10120,7 +10030,6 @@ public abstract class AbstractSet<out E> : kotlin.collections.AbstractCollection
 }
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public final class ArrayDeque<E> : kotlin.collections.AbstractMutableList<E> {
     public constructor ArrayDeque<E>()
 

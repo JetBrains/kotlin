@@ -252,7 +252,6 @@ actual class StringBuilder private constructor (
      * Returns `-1` if the specified [string] does not occur in this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     actual fun indexOf(string: String): Int {
         return (this as CharSequence).indexOf(string, startIndex = 0, ignoreCase = false)
     }
@@ -264,7 +263,6 @@ actual class StringBuilder private constructor (
      * Returns `-1` if the specified [string] does not occur in this string builder starting at the specified [startIndex].
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     actual fun indexOf(string: String, startIndex: Int): Int {
         if (string.isEmpty() && startIndex >= _length) return _length
         return (this as CharSequence).indexOf(string, startIndex, ignoreCase = false)
@@ -277,7 +275,6 @@ actual class StringBuilder private constructor (
      * Returns `-1` if the specified [string] does not occur in this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     actual fun lastIndexOf(string: String): Int {
         if (string.isEmpty()) return _length
         return (this as CharSequence).lastIndexOf(string, startIndex = lastIndex, ignoreCase = false)
@@ -290,7 +287,6 @@ actual class StringBuilder private constructor (
      * Returns `-1` if the specified [string] does not occur in this string builder starting at the specified [startIndex].
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     actual fun lastIndexOf(string: String, startIndex: Int): Int {
         if (string.isEmpty() && startIndex >= _length) return _length
         return (this as CharSequence).lastIndexOf(string, startIndex, ignoreCase = false)
@@ -484,7 +480,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     actual fun substring(startIndex: Int): String {
         return substring(startIndex, _length)
     }
@@ -523,7 +518,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder {
         checkReplaceRange(startIndex, endIndex, _length)
 
@@ -548,7 +542,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun deleteAt(index: Int): StringBuilder {
         AbstractList.checkElementIndex(index, _length)
         array.copyInto(array, startIndex = index + 1, endIndex = _length, destinationOffset = index)
@@ -565,7 +558,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun deleteRange(startIndex: Int, endIndex: Int): StringBuilder {
         checkReplaceRange(startIndex, endIndex, _length)
 
@@ -588,7 +580,6 @@ actual class StringBuilder private constructor (
      *  or when that index is out of the [destination] array indices range.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, _length)
         AbstractList.checkBoundsIndexes(destinationOffset, destinationOffset + endIndex - startIndex, destination.size)
@@ -608,7 +599,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
         val extraLength = endIndex - startIndex
@@ -628,7 +618,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         val extraLength = endIndex - startIndex
@@ -657,7 +646,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.length)
         AbstractList.checkPositionIndex(index, _length)
@@ -689,7 +677,6 @@ actual class StringBuilder private constructor (
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkPositionIndex(index, _length)
         AbstractList.checkBoundsIndexes(startIndex, endIndex, value.size)
@@ -754,7 +741,6 @@ public actual inline operator fun StringBuilder.set(index: Int, value: Char): Un
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder =
@@ -770,7 +756,6 @@ public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, 
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = this.deleteAt(index)
@@ -784,7 +769,6 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder = this.deleteRange(startIndex, endIndex)
@@ -802,7 +786,6 @@ public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: In
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER", "ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) =
@@ -820,7 +803,6 @@ public actual inline fun StringBuilder.toCharArray(destination: CharArray, desti
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
@@ -836,7 +818,6 @@ public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex:
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
@@ -856,7 +837,6 @@ public actual inline fun StringBuilder.appendRange(value: CharSequence, startInd
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
@@ -876,7 +856,6 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =

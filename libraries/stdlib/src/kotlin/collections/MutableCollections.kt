@@ -242,28 +242,24 @@ public inline fun <T> MutableList<T>.remove(index: Int): T = removeAt(index)
  * Removes the first element from this mutable list and returns that removed element, or throws [NoSuchElementException] if this list is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T> MutableList<T>.removeFirst(): T = if (isEmpty()) throw NoSuchElementException("List is empty.") else removeAt(0)
 
 /**
  * Removes the first element from this mutable list and returns that removed element, or returns `null` if this list is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T> MutableList<T>.removeFirstOrNull(): T? = if (isEmpty()) null else removeAt(0)
 
 /**
  * Removes the last element from this mutable list and returns that removed element, or throws [NoSuchElementException] if this list is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T> MutableList<T>.removeLast(): T = if (isEmpty()) throw NoSuchElementException("List is empty.") else removeAt(lastIndex)
 
 /**
  * Removes the last element from this mutable list and returns that removed element, or returns `null` if this list is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T> MutableList<T>.removeLastOrNull(): T? = if (isEmpty()) null else removeAt(lastIndex)
 
 /**

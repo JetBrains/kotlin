@@ -99,7 +99,6 @@ public actual inline fun Float.Companion.fromBits(bits: Int): Float =
  * Counts the number of set bits in the binary representation of this [Int] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.countOneBits(): Int {
     // Hacker's Delight 5-1 algorithm
     var v = this
@@ -115,7 +114,6 @@ public actual fun Int.countOneBits(): Int {
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Int] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Int.countLeadingZeroBits(): Int = nativeClz32(this)
 
@@ -123,7 +121,6 @@ public actual inline fun Int.countLeadingZeroBits(): Int = nativeClz32(this)
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.countTrailingZeroBits(): Int =
     // Hacker's Delight 5-4 algorithm for expressing countTrailingZeroBits with countLeadingZeroBits
     Int.SIZE_BITS - (this or -this).inv().countLeadingZeroBits()
@@ -133,7 +130,6 @@ public actual fun Int.countTrailingZeroBits(): Int =
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.takeHighestOneBit(): Int =
     if (this == 0) 0 else 1.shl(Int.SIZE_BITS - 1 - countLeadingZeroBits())
 
@@ -142,7 +138,6 @@ public actual fun Int.takeHighestOneBit(): Int =
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.takeLowestOneBit(): Int =
     // Hacker's Delight 2-1 algorithm for isolating rightmost 1-bit
     this and -this
@@ -183,7 +178,6 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.countOneBits(): Int =
     high.countOneBits() + low.countOneBits()
 
@@ -191,7 +185,6 @@ public actual fun Long.countOneBits(): Int =
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.countLeadingZeroBits(): Int =
     when (val high = this.high) {
         0 -> Int.SIZE_BITS + low.countLeadingZeroBits()
@@ -202,7 +195,6 @@ public actual fun Long.countLeadingZeroBits(): Int =
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.countTrailingZeroBits(): Int =
     when (val low = this.low) {
         0 -> Int.SIZE_BITS + high.countTrailingZeroBits()
@@ -214,7 +206,6 @@ public actual fun Long.countTrailingZeroBits(): Int =
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.takeHighestOneBit(): Long =
     when (val high = this.high) {
         0 -> Long(low.takeHighestOneBit(), 0)
@@ -226,7 +217,6 @@ public actual fun Long.takeHighestOneBit(): Long =
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.takeLowestOneBit(): Long =
     when (val low = this.low) {
         0 -> Long(0, high.takeLowestOneBit())

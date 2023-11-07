@@ -2617,7 +2617,6 @@ public fun CharArray.random(random: Random): Char {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.randomOrNull(): T? {
     return randomOrNull(Random)
@@ -2627,7 +2626,6 @@ public inline fun <T> Array<out T>.randomOrNull(): T? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.randomOrNull(): Byte? {
     return randomOrNull(Random)
@@ -2637,7 +2635,6 @@ public inline fun ByteArray.randomOrNull(): Byte? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.randomOrNull(): Short? {
     return randomOrNull(Random)
@@ -2647,7 +2644,6 @@ public inline fun ShortArray.randomOrNull(): Short? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun IntArray.randomOrNull(): Int? {
     return randomOrNull(Random)
@@ -2657,7 +2653,6 @@ public inline fun IntArray.randomOrNull(): Int? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun LongArray.randomOrNull(): Long? {
     return randomOrNull(Random)
@@ -2667,7 +2662,6 @@ public inline fun LongArray.randomOrNull(): Long? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.randomOrNull(): Float? {
     return randomOrNull(Random)
@@ -2677,7 +2671,6 @@ public inline fun FloatArray.randomOrNull(): Float? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.randomOrNull(): Double? {
     return randomOrNull(Random)
@@ -2687,7 +2680,6 @@ public inline fun DoubleArray.randomOrNull(): Double? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.randomOrNull(): Boolean? {
     return randomOrNull(Random)
@@ -2697,7 +2689,6 @@ public inline fun BooleanArray.randomOrNull(): Boolean? {
  * Returns a random element from this array, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun CharArray.randomOrNull(): Char? {
     return randomOrNull(Random)
@@ -2707,7 +2698,6 @@ public inline fun CharArray.randomOrNull(): Char? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun <T> Array<out T>.randomOrNull(random: Random): T? {
     if (isEmpty())
         return null
@@ -2718,7 +2708,6 @@ public fun <T> Array<out T>.randomOrNull(random: Random): T? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun ByteArray.randomOrNull(random: Random): Byte? {
     if (isEmpty())
         return null
@@ -2729,7 +2718,6 @@ public fun ByteArray.randomOrNull(random: Random): Byte? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun ShortArray.randomOrNull(random: Random): Short? {
     if (isEmpty())
         return null
@@ -2740,7 +2728,6 @@ public fun ShortArray.randomOrNull(random: Random): Short? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun IntArray.randomOrNull(random: Random): Int? {
     if (isEmpty())
         return null
@@ -2751,7 +2738,6 @@ public fun IntArray.randomOrNull(random: Random): Int? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun LongArray.randomOrNull(random: Random): Long? {
     if (isEmpty())
         return null
@@ -2762,7 +2748,6 @@ public fun LongArray.randomOrNull(random: Random): Long? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun FloatArray.randomOrNull(random: Random): Float? {
     if (isEmpty())
         return null
@@ -2773,7 +2758,6 @@ public fun FloatArray.randomOrNull(random: Random): Float? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun DoubleArray.randomOrNull(random: Random): Double? {
     if (isEmpty())
         return null
@@ -2784,7 +2768,6 @@ public fun DoubleArray.randomOrNull(random: Random): Double? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun BooleanArray.randomOrNull(random: Random): Boolean? {
     if (isEmpty())
         return null
@@ -2795,7 +2778,6 @@ public fun BooleanArray.randomOrNull(random: Random): Boolean? {
  * Returns a random element from this array using the specified source of randomness, or `null` if this array is empty.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public fun CharArray.randomOrNull(random: Random): Char? {
     if (isEmpty())
         return null
@@ -19593,7 +19575,6 @@ public inline fun CharArray.reduceIndexedOrNull(operation: (index: Int, acc: Cha
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Array<out T>.reduceOrNull(operation: (acc: S, T) -> S): S? {
     if (isEmpty())
         return null
@@ -19616,7 +19597,6 @@ public inline fun <S, T : S> Array<out T>.reduceOrNull(operation: (acc: S, T) ->
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun ByteArray.reduceOrNull(operation: (acc: Byte, Byte) -> Byte): Byte? {
     if (isEmpty())
         return null
@@ -19639,7 +19619,6 @@ public inline fun ByteArray.reduceOrNull(operation: (acc: Byte, Byte) -> Byte): 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun ShortArray.reduceOrNull(operation: (acc: Short, Short) -> Short): Short? {
     if (isEmpty())
         return null
@@ -19662,7 +19641,6 @@ public inline fun ShortArray.reduceOrNull(operation: (acc: Short, Short) -> Shor
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun IntArray.reduceOrNull(operation: (acc: Int, Int) -> Int): Int? {
     if (isEmpty())
         return null
@@ -19685,7 +19663,6 @@ public inline fun IntArray.reduceOrNull(operation: (acc: Int, Int) -> Int): Int?
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun LongArray.reduceOrNull(operation: (acc: Long, Long) -> Long): Long? {
     if (isEmpty())
         return null
@@ -19708,7 +19685,6 @@ public inline fun LongArray.reduceOrNull(operation: (acc: Long, Long) -> Long): 
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun FloatArray.reduceOrNull(operation: (acc: Float, Float) -> Float): Float? {
     if (isEmpty())
         return null
@@ -19731,7 +19707,6 @@ public inline fun FloatArray.reduceOrNull(operation: (acc: Float, Float) -> Floa
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun DoubleArray.reduceOrNull(operation: (acc: Double, Double) -> Double): Double? {
     if (isEmpty())
         return null
@@ -19754,7 +19729,6 @@ public inline fun DoubleArray.reduceOrNull(operation: (acc: Double, Double) -> D
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun BooleanArray.reduceOrNull(operation: (acc: Boolean, Boolean) -> Boolean): Boolean? {
     if (isEmpty())
         return null
@@ -19777,7 +19751,6 @@ public inline fun BooleanArray.reduceOrNull(operation: (acc: Boolean, Boolean) -
  * @sample samples.collections.Collections.Aggregates.reduceOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun CharArray.reduceOrNull(operation: (acc: Char, Char) -> Char): Char? {
     if (isEmpty())
         return null
@@ -20412,7 +20385,6 @@ public inline fun CharArray.reduceRightIndexedOrNull(operation: (index: Int, Cha
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Array<out T>.reduceRightOrNull(operation: (T, acc: S) -> S): S? {
     var index = lastIndex
     if (index < 0) return null
@@ -20435,7 +20407,6 @@ public inline fun <S, T : S> Array<out T>.reduceRightOrNull(operation: (T, acc: 
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun ByteArray.reduceRightOrNull(operation: (Byte, acc: Byte) -> Byte): Byte? {
     var index = lastIndex
     if (index < 0) return null
@@ -20458,7 +20429,6 @@ public inline fun ByteArray.reduceRightOrNull(operation: (Byte, acc: Byte) -> By
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun ShortArray.reduceRightOrNull(operation: (Short, acc: Short) -> Short): Short? {
     var index = lastIndex
     if (index < 0) return null
@@ -20481,7 +20451,6 @@ public inline fun ShortArray.reduceRightOrNull(operation: (Short, acc: Short) ->
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun IntArray.reduceRightOrNull(operation: (Int, acc: Int) -> Int): Int? {
     var index = lastIndex
     if (index < 0) return null
@@ -20504,7 +20473,6 @@ public inline fun IntArray.reduceRightOrNull(operation: (Int, acc: Int) -> Int):
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun LongArray.reduceRightOrNull(operation: (Long, acc: Long) -> Long): Long? {
     var index = lastIndex
     if (index < 0) return null
@@ -20527,7 +20495,6 @@ public inline fun LongArray.reduceRightOrNull(operation: (Long, acc: Long) -> Lo
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun FloatArray.reduceRightOrNull(operation: (Float, acc: Float) -> Float): Float? {
     var index = lastIndex
     if (index < 0) return null
@@ -20550,7 +20517,6 @@ public inline fun FloatArray.reduceRightOrNull(operation: (Float, acc: Float) ->
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun DoubleArray.reduceRightOrNull(operation: (Double, acc: Double) -> Double): Double? {
     var index = lastIndex
     if (index < 0) return null
@@ -20573,7 +20539,6 @@ public inline fun DoubleArray.reduceRightOrNull(operation: (Double, acc: Double)
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun BooleanArray.reduceRightOrNull(operation: (Boolean, acc: Boolean) -> Boolean): Boolean? {
     var index = lastIndex
     if (index < 0) return null
@@ -20596,7 +20561,6 @@ public inline fun BooleanArray.reduceRightOrNull(operation: (Boolean, acc: Boole
  * @sample samples.collections.Collections.Aggregates.reduceRightOrNull
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun CharArray.reduceRightOrNull(operation: (Char, acc: Char) -> Char): Char? {
     var index = lastIndex
     if (index < 0) return null
@@ -21058,7 +21022,6 @@ public inline fun <R> CharArray.runningFoldIndexed(initial: R, operation: (index
  * @sample samples.collections.Collections.Aggregates.runningReduce
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <S, T : S> Array<out T>.runningReduce(operation: (acc: S, T) -> S): List<S> {
     if (isEmpty()) return emptyList()
     var accumulator: S = this[0]
@@ -21450,7 +21413,6 @@ public inline fun CharArray.runningReduceIndexed(operation: (index: Int, acc: Ch
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <T, R> Array<out T>.scan(initial: R, operation: (acc: R, T) -> R): List<R> {
     return runningFold(initial, operation)
 }
@@ -21467,7 +21429,6 @@ public inline fun <T, R> Array<out T>.scan(initial: R, operation: (acc: R, T) ->
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ByteArray.scan(initial: R, operation: (acc: R, Byte) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21485,7 +21446,6 @@ public inline fun <R> ByteArray.scan(initial: R, operation: (acc: R, Byte) -> R)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ShortArray.scan(initial: R, operation: (acc: R, Short) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21503,7 +21463,6 @@ public inline fun <R> ShortArray.scan(initial: R, operation: (acc: R, Short) -> 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> IntArray.scan(initial: R, operation: (acc: R, Int) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21521,7 +21480,6 @@ public inline fun <R> IntArray.scan(initial: R, operation: (acc: R, Int) -> R): 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> LongArray.scan(initial: R, operation: (acc: R, Long) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21539,7 +21497,6 @@ public inline fun <R> LongArray.scan(initial: R, operation: (acc: R, Long) -> R)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> FloatArray.scan(initial: R, operation: (acc: R, Float) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21557,7 +21514,6 @@ public inline fun <R> FloatArray.scan(initial: R, operation: (acc: R, Float) -> 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> DoubleArray.scan(initial: R, operation: (acc: R, Double) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21575,7 +21531,6 @@ public inline fun <R> DoubleArray.scan(initial: R, operation: (acc: R, Double) -
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> BooleanArray.scan(initial: R, operation: (acc: R, Boolean) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21593,7 +21548,6 @@ public inline fun <R> BooleanArray.scan(initial: R, operation: (acc: R, Boolean)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> CharArray.scan(initial: R, operation: (acc: R, Char) -> R): List<R> {
     return runningFold(initial, operation)
@@ -21612,7 +21566,6 @@ public inline fun <R> CharArray.scan(initial: R, operation: (acc: R, Char) -> R)
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public inline fun <T, R> Array<out T>.scanIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
 }
@@ -21630,7 +21583,6 @@ public inline fun <T, R> Array<out T>.scanIndexed(initial: R, operation: (index:
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ByteArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21649,7 +21601,6 @@ public inline fun <R> ByteArray.scanIndexed(initial: R, operation: (index: Int, 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> ShortArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21668,7 +21619,6 @@ public inline fun <R> ShortArray.scanIndexed(initial: R, operation: (index: Int,
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> IntArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21687,7 +21637,6 @@ public inline fun <R> IntArray.scanIndexed(initial: R, operation: (index: Int, a
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> LongArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21706,7 +21655,6 @@ public inline fun <R> LongArray.scanIndexed(initial: R, operation: (index: Int, 
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> FloatArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21725,7 +21673,6 @@ public inline fun <R> FloatArray.scanIndexed(initial: R, operation: (index: Int,
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> DoubleArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21744,7 +21691,6 @@ public inline fun <R> DoubleArray.scanIndexed(initial: R, operation: (index: Int
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> BooleanArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): List<R> {
     return runningFoldIndexed(initial, operation)
@@ -21763,7 +21709,6 @@ public inline fun <R> BooleanArray.scanIndexed(initial: R, operation: (index: In
  * @sample samples.collections.Collections.Aggregates.scan
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <R> CharArray.scanIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
     return runningFoldIndexed(initial, operation)

@@ -3,7 +3,6 @@
 public inline fun <reified T> typeOf(): kotlin.reflect.KType
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun <T : kotlin.Any> kotlin.reflect.KClass<T>.cast(value: kotlin.Any?): T
 
@@ -15,7 +14,6 @@ public fun <T : kotlin.Any> kotlin.reflect.KClass<T>.createInstance(): T
 public inline fun <reified T : kotlin.Annotation> kotlin.reflect.KClass<*>.findAssociatedObject(): kotlin.Any?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.LowPriorityInOverloadResolution
 public fun <T : kotlin.Any> kotlin.reflect.KClass<T>.safeCast(value: kotlin.Any?): T?
 

@@ -31,6 +31,9 @@ object Elements : TemplateGroupBase() {
                     sourceFile(SourceFile.URanges)
                 }
             }
+            if (since?.let { it <= "1.4" } == true) {
+                wasExperimentalAnnotations.clear()
+            }
         }
     }
 

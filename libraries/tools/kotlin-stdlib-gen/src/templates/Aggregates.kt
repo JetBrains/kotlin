@@ -1188,7 +1188,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1213,7 +1212,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
 
         doc { reduceDoc("reduceOrNull") }
@@ -1313,7 +1311,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1339,7 +1336,6 @@ object Aggregates : TemplateGroupBase() {
         include(Lists, ArraysOfObjects)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
         inline()
         doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
@@ -1460,7 +1456,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1558,7 +1553,6 @@ object Aggregates : TemplateGroupBase() {
         include(CharSequences, ArraysOfUnsigned)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1658,7 +1652,6 @@ object Aggregates : TemplateGroupBase() {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
         since("1.4")
-        wasExperimental("ExperimentalStdlibApi")
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 

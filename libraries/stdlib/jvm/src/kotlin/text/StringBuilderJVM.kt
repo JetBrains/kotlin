@@ -34,7 +34,6 @@ public actual inline operator fun StringBuilder.set(index: Int, value: Char): Un
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder =
     this.replace(startIndex, endIndex, value)
@@ -49,7 +48,6 @@ public actual inline fun StringBuilder.setRange(startIndex: Int, endIndex: Int, 
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = this.deleteCharAt(index)
 
@@ -62,7 +60,6 @@ public actual inline fun StringBuilder.deleteAt(index: Int): StringBuilder = thi
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder = this.delete(startIndex, endIndex)
 
@@ -79,7 +76,6 @@ public actual inline fun StringBuilder.deleteRange(startIndex: Int, endIndex: In
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual inline fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length) =
@@ -97,7 +93,6 @@ public actual inline fun StringBuilder.toCharArray(destination: CharArray, desti
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
     this.append(value, startIndex, endIndex - startIndex)
@@ -112,7 +107,6 @@ public actual inline fun StringBuilder.appendRange(value: CharArray, startIndex:
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
     this.append(value, startIndex, endIndex)
@@ -131,7 +125,6 @@ public actual inline fun StringBuilder.appendRange(value: CharSequence, startInd
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder =
     this.insert(index, value, startIndex, endIndex - startIndex)
@@ -150,7 +143,6 @@ public actual inline fun StringBuilder.insertRange(index: Int, value: CharArray,
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder =
     this.insert(index, value, startIndex, endIndex)

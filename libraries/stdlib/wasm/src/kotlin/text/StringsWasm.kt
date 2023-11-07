@@ -82,7 +82,6 @@ public actual fun String(chars: CharArray, offset: Int, length: Int): String {
  * Concatenates characters in this [CharArray] into a String.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun CharArray.concatToString(): String {
     val thisStorage = this.storage
     val thisLength = thisStorage.len()
@@ -101,7 +100,6 @@ public actual fun CharArray.concatToString(): String {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
@@ -116,7 +114,6 @@ public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = 
  * Returns a [CharArray] containing characters of this string.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.toCharArray(): CharArray {
     val thisChars = this.chars
     val thisLength = thisChars.len()
@@ -135,7 +132,6 @@ public actual fun String.toCharArray(): CharArray {
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
@@ -179,7 +175,6 @@ public actual fun String.toCharArray(
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun ByteArray.decodeToString(): String {
     return decodeUtf8(this, 0, size, false)
 }
@@ -196,7 +191,6 @@ public actual fun ByteArray.decodeToString(): String {
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.decodeToString(
     startIndex: Int = 0,
@@ -213,7 +207,6 @@ public actual fun ByteArray.decodeToString(
  * Any malformed char sequence is replaced by the replacement byte sequence.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun String.encodeToByteArray(): ByteArray {
     return encodeUtf8(this, 0, length, false)
 }
@@ -230,7 +223,6 @@ public actual fun String.encodeToByteArray(): ByteArray {
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.encodeToByteArray(
     startIndex: Int = 0,

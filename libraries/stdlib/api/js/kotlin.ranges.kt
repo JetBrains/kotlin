@@ -515,30 +515,24 @@ public inline fun kotlin.ranges.ULongRange.random(): kotlin.ULong
 public fun kotlin.ranges.ULongRange.random(random: kotlin.random.Random): kotlin.ULong
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.CharRange.randomOrNull(): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ranges.CharRange.randomOrNull(random: kotlin.random.Random): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.IntRange.randomOrNull(): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ranges.IntRange.randomOrNull(random: kotlin.random.Random): kotlin.Int?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.LongRange.randomOrNull(): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.ranges.LongRange.randomOrNull(random: kotlin.random.Random): kotlin.Long?
 
 @kotlin.SinceKotlin(version = "1.5")

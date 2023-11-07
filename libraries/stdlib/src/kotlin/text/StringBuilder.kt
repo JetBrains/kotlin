@@ -129,7 +129,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * Characters are appended in order, starting at the index 0.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun append(value: CharArray): StringBuilder
 
     /**
@@ -157,7 +156,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * Otherwise, this method takes no action and simply returns.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun ensureCapacity(minimumCapacity: Int)
 
     /**
@@ -166,7 +164,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * Returns `-1` if the specified [string] does not occur in this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun indexOf(string: String): Int
 
     /**
@@ -176,7 +173,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * Returns `-1` if the specified [string] does not occur in this string builder starting at the specified [startIndex].
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun indexOf(string: String, startIndex: Int): Int
 
     /**
@@ -186,7 +182,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * Returns `-1` if the specified [string] does not occur in this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun lastIndexOf(string: String): Int
 
     /**
@@ -196,7 +191,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * Returns `-1` if the specified [string] does not occur in this string builder starting at the specified [startIndex].
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun lastIndexOf(string: String, startIndex: Int): Int
 
     /**
@@ -208,7 +202,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun insert(index: Int, value: Boolean): StringBuilder
 
     /**
@@ -283,7 +276,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun insert(index: Int, value: Char): StringBuilder
 
     /**
@@ -294,7 +286,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun insert(index: Int, value: CharArray): StringBuilder
 
     /**
@@ -308,7 +299,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun insert(index: Int, value: CharSequence?): StringBuilder
 
     /**
@@ -320,7 +310,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun insert(index: Int, value: Any?): StringBuilder
 
     /**
@@ -331,7 +320,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun insert(index: Int, value: String?): StringBuilder
 
     /**
@@ -346,7 +334,6 @@ expect class StringBuilder : Appendable, CharSequence {
      *  @throws IndexOutOfBoundsException or [IllegalArgumentException] if [newLength] is less than zero.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun setLength(newLength: Int)
 
     /**
@@ -355,7 +342,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException if [startIndex] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun substring(startIndex: Int): String
 
     /**
@@ -364,7 +350,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun substring(startIndex: Int, endIndex: Int): String
 
     /**
@@ -375,7 +360,6 @@ expect class StringBuilder : Appendable, CharSequence {
      * Calling this method may, but is not required to, affect the value of the [capacity] property.
      */
     @SinceKotlin("1.4")
-    @WasExperimental(ExperimentalStdlibApi::class)
     fun trimToSize()
 }
 
@@ -394,7 +378,6 @@ public expect fun StringBuilder.clear(): StringBuilder
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect operator fun StringBuilder.set(index: Int, value: Char)
 
 /**
@@ -407,7 +390,6 @@ public expect operator fun StringBuilder.set(index: Int, value: Char)
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder
 
 /**
@@ -420,7 +402,6 @@ public expect fun StringBuilder.setRange(startIndex: Int, endIndex: Int, value: 
  * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun StringBuilder.deleteAt(index: Int): StringBuilder
 
 /**
@@ -432,7 +413,6 @@ public expect fun StringBuilder.deleteAt(index: Int): StringBuilder
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): StringBuilder
 
 /**
@@ -448,7 +428,6 @@ public expect fun StringBuilder.deleteRange(startIndex: Int, endIndex: Int): Str
  *  or when that index is out of the [destination] array indices range.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun StringBuilder.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = this.length)
 
 /**
@@ -463,7 +442,6 @@ public expect fun StringBuilder.toCharArray(destination: CharArray, destinationO
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun StringBuilder.appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder
 
 /**
@@ -476,7 +454,6 @@ public expect fun StringBuilder.appendRange(value: CharArray, startIndex: Int, e
  * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun StringBuilder.appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder
 
 /**
@@ -493,7 +470,6 @@ public expect fun StringBuilder.appendRange(value: CharSequence, startIndex: Int
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun StringBuilder.insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder
 
 /**
@@ -510,7 +486,6 @@ public expect fun StringBuilder.insertRange(index: Int, value: CharArray, startI
  * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun StringBuilder.insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder
 
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER")

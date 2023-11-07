@@ -14,7 +14,6 @@ package kotlin.collections
  * It also implements [MutableList] interface and supports efficient get/set operations by index.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public class ArrayDeque<E> : AbstractMutableList<E> {
     private var head: Int = 0
     private var elementData: Array<Any?>

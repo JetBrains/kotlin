@@ -133,7 +133,6 @@ public expect fun String(chars: CharArray, offset: Int, length: Int): String
  * Concatenates characters in this [CharArray] into a String.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun CharArray.concatToString(): String
 
 /**
@@ -146,14 +145,12 @@ public expect fun CharArray.concatToString(): String
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String
 
 /**
  * Returns a [CharArray] containing characters of this string.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.toCharArray(): CharArray
 
 /**
@@ -166,7 +163,6 @@ public expect fun String.toCharArray(): CharArray
  * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray
 
 /**
@@ -196,7 +192,6 @@ public expect fun String.toCharArray(
  * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun ByteArray.decodeToString(): String
 
 /**
@@ -211,7 +206,6 @@ public expect fun ByteArray.decodeToString(): String
  * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun ByteArray.decodeToString(
     startIndex: Int = 0,
     endIndex: Int = this.size,
@@ -224,7 +218,6 @@ public expect fun ByteArray.decodeToString(
  * Any malformed char sequence is replaced by the replacement byte sequence.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.encodeToByteArray(): ByteArray
 
 /**
@@ -239,7 +232,6 @@ public expect fun String.encodeToByteArray(): ByteArray
  * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
  */
 @SinceKotlin("1.4")
-@WasExperimental(ExperimentalStdlibApi::class)
 public expect fun String.encodeToByteArray(
     startIndex: Int = 0,
     endIndex: Int = this.length,
