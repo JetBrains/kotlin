@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.nio.file.Path
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
@@ -39,6 +42,11 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
             useAdditionalService<KtModuleFactory> { KtSourceModuleFactory() }
+            useConfigurators(
+                ::CommonEnvironmentConfigurator,
+                ::JsEnvironmentConfigurator,
+                ::JvmEnvironmentConfigurator,
+            )
         }
     }
 

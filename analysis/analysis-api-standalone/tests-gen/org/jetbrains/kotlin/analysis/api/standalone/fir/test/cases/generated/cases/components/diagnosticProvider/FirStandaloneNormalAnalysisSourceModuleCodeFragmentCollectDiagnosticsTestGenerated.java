@@ -47,6 +47,24 @@ public class FirStandaloneNormalAnalysisSourceModuleCodeFragmentCollectDiagnosti
     }
 
     @Test
+    @TestMetadata("evalJs.kt")
+    public void testEvalJs() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/evalJs.kt");
+    }
+
+    @Test
+    @TestMetadata("evalJvm.kt")
+    public void testEvalJvm() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/evalJvm.kt");
+    }
+
+    @Test
+    @TestMetadata("evalJvmJs.kt")
+    public void testEvalJvmJs() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/evalJvmJs.kt");
+    }
+
+    @Test
     @TestMetadata("localClass.kt")
     public void testLocalClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/codeFragmentDiagnostics/localClass.kt");
