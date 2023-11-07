@@ -222,8 +222,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext): ExpEmbedding {
         val symbol = property.symbol
-        if (!symbol.isLocal) {
-            throw IllegalStateException("StmtConversionVisitor should not encounter non-local properties.")
+        check(symbol.isLocal) {
+            "StmtConversionVisitor should not encounter non-local properties."
         }
         val type = data.embedType(symbol.resolvedReturnType)
         return data.declareLocalProperty(symbol, property.initializer?.let { data.convert(it).withType(type) })

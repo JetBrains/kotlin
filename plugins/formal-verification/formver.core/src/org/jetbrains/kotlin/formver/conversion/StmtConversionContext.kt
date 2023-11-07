@@ -85,7 +85,7 @@ fun StmtConversionContext.embedPropertyAccess(accessExpression: FirPropertyAcces
             }
             else -> embedLocalProperty(calleeSymbol)
         }
-        else -> throw IllegalStateException("Property access symbol $calleeSymbol has unsupported type.")
+        else -> error("Property access symbol $calleeSymbol has unsupported type.")
     }
 
 fun StmtConversionContext.getInlineFunctionCallArgs(
