@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.formver.linearization
 
 import org.jetbrains.kotlin.formver.conversion.FreshEntityProducer
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.AnonymousVariableEmbedding
 
-class SharedLinearizationState(private val producer: FreshEntityProducer<VariableEmbedding, TypeEmbedding>) {
+class SharedLinearizationState(private val producer: FreshEntityProducer<AnonymousVariableEmbedding, TypeEmbedding>) {
     fun freshAnonVar(type: TypeEmbedding) = producer.getFresh(type)
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.conversion.StmtConversionContext
 import org.jetbrains.kotlin.formver.embeddings.PropertyAccessEmbedding
@@ -14,12 +15,13 @@ import org.jetbrains.kotlin.formver.embeddings.expression.debug.NamedBranchingNo
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.PlaintextLeaf
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.TreeView
 import org.jetbrains.kotlin.formver.embeddings.fillHoles
+import org.jetbrains.kotlin.formver.names.AnonymousName
 import org.jetbrains.kotlin.formver.viper.MangledName
 import org.jetbrains.kotlin.formver.viper.ast.*
 
-class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding) :
-    PureExpEmbedding,
-    PropertyAccessEmbedding {
+sealed interface VariableEmbedding : PureExpEmbedding, PropertyAccessEmbedding {
+    val name: MangledName
+    override val type: TypeEmbedding
 
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
@@ -46,3 +48,29 @@ class VariableEmbedding(val name: MangledName, override val type: TypeEmbedding)
     override val debugTreeView: TreeView
         get() = NamedBranchingNode("Var", PlaintextLeaf(name.mangled))
 }
+
+/**
+ * Embedding of a variable that is only used as a local placeholder, e.g. the return value or parameters
+ * in a type signature.
+ */
+class PlaceholderVariableEmbedding(override val name: MangledName, override val type: TypeEmbedding) : VariableEmbedding
+
+/**
+ * Embedding of an anonymous variable.
+ */
+class AnonymousVariableEmbedding(n: Int, override val type: TypeEmbedding) : VariableEmbedding {
+    override val name: MangledName = AnonymousName(n)
+}
+
+/**
+ * Embedding of a variable that comes from some FIR element.
+ */
+class FirVariableEmbedding(override val name: MangledName, override val type: TypeEmbedding, val symbol: FirBasedSymbol<*>) :
+    VariableEmbedding
+
+/**
+ * Variable embedding generated at linearization phase.
+ *
+ * This can still correspond to an earlier variable, but it no longer carries any interesting information.
+ */
+class LinearizationVariableEmbedding(override val name: MangledName, override val type: TypeEmbedding) : VariableEmbedding

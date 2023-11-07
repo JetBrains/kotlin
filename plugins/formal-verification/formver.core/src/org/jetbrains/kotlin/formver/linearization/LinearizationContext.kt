@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.formver.linearization
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
-import org.jetbrains.kotlin.formver.viper.ast.Exp
+import org.jetbrains.kotlin.formver.embeddings.expression.AnonymousVariableEmbedding
 import org.jetbrains.kotlin.formver.viper.ast.Label
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.formver.viper.ast.Stmt
 interface LinearizationContext : SeqnBuildContext {
     val source: KtSourceElement?
 
-    fun freshAnonVar(type: TypeEmbedding): Exp.LocalVar
+    fun freshAnonVar(type: TypeEmbedding): AnonymousVariableEmbedding
 
     fun asBlock(action: LinearizationContext.() -> Unit): Stmt.Seqn
     fun <R> withPosition(newSource: KtSourceElement, action: LinearizationContext.() -> R): R

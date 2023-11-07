@@ -103,8 +103,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
             val subj: Declare? = whenExpression.subject?.let {
                 val subjExp = convert(it)
                 when (val firSubjVar = whenExpression.subjectVariable) {
-                    null -> declareAnonLocal(subjExp.type, subjExp)
-                    else -> declareLocal(firSubjVar.name, subjExp.type, subjExp)
+                    null -> declareAnonVar(subjExp.type, subjExp)
+                    else -> declareLocalVariable(firSubjVar.symbol, subjExp)
                 }
             }
             val body = withWhenSubject(subj?.variable) {
@@ -226,7 +226,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
             throw IllegalStateException("StmtConversionVisitor should not encounter non-local properties.")
         }
         val type = data.embedType(symbol.resolvedReturnType)
-        return data.declareLocal(symbol.name, type, property.initializer?.let { data.convert(it).withType(type) })
+        return data.declareLocalProperty(symbol, property.initializer?.let { data.convert(it).withType(type) })
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): ExpEmbedding {
@@ -334,7 +334,8 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         val catches = catchData.blocks.map { catchBlock ->
             data.withNewScope {
                 val parameter = catchBlock.firCatch.parameter
-                val paramDecl = declareLocal(parameter.name, embedType(parameter.returnTypeRef.coneType), null)
+                // The value is the thrown exception, which we do not know, hence we do not initialise the exception variable.
+                val paramDecl = declareLocalProperty(parameter.symbol, null)
                 GotoChainNode(
                     catchBlock.entryLabel,
                     Block(
@@ -367,7 +368,7 @@ object StmtConversionVisitor : FirVisitor<ExpEmbedding, StmtConversionContext>()
         val expType = data.embedType(safeCallExpression.resolvedType)
         val checkedSafeCallSubjectType = data.embedType(safeCallExpression.checkedSubjectRef.value.resolvedType)
 
-        val storedReceiverDecl = data.declareAnonLocal(receiver.type, receiver)
+        val storedReceiverDecl = data.declareAnonVar(receiver.type, receiver)
         return Block(
             storedReceiverDecl,
             If(

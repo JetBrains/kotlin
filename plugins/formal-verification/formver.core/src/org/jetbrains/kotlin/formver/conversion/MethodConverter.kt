@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.formver.embeddings.callables.FunctionSignature
 import org.jetbrains.kotlin.formver.embeddings.expression.ExpEmbedding
-import org.jetbrains.kotlin.formver.viper.MangledName
+import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
 import org.jetbrains.kotlin.name.Name
 
 /**
@@ -29,7 +30,7 @@ class MethodConverter(
     scopeDepth: Int,
     private val parent: MethodConversionContext? = null,
 ) : MethodConversionContext, ProgramConversionContext by programCtx {
-    private var propertyResolver = PropertyNameResolver(scopeDepth)
+    private var propertyResolver = PropertyResolver(scopeDepth)
 
     override fun <R> withScopeImpl(scopeDepth: Int, action: () -> R): R {
         propertyResolver = propertyResolver.innerScope(scopeDepth)
@@ -45,17 +46,21 @@ class MethodConverter(
     override fun resolveLoopIndex(name: String): Int =
         propertyResolver.tryResolveLoopName(name) ?: throw IllegalArgumentException("Loop $name not found in scope.")
 
-    override fun resolveLocalPropertyName(name: Name): MangledName =
-        propertyResolver.tryResolveLocalPropertyName(name) ?: parent?.resolveLocalPropertyName(name)
+    override fun resolveLocal(name: Name): VariableEmbedding =
+        propertyResolver.tryResolveLocalProperty(name) ?: parent?.resolveLocal(name)
         ?: throw IllegalArgumentException("Property $name not found in scope.")
 
-    override fun registerLocalPropertyName(name: Name) {
-        propertyResolver.registerLocalPropertyName(name)
+    override fun registerLocalProperty(symbol: FirPropertySymbol) {
+        propertyResolver.registerLocalProperty(symbol, embedType(symbol.resolvedReturnType))
     }
 
-    override fun embedParameter(symbol: FirValueParameterSymbol): ExpEmbedding =
-        paramResolver.tryEmbedParameter(symbol) ?: parent?.embedParameter(symbol)
-        ?: throw IllegalArgumentException("Parameter $symbol not found in scope.")
+    override fun registerLocalVariable(symbol: FirVariableSymbol<*>) {
+        propertyResolver.registerLocalVariable(symbol, embedType(symbol.resolvedReturnType))
+    }
+
+    override fun resolveParameter(name: Name): ExpEmbedding =
+        paramResolver.tryResolveParameter(name) ?: parent?.resolveParameter(name)
+        ?: throw IllegalArgumentException("Parameter $name not found in scope.")
 
     override val defaultResolvedReturnTarget = paramResolver.defaultResolvedReturnTarget
     override fun resolveNamedReturnTarget(sourceName: String): ReturnTarget? {

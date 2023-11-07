@@ -28,7 +28,7 @@ data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
 
     override val type: TypeEmbedding = exps.lastOrNull()?.type ?: UnitTypeEmbedding
 
-    override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
+    override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         if (exps.isEmpty()) return
 
         for (exp in exps.take(exps.size - 1)) {
@@ -43,7 +43,7 @@ data class Block(val exps: List<ExpEmbedding>) : OptionalResultExpEmbedding {
 
 data class If(val condition: ExpEmbedding, val thenBranch: ExpEmbedding, val elseBranch: ExpEmbedding, override val type: TypeEmbedding) :
     OptionalResultExpEmbedding, DefaultDebugTreeViewImplementation {
-    override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
+    override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         val condViper = condition.toViper(ctx)
         val thenViper = ctx.asBlock { thenBranch.withType(type).toViperMaybeStoringIn(result, this) }
         val elseViper = ctx.asBlock { elseBranch.withType(type).toViperMaybeStoringIn(result, this) }
@@ -73,7 +73,7 @@ data class While(
         }
         ctx.addStatement(
             Stmt.While(
-                condVar,
+                condVar.toViper(ctx),
                 invariants.pureToViper(ctx.source),
                 bodyBlock,
                 ctx.source.asPosition
@@ -124,7 +124,7 @@ data class LabelExp(val label: Label) : UnitResultExpEmbedding {
 data class GotoChainNode(val label: Label?, val exp: ExpEmbedding, val next: Label) : OptionalResultExpEmbedding {
     override val type: TypeEmbedding = exp.type
 
-    override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
+    override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         label?.let { ctx.addLabel(it) }
         exp.toViperMaybeStoringIn(result, ctx)
         ctx.addStatement(next.toGoto())
@@ -138,7 +138,7 @@ data class NonDeterministically(val exp: ExpEmbedding) : UnitResultExpEmbedding,
     override fun toViperSideEffects(ctx: LinearizationContext) {
         val choice = ctx.freshAnonVar(BooleanTypeEmbedding)
         val expViper = ctx.asBlock { exp.toViper(this) }
-        ctx.addStatement(Stmt.If(choice, expViper, Stmt.Seqn(), ctx.source.asPosition))
+        ctx.addStatement(Stmt.If(choice.toViper(ctx), expViper, Stmt.Seqn(), ctx.source.asPosition))
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>
@@ -149,8 +149,14 @@ data class NonDeterministically(val exp: ExpEmbedding) : UnitResultExpEmbedding,
 data class MethodCall(val method: NamedFunctionSignature, val args: List<ExpEmbedding>) : StoredResultExpEmbedding {
     override val type: TypeEmbedding = method.returnType
 
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
-        ctx.addStatement(method.toMethodCall(args.map { it.toViper(ctx) }, result, ctx.source.asPosition))
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
+        ctx.addStatement(
+            method.toMethodCall(
+                args.map { it.toViper(ctx) },
+                result.toLocalVarUse(ctx.source.asPosition),
+                ctx.source.asPosition
+            )
+        )
     }
 
     override val debugTreeView: TreeView
@@ -182,7 +188,7 @@ data class InvokeFunctionObject(val receiver: ExpEmbedding, val args: List<ExpEm
                 ctx.source.asPosition
             )
         )
-        return variable
+        return variable.toViper(ctx)
     }
 
     override val debugTreeView: TreeView
@@ -198,7 +204,7 @@ data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: Exp
     OptionalResultExpEmbedding {
     override val type: TypeEmbedding = body.type
 
-    override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
+    override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         signature?.formalArgs?.forEach { arg ->
             // Ideally we would want to assume these rather than inhale them to prevent inconsistencies with permissions.
             // Unfortunately Silicon for some reason does not allow Assumes. However, it doesn't matter as long as the
@@ -224,7 +230,7 @@ data class FunctionExp(val signature: FullNamedFunctionSignature?, val body: Exp
 
 data class Elvis(val left: ExpEmbedding, val right: ExpEmbedding, override val type: TypeEmbedding) : StoredResultExpEmbedding,
     DefaultDebugTreeViewImplementation {
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         val leftViper = left.toViper(ctx)
         val leftWrapped = ExpWrapper(leftViper, left.type)
         val conditional = If(leftWrapped.notNullCmp(), leftWrapped, right, type)

@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.formver.asPosition
 import org.jetbrains.kotlin.formver.domains.*
 import org.jetbrains.kotlin.formver.embeddings.*
 import org.jetbrains.kotlin.formver.embeddings.callables.*
-import org.jetbrains.kotlin.formver.embeddings.expression.FunctionExp
-import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.expression.*
 import org.jetbrains.kotlin.formver.linearization.Linearizer
 import org.jetbrains.kotlin.formver.linearization.SeqnBuilder
 import org.jetbrains.kotlin.formver.linearization.SharedLinearizationState
@@ -50,7 +49,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
     override val scopeIndexProducer = indexProducer()
 
     // The type annotation is necessary for the code to compile.
-    override val anonVarProducer = FreshEntityProducer { n, type: TypeEmbedding -> VariableEmbedding(AnonymousName(n), type) }
+    override val anonVarProducer = FreshEntityProducer { n, type: TypeEmbedding -> AnonymousVariableEmbedding(n, type) }
     override val returnTargetProducer = FreshEntityProducer { n, type: TypeEmbedding -> ReturnTarget(n, type) }
 
     val program: Program
@@ -166,10 +165,11 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
         val retType = symbol.resolvedReturnTypeRef.type
         val receiverType = symbol.receiverType
         return object : FunctionSignature {
+            // TODO: figure out whether we want a symbol here and how to get it.
             override val receiver =
-                receiverType?.let { VariableEmbedding(ThisReceiverName, embedType(it)) }
+                receiverType?.let { PlaceholderVariableEmbedding(ThisReceiverName, embedType(it)) }
             override val params = symbol.valueParameterSymbols.map {
-                VariableEmbedding(it.embedName(), embedType(it.resolvedReturnType))
+                FirVariableEmbedding(it.embedName(), embedType(it.resolvedReturnType), it)
             }
             override val returnType = embedType(retType)
         }
@@ -271,7 +271,7 @@ class ProgramConverter(val session: FirSession, override val config: PluginConfi
                 MethodConverter(
                     this,
                     signature,
-                    RootParameterResolver(this, signature.sourceName, returnTarget),
+                    RootParameterResolver(this, signature, signature.sourceName, returnTarget),
                     scopeIndexProducer.getFresh(),
                 )
             val stmtCtx = StmtConverter(methodCtx)

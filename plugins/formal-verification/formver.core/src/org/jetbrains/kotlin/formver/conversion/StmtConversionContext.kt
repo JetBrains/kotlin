@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.formver.calleeSymbol
 import org.jetbrains.kotlin.formver.embeddings.ClassPropertyAccess
 import org.jetbrains.kotlin.formver.embeddings.PropertyAccessEmbedding
@@ -57,20 +58,18 @@ interface StmtConversionContext : MethodConversionContext {
     ): Pair<CatchBlockListData, R>
 }
 
-fun StmtConversionContext.declareLocal(
-    name: Name,
-    type: TypeEmbedding,
-    initializer: ExpEmbedding?,
-): Declare {
-    registerLocalPropertyName(name)
-    val varEmb = VariableEmbedding(resolveLocalPropertyName(name), type)
-    return Declare(varEmb, initializer)
+fun StmtConversionContext.declareLocalProperty(symbol: FirPropertySymbol, initializer: ExpEmbedding?): Declare {
+    registerLocalProperty(symbol)
+    return Declare(embedLocalProperty(symbol), initializer)
 }
 
-fun StmtConversionContext.declareAnonLocal(
-    type: TypeEmbedding,
-    initializer: ExpEmbedding?,
-): Declare = Declare(freshAnonVar(type), initializer)
+fun StmtConversionContext.declareLocalVariable(symbol: FirVariableSymbol<*>, initializer: ExpEmbedding?): Declare {
+    registerLocalVariable(symbol)
+    return Declare(embedLocalVariable(symbol), initializer)
+}
+
+fun StmtConversionContext.declareAnonVar(type: TypeEmbedding, initializer: ExpEmbedding?): Declare =
+    Declare(freshAnonVar(type), initializer)
 
 fun StmtConversionContext.embedPropertyAccess(accessExpression: FirPropertyAccessExpression): PropertyAccessEmbedding =
     when (val calleeSymbol = accessExpression.calleeSymbol) {
@@ -97,7 +96,7 @@ fun StmtConversionContext.getInlineFunctionCallArgs(
         when (arg.ignoringMetaNodes()) {
             is VariableEmbedding, is LambdaExp -> arg
             else -> {
-                val paramVarDecl = declareAnonLocal(arg.type, arg)
+                val paramVarDecl = declareAnonVar(arg.type, arg)
                 declarations.add(paramVarDecl)
                 paramVarDecl.variable
             }

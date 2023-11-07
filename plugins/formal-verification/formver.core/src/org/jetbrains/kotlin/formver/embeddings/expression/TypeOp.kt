@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.formver.embeddings.expression.debug.debugTreeView
 import org.jetbrains.kotlin.formver.embeddings.expression.debug.withDesignation
 import org.jetbrains.kotlin.formver.linearization.LinearizationContext
 import org.jetbrains.kotlin.formver.linearization.pureToViper
-import org.jetbrains.kotlin.formver.viper.ast.Exp
 import org.jetbrains.kotlin.formver.viper.ast.Stmt
 
 data class Is(override val inner: ExpEmbedding, val comparisonType: TypeEmbedding) : UnaryDirectResultExpEmbedding {
@@ -52,7 +51,7 @@ data class SafeCast(val exp: ExpEmbedding, val targetType: TypeEmbedding) : Stor
     override val type: NullableTypeEmbedding
         get() = targetType.getNullable()
 
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         val expViper = exp.toViper(ctx)
         val expWrapped = ExpWrapper(expViper, exp.type)
         val conditional = If(expWrapped.notNullCmp(), expWrapped, type.nullVal, type)
@@ -78,9 +77,9 @@ abstract class InhaleInvariants(val exp: ExpEmbedding) : StoredResultExpEmbeddin
 
     override val type: TypeEmbedding = exp.type
 
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         exp.toViperStoringIn(result, ctx)
-        for (invariant in invariants.fillHoles(ExpWrapper(result, type))) {
+        for (invariant in invariants.fillHoles(result)) {
             ctx.addStatement(Stmt.Inhale(invariant.pureToViper(), ctx.source.asPosition))
         }
     }

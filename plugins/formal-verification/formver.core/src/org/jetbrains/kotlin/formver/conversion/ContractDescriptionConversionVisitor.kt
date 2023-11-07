@@ -204,14 +204,11 @@ class ContractDescriptionConversionVisitor(
     private fun embeddedVarByIndex(ix: Int): VariableEmbedding = resolveByIndex(ix, { signature.receiver!! }) { signature.params[it] }
 
     private fun VariableEmbedding.nullCmp(isNegated: Boolean, sourceRole: SourceRole?): ExpEmbedding =
-        if (type is NullableTypeEmbedding) {
-            if (isNegated) {
-                NeCmp(this, type.nullVal, sourceRole)
-            } else {
-                EqCmp(this, type.nullVal, sourceRole)
-            }
-        } else {
-            BooleanLit(isNegated, sourceRole)
+        when (val type = this.type) {
+            is NullableTypeEmbedding ->
+                if (isNegated) NeCmp(this, type.nullVal, sourceRole)
+                else EqCmp(this, type.nullVal, sourceRole)
+            else -> BooleanLit(isNegated, sourceRole)
         }
 }
 

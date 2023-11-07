@@ -259,7 +259,7 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
     }
 
     private fun initPredicate(): Predicate {
-        val subjectEmbedding = VariableEmbedding(ClassPredicateSubjectName, this)
+        val subjectEmbedding = PlaceholderVariableEmbedding(ClassPredicateSubjectName, this)
         val accessFields = fields.values
             .flatMap { it.accessInvariantsForParameter().fillHoles(subjectEmbedding) }
 
@@ -280,7 +280,7 @@ data class ClassTypeEmbedding(val className: ScopedKotlinName) : TypeEmbedding {
 
     // Note: This is a preparation for upcoming pull requests, functions for predicates unfolding are just declared and not used.
     fun getterFunctions(): List<FieldAccessFunction> {
-        val receiver = VariableEmbedding(GetterFunctionSubjectName, this)
+        val receiver = PlaceholderVariableEmbedding(GetterFunctionSubjectName, this)
         val getPropertyFunctions = fields.values
             .filter { field -> field.accessPolicy != AccessPolicy.ALWAYS_INHALE_EXHALE }
             .map { field -> FieldAccessFunction(name, field, FieldAccess(receiver, field).pureToViper()) }

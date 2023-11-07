@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.formver.embeddings.callables
 
 import org.jetbrains.kotlin.formver.embeddings.FieldEmbedding
 import org.jetbrains.kotlin.formver.embeddings.LegacyUnspecifiedFunctionTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.expression.VariableEmbedding
-import org.jetbrains.kotlin.formver.names.AnonymousName
+import org.jetbrains.kotlin.formver.embeddings.expression.AnonymousVariableEmbedding
 import org.jetbrains.kotlin.formver.names.GetterFunctionName
 import org.jetbrains.kotlin.formver.names.GetterFunctionSubjectName
 import org.jetbrains.kotlin.formver.names.SpecialName
@@ -48,7 +47,7 @@ class FieldAccessFunction(
 }
 
 object DuplicableFunction : BuiltinFunction(SpecialName("duplicable")) {
-    private val thisArg = VariableEmbedding(AnonymousName(0), LegacyUnspecifiedFunctionTypeEmbedding)
+    private val thisArg = AnonymousVariableEmbedding(0, LegacyUnspecifiedFunctionTypeEmbedding)
 
     override val formalArgs: List<Declaration.LocalVarDecl> = listOf(thisArg.toLocalVarDecl())
     override val retType: Type = Type.Bool

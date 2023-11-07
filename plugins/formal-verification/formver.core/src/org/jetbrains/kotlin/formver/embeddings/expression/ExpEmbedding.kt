@@ -40,12 +40,12 @@ sealed interface ExpEmbedding {
      *
      * This function is intended for cases when having the variable already provides some benefit, e.g. in an if statement.
      */
-    fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext)
+    fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext)
 
     /**
      * Like `toViperStoringIn`, but allow special handling of the case when the result is unused.
      */
-    fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext)
+    fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext)
 
     /**
      * Like `toViper`, but assume the result is unused.
@@ -70,8 +70,8 @@ sealed interface ExpEmbedding {
  * Default implementation for `toViperStoringIn`, which simply assigns the value to the result variable.
  */
 sealed interface DefaultStoringInExpEmbedding : ExpEmbedding {
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
-        ctx.addStatement(Stmt.assign(result, toViper(ctx)))
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
+        ctx.addStatement(Stmt.assign(result.toViper(ctx), toViper(ctx)))
     }
 }
 
@@ -79,7 +79,7 @@ sealed interface DefaultStoringInExpEmbedding : ExpEmbedding {
  * Default `toViperMaybeStoringIn` implementation, which uses `StoringIn` if there is a result and `UnusedResult` otherwise.
  */
 sealed interface DefaultMaybeStoringInExpEmbedding : ExpEmbedding {
-    override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
+    override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         if (result != null) toViperStoringIn(result, ctx)
         else toViperUnusedResult(ctx)
     }
@@ -179,7 +179,7 @@ sealed interface BaseStoredResultExpEmbedding : ExpEmbedding {
     override fun toViper(ctx: LinearizationContext): Exp {
         val variable = ctx.freshAnonVar(type)
         toViperStoringIn(variable, ctx)
-        return variable
+        return variable.toViper(ctx)
     }
 }
 
@@ -198,7 +198,7 @@ sealed interface NoResultExpEmbedding : DefaultMaybeStoringInExpEmbedding {
         get() = NothingTypeEmbedding
 
     // Result ignored, since it is never used.
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         toViperUnusedResult(ctx)
     }
 
@@ -228,7 +228,7 @@ sealed interface OptionalResultExpEmbedding : BaseStoredResultExpEmbedding {
         toViperMaybeStoringIn(null, ctx)
     }
 
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         toViperMaybeStoringIn(result, ctx)
     }
 }
@@ -245,13 +245,13 @@ sealed interface PassthroughExpEmbedding : ExpEmbedding {
 
     override fun toViper(ctx: LinearizationContext): Exp = withPassthroughHook(ctx) { inner.toViper(this) }
 
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         withPassthroughHook(ctx) {
             inner.toViperStoringIn(result, this)
         }
     }
 
-    override fun toViperMaybeStoringIn(result: Exp.LocalVar?, ctx: LinearizationContext) {
+    override fun toViperMaybeStoringIn(result: VariableEmbedding?, ctx: LinearizationContext) {
         withPassthroughHook(ctx) {
             inner.toViperMaybeStoringIn(result, this)
         }
@@ -309,15 +309,15 @@ data class FieldAccess(val receiver: ExpEmbedding, val field: FieldEmbedding) : 
 
         val variable = ctx.freshAnonVar(type)
         toViperStoringIn(variable, ctx)
-        return variable
+        return variable.toViper(ctx)
     }
 
-    override fun toViperStoringIn(result: Exp.LocalVar, ctx: LinearizationContext) {
+    override fun toViperStoringIn(result: VariableEmbedding, ctx: LinearizationContext) {
         val receiverViper = receiver.toViper(ctx)
         val fieldAccess = PrimitiveFieldAccess(ExpWrapper(receiverViper, receiver.type), field)
         val invariant = accessInvariant?.fillHole(ExpWrapper(receiverViper, receiver.type))?.pureToViper(ctx.source)
         invariant?.let { ctx.addStatement(Stmt.Inhale(it, ctx.source.asPosition)) }
-        ctx.addStatement(Stmt.LocalVarAssign(result, fieldAccess.pureToViper(ctx.source), ctx.source.asPosition))
+        ctx.addStatement(Stmt.assign(result.toViper(ctx), fieldAccess.pureToViper(ctx.source), ctx.source.asPosition))
         invariant?.let { ctx.addStatement(Stmt.Exhale(it, ctx.source.asPosition)) }
     }
 
@@ -381,7 +381,7 @@ data class Assign(val lhs: ExpEmbedding, val rhs: ExpEmbedding) : UnitResultExpE
     override fun toViperSideEffects(ctx: LinearizationContext) {
         val lhsViper = lhs.toViper(ctx)
         if (lhsViper is Exp.LocalVar) {
-            rhs.withType(lhs.type).toViperStoringIn(lhsViper, ctx)
+            rhs.withType(lhs.type).toViperStoringIn(LinearizationVariableEmbedding(lhsViper.name, lhs.type), ctx)
         } else {
             val rhsViper = rhs.withType(lhs.type).toViper(ctx)
             ctx.addStatement(Stmt.assign(lhsViper, rhsViper, ctx.source.asPosition))
@@ -398,7 +398,7 @@ data class Declare(val variable: VariableEmbedding, val initializer: ExpEmbeddin
 
     override fun toViperSideEffects(ctx: LinearizationContext) {
         ctx.addDeclaration(variable.toLocalVarDecl(ctx.source.asPosition))
-        initializer?.toViperStoringIn(variable.toLocalVarUse(), ctx)
+        initializer?.toViperStoringIn(variable, ctx)
     }
 
     override val debugAnonymousSubexpressions: List<ExpEmbedding>

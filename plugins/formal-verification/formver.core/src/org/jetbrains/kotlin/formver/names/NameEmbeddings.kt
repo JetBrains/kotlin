@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.formver.conversion.ProgramConversionContext
 import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 /* This file contains classes to mangle names present in the Kotlin source.
  *
@@ -34,16 +35,15 @@ fun CallableId.embedExtensionGetterName(type: TypeEmbedding): ScopedKotlinName =
     embedScopedWithType(type, ExtensionGetterKotlinName(callableName))
 fun CallableId.embedExtensionSetterName(type: TypeEmbedding): ScopedKotlinName =
     embedScopedWithType(type, ExtensionSetterKotlinName(callableName))
+
+fun CallableId.embedLocalPropertyName(): KotlinName = SimpleKotlinName(callableName)
 fun CallableId.embedMemberPropertyName(): ScopedKotlinName = embedScoped(MemberKotlinName(callableName))
 fun CallableId.embedUnscopedPropertyName(): SimpleKotlinName = SimpleKotlinName(callableName)
 fun CallableId.embedFunctionName(type: TypeEmbedding): ScopedKotlinName =
     embedScopedWithType(type, FunctionKotlinName(callableName))
 
-fun CallableId.embedPropertyName(scope: Int): ScopedKotlinName = when {
-    isLocal -> ScopedKotlinName(LocalScope(scope), SimpleKotlinName(callableName))
-    className != null -> embedMemberPropertyName()
-    else -> error("Name is neither local nor bound to a class; we do not know how to handle this.")
-}
+fun Name.embedScopedLocalName(scope: Int) = ScopedKotlinName(LocalScope(scope), SimpleKotlinName(this))
+fun Name.embedParameterName() = ScopedKotlinName(ParameterScope, SimpleKotlinName(this))
 
 fun FirValueParameterSymbol.embedName(): ScopedKotlinName = ScopedKotlinName(ParameterScope, SimpleKotlinName(name))
 fun FirPropertyAccessorSymbol.embedName(ctx: ProgramConversionContext): ScopedKotlinName = when (propertySymbol.isExtension) {
