@@ -34,12 +34,12 @@ private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirProvisionalFunctionExpressionLowering,
     ::BirJvmOverloadsAnnotationLowering,
     ::BirMainMethodGenerationLowering,
-    //::BirAnnotationLowering,
     ::BirPolymorphicSignatureLowering,
     ::BirVarargLowering,
     ::BirJvmLateinitLowering,
     ::BirJvmInventNamesForLocalClassesLowering,
     ::BirInlineCallableReferenceToLambdaLowering,
+    ::BirAnnotationLowering,
 )
 
 private val excludedStandardPhases = setOf<String>(
