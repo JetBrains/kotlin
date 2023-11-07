@@ -1899,6 +1899,48 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/issues")
+            @TestDataPath("$PROJECT_ROOT")
+            @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/box/multiplatform/migratedOldTests/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+            public class Issues {
+                @Test
+                public void testAllFilesPresentInIssues() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/issues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("kt52757simplified.kt")
+                public void testKt52757simplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt52757simplified.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53109simplified.kt")
+                public void testKt53109simplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53109simplified.kt");
+                }
+
+                @Test
+                @TestMetadata("kt53639simplified.kt")
+                public void testKt53639simplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt53639simplified.kt");
+                }
+
+                @Test
+                @TestMetadata("kt55057simplified.kt")
+                public void testKt55057simplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt55057simplified.kt");
+                }
+
+                @Test
+                @TestMetadata("kt60291simplified.kt")
+                public void testKt60291simplified() throws Exception {
+                    runTest("compiler/testData/codegen/box/builderInference/issues/kt60291simplified.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter")
             @TestDataPath("$PROJECT_ROOT")
             @UseExtTestCaseGroupProvider()
