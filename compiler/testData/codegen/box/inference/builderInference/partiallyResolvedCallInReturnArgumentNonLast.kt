@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
+// FIR status: KT-58742
 
 class Out<out V>(val v: V)
 class Box<R> {
