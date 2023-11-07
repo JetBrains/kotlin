@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.copyCommonizeCInteropForIdeTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
+import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -80,6 +81,8 @@ internal val KotlinCreateNativeCInteropTasksSideEffect = KotlinCompilationSideEf
                 }
             }
         }
+
+        interop.dependencyFiles += project.locateOrCreateCInteropDependencyConfiguration(compilation)
     }
 }
 
