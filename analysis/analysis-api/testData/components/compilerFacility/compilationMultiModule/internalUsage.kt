@@ -11,5 +11,5 @@ internal fun lib(): String = "foo"
 import lib.lib
 
 fun test() {
-    lib()
+    <caret>lib()
 }
