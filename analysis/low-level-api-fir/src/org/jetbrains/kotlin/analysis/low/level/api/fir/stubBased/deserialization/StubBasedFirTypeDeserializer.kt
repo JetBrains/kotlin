@@ -175,20 +175,17 @@ internal class StubBasedFirTypeDeserializer(
     }
 
     private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
+        if (typeReference.typeElement?.unwrapNullability() is KtDynamicType) {
+            return ConeDynamicType.create(moduleData.session)
+        }
+
         val userType = typeReference.typeElement as? KtUserType
         val upperBoundType = (userType?.let { it.stub ?: loadStubByElement(it) } as? KotlinUserTypeStubImpl)?.upperBound
         if (upperBoundType != null) {
             val lowerBound = simpleType(typeReference, attributes)
             val upperBound = type(upperBoundType)
 
-            val isDynamic = lowerBound == moduleData.session.builtinTypes.nothingType.coneType &&
-                    upperBound == moduleData.session.builtinTypes.nullableAnyType.coneType
-
-            return if (isDynamic) {
-                ConeDynamicType.create(moduleData.session)
-            } else {
-                ConeFlexibleType(lowerBound!!, upperBound as ConeSimpleKotlinType)
-            }
+            return ConeFlexibleType(lowerBound!!, upperBound as ConeSimpleKotlinType)
         }
 
         return simpleType(typeReference, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
