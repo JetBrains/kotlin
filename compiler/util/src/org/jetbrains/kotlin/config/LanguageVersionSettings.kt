@@ -318,7 +318,7 @@ enum class LanguageFeature(
 
     // End of 2.* language features --------------------------------------------------
 
-    ExpectActualClasses(sinceVersion = null, kind = BUG_FIX), // KT-62885
+    ExpectActualClasses(sinceVersion = null), // KT-62885
 
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
