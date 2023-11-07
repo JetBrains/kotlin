@@ -224,7 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
     SCRIPT: [ResolvedTo(ANNOTATION_ARGUMENTS)] <script-scriptWithTypeAnnotationsOnDeclaration.kts>
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -237,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](<strcat>(String(return type: ), constant#)) List<@Anno[Unresolved](<strcat>(String(nested return type: ), constant#)) Collection<@Anno[Unresolved](<strcat>(String(nested nested return type: ), constant#)) String>> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> { LAZY_BLOCK }
 
 
 BODY_RESOLVE:
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-scriptWithTypeAnnotationsOnDeclaration.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=foo/Anno.position] position: String): R|foo/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -259,7 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptWithTypeAnnotationsOnDeclaration.kts
         public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](<strcat>(String(return type: ), constant#)) List<@Anno[Unresolved](<strcat>(String(nested return type: ), constant#)) Collection<@Anno[Unresolved](<strcat>(String(nested nested return type: ), constant#)) String>> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun explicitType(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>> { LAZY_BLOCK }
 
 
 FILE RAW TO BODY:
@@ -284,3 +284,4 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptWithTypeAnnotationsOnDeclaration.kts
         public final [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|@R|foo/Anno|(position = <strcat>(String(return type: ), R|foo/constant|))  kotlin/collections/List<@R|foo/Anno|(position = <strcat>(String(nested return type: ), R|foo/constant|))  kotlin/collections/Collection<@R|foo/Anno|(position = <strcat>(String(nested nested return type: ), R|foo/constant|))  kotlin/String>>| {
             ^explicitType Int(0)
         }
+

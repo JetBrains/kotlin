@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
@@ -658,6 +659,15 @@ private object FirTargetLazyAnnotationCalculatorTransformer : FirLazyAnnotationT
         }
 
         return regularClass
+    }
+
+    override fun transformScript(script: FirScript, data: FirLazyAnnotationTransformerData): FirScript {
+        script.transformAnnotations(this, data)
+        script.forEachDependentDeclaration {
+            it.transformSingle(this, data)
+        }
+
+        return script
     }
 
     override fun transformBlock(block: FirBlock, data: FirLazyAnnotationTransformerData): FirStatement {

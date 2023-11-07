@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentOnStatement.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] <script-annotationApplicationArgumentOnStatement.kts>
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) @R|kotlin/annotation/Retention|[Types](AnnotationRetention#.SOURCE#) public final [ResolvedTo(STATUS)] annotation class Annotation : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] annotation class Annotation : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Annotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Annotation.name] name: R|kotlin/String|): R|Annotation| {
                 LAZY_super<R|kotlin/Any|>
             }

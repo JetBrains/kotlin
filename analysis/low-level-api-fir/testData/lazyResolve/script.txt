@@ -584,7 +584,7 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         }
 
-        @Target[Unresolved](AnnotationTarget#.EXPRESSION#, AnnotationTarget#.FUNCTION#) @Retention[Unresolved](AnnotationRetention#.SOURCE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION) @Retention[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -594,13 +594,13 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         }
 
-        @Anno[Unresolved](En#.Entry#) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        @Anno[Unresolved](En#.Entry#) build#(<L> = LAZY_EXPRESSION)
+        @Anno[Unresolved](LAZY_EXPRESSION) build#(<L> = LAZY_EXPRESSION)
         public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](En#.Entry#) builder#.execute#()
+        @Anno[Unresolved](LAZY_EXPRESSION) builder#.execute#()
         builder#.version# = String()
 
 BODY_RESOLVE:
@@ -641,7 +641,7 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         }
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) @R|kotlin/annotation/Retention|[Types](AnnotationRetention#.SOURCE#) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) @R|kotlin/annotation/Retention|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|En|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -651,7 +651,7 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
 
         }
 
-        @R|Anno|[Types](En#.Entry#) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
