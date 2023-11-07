@@ -523,7 +523,11 @@ open class FirDeclarationsResolveTransformer(
             variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
             variable.transformAccessors()
         }
-        variable.transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+
+        // We need this return type transformation to resolve annotations from an implicit type
+        variable.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
+            .transformOtherChildren(transformer, ResolutionMode.ContextIndependent)
+
         context.storeVariable(variable, session)
         dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
         return variable
