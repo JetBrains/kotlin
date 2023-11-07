@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.muteExpectActualClassesWarning
+import org.jetbrains.kotlin.config.areExpectActualClassesStable
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 object ExpectActualClassifiersAreInBetaChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) return
-        if (context.languageVersionSettings.muteExpectActualClassesWarning) return
+        if (context.languageVersionSettings.areExpectActualClassesStable) return
         if (descriptor !is TypeAliasDescriptor && descriptor !is ClassDescriptor) return
         check(declaration is KtClassOrObject || declaration is KtTypeAlias)
 
