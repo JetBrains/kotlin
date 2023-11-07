@@ -32277,6 +32277,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("topLevelPropertyInitialization.kts")
+            public void testTopLevelPropertyInitialization() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/script/topLevelPropertyInitialization.kts");
+            }
+
+            @Test
             @TestMetadata("topLevelVariable.kts")
             public void testTopLevelVariable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/script/topLevelVariable.kts");

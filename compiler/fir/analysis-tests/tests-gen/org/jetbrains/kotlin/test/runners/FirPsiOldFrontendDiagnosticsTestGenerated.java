@@ -30289,6 +30289,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("topLevelPropertyInitialization.kts")
+            public void testTopLevelPropertyInitialization() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/script/topLevelPropertyInitialization.kts");
+            }
+
+            @Test
             @TestMetadata("topLevelVariable.kts")
             public void testTopLevelVariable() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/script/topLevelVariable.kts");
