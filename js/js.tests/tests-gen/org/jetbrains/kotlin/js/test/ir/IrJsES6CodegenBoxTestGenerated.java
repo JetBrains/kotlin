@@ -1949,6 +1949,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             }
 
             @Test
+            @TestMetadata("kt52757simplified.kt")
+            public void testKt52757simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt52757simplified.kt");
+            }
+
+            @Test
             @TestMetadata("kt52838a.kt")
             public void testKt52838a() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/issues/kt52838a.kt");
@@ -1973,6 +1979,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             }
 
             @Test
+            @TestMetadata("kt53109simplified.kt")
+            public void testKt53109simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53109simplified.kt");
+            }
+
+            @Test
             @TestMetadata("kt53422a.kt")
             public void testKt53422a() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/issues/kt53422a.kt");
@@ -1994,6 +2006,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             @TestMetadata("kt53639.kt")
             public void testKt53639() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/issues/kt53639.kt");
+            }
+
+            @Test
+            @TestMetadata("kt53639simplified.kt")
+            public void testKt53639simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt53639simplified.kt");
             }
 
             @Test
@@ -2048,6 +2066,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             @TestMetadata("kt55056.kt")
             public void testKt55056() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/issues/kt55056.kt");
+            }
+
+            @Test
+            @TestMetadata("kt55057simplified.kt")
+            public void testKt55057simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt55057simplified.kt");
             }
 
             @Test
@@ -2114,6 +2138,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             @TestMetadata("kt60291c.kt")
             public void testKt60291c() throws Exception {
                 runTest("compiler/testData/codegen/box/builderInference/issues/kt60291c.kt");
+            }
+
+            @Test
+            @TestMetadata("kt60291simplified.kt")
+            public void testKt60291simplified() throws Exception {
+                runTest("compiler/testData/codegen/box/builderInference/issues/kt60291simplified.kt");
             }
 
             @Test
