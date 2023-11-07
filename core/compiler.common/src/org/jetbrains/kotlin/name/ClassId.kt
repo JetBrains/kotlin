@@ -75,13 +75,21 @@ data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val
      * @return a string where packages are delimited by '/' and classes by '.', e.g. "kotlin/Map.Entry"
      */
     fun asString(): String {
+        fun FqName.escapeSlashes(): String {
+            val res = asString()
+            if (res.contains('/')) {
+                return "`$res`"
+            }
+            return res
+        }
+
         return if (packageFqName.isRoot) {
-            relativeClassName.asString()
+            relativeClassName.escapeSlashes()
         } else {
             buildString {
                 append(packageFqName.asString().replace('.', '/'))
                 append("/")
-                append(relativeClassName.asString())
+                append(relativeClassName.escapeSlashes())
             }
         }
     }
@@ -109,20 +117,22 @@ data class ClassId(val packageFqName: FqName, val relativeClassName: FqName, val
         }
 
         /**
-         * @param string a string where packages are delimited by '/' and classes by '.', e.g. "kotlin/Map.Entry"
+         * @param string a string where packages are delimited by '/' and classes by '.', e.g. "kotlin/Map.Entry".
+         *               If class name contains slashes, it should be put into ticks, e.g. "package/`test/test`"
          */
         @JvmOverloads
         @JvmStatic
         fun fromString(string: String, isLocal: Boolean = false): ClassId {
-            val lastSlashIndex = string.lastIndexOf("/")
+            val tickIndex = string.indexOf('`')
+            val lastSlashIndex = string.lastIndexOf("/", if (tickIndex == -1) string.length else tickIndex)
             val packageName: String
             val className: String
             if (lastSlashIndex == -1) {
                 packageName = ""
-                className = string
+                className = string.replace("`", "")
             } else {
                 packageName = string.substring(0, lastSlashIndex).replace('/', '.')
-                className = string.substring(lastSlashIndex + 1)
+                className = string.substring(lastSlashIndex + 1).replace("`", "")
             }
             return ClassId(FqName(packageName), FqName(className), isLocal)
         }

@@ -5,21 +5,28 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
+import com.intellij.util.io.AbstractStringEnumerator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractClassIdConsistencyTest.Directives.IGNORE_CONSISTENCY_CHECK
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.utils.ignoreExceptionIfIgnoreDirectivePresent
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.safeFqNameForLazyResolve
+import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 abstract class AbstractClassIdConsistencyTest : AbstractLowLevelApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
@@ -28,8 +35,47 @@ abstract class AbstractClassIdConsistencyTest : AbstractLowLevelApiSingleFileTes
                 val classId = declaration.getClassId()
                 val fqName = declaration.safeFqNameForLazyResolve()
                 testServices.assertions.assertEquals(fqName, classId?.asSingleFqName())
+
+                testSerialization(classId, testServices)
             }
         }
+    }
+
+    private fun testSerialization(classId: ClassId?, testServices: TestServices) {
+        val outStream = ByteArrayOutputStream()
+
+        val enumerator = object : AbstractStringEnumerator {
+            var list: MutableList<String?> = mutableListOf(null)
+            var map: MutableMap<String?, Int> = mutableMapOf(null to 0)
+
+            override fun close() {
+            }
+
+            override fun isDirty() = false
+
+            override fun force() {
+            }
+
+            override fun enumerate(value: String?): Int {
+                return map.getOrElse(value) {
+                    map[value] = list.size
+                    list += value
+                    list.size - 1
+                }
+            }
+
+            override fun valueOf(idx: Int): String? {
+                return list[idx]
+            }
+
+            override fun markCorrupted() {
+            }
+        }
+
+        StubUtils.serializeClassId(StubOutputStream(outStream, enumerator), classId)
+        val inStream = ByteArrayInputStream(outStream.toByteArray())
+        val result = StubUtils.deserializeClassId(StubInputStream(inStream, enumerator))
+        testServices.assertions.assertEquals(classId, result)
     }
 
     private object Directives : SimpleDirectivesContainer() {

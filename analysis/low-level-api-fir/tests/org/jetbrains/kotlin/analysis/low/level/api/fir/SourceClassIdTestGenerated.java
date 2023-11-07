@@ -43,6 +43,12 @@ public class SourceClassIdTestGenerated extends AbstractSourceClassIdTest {
     }
 
     @Test
+    @TestMetadata("invalidForJvmClassName.kt")
+    public void testInvalidForJvmClassName() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/classId/invalidForJvmClassName.kt");
+    }
+
+    @Test
     @TestMetadata("localClassInsideFunctionLiteral.kt")
     public void testLocalClassInsideFunctionLiteral() throws Exception {
         runTest("analysis/low-level-api-fir/testData/classId/localClassInsideFunctionLiteral.kt");
