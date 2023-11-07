@@ -45,4 +45,14 @@ public class FirIdeNormalAnalysisScriptSourceModuleCollectDiagnosticsTestGenerat
     public void testAllFilesPresentInDiagnostics() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics"), Pattern.compile("^(.+)\\.kts$"), null, true);
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Suppression {
+        @Test
+        public void testAllFilesPresentInSuppression() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression"), Pattern.compile("^(.+)\\.kts$"), null, true);
+        }
+    }
 }

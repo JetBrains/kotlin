@@ -117,4 +117,50 @@ public class FirIdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ext
     public void testUnusedDestructuring() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unusedDestructuring.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Suppression {
+        @Test
+        public void testAllFilesPresentInSuppression() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("conflictingOverloadsAtTopLevel.kt")
+        public void testConflictingOverloadsAtTopLevel() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsAtTopLevel.kt");
+        }
+
+        @Test
+        @TestMetadata("conflictingOverloadsAtTopLevel2.kt")
+        public void testConflictingOverloadsAtTopLevel2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsAtTopLevel2.kt");
+        }
+
+        @Test
+        @TestMetadata("conflictingOverloadsAtTopLevelWithFileSuppression.kt")
+        public void testConflictingOverloadsAtTopLevelWithFileSuppression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsAtTopLevelWithFileSuppression.kt");
+        }
+
+        @Test
+        @TestMetadata("conflictingOverloadsInClass.kt")
+        public void testConflictingOverloadsInClass() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsInClass.kt");
+        }
+
+        @Test
+        @TestMetadata("conflictingOverloadsInNestedClass.kt")
+        public void testConflictingOverloadsInNestedClass() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/conflictingOverloadsInNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("deprecationAtTopLevel.kt")
+        public void testDeprecationAtTopLevel() throws Exception {
+            runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression/deprecationAtTopLevel.kt");
+        }
+    }
 }
