@@ -430,6 +430,9 @@ private fun commonBuildSetup(
         // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
         "-Porg.gradle.java.installations.auto-download=false",
         "-Porg.gradle.java.installations.paths=$jdkLocations",
+        // Decreasing Gradle daemon idle timeout to 1 min from default 3 hours.
+        // This should help with OOM on CI when agents do not have enough free memory available.
+        "-Dorg.gradle.daemon.idletimeout=60000",
         if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null,
         if (enableBuildScan) "--scan" else null,
         kotlinDaemonDebugPort?.let {
