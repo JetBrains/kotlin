@@ -2,8 +2,11 @@ package org.jetbrains.kotlin.fir.dataframe.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.Names
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
+import org.jetbrains.kotlin.fir.scopes.collectAllProperties
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -16,7 +19,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
     override fun addNewImplicitReceivers(functionCall: FirFunctionCall): List<ConeKotlinType> {
         val token = generatedTokenOrNull(functionCall) ?: return emptyList()
         val symbol = token.toSymbol(session)!! as FirRegularClassSymbol
-        return symbol.declarationSymbols
+        return symbol.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE).collectAllProperties()
             .filterIsInstance<FirPropertySymbol>()
             .filter { it.resolvedReturnType.classId?.shortClassName?.asString()?.startsWith("Scope") ?: false }
             .map { it.resolvedReturnType }
