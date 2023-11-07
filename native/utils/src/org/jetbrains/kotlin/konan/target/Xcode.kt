@@ -91,7 +91,7 @@ internal class CurrentXcode : Xcode {
 
     override val toolchain by lazy {
         val ldPath = xcrun("-f", "ld") // = $toolchain/usr/bin/ld
-        File(ldPath).parentFile.parentFile.parentFile.absolutePath
+        File(ldPath).parentFile.parentFile.absolutePath
     }
 
     override val additionalTools: String by lazy {

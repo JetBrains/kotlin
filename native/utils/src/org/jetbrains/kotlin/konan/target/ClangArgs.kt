@@ -71,13 +71,7 @@ sealed class ClangArgs(
             return (konanOptions + otherOptions).map { "-D$it" }
         }
 
-    private val binDir = when (HostManager.host) {
-        KonanTarget.LINUX_X64 -> "$absoluteTargetToolchain/bin"
-        KonanTarget.MINGW_X64 -> "$absoluteTargetToolchain/bin"
-        KonanTarget.MACOS_X64,
-        KonanTarget.MACOS_ARM64 -> "$absoluteTargetToolchain/usr/bin"
-        else -> throw TargetSupportException("Unexpected host platform")
-    }
+    private val binDir = "$absoluteTargetToolchain/bin"
     // TODO: Use buildList
     private val commonClangArgs: List<String> = mutableListOf<List<String>>().apply {
         // Currently, MinGW toolchain contains old LLVM 8, and -fuse-ld=lld picks linker from there.

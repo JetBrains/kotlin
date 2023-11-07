@@ -37,7 +37,7 @@ class AppleConfigurablesImpl(
 
     override val absoluteTargetToolchain: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.toolchain
-        XcodePartsProvider.InternalServer -> absolute(toolchainDependency)
+        XcodePartsProvider.InternalServer -> "${absolute(toolchainDependency)}/usr"
     }
 
     override val absoluteAdditionalToolsDir: String get() = when (val provider = xcodePartsProvider) {

@@ -35,11 +35,7 @@ internal class BitcodeCompiler(
                     .execute()
 
     private fun targetTool(tool: String, vararg arg: String) {
-        val absoluteToolName = if (platform.configurables is AppleConfigurables) {
-            "${platform.absoluteTargetToolchain}/usr/bin/$tool"
-        } else {
-            "${platform.absoluteTargetToolchain}/bin/$tool"
-        }
+        val absoluteToolName = "${platform.absoluteTargetToolchain}/bin/$tool"
         runTool(absoluteToolName, *arg)
     }
 
