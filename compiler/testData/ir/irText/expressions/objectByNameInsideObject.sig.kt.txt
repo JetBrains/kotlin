@@ -37,8 +37,10 @@ object Thing : Base {
   private constructor() /* primary */
     // CHECK JVM_IR:
     //   Mangled name: Thing#<init>(){}#<anonymous>#static(){}kotlin.Any
+    //   Mangled name for the signature: <init>(){}<anonymous>#static(){}kotlin.Any
     // CHECK JS_IR NATIVE:
     //   Mangled name: Thing#<init>(){}#<anonymous>#static(){}
+    //   Mangled name for the signature: <init>(){}<anonymous>#static(){}
     local fun <anonymous>(): Any
 
   // CHECK JVM_IR:

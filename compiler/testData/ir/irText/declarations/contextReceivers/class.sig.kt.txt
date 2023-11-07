@@ -8,11 +8,13 @@ class Inner {
   //   Public signature debug description: <init>!Outer(kotlin.Any){}
   constructor($context_receiver_0: Outer, arg: Any) /* primary */
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         Inner.contextReceiverField0
-  //   Mangled name computed from Descriptor: Inner{}contextReceiverField0#jf
+  //   Mangled name: Inner.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0#jf
   // CHECK JS_IR NATIVE:
-  //   Mangled name computed from Ir:         Inner.contextReceiverField0
-  //   Mangled name computed from Descriptor: Inner{}contextReceiverField0
+  //   Mangled name: Inner.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0
   private /* final field */ val contextReceiverField0: Outer
 
   // CHECK JVM_IR:
@@ -62,7 +64,9 @@ class Outer {
 fun f(outer: Outer): Unit
   // CHECK JVM_IR:
   //   Mangled name: #f(Outer){}#<anonymous>#static@Outer(){}Inner
+  //   Mangled name for the signature: f(Outer){}<anonymous>#static@Outer(){}Inner
   // CHECK JS_IR NATIVE:
   //   Mangled name: #f(Outer){}#<anonymous>#static@Outer(){}
+  //   Mangled name for the signature: f(Outer){}<anonymous>#static@Outer(){}
   local fun Outer.<anonymous>(): Inner
 

@@ -45,8 +45,9 @@ enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   //   Public signature: /ConfigurationParameter.BASE_URL|null[0]
   BASE_URL
     // CHECK:
-    //   Mangled name computed from Ir:         ConfigurationParameter#<anonymous>#static(kotlin.String;Wrapper){}
-    //   Mangled name computed from Descriptor: ConfigurationParameter.BASE_URL#<init>(){}#<anonymous>#static(kotlin.String;Wrapper){}
+    //   Mangled name: ConfigurationParameter#<anonymous>#static(kotlin.String;Wrapper){}
+    //   Mangled name for the signature computed from Ir:         <anonymous>#static(kotlin.String;Wrapper){}
+    //   Mangled name for the signature computed from Descriptor: <init>(){}<anonymous>#static(kotlin.String;Wrapper){}
     local fun <anonymous>(value: String, nc: Wrapper): Unit
 
   // CHECK JVM_IR:

@@ -180,11 +180,13 @@ class CounterIterator : Iterator<Int> {
   //   Public signature debug description: <init>!CounterConfig(Counter){}
   constructor($context_receiver_0: CounterConfig, counter: Counter) /* primary */
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         CounterIterator.contextReceiverField0
-  //   Mangled name computed from Descriptor: CounterIterator{}contextReceiverField0#jf
+  //   Mangled name: CounterIterator.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0#jf
   // CHECK JS_IR NATIVE:
-  //   Mangled name computed from Ir:         CounterIterator.contextReceiverField0
-  //   Mangled name computed from Descriptor: CounterIterator{}contextReceiverField0
+  //   Mangled name: CounterIterator.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0
   private /* final field */ val contextReceiverField0: CounterConfig
 
   // CHECK JVM_IR:

@@ -11,13 +11,12 @@ import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
@@ -71,9 +70,11 @@ private const val CHECK_MARKER = "// CHECK"
  * // CHECK JVM_IR:
  * //   Mangled name: #test(){}kotlin.Int
  * //   Public signature: /test|4216975235718029399[0]
+ * //   Public signature debug description: test(){}kotlin.Int
  * // CHECK JS_IR NATIVE:
  * //   Mangled name: #test(){}
  * //   Public signature: /test|6620506149988718649[0]
+ * //   Public signature debug description: test(){}
  * fun test(): Int
  * ```
  *
@@ -206,13 +207,15 @@ class IrMangledNameAndSignatureDumpHandler(
 
             val symbol = declaration.symbol
 
-            val computedMangledNames = mutableListOf<ComputedMangledName>()
+            val fullMangledNames = mutableListOf<ComputedMangledName>()
+            val signatureMangledNames = mutableListOf<ComputedMangledName>()
 
-            irMangler.addMangledNameTo(computedMangledNames, declaration)
-            descriptorMangler.addMangledNameTo(computedMangledNames, symbol.descriptor)
+            irMangler.addFullMangledNameTo(fullMangledNames, declaration)
+            irMangler.addSignatureMangledNameTo(signatureMangledNames, declaration)
+            descriptorMangler.addSignatureMangledNameTo(signatureMangledNames, symbol.descriptor)
             ((declaration as? IrMetadataSourceOwner)?.metadata as? FirMetadataSource)?.fir?.let {
-                firMangler?.addMangledNameTo(
-                    computedMangledNames,
+                firMangler?.addSignatureMangledNameTo(
+                    signatureMangledNames,
                     it
                 )
             }
@@ -229,7 +232,14 @@ class IrMangledNameAndSignatureDumpHandler(
             }
 
             fun printActualMangledNamesAndSignatures() {
-                printMangledNames(computedMangledNames)
+                printMangledNames(fullMangledNames, prefix = "Mangled name")
+
+                // Signature mangled names computed from descriptors, IR and FIR must be all equal to the signature description, which
+                // we already print (see the IdSignature.print function above).
+                // If this is not the case, print them separately.
+                if (signatureMangledNames.any { it.value != symbol.signature?.asPublic()?.description.orEmpty() }) {
+                    printMangledNames(signatureMangledNames, prefix = "Mangled name for the signature")
+                }
 
                 symbol.signature?.print("Public signature")
                 symbol.privateSignature?.print("Private signature")
@@ -371,13 +381,13 @@ private inline fun Iterable<ComputedMangledName>.printAligned(printer: Printer, 
     map { prefix(it) to it.value }.aligned().forEach(printer::println)
 }
 
-private fun Printer.printMangledNames(computedMangledNames: List<ComputedMangledName>) {
+private fun Printer.printMangledNames(computedMangledNames: List<ComputedMangledName>, prefix: String) {
     val distinctNames = computedMangledNames.distinctBy { it.value }
 
     // If mangled names computed from all three representations (descriptors, IR, FIR) and modes match,
     // print just one mangled name.
     distinctNames.singleOrNull()?.let {
-        println("//   Mangled name: ${it.value}")
+        println("//   $prefix: ${it.value}")
         return
     }
 
@@ -386,17 +396,17 @@ private fun Printer.printMangledNames(computedMangledNames: List<ComputedMangled
         // only mangled names from each mangler.
         computedMangledNames
             .distinctBy { it.manglerName }
-            .printAligned(this) { "//   Mangled name computed from ${it.manglerName}: " }
+            .printAligned(this) { "//   $prefix computed from ${it.manglerName}: " }
     } else if (distinctNames.same { it.manglerName }) {
         // If the mangled names differ only by the compatibility mode used (but not the mangler), print
         // only mangled names for each compatibility mode.
         computedMangledNames
             .distinctBy { it.compatibleMode }
-            .printAligned(this) { "//   Mangled name (compatible mode: ${it.compatibleMode}): " }
+            .printAligned(this) { "//   $prefix (compatible mode: ${it.compatibleMode}): " }
     } else {
         // Otherwise, print the whole matrix.
         computedMangledNames
-            .printAligned(this) { "//   Mangled name computed from ${it.manglerName} (compatible mode: ${it.compatibleMode}): " }
+            .printAligned(this) { "//   $prefix computed from ${it.manglerName} (compatible mode: ${it.compatibleMode}): " }
     }
 }
 
@@ -409,13 +419,15 @@ private fun Printer.printlnCheckMarker(backends: List<TargetBackend>) {
     printlnWithNoIndent(":")
 }
 
-private fun <Declaration, Mangler : KotlinMangler<Declaration>> Mangler.addMangledNameTo(
+private fun <Declaration> addMangledNameTo(
     collector: MutableList<ComputedMangledName>,
-    declaration: Declaration
+    manglerName: String,
+    declaration: Declaration,
+    mangle: Declaration.(Boolean) -> String,
 ) {
     listOf(false, true).mapTo(collector) { compatibleMode ->
         val mangledName = try {
-            declaration.mangleString(compatibleMode)
+            declaration.mangle(compatibleMode)
         } catch (e: Throwable) {
             // Kotlin-like IR renderer suppresses exceptions thrown during rendering, which leads to missing renders that are hard to debug.
             // Because this routine is executed during rendering, we print the exception description instead of a proper mangled name.
@@ -433,6 +445,20 @@ private fun <Declaration, Mangler : KotlinMangler<Declaration>> Mangler.addMangl
         }
         ComputedMangledName(manglerName, compatibleMode, mangledName)
     }
+}
+
+private fun <Declaration, Mangler : KotlinMangler<Declaration>> Mangler.addSignatureMangledNameTo(
+    collector: MutableList<ComputedMangledName>,
+    declaration: Declaration
+) {
+    addMangledNameTo(collector, manglerName, declaration) { signatureString(it) }
+}
+
+private fun KotlinMangler.IrMangler.addFullMangledNameTo(
+    collector: MutableList<ComputedMangledName>,
+    declaration: IrDeclaration,
+) {
+    addMangledNameTo(collector, manglerName, declaration) { mangleString(it) }
 }
 
 /**
@@ -492,9 +518,8 @@ private val whitespaceRegex = "\\s+".toRegex()
  * // CHECK JS_IR NATIVE:
  * //   Mangled name: #test(){}
  * //   Public signature: /test|6620506149988718649[0]
- * fun test(): Int {
- *   return 42
- * }
+ * //   Public signature debug description: test(){}
+ * fun test(): Int
  * ```
  * will be parsed into:
  * ```kotlin
@@ -502,7 +527,8 @@ private val whitespaceRegex = "\\s+".toRegex()
  *   backends = listOf(TargetBackend.JS_IR, TargetBackend.NATIVE),
  *   expectations = listOf(
  *     "//   Mangled name: #test(){}",
- *     "//   Public signature: /test|6620506149988718649[0]"
+ *     "//   Public signature: /test|6620506149988718649[0]",
+ *     "//   Public signature debug description: test(){}",
  *   )
  * )
  * ```

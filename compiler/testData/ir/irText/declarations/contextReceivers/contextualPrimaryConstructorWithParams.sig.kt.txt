@@ -68,11 +68,13 @@ class OK {
   //   Public signature debug description: <init>!O(kotlin.String){}
   constructor($context_receiver_0: O, k: String) /* primary */
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         OK.contextReceiverField0
-  //   Mangled name computed from Descriptor: OK{}contextReceiverField0#jf
+  //   Mangled name: OK.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0#jf
   // CHECK JS_IR NATIVE:
-  //   Mangled name computed from Ir:         OK.contextReceiverField0
-  //   Mangled name computed from Descriptor: OK{}contextReceiverField0
+  //   Mangled name: OK.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0
   private /* final field */ val contextReceiverField0: O
 
 }
@@ -88,7 +90,9 @@ class OK {
 fun box(): String
   // CHECK JVM_IR:
   //   Mangled name: #box(){}kotlin.String#<anonymous>#static@O(){}kotlin.String
+  //   Mangled name for the signature: box(){}kotlin.String<anonymous>#static@O(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: #box(){}#<anonymous>#static@O(){}
+  //   Mangled name for the signature: box(){}<anonymous>#static@O(){}
   local fun O.<anonymous>(): String
 

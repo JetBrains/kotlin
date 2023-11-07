@@ -96,11 +96,13 @@ class Result {
   //   Public signature debug description: <init>!kotlin.Int(){}
   constructor($context_receiver_0: Int) /* primary */
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         Result.contextReceiverField0
-  //   Mangled name computed from Descriptor: Result{}contextReceiverField0#jf
+  //   Mangled name: Result.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0#jf
   // CHECK JS_IR NATIVE:
-  //   Mangled name computed from Ir:         Result.contextReceiverField0
-  //   Mangled name computed from Descriptor: Result{}contextReceiverField0
+  //   Mangled name: Result.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0
   private /* final field */ val contextReceiverField0: Int
 
 }

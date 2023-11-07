@@ -4,8 +4,9 @@
 //   Public signature debug description: {}test1
 val test1: ErrorType
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         #<get-test1>(){}<ERROR CLASS>
-  //   Mangled name computed from Descriptor: #<get-test1>(){}<Error class: unknown class>
+  //   Mangled name: #<get-test1>(){}<ERROR CLASS>
+  //   Mangled name for the signature computed from Ir:         <get-test1>(){}<ERROR CLASS>
+  //   Mangled name for the signature computed from Descriptor: <get-test1>(){}<Error class: unknown class>
   //   Public signature: /test1.<get-test1>|-4817139884021780494[0]
   //   Public signature debug description: <get-test1>(){}<Error class: unknown class>
   get
@@ -16,8 +17,9 @@ val test1: ErrorType
 //   Public signature debug description: {}test2
 val test2: ErrorType
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         #<get-test2>(){}<ERROR CLASS>
-  //   Mangled name computed from Descriptor: #<get-test2>(){}<Error class: unknown class>
+  //   Mangled name: #<get-test2>(){}<ERROR CLASS>
+  //   Mangled name for the signature computed from Ir:         <get-test2>(){}<ERROR CLASS>
+  //   Mangled name for the signature computed from Descriptor: <get-test2>(){}<Error class: unknown class>
   //   Public signature: /test2.<get-test2>|1859255286326922853[0]
   //   Public signature debug description: <get-test2>(){}<Error class: unknown class>
   get
@@ -28,8 +30,9 @@ val test2: ErrorType
 //   Public signature debug description: {}test3
 val test3: ErrorType
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         #<get-test3>(){}<ERROR CLASS>
-  //   Mangled name computed from Descriptor: #<get-test3>(){}<Error class: unknown class>
+  //   Mangled name: #<get-test3>(){}<ERROR CLASS>
+  //   Mangled name for the signature computed from Ir:         <get-test3>(){}<ERROR CLASS>
+  //   Mangled name for the signature computed from Descriptor: <get-test3>(){}<Error class: unknown class>
   //   Public signature: /test3.<get-test3>|-2322568342617474229[0]
   //   Public signature debug description: <get-test3>(){}<Error class: unknown class>
   get
@@ -40,8 +43,9 @@ val test3: ErrorType
 //   Public signature debug description: {}test4
 val test4: ErrorType
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         #<get-test4>(){}<ERROR CLASS>
-  //   Mangled name computed from Descriptor: #<get-test4>(){}<Error class: unknown class>
+  //   Mangled name: #<get-test4>(){}<ERROR CLASS>
+  //   Mangled name for the signature computed from Ir:         <get-test4>(){}<ERROR CLASS>
+  //   Mangled name for the signature computed from Descriptor: <get-test4>(){}<Error class: unknown class>
   //   Public signature: /test4.<get-test4>|-5181690683324812065[0]
   //   Public signature debug description: <get-test4>(){}<Error class: unknown class>
   get

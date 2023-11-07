@@ -40,25 +40,33 @@ class IdeWizard {
   private fun <V : Any, T : SettingType<V>> setting(reference: SettingReference<V, T>): <no name provided><V, T>
     // CHECK JVM_IR:
     //   Mangled name: IdeWizard#setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}IdeWizard#setting.<no name provided><1:0,1:1>.<no name provided>
+    //   Mangled name for the signature: setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}IdeWizard#setting.<no name provided><1:0,1:1>
     // CHECK JS_IR NATIVE:
     //   Mangled name: IdeWizard#setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}.<no name provided>
+    //   Mangled name for the signature: setting(SettingReference<1:0,1:1>){0§<kotlin.Any>;1§<SettingType<1:0>>}
     local class <no name provided> : ReadWriteProperty<Any?, V?> {
       // CHECK JVM_IR:
       //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#<init>(){}
+      //   Mangled name for the signature: setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1><init>(){}
       // CHECK JS_IR NATIVE:
       //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#<init>(){}
+      //   Mangled name for the signature: setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}<init>(){}
       constructor() /* primary */
 
       // CHECK JVM_IR:
       //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}2:0?
+      //   Mangled name for the signature: setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}2:0?
       // CHECK JS_IR NATIVE:
       //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}
+      //   Mangled name for the signature: setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}getValue(kotlin.Any?;kotlin.reflect.KProperty<*>){}
       override operator fun getValue(thisRef: Any?, property: KProperty<*>): V?
 
       // CHECK JVM_IR:
       //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>.<no name provided>#setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
+      //   Mangled name for the signature: setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}IdeWizard#setting.<no name provided><2:0,2:1>setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
       // CHECK JS_IR NATIVE:
       //   Mangled name: IdeWizard#setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}.<no name provided>#setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
+      //   Mangled name for the signature: setting(SettingReference<2:0,2:1>){0§<kotlin.Any>;1§<SettingType<2:0>>}setValue(kotlin.Any?;kotlin.reflect.KProperty<*>;2:0?){}
       override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: V?): Unit
 
     }

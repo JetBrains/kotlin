@@ -30,11 +30,13 @@ class Test {
   //   Public signature debug description: <init>!Context(){}
   constructor($context_receiver_0: Context) /* primary */
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         Test.contextReceiverField0
-  //   Mangled name computed from Descriptor: Test{}contextReceiverField0#jf
+  //   Mangled name: Test.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0#jf
   // CHECK JS_IR NATIVE:
-  //   Mangled name computed from Ir:         Test.contextReceiverField0
-  //   Mangled name computed from Descriptor: Test{}contextReceiverField0
+  //   Mangled name: Test.contextReceiverField0
+  //   Mangled name for the signature computed from Ir:
+  //   Mangled name for the signature computed from Descriptor: {}contextReceiverField0
   private /* final field */ val contextReceiverField0: Context
 
   // CHECK:

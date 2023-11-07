@@ -35,6 +35,7 @@ class ResolvedCall<C : Any?> {
 
 // CHECK JVM_IR:
 //   Mangled name: #allCandidatesResult(kotlin.collections.Collection<MyCandidate>){0§<kotlin.Any?>}OverloadResolutionResultsImpl<0:0?>?
+//   Mangled name for the signature: allCandidatesResult(kotlin.collections.Collection<MyCandidate>){0§<kotlin.Any?>}OverloadResolutionResultsImpl<0:0?>?
 //   Public signature: [ File 'AllCandidates.kt' <- /allCandidatesResult|-4417746287859138452[0] ]
 private fun <A : Any?> allCandidatesResult(allCandidates: Collection<MyCandidate>): OverloadResolutionResultsImpl<A?>?
 

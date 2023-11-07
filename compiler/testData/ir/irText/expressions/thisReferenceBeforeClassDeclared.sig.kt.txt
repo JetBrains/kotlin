@@ -39,18 +39,22 @@ open class WithCompanion {
 fun WithCompanion.test(): Unit
   // CHECK:
   //   Mangled name: #test@WithCompanion(){}.<no name provided>
+  //   Mangled name for the signature: test@WithCompanion(){}
   local class <no name provided> : WithCompanion {
     // CHECK:
     //   Mangled name: #test@WithCompanion(){}.<no name provided>#<init>(){}
+    //   Mangled name for the signature: test@WithCompanion(){}<init>(){}
     constructor() /* primary */
 
   }
 
   // CHECK:
   //   Mangled name: #test@WithCompanion(){}.<no name provided>
+  //   Mangled name for the signature: test@WithCompanion(){}
   local class <no name provided> : WithCompanion {
     // CHECK:
     //   Mangled name: #test@WithCompanion(){}.<no name provided>#<init>(){}
+    //   Mangled name for the signature: test@WithCompanion(){}<init>(){}
     constructor() /* primary */
 
   }

@@ -9,8 +9,9 @@
 fun <T : Any?> elvisLike(x: T, y: (T & Any)): (T & Any)
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #main(){}
-//   Mangled name computed from Descriptor: #main(){}%definitelyNonNull.kt
+//   Mangled name: #main(){}
+//   Mangled name for the signature computed from Ir:         main(){}
+//   Mangled name for the signature computed from Descriptor: main(){}%definitelyNonNull.kt
 //   Public signature: /main|536315142565162436[0]
 //   Public signature debug description: main(){}%definitelyNonNull.kt
 // CHECK JS_IR NATIVE:

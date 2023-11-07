@@ -72,9 +72,11 @@ class Expression {
 
 // CHECK JVM_IR:
 //   Mangled name: #countIssues(kotlin.Function1<ArgumentsBuilder,kotlin.Unit>){}
+//   Mangled name for the signature: countIssues(kotlin.Function1<ArgumentsBuilder,kotlin.Unit>){}
 //   Public signature: [ File 'timesInBuilder.kt' <- /countIssues|-3006686104129982000[0] ]
 // CHECK JS_IR NATIVE:
 //   Mangled name: #countIssues(kotlin.Function1<ArgumentsBuilder,kotlin.Unit>){}
+//   Mangled name for the signature: countIssues(kotlin.Function1<ArgumentsBuilder,kotlin.Unit>){}
 private fun countIssues(restrictionsBuilder: @ExtensionFunctionType Function1<ArgumentsBuilder, Unit>): Unit
 
 // CHECK JVM_IR:
@@ -119,8 +121,10 @@ fun <T : Comparable<T>> Column.select(t: T, r: T): Expression
 
 // CHECK JVM_IR:
 //   Mangled name: #test(kotlin.Long){}
+//   Mangled name for the signature: test(kotlin.Long){}
 //   Public signature: [ File 'timesInBuilder.kt' <- /test|-2956403500052581138[0] ]
 // CHECK JS_IR NATIVE:
 //   Mangled name: #test(kotlin.Long){}
+//   Mangled name for the signature: test(kotlin.Long){}
 private fun test(x: Long): Unit
 

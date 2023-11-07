@@ -7,26 +7,34 @@ interface NestedGroupFragment {
 
 // CHECK JVM_IR:
 //   Mangled name: #addMavenOptionsGroupFragment(){}#addOptionsGroup.<no name provided><kotlin.Int>
+//   Mangled name for the signature: addMavenOptionsGroupFragment(){}#addOptionsGroup.<no name provided><kotlin.Int>
 //   Public signature: [ File 'AnonymousAsReturnOfGenericFunction.kt' <- /addMavenOptionsGroupFragment|1068646653174639665[0] ]
 // CHECK JS_IR NATIVE:
 //   Mangled name: #addMavenOptionsGroupFragment(){}
+//   Mangled name for the signature: addMavenOptionsGroupFragment(){}
 private fun addMavenOptionsGroupFragment(): <no name provided><Int>
 
 // CHECK JVM_IR:
 //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><0:0>
+//   Mangled name for the signature: addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><0:0>
 //   Public signature: [ File 'AnonymousAsReturnOfGenericFunction.kt' <- /addOptionsGroup|1295014906395670038[0] ]
 // CHECK JS_IR NATIVE:
 //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}
+//   Mangled name for the signature: addOptionsGroup(){0§<kotlin.Any?>}
 private fun <S : Any?> addOptionsGroup(): <no name provided><S>
   // CHECK JVM_IR:
   //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><1:0>.<no name provided>
+  //   Mangled name for the signature: addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><1:0>
   // CHECK JS_IR NATIVE:
   //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}.<no name provided>
+  //   Mangled name for the signature: addOptionsGroup(){0§<kotlin.Any?>}
   local class <no name provided> : NestedGroupFragment {
     // CHECK JVM_IR:
     //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><2:0>.<no name provided>#<init>(){}
+    //   Mangled name for the signature: addOptionsGroup(){0§<kotlin.Any?>}#addOptionsGroup.<no name provided><2:0><init>(){}
     // CHECK JS_IR NATIVE:
     //   Mangled name: #addOptionsGroup(){0§<kotlin.Any?>}.<no name provided>#<init>(){}
+    //   Mangled name for the signature: addOptionsGroup(){0§<kotlin.Any?>}<init>(){}
     constructor() /* primary */
 
   }

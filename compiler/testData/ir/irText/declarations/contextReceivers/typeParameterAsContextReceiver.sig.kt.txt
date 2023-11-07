@@ -5,9 +5,11 @@
 fun test(): Unit
   // CHECK:
   //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}
+  //   Mangled name for the signature: test(){}<anonymous>#static@kotlin.Int(){}
   local fun Int.<anonymous>(): Unit
     // CHECK:
     //   Mangled name: #test(){}#<anonymous>#static@kotlin.Int(){}#<anonymous>#static(kotlin.Int){}
+    //   Mangled name for the signature: test(){}<anonymous>#static@kotlin.Int(){}<anonymous>#static(kotlin.Int){}
     local fun <anonymous>(i: Int): Unit
 
 // CHECK:

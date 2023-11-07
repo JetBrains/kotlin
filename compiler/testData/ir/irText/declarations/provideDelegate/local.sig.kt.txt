@@ -81,7 +81,9 @@ class DelegateProvider {
 fun foo(): Unit
   // CHECK JVM_IR:
   //   Mangled name: #foo(){}#<get-testMember>#static(){}kotlin.String
+  //   Mangled name for the signature: foo(){}<get-testMember>#static(){}kotlin.String
   // CHECK JS_IR NATIVE:
   //   Mangled name: #foo(){}#<get-testMember>#static(){}
+  //   Mangled name for the signature: foo(){}<get-testMember>#static(){}
   local fun <get-testMember>(): String
 

@@ -11,26 +11,36 @@ class A {
       // CHECK JVM_IR:
       //   Mangled name (compatible mode: false): A{}b.<no name provided>
       //   Mangled name (compatible mode: true):  A.b.<no name provided>
+      //   Mangled name for the signature (compatible mode: false): {}b
+      //   Mangled name for the signature (compatible mode: true):
       local class <no name provided> : DoubleExpression {
         // CHECK:
         //   Mangled name (compatible mode: false): A{}b.<no name provided>#<init>(){}
         //   Mangled name (compatible mode: true):  A.b.<no name provided>#<init>(){}
+        //   Mangled name for the signature (compatible mode: false): {}b<init>(){}
+        //   Mangled name for the signature (compatible mode: true):  <init>(){}
         constructor() /* primary */
 
         // CHECK:
         //   Mangled name (compatible mode: false): A{}b.<no name provided>#isEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
         //   Mangled name (compatible mode: true):  A.b.<no name provided>#isEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
+        //   Mangled name for the signature (compatible mode: false): {}bisEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
+        //   Mangled name for the signature (compatible mode: true):  isEqualTo(kotlin.Double){}kotlin.Any{EnhancedNullability}
         @Override
         /* fake */ override fun isEqualTo(value: Double): @EnhancedNullability Any
 
         // CHECK JVM_IR:
         //   Mangled name (compatible mode: false): A{}b.<no name provided>#isEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
         //   Mangled name (compatible mode: true):  A.b.<no name provided>#isEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
+        //   Mangled name for the signature (compatible mode: false): {}bisEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
+        //   Mangled name for the signature (compatible mode: true):  isEqualTo(kotlin.Double{EnhancedNullability}){}kotlin.Any{EnhancedNullability}
         /* fake */ override fun isEqualTo(value: @EnhancedNullability Double): @EnhancedNullability Any
 
         // CHECK JVM_IR:
         //   Mangled name (compatible mode: false): A{}b.<no name provided>#get(){}kotlin.Double
         //   Mangled name (compatible mode: true):  A.b.<no name provided>#get(){}kotlin.Double
+        //   Mangled name for the signature (compatible mode: false): {}bget(){}kotlin.Double
+        //   Mangled name for the signature (compatible mode: true):  get(){}kotlin.Double
         override fun get(): Double
 
       }
@@ -38,6 +48,8 @@ class A {
     // CHECK JVM_IR:
     //   Mangled name (compatible mode: false): A#<get-b>(){}A{}b.<no name provided>
     //   Mangled name (compatible mode: true):  A#<get-b>(){}A.b.<no name provided>
+    //   Mangled name for the signature (compatible mode: false): <get-b>(){}A{}b.<no name provided>
+    //   Mangled name for the signature (compatible mode: true):  <get-b>(){}A.b.<no name provided>
     //   Public signature: /A.b.<get-b>|-6508357397455690228[0]
     //   Public signature debug description: <get-b>(){}A{}b.<no name provided>
     private get

@@ -1,9 +1,11 @@
 // CHECK:
 //   Mangled name: {}registrationMap
+//   Mangled name for the signature: {}registrationMap
 //   Public signature: [ File 'ClashResolutionDescriptor.kt' <- /registrationMap|8184441143918876435[0] ]
 private val registrationMap: HashMap<Type, Any>
   // CHECK JVM_IR:
   //   Mangled name: #<get-registrationMap>(){}java.util.HashMap<java.lang.reflect.Type,kotlin.Any>
+  //   Mangled name for the signature: <get-registrationMap>(){}java.util.HashMap<java.lang.reflect.Type,kotlin.Any>
   //   Public signature: [ File 'ClashResolutionDescriptor.kt' <- /registrationMap.<get-registrationMap>|3119298927482099509[0] ]
   private get
 

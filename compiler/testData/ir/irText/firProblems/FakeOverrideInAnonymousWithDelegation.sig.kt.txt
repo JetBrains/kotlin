@@ -11,25 +11,37 @@ class Wrapper {
       // CHECK JVM_IR:
       //   Mangled name (compatible mode: false): Wrapper{}dummy.<no name provided>
       //   Mangled name (compatible mode: true):  Wrapper.dummy.<no name provided>
+      //   Mangled name for the signature (compatible mode: false): {}dummy
+      //   Mangled name for the signature (compatible mode: true):
       // CHECK JS_IR NATIVE:
       //   Mangled name (compatible mode: false): Wrapper{}dummy.<no name provided>
       //   Mangled name (compatible mode: true):  Wrapper.dummy.<no name provided>
+      //   Mangled name for the signature (compatible mode: false): {}dummy
+      //   Mangled name for the signature (compatible mode: true):
       local class <no name provided> : Bar {
         // CHECK:
         //   Mangled name (compatible mode: false): Wrapper{}dummy.<no name provided>#<init>(){}
         //   Mangled name (compatible mode: true):  Wrapper.dummy.<no name provided>#<init>(){}
+        //   Mangled name for the signature (compatible mode: false): {}dummy<init>(){}
+        //   Mangled name for the signature (compatible mode: true):  <init>(){}
         constructor() /* primary */
 
         // CHECK:
         //   Mangled name (compatible mode: false): Wrapper{}dummy.<no name provided>{}foo
         //   Mangled name (compatible mode: true):  Wrapper.dummy.<no name provided>{}foo
+        //   Mangled name for the signature (compatible mode: false): {}dummy{}foo
+        //   Mangled name for the signature (compatible mode: true):  {}foo
         /* fake */ override val foo: String
           // CHECK JVM_IR:
           //   Mangled name (compatible mode: false): Wrapper{}dummy.<no name provided>#<get-foo>(){}kotlin.String
           //   Mangled name (compatible mode: true):  Wrapper.dummy.<no name provided>#<get-foo>(){}kotlin.String
+          //   Mangled name for the signature (compatible mode: false): {}dummy<get-foo>(){}kotlin.String
+          //   Mangled name for the signature (compatible mode: true):  <get-foo>(){}kotlin.String
           // CHECK JS_IR NATIVE:
           //   Mangled name (compatible mode: false): Wrapper{}dummy.<no name provided>#<get-foo>(){}
           //   Mangled name (compatible mode: true):  Wrapper.dummy.<no name provided>#<get-foo>(){}
+          //   Mangled name for the signature (compatible mode: false): {}dummy<get-foo>(){}
+          //   Mangled name for the signature (compatible mode: true):  <get-foo>(){}
           /* fake */ override get(): String
 
       }
@@ -37,6 +49,8 @@ class Wrapper {
     // CHECK JVM_IR:
     //   Mangled name (compatible mode: false): Wrapper#<get-dummy>(){}Wrapper{}dummy.<no name provided>
     //   Mangled name (compatible mode: true):  Wrapper#<get-dummy>(){}Wrapper.dummy.<no name provided>
+    //   Mangled name for the signature (compatible mode: false): <get-dummy>(){}Wrapper{}dummy.<no name provided>
+    //   Mangled name for the signature (compatible mode: true):  <get-dummy>(){}Wrapper.dummy.<no name provided>
     //   Public signature: /Wrapper.dummy.<get-dummy>|-1011589390871666922[0]
     //   Public signature debug description: <get-dummy>(){}Wrapper{}dummy.<no name provided>
     // CHECK JS_IR NATIVE:
@@ -54,29 +68,43 @@ class Wrapper {
       // CHECK JVM_IR:
       //   Mangled name (compatible mode: false): Wrapper{}bar.<no name provided>
       //   Mangled name (compatible mode: true):  Wrapper.bar.<no name provided>
+      //   Mangled name for the signature (compatible mode: false): {}bar
+      //   Mangled name for the signature (compatible mode: true):
       // CHECK JS_IR NATIVE:
       //   Mangled name (compatible mode: false): Wrapper{}bar.<no name provided>
       //   Mangled name (compatible mode: true):  Wrapper.bar.<no name provided>
+      //   Mangled name for the signature (compatible mode: false): {}bar
+      //   Mangled name for the signature (compatible mode: true):
       local class <no name provided> : Bar {
         // CHECK:
         //   Mangled name (compatible mode: false): Wrapper{}bar.<no name provided>#<init>(){}
         //   Mangled name (compatible mode: true):  Wrapper.bar.<no name provided>#<init>(){}
+        //   Mangled name for the signature (compatible mode: false): {}bar<init>(){}
+        //   Mangled name for the signature (compatible mode: true):  <init>(){}
         constructor() /* primary */
         // CHECK:
         //   Mangled name (compatible mode: false): Wrapper{}bar.<no name provided>.$$delegate_0
         //   Mangled name (compatible mode: true):  Wrapper.bar.<no name provided>.$$delegate_0
+        //   Mangled name for the signature (compatible mode: false): {}bar
+        //   Mangled name for the signature (compatible mode: true):
         private /* final field */ val $$delegate_0: <no name provided>
 
         // CHECK:
         //   Mangled name (compatible mode: false): Wrapper{}bar.<no name provided>{}foo
         //   Mangled name (compatible mode: true):  Wrapper.bar.<no name provided>{}foo
+        //   Mangled name for the signature (compatible mode: false): {}bar{}foo
+        //   Mangled name for the signature (compatible mode: true):  {}foo
         override val foo: String
           // CHECK JVM_IR:
           //   Mangled name (compatible mode: false): Wrapper{}bar.<no name provided>#<get-foo>(){}kotlin.String
           //   Mangled name (compatible mode: true):  Wrapper.bar.<no name provided>#<get-foo>(){}kotlin.String
+          //   Mangled name for the signature (compatible mode: false): {}bar<get-foo>(){}kotlin.String
+          //   Mangled name for the signature (compatible mode: true):  <get-foo>(){}kotlin.String
           // CHECK JS_IR NATIVE:
           //   Mangled name (compatible mode: false): Wrapper{}bar.<no name provided>#<get-foo>(){}
           //   Mangled name (compatible mode: true):  Wrapper.bar.<no name provided>#<get-foo>(){}
+          //   Mangled name for the signature (compatible mode: false): {}bar<get-foo>(){}
+          //   Mangled name for the signature (compatible mode: true):  <get-foo>(){}
           override get(): String
 
       }
@@ -84,6 +112,8 @@ class Wrapper {
     // CHECK JVM_IR:
     //   Mangled name (compatible mode: false): Wrapper#<get-bar>(){}Wrapper{}bar.<no name provided>
     //   Mangled name (compatible mode: true):  Wrapper#<get-bar>(){}Wrapper.bar.<no name provided>
+    //   Mangled name for the signature (compatible mode: false): <get-bar>(){}Wrapper{}bar.<no name provided>
+    //   Mangled name for the signature (compatible mode: true):  <get-bar>(){}Wrapper.bar.<no name provided>
     //   Public signature: /Wrapper.bar.<get-bar>|-6775654681164748186[0]
     //   Public signature debug description: <get-bar>(){}Wrapper{}bar.<no name provided>
     // CHECK JS_IR NATIVE:

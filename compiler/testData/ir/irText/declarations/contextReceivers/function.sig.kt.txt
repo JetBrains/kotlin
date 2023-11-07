@@ -33,6 +33,7 @@ class C {
 fun bar(c: C): Unit
   // CHECK:
   //   Mangled name: #bar(C){}#<anonymous>#static@C(){}
+  //   Mangled name for the signature: bar(C){}<anonymous>#static@C(){}
   local fun C.<anonymous>(): Unit
 
 // CHECK:

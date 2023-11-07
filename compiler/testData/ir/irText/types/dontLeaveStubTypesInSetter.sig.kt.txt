@@ -41,8 +41,9 @@ class Foo<T : Any?> {
 fun <K : Any?> foo(x: MutableList<K>): Foo<K>
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #main(){}
-//   Mangled name computed from Descriptor: #main(){}%dontLeaveStubTypesInSetter.kt
+//   Mangled name: #main(){}
+//   Mangled name for the signature computed from Ir:         main(){}
+//   Mangled name for the signature computed from Descriptor: main(){}%dontLeaveStubTypesInSetter.kt
 //   Public signature: /main|-2535684763027974809[0]
 //   Public signature debug description: main(){}%dontLeaveStubTypesInSetter.kt
 // CHECK JS_IR NATIVE:

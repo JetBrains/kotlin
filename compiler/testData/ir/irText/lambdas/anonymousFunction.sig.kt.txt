@@ -7,9 +7,13 @@ val anonymous: Function0<Unit>
     // CHECK JVM_IR:
     //   Mangled name (compatible mode: false): {}anonymous#<no name provided>#static(){}
     //   Mangled name (compatible mode: true):  anonymous#<no name provided>#static(){}
+    //   Mangled name for the signature (compatible mode: false): {}anonymous<no name provided>#static(){}
+    //   Mangled name for the signature (compatible mode: true):  <no name provided>#static(){}
     // CHECK JS_IR NATIVE:
     //   Mangled name (compatible mode: false): {}anonymous#<no name provided>#static(){}
     //   Mangled name (compatible mode: true):  anonymous#<no name provided>#static(){}
+    //   Mangled name for the signature (compatible mode: false): {}anonymous<no name provided>#static(){}
+    //   Mangled name for the signature (compatible mode: true):  <no name provided>#static(){}
     local fun <no name provided>(): Unit
 
   // CHECK JVM_IR:

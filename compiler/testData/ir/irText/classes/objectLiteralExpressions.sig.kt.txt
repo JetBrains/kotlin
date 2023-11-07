@@ -7,13 +7,19 @@ val test1: Any
     // CHECK JVM_IR:
     //   Mangled name (compatible mode: false): {}test1.<no name provided>
     //   Mangled name (compatible mode: true):  test1.<no name provided>
+    //   Mangled name for the signature (compatible mode: false): {}test1
+    //   Mangled name for the signature (compatible mode: true):
     // CHECK JS_IR NATIVE:
     //   Mangled name (compatible mode: false): {}test1.<no name provided>
     //   Mangled name (compatible mode: true):  test1.<no name provided>
+    //   Mangled name for the signature (compatible mode: false): {}test1
+    //   Mangled name for the signature (compatible mode: true):
     local class <no name provided> {
       // CHECK:
       //   Mangled name (compatible mode: false): {}test1.<no name provided>#<init>(){}
       //   Mangled name (compatible mode: true):  test1.<no name provided>#<init>(){}
+      //   Mangled name for the signature (compatible mode: false): {}test1<init>(){}
+      //   Mangled name for the signature (compatible mode: true):  <init>(){}
       constructor() /* primary */
 
     }
@@ -37,18 +43,26 @@ val test2: IFoo
     // CHECK JVM_IR:
     //   Mangled name (compatible mode: false): {}test2.<no name provided>
     //   Mangled name (compatible mode: true):  test2.<no name provided>
+    //   Mangled name for the signature (compatible mode: false): {}test2
+    //   Mangled name for the signature (compatible mode: true):
     // CHECK JS_IR NATIVE:
     //   Mangled name (compatible mode: false): {}test2.<no name provided>
     //   Mangled name (compatible mode: true):  test2.<no name provided>
+    //   Mangled name for the signature (compatible mode: false): {}test2
+    //   Mangled name for the signature (compatible mode: true):
     local class <no name provided> : IFoo {
       // CHECK:
       //   Mangled name (compatible mode: false): {}test2.<no name provided>#<init>(){}
       //   Mangled name (compatible mode: true):  test2.<no name provided>#<init>(){}
+      //   Mangled name for the signature (compatible mode: false): {}test2<init>(){}
+      //   Mangled name for the signature (compatible mode: true):  <init>(){}
       constructor() /* primary */
 
       // CHECK:
       //   Mangled name (compatible mode: false): {}test2.<no name provided>#foo(){}
       //   Mangled name (compatible mode: true):  test2.<no name provided>#foo(){}
+      //   Mangled name for the signature (compatible mode: false): {}test2foo(){}
+      //   Mangled name for the signature (compatible mode: true):  foo(){}
       override fun foo(): Unit
 
     }
@@ -102,19 +116,25 @@ class Outer {
   fun test3(): Inner
     // CHECK JVM_IR:
     //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>
+    //   Mangled name for the signature: test3(){}Outer.Inner
     // CHECK JS_IR NATIVE:
     //   Mangled name: Outer#test3(){}.<no name provided>
+    //   Mangled name for the signature: test3(){}
     local class <no name provided> : Inner {
       // CHECK JVM_IR:
       //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>#<init>(){}
+      //   Mangled name for the signature: test3(){}Outer.Inner<init>(){}
       // CHECK JS_IR NATIVE:
       //   Mangled name: Outer#test3(){}.<no name provided>#<init>(){}
+      //   Mangled name for the signature: test3(){}<init>(){}
       constructor() /* primary */
 
       // CHECK JVM_IR:
       //   Mangled name: Outer#test3(){}Outer.Inner.<no name provided>#foo(){}
+      //   Mangled name for the signature: test3(){}Outer.Innerfoo(){}
       // CHECK JS_IR NATIVE:
       //   Mangled name: Outer#test3(){}.<no name provided>#foo(){}
+      //   Mangled name for the signature: test3(){}foo(){}
       override fun foo(): Unit
 
     }
@@ -145,19 +165,25 @@ interface IFoo {
 fun Outer.test4(): Inner
   // CHECK JVM_IR:
   //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>
+  //   Mangled name for the signature: test4@Outer(){}Outer.Inner
   // CHECK JS_IR NATIVE:
   //   Mangled name: #test4@Outer(){}.<no name provided>
+  //   Mangled name for the signature: test4@Outer(){}
   local class <no name provided> : Inner {
     // CHECK JVM_IR:
     //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>#<init>(){}
+    //   Mangled name for the signature: test4@Outer(){}Outer.Inner<init>(){}
     // CHECK JS_IR NATIVE:
     //   Mangled name: #test4@Outer(){}.<no name provided>#<init>(){}
+    //   Mangled name for the signature: test4@Outer(){}<init>(){}
     constructor() /* primary */
 
     // CHECK JVM_IR:
     //   Mangled name: #test4@Outer(){}Outer.Inner.<no name provided>#foo(){}
+    //   Mangled name for the signature: test4@Outer(){}Outer.Innerfoo(){}
     // CHECK JS_IR NATIVE:
     //   Mangled name: #test4@Outer(){}.<no name provided>#foo(){}
+    //   Mangled name for the signature: test4@Outer(){}foo(){}
     override fun foo(): Unit
 
   }

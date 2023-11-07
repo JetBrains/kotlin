@@ -5,6 +5,7 @@
 fun box(): Unit
   // CHECK:
   //   Mangled name: #box(){}#<anonymous>#static(kotlin.String){}
+  //   Mangled name for the signature: box(){}<anonymous>#static(kotlin.String){}
   local fun <anonymous>(it: String): Unit
 
 // CHECK:

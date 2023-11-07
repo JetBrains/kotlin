@@ -5,6 +5,7 @@
 fun testWithNullCheck(xs: Array<String>): Unit
   // CHECK JVM_IR:
   //   Mangled name: #testWithNullCheck(kotlin.Array<kotlin.String>){}#<anonymous>#static(){}kotlin.String
+  //   Mangled name for the signature: testWithNullCheck(kotlin.Array<kotlin.String>){}<anonymous>#static(){}kotlin.String
   local fun <anonymous>(): String
 
 // CHECK JVM_IR:

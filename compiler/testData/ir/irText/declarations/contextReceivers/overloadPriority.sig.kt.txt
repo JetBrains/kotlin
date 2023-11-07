@@ -37,7 +37,9 @@ fun f(): Any
 fun test(): Unit
   // CHECK JVM_IR:
   //   Mangled name: #test(){}#<anonymous>#static@Context(){}kotlin.Int
+  //   Mangled name for the signature: test(){}<anonymous>#static@Context(){}kotlin.Int
   // CHECK JS_IR NATIVE:
   //   Mangled name: #test(){}#<anonymous>#static@Context(){}
+  //   Mangled name for the signature: test(){}<anonymous>#static@Context(){}
   local fun Context.<anonymous>(): Int
 

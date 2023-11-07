@@ -15,8 +15,9 @@ fun <R : Number> Number.convert(): R
 fun foo(arg: Number): Unit
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #main(kotlin.Array<kotlin.String>){}
-//   Mangled name computed from Descriptor: #main(kotlin.Array<kotlin.String>){}%argumentMappedWithError.kt
+//   Mangled name: #main(kotlin.Array<kotlin.String>){}
+//   Mangled name for the signature computed from Ir:         main(kotlin.Array<kotlin.String>){}
+//   Mangled name for the signature computed from Descriptor: main(kotlin.Array<kotlin.String>){}%argumentMappedWithError.kt
 //   Public signature: /main|5561668743171252170[0]
 //   Public signature debug description: main(kotlin.Array<kotlin.String>){}%argumentMappedWithError.kt
 // CHECK JS_IR NATIVE:
