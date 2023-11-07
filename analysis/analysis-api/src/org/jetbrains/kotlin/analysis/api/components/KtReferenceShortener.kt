@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
@@ -96,6 +97,8 @@ public abstract class KtReferenceShortener : KtAnalysisSessionComponent() {
         classShortenStrategy: (KtClassLikeSymbol) -> ShortenStrategy,
         callableShortenStrategy: (KtCallableSymbol) -> ShortenStrategy
     ): ShortenCommand
+
+    public abstract fun renderTypeShortenedIfAlreadyImported(classId: ClassId, elementForScope: KtElement): String
 }
 
 public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
@@ -149,6 +152,32 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
                 classShortenStrategy,
                 callableShortenStrategy
             )
+        }
+
+    /**
+     * Render [classId] in a shorted form if it is already imported or defined under the scope [elementForScope]. It will return the
+     * fully-qualified name of [classId] if
+     *   - It cannot shorten [classId] (because its package and parent class are not already imported), or
+     *   - [elementForScope] is not KtFile and KtClassOrObject.
+     *
+     * For example,
+     * ```
+     * package com.x.y.z
+     * import dependency.Foo
+     * class Bar { class Inner { class MoreInner } }
+     * ```
+     * If we call this API with `classId = com.x.y.z.Bar.Inner` and `elementForScope = KtClass For MoreInner`, it will return "Inner".
+     * If we call this API with `classId = dependency.Foo` and `elementForScope = KtClass For Bar`, it will return "Foo".
+     * If we call this API with `classId = not.already.imported.TypeX` and `elementForScope = KtClass For Bar`, it will return
+     * "not.already.imported.TypeX".
+     *
+     * This API will be useful for the case we need to shorten types before we have the final PSI, because updating PSI will make
+     * [ShortenCommand] invalid, which means [collectPossibleReferenceShorteningsInElement] and [collectPossibleReferenceShortenings]
+     * cannot help if we don't have the final PSI.
+     */
+    public fun renderShortenedTypeIfAlreadyImported(classId: ClassId, elementForScope: KtElement): String =
+        withValidityAssertion {
+            analysisSession.referenceShortener.renderTypeShortenedIfAlreadyImported(classId, elementForScope)
         }
 }
 

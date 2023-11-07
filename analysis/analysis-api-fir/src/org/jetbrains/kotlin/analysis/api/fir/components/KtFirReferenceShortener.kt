@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.components.ShortenCommand
 import org.jetbrains.kotlin.analysis.api.components.ShortenOptions
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.components.ElementsToShortenCollector.PartialOrderOfScope.Companion.toPartialOrder
+import org.jetbrains.kotlin.analysis.api.fir.components.PartialOrderOfScope.Companion.toPartialOrder
 import org.jetbrains.kotlin.analysis.api.fir.isImplicitDispatchReceiver
 import org.jetbrains.kotlin.analysis.api.fir.references.KDocReferenceResolver
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
@@ -138,6 +138,23 @@ internal class KtFirReferenceShortener(
             collector.qualifiersToShorten.map { it.element }.distinct().map { it.createSmartPointer() },
             kDocCollector.kDocQualifiersToShorten.map { it.element }.distinct().map { it.createSmartPointer() },
         )
+    }
+
+    override fun renderTypeShortenedIfAlreadyImported(classId: ClassId, elementForScope: KtElement): String {
+        val fqNameWithoutShorten = classId.asFqNameString()
+        if (elementForScope !is KtFile && elementForScope !is KtDeclaration) return fqNameWithoutShorten
+        val towerContext = FirTowerContextProviderByContextCollector.create(firResolveSession, elementForScope)
+        val scopes = context.findScopesAtPosition(elementForScope, emptySequence(), towerContext) ?: return fqNameWithoutShorten
+
+        var parentOrSelfClassId = classId
+        while (true) {
+            val classSymbol = context.toClassSymbol(parentOrSelfClassId) ?: break
+            if (context.shortenClassifierIfAlreadyImported(parentOrSelfClassId, elementForScope, classSymbol, scopes)) {
+                return if (parentOrSelfClassId == classId) classId.shortClassName.asString() else classId.shortenParent(parentOrSelfClassId)
+            }
+            parentOrSelfClassId = parentOrSelfClassId.parentClassId ?: break
+        }
+        return fqNameWithoutShorten
     }
 
     private fun KtElement.getCorrespondingFirElement(): FirElement? {
@@ -379,6 +396,71 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
 
     fun convertToImportableName(callableSymbol: FirCallableSymbol<*>): FqName? =
         callableSymbol.computeImportableName(firSession)
+
+    /**
+     * Returns true if this [PsiFile] has a [KtImportDirective] whose imported FqName is the same as [classId] but references a different
+     * symbol.
+     */
+    private fun PsiFile.hasImportDirectiveForDifferentSymbolWithSameName(classId: ClassId): Boolean {
+        val importDirectivesWithSameImportedFqName = collectDescendantsOfType { importedDirective: KtImportDirective ->
+            importedDirective.importedFqName?.shortName() == classId.shortClassName
+        }
+        return importDirectivesWithSameImportedFqName.isNotEmpty() &&
+                importDirectivesWithSameImportedFqName.all { it.importedFqName != classId.asSingleFqName() }
+    }
+
+    private fun findCandidatesForPropertyAccess(
+        annotations: List<FirAnnotation>,
+        typeArguments: List<FirTypeProjection>,
+        name: Name,
+        elementInScope: KtElement,
+    ): List<OverloadCandidate> {
+        val fakeCalleeReference = buildSimpleNamedReference { this.name = name }
+        val fakeFirQualifiedAccess = buildPropertyAccessExpression {
+            this.annotations.addAll(annotations)
+            this.typeArguments.addAll(typeArguments)
+            calleeReference = fakeCalleeReference
+        }
+        val candidates = AllCandidatesResolver(analysisSession.useSiteSession).getAllCandidates(
+            firResolveSession, fakeFirQualifiedAccess, name, elementInScope
+        )
+        return candidates.filter { overloadCandidate ->
+            overloadCandidate.candidate.currentApplicability == CandidateApplicability.RESOLVED
+        }
+    }
+
+    fun shortenClassifierIfAlreadyImported(
+        classId: ClassId,
+        element: KtElement,
+        classSymbol: FirClassLikeSymbol<*>,
+        scopes: List<FirScope>,
+    ): Boolean {
+        val name = classId.shortClassName
+        val availableClassifiers = findClassifiersInScopesByName(scopes, name)
+        val matchingAvailableSymbol = availableClassifiers.firstOrNull { it.availableSymbol.symbol.classIdIfExists == classId }
+        val scopeForClass = matchingAvailableSymbol?.scope ?: return false
+
+        if (availableClassifiers.map { it.scope }.hasScopeCloserThan(scopeForClass, element)) return false
+
+        /**
+         * If we have a property with the same name, avoid dropping qualifiers makes it reference a property with the same name e.g.,
+         *    package my.component
+         *    class foo { .. }  // A
+         *    ..
+         *    fun test() {
+         *      val foo = ..    // B
+         *      my.component.foo::class.java  // If we drop `my.component`, it will reference `B` instead of `A`
+         *    }
+         */
+        if (findPropertiesInScopes(scopes, name).isNotEmpty()) {
+            val firForElement = element.getOrBuildFir(firResolveSession) as? FirQualifiedAccessExpression
+            val typeArguments = firForElement?.typeArguments ?: emptyList()
+            val qualifiedAccessCandidates = findCandidatesForPropertyAccess(classSymbol.annotations, typeArguments, name, element)
+            if (qualifiedAccessCandidates.mapNotNull { it.candidate.originScope }.hasScopeCloserThan(scopeForClass, element)) return false
+        }
+
+        return !element.containingFile.hasImportDirectiveForDifferentSymbolWithSameName(classId)
+    }
 }
 
 private sealed class ElementToShorten {
@@ -577,8 +659,6 @@ private class ElementsToShortenCollector(
         )
     }
 
-    private val FirClassifierSymbol<*>.classIdIfExists: ClassId? get() = (this as? FirClassLikeSymbol<*>)?.classId
-
     /**
      * Returns true if the class symbol has a type parameter that is supposed to be provided for its parent class.
      *
@@ -589,189 +669,6 @@ private class ElementsToShortenCollector(
      */
     private fun FirClassLikeSymbol<*>.hasTypeParameterFromParent(): Boolean = typeParameterSymbols.orEmpty().any {
         it.containingDeclarationSymbol != this
-    }
-
-    private fun FirScope.correspondingClassIdIfExists(): ClassId = when (this) {
-        is FirNestedClassifierScope -> klass.classId
-        is FirNestedClassifierScopeWithSubstitution -> originalScope.correspondingClassIdIfExists()
-        is FirClassUseSiteMemberScope -> classId
-        else -> errorWithAttachment("FirScope ${this::class}` is expected to be one of FirNestedClassifierScope and FirClassUseSiteMemberScope to get ClassId") {
-            withEntry("firScope", this@correspondingClassIdIfExists) { it.toString() }
-        }
-    }
-
-    private fun ClassId.idWithoutCompanion() = if (shortClassName == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) outerClassId else this
-
-    private fun FirScope.isScopeForClass(): Boolean = when {
-        this is FirNestedClassifierScope -> true
-        this is FirNestedClassifierScopeWithSubstitution -> originalScope.isScopeForClass()
-        this is FirClassUseSiteMemberScope -> true
-        else -> false
-    }
-
-    /**
-     * Assuming that both this [FirScope] and [another] are [FirNestedClassifierScope] or [FirClassUseSiteMemberScope] and both of them
-     * are surrounding [from], returns whether this [FirScope] is closer than [another] based on the distance from [from].
-     *
-     * If one of this [FirScope] and [another] is not [FirNestedClassifierScope] or [FirClassUseSiteMemberScope], it returns false.
-     *
-     * Example:
-     *   class Outer { // scope1  ClassId = Other
-     *     class Inner { // scope2  ClassId = Other.Inner
-     *       fun foo() {
-     *         // Distance to scopes for classes from <element> in the order from the closest:
-     *         //   scope2 -> scope3 -> scope1
-     *         <element>
-     *       }
-     *       companion object { // scope3  ClassId = Other.Inner.Companion
-     *       }
-     *     }
-     *   }
-     *
-     * This function determines the distance based on [ClassId].
-     */
-    private fun FirScope.isScopeForClassCloserThanAnotherScopeForClass(another: FirScope, from: KtClass): Boolean {
-        // Make sure both are scopes for classes
-        if (!isScopeForClass() || !another.isScopeForClass()) return false
-
-        if (this == another) return false
-
-        val classId = correspondingClassIdIfExists()
-        val classIdOfAnother = another.correspondingClassIdIfExists()
-        if (classId == classIdOfAnother) return false
-
-        // Find the first ClassId matching inner class. If the first matching one is this scope's ClassId, it means this scope is closer
-        // than `another`.
-        val candidates = setOfNotNull(classId, classIdOfAnother, classId.idWithoutCompanion(), classIdOfAnother.idWithoutCompanion())
-        val closestClassId = findMostInnerClassMatchingId(from, candidates)
-        return closestClassId == classId || (closestClassId != classIdOfAnother && closestClassId == classId.idWithoutCompanion())
-    }
-
-    /**
-     * Travels all containing classes of [innerClass] and finds the one matching ClassId with one of [candidates]. Returns the matching
-     * ClassId. If it does not have a matching ClassId, it returns null.
-     */
-    private fun findMostInnerClassMatchingId(innerClass: KtClass, candidates: Set<ClassId>): ClassId? {
-        var classInNestedClass: KtClass? = innerClass
-        while (classInNestedClass != null) {
-            val containingClassId = classInNestedClass.getClassId()
-            if (containingClassId in candidates) return containingClassId
-            classInNestedClass = classInNestedClass.containingClass()
-        }
-        return null
-    }
-
-
-    /**
-     * An enum class to specify the distance of scopes from an element as a partial order
-     *
-     * Example:
-     *   import ... // scope1  FirExplicitSimpleImportingScope - enum entry: ExplicitSimpleImporting
-     *   // scope2  FirPackageMemberScope - enum entry: PackageMember
-     *   class Outer { // scope3  FirClassUseSiteMemberScope - enum entry: ClassUseSite
-     *     class Inner { // scope4  FirClassUseSiteMemberScope or FirNestedClassifierScope - enum entry: ClassUseSite/NestedClassifier
-     *       fun foo() { // scope5  FirLocalScope - enum entry: Local
-     *
-     *         // Distance to scopes from <element> in the order from the closest:
-     *         //   scope5 -> scope4 -> scope6 -> scope3 -> scope1 -> scope2
-     *         <element>
-     *
-     *       }
-     *       companion object {
-     *         // scope6  FirClassUseSiteMemberScope or FirNestedClassifierScope - enum entry: ClassUseSite/NestedClassifier
-     *       }
-     *     }
-     *   }
-     */
-    private enum class PartialOrderOfScope(
-        val scopeDistanceLevel: Int // Note: Don't use the built-in ordinal since there are some scopes that are at the same level.
-    ) {
-        Local(1),
-        ClassUseSite(2),
-        NestedClassifier(2),
-        TypeParameter(2),
-        ExplicitSimpleImporting(3),
-        PackageMember(4),
-        Unclassified(5),
-        ;
-
-        companion object {
-            fun FirScope.toPartialOrder(): PartialOrderOfScope {
-                return when (this) {
-                    is FirLocalScope -> Local
-                    is FirClassUseSiteMemberScope -> ClassUseSite
-                    is FirNestedClassifierScope -> NestedClassifier
-                    is FirTypeParameterScope -> TypeParameter
-                    is FirNestedClassifierScopeWithSubstitution -> originalScope.toPartialOrder()
-                    is FirExplicitSimpleImportingScope -> ExplicitSimpleImporting
-                    is FirPackageMemberScope -> PackageMember
-                    else -> Unclassified
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns whether this [FirScope] is a scope wider than [another] based on the above [PartialOrderOfScope] or not.
-     */
-    private fun FirScope.isWiderThan(another: FirScope): Boolean =
-        toPartialOrder().scopeDistanceLevel > another.toPartialOrder().scopeDistanceLevel
-
-    /**
-     * Assuming that all scopes in this List<FirScope> and [base] are surrounding [from], returns whether an element of
-     * this List<FirScope> is closer than [base] based on the distance from [from].
-     */
-    private fun List<FirScope>.hasScopeCloserThan(base: FirScope, from: KtElement) = any { scope ->
-        if (scope.isScopeForClass() && base.isScopeForClass()) {
-            val classContainingFrom = from.containingClass() ?: return@any false
-            return@any scope.isScopeForClassCloserThanAnotherScopeForClass(base, classContainingFrom)
-        }
-        base.isWiderThan(scope)
-    }
-
-    /**
-     * Returns true if this [PsiFile] has a [KtImportDirective] whose imported FqName is the same as [classId] but references a different
-     * symbol.
-     */
-    private fun PsiFile.hasImportDirectiveForDifferentSymbolWithSameName(classId: ClassId): Boolean {
-        val importDirectivesWithSameImportedFqName = collectDescendantsOfType { importedDirective: KtImportDirective ->
-            importedDirective.importedFqName?.shortName() == classId.shortClassName
-        }
-        return importDirectivesWithSameImportedFqName.isNotEmpty() &&
-                importDirectivesWithSameImportedFqName.all { it.importedFqName != classId.asSingleFqName() }
-    }
-
-    private fun shortenClassifierIfAlreadyImported(
-        classId: ClassId,
-        element: KtElement,
-        classSymbol: FirClassLikeSymbol<*>,
-        scopes: List<FirScope>,
-    ): Boolean {
-        val name = classId.shortClassName
-        val availableClassifiers = shorteningContext.findClassifiersInScopesByName(scopes, name)
-        val matchingAvailableSymbol = availableClassifiers.firstOrNull { it.availableSymbol.symbol.classIdIfExists == classId }
-        val scopeForClass = matchingAvailableSymbol?.scope ?: return false
-
-        if (availableClassifiers.map { it.scope }.hasScopeCloserThan(scopeForClass, element)) return false
-
-        /**
-         * If we have a property with the same name, avoid dropping qualifiers makes it reference a property with the same name e.g.,
-         *    package my.component
-         *    class foo { .. }  // A
-         *    ..
-         *    fun test() {
-         *      val foo = ..    // B
-         *      my.component.foo::class.java  // If we drop `my.component`, it will reference `B` instead of `A`
-         *    }
-         */
-        if (shorteningContext.findPropertiesInScopes(scopes, name).isNotEmpty()) {
-            val firForElement = element.getOrBuildFir(firResolveSession) as? FirQualifiedAccessExpression
-            val typeArguments = firForElement?.typeArguments ?: emptyList()
-            val qualifiedAccessCandidates = findCandidatesForPropertyAccess(classSymbol.annotations, typeArguments, name, element)
-            if (qualifiedAccessCandidates.mapNotNull { it.candidate.originScope }.hasScopeCloserThan(scopeForClass, element)) return false
-        }
-
-        return !element.containingFile.hasImportDirectiveForDifferentSymbolWithSameName(classId)
     }
 
     private fun findClassifierElementsToShorten(
@@ -787,7 +684,7 @@ private class ElementsToShortenCollector(
             // If its parent has a type parameter, we do not shorten it ATM because it will lose its type parameter. See KTIJ-26072
             if (classSymbol.hasTypeParameterFromParent()) continue
 
-            if (shortenClassifierIfAlreadyImported(classId, element, classSymbol, positionScopes)) {
+            if (shorteningContext.shortenClassifierIfAlreadyImported(classId, element, classSymbol, positionScopes)) {
                 return createElementToShorten(element, null, false)
             }
             if (option == ShortenStrategy.SHORTEN_IF_ALREADY_IMPORTED) continue
@@ -1385,3 +1282,145 @@ private fun KtElement.getQualifier(): KtElement? = when (this) {
     is KtDotQualifiedExpression -> receiverExpression
     else -> null
 }
+
+private val FirClassifierSymbol<*>.classIdIfExists: ClassId? get() = (this as? FirClassLikeSymbol<*>)?.classId
+
+/**
+ * Travels all containing classes of [innerClass] and finds the one matching ClassId with one of [candidates]. Returns the matching
+ * ClassId. If it does not have a matching ClassId, it returns null.
+ */
+private fun findMostInnerClassMatchingId(innerClass: KtClass, candidates: Set<ClassId>): ClassId? {
+    var classInNestedClass: KtClass? = innerClass
+    while (classInNestedClass != null) {
+        val containingClassId = classInNestedClass.getClassId()
+        if (containingClassId in candidates) return containingClassId
+        classInNestedClass = classInNestedClass.containingClass()
+    }
+    return null
+}
+
+private fun ClassId.idWithoutCompanion() = if (shortClassName == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) outerClassId else this
+
+private fun FirScope.correspondingClassIdIfExists(): ClassId = when (this) {
+    is FirNestedClassifierScope -> klass.classId
+    is FirNestedClassifierScopeWithSubstitution -> originalScope.correspondingClassIdIfExists()
+    is FirClassUseSiteMemberScope -> classId
+    else -> errorWithAttachment("FirScope ${this::class}` is expected to be one of FirNestedClassifierScope and FirClassUseSiteMemberScope to get ClassId") {
+        withEntry("firScope", this@correspondingClassIdIfExists) { it.toString() }
+    }
+}
+
+private fun FirScope.isScopeForClass(): Boolean = when {
+    this is FirNestedClassifierScope -> true
+    this is FirNestedClassifierScopeWithSubstitution -> originalScope.isScopeForClass()
+    this is FirClassUseSiteMemberScope -> true
+    else -> false
+}
+
+/**
+ * Assuming that both this [FirScope] and [another] are [FirNestedClassifierScope] or [FirClassUseSiteMemberScope] and both of them
+ * are surrounding [from], returns whether this [FirScope] is closer than [another] based on the distance from [from].
+ *
+ * If one of this [FirScope] and [another] is not [FirNestedClassifierScope] or [FirClassUseSiteMemberScope], it returns false.
+ *
+ * Example:
+ *   class Outer { // scope1  ClassId = Other
+ *     class Inner { // scope2  ClassId = Other.Inner
+ *       fun foo() {
+ *         // Distance to scopes for classes from <element> in the order from the closest:
+ *         //   scope2 -> scope3 -> scope1
+ *         <element>
+ *       }
+ *       companion object { // scope3  ClassId = Other.Inner.Companion
+ *       }
+ *     }
+ *   }
+ *
+ * This function determines the distance based on [ClassId].
+ */
+private fun FirScope.isScopeForClassCloserThanAnotherScopeForClass(another: FirScope, from: KtClass): Boolean {
+    // Make sure both are scopes for classes
+    if (!isScopeForClass() || !another.isScopeForClass()) return false
+
+    if (this == another) return false
+
+    val classId = correspondingClassIdIfExists()
+    val classIdOfAnother = another.correspondingClassIdIfExists()
+    if (classId == classIdOfAnother) return false
+
+    // Find the first ClassId matching inner class. If the first matching one is this scope's ClassId, it means this scope is closer
+    // than `another`.
+    val candidates = setOfNotNull(classId, classIdOfAnother, classId.idWithoutCompanion(), classIdOfAnother.idWithoutCompanion())
+    val closestClassId = findMostInnerClassMatchingId(from, candidates)
+    return closestClassId == classId || (closestClassId != classIdOfAnother && closestClassId == classId.idWithoutCompanion())
+}
+
+/**
+ * An enum class to specify the distance of scopes from an element as a partial order
+ *
+ * Example:
+ *   import ... // scope1  FirExplicitSimpleImportingScope - enum entry: ExplicitSimpleImporting
+ *   // scope2  FirPackageMemberScope - enum entry: PackageMember
+ *   class Outer { // scope3  FirClassUseSiteMemberScope - enum entry: ClassUseSite
+ *     class Inner { // scope4  FirClassUseSiteMemberScope or FirNestedClassifierScope - enum entry: ClassUseSite/NestedClassifier
+ *       fun foo() { // scope5  FirLocalScope - enum entry: Local
+ *
+ *         // Distance to scopes from <element> in the order from the closest:
+ *         //   scope5 -> scope4 -> scope6 -> scope3 -> scope1 -> scope2
+ *         <element>
+ *
+ *       }
+ *       companion object {
+ *         // scope6  FirClassUseSiteMemberScope or FirNestedClassifierScope - enum entry: ClassUseSite/NestedClassifier
+ *       }
+ *     }
+ *   }
+ */
+private enum class PartialOrderOfScope(
+    val scopeDistanceLevel: Int // Note: Don't use the built-in ordinal since there are some scopes that are at the same level.
+) {
+    Local(1),
+    ClassUseSite(2),
+    NestedClassifier(2),
+    TypeParameter(2),
+    ExplicitSimpleImporting(3),
+    PackageMember(4),
+    Unclassified(5),
+    ;
+
+    companion object {
+        fun FirScope.toPartialOrder(): PartialOrderOfScope {
+            return when (this) {
+                is FirLocalScope -> Local
+                is FirClassUseSiteMemberScope -> ClassUseSite
+                is FirNestedClassifierScope -> NestedClassifier
+                is FirTypeParameterScope -> TypeParameter
+                is FirNestedClassifierScopeWithSubstitution -> originalScope.toPartialOrder()
+                is FirExplicitSimpleImportingScope -> ExplicitSimpleImporting
+                is FirPackageMemberScope -> PackageMember
+                else -> Unclassified
+            }
+        }
+    }
+}
+
+/**
+ * Returns whether this [FirScope] is a scope wider than [another] based on the above [PartialOrderOfScope] or not.
+ */
+private fun FirScope.isWiderThan(another: FirScope): Boolean =
+    toPartialOrder().scopeDistanceLevel > another.toPartialOrder().scopeDistanceLevel
+
+/**
+ * Assuming that all scopes in this List<FirScope> and [base] are surrounding [from], returns whether an element of
+ * this List<FirScope> is closer than [base] based on the distance from [from].
+ */
+private fun List<FirScope>.hasScopeCloserThan(base: FirScope, from: KtElement) = any { scope ->
+    if (scope.isScopeForClass() && base.isScopeForClass()) {
+        val classContainingFrom = from.containingClass() ?: return@any false
+        return@any scope.isScopeForClassCloserThanAnotherScopeForClass(base, classContainingFrom)
+    }
+    base.isWiderThan(scope)
+}
+
+private fun ClassId.shortenParent(parentClassId: ClassId): String =
+    "${parentClassId.shortClassName.asString()}${asFqNameString().removePrefix(parentClassId.asFqNameString())}"

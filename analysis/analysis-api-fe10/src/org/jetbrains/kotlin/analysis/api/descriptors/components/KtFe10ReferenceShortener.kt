@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtUserType
 
@@ -51,4 +53,6 @@ internal class KtFe10ReferenceShortener(
             override val isEmpty: Boolean get() = true
         }
     }
+
+    override fun renderTypeShortenedIfAlreadyImported(classId: ClassId, elementForScope: KtElement): String = classId.asFqNameString()
 }

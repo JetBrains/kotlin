@@ -50,11 +50,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInf
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceImportAliasTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveWithResolveExtensionTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerForWholeFileTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractBuiltInTypeTest
@@ -283,6 +279,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test(AbstractReferenceShortenerForWholeFileTest::class) {
             model(it, "referenceShortenerWholeFile")
+        }
+
+        test(AbstractRenderShortenedTypeIfAlreadyImportedTest::class) {
+            model(it, "renderShortenedTypeIfAlreadyImported")
         }
     }
 
