@@ -183,6 +183,20 @@ fun main() {
             ) {
                 model("CInterop/experimental/cases", pattern = "^([^_](.+))$", recursive = false)
             }
+
+            testClass<AbstractNativeCInteropExecutableTest>(
+                suiteTestClassName = "ClassicNativeCInteropExecutableTest",
+            ) {
+                model("CInterop/executable", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCInteropExecutableTest>(
+                suiteTestClassName = "FirNativeCInteropExecutableTest",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("CInterop/executable", pattern = "^([^_](.+))$", recursive = false)
+            }
         }
 
         // ObjCExport tests.
