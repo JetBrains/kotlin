@@ -293,7 +293,7 @@ class Fir2IrImplicitCastInserter(
             receiver,
             selector,
             typeOrigin
-        ) ?: implicitCastOrExpression(originalIrReceiver, receiver.resolvedType)
+        ) ?: implicitCastOrExpression(originalIrReceiver, receiver.resolvedType, typeOrigin)
     }
 
     private fun implicitCastFromReceiverForIntersectionTypeOrNull(
