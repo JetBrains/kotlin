@@ -28,7 +28,7 @@ object FirOverloadsChecker : FirFunctionChecker() {
         val annotation = declaration.getAnnotationByClassId(JVM_OVERLOADS_CLASS_ID, session) ?: return
 
         val ownerOfParametersWithDefaultValues = declaration.symbol.takeIf { !it.isActual }
-            ?: declaration.symbol.getSingleExpectForActualOrNull()
+            ?: declaration.symbol.getSingleMatchedExpectForActualOrNull()
             ?: return
 
         val containingDeclaration = declaration.getContainingClassSymbol(session)
