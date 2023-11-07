@@ -59,7 +59,7 @@ internal enum class ClassLevelProperty(val shortName: String) {
     TEST_MODE("mode"),
     COMPILER_PLUGINS("compilerPlugins"),
     CUSTOM_KLIBS("customKlibs"),
-    FORCE_STANDALONE("forceStandalone"),
+    TEST_KIND("testKind"),
     COMPILE_ONLY("compileOnly"),
     OPTIMIZATION_MODE("optimizationMode"),
     USE_THREAD_STATE_CHECKER("useThreadStateChecker"),

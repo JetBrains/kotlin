@@ -104,14 +104,6 @@ internal value class CustomKlibs(val klibs: Set<File>) {
 }
 
 /**
- * Whether to force [TestKind.STANDALONE] for all tests where [TestKind] is assumed to be [TestKind.REGULAR] otherwise:
- * - either explicitly specified in the test data file: // KIND: REGULAR
- * - or // KIND: is not specified in the test data file and thus automatically considered as [TestKind.REGULAR]
- */
-@JvmInline
-internal value class ForcedStandaloneTestKind(val value: Boolean)
-
-/**
  * Whether tests should be compiled only (true) or compiled and executed (false, the default).
  *
  * TODO: need to reconsider this setting when other [Runner]s than [LocalTestRunner] and [NoopTestRunner] are supported

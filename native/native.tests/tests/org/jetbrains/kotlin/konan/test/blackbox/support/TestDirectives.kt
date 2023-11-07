@@ -247,9 +247,9 @@ internal class TestCompilerArgs(val compilerArgs: List<String>) {
     }
 }
 
-internal fun parseTestKind(registeredDirectives: RegisteredDirectives, location: Location): TestKind {
+internal fun parseTestKind(registeredDirectives: RegisteredDirectives, location: Location): TestKind? {
     if (KIND !in registeredDirectives)
-        return TestKind.REGULAR // The default one.
+        return null // The default is determined by TEST_KIND global property
 
     val values = registeredDirectives[KIND]
     return values.singleOrNull() ?: fail { "$location: Exactly one test kind expected in $KIND directive: $values" }

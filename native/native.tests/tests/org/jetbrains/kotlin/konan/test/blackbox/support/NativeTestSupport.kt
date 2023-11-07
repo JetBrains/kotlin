@@ -201,7 +201,7 @@ internal object NativeTestSupport {
         output += computeTestMode(enforcedProperties)
         output += computeCompilerPlugins(enforcedProperties)
         output += computeCustomKlibs(enforcedProperties)
-        output += computeForcedStandaloneTestKind(enforcedProperties)
+        output += computeTestKind(enforcedProperties)
         output += computeForcedNoopTestRunner(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
         // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
@@ -309,13 +309,11 @@ internal object NativeTestSupport {
             )
         )
 
-    private fun computeForcedStandaloneTestKind(enforcedProperties: EnforcedProperties): ForcedStandaloneTestKind =
-        ForcedStandaloneTestKind(
-            ClassLevelProperty.FORCE_STANDALONE.readValue(
-                enforcedProperties,
-                String::toBooleanStrictOrNull,
-                default = false
-            )
+    private fun computeTestKind(enforcedProperties: EnforcedProperties): TestKind =
+        ClassLevelProperty.TEST_KIND.readValue(
+            enforcedProperties,
+            TestKind.values(),
+            default = TestKind.REGULAR
         )
 
     private fun computeForcedNoopTestRunner(enforcedProperties: EnforcedProperties): ForcedNoopTestRunner =

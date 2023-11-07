@@ -197,12 +197,7 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
         val freeCompilerArgs = parseFreeCompilerArgs(registeredDirectives, location)
         val expectedTimeoutFailure = parseExpectedTimeoutFailure(registeredDirectives)
 
-        val testKind = parseTestKind(registeredDirectives, location).let { testKind ->
-            if (testKind == TestKind.REGULAR && settings.get<ForcedStandaloneTestKind>().value)
-                TestKind.STANDALONE
-            else
-                testKind
-        }
+        val testKind = parseTestKind(registeredDirectives, location) ?: settings.get<TestKind>()
 
         if (testKind == TestKind.REGULAR) {
             // Fix package declarations to avoid unintended conflicts between symbols with the same name in different test cases.

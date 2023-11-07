@@ -174,7 +174,7 @@ private class ExtTestDataFile(
     fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
-        val definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value
+        val definitelyStandaloneTest = settings.get<TestKind>() != TestKind.REGULAR
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         patchPackageNames(isStandaloneTest)
         patchFileLevelAnnotations()
