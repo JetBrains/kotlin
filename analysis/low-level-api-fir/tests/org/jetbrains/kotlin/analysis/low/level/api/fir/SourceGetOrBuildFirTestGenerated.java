@@ -1278,6 +1278,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("localDelegatedPropertyWithPropagatedType.kt")
+        public void testLocalDelegatedPropertyWithPropagatedType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/localDelegatedPropertyWithPropagatedType.kt");
+        }
+
+        @Test
         @TestMetadata("localFunction.kt")
         public void testLocalFunction() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/localFunction.kt");
@@ -1287,6 +1293,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         @TestMetadata("localProperty.kt")
         public void testLocalProperty() throws Exception {
             runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/localProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("localPropertyWithPropagatedType.kt")
+        public void testLocalPropertyWithPropagatedType() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/getOrBuildFir/wholeDeclaration/localPropertyWithPropagatedType.kt");
         }
 
         @Test

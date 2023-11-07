@@ -1,0 +1,36 @@
+KT element: KtProperty
+FIR element: FirPropertyImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/secondConstant|)) [ResolvedTo(BODY_RESOLVE)] lval localProperty: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>| <inline=Unknown>  {
+    ^ R|foo/explicitType|()
+}
+)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] localDelegatedPropertyWithPropagatedType.kt
+    package foo
+
+    @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=foo/Anno.position] position: R|kotlin/String|): R|foo/Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val position: R|kotlin/String| = R|<local>/position|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(CONTRACTS)] fun explicitType(): R|@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>| {
+        ^explicitType IntegerLiteral(0)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        @R|foo/Anno|[Types](position = <strcat>(String(property ), R|foo/secondConstant|)) [ResolvedTo(BODY_RESOLVE)] lval localProperty: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(BODY_RESOLVE)] lazy@fun <anonymous>(): R|@R|foo/Anno|(<strcat>(String(return type: ), constant#))  kotlin/collections/List<@R|foo/Anno|(<strcat>(String(nested return type: ), constant#))  kotlin/collections/Collection<@R|foo/Anno|(<strcat>(String(nested nested return type: ), constant#))  kotlin/String>>| <inline=Unknown>  {
+            ^ R|foo/explicitType|()
+        }
+        )
+    }
+    public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val secondConstant: R|kotlin/String| = String(str)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
