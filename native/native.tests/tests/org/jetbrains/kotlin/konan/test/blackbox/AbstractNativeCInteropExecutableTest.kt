@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
-import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
@@ -21,26 +20,26 @@ abstract class AbstractNativeCInteropExecutableTest : AbstractNativeSimpleTest()
     fun runTest(
         testDataDir: String,
     ) {
-        val fullDefFile = File(testDataDir, "library.def")
-        muteCInteropTestIfNecessary(fullDefFile, targets.testTarget)
+        val defFile = File(testDataDir, "library.def")
+        muteCInteropTestIfNecessary(defFile, targets.testTarget)
 
-        val fullMFile = File(testDataDir, "library.m")
-        val fullKTFile = File(testDataDir, "usage.kt")
+        val mFile = File(testDataDir, "library.m")
+        val ktFile = File(testDataDir, "usage.kt")
 
         val library = cinteropToLibrary(
             targets = targets,
-            defFile = fullDefFile,
+            defFile = defFile,
             outputDir = buildDir,
             freeCompilerArgs = TestCompilerArgs(listOf(
-                    "-compiler-option", "-I$testDataDir",
-                    "-Xcompile-source", fullMFile.absolutePath,
-                    "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=",
+                "-compiler-option", "-I$testDataDir",
+                "-Xcompile-source", mFile.absolutePath,
+                "-Xsource-compiler-option", "-DNS_FORMAT_ARGUMENT(A)=",
                 )
             )
         ).assertSuccess().resultingArtifact
 
         val testCase = generateTestCaseWithSingleFile(
-            sourceFile = fullKTFile,
+            sourceFile = ktFile,
             freeCompilerArgs = TestCompilerArgs(testRunSettings.get<PipelineType>().compilerFlags),
             testKind = TestKind.STANDALONE_NO_TR,
             extras = TestCase.NoTestRunnerExtras("main")
