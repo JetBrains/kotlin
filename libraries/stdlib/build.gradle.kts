@@ -65,6 +65,8 @@ kotlin {
     val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
     val diagnosticNamesArg = if (renderDiagnosticNames) "-Xrender-internal-diagnostic-names" else null
 
+    explicitApi()
+
     metadata {
         compilations {
             all {
@@ -74,6 +76,7 @@ kotlin {
                             "-Xallow-kotlin-package",
                             "-module-name", "kotlin-stdlib-common",
                             "-Xexpect-actual-classes",
+                            "-Xexplicit-api=strict",
                             diagnosticNamesArg,
                         )
                     }
@@ -132,6 +135,7 @@ kotlin {
                             "-Xallow-kotlin-package",
                             "-Xmultifile-parts-inherit",
                             "-Xno-new-java-annotation-targets",
+                            "-Xexplicit-api=strict",
                             diagnosticNamesArg,
                         )
                     }
@@ -147,6 +151,7 @@ kotlin {
                             "-Xallow-kotlin-package",
                             "-Xmultifile-parts-inherit",
                             "-Xno-new-java-annotation-targets",
+                            "-Xexplicit-api=strict",
                             diagnosticNamesArg,
                         )
                     }
@@ -204,9 +209,10 @@ kotlin {
             val main by getting
             main.apply {
                 kotlinOptions {
-                    freeCompilerArgs += listOf(
+                    freeCompilerArgs += listOfNotNull(
                         "-Xir-module-name=kotlin",
                         "-Xexpect-actual-classes",
+                        diagnosticNamesArg,
                     )
 
                     if (!kotlinBuildProperties.disableWerror) {
@@ -223,7 +229,11 @@ kotlin {
         (this as KotlinTargetWithNodeJsDsl).nodejs()
         compilations {
             all {
-                kotlinOptions.freeCompilerArgs += listOf("-Xallow-kotlin-package", "-Xexpect-actual-classes")
+                kotlinOptions.freeCompilerArgs += listOfNotNull(
+                    "-Xallow-kotlin-package",
+                    "-Xexpect-actual-classes",
+                    diagnosticNamesArg
+                )
             }
             val main by getting
             main.apply {
