@@ -86,6 +86,7 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
                     this,
                     providers = listOfNotNull(
                         firProvider.symbolProvider,
+                        switchableExtensionDeclarationsSymbolProvider,
                         syntheticFunctionInterfaceProvider,
                     ),
                     dependencyProvider,

@@ -499,6 +499,15 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirProvider::class, firProvider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
+            val contextModule = module.contextModule
+            if (contextModule is KtSourceModule) {
+                registerCompilerPluginServices(project, contextModule)
+                registerCompilerPluginExtensions(project, contextModule)
+            } else {
+                register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
+                register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
+            }
+
             registerCommonComponentsAfterExtensionsAreConfigured()
 
             val dependencyProvider = LLFirDependenciesSymbolProvider(this) {
@@ -519,20 +528,19 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             extensionService.additionalCheckers.forEach(session.checkersComponent::register)
 
-            //TODO: remove, replace with plugin loading
-            run {
-                register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
-                register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
-            }
-
             val syntheticFunctionInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider
                 .createIfNeeded(this, moduleData, scopeProvider)
+
+            val switchableExtensionDeclarationsSymbolProvider = FirSwitchableExtensionDeclarationsSymbolProvider
+                .createIfNeeded(this)
+                ?.also { register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it) }
 
             val context = CodeFragmentSessionCreationContext(
                 moduleData,
                 firProvider,
                 dependencyProvider,
-                syntheticFunctionInterfaceProvider
+                syntheticFunctionInterfaceProvider,
+                switchableExtensionDeclarationsSymbolProvider
             )
 
             additionalSessionConfiguration(context, this)
@@ -543,7 +551,8 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         val moduleData: LLFirModuleData,
         val firProvider: LLFirProvider,
         val dependencyProvider: LLFirDependenciesSymbolProvider,
-        val syntheticFunctionInterfaceProvider: FirExtensionSyntheticFunctionInterfaceProvider?
+        val syntheticFunctionInterfaceProvider: FirExtensionSyntheticFunctionInterfaceProvider?,
+        val switchableExtensionDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider?,
     )
 
     private fun wrapLanguageVersionSettings(original: LanguageVersionSettings): LanguageVersionSettings {

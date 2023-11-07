@@ -17,13 +17,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegiste
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.providers.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirExceptionHandler
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -75,7 +73,7 @@ internal fun FirSession.registerCompilerPluginExtensions(project: Project, modul
 }
 
 @SessionConfiguration
-internal fun LLFirSourcesSession.registerCompilerPluginServices(
+internal fun LLFirSession.registerCompilerPluginServices(
     project: Project,
     module: KtSourceModule
 ) {
