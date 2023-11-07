@@ -115,7 +115,8 @@ class FirDataFrameExtensionRegistrar(
                 val flag = FlagContainer(shouldIntercept = true)
                 val templateCompiler = TemplateCompiler(flag)
                 templateCompiler.session = it
-                CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, FirMetaContextImpl(it, templateCompiler), refinedToOriginal, flag)
+//                CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, FirMetaContextImpl(it, templateCompiler), refinedToOriginal, flag)
+                NewCandidateInterceptor(it, ::nextFunction, this::nextName, refinedToOriginal, flag)
             }
             +::TokenGenerator
         }

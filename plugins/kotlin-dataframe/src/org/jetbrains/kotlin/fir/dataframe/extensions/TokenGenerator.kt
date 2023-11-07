@@ -75,7 +75,8 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                             isNullable = false
                         ),
                         propertyName = propertyName,
-                        returnTypeRef = schemaProperty.dataRowReturnType.toFirResolvedTypeRef()
+                        returnTypeRef = schemaProperty.dataRowReturnType.toFirResolvedTypeRef(),
+                        effectiveVisibility = EffectiveVisibility.Local
                     )
 
                     val columnContainerExtension = generateExtensionProperty(
@@ -87,7 +88,8 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                         ),
                         propertyName = propertyName,
                         returnTypeRef = schemaProperty.columnContainerReturnType.toFirResolvedTypeRef(),
-                        symbol = k
+                        symbol = k,
+                        effectiveVisibility = EffectiveVisibility.Local
                     )
                     propertyName to listOf(dataRowExtension, columnContainerExtension)
                 }
@@ -99,8 +101,8 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
         // maybe Init needed not for everything
         val destination = mutableSetOf<Name>()
         when (classSymbol.fir.callShapeData) {
-            is CallShapeData.RefinedType -> Unit
-            is CallShapeData.Schema -> Unit
+            is CallShapeData.RefinedType -> destination.add(SpecialNames.INIT)
+            is CallShapeData.Schema -> destination.add(SpecialNames.INIT)
             is CallShapeData.Scope -> destination.add(SpecialNames.INIT)
             null -> Unit
         }
@@ -119,7 +121,7 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             origin = FirDeclarationOrigin.Plugin(Key)
             status = FirResolvedDeclarationStatusImpl(
-                    Visibilities.Local,
+                    Visibilities.Public,
                     Modality.ABSTRACT,
                     EffectiveVisibility.Local
             )
@@ -144,8 +146,8 @@ class TokenGenerator(session: FirSession) : FirDeclarationGenerationExtension(se
                 propertySymbol = firPropertySymbol
                 isGetter = true
                 status = FirResolvedDeclarationStatusImpl(
-                        Visibilities.Local,
-                        Modality.ABSTRACT,
+                        Visibilities.Public,
+                        Modality.FINAL,
                         EffectiveVisibility.Local
                 )
             }.also { firPropertyAccessorSymbol.bind(it) }

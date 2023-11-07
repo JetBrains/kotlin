@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.SimpleTypeNullability
 import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.getValueArgument
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
@@ -72,14 +75,16 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         return declaration
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
+        val irType = declaration.returnType.superTypes()[0]
+        val symbol = irType.classOrFail.owner.primaryConstructor?.symbol ?: return null
         val type = declaration.returnType as? IrSimpleType ?: return null
-        val irBuiltIns = context.irBuiltIns
         val delegatingAnyCall = IrDelegatingConstructorCallImpl(
             -1,
             -1,
-            irBuiltIns.anyType,
-            irBuiltIns.anyClass.owner.primaryConstructor?.symbol ?: return null,
+            irType,
+            symbol,
             typeArgumentsCount = 0,
             valueArgumentsCount = 0
         ).copyAttributes(declaration.parentAsClass)
@@ -109,7 +114,6 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
                     it.putValueArgument(0, IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, jvmNameArg))
                 }
         )
-
         val returnType = getter.returnType
         val isDataColumn = returnType.classFqName!!.asString().let {
             it == DataColumn::class.qualifiedName!! || it == ColumnGroup::class.qualifiedName!!
