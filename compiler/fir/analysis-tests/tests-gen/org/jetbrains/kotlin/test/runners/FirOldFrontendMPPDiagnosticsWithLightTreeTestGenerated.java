@@ -134,6 +134,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("expectActualClassesAreInBeta_suppressWarningWithLv.kt")
+    public void testExpectActualClassesAreInBeta_suppressWarningWithLv() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/expectActualClassesAreInBeta_suppressWarningWithLv.kt");
+    }
+
+    @Test
     @TestMetadata("expectDataObject.kt")
     public void testExpectDataObject() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/expectDataObject.kt");
