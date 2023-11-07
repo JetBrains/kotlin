@@ -200,6 +200,7 @@ public fun Path.copyToRecursively(
     @Suppress("UNUSED_PARAMETER")
     fun copy(source: Path, attributes: BasicFileAttributes): FileVisitResult {
         return try {
+            source.checkFileName()
             DefaultCopyActionContext.copyAction(source, destination(source)).toFileVisitResult()
         } catch (exception: Exception) {
             error(source, exception)
@@ -400,6 +401,7 @@ private fun SecureDirectoryStream<Path>.isDirectory(entryName: Path, vararg opti
 
 private fun insecureHandleEntry(entry: Path, collector: ExceptionsCollector) {
     collectIfThrows(collector) {
+        entry.checkFileName()
         if (entry.isDirectory(LinkOption.NOFOLLOW_LINKS)) {
             val preEnterTotalExceptions = collector.totalExceptions
 
@@ -427,3 +429,11 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
         }
     }
 }
+
+// illegal file name
+
+private fun Path.checkFileName() {
+    if (name.contains("..")) throw IllegalFileNameException(this)
+}
+
+internal class IllegalFileNameException(file: Path) : FileSystemException(file.toString(), null, "Illegal file name")

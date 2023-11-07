@@ -43,6 +43,7 @@ internal class PathTreeWalk(
         entriesAction: (List<PathNode>) -> Unit
     ) {
         val path = node.path
+        path.checkFileName()
         if (path.isDirectory(*linkOptions)) {
             if (node.createsCycle())
                 throw FileSystemLoopException(path.toString())
@@ -56,6 +57,10 @@ internal class PathTreeWalk(
         } else if (path.exists(LinkOption.NOFOLLOW_LINKS)) {
             yield(path)
         }
+    }
+
+    private fun Path.checkFileName() {
+        if (name.contains("..")) throw IllegalFileNameException(this)
     }
 
     private fun dfsIterator() = iterator<Path> {
