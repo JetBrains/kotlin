@@ -18541,6 +18541,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
         }
 
         @Test
+        @TestMetadata("genericContextOverride.kt")
+        public void testGenericContextOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionProperties/genericContextOverride.kt");
+        }
+
+        @Test
         @TestMetadata("genericValForPrimitiveType.kt")
         public void testGenericValForPrimitiveType() throws Exception {
             runTest("compiler/testData/codegen/box/extensionProperties/genericValForPrimitiveType.kt");
