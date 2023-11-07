@@ -10,6 +10,13 @@ class Impl : WithClassProperty() {
     }
 }
 
+@ObjCName("KotlinImplWithoutCompanionPropertyOverride")
+class ImplWithoutOverride : WithClassProperty() {
+    companion object : WithClassPropertyMeta() {
+    }
+}
+
 fun main() {
     assertEquals("42", Impl.stringProperty())
+    assertEquals("153", ImplWithoutOverride.stringProperty())
 }

@@ -1,7 +1,3 @@
-depends = Foundation
-language = Objective-C
-
----
 #import "Foundation/NSString.h"
 #import "Foundation/NSObject.h"
 
