@@ -213,7 +213,7 @@ open class JvmIrCodegenFactory(
             irLinker,
             messageLogger
         )
-        if (pluginExtensions.isNotEmpty()) {
+        if (pluginExtensions.isNotEmpty() && !ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
             for (extension in pluginExtensions) {
                 if (psi2irContext.configuration.generateBodies ||
                     @OptIn(FirIncompatiblePluginAPI::class) extension.shouldAlsoBeAppliedInKaptStubGenerationMode
