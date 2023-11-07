@@ -13,7 +13,19 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.konan.target.*
+import java.io.File
+import java.nio.file.Paths
 import javax.inject.Inject
+import kotlin.io.path.isSameFileAs
+
+private fun File.matchesDependency(dependency: String): Boolean {
+    val path = Paths.get(dependency)
+    return if (path.isAbsolute) {
+        path.isSameFileAs(this.toPath())
+    } else {
+        this.name == dependency
+    }
+}
 
 /**
  * Consuming native dependencies.
@@ -47,11 +59,11 @@ abstract class NativeDependenciesExtension @Inject constructor(private val proje
     }
 
     private val llvmFileCollection: FileCollection = nativeDependencies.incoming.artifacts.artifactFiles.filter {
-        it.name == platformManager.hostPlatform.llvmHome
+        it.matchesDependency(platformManager.hostPlatform.llvmHome!!)
     }
 
     private val libffiFileCollection: FileCollection = nativeDependencies.incoming.artifacts.artifactFiles.filter {
-        it.name == platformManager.hostPlatform.libffiDir
+        it.matchesDependency(platformManager.hostPlatform.libffiDir!!)
     }
 
     /**

@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.konan.target.TargetDomainObjectContainer
 import org.jetbrains.kotlin.konan.target.TargetWithSanitizer
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.utils.capitalized
+import java.nio.file.Paths
 import javax.inject.Inject
+import kotlin.io.path.name
 
 /**
  * Downloading native dependencies.
@@ -109,7 +111,7 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
             }
         }
 
-        val dependencies by loader::dependencies
+        private val dependencies by loader::dependencies
 
         val task = project.tasks.register<NativeDependenciesDownloader>("nativeDependencies${_target.name.capitalized}") {
             description = "Download dependencies for $_target"
@@ -130,6 +132,19 @@ abstract class NativeDependenciesDownloaderExtension @Inject constructor(private
                                 type = "directory"
                                 extension = ""
                                 builtBy(task)
+                            }
+                        }
+                        // Check for overridden distributions. They'll be absent from `depedencies` and
+                        // so should be added manually.
+                        listOf(loader.llvmHome!!, loader.libffiDir!!).forEach { dependency ->
+                            val dependencyPath = Paths.get(dependency)
+                            // If dependency is an absolute path - it's overridden.
+                            if (dependencyPath.isAbsolute) {
+                                artifact(dependencyPath.toFile()) {
+                                    name = dependencyPath.name
+                                    type = "directory"
+                                    extension = ""
+                                }
                             }
                         }
                     }
