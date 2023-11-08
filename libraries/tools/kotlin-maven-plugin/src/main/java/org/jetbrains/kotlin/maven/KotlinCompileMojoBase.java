@@ -84,6 +84,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         List<String> sourceFilePaths = new ArrayList<>();
         if (sourceDirs != null && !sourceDirs.isEmpty()) sourceFilePaths.addAll(sourceDirs);
         sourceFilePaths.addAll(project.getCompileSourceRoots());
+        sourceFilePaths.addAll(project.getTestCompileSourceRoots());
 
         return sourceFilePaths.stream().map(path -> new File(path).toPath().normalize().toString())
                 .distinct().collect(Collectors.toList());
