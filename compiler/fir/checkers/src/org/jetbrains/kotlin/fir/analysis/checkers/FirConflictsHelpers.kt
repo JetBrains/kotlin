@@ -163,7 +163,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirReg
 
         collect(declaredFunction, FirRedeclarationPresenter.represent(declaredFunction), functionDeclarations)
 
-        unsubstitutedScope.collectLeafFunctionsByName(declaredFunction.name).forEach { anotherFunction ->
+        unsubstitutedScope.processFunctionsByName(declaredFunction.name) { anotherFunction ->
             if (anotherFunction != declaredFunction && anotherFunction.isCollectable() && anotherFunction.isVisibleInClass(klass)) {
                 collect(anotherFunction, FirRedeclarationPresenter.represent(anotherFunction), functionDeclarations)
             }
@@ -190,7 +190,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectClassMembers(klass: FirReg
 
         collect(declaredProperty, FirRedeclarationPresenter.represent(declaredProperty), otherDeclarations)
 
-        unsubstitutedScope.collectLeafPropertiesByName(declaredProperty.name).forEach { anotherProperty ->
+        unsubstitutedScope.processPropertiesByName(declaredProperty.name) { anotherProperty ->
             if (anotherProperty != declaredProperty && anotherProperty.isCollectable() && anotherProperty.isVisibleInClass(klass)) {
                 collect(anotherProperty, FirRedeclarationPresenter.represent(anotherProperty), otherDeclarations)
             }

@@ -39,50 +39,6 @@ fun FirContainingNamesAwareScope.processAllClassifiers(processor: (FirClassifier
     }
 }
 
-inline fun <reified T : FirCallableSymbol<*>> collectLeafCallablesByName(
-    name: Name,
-    processCallablesByName: (Name, (T) -> Unit) -> Unit,
-    crossinline processDirectlyOverriddenCallables: (T, (T) -> ProcessorAction) -> Unit,
-): List<T> {
-    val collected = mutableSetOf<T>()
-    val bases = mutableSetOf<T>()
-
-    processCallablesByName(name) { function ->
-        processDirectlyOverriddenCallables(function) {
-            bases.add(it)
-            ProcessorAction.NEXT
-        }
-
-        if (function !in bases) {
-            collected.add(function)
-        }
-    }
-
-    return collected.filter { it !in bases }
-}
-
-fun FirTypeScope.collectLeafFunctionsByName(name: Name): List<FirNamedFunctionSymbol> =
-    collectLeafCallablesByName(name, ::processFunctionsByName, ::processDirectlyOverriddenFunctions)
-
-fun FirTypeScope.collectLeafPropertiesByName(name: Name): List<FirVariableSymbol<*>> =
-    collectLeafCallablesByName(name, ::processPropertiesByName) { variable, process ->
-        if (variable is FirPropertySymbol) {
-            processDirectlyOverriddenProperties(variable, process)
-        }
-    }
-
-fun FirTypeScope.collectLeafFunctions(): List<FirNamedFunctionSymbol> = buildList {
-    for (name in getCallableNames()) {
-        this += collectLeafFunctionsByName(name)
-    }
-}
-
-fun FirTypeScope.collectLeafProperties(): List<FirVariableSymbol<*>> = buildList {
-    for (name in getCallableNames()) {
-        this += collectLeafPropertiesByName(name)
-    }
-}
-
 fun FirContainingNamesAwareScope.collectAllProperties(): Collection<FirVariableSymbol<*>> {
     return mutableListOf<FirVariableSymbol<*>>().apply {
         processAllProperties(this::add)
