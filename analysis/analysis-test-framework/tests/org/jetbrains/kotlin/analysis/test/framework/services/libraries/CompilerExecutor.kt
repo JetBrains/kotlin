@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.analysis.test.framework.services.libraries
 
 import org.jetbrains.kotlin.analysis.test.framework.utils.SkipTestException
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
@@ -49,7 +52,7 @@ object CompilerExecutor {
 
     fun parseCompilerOptionsFromTestdata(module: TestModule): List<String> = buildList {
         module.directives[LanguageSettingsDirectives.API_VERSION].firstOrNull()?.let { apiVersion ->
-            addAll(listOf("-api-version", apiVersion.versionString))
+            addAll(listOf(CommonCompilerArguments::apiVersion.cliArgument, apiVersion.versionString))
         }
 
         module.directives[LanguageSettingsDirectives.LANGUAGE].firstOrNull()?.let {
@@ -57,7 +60,7 @@ object CompilerExecutor {
         }
 
         module.directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()?.let { jvmTarget ->
-            addAll(listOf("-jvm-target", jvmTarget.description))
+            addAll(listOf(K2JVMCompilerArguments::jvmTarget.cliArgument, jvmTarget.description))
 
             val jdkHome = when {
                 jvmTarget <= JvmTarget.JVM_1_8 -> KtTestUtil.getJdk8Home()
@@ -67,7 +70,7 @@ object CompilerExecutor {
                 else -> error("JDK for $jvmTarget is not found")
             }
 
-            addAll(listOf("-jdk-home", jdkHome.toString()))
+            addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
         }
 
         addAll(module.directives[Directives.COMPILER_ARGUMENTS])
