@@ -395,6 +395,11 @@ include ":plugins:compose-compiler-plugin:compiler",
         ":plugins:compose-compiler-plugin:compiler-daemon",
         ":plugins:compose-compiler-plugin:compiler-daemon:integration-tests"
 
+// Swift Export modules
+include ":native:swift:sir",
+        ":native:swift:sir-passes",
+        ":native:swift:sir-analysis-api"
+
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/plugins/kotlin/${imlPath}")
