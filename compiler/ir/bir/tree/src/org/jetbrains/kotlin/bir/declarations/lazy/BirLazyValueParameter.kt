@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.name.Name
 
 class BirLazyValueParameter(
-    override val originalElement: IrValueParameter,
+    override val originalIrElement: IrValueParameter,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(converter), BirValueParameter {
     override val owner: BirValueParameter
@@ -25,33 +25,33 @@ class BirLazyValueParameter(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: ParameterDescriptor
-        get() = originalElement.descriptor
+        get() = originalIrElement.descriptor
     override var index: Int
-        get() = originalElement.index
+        get() = originalIrElement.index
         set(value) = mutationNotSupported()
     override var isCrossinline: Boolean
-        get() = originalElement.isCrossinline
+        get() = originalIrElement.isCrossinline
         set(value) = mutationNotSupported()
     override var isNoinline: Boolean
-        get() = originalElement.isNoinline
+        get() = originalIrElement.isNoinline
         set(value) = mutationNotSupported()
     override var isHidden: Boolean
-        get() = originalElement.isHidden
+        get() = originalIrElement.isHidden
         set(value) = mutationNotSupported()
     override var name: Name
-        get() = originalElement.name
+        get() = originalIrElement.name
         set(value) = mutationNotSupported()
     override var isAssignable: Boolean
-        get() = originalElement.isAssignable
+        get() = originalIrElement.isAssignable
         set(value) = mutationNotSupported()
     override var type: BirType by lazyVar<BirLazyValueParameter, _> {
-        converter.remapType(originalElement.type)
+        converter.remapType(originalIrElement.type)
     }
     override var varargElementType: BirType? by lazyVar<BirLazyValueParameter, _> {
-        converter.remapType(originalElement.varargElementType)
+        converter.remapType(originalIrElement.varargElementType)
     }
     override var defaultValue: BirExpressionBody? by lazyVar<BirLazyValueParameter, _> {
-        convertChild(originalElement.defaultValue)
+        convertChild(originalIrElement.defaultValue)
     }
-    override val annotations = lazyChildElementList<BirLazyValueParameter, BirConstructorCall>(1) { originalElement.annotations }
+    override val annotations = lazyChildElementList<BirLazyValueParameter, BirConstructorCall>(1) { originalIrElement.annotations }
 }

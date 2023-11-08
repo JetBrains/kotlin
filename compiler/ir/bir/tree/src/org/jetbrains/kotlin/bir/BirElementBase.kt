@@ -39,6 +39,11 @@ abstract class BirElementBase : BirElementParent(), BirElement {
     val attachedToTree
         get() = root != null
 
+    fun getContainingForest(): BirForest? {
+        root?.realizeTreeMovements()
+        return root
+    }
+
 
     internal fun hasFlag(flag: Byte): Boolean =
         (flags and flag).toInt() != 0

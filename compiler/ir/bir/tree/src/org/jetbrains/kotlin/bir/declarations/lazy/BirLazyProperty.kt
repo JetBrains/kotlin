@@ -18,58 +18,58 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.name.Name
 
 class BirLazyProperty(
-    override val originalElement: IrProperty,
+    override val originalIrElement: IrProperty,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(converter), BirProperty {
     override val owner: BirProperty
         get() = this
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor
-        get() = originalElement.descriptor
+        get() = originalIrElement.descriptor
     override var isExternal: Boolean
-        get() = originalElement.isExternal
+        get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()
     override var name: Name
-        get() = originalElement.name
+        get() = originalIrElement.name
         set(value) = mutationNotSupported()
     override var modality: Modality
-        get() = originalElement.modality
+        get() = originalIrElement.modality
         set(value) = mutationNotSupported()
     override var visibility: DescriptorVisibility
-        get() = originalElement.visibility
+        get() = originalIrElement.visibility
         set(value) = mutationNotSupported()
     override var isVar: Boolean
-        get() = originalElement.isVar
+        get() = originalIrElement.isVar
         set(value) = mutationNotSupported()
     override var isConst: Boolean
-        get() = originalElement.isConst
+        get() = originalIrElement.isConst
         set(value) = mutationNotSupported()
     override var isLateinit: Boolean
-        get() = originalElement.isLateinit
+        get() = originalIrElement.isLateinit
         set(value) = mutationNotSupported()
     override var isDelegated: Boolean
-        get() = originalElement.isDelegated
+        get() = originalIrElement.isDelegated
         set(value) = mutationNotSupported()
     override var isExpect: Boolean
-        get() = originalElement.isExpect
+        get() = originalIrElement.isExpect
         set(value) = mutationNotSupported()
     override var isFakeOverride: Boolean
-        get() = originalElement.isFakeOverride
+        get() = originalIrElement.isFakeOverride
         set(value) = mutationNotSupported()
     override var attributeOwnerId: BirAttributeContainer by lazyVar<BirLazyProperty, _> {
-        converter.remapElement(originalElement.attributeOwnerId)
+        converter.remapElement(originalIrElement.attributeOwnerId)
     }
     override var backingField: BirField? by lazyVar<BirLazyProperty, _> {
-        converter.remapElement(originalElement.backingField)
+        converter.remapElement(originalIrElement.backingField)
     }
     override var getter: BirSimpleFunction? by lazyVar<BirLazyProperty, _> {
-        convertChild(originalElement.getter)
+        convertChild(originalIrElement.getter)
     }
     override var setter: BirSimpleFunction? by lazyVar<BirLazyProperty, _> {
-        convertChild(originalElement.setter)
+        convertChild(originalIrElement.setter)
     }
     override var overriddenSymbols: List<BirPropertySymbol> by lazyVar<BirLazyProperty, _> {
-        originalElement.overriddenSymbols.map { converter.remapSymbol(it) }
+        originalIrElement.overriddenSymbols.map { converter.remapSymbol(it) }
     }
-    override val annotations = lazyChildElementList<BirLazyProperty, BirConstructorCall>(1) { originalElement.annotations }
+    override val annotations = lazyChildElementList<BirLazyProperty, BirConstructorCall>(1) { originalIrElement.annotations }
 }

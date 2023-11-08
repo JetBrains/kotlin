@@ -50,7 +50,7 @@ abstract class Ir2BirConverterBase() {
         IdentityHashMap<Ir, Bir>(expectedMaxSize)
 
     protected abstract fun <Bir : BirElement> copyElement(old: IrElement): Bir
-    protected abstract fun <Bir : BirElement> copyLazyElement(old: IrLazyDeclarationBase): Bir
+    protected abstract fun <Bir : BirElement> copyLazyElement(old: IrLazyDeclarationBase): Bir?
 
     fun copyIrTree(irRootElements: List<IrElement>): List<BirElement> {
         return irRootElements.map { copyElement(it) }
@@ -77,10 +77,11 @@ abstract class Ir2BirConverterBase() {
         }
 
         if (!expandLazyElementsIntoImpl && old is IrLazyDeclarationBase) {
-            val new = copyLazyElement<SE>(old)
-            map[old] = new
-            appendElementAsForestRoot(old, new)?.attachRootElement(new as BirElementBase)
-            return new
+            copyLazyElement<SE>(old)?.let { new ->
+                map[old] = new
+                appendElementAsForestRoot(old, new)?.attachRootElement(new as BirElementBase)
+                return new
+            }
         }
 
         return doCopyElement(old) {
@@ -213,8 +214,7 @@ abstract class Ir2BirConverterBase() {
 
     protected fun BirAttributeContainer.copyAttributes(old: IrAttributeContainer) {
         val owner = old.attributeOwnerId
-        attributeOwnerId = if (owner === old) this
-        else remapElement(owner) as BirAttributeContainer
+        attributeOwnerId = if (owner === old) this else remapElement(owner)
     }
 
     protected fun <Ir : IrElement, Bir : BirElement> BirChildElementList<Bir>.copyElements(from: List<Ir>) {
