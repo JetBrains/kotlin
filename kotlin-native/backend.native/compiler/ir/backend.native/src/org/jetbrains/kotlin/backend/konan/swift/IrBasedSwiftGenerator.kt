@@ -29,7 +29,12 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         private const val SWITCH_THREAD_STATE_TO_NATIVE = "switchThreadStateToNative"
         private const val SWITCH_THREAD_STATE_TO_RUNNABLE = "switchThreadStateToRunnable"
 
-        private val kotlinAnySwiftType = SwiftCode.build { "kotlin.Object".type }
+        private val kotlinAny = Names(
+                swift = "kotlin.Object",
+                c = "__kn_class_kotlin_Any",
+                path = listOf("kotlin.Object"),
+                symbol = ""
+        )
     }
 
     private interface BridgeCodeGenDelegate {
@@ -144,6 +149,19 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
                 val cName = "__kn_class_$pathString"
                 return Names(swiftName, cName, path, "")
             }
+
+            operator fun invoke(declaration: IrType): Names? {
+                if (declaration.isAny()) {
+                    return kotlinAny
+                }
+                val classFqName = declaration.classFqName ?: return null
+                val path = classFqName.pathSegments().map { it.identifier }
+                val swiftName = path.last()
+                val pathString = path.joinToString(separator = "_")
+                val cName =  "__kn_class_$pathString"
+                val symbol = ""
+                return Names(swiftName, cName, path, symbol)
+            }
         }
     }
 
@@ -156,6 +174,7 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         enum class Kind {
             PACKAGE,
             TYPE,
+            PROTOCOL,
         }
 
         fun <R> reduce(transform: (List<String>, Kind, List<T>, List<R>) -> R): R {
@@ -211,7 +230,8 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         val names = Names(declaration)
         val path = names.path.dropLast(1)
 
-        val namespace = Namespace<SwiftCode.Declaration>(names.swift, Namespace.Kind.TYPE)
+        val namespaceKind = if (declaration.isInterface) Namespace.Kind.PROTOCOL else Namespace.Kind.TYPE
+        val namespace = Namespace<SwiftCode.Declaration>(names.swift, namespaceKind)
         data.swiftDeclarations.insertNamespace(path, namespace)
 
         super.visitClass(declaration, data)
@@ -223,18 +243,60 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
         namespace.elements.clear()
         namespace.elements.addAll(declarations.second)
 
-        val cls = SwiftCode.build {
-            `class`(
-                    names.swift,
-                    inheritedTypes = listOfNotNull(
-                            declaration.superClass?.let { Names(it).path.type } ?: kotlinAnySwiftType
-                    ),
-            ) {
-                declarations.first.forEach { +it }
-            }
-        }
+        when(declaration.kind) {
+            ClassKind.INTERFACE -> SwiftCode.build {
+                val trueName: String
+                if (path.isNotEmpty()) {
+                    trueName = names.path.joinToString(separator = "") { it.replaceFirstChar { it.uppercase() } }
+                    val typeAlias = `typealias`(names.swift, trueName.type, visibility = public)
+                    data.swiftDeclarations.insertElement(path, typeAlias)
+                } else {
+                    trueName = names.swift
+                }
 
-        data.swiftDeclarations.insertElement(path, cls)
+                val proto = protocol(
+                        trueName,
+                        // So far we opt to not filter-out "Kotlin.Object" from interface base types,
+                        // as we assume that's reasonable restriction that we may lift later.
+                        inheritedTypes = declaration.superTypes.mapNotNull { Names(it)?.path?.type },
+                        visibility = public,
+                ) {
+                    declarations.first.mapNotNull {
+                        when (it) {
+                            is SwiftCode.Declaration.ComputedVariable -> it.copy(
+                                    get = it.get?.copy(argumentName = null, body = null),
+                                    set = it.set?.copy(argumentName = null, body = null),
+                                    visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+                            )
+                            is SwiftCode.Declaration.Method -> it.copy(
+                                    code = null,
+                                    visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+                            )
+                            is SwiftCode.ProtocolMember -> it
+                            else -> null
+                        }
+                    }.forEach { +it }
+                }
+                data.swiftDeclarations.insertElement(emptyList(), proto)
+            }
+            ClassKind.CLASS -> SwiftCode.build {
+                val superTypes = listOfNotNull(declaration.superClass?.let { Names(it).path.type } ?: kotlinAny.swift.type) +
+                        declaration.superTypes.mapNotNull { Names(it)?.path?.type }
+                val cls = `class`(
+                        names.swift,
+                        inheritedTypes = superTypes,
+                ) {
+                    declarations.first.forEach { +it }
+                }
+
+                data.swiftDeclarations.insertElement(path, cls)
+            }
+
+            ClassKind.ENUM_CLASS -> return
+            ClassKind.ENUM_ENTRY -> return
+            ClassKind.ANNOTATION_CLASS -> return
+            ClassKind.OBJECT -> return
+        }
     }
 
     private fun isSupported(declaration: IrClass): Boolean {
@@ -321,7 +383,7 @@ internal open class IrBasedSwiftVisitor : IrElementVisitor<Unit, IrBasedSwiftVis
             }
             declaration.computeBinaryType() is BinaryType.Reference -> {
                 // FIXME: generate particular types
-                val type = kotlinAnySwiftType.let { if (declaration.isNullable()) it.optional else it }
+                val type = kotlinAny.swift.type.let { if (declaration.isNullable()) it.optional else it }
                 return Bridge.Object(type, cType)
             }
             else -> return null
@@ -517,13 +579,18 @@ class IrBasedSwiftGenerator : IrElementVisitorVoid {
                 val outline = mutableListOf<SwiftCode.Declaration>()
 
                 when (kind) {
+                    IrBasedSwiftVisitor.Namespace.Kind.PACKAGE -> {
+                        inline.add(enum(namePath.last(), visibility = public) {
+                            children.forEach { it.inline.forEach { +it.patchStatic() } }
+                        })
+                    }
                     IrBasedSwiftVisitor.Namespace.Kind.TYPE -> {
                         outline.add(extension(name) {
                             children.forEach { it.inline.forEach { +it.patchStatic() } }
                         })
                     }
-                    IrBasedSwiftVisitor.Namespace.Kind.PACKAGE -> {
-                        inline.add(enum(namePath.last(), visibility = public) {
+                    IrBasedSwiftVisitor.Namespace.Kind.PROTOCOL -> {
+                        outline.add(extension(name) {
                             children.forEach { it.inline.forEach { +it.patchStatic() } }
                         })
                     }
@@ -606,6 +673,9 @@ private fun SwiftCode.Declaration.Function.addDummyParam() {
 private val IrType.isRegularClass: Boolean
     get() = this.classOrNull?.owner?.kind == ClassKind.CLASS
 
+private val IrType.isInterface: Boolean
+    get() = this.classOrNull?.owner?.kind == ClassKind.INTERFACE
+
 private val IrType.isClass: Boolean
     get() = this.classOrNull?.owner is IrClass && !this.isPrimitiveType(false) && !this.isUnsignedType(false)
 
@@ -632,7 +702,7 @@ private fun IrType.mapTypeToC(): CCode.Type? = CCode.build {
             UnsignedType.UINT -> int32(isUnsigned = true)
             UnsignedType.ULONG -> int64(isUnsigned = true)
         }
-        isRegularClass -> void.pointer(nullability = CCode.Type.Pointer.Nullability.NULLABLE.takeIf { isNullable() })
+        isRegularClass || this@mapTypeToC.isInterface -> void.pointer(nullability = CCode.Type.Pointer.Nullability.NULLABLE.takeIf { isNullable() })
         else -> null
     }
 }

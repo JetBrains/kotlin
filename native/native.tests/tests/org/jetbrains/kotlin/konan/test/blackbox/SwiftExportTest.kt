@@ -79,4 +79,10 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
         val testDir = File("native/native.tests/testData/SwiftExport/swift_api_generation")
         runAPIGenerationTest(testDir.absolutePath)
     }
+
+    @Test
+    fun interfaces() {
+        val testDir = File("native/native.tests/testData/SwiftExport/interfaces")
+        runTest(testDir.absolutePath)
+    }
 }

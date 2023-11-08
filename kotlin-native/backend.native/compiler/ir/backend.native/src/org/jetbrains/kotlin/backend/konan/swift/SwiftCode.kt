@@ -74,6 +74,8 @@ sealed interface SwiftCode {
 
     class EnumBlock(body: ListBuilder<EnumMember>.() -> Unit) : Block<EnumMember>(body)
 
+    class ProtocolBlock(body: ListBuilder<ProtocolMember>.() -> Unit) : Block<ProtocolMember>(body)
+
     sealed interface Import : FileMember {
         data class Module(val name: String) : Import {
             override fun render(): String = "import $name"
@@ -96,6 +98,8 @@ sealed interface SwiftCode {
     }
 
     sealed interface EnumMember : SwiftCode
+
+    sealed interface ProtocolMember : SwiftCode
 
     sealed interface FileMember : SwiftCode
 
@@ -128,7 +132,7 @@ sealed interface SwiftCode {
                 val type: Type,
                 override val attributes: List<Attribute> = emptyList(),
                 override val visibility: Visibility = Visibility.INTERNAL,
-        ) : Declaration {
+        ) : Declaration, ProtocolMember {
             override fun render(): String {
                 return "${visibility.renderAsPrefix()}typealias ${name.escapeIdentifierIfNeeded()} = ${type.render()}"
             }
@@ -217,7 +221,7 @@ sealed interface SwiftCode {
                 override val attributes: List<Attribute> = emptyList(),
                 override val visibility: Visibility = Visibility.INTERNAL,
                 override val code: CodeBlock?,
-        ) : Function {
+        ) : Function, ProtocolMember {
             override val keyword = "func"
 
             override val modifiers
@@ -254,7 +258,7 @@ sealed interface SwiftCode {
                 override val attributes: List<Attribute> = emptyList(),
                 override val visibility: Visibility = Visibility.INTERNAL,
                 override val code: CodeBlock?,
-        ) : Function {
+        ) : Function, ProtocolMember {
             override val keyword: String
                 get() = if (isOptional) "init?" else "init"
 
@@ -351,11 +355,11 @@ sealed interface SwiftCode {
                 override val visibility: Visibility = Visibility.INTERNAL,
                 val get: Accessor? = null,
                 val set: Accessor? = null,
-        ) : Variable {
-            data class Accessor(val name: String, val argumentName: String? = null, val body: CodeBlock) : SwiftCode {
+        ) : Variable, ProtocolMember {
+            data class Accessor(val name: String, val argumentName: String? = null, val body: CodeBlock?) : SwiftCode {
                 override fun render(): String {
                     val arguments = argumentName?.let { "($it)" } ?: ""
-                    val body = body.renderAsBlock()
+                    val body = body?.renderAsBlock() ?: ""
                     return "$name$arguments $body"
                 }
             }
@@ -392,7 +396,7 @@ sealed interface SwiftCode {
                     "$kind ",
                     name,
                     genericTypes.render(),
-                    inheritedTypes.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.render() }?.let { ": $it" },
+                    inheritedTypes.renderAsTypeComposition()?.let { ": $it" },
                     genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
                     block.renderAsBlock().let { " $it" }
             ).joinToString(separator = "")
@@ -486,7 +490,43 @@ sealed interface SwiftCode {
                     visibility.renderAsPrefix(),
                     "extension ",
                     type.render(),
-                    inheritedTypes.takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.render() }?.let { ": $it" },
+                    inheritedTypes.renderAsTypeComposition()?.let { ": $it" },
+                    genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
+                    block.renderAsBlock().let { " $it" }
+            ).joinToString(separator = "")
+        }
+
+        data class Protocol(
+                val name: String,
+                val primaryAssociatedTypes: List<String> = emptyList(),
+                val inheritedTypes: List<Type.Nominal> = emptyList(),
+                val genericTypeConstraints: List<GenericConstraint> = emptyList(),
+                override val attributes: List<Attribute> = emptyList(),
+                override val visibility: Visibility = Visibility.INTERNAL,
+                val block: ProtocolBlock,
+        ) : Declaration {
+            data class AssociatedType(
+                    val name: String,
+                    val inheritedTypes: List<Type.Nominal> = emptyList(),
+                    val defaultValue: Type? = null,
+                    val genericTypeConstraints: List<GenericConstraint> = emptyList(),
+            ) : ProtocolMember {
+                override fun render(): String = listOfNotNull(
+                        "associatedtype ",
+                        name.escapeIdentifierIfNeeded(),
+                        inheritedTypes.renderAsTypeComposition()?.let { ": $it" },
+                        defaultValue?.let { " = " + it.render() },
+                        genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
+                ).joinToString(separator = "")
+            }
+
+            override fun render(): String = listOfNotNull(
+                    attributes.render(),
+                    visibility.renderAsPrefix(),
+                    "protocol ",
+                    name.escapeIdentifierIfNeeded(),
+                    primaryAssociatedTypes.renderAsPrimaryAssociatedTypes(),
+                    inheritedTypes.renderAsTypeComposition()?.let { ": $it" },
                     genericTypeConstraints.takeIf { it.isNotEmpty() }?.render()?.let { "\n$it" },
                     block.renderAsBlock().let { " $it" }
             ).joinToString(separator = "")
@@ -890,6 +930,12 @@ private fun List<SwiftCode.Attribute>.render(): String? {
 @JvmName("renderAsGenericArgumentsList")
 private fun List<SwiftCode.Type>.render() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { it.render() } ?: ""
 
+@JvmName("renderAsTypeComposition")
+private fun List<SwiftCode.Type>.renderAsTypeComposition(): String? = takeIf { it.isNotEmpty() }?.joinToString(separator = " & ") { it.render() }
+
+@JvmName("renderAsPrimaryAssociatedTypesList")
+private fun List<String>.renderAsPrimaryAssociatedTypes() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { it.escapeIdentifierIfNeeded() } ?: ""
+
 @JvmName("renderAsGenericParameterList")
 private fun List<SwiftCode.GenericParameter>.render() = takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") { it.render() } ?: ""
 
@@ -926,7 +972,12 @@ fun SwiftCode.Builder.attribute(name: String, vararg arguments: SwiftCode.Argume
     return SwiftCode.Attribute(name, arguments.takeIf { it.isNotEmpty() }?.toList())
 }
 
-fun SwiftCode.Builder.`typealias`(name: String, type: SwiftCode.Type) = SwiftCode.Declaration.TypeAlias(name, type)
+fun SwiftCode.Builder.`typealias`(
+        name: String,
+        type: SwiftCode.Type,
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+) = SwiftCode.Declaration.TypeAlias(name, type, attributes, visibility)
 
 fun SwiftCode.Builder.function(
         name: String,
@@ -1196,6 +1247,36 @@ fun SwiftCode.Builder.case(
         name: String,
         value: SwiftCode.Expression
 ) = SwiftCode.Declaration.Enum.Case(name, value = value)
+
+fun SwiftCode.Builder.protocol(
+        name: String,
+        primaryAssociatedTypes: List<String> = emptyList(),
+        inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+        attributes: List<SwiftCode.Attribute> = emptyList(),
+        visibility: SwiftCode.Declaration.Visibility = SwiftCode.Declaration.Visibility.INTERNAL,
+        block: SwiftCode.ListBuilder<SwiftCode.ProtocolMember>.() -> Unit,
+) = SwiftCode.Declaration.Protocol(
+        name,
+        primaryAssociatedTypes,
+        inheritedTypes,
+        genericTypeConstraints,
+        attributes,
+        visibility,
+        SwiftCode.ProtocolBlock(block)
+)
+
+fun SwiftCode.Builder.associatedtype(
+        name: String,
+        inheritedTypes: List<SwiftCode.Type.Nominal> = emptyList(),
+        defaultValue: SwiftCode.Type? = null,
+        genericTypeConstraints: List<SwiftCode.GenericConstraint> = emptyList(),
+) = SwiftCode.Declaration.Protocol.AssociatedType(
+        name,
+        inheritedTypes,
+        defaultValue,
+        genericTypeConstraints,
+)
 
 //endregion
 
