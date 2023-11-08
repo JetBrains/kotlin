@@ -343,6 +343,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("initWithAnnotation.kt")
+    public void testInitWithAnnotation() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/initWithAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaAsSAMInterface.kt")
     public void testLambdaAsSAMInterface() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/lambdaAsSAMInterface.kt");
