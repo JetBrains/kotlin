@@ -17,65 +17,65 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.name.Name
 
 class BirLazyClass(
-    override val originalElement: IrClass,
+    override val originalIrElement: IrClass,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(converter), BirClass {
     override val owner: BirClass
         get() = this
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: ClassDescriptor
-        get() = originalElement.descriptor
+        get() = originalIrElement.descriptor
     override var kind: ClassKind
-        get() = originalElement.kind
+        get() = originalIrElement.kind
         set(value) = mutationNotSupported()
     override var modality: Modality
-        get() = originalElement.modality
+        get() = originalIrElement.modality
         set(value) = mutationNotSupported()
     override var isCompanion: Boolean
-        get() = originalElement.isCompanion
+        get() = originalIrElement.isCompanion
         set(value) = mutationNotSupported()
     override var isInner: Boolean
-        get() = originalElement.isInner
+        get() = originalIrElement.isInner
         set(value) = mutationNotSupported()
     override var isData: Boolean
-        get() = originalElement.isData
+        get() = originalIrElement.isData
         set(value) = mutationNotSupported()
     override var isValue: Boolean
-        get() = originalElement.isValue
+        get() = originalIrElement.isValue
         set(value) = mutationNotSupported()
     override var isExpect: Boolean
-        get() = originalElement.isExpect
+        get() = originalIrElement.isExpect
         set(value) = mutationNotSupported()
     override var isFun: Boolean
-        get() = originalElement.isFun
+        get() = originalIrElement.isFun
         set(value) = mutationNotSupported()
     override var hasEnumEntries: Boolean
-        get() = originalElement.hasEnumEntries
+        get() = originalIrElement.hasEnumEntries
         set(value) = mutationNotSupported()
     override val source: SourceElement
-        get() = originalElement.source
+        get() = originalIrElement.source
     override var name: Name
-        get() = originalElement.name
+        get() = originalIrElement.name
         set(value) = mutationNotSupported()
     override var visibility: DescriptorVisibility
-        get() = originalElement.visibility
+        get() = originalIrElement.visibility
         set(value) = mutationNotSupported()
     override var isExternal: Boolean
-        get() = originalElement.isExternal
+        get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()
     override var valueClassRepresentation: ValueClassRepresentation<BirSimpleType>? by lazyVar<BirLazyClass, _> {
-        originalElement.valueClassRepresentation?.mapUnderlyingType { converter.remapSimpleType(it) }
+        originalIrElement.valueClassRepresentation?.mapUnderlyingType { converter.remapSimpleType(it) }
     }
     override var superTypes: List<BirType> by lazyVar<BirLazyClass, _> {
-        originalElement.superTypes.map { converter.remapType(it) }
+        originalIrElement.superTypes.map { converter.remapType(it) }
     }
     override var attributeOwnerId: BirAttributeContainer by lazyVar<BirLazyClass, _> {
-        converter.remapElement(originalElement.attributeOwnerId)
+        converter.remapElement(originalIrElement.attributeOwnerId)
     }
     override var thisReceiver: BirValueParameter? by lazyVar<BirLazyClass, _> {
-        convertChild(originalElement.thisReceiver)
+        convertChild(originalIrElement.thisReceiver)
     }
-    override val typeParameters = lazyChildElementList<BirLazyClass, BirTypeParameter>(1) { originalElement.typeParameters }
-    override val annotations = lazyChildElementList<BirLazyClass, BirConstructorCall>(2) { originalElement.annotations }
-    override val declarations = lazyChildElementList<BirLazyClass, BirDeclaration>(3) { originalElement.declarations }
+    override val typeParameters = lazyChildElementList<BirLazyClass, BirTypeParameter>(1) { originalIrElement.typeParameters }
+    override val annotations = lazyChildElementList<BirLazyClass, BirConstructorCall>(2) { originalIrElement.annotations }
+    override val declarations = lazyChildElementList<BirLazyClass, BirDeclaration>(3) { originalIrElement.declarations }
 }
