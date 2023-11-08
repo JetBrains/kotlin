@@ -13,6 +13,6 @@ abstract class KotlinLabelProviderService {
 
     companion object {
         fun getService(): KotlinLabelProviderService? =
-            ApplicationManager.getApplication().getServiceIfCreated(KotlinLabelProviderService::class.java)
+            ApplicationManager.getApplication().getService(KotlinLabelProviderService::class.java)
     }
 }
