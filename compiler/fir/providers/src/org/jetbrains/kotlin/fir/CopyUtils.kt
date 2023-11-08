@@ -93,7 +93,6 @@ fun List<FirAnnotation>.computeTypeAttributes(
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
             CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> when {
                 allowExtensionFunctionType -> attributes += CompilerConeAttributes.ExtensionFunctionType
-                else -> {}
             }
             CompilerConeAttributes.ContextFunctionTypeParams.ANNOTATION_CLASS_ID ->
                 attributes +=
