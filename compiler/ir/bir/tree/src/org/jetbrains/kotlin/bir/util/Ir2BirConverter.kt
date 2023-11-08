@@ -1156,7 +1156,7 @@ class Ir2BirConverter(
         }
     }
 
-    override fun <Bir : BirElement> copyLazyElement(old: IrLazyDeclarationBase): Bir {
+    override fun <Bir : BirElement> copyLazyElement(old: IrLazyDeclarationBase): Bir? {
         @Suppress("UNCHECKED_CAST")
         return when (old) {
             is IrClass -> BirLazyClass(old, this)
@@ -1165,7 +1165,7 @@ class Ir2BirConverter(
             is IrValueParameter -> BirLazyValueParameter(old, this)
             is IrProperty -> BirLazyProperty(old, this)
             is IrField -> BirLazyField(old, this)
-            else -> TODO(old.javaClass.simpleName)
-        } as Bir
+            else -> null
+        } as Bir?
     }
 }

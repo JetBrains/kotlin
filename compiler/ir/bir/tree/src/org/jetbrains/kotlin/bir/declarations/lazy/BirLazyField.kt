@@ -19,37 +19,37 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.name.Name
 
 class BirLazyField(
-    override val originalElement: IrField,
+    override val originalIrElement: IrField,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(converter), BirField {
     override val owner: BirField
         get() = this
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: PropertyDescriptor
-        get() = originalElement.descriptor
+        get() = originalIrElement.descriptor
     override var isFinal: Boolean
-        get() = originalElement.isFinal
+        get() = originalIrElement.isFinal
         set(value) = mutationNotSupported()
     override var isStatic: Boolean
-        get() = originalElement.isStatic
+        get() = originalIrElement.isStatic
         set(value) = mutationNotSupported()
     override var isExternal: Boolean
-        get() = originalElement.isExternal
+        get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()
     override var name: Name
-        get() = originalElement.name
+        get() = originalIrElement.name
         set(value) = mutationNotSupported()
     override var visibility: DescriptorVisibility
-        get() = originalElement.visibility
+        get() = originalIrElement.visibility
         set(value) = mutationNotSupported()
     override var type: BirType by lazyVar<BirLazyField, _> {
-        converter.remapType(originalElement.type)
+        converter.remapType(originalIrElement.type)
     }
     override var initializer: BirExpressionBody? by lazyVar<BirLazyField, _> {
-        convertChild(originalElement.initializer)
+        convertChild(originalIrElement.initializer)
     }
     override var correspondingPropertySymbol: BirPropertySymbol? by lazyVar<BirLazyField, _> {
-        converter.remapSymbol(originalElement.correspondingPropertySymbol)
+        converter.remapSymbol(originalIrElement.correspondingPropertySymbol)
     }
-    override val annotations = lazyChildElementList<BirLazyField, BirConstructorCall>(1) { originalElement.annotations }
+    override val annotations = lazyChildElementList<BirLazyField, BirConstructorCall>(1) { originalIrElement.annotations }
 }

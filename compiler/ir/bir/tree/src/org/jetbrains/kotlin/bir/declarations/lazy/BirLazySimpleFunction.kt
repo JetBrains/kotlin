@@ -21,72 +21,72 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.name.Name
 
 class BirLazySimpleFunction(
-    override val originalElement: IrSimpleFunction,
+    override val originalIrElement: IrSimpleFunction,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(converter), BirSimpleFunction {
     override val owner: BirSimpleFunction
         get() = this
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: FunctionDescriptor
-        get() = originalElement.descriptor
+        get() = originalIrElement.descriptor
     override var isExternal: Boolean
-        get() = originalElement.isExternal
+        get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()
     override var name: Name
-        get() = originalElement.name
+        get() = originalIrElement.name
         set(value) = mutationNotSupported()
     override var visibility: DescriptorVisibility
-        get() = originalElement.visibility
+        get() = originalIrElement.visibility
         set(value) = mutationNotSupported()
     override var modality: Modality
-        get() = originalElement.modality
+        get() = originalIrElement.modality
         set(value) = mutationNotSupported()
     override var isTailrec: Boolean
-        get() = originalElement.isTailrec
+        get() = originalIrElement.isTailrec
         set(value) = mutationNotSupported()
     override var isSuspend: Boolean
-        get() = originalElement.isSuspend
+        get() = originalIrElement.isSuspend
         set(value) = mutationNotSupported()
     override var isFakeOverride: Boolean
-        get() = originalElement.isFakeOverride
+        get() = originalIrElement.isFakeOverride
         set(value) = mutationNotSupported()
     override var isOperator: Boolean
-        get() = originalElement.isOperator
+        get() = originalIrElement.isOperator
         set(value) = mutationNotSupported()
     override var isInfix: Boolean
-        get() = originalElement.isInfix
+        get() = originalIrElement.isInfix
         set(value) = mutationNotSupported()
     override var isInline: Boolean
-        get() = originalElement.isInline
+        get() = originalIrElement.isInline
         set(value) = mutationNotSupported()
     override var isExpect: Boolean
-        get() = originalElement.isExpect
+        get() = originalIrElement.isExpect
         set(value) = mutationNotSupported()
     override var correspondingPropertySymbol: BirPropertySymbol? by lazyVar<BirLazySimpleFunction, _> {
-        converter.remapSymbol(originalElement.correspondingPropertySymbol)
+        converter.remapSymbol(originalIrElement.correspondingPropertySymbol)
     }
     override var returnType: BirType by lazyVar<BirLazySimpleFunction, _> {
-        converter.remapType(originalElement.returnType)
+        converter.remapType(originalIrElement.returnType)
     }
     override var dispatchReceiverParameter: BirValueParameter? by lazyVar<BirLazySimpleFunction, _> {
-        convertChild(originalElement.dispatchReceiverParameter)
+        convertChild(originalIrElement.dispatchReceiverParameter)
     }
     override var extensionReceiverParameter: BirValueParameter? by lazyVar<BirLazySimpleFunction, _> {
-        convertChild(originalElement.extensionReceiverParameter)
+        convertChild(originalIrElement.extensionReceiverParameter)
     }
     override var contextReceiverParametersCount: Int
-        get() = originalElement.contextReceiverParametersCount
+        get() = originalIrElement.contextReceiverParametersCount
         set(value) = mutationNotSupported()
     override var body: BirBody? by lazyVar<BirLazySimpleFunction, _> {
-        convertChild(originalElement.body)
+        convertChild(originalIrElement.body)
     }
     override var attributeOwnerId: BirAttributeContainer by lazyVar<BirLazySimpleFunction, _> {
-        converter.remapElement(originalElement.attributeOwnerId)
+        converter.remapElement(originalIrElement.attributeOwnerId)
     }
     override var overriddenSymbols: List<BirSimpleFunctionSymbol> by lazyVar<BirLazySimpleFunction, _> {
-        originalElement.overriddenSymbols.map { converter.remapSymbol(it) }
+        originalIrElement.overriddenSymbols.map { converter.remapSymbol(it) }
     }
-    override val annotations = lazyChildElementList<BirLazySimpleFunction, BirConstructorCall>(1) { originalElement.annotations }
-    override val typeParameters = lazyChildElementList<BirLazySimpleFunction, BirTypeParameter>(2) { originalElement.typeParameters }
-    override val valueParameters = lazyChildElementList<BirLazySimpleFunction, BirValueParameter>(3) { originalElement.valueParameters }
+    override val annotations = lazyChildElementList<BirLazySimpleFunction, BirConstructorCall>(1) { originalIrElement.annotations }
+    override val typeParameters = lazyChildElementList<BirLazySimpleFunction, BirTypeParameter>(2) { originalIrElement.typeParameters }
+    override val valueParameters = lazyChildElementList<BirLazySimpleFunction, BirValueParameter>(3) { originalIrElement.valueParameters }
 }

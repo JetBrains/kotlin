@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.name.Name
 
 class BirLazyConstructor(
-    override val originalElement: IrConstructor,
+    override val originalIrElement: IrConstructor,
     converter: Ir2BirConverter,
 ) : BirLazyElementBase(converter), BirConstructor {
     override val owner: BirConstructor
@@ -25,41 +25,41 @@ class BirLazyConstructor(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: ClassConstructorDescriptor
-        get() = originalElement.descriptor
+        get() = originalIrElement.descriptor
     override var isPrimary: Boolean
-        get() = originalElement.isPrimary
+        get() = originalIrElement.isPrimary
         set(value) = mutationNotSupported()
     override var isExternal: Boolean
-        get() = originalElement.isExternal
+        get() = originalIrElement.isExternal
         set(value) = mutationNotSupported()
     override var name: Name
-        get() = originalElement.name
+        get() = originalIrElement.name
         set(value) = mutationNotSupported()
     override var visibility: DescriptorVisibility
-        get() = originalElement.visibility
+        get() = originalIrElement.visibility
         set(value) = mutationNotSupported()
     override var isInline: Boolean
-        get() = originalElement.isInline
+        get() = originalIrElement.isInline
         set(value) = mutationNotSupported()
     override var isExpect: Boolean
-        get() = originalElement.isExpect
+        get() = originalIrElement.isExpect
         set(value) = mutationNotSupported()
     override var contextReceiverParametersCount: Int
-        get() = originalElement.contextReceiverParametersCount
+        get() = originalIrElement.contextReceiverParametersCount
         set(value) = mutationNotSupported()
     override var returnType: BirType by lazyVar<BirLazyConstructor, _> {
-        converter.remapType(originalElement.returnType)
+        converter.remapType(originalIrElement.returnType)
     }
     override var dispatchReceiverParameter: BirValueParameter? by lazyVar<BirLazyConstructor, _> {
-        convertChild(originalElement.dispatchReceiverParameter)
+        convertChild(originalIrElement.dispatchReceiverParameter)
     }
     override var extensionReceiverParameter: BirValueParameter? by lazyVar<BirLazyConstructor, _> {
-        convertChild(originalElement.extensionReceiverParameter)
+        convertChild(originalIrElement.extensionReceiverParameter)
     }
     override var body: BirBody? by lazyVar<BirLazyConstructor, _> {
-        convertChild(originalElement.body)
+        convertChild(originalIrElement.body)
     }
-    override val annotations = lazyChildElementList<BirLazyConstructor, BirConstructorCall>(1) { originalElement.annotations }
-    override val typeParameters = lazyChildElementList<BirLazyConstructor, BirTypeParameter>(2) { originalElement.typeParameters }
-    override val valueParameters = lazyChildElementList<BirLazyConstructor, BirValueParameter>(3) { originalElement.valueParameters }
+    override val annotations = lazyChildElementList<BirLazyConstructor, BirConstructorCall>(1) { originalIrElement.annotations }
+    override val typeParameters = lazyChildElementList<BirLazyConstructor, BirTypeParameter>(2) { originalIrElement.typeParameters }
+    override val valueParameters = lazyChildElementList<BirLazyConstructor, BirValueParameter>(3) { originalIrElement.valueParameters }
 }
