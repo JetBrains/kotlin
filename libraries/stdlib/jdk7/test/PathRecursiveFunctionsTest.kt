@@ -5,8 +5,10 @@
 
 package kotlin.jdk7.test
 
+import java.lang.NullPointerException
 import java.nio.file.*
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.*
 import kotlin.jdk7.test.PathTreeWalkTest.Companion.createTestFiles
@@ -1025,9 +1027,18 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
 
     private fun withZip(parent: Path, name: String, entries: List<String>, block: (Path) -> Unit) {
         val archive = createZipFile(parent, name, entries)
-        val classLoader: ClassLoader? = null
-        FileSystems.newFileSystem(archive, classLoader).use { zipFs ->
-            val zipRoot = zipFs.getPath("/")
+        val zipFs: FileSystem
+        try {
+            val classLoader: ClassLoader? = null
+            zipFs = FileSystems.newFileSystem(archive, classLoader)
+        } catch (e: ZipException) {
+            // Later JDK version do not allow opening zip files that have entry named "." or "..".
+            // See https://bugs.openjdk.org/browse/JDK-8251329 and https://bugs.openjdk.org/browse/JDK-8283486
+            println("Opening a ZIP file failed with $e")
+            return
+        }
+        zipFs.use {
+            val zipRoot = it.getPath("/")
             block(zipRoot)
         }
     }
@@ -1064,6 +1075,52 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             assertIs<IllegalFileNameException>(suppressed)
             assertEquals(expectedErrorFile, suppressed.file)
             assertContains(suppressed.message!!, "Illegal file name")
+        }
+    }
+
+    @Test
+    fun zipDotFileName() {
+        val root = createTempDirectory().cleanupRecursively()
+
+        withZip(root, "Archive1.zip", listOf("normal", ".")) { zipRoot ->
+            testWalkFails(zipRoot, "/.")
+
+            val target = root.resolve("UnzipArchive1")
+            testCopyToRecursivelyFails(zipRoot, target, ".", "")
+
+            testDeleteRecursivelyFails(zipRoot, "/.")
+        }
+
+        withZip(root, "Archive2.zip", listOf("normal", "./")) { zipRoot ->
+            testWalkFails(zipRoot, "/./")
+
+            val target = root.resolve("UnzipArchive2")
+            testCopyToRecursivelyFails(zipRoot, target, "./", ".")
+
+            testDeleteRecursivelyFails(zipRoot, "/./")
+        }
+    }
+
+    @Test
+    fun zipSlashFileName() {
+        val root = createTempDirectory().cleanupRecursively()
+
+        withZip(root, "Archive1.zip", listOf("normal", "/")) { zipRoot ->
+            testWalkFails(zipRoot, "/")
+
+            val target = root.resolve("UnzipArchive1")
+            testCopyToRecursivelyFails(zipRoot, target, "", "")
+
+            testDeleteRecursivelyFails(zipRoot, "/")
+        }
+
+        withZip(root, "Archive2.zip", listOf("normal", "//")) { zipRoot ->
+            testWalkFails(zipRoot, "/")
+
+            val target = root.resolve("UnzipArchive2")
+            testCopyToRecursivelyFails(zipRoot, target, "", "")
+
+            testDeleteRecursivelyFails(zipRoot, "/")
         }
     }
 
@@ -1138,12 +1195,19 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         }
 
         withZip(root, "Archive7.zip", listOf("normal", "..a..b..")) { zipRoot ->
-            testWalkFails(zipRoot, "/..a..b..")
+            testVisitedFiles(listOf("", "normal", "..a..b.."), zipRoot.walkIncludeDirectories(), zipRoot)
 
             val target = root.resolve("UnzipArchive7")
-            testCopyToRecursivelyFails(zipRoot, target, "..a..b..", "..a..b..")
+            zipRoot.copyToRecursively(target, followLinks = false)
+            testVisitedFiles(listOf("", "normal", "..a..b.."), target.walkIncludeDirectories(), target)
 
-            testDeleteRecursivelyFails(zipRoot, "/..a..b..")
+            assertFailsWith<FileSystemException> {
+                zipRoot.deleteRecursively()
+            }.also { exception ->
+                val suppressed = exception.suppressed.single()
+                assertIs<NullPointerException>(suppressed)
+            }
+            testVisitedFiles(listOf(""), zipRoot.walkIncludeDirectories(), zipRoot)
         }
 
         val expectedRootContent = listOf(

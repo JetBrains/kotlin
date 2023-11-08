@@ -197,10 +197,13 @@ public fun Path.copyToRecursively(
         return onError(source, destination(source), exception).toFileVisitResult()
     }
 
+    var isStartPath = true
+
     @Suppress("UNUSED_PARAMETER")
     fun copy(source: Path, attributes: BasicFileAttributes): FileVisitResult {
         return try {
-            source.checkFileName()
+            source.checkFileName(isStartPath)
+            isStartPath = false
             DefaultCopyActionContext.copyAction(source, destination(source)).toFileVisitResult()
         } catch (exception: Exception) {
             error(source, exception)
@@ -337,7 +340,7 @@ private fun Path.deleteRecursivelyImpl(): List<Exception> {
     }
 
     if (useInsecure) {
-        insecureHandleEntry(this, collector)
+        insecureHandleEntry(this, true, collector)
     }
 
     return collector.collectedExceptions
@@ -399,9 +402,9 @@ private fun SecureDirectoryStream<Path>.isDirectory(entryName: Path, vararg opti
 
 // insecure walk
 
-private fun insecureHandleEntry(entry: Path, collector: ExceptionsCollector) {
+private fun insecureHandleEntry(entry: Path, isStartPath: Boolean, collector: ExceptionsCollector) {
     collectIfThrows(collector) {
-        entry.checkFileName()
+        entry.checkFileName(isStartPath)
         if (entry.isDirectory(LinkOption.NOFOLLOW_LINKS)) {
             val preEnterTotalExceptions = collector.totalExceptions
 
@@ -424,7 +427,7 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
             Files.newDirectoryStream(path)
         }?.use { directoryStream ->
             for (entry in directoryStream) {
-                insecureHandleEntry(entry, collector)
+                insecureHandleEntry(entry, false, collector)
             }
         }
     }
@@ -432,8 +435,16 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
 
 // illegal file name
 
-private fun Path.checkFileName() {
-    if (name.contains("..")) throw IllegalFileNameException(this)
+/**
+ * Checks whether this file has a legal name.
+ * Some names are illegal because they cause traversal to cycle.
+ * See KT-63103.
+ */
+internal fun Path.checkFileName(isStartPath: Boolean) {
+    if (isStartPath) return
+    if (name == ".." || name == "../" ||
+        name == "." || name == "./" ||
+        name == "" || name == "/") throw IllegalFileNameException(this)
 }
 
 internal class IllegalFileNameException(file: Path) : FileSystemException(file.toString(), null, "Illegal file name")

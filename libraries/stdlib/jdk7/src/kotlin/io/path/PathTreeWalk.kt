@@ -39,11 +39,12 @@ internal class PathTreeWalk(
 
     private suspend inline fun SequenceScope<Path>.yieldIfNeeded(
         node: PathNode,
+        isStartNode: Boolean,
         entriesReader: DirectoryEntriesReader,
         entriesAction: (List<PathNode>) -> Unit
     ) {
         val path = node.path
-        path.checkFileName()
+        path.checkFileName(isStartNode)
         if (path.isDirectory(*linkOptions)) {
             if (node.createsCycle())
                 throw FileSystemLoopException(path.toString())
@@ -59,17 +60,13 @@ internal class PathTreeWalk(
         }
     }
 
-    private fun Path.checkFileName() {
-        if (name.contains("..")) throw IllegalFileNameException(this)
-    }
-
     private fun dfsIterator() = iterator<Path> {
         // Stack of directory iterators, beginning from the start directory
         val stack = ArrayDeque<PathNode>()
         val entriesReader = DirectoryEntriesReader(followLinks)
 
         val startNode = PathNode(start, keyOf(start, linkOptions), null)
-        yieldIfNeeded(startNode, entriesReader) { entries ->
+        yieldIfNeeded(startNode, true, entriesReader) { entries ->
             startNode.contentIterator = entries.iterator()
             stack.addLast(startNode)
         }
@@ -80,7 +77,7 @@ internal class PathTreeWalk(
 
             if (topIterator.hasNext()) {
                 val pathNode = topIterator.next()
-                yieldIfNeeded(pathNode, entriesReader) { entries ->
+                yieldIfNeeded(pathNode, false, entriesReader) { entries ->
                     pathNode.contentIterator = entries.iterator()
                     stack.addLast(pathNode)
                 }
@@ -98,11 +95,13 @@ internal class PathTreeWalk(
 
         queue.addLast(PathNode(start, keyOf(start, linkOptions), null))
 
+        var isStartNode = true
         while (queue.isNotEmpty()) {
             val pathNode = queue.removeFirst()
-            yieldIfNeeded(pathNode, entriesReader) { entries ->
+            yieldIfNeeded(pathNode, isStartNode, entriesReader) { entries ->
                 queue.addAll(entries)
             }
+            isStartNode = false
         }
     }
 }
