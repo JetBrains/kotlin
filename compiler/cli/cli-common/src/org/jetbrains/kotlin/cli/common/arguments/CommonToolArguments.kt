@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import java.io.Serializable
+import kotlin.reflect.KProperty1
+import kotlin.reflect.jvm.javaField
 
 abstract class CommonToolArguments : Freezable(), Serializable {
     companion object {
@@ -100,3 +102,15 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     // the previous commit. This method can be removed after some time.
     override fun equals(other: Any?): Boolean = super.equals(other)
 }
+
+
+/**
+ * An argument which should be passed to Kotlin compiler to enable [this] compiler option
+ */
+val KProperty1<out CommonCompilerArguments, *>.cliArgument: String
+    get() {
+        val javaField = javaField
+            ?: error("Java field should be present for $this")
+        val argumentAnnotation = javaField.getAnnotation<Argument>(Argument::class.java)
+        return argumentAnnotation.value
+    }
