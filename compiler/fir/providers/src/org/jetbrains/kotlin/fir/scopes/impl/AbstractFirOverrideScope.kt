@@ -31,7 +31,7 @@ abstract class AbstractFirOverrideScope(
         val baseDeclaration = (this as FirBasedSymbol<*>).fir as FirCallableDeclaration
         val override = overrideCandidates.firstOrNull {
             val overrideCandidate = (it as FirBasedSymbol<*>).fir as FirCallableDeclaration
-            baseDeclaration.modality != Modality.FINAL && overrideChecker.similarFunctionsOrBothProperties(
+            overrideChecker.similarFunctionsOrBothProperties(
                 overrideCandidate,
                 baseDeclaration
             )
