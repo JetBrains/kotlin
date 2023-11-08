@@ -491,7 +491,7 @@ class Fir2IrVisitor(
         expectedType: ConeKotlinType,
     ) =
         with(implicitCastInserter) {
-            this@insertImplicitCast.cast(baseExpression, valueType, expectedType)
+            this@insertImplicitCast.insertSpecialCast(baseExpression, valueType, expectedType)
         }
 
     override fun visitProperty(property: FirProperty, data: Any?): IrElement = whileAnalysing(session, property) {

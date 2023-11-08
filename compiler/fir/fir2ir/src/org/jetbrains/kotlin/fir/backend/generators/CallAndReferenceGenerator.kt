@@ -1040,7 +1040,7 @@ class CallAndReferenceGenerator(
                 }
                 // here we should pass unsubstituted parameter type to properly infer if the original type accepts null or not
                 // to properly insert nullability check
-                irArgument = irArgument.cast(argument, argumentType, unsubstitutedParameterType)
+                irArgument = irArgument.insertSpecialCast(argument, argumentType, unsubstitutedParameterType)
             }
         }
         with(adapterGenerator) {
@@ -1290,7 +1290,7 @@ class CallAndReferenceGenerator(
                             with(visitor.implicitCastInserter) {
                                 val extensionReceiver = qualifiedAccess.extensionReceiver!!
                                 val substitutor = qualifiedAccess.buildSubstitutorByCalledCallable()
-                                it.cast(
+                                it.insertSpecialCast(
                                     extensionReceiver,
                                     extensionReceiver.resolvedType,
                                     substitutor.substituteOrSelf(receiverType.coneType),

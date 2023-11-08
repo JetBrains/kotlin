@@ -188,7 +188,7 @@ class Fir2IrImplicitCastInserter(
     }
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: IrElement): IrElement =
-        (data as IrThrow).cast(throwExpression, throwExpression.exception.resolvedType, throwExpression.resolvedType)
+        (data as IrThrow).insertSpecialCast(throwExpression, throwExpression.exception.resolvedType, throwExpression.resolvedType)
 
     override fun visitBlock(block: FirBlock, data: IrElement): IrElement =
         (data as? IrContainerExpression)?.insertImplicitCasts() ?: data
@@ -196,13 +196,23 @@ class Fir2IrImplicitCastInserter(
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: IrElement): IrElement {
         val irReturn = data as? IrReturn ?: return data
         val expectedType = returnExpression.target.labeledElement.returnTypeRef
-        irReturn.value = irReturn.value.cast(returnExpression.result, returnExpression.result.resolvedType, expectedType.coneType)
+        irReturn.value = irReturn.value.insertSpecialCast(returnExpression.result, returnExpression.result.resolvedType, expectedType.coneType)
         return data
     }
 
     // ==================================================================================
 
-    internal fun IrExpression.cast(expression: FirExpression, valueTypeRef: ConeKotlinType, expectedTypeRef: ConeKotlinType): IrExpression {
+    /**
+     * This functions processes the following casts:
+     * - coercion to Unit
+     * - nullability casts based on nullability annotations
+     * - casts for dynamic types
+     */
+    internal fun IrExpression.insertSpecialCast(
+        expression: FirExpression,
+        valueType: ConeKotlinType,
+        expectedType: ConeKotlinType,
+    ): IrExpression {
         if (this is IrTypeOperatorCall) {
             return this
         }
@@ -211,21 +221,21 @@ class Fir2IrImplicitCastInserter(
             insertImplicitCasts()
         }
 
-        val valueType = valueTypeRef.fullyExpandedType(session)
-        val expectedType = expectedTypeRef.fullyExpandedType(session)
+        val expandedValueType = valueType.fullyExpandedType(session)
+        val expandedExpectedType = expectedType.fullyExpandedType(session)
 
         return when {
-            expectedType.isUnit -> {
+            expandedExpectedType.isUnit -> {
                 coerceToUnitIfNeeded(this, irBuiltIns)
             }
-            valueType is ConeDynamicType -> {
-                if (expectedType !is ConeDynamicType && !expectedType.isNullableAny) {
-                    implicitCast(this, expectedType.toIrType(ConversionTypeOrigin.DEFAULT))
+            expandedValueType is ConeDynamicType -> {
+                if (expandedExpectedType !is ConeDynamicType && !expandedExpectedType.isNullableAny) {
+                    implicitCast(this, expandedExpectedType.toIrType(ConversionTypeOrigin.DEFAULT))
                 } else {
                     this
                 }
             }
-            typeCanBeEnhancedOrFlexibleNullable(valueType) && !expectedType.acceptsNullValues() -> {
+            typeCanBeEnhancedOrFlexibleNullable(expandedValueType) && !expandedExpectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
             // TODO: coerceIntToAnotherIntegerType
