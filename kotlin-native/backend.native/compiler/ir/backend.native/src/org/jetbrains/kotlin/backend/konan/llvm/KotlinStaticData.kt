@@ -61,7 +61,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
 
         val global = this.createGlobal(compositeType, "")
 
-        val objHeaderPtr = global.pointer.getElementPtr(llvm, 0)
+        val objHeaderPtr = global.pointer.getElementPtr(llvm, compositeType, 0)
         val arrayHeader = arrayHeader(typeInfo, elements.size)
 
         global.setInitializer(Struct(compositeType, arrayHeader, arrayBody))
@@ -76,7 +76,7 @@ internal class KotlinStaticData(override val generationState: NativeGenerationSt
         global.setUnnamedAddr(true)
         global.setConstant(true)
 
-        val objHeaderPtr = global.pointer.getElementPtr(llvm, 0)
+        val objHeaderPtr = global.pointer.bitcast(llvm.runtime.objHeaderPtrType)
 
         return createRef(objHeaderPtr)
     }

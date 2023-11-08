@@ -831,11 +831,12 @@ private fun ObjCExportBlockCodeGenerator.emitBlockToKotlinFunctionConverters() {
         } ?: NullPointer(objCToKotlinFunctionType)
     }
 
+    val type = pointerType(objCToKotlinFunctionType)
     val ptr = staticData.placeGlobalArray(
             "",
-            pointerType(objCToKotlinFunctionType),
+            type,
             converters
-    ).pointer.getElementPtr(llvm, 0)
+    ).pointer.getElementPtr(llvm, LLVMArrayType(type, converters.size)!!, 0)
 
     // Note: defining globals declared in runtime.
     staticData.placeGlobal("Kotlin_ObjCExport_blockToFunctionConverters", ptr, isExported = true)
@@ -1628,9 +1629,10 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
     }
 
     val vtable = if (!irClass.isInterface && !irClass.typeInfoHasVtableAttached) {
-        staticData.placeGlobal("", rttiGenerator.vtable(irClass)).also {
+        val table = rttiGenerator.vtable(irClass)
+        staticData.placeGlobal("", table).also {
             it.setConstant(true)
-        }.pointer.getElementPtr(llvm, 0)
+        }.pointer.getElementPtr(llvm, LLVMArrayType(llvm.int8PtrType, table.elements.size)!!, 0)
     } else {
         null
     }

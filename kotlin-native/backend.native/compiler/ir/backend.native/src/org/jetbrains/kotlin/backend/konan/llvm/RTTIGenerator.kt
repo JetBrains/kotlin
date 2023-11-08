@@ -531,7 +531,7 @@ internal class RTTIGenerator(
         val vtable = vtable(superClass)
         val typeInfoWithVtableType = llvm.structType(runtime.typeInfoType, vtable.llvmType)
         val typeInfoWithVtableGlobal = staticData.createGlobal(typeInfoWithVtableType, "", isExported = false)
-        val result = typeInfoWithVtableGlobal.pointer.getElementPtr(llvm, 0)
+        val result = typeInfoWithVtableGlobal.pointer.getElementPtr(llvm, typeInfoWithVtableType, 0)
         val typeHierarchyInfo = if (!context.ghaEnabled())
             ClassGlobalHierarchyInfo.DUMMY
         else
@@ -546,10 +546,11 @@ internal class RTTIGenerator(
             } else {
                 val vtableEntries = layoutBuilder.interfaceVTableEntries.map { methodImpls[it]!!.bitcast(llvm.int8PtrType) }
                 val interfaceVTable = staticData.placeGlobalArray("", llvm.int8PtrType, vtableEntries)
+                val interfaceVTableType = LLVMArrayType(llvm.int8PtrType, vtableEntries.size)!!
                 InterfaceTableRecord(
                         llvm.constInt32(layoutBuilder.classId),
                         llvm.constInt32(layoutBuilder.interfaceVTableEntries.size),
-                        interfaceVTable.pointer.getElementPtr(llvm, 0)
+                        interfaceVTable.pointer.getElementPtr(llvm, interfaceVTableType, 0)
                 )
             }
         }

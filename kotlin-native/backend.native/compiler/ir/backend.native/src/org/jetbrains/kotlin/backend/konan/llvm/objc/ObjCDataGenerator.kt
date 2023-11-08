@@ -254,7 +254,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         fun get(value: String) = literals.getOrPut(value) {
             val globalPointer = generator.generate(llvm.module, llvm, value)
             llvm.compilerUsedGlobals += globalPointer.llvm
-            globalPointer.getElementPtr(llvm, 0)
+            globalPointer.bitcast(llvm.int8PtrType)
         }
     }
 
