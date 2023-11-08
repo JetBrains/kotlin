@@ -861,7 +861,7 @@ class IrBodyDeserializer(
     private companion object {
         private val statementOriginIndex = IrStatementOrigin.Companion::class
             .declaredMemberProperties
-            .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOriginImpl }
+            .mapNotNull { it.get(IrStatementOrigin.Companion) as? IrStatementOrigin }
             .associateBy { it.debugName }
     }
 }
