@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolveMultiDesignationCollector
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseRecursively
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -42,9 +43,10 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
                 listOf(firFile).plus(designations.map { it.firFile }).distinct()
             }
 
+            val basePhase = elementToResolve.resolvePhase
             val shouldRenderDeclaration = elementToResolve !in filesToRender
             for (currentPhase in FirResolvePhase.entries) {
-                if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
+                if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS || currentPhase < basePhase) continue
                 resolver(currentPhase)
 
                 if (resultBuilder.isNotEmpty()) {
