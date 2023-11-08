@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.INPUT_DAT
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.LLDB_TRACE
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_REGEX
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.PROGRAM_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
+import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
@@ -83,13 +85,13 @@ internal object TestDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    // TODO: to be supported later
-//    val OUTPUT_REGEX by stringDirective(
-//        description = """
-//            The regex that the expected program output should match to. When program finishes its execution, the actual output (stdout)
-//            will be checked against this regex.
-//        """.trimIndent()
-//    )
+    val OUTPUT_REGEX by stringDirective(
+        description = """
+            The regex that the expected program output should match to. When program finishes its execution, the actual output (stdout)
+            will be checked against this regex.
+        """.trimIndent(),
+        multiLine = true,
+    )
 
     // TODO: to be supported later
 //    val OUTPUT_INCLUDES by stringDirective(
@@ -394,7 +396,7 @@ internal fun parseFreeCompilerArgs(registeredDirectives: RegisteredDirectives, l
 }
 
 internal fun parseOutputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): OutputDataFile? =
-    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)?.let(TestRunCheck::OutputDataFile)
+    parseFileBasedDirective(baseDir, OUTPUT_DATA_FILE, registeredDirectives, location)?.let { OutputDataFile(file = it) }
 
 internal fun parseInputDataFile(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): File? =
     parseFileBasedDirective(baseDir, INPUT_DATA_FILE, registeredDirectives, location)
@@ -417,6 +419,19 @@ private fun parseFileBasedDirective(
 }
 
 internal fun parseProgramArguments(registeredDirectives: RegisteredDirectives): List<String> = registeredDirectives[PROGRAM_ARGS]
+
+internal fun parseOutputRegex(registeredDirectives: RegisteredDirectives): TestRunCheck.OutputMatcher? {
+    if (OUTPUT_REGEX !in registeredDirectives)
+        return null
+    val regexStr = registeredDirectives.singleValue(OUTPUT_REGEX)
+    val regex = regexStr.toRegex(RegexOption.DOT_MATCHES_ALL)
+    return TestRunCheck.OutputMatcher {
+        assertTrue(regex.matches(it)) {
+            "Regex `$regex` failed to match `$it`"
+        }
+        true
+    }
+}
 
 internal class Location(private val testDataFile: File, val lineNumber: Int? = null) {
     override fun toString() = buildString {

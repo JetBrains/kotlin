@@ -22,9 +22,19 @@ internal sealed interface TestRunCheck {
         class Expected(val expectedExitCode: Int) : ExitCode()
     }
 
-    class OutputDataFile(val file: File) : TestRunCheck
+    enum class Output {
+        STDOUT,
+        STDERR,
 
-    class OutputMatcher(val match: (String) -> Boolean): TestRunCheck
+        /**
+         * [STDOUT] followed by [STDERR]
+         */
+        ALL,
+    }
+
+    class OutputDataFile(val output: Output = Output.ALL, val file: File) : TestRunCheck
+
+    class OutputMatcher(val output: Output = Output.ALL, val match: (String) -> Boolean): TestRunCheck
 
     class FileCheckMatcher(val settings: Settings, val testDataFile: File): TestRunCheck
 }
