@@ -113,6 +113,7 @@ internal abstract class BuildFlowService : BuildService<BuildFlowService.Paramet
 
     override fun onFinish(event: FinishEvent?) {
         parameters.fusStatisticsAvailable.get() //force to calculate configuration metrics before build finish
+        parameters.taskNames.get() //force to calculate configuration metrics before build finish
         if ((event is TaskFinishEvent) && (event.result is TaskFailureResult)) {
             buildFailed = true
         }
