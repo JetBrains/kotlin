@@ -616,7 +616,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     }
 
     private fun createModuleData(session: LLFirSession): LLFirModuleData {
-        return LLFirModuleData(session.ktModule).apply { bindSession(session) }
+        return LLFirModuleData(session)
     }
 
     /**

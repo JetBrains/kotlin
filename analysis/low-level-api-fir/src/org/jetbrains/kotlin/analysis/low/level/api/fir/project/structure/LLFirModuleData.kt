@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -31,9 +33,11 @@ val FirBasedSymbol<*>.llFirModuleData: LLFirModuleData
     get() = fir.llFirModuleData
 
 
-class LLFirModuleData(
-    val ktModule: KtModule,
-) : FirModuleData() {
+class LLFirModuleData private constructor(val ktModule: KtModule) : FirModuleData() {
+    constructor(session: LLFirSession) : this(session.ktModule) {
+        bindSession(session)
+    }
+
     override val name: Name get() = Name.special("<${ktModule.moduleDescription}>")
 
     override val dependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -53,6 +57,9 @@ class LLFirModuleData(
     override val isCommon: Boolean get() = ktModule.platform.isCommon()
 
     override val analyzerServices: PlatformDependentAnalyzerServices get() = ktModule.analyzerServices
+
+    override val session: FirSession
+        get() = boundSession ?: LLFirSessionCache.getInstance(ktModule.project).getSession(ktModule, preferBinary = true)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

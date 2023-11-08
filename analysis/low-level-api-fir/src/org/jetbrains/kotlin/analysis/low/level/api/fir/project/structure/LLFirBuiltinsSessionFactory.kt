@@ -72,7 +72,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
         val builtinsModule = getBuiltinsModule(platform)
 
         val session = LLFirBuiltinsAndCloneableSession(builtinsModule, builtInTypes)
-        val moduleData = LLFirModuleData(builtinsModule).apply { bindSession(session) }
+        val moduleData = LLFirModuleData(session)
 
         return session.apply {
             registerIdeComponents(project)
