@@ -182,10 +182,13 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
 
     private fun KtElement.isFromSourceOrLibraryBinary(): Boolean = getModuleIfSupportEnabled()?.isFromSourceOrLibraryBinary() == true
 
-    private fun KtModule.isFromSourceOrLibraryBinary() = when (this) {
-        is KtSourceModule -> true
-        is KtLibraryModule -> true
-        else -> false
+    private fun KtModule.isFromSourceOrLibraryBinary(): Boolean {
+        return when (this) {
+            is KtSourceModule -> true
+            is KtLibraryModule -> true
+            is KtDanglingFileModule -> contextModule.isFromSourceOrLibraryBinary()
+            else -> false
+        }
     }
 }
 

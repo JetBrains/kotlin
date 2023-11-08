@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
-import org.jetbrains.kotlin.analysis.project.structure.KtCodeFragmentModule
+import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
@@ -75,8 +75,8 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
         }
     }
 
-    override fun createCodeFragmentSession(module: KtCodeFragmentModule, contextSession: LLFirSession): LLFirSession {
-        return doCreateCodeFragmentSession(module, contextSession) {
+    override fun createDanglingFileSession(module: KtDanglingFileModule, contextSession: LLFirSession): LLFirSession {
+        return doCreateDanglingFileSession(module, contextSession) {
             registerDefaultComponents()
             registerModuleIndependentJsComponents()
 

@@ -54,7 +54,7 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         )
         busConnection.subscribe(
             PsiModificationTracker.TOPIC,
-            PsiModificationTracker.Listener { invalidateAllCodeFragments() }
+            PsiModificationTracker.Listener { invalidateAllDanglingFiles() }
         )
     }
 
@@ -85,7 +85,7 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
             sessionCache.removeAllScriptSessions()
         }
 
-        sessionCache.removeAllCodeFragmentSessions()
+        sessionCache.removeAllDanglingFileSessions()
     }
 
     private fun invalidateAll(includeLibraryModules: Boolean) {
@@ -105,8 +105,8 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         LLFirSessionCache.getInstance(project).removeAllSessions(includeLibraryModules)
     }
 
-    private fun invalidateAllCodeFragments() {
-        LLFirSessionCache.getInstance(project).removeAllCodeFragmentSessions()
+    private fun invalidateAllDanglingFiles() {
+        LLFirSessionCache.getInstance(project).removeAllDanglingFileSessions()
     }
 
     override fun dispose() {

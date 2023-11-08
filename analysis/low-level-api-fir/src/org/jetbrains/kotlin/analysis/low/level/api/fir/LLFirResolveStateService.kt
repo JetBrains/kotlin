@@ -54,15 +54,10 @@ class LLFirResolveSessionService(project: Project) {
             is KtSourceModule -> LLSourceModuleResolutionStrategyProvider
             is KtLibraryModule, is KtLibrarySourceModule -> LLLibraryModuleResolutionStrategyProvider(module)
             is KtScriptModule -> LLScriptModuleResolutionStrategyProvider(module)
-            is KtCodeFragmentModule -> {
-                val contextElement = module.codeFragment.context
-                if (contextElement != null) {
-                    val contextModule = moduleProvider.getModule(contextElement)
-                    val contextResolutionStrategyProvider = createResolutionStrategyProvider(contextModule, moduleProvider)
-                    LLCodeFragmentResolutionStrategyProvider(contextResolutionStrategyProvider)
-                } else {
-                    LLSimpleResolutionStrategyProvider(module)
-                }
+            is KtDanglingFileModule -> {
+                val contextModule = module.contextModule
+                val contextResolutionStrategyProvider = createResolutionStrategyProvider(contextModule, moduleProvider)
+                LLDanglingFileResolutionStrategyProvider(contextResolutionStrategyProvider)
             }
             is KtNotUnderContentRootModule -> LLSimpleResolutionStrategyProvider(module)
             else -> {
@@ -77,7 +72,7 @@ class LLFirResolveSessionService(project: Project) {
         return when (moduleProvider.useSiteModule) {
             is KtSourceModule,
             is KtScriptModule,
-            is KtCodeFragmentModule -> LLSourceDiagnosticProvider(moduleProvider, sessionProvider)
+            is KtDanglingFileModule -> LLSourceDiagnosticProvider(moduleProvider, sessionProvider)
             else -> LLEmptyDiagnosticProvider
         }
     }
@@ -115,10 +110,10 @@ private class LLScriptModuleResolutionStrategyProvider(private val useSiteModule
     }
 }
 
-private class LLCodeFragmentResolutionStrategyProvider(private val delegate: LLModuleResolutionStrategyProvider) : LLModuleResolutionStrategyProvider {
+private class LLDanglingFileResolutionStrategyProvider(private val delegate: LLModuleResolutionStrategyProvider) : LLModuleResolutionStrategyProvider {
     override fun getKind(module: KtModule): LLModuleResolutionStrategy {
         return when (module) {
-            is KtCodeFragmentModule -> LLModuleResolutionStrategy.LAZY
+            is KtDanglingFileModule -> LLModuleResolutionStrategy.LAZY
             else -> delegate.getKind(module)
         }
     }

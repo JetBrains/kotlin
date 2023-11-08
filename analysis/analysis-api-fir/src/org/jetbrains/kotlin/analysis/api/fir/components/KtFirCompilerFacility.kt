@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
-import org.jetbrains.kotlin.analysis.project.structure.KtCodeFragmentModule
+import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -248,7 +248,7 @@ internal class KtFirCompilerFacility(
 
     private fun computeTargetModules(module: KtModule): List<KtModule> {
         return when (module) {
-            is KtCodeFragmentModule -> listOf(module.contextModule, module)
+            is KtDanglingFileModule -> listOf(module.contextModule, module)
             else -> listOf(module)
         }
     }
