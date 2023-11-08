@@ -159,9 +159,9 @@ class BirBuiltIns(
     val arrayOf: BirSimpleFunction = remapSymbolOwner(irBuiltIns.arrayOf)
     val arrayOfNulls: BirSimpleFunction = remapSymbolOwner(irBuiltIns.arrayOfNulls)
 
-    val lateinitIsInitialized: BirSimpleFunction = remapSymbolOwner<_, BirProperty>(
-        irBuiltIns.findProperties(Name.identifier("isInitialized"), FqName("kotlin")).single()
-    ).getter as BirSimpleFunction
+    val lateinitIsInitialized: BirSimpleFunction? =
+        irBuiltIns.findProperties(Name.identifier("isInitialized"), FqName("kotlin")).singleOrNull()?.takeIf { it.isBound }
+            ?.let { remapSymbolOwner<_, BirProperty>(it).getter as BirSimpleFunction }
 
     val linkageErrorSymbol: BirSimpleFunction
         get() = TODO("TODO in IrBuiltInsOverFir")
