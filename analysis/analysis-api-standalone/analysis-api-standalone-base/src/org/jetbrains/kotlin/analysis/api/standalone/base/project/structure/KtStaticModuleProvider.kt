@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtCodeFragmentModuleImpl
+import org.jetbrains.kotlin.analysis.project.structure.impl.KtDanglingFileModuleImpl
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.psiUtil.contains
@@ -31,7 +31,7 @@ class KtStaticModuleProvider(
                     .withAttachment("codeFragment.kt", containingPsiFile.text)
 
             val contextModule = getModule(contextElement, contextualModule)
-            return KtCodeFragmentModuleImpl(containingPsiFile, contextModule)
+            return KtDanglingFileModuleImpl(containingPsiFile, contextModule)
         }
 
         val containingVirtualFile = containingPsiFile.virtualFile

@@ -7,22 +7,35 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.KtCodeFragmentModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtDanglingFileModule
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import java.util.Objects
 
-public class KtCodeFragmentModuleImpl(
-    codeFragment: KtCodeFragment,
+public class KtDanglingFileModuleImpl(
+    file: KtFile,
     override val contextModule: KtModule
-) : KtCodeFragmentModule {
-    private val codeFragmentRef = codeFragment.createSmartPointer()
+) : KtDanglingFileModule {
+    override val isCodeFragment: Boolean = file is KtCodeFragment
 
-    override val codeFragment: KtCodeFragment
-        get() = codeFragmentRef.element?.takeIf { it.isValid } ?: error("Code fragment module is invalid")
+    private val fileRef = file.createSmartPointer()
+
+    init {
+        require(contextModule != this)
+
+        if (contextModule is KtDanglingFileModule) {
+            // Only code fragments can depend on dangling files.
+            // This is needed for completion, inspections and refactorings.
+            require(file is KtCodeFragment)
+        }
+    }
+
+    override val file: KtFile
+        get() = fileRef.element?.takeIf { it.isValid } ?: error("Dangling file module is invalid")
 
     override val project: Project
         get() = contextModule.project
@@ -34,7 +47,7 @@ public class KtCodeFragmentModuleImpl(
         get() = contextModule.analyzerServices
 
     override val contentScope: GlobalSearchScope
-        get() = GlobalSearchScope.fileScope(codeFragment)
+        get() = GlobalSearchScope.fileScope(file)
 
     override val directRegularDependencies: List<KtModule>
         get() = contextModule.directRegularDependencies
@@ -51,16 +64,16 @@ public class KtCodeFragmentModuleImpl(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
 
-        if (other is KtCodeFragmentModuleImpl) {
-            val selfCodeFragment = this.codeFragmentRef.element
-            val otherCodeFragment = other.codeFragmentRef.element
-            return selfCodeFragment != null && selfCodeFragment == otherCodeFragment && contextModule == other.contextModule
+        if (other is KtDanglingFileModuleImpl) {
+            val selfFile = this.fileRef.element
+            val otherFile = other.fileRef.element
+            return selfFile != null && selfFile == otherFile && contextModule == other.contextModule
         }
 
         return false
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(codeFragmentRef.element, contextModule)
+        return Objects.hash(fileRef.element, contextModule)
     }
 }

@@ -35,7 +35,7 @@ class LLFirSessionCache(private val project: Project) {
 
     private val sourceCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
     private val binaryCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
-    private val codeFragmentSessionCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
+    private val danglingFileSessionCache: SessionStorage = CollectionFactory.createConcurrentSoftValueMap()
 
     /**
      * Returns the existing session if found, or creates a new session and caches it.
@@ -49,7 +49,7 @@ class LLFirSessionCache(private val project: Project) {
         }
 
         val targetCache = when (module) {
-            is KtCodeFragmentModule -> codeFragmentSessionCache
+            is KtDanglingFileModule -> danglingFileSessionCache
             else -> sourceCache
         }
 
@@ -86,9 +86,9 @@ class LLFirSessionCache(private val project: Project) {
 
         val didSourceSessionExist = removeSessionFrom(module, sourceCache)
         val didBinarySessionExist = module is KtBinaryModule && removeSessionFrom(module, binaryCache)
-        val didCodeFragmentSessionExist = module is KtCodeFragmentModule && removeSessionFrom(module, codeFragmentSessionCache)
+        val didDanglingFileSessionExist = module is KtDanglingFileModule && removeSessionFrom(module, danglingFileSessionCache)
 
-        return didSourceSessionExist || didBinarySessionExist || didCodeFragmentSessionExist
+        return didSourceSessionExist || didBinarySessionExist || didDanglingFileSessionExist
     }
 
     private fun removeSessionFrom(module: KtModule, storage: SessionStorage): Boolean {
@@ -114,11 +114,11 @@ class LLFirSessionCache(private val project: Project) {
             removeAllMatchingSessionsFrom(sourceCache) { it !is KtBinaryModule && it !is KtLibrarySourceModule }
         }
 
-        removeAllCodeFragmentSessions()
+        removeAllDanglingFileSessions()
     }
 
-    fun removeAllCodeFragmentSessions() {
-        removeAllSessionsFrom(codeFragmentSessionCache)
+    fun removeAllDanglingFileSessions() {
+        removeAllSessionsFrom(danglingFileSessionCache)
     }
 
     // Removing script sessions is only needed temporarily until KTIJ-25620 has been implemented.
@@ -159,11 +159,11 @@ class LLFirSessionCache(private val project: Project) {
             is KtLibraryModule, is KtLibrarySourceModule -> sessionFactory.createLibrarySession(module)
             is KtSdkModule -> sessionFactory.createBinaryLibrarySession(module)
             is KtScriptModule -> sessionFactory.createScriptSession(module)
-            is KtCodeFragmentModule -> {
-                // 'KtCodeFragment' context must have an analyzable session, so we can properly compile code against it.
-                // 'KtCodeFragmentModule' is always a leaf module, there might not be a circular reference.
+            is KtDanglingFileModule -> {
+                //  Dangling file context must have an analyzable session, so we can properly compile code against it.
+                // 'KtDanglingFileModule' is always a leaf module, so there might not be a circular reference.
                 val contextSession = getSession(module.contextModule, preferBinary = false)
-                sessionFactory.createCodeFragmentSession(module, contextSession)
+                sessionFactory.createDanglingFileSession(module, contextSession)
             }
             is KtNotUnderContentRootModule -> sessionFactory.createNotUnderContentRootResolvableSession(module)
             else -> error("Unexpected module kind: ${module::class.simpleName}")

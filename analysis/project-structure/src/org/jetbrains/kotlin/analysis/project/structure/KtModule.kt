@@ -10,7 +10,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import java.nio.file.Path
@@ -216,21 +215,29 @@ public interface KtScriptDependencyModule : KtModule {
 }
 
 /**
- * A module for a Kotlin code fragment – a piece of code analyzed against a specific context element.
+ * A module for a dangling file. Such files are usually temporary and are stored in-memory.
+ * Dangling files may be created for various purposes, such as: a code fragment for the evaluator, a sandbox for testing code modification
+ * applicability, etc.
  */
-public interface KtCodeFragmentModule : KtModule {
+public interface KtDanglingFileModule : KtModule {
     /**
-     * A code fragment PSI.
+     * A temporary file PSI.
      */
-    public val codeFragment: KtCodeFragment
+    public val file: KtFile
 
     /**
-     * Module of the context element.
+     * The module against which the [file] is analyzed.
      */
     public val contextModule: KtModule
 
+    /**
+     * True if the [file] is a code fragment.
+     * Useful to recognize code fragments when their PSI was collected.
+     */
+    public val isCodeFragment: Boolean
+
     override val moduleDescription: String
-        get() = "Code fragment"
+        get() = "Temporary file"
 }
 
 /**
