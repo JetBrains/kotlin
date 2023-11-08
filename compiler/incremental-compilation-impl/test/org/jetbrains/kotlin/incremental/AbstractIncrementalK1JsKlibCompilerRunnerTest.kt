@@ -29,7 +29,6 @@ abstract class AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest :
 abstract class AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments {
         return super.createCompilerArguments(destinationDir, testDir).apply {
-            useK2 = true
             languageVersion = "2.0"
         }
     }

@@ -23,7 +23,6 @@ abstract class AbstractIncrementalMultiplatformJvmCompilerRunnerTest : AbstractI
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JVMCompilerArguments {
         return super.createCompilerArguments(destinationDir, testDir).apply {
             multiPlatform = true
-            useK2 = false
             languageVersion = "1.9"
         }
     }

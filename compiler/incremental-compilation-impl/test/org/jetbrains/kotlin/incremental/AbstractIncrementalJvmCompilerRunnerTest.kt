@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.utils.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
@@ -72,8 +73,12 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         val buildReporter = TestBuildReporter(testICReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
 
         withIncrementalCompilation(args) {
+            val k2Mode = args.useK2 || (
+                    (args.languageVersion ?: LanguageVersion.LATEST_STABLE.versionString) >= LanguageVersion.KOTLIN_2_0.versionString
+                    )
+
             val compiler =
-                if (args.useK2 && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */)
+                if (k2Mode && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */)
                     IncrementalFirJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
@@ -89,7 +94,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                         cachesDir,
                         buildReporter,
                         // Use precise setting in case of non-Gradle build
-                        usePreciseJavaTracking = !args.useK2, // TODO by @Ilya.Chernikov: add fir-based java classes tracker when available and set this to true
+                        usePreciseJavaTracking = !k2Mode, // TODO by @Ilya.Chernikov: add fir-based java classes tracker when available and set this to true
                         buildHistoryFile = buildHistoryFile,
                         outputDirs = null,
                         modulesApiHistory = EmptyModulesApiHistory,
