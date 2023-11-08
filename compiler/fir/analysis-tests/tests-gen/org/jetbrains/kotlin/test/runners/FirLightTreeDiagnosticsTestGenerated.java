@@ -7000,6 +7000,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("TypeVariablesInWrappedSamCall.kt")
+            public void testTypeVariablesInWrappedSamCall() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/TypeVariablesInWrappedSamCall.kt");
+            }
+
+            @Test
             @TestMetadata("TypesEligibleForSimpleVisit.kt")
             public void testTypesEligibleForSimpleVisit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/TypesEligibleForSimpleVisit.kt");

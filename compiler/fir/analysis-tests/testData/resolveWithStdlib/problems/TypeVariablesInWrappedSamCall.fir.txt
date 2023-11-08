@@ -1,0 +1,25 @@
+FILE: TypeVariablesInWrappedSamCall.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval flag: R|kotlin/Boolean| = Boolean(true)
+        R|/consumeTicker<CS errors: /consumeTicker>#|(R|/select|<R|Ticker?|>(when () {
+            R|<local>/flag| ->  {
+                Null(null)
+            }
+            else ->  {
+                select@fun <anonymous>(num: <ERROR TYPE REF: Cannot infer type for parameter num>): R|kotlin/Unit| <inline=Unknown>  {
+                    R|<local>/num|.<Ambiguity: dec, [kotlin/dec, kotlin/dec]>#()
+                }
+
+            }
+        }
+        , Null(null)))
+    }
+    public final fun <T> select(a: R|T|, b: R|T|): R|T| {
+        ^select R|<local>/a|
+    }
+    public final fun consumeTicker(ticker: R|Ticker?|): R|kotlin/Unit| {
+    }
+    public abstract fun interface Ticker : R|kotlin/Any| {
+        public abstract fun tick(num: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
