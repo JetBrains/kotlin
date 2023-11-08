@@ -169,49 +169,23 @@ abstract class Ir2BirConverterBase() {
     }
 
     fun <Bir : BirElement> remapElement(old: IrElement): Bir = copyElement(old)
+
     @JvmName("remapElementNullable")
     fun <Bir : BirElement> remapElement(old: IrElement?): Bir? = if (old == null) null else copyElement(old)
 
     fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: IrS): BirS {
-        return if (old.isBound) {
-            val owner = old.owner
-            if (symbolOwnersCurrentlyBeingConverted.isNotEmpty() && owner in symbolOwnersCurrentlyBeingConverted) {
-                @Suppress("UNCHECKED_CAST")
-                symbolOwnersCurrentlyBeingConverted.computeIfAbsent(owner) { convertLateBindSymbol(old) } as BirS
-            } else {
-                remapElement(owner) as BirS
-            }
+        check(old.isBound) { "All symbols should be bound at this stage" }
+        val owner = old.owner
+        return if (symbolOwnersCurrentlyBeingConverted.isNotEmpty() && owner in symbolOwnersCurrentlyBeingConverted) {
+            @Suppress("UNCHECKED_CAST")
+            symbolOwnersCurrentlyBeingConverted.computeIfAbsent(owner) { convertLateBindSymbol(old) } as BirS
         } else {
-            convertExternalSymbol(old)
+            remapElement(owner) as BirS
         }
     }
 
     @JvmName("remapSymbolNullable")
     fun <IrS : IrSymbol, BirS : BirSymbol> remapSymbol(old: IrS?): BirS? = if (old == null) null else remapSymbol(old)
-
-    private fun <BirS : ExternalBirSymbol<*>, IrS : IrSymbol> convertExternalSymbol(old: IrS): BirS {
-        val signature = old.signature
-        @Suppress("UNCHECKED_CAST")
-        return when (old) {
-            is IrFileSymbol -> ExternalBirSymbol.FileSymbol(signature)
-            is IrExternalPackageFragmentSymbol -> ExternalBirSymbol.ExternalPackageFragmentSymbol(signature)
-            is IrAnonymousInitializerSymbol -> ExternalBirSymbol.AnonymousInitializerSymbol(signature)
-            is IrEnumEntrySymbol -> ExternalBirSymbol.EnumEntrySymbol(signature)
-            is IrFieldSymbol -> ExternalBirSymbol.FieldSymbol(signature)
-            is IrClassSymbol -> ExternalBirSymbol.ClassSymbol(signature)
-            is IrScriptSymbol -> ExternalBirSymbol.ScriptSymbol(signature)
-            is IrTypeParameterSymbol -> ExternalBirSymbol.TypeParameterSymbol(signature)
-            is IrValueParameterSymbol -> ExternalBirSymbol.ValueParameterSymbol(signature)
-            is IrVariableSymbol -> ExternalBirSymbol.VariableSymbol(signature)
-            is IrConstructorSymbol -> ExternalBirSymbol.ConstructorSymbol(signature)
-            is IrSimpleFunctionSymbol -> ExternalBirSymbol.SimpleFunctionSymbol(signature)
-            is IrReturnableBlockSymbol -> ExternalBirSymbol.ReturnableBlockSymbol(signature)
-            is IrPropertySymbol -> ExternalBirSymbol.PropertySymbol(signature)
-            is IrLocalDelegatedPropertySymbol -> ExternalBirSymbol.LocalDelegatedPropertySymbol(signature)
-            is IrTypeAliasSymbol -> ExternalBirSymbol.TypeAliasSymbol(signature)
-            else -> error(old)
-        } as BirS
-    }
 
     private fun <BirS : LateBoundBirSymbol<*>, IrS : IrSymbol> convertLateBindSymbol(old: IrS): BirS {
         val signature = old.signature
