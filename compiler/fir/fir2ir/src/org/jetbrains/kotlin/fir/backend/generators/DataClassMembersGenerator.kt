@@ -132,7 +132,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 get() {
                     // Pick the (necessarily unique) non-interface upper bound if it exists
                     for (type in bounds) {
-                        val klass = type.coneType.nothingToAny().toRegularClassSymbol(session)?.fir ?: continue
+                        val klass = type.coneType.coerceToAny().toRegularClassSymbol(session)?.fir ?: continue
                         val kind = klass.classKind
                         if (kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS) return klass
                     }
@@ -140,7 +140,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     // Otherwise, choose either the first IrClass supertype or recurse.
                     // In the first case, all supertypes are interface types and the choice was arbitrary.
                     // In the second case, there is only a single supertype.
-                    val firstBoundType = bounds.first().coneType.fullyExpandedType(session).nothingToAny()
+                    val firstBoundType = bounds.first().coneType.fullyExpandedType(session).coerceToAny()
                     return when (val firstSuper = firstBoundType.toSymbol(session)?.fir) {
                         is FirRegularClass -> firstSuper
                         is FirTypeParameter -> firstSuper.erasedUpperBound
@@ -161,7 +161,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 val symbol = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
                     else -> {
-                        val classForType = when (val classifier = type.nothingToAny().toSymbol(session)?.fir) {
+                        val classForType = when (val classifier = type.coerceToAny().toSymbol(session)?.fir) {
                             is FirRegularClass -> classifier
                             is FirTypeParameter -> classifier.erasedUpperBound
                             else -> error("Unknown classifier kind $classifier")
@@ -176,11 +176,12 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         }
 
         /**
-         * kotlin.Nothing has no members, so any function on property of type Nothing should be actually taken from kotlin.Any
+         * Convert types which do not have members - kotlin.Nothing and `dynamic` - to kotlin.Any.
          */
-        private fun ConeKotlinType.nothingToAny(): ConeKotlinType {
+        private fun ConeKotlinType.coerceToAny(): ConeKotlinType {
             return when {
                 this.isNothingOrNullableNothing -> session.builtinTypes.anyType.type
+                this is ConeDynamicType -> session.builtinTypes.anyType.type
                 else -> this
             }
         }

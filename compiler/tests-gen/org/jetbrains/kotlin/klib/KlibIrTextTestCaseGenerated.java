@@ -2283,6 +2283,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
                 runTest("compiler/testData/ir/irText/js/dynamic/dynamicExclExclOperator.kt");
             }
 
+            @TestMetadata("dynamicInDataClass.kt")
+            public void testDynamicInDataClass() throws Exception {
+                runTest("compiler/testData/ir/irText/js/dynamic/dynamicInDataClass.kt");
+            }
+
             @TestMetadata("dynamicInfixCall.kt")
             public void testDynamicInfixCall() throws Exception {
                 runTest("compiler/testData/ir/irText/js/dynamic/dynamicInfixCall.kt");
