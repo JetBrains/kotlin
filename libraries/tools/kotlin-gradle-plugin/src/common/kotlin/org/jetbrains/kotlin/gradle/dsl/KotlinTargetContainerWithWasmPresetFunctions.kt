@@ -26,7 +26,7 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
         )
 
     @ExperimentalWasmDsl
-    fun wasmJs() = wasmJs("wasmJs") { }
+    fun wasmJs() = wasmJs { }
 
     @ExperimentalWasmDsl
     fun wasmJs(name: String) = wasmJs(name) { }
@@ -50,7 +50,7 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
         )
 
     @ExperimentalWasmDsl
-    fun wasmWasi() = wasmJs("wasmWasi") { }
+    fun wasmWasi() = wasmWasi { }
 
     @ExperimentalWasmDsl
     fun wasmWasi(name: String) = wasmWasi(name) { }
