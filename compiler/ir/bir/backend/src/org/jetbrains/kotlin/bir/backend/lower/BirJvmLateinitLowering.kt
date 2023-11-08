@@ -24,7 +24,7 @@ class BirJvmLateinitLowering : BirLoweringPhase() {
         it.isLateinit
     }
     private val lateinitInitializerCalls = registerIndexKey<BirCall>(false) {
-        it.symbol == birBuiltIns.lateinitIsInitialized
+        birBuiltIns.lateinitIsInitialized != null && it.symbol == birBuiltIns.lateinitIsInitialized
     }
     private val variableReads = registerBackReferencesKey<BirGetValue> {
         recordReference(it.symbol)
