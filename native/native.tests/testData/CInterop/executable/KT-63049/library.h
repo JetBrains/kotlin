@@ -1,0 +1,2 @@
+@interface NotFromNSObject
+@end
