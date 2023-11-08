@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.bir.expressions.BirConstructorCall
 import org.jetbrains.kotlin.bir.expressions.BirExpression
 import org.jetbrains.kotlin.bir.expressions.BirMemberAccessExpression
 import org.jetbrains.kotlin.bir.symbols.BirSymbol
-import org.jetbrains.kotlin.bir.symbols.ExternalBirSymbol
 import org.jetbrains.kotlin.bir.symbols.LateBoundBirSymbol
 import org.jetbrains.kotlin.bir.types.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrSymbolBase
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
 import org.jetbrains.kotlin.ir.types.impl.IrDelegatedSimpleType
@@ -34,7 +34,7 @@ abstract class Ir2BirConverterBase() {
     var appendElementAsForestRoot: (IrElement, BirElement) -> BirForest? = { _, _ -> null }
     var copyAncestorsForOrphanedElements = false
     var expandLazyElementsIntoImpl = false
-    var copyDescriptors = false
+    var instantiateDescriptors = false
 
     private val collectedBirElementsWithoutParent = mutableListOf<BirElement>()
     private val collectedIrElementsWithoutParent = mutableListOf<IrElement>()
@@ -237,7 +237,15 @@ abstract class Ir2BirConverterBase() {
         get() = List(typeArgumentsCount) { getTypeArgument(it) }
 
     protected fun <D : DeclarationDescriptor> mapDescriptor(readDescriptor: () -> D?): D? {
-        return if (copyDescriptors) readDescriptor() else null
+        return if (instantiateDescriptors) readDescriptor() else null
+    }
+
+    protected fun <D : DeclarationDescriptor> mapDescriptor(declaration: IrSymbolOwner): D? {
+        val symbol = declaration.symbol
+        return if (symbol is IrSymbolBase<*> && (instantiateDescriptors || symbol.hasDescriptor)) {
+            @Suppress("UNCHECKED_CAST")
+            symbol.descriptor as D
+        } else null
     }
 
     fun remapType(irType: IrType): BirType = when (irType) {
