@@ -8,18 +8,16 @@ package org.jetbrains.kotlin.bir.lazy
 import org.jetbrains.kotlin.bir.*
 import org.jetbrains.kotlin.bir.declarations.*
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.util.IdSignature
 import kotlin.concurrent.Volatile
 
 abstract class BirLazyElementBase(
     internal val converter: Ir2BirConverter,
 ) : BirElementBase(), BirDeclaration {
-    protected abstract val originalElement: IrDeclaration
+    internal abstract val originalIrElement: IrDeclaration
 
     @Volatile
     private var parentInitialized = false
@@ -29,7 +27,7 @@ abstract class BirLazyElementBase(
             if (parentInitialized) return _parent as BirElementBase
             synchronized(this) {
                 if (!parentInitialized) {
-                    _parent = converter.remapElement<BirElementBase>(originalElement.parent)
+                    _parent = converter.remapElement<BirElementBase>(originalIrElement.parent)
                     parentInitialized = true
                 }
 
@@ -74,15 +72,15 @@ abstract class BirLazyElementBase(
 
 
     override val sourceSpan: SourceSpan
-        get() = SourceSpan(originalElement.startOffset, originalElement.endOffset)
+        get() = SourceSpan(originalIrElement.startOffset, originalIrElement.endOffset)
 
     override var signature: IdSignature?
-        get() = originalElement.symbol.signature
+        get() = originalIrElement.symbol.signature
         set(value) = mutationNotSupported()
 
 
     override var origin: IrDeclarationOrigin
-        get() = originalElement.origin
+        get() = originalIrElement.origin
         set(value) = mutationNotSupported()
 
 

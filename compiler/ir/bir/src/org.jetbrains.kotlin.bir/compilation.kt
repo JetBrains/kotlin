@@ -14,11 +14,16 @@ import org.jetbrains.kotlin.bir.backend.lower.*
 import org.jetbrains.kotlin.bir.declarations.BirExternalPackageFragment
 import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.lazy.BirLazyElementBase
+import org.jetbrains.kotlin.bir.util.Bir2IrConverter
 import org.jetbrains.kotlin.bir.util.Ir2BirConverter
 import org.jetbrains.kotlin.bir.util.countAllElementsInTree
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
+import java.util.IdentityHashMap
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -42,7 +47,24 @@ private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
     ::BirAnnotationLowering,
 )
 
-private val excludedStandardPhases = setOf<String>(
+private val irPhasesReimplementedInBir = setOf<String>(
+    "JvmStaticInObject",
+    "RepeatedAnnotation",
+    "TypeAliasAnnotationMethodsLowering",
+    "FunctionExpression",
+    "JvmOverloadsAnnotation",
+    "MainMethodGeneration",
+    "Annotation",
+    "PolymorphicSignature",
+    "VarargLowering",
+    "JvmLateinitLowering",
+    "InventNamesForLocalClasses",
+    "InlineCallableReferenceToLambdaPhase",
+)
+
+private val excludedPhases = setOf<String>(
+    //"Bir2Ir",
+
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
     // still have their parent property set.
@@ -60,18 +82,18 @@ fun lowerWithBir(
 
     val birPhases = listOf<AbstractNamedCompilerPhase<JvmBackendContext, *, *>>(
         ConvertIrToBirPhase(
+            "Ir2Bir",
             "Convert IR to BIR",
-            "Experimental phase to test alternative IR architecture",
             context.phaseConfig.needProfiling,
         ),
-        NamedCompilerPhase(
-            "Run BIR lowerings",
+        /*NamedCompilerPhase(
+            "Lower Bir",
             "Experimental phase to test alternative IR architecture",
             lower = BirLowering,
-        ),
+        ),*/
         ConvertBirToIrPhase(
+            "Bir2Ir",
             "Convert lowered BIR back to IR",
-            "Experimental phase to test alternative IR architecture",
         ),
     )
     newPhases.addAll(
@@ -81,7 +103,7 @@ fun lowerWithBir(
 
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
-        enabled += compoundPhase.toPhaseMap().values.filter { it.name !in excludedStandardPhases }.toSet()
+        enabled += compoundPhase.toPhaseMap().values.filter { it.name !in excludedPhases }.toSet()
         verbose += context.phaseConfig.verbose
         toDumpStateBefore += context.phaseConfig.toDumpStateBefore
         toDumpStateAfter += context.phaseConfig.toDumpStateAfter
@@ -209,13 +231,17 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
         val externalModulesBir = BirForest()
         val compiledBir = BirForest()
 
+        val externalIr2BirElements = IdentityHashMap<BirElement, IrSymbol>()
         val ir2BirConverter = Ir2BirConverter(dynamicPropertyManager)
         ir2BirConverter.copyAncestorsForOrphanedElements = true
         ir2BirConverter.appendElementAsForestRoot = { old, new ->
+            if (old is IrSymbolOwner) {
+                externalIr2BirElements[new] = old.symbol
+            }
+
             when {
                 old === input -> compiledBir
-                new is BirModuleFragment || new is BirExternalPackageFragment -> externalModulesBir
-                new is BirLazyElementBase -> externalModulesBir
+                new is BirModuleFragment || new is BirExternalPackageFragment || new is BirLazyElementBase -> externalModulesBir
                 else -> null
             }
         }
@@ -236,10 +262,18 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
             birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
         }
 
-        birModule.countAllElementsInTree()
+        val size = birModule.countAllElementsInTree()
         //measureElementDistribution(birModule)
 
-        return BirCompilationBundle(birModule, birContext, input, profile)
+        return BirCompilationBundle(
+            birModule,
+            birContext,
+            input,
+            externalIr2BirElements,
+            dynamicPropertyManager,
+            size,
+            profile
+        )
     }
 
     override fun outputIfNotEnabled(
@@ -255,7 +289,10 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
 private class BirCompilationBundle(
     val birModule: BirModuleFragment,
     val backendContext: JvmBirBackendContext,
-    val originalIrModuleFragment: IrModuleFragment,
+    val irModuleFragment: IrModuleFragment,
+    val externalIr2BirElements: Map<BirElement, IrSymbol>,
+    val dynamicPropertyManager: BirElementDynamicPropertyManager,
+    val estimatedIrTreeSize: Int,
     val profile: Boolean,
 )
 
@@ -302,7 +339,20 @@ private object BirLowering : SameTypeCompilerPhase<JvmBackendContext, BirCompila
 private class ConvertBirToIrPhase(name: String, description: String) :
     SimpleNamedCompilerPhase<JvmBackendContext, BirCompilationBundle, IrModuleFragment>(name, description) {
     override fun phaseBody(context: JvmBackendContext, input: BirCompilationBundle): IrModuleFragment {
-        return input.originalIrModuleFragment
+        val compiledBir = input.birModule.getContainingForest()!!
+        val bir2IrConverter = Bir2IrConverter(
+            input.dynamicPropertyManager,
+            input.externalIr2BirElements,
+            context.irBuiltIns,
+            compiledBir,
+            input.estimatedIrTreeSize
+        )
+        val newIrModule: IrModuleFragment
+        invokePhaseMeasuringTime(input.profile, "!BIR - convert IR to BIR") {
+            newIrModule = bir2IrConverter.remapElement<IrModuleFragment>(input.birModule)
+            newIrModule.patchDeclarationParents()
+        }
+        return newIrModule
     }
 
     override fun outputIfNotEnabled(
@@ -311,7 +361,7 @@ private class ConvertBirToIrPhase(name: String, description: String) :
         context: JvmBackendContext,
         input: BirCompilationBundle,
     ): IrModuleFragment {
-        return input.originalIrModuleFragment
+        return input.irModuleFragment
     }
 }
 
