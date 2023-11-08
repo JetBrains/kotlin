@@ -32,6 +32,8 @@ internal val USER_CONSENT_DETAILS_LINK_TEMPLATE = "You can read more details her
 
 internal const val PROMPT_REQUEST = "Do you agree with this? Please answer with 'yes' or 'no': "
 
+private const val MAX_REQUEST_ATTEMPTS = 5
+
 internal fun String.formatWithLink(link: String) = replace(linkPlaceholder, link)
 
 internal class ConsentManager(
@@ -56,7 +58,7 @@ internal class ConsentManager(
         if (consentDetailsLink != null) {
             output.println(USER_CONSENT_DETAILS_LINK_TEMPLATE.formatWithLink(consentDetailsLink))
         }
-        while (true) {
+        repeat(MAX_REQUEST_ATTEMPTS) {
             output.println(PROMPT_REQUEST)
             when (input.readLine()) {
                 "yes" -> {
@@ -77,5 +79,7 @@ internal class ConsentManager(
                 }
             }
         }
+        // we didn't receive an answer, let's ask next time
+        return false
     }
 }
