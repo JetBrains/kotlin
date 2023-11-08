@@ -47,11 +47,9 @@ def platformManager = new PlatformManager(DistributionKt.buildDistribution(Utils
 def kotlinDist = null
 if (hasProperty("kotlin_dist")) {
     kotlinDist = file(findProperty("kotlin_dist"))
-    ext["notationMapping"] = [':kotlin-stdlib-common'                      : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib.jar").absolutePath,
-                              ':kotlin-test:kotlin-test-common'            : project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
-                              ':kotlin-test:kotlin-test-annotations-common': project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
-                              ':kotlin-test:kotlin-test-junit'             : project.file("${kotlinDist}/kotlinc/lib/kotlin-test-junit.jar").absolutePath,
-                              ':kotlin-stdlib-jdk8'                        : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib-jdk8.jar").absolutePath]
+    ext["notationMapping"] = [':kotlin-stdlib-common' : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib.jar").absolutePath,
+                              ':kotlin-test'          : project.file("${kotlinDist}/kotlinc/lib/kotlin-test.jar").absolutePath,
+                              ':kotlin-stdlib-jdk8'   : project.file("${kotlinDist}/kotlinc/lib/kotlin-stdlib-jdk8.jar").absolutePath]
     ext.targetList = []
 }
 

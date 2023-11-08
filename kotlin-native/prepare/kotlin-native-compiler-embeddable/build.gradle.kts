@@ -56,7 +56,7 @@ dependencies {
     kotlinNativeJavadoc(project(":kotlin-native:backend.native"))
 
     testImplementation(libs.junit4)
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
 }
 
 val compiler = embeddableCompiler("kotlin-native-compiler-embeddable") {

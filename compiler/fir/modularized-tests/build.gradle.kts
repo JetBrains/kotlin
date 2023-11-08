@@ -19,8 +19,7 @@ dependencies {
     testRuntimeOnly(commonDependency("commons-lang:commons-lang"))
 
     testImplementation(libs.junit4)
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testCompileOnly(kotlinTest("junit"))
     testApi(projectTests(":compiler:tests-common"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))

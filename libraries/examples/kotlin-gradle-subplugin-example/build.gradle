@@ -17,8 +17,6 @@ dependencies {
     // Use this dependency instead when building apart from the other modules:
     // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
 
-    api project(':kotlin-test:kotlin-test-junit')
-
     compileOnly RepoDependencies.kotlinStdlib(project)
     compileOnly project(':compiler')
     compileOnly project(':compiler:plugin-api')

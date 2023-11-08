@@ -20,7 +20,7 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))
 
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
     testImplementation(toolsJar())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

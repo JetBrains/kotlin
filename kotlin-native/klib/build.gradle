@@ -24,7 +24,7 @@ dependencies {
     implementation project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
     implementation project(":kotlin-native:utilities:basic-utils")
     testImplementation libs.junit4
-    testImplementation project(":kotlin-test:kotlin-test-junit")
+    testImplementation RepoDependencies.kotlinTest(project, "junit")
 }
 
 test {

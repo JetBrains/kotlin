@@ -52,7 +52,7 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-test-junit</artifactId>
+      <artifactId>kotlin-test</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>runtime</scope>
       <optional>true</optional>

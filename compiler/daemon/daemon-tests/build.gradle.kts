@@ -7,7 +7,7 @@ plugins {
 
 dependencies {
     testImplementation(kotlinStdlib())
-    testImplementation(project(":kotlin-test:kotlin-test-jvm"))
+    testImplementation(kotlinTest("junit"))
     testImplementation(project(":kotlin-daemon"))
     testImplementation(project(":kotlin-daemon-client"))
     testImplementation(libs.junit4)

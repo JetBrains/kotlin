@@ -51,7 +51,7 @@ dependencies {
     testCompileOnly(project(":plugins:android-extensions-compiler"))
     testApi(projectTests(":generators:test-generator"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(kotlinTest())
     testApi(project(":kotlin-scripting-compiler-impl"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(libs.junit4) // for ComparisonFailure

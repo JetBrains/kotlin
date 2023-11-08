@@ -50,7 +50,7 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-api-impl-barebone"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

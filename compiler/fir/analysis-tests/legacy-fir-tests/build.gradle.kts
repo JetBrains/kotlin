@@ -14,8 +14,7 @@ dependencies {
     compileOnly(intellijCore())
 
     testImplementation(libs.junit4)
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
+    testCompileOnly(kotlinTest("junit"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))

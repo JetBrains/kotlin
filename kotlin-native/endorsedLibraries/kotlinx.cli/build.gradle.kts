@@ -15,8 +15,7 @@ kotlin {
         commonTest {
             dependencies {
                 // projectOrFiles is required for the performance project that includes kotlinx.cli compositely
-                projectOrFiles(project, ":kotlin-test:kotlin-test-common")?.let { implementation(it) }
-                projectOrFiles(project, ":kotlin-test:kotlin-test-annotations-common")?.let { implementation(it) }
+                projectOrFiles(project, ":kotlin-test")?.let { implementation(it) }
             }
             kotlin.srcDir("src/tests")
         }
@@ -30,7 +29,7 @@ kotlin {
             // JVM-specific tests and their dependencies:
             compilations["test"].defaultSourceSet {
                 dependencies {
-                    implementation(project(":kotlin-test:kotlin-test-junit"))
+                    implementation(kotlinTest("junit"))
                 }
             }
 

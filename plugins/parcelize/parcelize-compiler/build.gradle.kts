@@ -34,7 +34,7 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(project(":plugins:parcelize:parcelize-runtime"))
     testApi(project(":kotlin-android-extensions-runtime"))
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(kotlinTest())
 
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))

@@ -120,7 +120,7 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(projectTests(":kotlin-build-common"))
     testImplementation(project(":kotlin-compiler-runner"))
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))

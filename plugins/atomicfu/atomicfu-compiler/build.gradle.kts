@@ -84,7 +84,7 @@ dependencies {
 
     testImplementation(projectTests(":js:js.tests"))
     testImplementation(libs.junit4)
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:
     if (!kotlinBuildProperties.isInIdeaSync) {

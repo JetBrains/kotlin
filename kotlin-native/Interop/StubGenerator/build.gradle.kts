@@ -39,8 +39,7 @@ dependencies {
     implementation(project(":compiler:util"))
     implementation(project(":compiler:ir.serialization.common"))
 
-    testImplementation(kotlin("test-junit"))
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
 }
 
 tasks {

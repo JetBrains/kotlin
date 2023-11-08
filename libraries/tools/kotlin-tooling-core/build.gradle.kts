@@ -12,7 +12,7 @@ configureKotlinCompileTasksGradleCompatibility()
 dependencies {
     api(platform(project(":kotlin-gradle-plugins-bom")))
     compileOnly(kotlinStdlib())
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
 }
 
 tasks {

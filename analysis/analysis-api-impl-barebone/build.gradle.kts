@@ -12,7 +12,7 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
     testImplementation(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:test-infrastructure"))

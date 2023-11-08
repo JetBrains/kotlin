@@ -18,7 +18,7 @@ dependencies {
     implementation("org.codehaus.mojo:animal-sniffer:1.21")
     implementation(kotlinStdlib())
 
-    testImplementation(project(":kotlin-test:kotlin-test-junit"))
+    testImplementation(kotlinTest("junit"))
 
     testArtifacts(project(":kotlin-reflect"))
 

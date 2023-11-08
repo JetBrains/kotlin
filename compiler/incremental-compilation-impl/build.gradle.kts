@@ -23,7 +23,7 @@ dependencies {
     compileOnly(intellijCore())
 
     testImplementation(libs.junit4)
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testApi(kotlinTest("junit"))
     testApi(kotlinStdlib())
     testApi(projectTests(":kotlin-build-common"))
     testApi(projectTests(":compiler:tests-common"))

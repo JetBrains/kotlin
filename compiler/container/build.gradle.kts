@@ -10,8 +10,7 @@ dependencies {
     compileOnly(intellijCore())
     testApi(kotlinStdlib())
     testCompileOnly("org.jetbrains:annotations:13.0")
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testApi(kotlinTest("junit"))
     testImplementation(libs.junit4)
     testCompileOnly(intellijCore())
 
