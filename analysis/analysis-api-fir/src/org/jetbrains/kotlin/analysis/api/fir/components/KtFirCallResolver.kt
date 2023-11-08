@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
@@ -70,6 +71,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
@@ -122,8 +124,8 @@ internal class KtFirCallResolver(
         getCallInfo: FirElement.(
             psiToResolve: KtElement,
             resolveCalleeExpressionOfFunctionCall: Boolean,
-            resolveFragmentOfCall: Boolean
-        ) -> List<T>
+            resolveFragmentOfCall: Boolean,
+        ) -> List<T>,
     ): List<T> {
         if (!canBeResolvedAsCall(psi)) return emptyList()
 
@@ -360,7 +362,7 @@ internal class KtFirCallResolver(
         psi: KtElement,
         fir: FirResolvable,
         candidate: AbstractCandidate?,
-        resolveFragmentOfCall: Boolean
+        resolveFragmentOfCall: Boolean,
     ): KtCall? {
         return createKtCall(psi, fir, fir.calleeReference, candidate, resolveFragmentOfCall)
     }
@@ -370,7 +372,7 @@ internal class KtFirCallResolver(
         fir: FirElement,
         calleeReference: FirReference,
         candidate: AbstractCandidate?,
-        resolveFragmentOfCall: Boolean
+        resolveFragmentOfCall: Boolean,
     ): KtCall? {
         val targetSymbol = candidate?.symbol
             ?: calleeReference.toResolvedBaseSymbol()
@@ -396,7 +398,7 @@ internal class KtFirCallResolver(
         fun createKtPartiallyAppliedSymbolForImplicitInvoke(
             dispatchReceiver: FirExpression?,
             extensionReceiver: FirExpression?,
-            explicitReceiverKind: ExplicitReceiverKind
+            explicitReceiverKind: ExplicitReceiverKind,
         ): KtPartiallyAppliedSymbol<KtCallableSymbol, KtCallableSignature<KtCallableSymbol>> {
             isImplicitInvoke = true
 
@@ -404,16 +406,25 @@ internal class KtFirCallResolver(
             // the `invoke` member function. In this case, we use the `calleeExpression` in the `KtCallExpression` as the PSI
             // representation of this receiver. Caller can then use this PSI for further call resolution, which is implemented by the
             // parameter `resolveCalleeExpressionOfFunctionCall` in `toKtCallInfo`.
-            val explicitReceiverPsi = when (psi) {
-                is KtQualifiedExpression -> (psi.selectorExpression as KtCallExpression).calleeExpression
-                is KtCallExpression -> psi.calleeExpression
+            var explicitReceiverPsi = when (psi) {
+                is KtQualifiedExpression -> {
+                    psi.selectorExpression
+                        ?: errorWithAttachment("missing selectorExpression in PSI ${psi::class} for FirImplicitInvokeCall") {
+                            withPsiEntry("psi", psi, analysisSession::getModule)
+                        }
+                }
+                is KtExpression -> psi
                 else -> errorWithAttachment("unexpected PSI ${psi::class} for FirImplicitInvokeCall") {
                     withPsiEntry("psi", psi, analysisSession::getModule)
                 }
             }
-                ?: errorWithAttachment("missing calleeExpression in PSI ${psi::class} for FirImplicitInvokeCall") {
-                    withPsiEntry("psi", psi, analysisSession::getModule)
-                }
+
+            if (explicitReceiverPsi is KtCallExpression) {
+                explicitReceiverPsi = explicitReceiverPsi.calleeExpression
+                    ?: errorWithAttachment("missing calleeExpression in PSI ${psi::class} for FirImplicitInvokeCall") {
+                        withPsiEntry("psi", psi, analysisSession::getModule)
+                    }
+            }
 
             // Specially handle @ExtensionFunctionType
             if (dispatchReceiver?.resolvedType?.isExtensionFunctionType == true) {
@@ -435,7 +446,9 @@ internal class KtFirCallResolver(
                     dispatchReceiverValue =
                         KtExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.resolvedType.asKtType(), false, token)
                     if (firstArgIsExtensionReceiver) {
-                        extensionReceiverValue = (fir as FirFunctionCall).arguments.firstOrNull()?.toKtReceiverValue()
+                        extensionReceiverValue =
+                            (fir as? FirFunctionCall)?.arguments?.firstOrNull()?.toKtReceiverValue()
+                                ?: (fir as? FirPropertyAccessExpression)?.explicitReceiver?.toKtReceiverValue()
                     } else {
                         extensionReceiverValue = extensionReceiver?.toKtReceiverValue()
                     }
@@ -557,7 +570,7 @@ internal class KtFirCallResolver(
                             partiallyAppliedSymbol as KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol>,
                             LinkedHashMap(),
                             fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
-                            _isImplicitInvoke = false,
+                            isImplicitInvoke,
                         )
                     }
                 }

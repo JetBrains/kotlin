@@ -1,0 +1,30 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = action
+          isSafeNavigation = false
+          type = @ExtensionFunctionType kotlin.Function1<kotlin.String, kotlin.Unit>?
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = s
+          isSafeNavigation = false
+          type = kotlin.String
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = p1
+              receiverType = null
+              returnType = kotlin.String
+              symbol = p1: P1
+              callableIdIfNonLocal = null
+          ]
+          callableIdIfNonLocal = kotlin/Function1.invoke
+      typeArgumentsMapping = {}
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<FUNCTION_CALL_EXPECTED: Function invocation 'action(...)' expected.>
