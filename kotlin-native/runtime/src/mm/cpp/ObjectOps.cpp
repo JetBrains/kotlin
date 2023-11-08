@@ -75,6 +75,8 @@ OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo)
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
     auto* object = threadData->allocator().allocateObject(typeInfo);
+    // Prevents unsafe class publication (see KT-58995).
+    std::atomic_thread_fence(std::memory_order_release);
     threadData->gc().onAllocation(object);
     RETURN_OBJ(object);
 }
@@ -83,6 +85,8 @@ OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, 
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
     auto* array = threadData->allocator().allocateArray(typeInfo, static_cast<uint32_t>(elements));
+    // Prevents unsafe class publication (see KT-58995).
+    std::atomic_thread_fence(std::memory_order_release);
     threadData->gc().onAllocation(array->obj());
     RETURN_OBJ(array->obj());
 }
