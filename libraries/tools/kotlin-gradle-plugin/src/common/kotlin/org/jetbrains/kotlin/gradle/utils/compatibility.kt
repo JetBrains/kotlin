@@ -97,13 +97,13 @@ internal fun ArtifactCollection.getResolvedArtifactsCompat(project: Project): Pr
     }
 
 /**
- * ValueSources are not well-supported with Configuration Cache in early Gradle versions
- * Gradle 8.1 is discovered experimentally
+ * ValueSources with injected ExecOperations are supported with Configuration Cache in Gradle 7.5+
+ * https://docs.gradle.org/7.5/release-notes.html#running-external-processes-at-configuration-time
  */
-internal fun <T> Project.valueSourceProviderCompat(
+internal fun <T> Project.valueSourceWithExecProviderCompat(
     clazz: Class<out ValueSource<T, ValueSourceParameters.None>>
 ): Provider<T> {
-    return if (GradleVersion.current() < GradleVersion.version("8.1")) {
+    return if (GradleVersion.current() < GradleVersion.version("7.5")) {
         val vs = project.objects.newInstance(clazz)
         project.provider { vs.obtain() }
     } else {
