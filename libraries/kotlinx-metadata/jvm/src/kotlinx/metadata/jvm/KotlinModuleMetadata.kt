@@ -21,7 +21,7 @@ import kotlinx.metadata.jvm.internal.JvmReadUtils.throwIfNotCompatible
 import kotlinx.metadata.jvm.internal.wrapIntoMetadataExceptionWhenNeeded
 import kotlinx.metadata.jvm.internal.wrapWriteIntoIAE
 import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion as CompilerMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
 import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
@@ -181,9 +181,9 @@ public class KotlinModuleMetadata private constructor(
         @UnstableMetadataApi
         @JvmStatic
         @JvmOverloads
-        public fun write(kmModule: KmModule, metadataVersion: IntArray = COMPATIBLE_METADATA_VERSION): ByteArray = wrapWriteIntoIAE {
+        public fun write(kmModule: KmModule, metadataVersion: JvmMetadataVersion = JvmMetadataVersion.CURRENT): ByteArray = wrapWriteIntoIAE {
             val w = Writer().also { it.writeModule(kmModule) }
-            return w.b.build().serializeToByteArray(JvmMetadataVersion(*metadataVersion), 0)
+            return w.b.build().serializeToByteArray(CompilerMetadataVersion(metadataVersion.toIntArray(), false), 0)
         }
 
         private fun dataFromBytes(bytes: ByteArray): ModuleMapping {

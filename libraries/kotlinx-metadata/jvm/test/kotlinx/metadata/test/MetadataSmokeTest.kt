@@ -63,7 +63,7 @@ class MetadataSmokeTest {
             }
         }
 
-        val annotationData = KotlinClassMetadata.Class(klass, KotlinClassMetadata.COMPATIBLE_METADATA_VERSION, 0).write()
+        val annotationData = KotlinClassMetadata.Class(klass, JvmMetadataVersion.CURRENT, 0).write()
 
         // Then, produce the bytecode of a .class file with ASM
 
@@ -179,7 +179,7 @@ class MetadataSmokeTest {
     @OptIn(UnstableMetadataApi::class)
     fun metadataVersionEarlierThan1_4() {
         val dummy = MetadataSmokeTest::class.java.readMetadataAsKmClass()
-        val mv = intArrayOf(1, 3)
+        val mv = JvmMetadataVersion(1, 3)
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.Class(dummy, mv, 0).write() } // We can't write empty KmClass()
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.FileFacade(KmPackage(), mv, 0).write() }
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassFacade(listOf("A"), mv, 0).write() }

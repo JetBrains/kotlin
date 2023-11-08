@@ -1310,6 +1310,24 @@ public final class kotlinx/metadata/jvm/JvmMetadataUtil {
 	public static final fun toJvmInternalName (Ljava/lang/String;)Ljava/lang/String;
 }
 
+public final class kotlinx/metadata/jvm/JvmMetadataVersion : java/lang/Comparable {
+	public static final field CURRENT Lkotlinx/metadata/jvm/JvmMetadataVersion;
+	public static final field Companion Lkotlinx/metadata/jvm/JvmMetadataVersion$Companion;
+	public fun <init> (II)V
+	public fun <init> (III)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lkotlinx/metadata/jvm/JvmMetadataVersion;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMajor ()I
+	public final fun getMinor ()I
+	public final fun getPatch ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/metadata/jvm/JvmMetadataVersion$Companion {
+}
+
 public final class kotlinx/metadata/jvm/JvmMethodSignature : kotlinx/metadata/jvm/JvmMemberSignature {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -1441,12 +1459,12 @@ public abstract class kotlinx/metadata/jvm/KotlinClassMetadata {
 	public static final field MULTI_FILE_CLASS_PART_KIND I
 	public static final field SYNTHETIC_CLASS_KIND I
 	public abstract fun getFlags ()I
-	public abstract fun getVersion ()[I
+	public abstract fun getVersion ()Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public static final fun read (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
 	public static final fun readLenient (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
 	public static final fun readStrict (Lkotlin/Metadata;)Lkotlinx/metadata/jvm/KotlinClassMetadata;
 	public abstract fun setFlags (I)V
-	public abstract fun setVersion ([I)V
+	public abstract fun setVersion (Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public abstract fun write ()Lkotlin/Metadata;
 	public static final fun writeClass (Lkotlinx/metadata/KmClass;)Lkotlin/Metadata;
 	public static final fun writeClass (Lkotlinx/metadata/KmClass;[I)Lkotlin/Metadata;
@@ -1469,14 +1487,14 @@ public abstract class kotlinx/metadata/jvm/KotlinClassMetadata {
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$Class : kotlinx/metadata/jvm/KotlinClassMetadata {
-	public fun <init> (Lkotlinx/metadata/KmClass;[II)V
+	public fun <init> (Lkotlinx/metadata/KmClass;Lkotlinx/metadata/jvm/JvmMetadataVersion;I)V
 	public final fun accept (Lkotlinx/metadata/KmClassVisitor;)V
 	public fun getFlags ()I
 	public final fun getKmClass ()Lkotlinx/metadata/KmClass;
-	public fun getVersion ()[I
+	public fun getVersion ()Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public fun setFlags (I)V
 	public final fun setKmClass (Lkotlinx/metadata/KmClass;)V
-	public fun setVersion ([I)V
+	public fun setVersion (Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public final fun toKmClass ()Lkotlinx/metadata/KmClass;
 	public fun write ()Lkotlin/Metadata;
 }
@@ -1521,14 +1539,14 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Companion {
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade : kotlinx/metadata/jvm/KotlinClassMetadata {
-	public fun <init> (Lkotlinx/metadata/KmPackage;[II)V
+	public fun <init> (Lkotlinx/metadata/KmPackage;Lkotlinx/metadata/jvm/JvmMetadataVersion;I)V
 	public final fun accept (Lkotlinx/metadata/KmPackageVisitor;)V
 	public fun getFlags ()I
 	public final fun getKmPackage ()Lkotlinx/metadata/KmPackage;
-	public fun getVersion ()[I
+	public fun getVersion ()Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public fun setFlags (I)V
 	public final fun setKmPackage (Lkotlinx/metadata/KmPackage;)V
-	public fun setVersion ([I)V
+	public fun setVersion (Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public final fun toKmPackage ()Lkotlinx/metadata/KmPackage;
 	public fun write ()Lkotlin/Metadata;
 }
@@ -1542,13 +1560,13 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$FileFacade$Writer : 
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade : kotlinx/metadata/jvm/KotlinClassMetadata {
-	public fun <init> (Ljava/util/List;[II)V
+	public fun <init> (Ljava/util/List;Lkotlinx/metadata/jvm/JvmMetadataVersion;I)V
 	public fun getFlags ()I
 	public final fun getPartClassNames ()Ljava/util/List;
-	public fun getVersion ()[I
+	public fun getVersion ()Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public fun setFlags (I)V
 	public final fun setPartClassNames (Ljava/util/List;)V
-	public fun setVersion ([I)V
+	public fun setVersion (Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public fun write ()Lkotlin/Metadata;
 }
 
@@ -1561,16 +1579,16 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassFacade
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart : kotlinx/metadata/jvm/KotlinClassMetadata {
-	public fun <init> (Lkotlinx/metadata/KmPackage;Ljava/lang/String;[II)V
+	public fun <init> (Lkotlinx/metadata/KmPackage;Ljava/lang/String;Lkotlinx/metadata/jvm/JvmMetadataVersion;I)V
 	public final fun accept (Lkotlinx/metadata/KmPackageVisitor;)V
 	public final fun getFacadeClassName ()Ljava/lang/String;
 	public fun getFlags ()I
 	public final fun getKmPackage ()Lkotlinx/metadata/KmPackage;
-	public fun getVersion ()[I
+	public fun getVersion ()Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public final fun setFacadeClassName (Ljava/lang/String;)V
 	public fun setFlags (I)V
 	public final fun setKmPackage (Lkotlinx/metadata/KmPackage;)V
-	public fun setVersion ([I)V
+	public fun setVersion (Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public final fun toKmPackage ()Lkotlinx/metadata/KmPackage;
 	public fun write ()Lkotlin/Metadata;
 }
@@ -1584,15 +1602,15 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$MultiFileClassPart$W
 }
 
 public final class kotlinx/metadata/jvm/KotlinClassMetadata$SyntheticClass : kotlinx/metadata/jvm/KotlinClassMetadata {
-	public fun <init> (Lkotlinx/metadata/KmLambda;[II)V
+	public fun <init> (Lkotlinx/metadata/KmLambda;Lkotlinx/metadata/jvm/JvmMetadataVersion;I)V
 	public final fun accept (Lkotlinx/metadata/KmLambdaVisitor;)V
 	public fun getFlags ()I
 	public final fun getKmLambda ()Lkotlinx/metadata/KmLambda;
-	public fun getVersion ()[I
+	public fun getVersion ()Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public final fun isLambda ()Z
 	public fun setFlags (I)V
 	public final fun setKmLambda (Lkotlinx/metadata/KmLambda;)V
-	public fun setVersion ([I)V
+	public fun setVersion (Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public final fun toKmLambda ()Lkotlinx/metadata/KmLambda;
 	public fun write ()Lkotlin/Metadata;
 }
@@ -1609,9 +1627,9 @@ public final class kotlinx/metadata/jvm/KotlinClassMetadata$Unknown : kotlinx/me
 	public static final field Companion Lkotlinx/metadata/jvm/KotlinClassMetadata$Unknown$Companion;
 	public static final field INSTANCE Lkotlinx/metadata/jvm/KotlinClassMetadata$Unknown;
 	public fun getFlags ()I
-	public fun getVersion ()[I
+	public fun getVersion ()Lkotlinx/metadata/jvm/JvmMetadataVersion;
 	public fun setFlags (I)V
-	public fun setVersion ([I)V
+	public fun setVersion (Lkotlinx/metadata/jvm/JvmMetadataVersion;)V
 	public fun write ()Lkotlin/Metadata;
 }
 
@@ -1626,14 +1644,14 @@ public final class kotlinx/metadata/jvm/KotlinModuleMetadata {
 	public static final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
 	public final fun toKmModule ()Lkotlinx/metadata/jvm/KmModule;
 	public static final fun write (Lkotlinx/metadata/jvm/KmModule;)[B
-	public static final fun write (Lkotlinx/metadata/jvm/KmModule;[I)[B
+	public static final fun write (Lkotlinx/metadata/jvm/KmModule;Lkotlinx/metadata/jvm/JvmMetadataVersion;)[B
 }
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Companion {
 	public final fun read ([B)Lkotlinx/metadata/jvm/KotlinModuleMetadata;
 	public final fun write (Lkotlinx/metadata/jvm/KmModule;)[B
-	public final fun write (Lkotlinx/metadata/jvm/KmModule;[I)[B
-	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;Lkotlinx/metadata/jvm/KmModule;[IILjava/lang/Object;)[B
+	public final fun write (Lkotlinx/metadata/jvm/KmModule;Lkotlinx/metadata/jvm/JvmMetadataVersion;)[B
+	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;Lkotlinx/metadata/jvm/KmModule;Lkotlinx/metadata/jvm/JvmMetadataVersion;ILjava/lang/Object;)[B
 }
 
 public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Writer {

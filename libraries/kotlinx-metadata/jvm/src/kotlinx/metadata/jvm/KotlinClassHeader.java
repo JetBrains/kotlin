@@ -178,7 +178,7 @@ public final class KotlinClassHeader implements Metadata {
     public static final int MULTI_FILE_CLASS_PART_KIND = 5;
 
     /**
-     * Use {@link KotlinClassMetadata#COMPATIBLE_METADATA_VERSION} instead
+     * Use {@link kotlinx.metadata.jvm.JvmMetadataVersion#CURRENT} instead
      */
     @Deprecated
     public static final int[] COMPATIBLE_METADATA_VERSION = Arrays.copyOf(JvmMetadataVersion.INSTANCE.toArray(), 3);

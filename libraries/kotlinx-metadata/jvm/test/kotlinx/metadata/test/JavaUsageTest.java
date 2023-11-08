@@ -7,6 +7,7 @@ package kotlinx.metadata.test;
 
 import kotlin.Metadata;
 import kotlinx.metadata.KmClass;
+import kotlinx.metadata.jvm.JvmMetadataVersion;
 import kotlinx.metadata.jvm.KotlinClassHeader;
 import kotlinx.metadata.jvm.KotlinClassMetadata;
 import org.junit.Test;
@@ -32,7 +33,8 @@ public class JavaUsageTest {
         Metadata m = MetadataSmokeTest.class.getAnnotation(Metadata.class);
         KotlinClassMetadata clazz1 = ((KotlinClassMetadata) Objects.requireNonNull(KotlinClassMetadata.readStrict(m)));
         Metadata written = clazz1.write();
-        assertArrayEquals(written.mv(), KotlinClassMetadata.COMPATIBLE_METADATA_VERSION);
+        //noinspection KotlinInternalInJava
+        assertArrayEquals(written.mv(), JvmMetadataVersion.CURRENT.toIntArray());
         assertEquals(50, written.xi());
     }
 }

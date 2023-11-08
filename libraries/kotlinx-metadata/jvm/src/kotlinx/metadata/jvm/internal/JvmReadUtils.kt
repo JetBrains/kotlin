@@ -71,11 +71,4 @@ internal object JvmReadUtils {
             throw IllegalArgumentException("Provided Metadata instance has version $jvmMetadataVersion, $postfix")
         }
     }
-
-    internal fun checkMetadataVersion(version: IntArray) {
-        require(version.size >= 2 && version[0] >= 1 && (version[0] > 1 || version[1] >= 4)) {
-            "This version of kotlinx-metadata-jvm doesn't support writing Kotlin metadata of version earlier than 1.4. " +
-                    "Please change the version from ${version.toList()} to at least [1, 4]."
-        }
-    }
 }
