@@ -1,17 +1,10 @@
-/*
- * Copyright 2010-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
-@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class, FreezingIsDeprecated::class)
+// No termination is going on here. But that's the closest location to other unhandled exception hook tests.
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlin.test.*
 
-import kotlin.native.concurrent.*
-
 fun main() {
-    val exceptionHook = { _: Throwable ->
-        println("Hook")
-    }.freeze()
+    val exceptionHook = { _: Throwable -> Unit }
 
     val oldHook = setUnhandledExceptionHook(exceptionHook)
     assertNull(oldHook)

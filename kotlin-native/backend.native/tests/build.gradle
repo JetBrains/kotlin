@@ -314,11 +314,6 @@ standaloneTest("runtime_basic_init") {
     expectedExitStatus = 0
 }
 
-standaloneTest("runtime_basic_exit") {
-    source = "runtime/basic/exit.kt"
-    expectedExitStatus = 42
-}
-
 standaloneTest('enumEquals') {
     useGoldenData = true
     source = "runtime/basic/enum_equals.kt"
@@ -833,112 +828,12 @@ standaloneTest("throw_from_except_constr") {
     source = "runtime/exceptions/throw_from_except_constr.kt"
 }
 
-standaloneTest("custom_hook") {
-    outputChecker = {
-        it.contains("value 42: Error. Runnable state: true") && it.contains("Uncaught Kotlin exception: kotlin.Error: an error")
-    }
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/exceptions/custom_hook.kt"
-    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
-}
-
-standaloneTest("custom_hook_memory_leak") {
-    outputChecker = {
-        it.contains("Hook 42") && it.contains("Uncaught Kotlin exception: kotlin.Error: an error")
-    }
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/exceptions/custom_hook_memory_leak.kt"
-}
-
-standaloneTest("custom_hook_get") {
-    source = "runtime/exceptions/custom_hook_get.kt"
-}
-
-standaloneTest("custom_hook_no_reset") {
-    outputChecker = {
-        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: some error")
-    }
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/exceptions/custom_hook_no_reset.kt"
-}
-
-standaloneTest("custom_hook_throws") {
-    outputChecker = {
-        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: another error") && !it.contains("some error")
-    }
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/exceptions/custom_hook_throws.kt"
-}
-
-standaloneTest("custom_hook_unhandled_exception") {
-    useGoldenData = true
-    source = "runtime/exceptions/custom_hook_unhandled_exception.kt"
-}
-
-standaloneTest("custom_hook_terminate") {
-    outputChecker = {
-        it.contains("Hook called")
-    }
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/exceptions/custom_hook_terminate.kt"
-}
-
-standaloneTest("custom_hook_terminate_unhandled_exception") {
-    outputChecker = {
-        it.contains("Hook called") && it.contains("Uncaught Kotlin exception: kotlin.Error: some error") && !it.contains("Not going to happen")
-    }
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/exceptions/custom_hook_terminate_unhandled_exception.kt"
-}
-
-standaloneTest("exception_in_global_init") {
-    source = "runtime/exceptions/exception_in_global_init.kt"
-    expectedExitStatusChecker = { it != 0 }
-    outputChecker = { s -> s.contains("Uncaught Kotlin exception:") && s.contains("FAIL") && !s.contains("in kotlin main") }
-}
-
 tasks.register("rethrow_exception", KonanLocalTest) {
     source = "runtime/exceptions/rethrow.kt"
 }
 
 tasks.register("throw_from_catch", KonanLocalTest) {
     source = "runtime/exceptions/throw_from_catch.kt"
-}
-
-standaloneTest("terminate") {
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/exceptions/terminate.kt"
-}
-
-standaloneTest("unhandled_exception") {
-    outputChecker = {
-        it.contains("Uncaught Kotlin exception: kotlin.Error: some error")
-    }
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/exceptions/unhandled_exception.kt"
-}
-
-
-tasks.register("main_exception", KonanLocalTest) {
-    outputChecker = { s -> s.contains("kotlin.Error: Hello!") }
-    expectedExitStatus = 1
-    source = "runtime/basic/main_exception.kt"
-}
-
-standaloneTest("runtime_basic_assert_failed") {
-    expectedExitStatusChecker = { it != 0 }
-    source = "runtime/basic/assert_failed.kt"
-}
-
-standaloneTest("runtime_basic_assert_passed") {
-    expectedExitStatus = 0
-    source = "runtime/basic/assert_passed.kt"
-}
-
-standaloneTest("runtime_basic_assert_disabled") {
-    expectedExitStatus = 0
-    enableKonanAssertions = false
-    source = "runtime/basic/assert_failed.kt"
 }
 
 tasks.register("initializers0", KonanLocalTest) {
