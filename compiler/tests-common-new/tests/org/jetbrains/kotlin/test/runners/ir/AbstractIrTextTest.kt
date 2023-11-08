@@ -11,13 +11,10 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
@@ -32,13 +29,23 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
-abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
+abstract class AbstractIrTextTest<FrontendOutput, BackendOutput>(
     private val targetPlatform: TargetPlatform,
-    targetBackend: TargetBackend
-) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
+    targetBackend: TargetBackend,
+) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) where FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>, BackendOutput : ResultingArtifact.Binary<BackendOutput> {
+
+    inner class KlibSignatureVerification(
+        val collectAndMemorizeIdSignatures: Constructor<AbstractCollectAndMemorizeIdSignatures>,
+        val verifySignaturesByDeserializedIr: Constructor<AbstractVerifyIdSignaturesByDeserializedIr>,
+        val verifySignaturesByK1LazyIr: Constructor<AbstractVerifyIdSignaturesByK1LazyIr>?,
+        val verifySignaturesByK2LazyIr: Constructor<AbstractVerifyIdSignaturesByK2LazyIr>,
+        val backendFacade: Constructor<BackendFacade<IrBackendInput, BackendOutput>>
+    )
+
     abstract val frontend: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
     abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+    abstract val klibSignatureVerification: KlibSignatureVerification?
 
     open fun TestConfigurationBuilder.applyConfigurators() {}
 
@@ -97,6 +104,19 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
                 ::IrPrettyKotlinDumpHandler,
                 ::IrSourceRangesDumpHandler,
                 ::IrMangledNameAndSignatureDumpHandler,
+            )
+            klibSignatureVerification?.collectAndMemorizeIdSignatures?.let { useHandlers(it) }
+        }
+
+        klibSignatureVerification?.backendFacade?.let { facadeStep(it) }
+
+        klibArtifactsHandlersStep {
+            useHandlers(
+                listOfNotNull(
+                    klibSignatureVerification?.verifySignaturesByDeserializedIr,
+                    klibSignatureVerification?.verifySignaturesByK1LazyIr,
+                    klibSignatureVerification?.verifySignaturesByK2LazyIr
+                )
             )
         }
     }

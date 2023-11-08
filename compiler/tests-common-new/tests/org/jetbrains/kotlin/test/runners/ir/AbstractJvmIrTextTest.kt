@@ -17,8 +17,13 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-abstract class AbstractJvmIrTextTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
-    AbstractIrTextTest<FrontendOutput>(JvmPlatforms.defaultJvmPlatform, TargetBackend.JVM_IR) {
+abstract class AbstractJvmIrTextTest<FrontendOutput> :
+    AbstractIrTextTest<FrontendOutput, ResultingArtifact.Binary.Empty>(
+        JvmPlatforms.defaultJvmPlatform,
+        TargetBackend.JVM_IR
+    ) where FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput> {
+
+    final override val klibSignatureVerification: KlibSignatureVerification? get() = null
 
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(

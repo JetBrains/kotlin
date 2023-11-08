@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.handlers.JsCollectAndMemorizeIdSignatures
+import org.jetbrains.kotlin.js.test.handlers.JsVerifyIdSignaturesByDeserializedIr
+import org.jetbrains.kotlin.js.test.handlers.JsVerifyIdSignaturesByK2LazyIr
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTextTestBase
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -20,6 +24,14 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.runners.codegen.FirPsiCodegenTest
 
 abstract class AbstractFirJsIrTextTestBase(private val parser: FirParser) : AbstractJsIrTextTestBase<FirOutputArtifact>() {
+
+    final override val klibSignatureVerification = KlibSignatureVerification(
+        collectAndMemorizeIdSignatures = ::JsCollectAndMemorizeIdSignatures,
+        verifySignaturesByDeserializedIr = ::JsVerifyIdSignaturesByDeserializedIr,
+        verifySignaturesByK1LazyIr = null,
+        verifySignaturesByK2LazyIr = ::JsVerifyIdSignaturesByK2LazyIr,
+        backendFacade = ::FirJsKlibBackendFacade
+    )
 
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.FIR

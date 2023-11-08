@@ -34,7 +34,11 @@ fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: De
             }
     }
     getRecursive(module, kind)
-    return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
+    return visited.mapNotNull {
+        // Important: Common KMP test modules can not have KLIB artifacts, all their declarations just go to the corresponding actual KMP modules.
+        val artifact = testServices.dependencyProvider.getArtifactSafe(it, ArtifactKinds.KLib) ?: return@mapNotNull null
+        artifact.outputFile
+    }
 }
 
 fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {

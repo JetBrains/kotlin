@@ -9,14 +9,20 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 
-abstract class AbstractNativeIrTextTestBase<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
-    AbstractIrTextTest<FrontendOutput>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
+abstract class AbstractNativeIrTextTestBase<FrontendOutput> :
+    AbstractIrTextTest<FrontendOutput, BinaryArtifacts.KLib>(
+        NativePlatforms.unspecifiedNativePlatform,
+        TargetBackend.NATIVE
+    ) where FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput> {
+
+    final override val klibSignatureVerification: KlibSignatureVerification? get() = null
 
     final override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(

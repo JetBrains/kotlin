@@ -139,6 +139,21 @@ class ComposedRegisteredDirectives(
     }
 }
 
+// TODO: shouldn't it be merged with ComposedRegisteredDirectives?
+class UniqueRegisteredDirectives(
+    private val delegate: RegisteredDirectives,
+) : RegisteredDirectives() {
+    override fun iterator() = delegate.toCollection(linkedSetOf()).iterator()
+    override fun contains(directive: Directive) = directive in delegate
+    override fun get(directive: StringDirective) = delegate[directive].unique()
+    override fun <T : Any> get(directive: ValueDirective<T>) = delegate[directive].unique()
+    override fun isEmpty() = delegate.isEmpty()
+
+    companion object {
+        private fun <T> List<T>.unique(): List<T> = LinkedHashSet(this).toList()
+    }
+}
+
 // --------------------------- Utils ---------------------------
 
 fun RegisteredDirectives.singleValue(directive: StringDirective): String {

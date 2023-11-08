@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K1: JS_IR
-
 // MODULE: m1
 // FILE: genericClassInDifferentModule_m1.kt
 
