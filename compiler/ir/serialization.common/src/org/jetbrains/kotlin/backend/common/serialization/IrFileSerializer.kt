@@ -183,7 +183,7 @@ open class IrFileSerializer(
     private fun serializeIrDeclarationOrigin(origin: IrDeclarationOrigin): Int = serializeString(origin.name)
 
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin): Int =
-        serializeString((origin as? IrStatementOriginImpl)?.debugName ?: error("Unable to serialize origin ${origin.javaClass.name}"))
+        serializeString(origin.debugName)
 
     private fun serializeCoordinates(start: Int, end: Int): Long = if (skipPrivateApi) {
         0L
