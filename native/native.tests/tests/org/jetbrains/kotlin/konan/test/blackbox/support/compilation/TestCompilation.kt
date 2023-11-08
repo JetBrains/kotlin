@@ -203,7 +203,8 @@ internal class LibraryCompilation(
 ) : SourceBasedCompilation<KLIB>(
     targets = settings.get(),
     home = settings.get(),
-    classLoader = if (ifNotNullCompileWithNewCompilerAndDumpCallSites != null) settings.get() else KotlinNativeClassLoader.getAlternativeClassLoader(),
+//    classLoader = if (ifNotNullCompileWithNewCompilerAndDumpCallSites != null) settings.get() else KotlinNativeClassLoader.getAlternativeClassLoader(),
+    classLoader = settings.get(),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
     threadStateChecker = settings.get(),
@@ -211,11 +212,12 @@ internal class LibraryCompilation(
     gcType = settings.get(),
     gcScheduler = settings.get(),
     allocator = settings.get(),
-    pipelineType = if (ifNotNullCompileWithNewCompilerAndDumpCallSites == null
-        && KotlinNativeClassLoader.getAlternativeClassLoader().embeddedKotlinVersion.startsWith("1.9")
-    ) {
-        PipelineType.K1
-    } else settings.get(),
+//    pipelineType = if (ifNotNullCompileWithNewCompilerAndDumpCallSites == null
+//        && KotlinNativeClassLoader.getAlternativeClassLoader().embeddedKotlinVersion.startsWith("1.9")
+//    ) {
+//        PipelineType.K1
+//    } else settings.get(),
+    pipelineType = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     compilerPlugins = settings.get(),
     sourceModules = sourceModules,

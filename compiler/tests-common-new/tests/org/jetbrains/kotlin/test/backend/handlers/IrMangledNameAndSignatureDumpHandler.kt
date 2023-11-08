@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.interpreter.intrinsicConstEvaluationAnnotation
@@ -116,9 +115,9 @@ class IrMangledNameAndSignatureDumpHandler(
      *
      * Each element is a list of `// CHECK` blocks for a single declaration.
      */
-    private val checkBlockGroupIterator: Iterator<CheckBlockGroup> by lazy {
+    private val checkBlockGroupIterator: Iterator<IrTextTestCheckBlockGroup> by lazy {
         try {
-            parseAllCheckBlocks(expectedFile.readText())
+            parseAllIrTextTestCheckBlocks(expectedFile.readText())
         } catch (e: FileNotFoundException) {
             emptyList()
         }.iterator()
@@ -441,18 +440,18 @@ private fun <Declaration, Mangler : KotlinMangler<Declaration>> Mangler.addMangl
  * @property backends The backends this `// CHECK` block is for.
  * @property expectations The list of expectation lines in this `// CHECK` block.
  */
-private data class CheckBlock(val backends: List<TargetBackend>, val expectations: List<String>)
+internal data class IrTextTestCheckBlock(val backends: List<TargetBackend>, val expectations: List<String>)
 
 /**
  * A list of `// CHECK` blocks for a single declaration.
  */
-private typealias CheckBlockGroup = List<CheckBlock>
+internal typealias IrTextTestCheckBlockGroup = List<IrTextTestCheckBlock>
 
-private fun parseAllCheckBlocks(input: String): List<CheckBlockGroup> {
-    val result = mutableListOf<CheckBlockGroup>()
+internal fun parseAllIrTextTestCheckBlocks(input: String): List<IrTextTestCheckBlockGroup> {
+    val result = mutableListOf<IrTextTestCheckBlockGroup>()
     val lineIterator = input.lines().iterator()
 
-    var currentCheckBlockGroup = mutableListOf<CheckBlock>() // CHECK blocks for a single declaration
+    var currentCheckBlockGroup = mutableListOf<IrTextTestCheckBlock>() // CHECK blocks for a single declaration
 
     var line = if (lineIterator.hasNext()) lineIterator.next() else return emptyList()
 
@@ -511,7 +510,7 @@ private val whitespaceRegex = "\\s+".toRegex()
  * @param lineIterator The iterator over lines in the expectation file.
  * @return The line representing the beginning of the next `// CHECK` block (if there is one), and the parsed `// CHECK` block.
  */
-private fun parseSingleCheckBlock(trimmedCheckLine: String, lineIterator: Iterator<String>): Pair<String?, CheckBlock> {
+private fun parseSingleCheckBlock(trimmedCheckLine: String, lineIterator: Iterator<String>): Pair<String?, IrTextTestCheckBlock> {
     assert(trimmedCheckLine.startsWith(CHECK_MARKER))
     val colonIndex = trimmedCheckLine.indexOf(':')
     if (colonIndex < 0) {
@@ -528,7 +527,7 @@ private fun parseSingleCheckBlock(trimmedCheckLine: String, lineIterator: Iterat
         val trimmed = line.trim()
         if (trimmed.startsWith(CHECK_MARKER)) {
             // Encountered the next // CHECK block
-            return trimmed to CheckBlock(backends, expectations)
+            return trimmed to IrTextTestCheckBlock(backends, expectations)
         }
         if (trimmed.startsWith("//")) {
             expectations.add(trimmed)
@@ -538,5 +537,5 @@ private fun parseSingleCheckBlock(trimmedCheckLine: String, lineIterator: Iterat
         }
     }
     // Either we have no more lines, or the next line is not valid beginning of a `// CHECK` block.
-    return null to CheckBlock(backends, expectations)
+    return null to IrTextTestCheckBlock(backends, expectations)
 }

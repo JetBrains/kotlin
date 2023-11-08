@@ -167,4 +167,21 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override var irActualizerResult: IrActualizedResult? = null,
         override val fir2IrComponents: Fir2IrComponents?
     ) : IrBackendInput()
+
+    data class LazyIrReconstructedFromKlib(
+        override val irModuleFragment: IrModuleFragment,
+        override val dependentIrModuleFragments: List<IrModuleFragment>,
+        override val irPluginContext: IrPluginContext,
+        override val diagnosticReporter: BaseDiagnosticsCollector,
+        override val descriptorMangler: KotlinMangler.DescriptorMangler,
+        override val irMangler: KotlinMangler.IrMangler,
+        override val firMangler: FirMangler? = null,
+        override val fir2IrComponents: Fir2IrComponents? = null
+    ) : IrBackendInput() {
+
+        override val kind: BackendKind<IrBackendInput>
+            get() = BackendKinds.DeserializedIrBackend
+
+        override var irActualizerResult: IrActualizedResult? = null
+    }
 }

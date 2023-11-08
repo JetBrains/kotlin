@@ -239,6 +239,16 @@ fun main(args: Array<String>) {
                 model("ir/irText")
             }
 
+            testClass<AbstractClassicJsToK2CompatibilityTest> {
+                model("ir/irText")
+            }
+            testClass<AbstractFirLightTreeJsToK2CompatibilityTest> {
+                model("ir/irText")
+            }
+            testClass<AbstractFirPsiJsToK2CompatibilityTest> {
+                model("ir/irText")
+            }
+
             testClass<AbstractFirJsCodegenBoxTest> {
                 model("codegen/box", excludeDirs = jvmOnlyBoxTests)
             }
