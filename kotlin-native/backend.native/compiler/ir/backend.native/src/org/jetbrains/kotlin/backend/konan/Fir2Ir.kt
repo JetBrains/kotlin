@@ -96,7 +96,7 @@ internal fun PhaseContext.fir2Ir(
     val fir2IrConfiguration = Fir2IrConfiguration(
             languageVersionSettings = configuration.languageVersionSettings,
             diagnosticReporter = diagnosticsReporter,
-            linkViaSignatures = false,
+            linkViaSignatures = true,
             evaluatedConstTracker = configuration
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             inlineConstTracker = null,
