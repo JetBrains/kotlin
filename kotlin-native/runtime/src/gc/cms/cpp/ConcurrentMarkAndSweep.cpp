@@ -83,10 +83,6 @@ void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkFlags() {
     rootSetLocked_.store(false, std::memory_order_release);
 }
 
-mm::ThreadData& gc::ConcurrentMarkAndSweep::ThreadData::commonThreadData() const {
-    return threadData_;
-}
-
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
     allocator_(allocator),

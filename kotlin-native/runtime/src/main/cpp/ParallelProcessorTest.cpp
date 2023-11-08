@@ -49,7 +49,7 @@ struct Task {
     Task* next_ = nullptr;
 };
 
-auto workBatch(std::size_t size) {
+auto createWork(std::size_t size) {
     std::list<Task> batch;
     for (size_t i = 0; i < size; ++i) {
         batch.emplace_back();
@@ -66,9 +66,11 @@ void offerWork(WorkList& wl, Iterable& batch) {
 }
 
 using ListImpl = intrusive_forward_list<Task>;
-static constexpr auto kBatchSize = 256;
-using Processor = ParallelProcessor<ListImpl, kBatchSize, 1024>;
+constexpr auto kBatchSize = 256;
+constexpr auto kBatchPoolSize = 4;
+using Processor = ParallelProcessor<ListImpl, kBatchSize, kBatchPoolSize>;
 using Worker = typename Processor::Worker;
+using WorkSource = typename Processor::WorkSource;
 
 } // namespace
 
@@ -99,16 +101,102 @@ TEST(ParallelProcessorTest, ContededRegistration) {
 
 TEST(ParallelProcessorTest, Sharing) {
     Processor processor;
+
     Worker giver(processor);
     Worker taker(processor);
+    EXPECT_THAT(processor.registeredWorkers(), 2);
 
-    auto work = workBatch(kBatchSize * 2);
-    offerWork(giver, work);
+    auto twoBatches = createWork(kBatchSize * 2);
+    offerWork(giver, twoBatches);
 
-    EXPECT_TRUE(taker.localEmpty());
+    EXPECT_TRUE(taker.retainsNoWork());
 
     // have to steal from giver
     EXPECT_NE(taker.tryPop(), nullptr);
 
-    EXPECT_FALSE(taker.localEmpty());
+    EXPECT_FALSE(taker.retainsNoWork());
+}
+
+TEST(ParallelProcessorTest, SharingFromNonWorkerSource) {
+    Processor processor;
+
+    WorkSource giver(processor);
+    EXPECT_THAT(processor.registeredWorkers(), 0);
+
+    Worker taker(processor);
+    EXPECT_THAT(processor.registeredWorkers(), 1);
+
+    auto work = createWork(kBatchSize * 2);
+    offerWork(giver, work);
+
+    EXPECT_TRUE(taker.retainsNoWork());
+
+    // have to steal from giver
+    EXPECT_NE(taker.tryPop(), nullptr);
+
+    EXPECT_FALSE(taker.retainsNoWork());
+}
+
+TEST(ParallelProcessorTest, Overflow) {
+    Processor processor;
+    Worker worker(processor);
+
+    auto workSize = kBatchSize * (kBatchPoolSize + 2);
+    auto work = createWork(workSize);
+    offerWork(worker, work);
+
+    std::size_t poppedCount = 0;
+    while (worker.tryPop() != nullptr) {
+        ++poppedCount;
+    }
+    EXPECT_THAT(poppedCount, workSize);
+    EXPECT_THAT(worker.retainsNoWork(), true);
+}
+
+TEST(ParallelProcessorTest, ForceFlush) {
+    Processor processor;
+
+    WorkSource source(processor);
+
+    auto workSize = kBatchSize / 2;
+    auto halfBatch = createWork(workSize);
+    offerWork(source, halfBatch);
+
+    EXPECT_THAT(source.forceFlush(), true);
+    EXPECT_THAT(source.retainsNoWork(), true);
+
+    Worker checker(processor);
+    std::size_t poppedCount = 0;
+    while (checker.tryPop() != nullptr) {
+        ++poppedCount;
+    }
+    EXPECT_THAT(poppedCount, workSize);
+}
+
+TEST(ParallelProcessorTest, ForceFlushWithOverflow) {
+    Processor processor;
+
+    // Fill up the processor's work pool
+    Worker overflower(processor);
+
+    auto poolSizeBatches = createWork(kBatchSize * kBatchPoolSize);
+    offerWork(overflower, poolSizeBatches);
+
+    EXPECT_THAT(overflower.forceFlush(), true);
+
+    // No overflow a local work source
+    WorkSource source(processor);
+
+    auto twoBatches = createWork(kBatchSize * 2);
+    offerWork(source, twoBatches);
+
+    // no space to flush into
+    EXPECT_THAT(source.forceFlush(), false);
+
+    // drain the processor's pool
+    while (overflower.tryPop() != nullptr) {}
+
+    // now can flush
+    EXPECT_THAT(source.forceFlush(), true);
+    EXPECT_THAT(source.retainsNoWork(), true);
 }

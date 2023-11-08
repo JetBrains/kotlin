@@ -43,20 +43,22 @@ public:
 
         void onThreadRegistration() noexcept { barriers_.onThreadRegistration(); }
 
-        BarriersThreadData& barriers() noexcept { return barriers_; }
-
         bool tryLockRootSet();
         void publish();
         bool published() const;
         void clearMarkFlags();
 
-        mm::ThreadData& commonThreadData() const;
+        auto& commonThreadData() const noexcept { return threadData_; }
+        auto& barriers() noexcept { return barriers_; }
+        // TODO use in concurrent mark
+        [[maybe_unused]] auto& markQueue() noexcept { return markQueue_; }
 
     private:
         friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
         BarriersThreadData barriers_;
+        ManuallyScoped<mark::ParallelMark::MutatorQueue> markQueue_;
 
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;

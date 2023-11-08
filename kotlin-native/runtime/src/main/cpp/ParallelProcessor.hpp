@@ -24,6 +24,7 @@ namespace kotlin {
  */
 template <typename ListImpl, std::size_t kBatchSize, std::size_t kBatchesPoolSize>
 class ParallelProcessor : private Pinned {
+private:
     class Batch {
     public:
         ALWAYS_INLINE bool empty() const noexcept {
@@ -71,25 +72,32 @@ class ParallelProcessor : private Pinned {
         std::size_t elemsCount_ = 0;
     };
 
-public:
-    class Worker : private Pinned {
-        friend ParallelProcessor;
+    class LocalQueue : private Pinned {
     public:
-        explicit Worker(ParallelProcessor& dispatcher) : dispatcher_(dispatcher) {
-            dispatcher_.registeredWorkers_.fetch_add(1, std::memory_order_relaxed);
-            RuntimeLogDebug({ kTagBalancing }, "Worker registered");
-        }
-
         ALWAYS_INLINE bool localEmpty() const noexcept {
-            return batch_.empty() && overflowList_.empty();
+            return localQueue_.empty();
         }
 
         ALWAYS_INLINE bool tryPushLocal(typename ListImpl::reference value) noexcept {
-            return overflowList_.try_push_front(value);
+            return localQueue_.try_push_front(value);
         }
 
         ALWAYS_INLINE typename ListImpl::pointer tryPopLocal() noexcept {
-            return overflowList_.try_pop_front();
+            return localQueue_.try_pop_front();
+        }
+
+    protected:
+        ListImpl localQueue_;
+    };
+
+public:
+    class WorkSource : public LocalQueue {
+        friend ParallelProcessor;
+    public:
+        explicit WorkSource(ParallelProcessor& dispatcher) : dispatcher_(dispatcher) {}
+
+        ALWAYS_INLINE bool retainsNoWork() const noexcept {
+            return batch_.empty() && this->localEmpty();
         }
 
         ALWAYS_INLINE bool tryPush(typename ListImpl::reference value) noexcept {
@@ -97,75 +105,113 @@ public:
                 bool released = dispatcher_.releaseBatch(std::move(batch_));
                 if (!released) {
                     RuntimeLogDebug({ kTagBalancing }, "Batches pool overflow");
-                    batch_.transferAllInto(overflowList_);
+                    batch_.transferAllInto(overflowList());
                 }
                 batch_ = Batch{};
             }
             return batch_.tryPush(value);
         }
 
+        /**
+         * Tries to transfer all the tasks stored in this WorkSource locally into the shared ParallelProcessor's storage.
+         * @return `true` iff this WorkSource doesn't contain any local tasks anymore.
+         */
+        ALWAYS_INLINE bool forceFlush() noexcept {
+            while (true) {
+                if (!batch_.empty()) {
+                    bool released = dispatcher_.releaseBatch(std::move(batch_));
+                    if (released) {
+                        RuntimeLogDebug({ kTagBalancing }, "Work butch flushed");
+                        batch_ = Batch{};
+                    } else {
+                        RuntimeLogDebug({ kTagBalancing }, "Failed to force flush work queue");
+                        return false;
+                    };
+                }
+                RuntimeAssert(batch_.empty(), "Now must be empty");
+                if (overflowList().empty()) {
+                    return true;
+                } else {
+                    RuntimeLogDebug({ kTagBalancing }, "Refiling batch from overflow list");
+                    batch_.fillFrom(overflowList());
+                }
+            }
+        }
+
+    protected:
+        ListImpl& overflowList() noexcept {
+            return this->localQueue_;
+        }
+
+        ParallelProcessor& dispatcher_;
+        Batch batch_;
+    };
+
+    class Worker : public WorkSource {
+        friend ParallelProcessor;
+    public:
+        explicit Worker(ParallelProcessor& dispatcher) : WorkSource(dispatcher) {
+            this->dispatcher_.registeredWorkers_.fetch_add(1, std::memory_order_relaxed);
+            RuntimeLogDebug({ kTagBalancing }, "Worker registered");
+        }
+
         ALWAYS_INLINE typename ListImpl::pointer tryPop() noexcept {
-            if (batch_.empty()) {
+            if (this->batch_.empty()) {
                 while (true) {
-                    bool acquired = dispatcher_.acquireBatch(batch_);
+                    bool acquired = this->dispatcher_.acquireBatch(this->batch_);
                     if (!acquired) {
-                        if (!overflowList_.empty()) {
-                            batch_.fillFrom(overflowList_);
-                            RuntimeLogDebug({ kTagBalancing }, "Acquired %zu elements from the overflow list", batch_.elementsCount());
+                        if (!this->overflowList().empty()) {
+                            this->batch_.fillFrom(this->overflowList());
+                            RuntimeLogDebug({ kTagBalancing }, "Acquired %zu elements from the overflow list", this->batch_.elementsCount());
                         } else {
                             bool newWorkAvailable = waitForMoreWork();
                             if (newWorkAvailable) continue;
                             return nullptr;
                         }
                     }
-                    RuntimeAssert(!batch_.empty(), "Must have acquired some elements");
+                    RuntimeAssert(!this->batch_.empty(), "Must have acquired some elements");
                     break;
                 }
             }
 
-            return batch_.tryPop();
+            return this->batch_.tryPop();
         }
 
     private:
         bool waitForMoreWork() noexcept {
-            RuntimeAssert(batch_.empty(), "Local batch must be depleted before waiting for shared work");
-            RuntimeAssert(overflowList_.empty(), "Local overflow list must be depleted before waiting for shared work");
+            RuntimeAssert(this->batch_.empty(), "Local batch must be depleted before waiting for shared work");
+            RuntimeAssert(this->overflowList().empty(), "Local overflow list must be depleted before waiting for shared work");
 
-            std::unique_lock lock(dispatcher_.waitMutex_);
+            std::unique_lock lock(this->dispatcher_.waitMutex_);
 
-            auto nowWaiting = dispatcher_.waitingWorkers_.fetch_add(1, std::memory_order_relaxed) + 1;
+            auto nowWaiting = this->dispatcher_.waitingWorkers_.fetch_add(1, std::memory_order_relaxed) + 1;
             RuntimeLogDebug({ kTagBalancing }, "Worker goes to sleep (now sleeping %zu of %zu)",
-                            nowWaiting, dispatcher_.registeredWorkers_.load(std::memory_order_relaxed));
+                            nowWaiting, this->dispatcher_.registeredWorkers_.load(std::memory_order_relaxed));
 
-            if (dispatcher_.allDone_) {
-                dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
+            if (this->dispatcher_.allDone_) {
+                this->dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
                 return false;
             }
 
-            if (nowWaiting == dispatcher_.registeredWorkers_.load(std::memory_order_relaxed)) {
+            if (nowWaiting == this->dispatcher_.registeredWorkers_.load(std::memory_order_relaxed)) {
                 // we are the last ones awake
                 RuntimeLogDebug({ kTagBalancing }, "Worker has detected termination");
-                dispatcher_.allDone_ = true;
+                this->dispatcher_.allDone_ = true;
+                this->dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
                 lock.unlock();
-                dispatcher_.waitCV_.notify_all();
-                dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
+                this->dispatcher_.waitCV_.notify_all();
                 return false;
             }
 
-            dispatcher_.waitCV_.wait(lock);
-            dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
-            if (dispatcher_.allDone_) {
+            this->dispatcher_.waitCV_.wait(lock);
+            this->dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
+            if (this->dispatcher_.allDone_) {
                 return false;
             }
             RuntimeLogDebug({ kTagBalancing }, "Worker woke up");
 
             return true;
         }
-
-        ParallelProcessor& dispatcher_;
-
-        Batch batch_;
-        ListImpl overflowList_;
     };
 
     ParallelProcessor() = default;

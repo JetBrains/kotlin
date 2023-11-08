@@ -78,6 +78,9 @@ class ParallelMark : private Pinned {
     // work balancing parameters were chosen pretty arbitrary
     using ParallelProcessor = ParallelProcessor<MarkStackImpl, 512, 4096>;
 public:
+
+    using MutatorQueue = ParallelProcessor::WorkSource;
+
     class MarkTraits {
     public:
         using MarkQueue = ParallelProcessor::Worker;

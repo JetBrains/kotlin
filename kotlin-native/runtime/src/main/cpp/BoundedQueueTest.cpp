@@ -88,6 +88,8 @@ TEST(BoundedQueueTest, ConcurrentDequeue) {
         });
     }
     start = true;
+
+    threads.clear();
 }
 
 TEST(BoundedQueueTest, PingPongWithOverflow) {
