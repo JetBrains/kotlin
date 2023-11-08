@@ -25,7 +25,9 @@ class Ir2FirManglerAdapter(private val delegate: FirMangler) : AbstractKotlinMan
 
     override fun IrDeclaration.isExported(compatibleMode: Boolean): Boolean = delegate.run { fir().isExported(compatibleMode) }
 
-    override fun IrDeclaration.mangleString(compatibleMode: Boolean): String = delegate.run { fir().mangleString(compatibleMode) }
+    override fun IrDeclaration.mangleString(compatibleMode: Boolean): String {
+        error("Should not be called")
+    }
 
     override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = delegate.run { fir().signatureString(compatibleMode) }
 

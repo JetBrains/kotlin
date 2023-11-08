@@ -20,16 +20,7 @@ object DisabledDescriptorMangler : KotlinMangler.DescriptorMangler {
     override fun DeclarationDescriptor.isExported(compatibleMode: Boolean): Boolean =
         error("Should not be called")
 
-    override fun DeclarationDescriptor.mangleString(compatibleMode: Boolean): String =
-        error("Should not be called")
-
     override fun DeclarationDescriptor.signatureString(compatibleMode: Boolean): String =
-        error("Should not be called")
-
-    override fun ClassDescriptor.mangleEnumEntryString(compatibleMode: Boolean): String =
-        error("Should not be called")
-
-    override fun PropertyDescriptor.mangleFieldString(compatibleMode: Boolean): String =
         error("Should not be called")
 }
 

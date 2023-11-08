@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarati
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
 abstract class FirMangler : AbstractKotlinMangler<FirDeclaration>() {
-    override fun FirDeclaration.mangleString(compatibleMode: Boolean): String = getMangleComputer(MangleMode.FULL, compatibleMode).computeMangle(this)
 
     override fun FirDeclaration.signatureString(compatibleMode: Boolean): String = getMangleComputer(MangleMode.SIGNATURE, compatibleMode).computeMangle(this)
 

@@ -61,8 +61,6 @@ class ManglerChecker(
     private fun IrDeclaration.shouldBeSkipped(): Boolean = accept(skipper, null)
     private fun KotlinMangler<IrDeclaration>.isExportCheck(declaration: IrDeclaration) =
         !declaration.shouldBeSkipped() && declaration.isExported(false)
-    private fun KotlinMangler<IrDeclaration>.stringMangle(declaration: IrDeclaration) =
-        declaration.mangleString(compatibleMode = false)
 
     private fun KotlinMangler<IrDeclaration>.signatureMangle(declaration: IrDeclaration) =
         declaration.signatureString(compatibleMode = false)
@@ -98,10 +96,6 @@ class ManglerChecker(
         }
 
         if (!exported) return
-
-        manglers.checkAllEqual("", { stringMangle(declaration) }) { m1, r1, m2, r2 ->
-            error("FULL: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
-        }
 
         manglers.checkAllEqual("", { signatureMangle(declaration) }) { m1, r1, m2, r2 ->
             error("SIG: ${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")
