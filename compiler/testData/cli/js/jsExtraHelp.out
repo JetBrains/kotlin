@@ -6,8 +6,6 @@ where advanced options include:
   -Xenable-extension-functions-in-externals
                              Enable extension function members in external interfaces.
   -Xfake-override-validator  Enable the IR fake override validator.
-  -Xforce-deprecated-legacy-compiler-usage
-                             This flag is used only for our inner infrastructure. It will soon be removed, so it's no longer safe to use.
   -Xfriend-modules=<path>    Paths to friend modules.
   -Xfriend-modules-disabled  Disable internal declaration export.
   -Xgenerate-dts             Generate a TypeScript declaration .d.ts file alongside the JS file. This is available only in the IR backend.
@@ -43,7 +41,6 @@ where advanced options include:
   -Xir-safe-external-boolean Wrap access to external 'Boolean' properties with an explicit conversion to 'Boolean'.
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when accessing external 'Boolean' properties.
-  -Xmetadata-only            Generate .meta.js and .kjsm files only.
   -Xoptimize-generated-js    Perform additional optimizations on the generated JS code.
   -Xpartial-linkage-loglevel={info|warning|error}
                              Define the compile-time log level for partial linkage.

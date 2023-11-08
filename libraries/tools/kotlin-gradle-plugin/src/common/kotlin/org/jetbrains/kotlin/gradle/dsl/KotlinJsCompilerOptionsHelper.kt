@@ -14,11 +14,8 @@ internal object KotlinJsCompilerOptionsHelper {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.fillCompilerArguments(from, args)
         args.friendModulesDisabled = from.friendModulesDisabled.get()
         args.main = from.main.get().mode
-        args.metaInfo = from.metaInfo.get()
         args.moduleKind = from.moduleKind.get().kind
         args.moduleName = from.moduleName.orNull
-        args.noStdlib = from.noStdlib.get()
-        args.outputFile = from.outputFile.orNull
         args.sourceMap = from.sourceMap.get()
         args.sourceMapEmbedSources = from.sourceMapEmbedSources.orNull?.mode
         args.sourceMapNamesPolicy = from.sourceMapNamesPolicy.orNull?.policy
@@ -35,11 +32,8 @@ internal object KotlinJsCompilerOptionsHelper {
         org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(from, into)
         into.friendModulesDisabled.convention(from.friendModulesDisabled)
         into.main.convention(from.main)
-        into.metaInfo.convention(from.metaInfo)
         into.moduleKind.convention(from.moduleKind)
         into.moduleName.convention(from.moduleName)
-        into.noStdlib.convention(from.noStdlib)
-        into.outputFile.convention(from.outputFile)
         into.sourceMap.convention(from.sourceMap)
         into.sourceMapEmbedSources.convention(from.sourceMapEmbedSources)
         into.sourceMapNamesPolicy.convention(from.sourceMapNamesPolicy)
