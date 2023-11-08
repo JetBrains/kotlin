@@ -19006,6 +19006,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("contextReceiverToExtensionReceiver.kt")
+        public void testContextReceiverToExtensionReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/contextReceiverToExtensionReceiver.kt");
+        }
+
+        @Test
         @TestMetadata("CustomHashSetSize.kt")
         public void testCustomHashSetSize() throws Exception {
             runTest("compiler/testData/codegen/box/fir/CustomHashSetSize.kt");
