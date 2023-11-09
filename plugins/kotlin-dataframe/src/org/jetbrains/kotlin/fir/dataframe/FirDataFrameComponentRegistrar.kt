@@ -58,20 +58,20 @@ class GeneratedNames : IGeneratedNames {
 
     override fun nextName(s: String): ClassId {
         val s = s.prefixIfNot("Token")
-        val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), FqName(s), true)
+        val newId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName(s), true)
         tokens.add(newId)
         return newId
     }
 
     override fun nextScope(s: String): ClassId {
-        val newId = ClassId(FqName("org.jetbrains.kotlinx.dataframe"), FqName("${s}Scope"), true)
+        val newId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("${s}Scope"), true)
         scopes.add(newId)
         return newId
     }
 
     override fun nextFunction(s: String): CallableId {
         val i = id.getValue(s)
-        val callableId = CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("$s$i"))
+        val callableId = CallableId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, Name.identifier("$s$i"))
         id[s] = i + 1
         callables.add(callableId)
         return callableId
