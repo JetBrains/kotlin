@@ -27,24 +27,6 @@ import java.util.*
 import kotlin.collections.set
 import kotlin.math.abs
 
-// TODO remove direct usages of [mapToKey] from [NameTable] & co and move it to scripting & REPL infrastructure. Review usages.
-private fun <T> mapToKey(declaration: T): String {
-    return with(JsManglerIr) {
-        if (declaration is IrDeclaration) {
-            try {
-                declaration.hashedMangle(compatibleMode = false).toString()
-            } catch (e: Throwable) {
-                // FIXME: We can't mangle some local declarations. But
-                "wrong_key"
-            }
-        } else if (declaration is String) {
-            declaration.hashMangle.toString()
-        } else {
-            error("Key is not generated for " + declaration?.let { it::class.simpleName })
-        }
-    }
-}
-
 abstract class NameScope {
     abstract fun isReserved(name: String): Boolean
 
@@ -56,7 +38,6 @@ abstract class NameScope {
 class NameTable<T>(
     val parent: NameScope = EmptyScope,
     val reserved: MutableSet<String> = mutableSetOf(),
-    val mappedNames: MutableMap<String, String>? = null,
 ) : NameScope() {
     val names = mutableMapOf<T, String>()
 
@@ -69,7 +50,6 @@ class NameTable<T>(
     fun declareStableName(declaration: T, name: String) {
         names[declaration] = name
         reserved.add(name)
-        mappedNames?.set(mapToKey(declaration), name)
     }
 
     fun declareFreshName(declaration: T, suggestedName: String): String {

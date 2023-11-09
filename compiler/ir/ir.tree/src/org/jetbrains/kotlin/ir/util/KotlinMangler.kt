@@ -72,23 +72,13 @@ interface KotlinMangler<D : Any> {
          * (depending on the target platform).
          *
          * The result of this function is only used for assigning names to binary symbols of Kotlin functions in the final executable
-         * produced by Kotlin/Native, and for generating stable names in the JavaScript code produced by Kotlin/JS.
+         * produced by Kotlin/Native.
          * **It does not affect klib ABI.**
          *
          * @param compatibleMode If `true`, the mangled names of property backing fields are just those fields' names.
          * Otherwise, mangles such fields exactly as their corresponding properties.
          */
         fun IrDeclaration.mangleString(compatibleMode: Boolean): String
-
-        /**
-         * Computes the hash code of the string returned by [mangleString] using the CityHash64 algorithm.
-         *
-         * **The result of this function does not affect klib ABI.**
-         *
-         * @param compatibleMode If `true`, the mangled names of property backing fields are just those fields' names.
-         * Otherwise, mangles such fields exactly as their corresponding properties.
-         */
-        fun IrDeclaration.hashedMangle(compatibleMode: Boolean): Long = mangleString(compatibleMode).hashMangle
 
         override val manglerName: String
             get() = "Ir"
