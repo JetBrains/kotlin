@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
@@ -53,8 +52,8 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
             KotlinGlobalSourceOutOfBlockModificationListener { invalidateAll(includeLibraryModules = false) },
         )
         busConnection.subscribe(
-            PsiModificationTracker.TOPIC,
-            PsiModificationTracker.Listener { invalidateAllDanglingFiles() }
+            KotlinTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION,
+            KotlinCodeFragmentContextModificationListener { module -> invalidateCodeFragments(module) }
         )
     }
 
@@ -85,7 +84,11 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
             sessionCache.removeAllScriptSessions()
         }
 
-        sessionCache.removeAllDanglingFileSessions()
+        if (module is KtDanglingFileModule) {
+            sessionCache.removeContextualDanglingFileSessions(module)
+        } else {
+            sessionCache.removeAllDanglingFileSessions()
+        }
     }
 
     private fun invalidateAll(includeLibraryModules: Boolean) {
@@ -105,8 +108,8 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         LLFirSessionCache.getInstance(project).removeAllSessions(includeLibraryModules)
     }
 
-    private fun invalidateAllDanglingFiles() {
-        LLFirSessionCache.getInstance(project).removeAllDanglingFileSessions()
+    private fun invalidateCodeFragments(contextModule: KtModule) {
+        LLFirSessionCache.getInstance(project).removeContextualDanglingFileSessions(contextModule)
     }
 
     override fun dispose() {

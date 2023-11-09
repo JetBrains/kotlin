@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
+import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION
 import org.jetbrains.kotlin.analysis.providers.topics.KotlinTopics.MODULE_OUT_OF_BLOCK_MODIFICATION
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
@@ -166,26 +167,29 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
         }
     }
 
-    private fun calculateChangeType(element: PsiElement, modificationType: ModificationType): ChangeType = when {
-        // If PSI is not valid, well something bad happened; OOBM won't hurt
-        !element.isValid -> ChangeType.OutOfBlock
+    private fun calculateChangeType(element: PsiElement, modificationType: ModificationType): ChangeType {
+        if (!element.isValid) {
+            // If PSI is not valid, well something bad happened; OOBM won't hurt
+            return ChangeType.OutOfBlock
+        }
 
-        element is PsiWhiteSpace || element is PsiComment -> ChangeType.Invisible
+        if (element is PsiWhiteSpace || element is PsiComment) {
+            return ChangeType.Invisible
+        }
 
-        // TODO improve for Java KTIJ-21684
-        element.language !is KotlinLanguage -> ChangeType.OutOfBlock
+        if (element.language !is KotlinLanguage) {
+            // TODO improve for Java KTIJ-21684
+            return ChangeType.OutOfBlock
+        }
 
-        else -> {
-            val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element)
-            if (
-                inBlockModificationOwner != null
-                && !element.isNewDirectChildOf(inBlockModificationOwner, modificationType)
-                && !modificationType.isContractRemoval()
-            ) {
-                ChangeType.InBlock(inBlockModificationOwner, project)
-            } else {
-                ChangeType.OutOfBlock
-            }
+        val inBlockModificationOwner = nonLocalDeclarationForLocalChange(element) ?: return ChangeType.OutOfBlock
+
+        val isOutOfBlockChange = element.isNewDirectChildOf(inBlockModificationOwner, modificationType)
+                || modificationType.isContractRemoval()
+
+        return when {
+            inBlockModificationOwner is KtCodeFragment || !isOutOfBlockChange -> ChangeType.InBlock(inBlockModificationOwner, project)
+            else -> ChangeType.OutOfBlock
         }
     }
 
@@ -244,6 +248,8 @@ class LLFirDeclarationModificationService(val project: Project) : Disposable {
             ?: return // we do not have a cache for this file
 
         fileStructure.invalidateElement(declaration)
+
+        project.analysisMessageBus.syncPublisher(CODE_FRAGMENT_CONTEXT_MODIFICATION).onModification(ktModule)
     }
 
     private fun outOfBlockModification(element: PsiElement) {

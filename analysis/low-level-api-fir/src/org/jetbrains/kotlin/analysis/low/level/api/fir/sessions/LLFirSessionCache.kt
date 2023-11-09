@@ -117,6 +117,23 @@ class LLFirSessionCache(private val project: Project) {
         removeAllDanglingFileSessions()
     }
 
+    fun removeContextualDanglingFileSessions(contextModule: KtModule) {
+        if (contextModule is KtDanglingFileModule) {
+            removeAllMatchingSessionsFrom(danglingFileSessionCache) { it is KtDanglingFileModule && hasContextModule(it, contextModule) }
+        } else {
+            // Only code fragments can have a dangling file context
+            removeAllMatchingSessionsFrom(danglingFileSessionCache) { it is KtDanglingFileModule && it.isCodeFragment }
+        }
+    }
+
+    private tailrec fun hasContextModule(module: KtDanglingFileModule, contextModule: KtModule): Boolean {
+        return when (val candidate = module.contextModule) {
+            contextModule -> true
+            is KtDanglingFileModule -> hasContextModule(candidate, contextModule)
+            else -> false
+        }
+    }
+
     fun removeAllDanglingFileSessions() {
         removeAllSessionsFrom(danglingFileSessionCache)
     }
@@ -161,7 +178,6 @@ class LLFirSessionCache(private val project: Project) {
             is KtScriptModule -> sessionFactory.createScriptSession(module)
             is KtDanglingFileModule -> {
                 //  Dangling file context must have an analyzable session, so we can properly compile code against it.
-                // 'KtDanglingFileModule' is always a leaf module, so there might not be a circular reference.
                 val contextSession = getSession(module.contextModule, preferBinary = false)
                 sessionFactory.createDanglingFileSession(module, contextSession)
             }
