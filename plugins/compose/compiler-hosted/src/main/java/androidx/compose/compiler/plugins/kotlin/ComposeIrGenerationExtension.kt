@@ -134,7 +134,8 @@ class ComposeIrGenerationExtension(
             symbolRemapper,
             metrics,
             stabilityInferencer,
-            strongSkippingEnabled
+            strongSkippingEnabled,
+            intrinsicRememberEnabled
         ).lower(moduleFragment)
 
         if (!useK2) {

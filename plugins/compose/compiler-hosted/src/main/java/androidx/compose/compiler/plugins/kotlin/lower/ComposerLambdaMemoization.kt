@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -292,7 +293,8 @@ class ComposerLambdaMemoization(
     symbolRemapper: DeepCopySymbolRemapper,
     metrics: ModuleMetrics,
     stabilityInferencer: StabilityInferencer,
-    val strongSkippingModeEnabled: Boolean = false
+    private val strongSkippingModeEnabled: Boolean,
+    private val intrinsicRememberEnabled: Boolean
 ) : AbstractComposeLowering(context, symbolRemapper, metrics, stabilityInferencer),
 
     ModuleLoweringPass {
@@ -307,6 +309,9 @@ class ComposerLambdaMemoization(
     private var currentFile: IrFile? = null
 
     private var inlineLambdaInfo = ComposeInlineLambdaLocator(context)
+
+    private val rememberFunctions =
+        getTopLevelFunctions(ComposeCallableIds.remember).map { it.owner }
 
     private fun getOrCreateComposableSingletonsClass(): IrClass {
         if (composableSingletonsClass != null) return composableSingletonsClass!!
@@ -881,13 +886,30 @@ class ComposerLambdaMemoization(
         }
 
         val captureExpressions = captures.map { irGet(it) }
+        metrics.recordLambda(
+            composable = false,
+            memoized = true,
+            singleton = false
+        )
 
-        val invalidExpr = captureExpressions
+        return if (!intrinsicRememberEnabled) {
+            // generate cache directly only if strong skipping is enabled without intrinsic remember
+            // otherwise, generated memoization won't benefit from capturing changed values
+            irCache(captureExpressions, expression)
+        } else {
+            irRemember(captureExpressions, expression)
+        }.patchDeclarationParents(functionContext.declaration)
+    }
+
+    private fun irCache(
+        captures: List<IrExpression>,
+        expression: IrExpression,
+    ): IrExpression {
+        val invalidExpr = captures
             .map(::irChanged)
             .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
             ?: irConst(false)
 
-        val declaration = functionContext.declaration
         val calculation = irLambdaExpression(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
@@ -897,12 +919,6 @@ class ComposerLambdaMemoization(
                 +irReturn(expression)
             }
         }
-
-        metrics.recordLambda(
-            composable = false,
-            memoized = true,
-            singleton = false
-        )
 
         val cache = irCache(
             irCurrentComposer(),
@@ -928,7 +944,76 @@ class ComposerLambdaMemoization(
                 irEndReplaceableGroup(irCurrentComposer()),
                 irGet(cacheTmpVar)
             )
-        ).patchDeclarationParents(declaration)
+        )
+    }
+
+    private fun irRemember(
+        captures: List<IrExpression>,
+        expression: IrExpression
+    ): IrExpression {
+        val directRememberFunction = // Exclude the varargs version
+            rememberFunctions.singleOrNull {
+                // captures + calculation arg
+                it.valueParameters.size == captures.size + 1 &&
+                    // Exclude the varargs version
+                    it.valueParameters.firstOrNull()?.varargElementType == null
+            }
+        val rememberFunction = directRememberFunction
+            ?: rememberFunctions.single {
+                // Use the varargs version
+                it.valueParameters.firstOrNull()?.varargElementType != null
+            }
+
+        val rememberFunctionSymbol = referenceSimpleFunction(rememberFunction.symbol)
+        val irBuilder = DeclarationIrBuilder(
+            generatorContext = context,
+            symbol = currentFunctionContext!!.symbol,
+            startOffset = expression.startOffset,
+            endOffset = expression.endOffset
+        )
+
+        return irBuilder.irCall(
+            callee = rememberFunctionSymbol,
+            type = expression.type
+        ).apply {
+            // The result type type parameter is first, followed by the argument types
+            putTypeArgument(0, expression.type)
+            val lambdaArgumentIndex = if (directRememberFunction != null) {
+                // condition arguments are the first `arg.size` arguments
+                for (i in captures.indices) {
+                    putValueArgument(i, captures[i])
+                }
+                // The lambda is the last parameter
+                captures.size
+            } else {
+                val parameterType = rememberFunction.valueParameters[0].type
+                // Call to the vararg version
+                putValueArgument(
+                    0,
+                    IrVarargImpl(
+                        startOffset = UNDEFINED_OFFSET,
+                        endOffset = UNDEFINED_OFFSET,
+                        type = parameterType,
+                        varargElementType = context.irBuiltIns.anyType,
+                        elements = captures
+                    )
+                )
+                1
+            }
+
+            putValueArgument(
+                index = lambdaArgumentIndex,
+                valueArgument = irLambdaExpression(
+                    startOffset = expression.startOffset,
+                    endOffset = expression.endOffset,
+                    returnType = expression.type
+                ) { fn ->
+                    fn.body = DeclarationIrBuilder(context, fn.symbol).irBlockBody {
+                        +irReturn(expression)
+                    }
+                }
+            )
+        }
     }
 
     private fun irChanged(value: IrExpression): IrExpression = irChanged(

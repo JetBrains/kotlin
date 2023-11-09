@@ -984,6 +984,19 @@ class ComposableFunctionBodyTransformer(
             }
         }
 
+        scope.applyIntrinsicRememberFixups { args, metas ->
+            // replace dirty with changed param in meta used for inference, as we are not
+            // populating dirty
+            if (!canSkipExecution) {
+                metas.forEach {
+                    if (it.maskParam == dirty) {
+                        it.maskParam = changedParam
+                    }
+                }
+            }
+            irIntrinsicRememberInvalid(args, metas, ::irInferredChanged)
+        }
+
         if (canSkipExecution) {
             // We CANNOT skip if any of the following conditions are met
             // 1. if any of the stable parameters have *differences* from last execution.
@@ -1136,6 +1149,20 @@ class ComposableFunctionBodyTransformer(
             skipPreamble.statements.addAll(0, dirty.asStatements())
             dirty
         } else changedParam
+
+        scope.applyIntrinsicRememberFixups { args, metas ->
+            // replace dirty with changed param in meta used for inference, as we are not
+            // populating dirty
+            if (!canSkipExecution) {
+                metas.forEach {
+                    if (it.maskParam == dirty) {
+                        it.maskParam = changedParam
+                    }
+                }
+            }
+            irIntrinsicRememberInvalid(args, metas, ::irInferredChanged)
+        }
+
         val transformedBody = if (canSkipExecution) {
             // We CANNOT skip if any of the following conditions are met
             // 1. if any of the stable parameters have *differences* from last execution.
@@ -2629,7 +2656,7 @@ class ComposableFunctionBodyTransformer(
         var isStatic: Boolean = false,
         var isCertain: Boolean = false,
         var maskSlot: Int = -1,
-        var maskParam: IrChangedBitMaskValue? = null
+        var maskParam: IrChangedBitMaskValue? = null,
     )
 
     private fun paramMetaOf(arg: IrExpression, isProvided: Boolean): ParamMeta {
@@ -2979,7 +3006,7 @@ class ComposableFunctionBodyTransformer(
 
         // Build the change parameters as if this was a call to remember to ensure the
         // use of the $dirty flags are calculated correctly.
-        inputArgs.map { paramMetaOf(it, isProvided = true) }.also {
+        val inputArgMetas = inputArgs.map { paramMetaOf(it, isProvided = true) }.also {
             buildChangedParamsForCall(
                 contextParams = emptyList(),
                 valueParams = it,
@@ -2988,21 +3015,53 @@ class ComposableFunctionBodyTransformer(
             )
         }
 
+        // If intrinsic remember uses $dirty, we are not sure if it is going to be populated,
+        // so we have to apply fixups after function body is transformed
+        var dirty: IrChangedBitMaskValue? = null
+        inputArgMetas.forEach {
+            if (it.maskParam is IrChangedBitMaskVariable) {
+                if (dirty == null) {
+                    dirty = it.maskParam
+                } else {
+                    // Validate that we only capture dirty param from a single scope. Capturing
+                    // $dirty is only allowed in inline functions, so we are guaranteed to only
+                    // encounter one.
+                    require(dirty == it.maskParam) {
+                        "Only single dirty param is allowed in a capture scope"
+                    }
+                }
+            }
+        }
+        val usesDirty = inputArgMetas.any { it.maskParam is IrChangedBitMaskVariable }
+
         // We can only rely on the $changed or $dirty if the flags are correctly updated in
         // the restart function or the result of replacing remember with cached will be
         // different.
-        val changedTestFunction: (IrExpression) -> IrExpression? =
-            if (updateChangedFlagsFunction == null) {
-                ::irChanged
+        val metaMaskConsistent = updateChangedFlagsFunction != null
+        val changedFunction: (IrExpression, ParamMeta) -> IrExpression? =
+            if (usesDirty || !metaMaskConsistent) {
+                { arg, _ -> irChanged(arg) }
             } else {
-                ::irChangedOrInferredChanged
+                ::irInferredChanged
             }
 
-        val invalidExpr = inputArgs
-            .mapNotNull(changedTestFunction)
-            .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
-            ?: irConst(false)
-
+        val invalidExpr = irIntrinsicRememberInvalid(inputArgs, inputArgMetas, changedFunction)
+        val functionScope = currentFunctionScope
+        val cacheCall = irCache(
+            irCurrentComposer(),
+            expression.startOffset,
+            expression.endOffset,
+            expression.type,
+            invalidExpr,
+            calculationArg.transform(this, null)
+        )
+        if (usesDirty && metaMaskConsistent) {
+            functionScope.recordIntrinsicRememberFixUp(
+                inputArgs,
+                inputArgMetas,
+                cacheCall
+            )
+        }
         val blockScope = object : Scope.BlockScope("<intrinsic-remember>") {
             val rememberFunction = expression.symbol.owner
             val currentFunction = currentFunctionScope.function
@@ -3030,24 +3089,25 @@ class ComposableFunctionBodyTransformer(
         }
 
         return inScope(blockScope) {
-            irCache(
-                irCurrentComposer(),
-                expression.startOffset,
-                expression.endOffset,
-                expression.type,
-                invalidExpr,
-                calculationArg.transform(this, null)
-            ).wrap(
+            cacheCall.wrap(
                 before = listOf(irStartReplaceableGroup(expression, blockScope)),
                 after = listOf(irEndReplaceableGroup(scope = blockScope))
             )
         }
     }
 
-    private fun irChangedOrInferredChanged(arg: IrExpression): IrExpression? {
-        val meta = paramMetaOf(arg, isProvided = true)
-        val param = meta.maskParam
+    private fun irIntrinsicRememberInvalid(
+        args: List<IrExpression>,
+        metas: List<ParamMeta>,
+        changedExpr: (IrExpression, ParamMeta) -> IrExpression?
+    ): IrExpression =
+        args
+            .mapIndexedNotNull { i, arg -> changedExpr(arg, metas[i]) }
+            .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
+            ?: irConst(false)
 
+    private fun irInferredChanged(arg: IrExpression, meta: ParamMeta): IrExpression? {
+        val param = meta.maskParam
         return when {
             meta.isStatic -> null
             meta.isCertain &&
@@ -3867,6 +3927,42 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
                 return null
+            }
+
+            private class IntrinsicRememberFixup(
+                val args: List<IrExpression>,
+                val metas: List<ParamMeta>,
+                val call: IrCall
+            )
+            private val intrinsicRememberFixups = mutableListOf<IntrinsicRememberFixup>()
+
+            fun recordIntrinsicRememberFixUp(
+                args: List<IrExpression>,
+                metas: List<ParamMeta>,
+                call: IrCall
+            ) {
+                val dirty = metas.find { it.maskParam is IrChangedBitMaskVariable }
+                if (dirty?.maskParam == this.dirty) {
+                    intrinsicRememberFixups.add(IntrinsicRememberFixup(args, metas, call))
+                } else {
+                    // capturing dirty is only allowed from inline function context, which doesn't
+                    // have dirty params.
+                    // if we encounter dirty that doesn't match mask from the current function, it
+                    // means that we should apply the fixup higher in the tree.
+                    var scope = parent
+                    while (scope !is FunctionScope) scope = scope!!.parent
+                    scope.recordIntrinsicRememberFixUp(args, metas, call)
+                }
+            }
+
+            fun applyIntrinsicRememberFixups(
+                invalidExpr: (List<IrExpression>, List<ParamMeta>) -> IrExpression
+            ) {
+                intrinsicRememberFixups.forEach {
+                    val invalid = invalidExpr(it.args, it.metas)
+                    // $composer.cache(invalid, calc)
+                    it.call.putValueArgument(0, invalid)
+                }
             }
         }
 
