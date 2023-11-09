@@ -422,7 +422,8 @@ if (!buildProperties.inJpsBuildIdeaSync) {
 }
 
 include ":compiler:build-tools:kotlin-build-tools-api",
-        ":compiler:build-tools:kotlin-build-tools-impl"
+        ":compiler:build-tools:kotlin-build-tools-impl",
+        ":compiler:build-tools:kotlin-build-tools-api-tests"
 
 // Experimental modules, should be placed into plugins/compose-compiler-plugin folder
 include ":plugins:compose-compiler-plugin:compiler",
