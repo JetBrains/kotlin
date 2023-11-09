@@ -234,10 +234,7 @@ class Fir2IrTypeConverter(
                 original.toIrType(typeOrigin).makeNotNull()
             }
             is ConeIntersectionType -> {
-                val approximated = session.typeApproximator.approximateToSuperType(
-                    this,
-                    TypeApproximatorConfiguration.FrontendToBackendTypesApproximation
-                )!!
+                val approximated = approximateForIrOrNull()!!
                 approximated.toIrType(typeOrigin)
             }
             is ConeStubType -> createErrorType()
@@ -362,3 +359,8 @@ fun ConeKotlinType.toIrType(
     with(typeConverter) {
         toIrType(typeOrigin)
     }
+
+context(Fir2IrComponents)
+internal fun ConeKotlinType.approximateForIrOrNull(): ConeKotlinType? {
+    return session.typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.FrontendToBackendTypesApproximation)
+}
