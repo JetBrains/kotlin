@@ -292,7 +292,11 @@ fun compileSwift(
     val platform = project.platformManager.platform(target)
     assert(platform.configurables is AppleConfigurables)
     val configs = platform.configurables as AppleConfigurables
-    val compiler = configs.absoluteTargetToolchain + "/usr/bin/swiftc"
+    val compiler = with(configs.absoluteTargetToolchain) {
+        // This is a follow up to the change "Consolidate toolchain paths between platforms" (3aeca1956e1a)
+        // The absoluteTargetToolchain has started to include usr subdir, but the bootstrap version still has the old path without.
+        this + if (this.endsWith("/usr")) "/bin/swiftc" else "/usr/bin/swiftc"
+    }
 
     val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
 
