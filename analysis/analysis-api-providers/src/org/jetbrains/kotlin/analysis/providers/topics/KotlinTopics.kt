@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
  *  - [KotlinGlobalModuleStateModificationListener]
  *  - [KotlinGlobalSourceModuleStateModificationListener]
  *  - [KotlinGlobalSourceOutOfBlockModificationListener]
+ *  - [KotlinCodeFragmentContextModificationListener]
  *
  * Care needs to be taken with the lack of interplay between different types of topics: Publishing a global modification event, for example,
  * does not imply the corresponding module-level event. Similarly, publishing a module state modification event does not imply out-of-block
@@ -60,4 +61,7 @@ public object KotlinTopics {
 
     public val GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION: Topic<KotlinGlobalSourceOutOfBlockModificationListener> =
         Topic(KotlinGlobalSourceOutOfBlockModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
+
+    public val CODE_FRAGMENT_CONTEXT_MODIFICATION: Topic<KotlinCodeFragmentContextModificationListener> =
+        Topic(KotlinCodeFragmentContextModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 }
