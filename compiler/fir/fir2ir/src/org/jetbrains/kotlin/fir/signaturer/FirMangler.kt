@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class Ir2FirManglerAdapter(private val delegate: FirMangler) : AbstractKotlinMangler<IrDeclaration>(),
     KotlinMangler.IrMangler {
@@ -26,15 +27,15 @@ class Ir2FirManglerAdapter(private val delegate: FirMangler) : AbstractKotlinMan
     override fun IrDeclaration.isExported(compatibleMode: Boolean): Boolean = delegate.run { fir().isExported(compatibleMode) }
 
     override fun IrDeclaration.mangleString(compatibleMode: Boolean): String {
-        error("Should not be called")
+        shouldNotBeCalled()
     }
 
     override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = delegate.run { fir().signatureString(compatibleMode) }
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> =
-        error("Should not have been reached")
+        shouldNotBeCalled()
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> {
-        error("Should not be called")
+        shouldNotBeCalled()
     }
 }
