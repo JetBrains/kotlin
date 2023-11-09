@@ -459,7 +459,7 @@ object FirFakeOverrideGenerator {
             effectiveVisibility = effectiveVisibility,
             resolvePhase = resolvePhase,
         ).apply {
-            replaceAnnotations(annotations)
+            replaceAnnotations(this@buildCopy.annotations)
         }
         is FirDefaultPropertySetter -> FirDefaultPropertySetter(
             source = source,
@@ -472,7 +472,7 @@ object FirFakeOverrideGenerator {
             effectiveVisibility = effectiveVisibility,
             resolvePhase = resolvePhase,
         ).apply {
-            replaceAnnotations(annotations)
+            replaceAnnotations(this@buildCopy.annotations)
         }
         else -> buildPropertyAccessorCopy(this) {
             this.symbol = FirPropertyAccessorSymbol()
