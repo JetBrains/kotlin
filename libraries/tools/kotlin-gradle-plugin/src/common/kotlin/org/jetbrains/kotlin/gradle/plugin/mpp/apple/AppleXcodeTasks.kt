@@ -76,6 +76,8 @@ private object XcodeEnvironment {
 
     val sign: String? get() = System.getenv("EXPANDED_CODE_SIGN_IDENTITY")
 
+    val userScriptSandboxingEnabled: String? get() = System.getenv("ENABLE_USER_SCRIPT_SANDBOXING")
+
     override fun toString() = """
         XcodeEnvironment:
           buildType=$buildType
@@ -147,6 +149,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val envEmbeddedFrameworksDir = XcodeEnvironment.embeddedFrameworksDir
     val envFrameworkSearchDir = XcodeEnvironment.frameworkSearchDir
     val envSign = XcodeEnvironment.sign
+    val userScriptSandboxingEnabled = XcodeEnvironment.userScriptSandboxingEnabled
 
     val frameworkTaskName = lowerCamelCaseName(AppleXcodeTasks.embedAndSignTaskPrefix, framework.namePrefix, AppleXcodeTasks.embedAndSignTaskPostfix)
 
@@ -174,6 +177,23 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
         return
     }
 
+    if (userScriptSandboxingEnabled == "YES") {
+        locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
+            task.group = BasePlugin.BUILD_GROUP
+            task.description = "Embed and sign ${framework.namePrefix} framework as requested by Xcode's environment variables"
+            task.doFirst {
+                throw IllegalStateException(
+                    "You have sandboxing for user scripts enabled. " +
+                            "\nTo make the $frameworkTaskName task pass, disable this feature. " +
+                            "\nIn your Xcode project, navigate to \"Build Setting\", " +
+                            "and under \"Build Options\" set \"User script sandboxing\" (ENABLE_USER_SCRIPT_SANDBOXING) to \"NO\". " +
+                            "\nFor more information, see documentation: https://jb.gg/ltd9e6"
+                )
+            }
+        }
+        return
+    }
+
     val embedAndSignTask = locateOrRegisterTask<FrameworkCopy>(frameworkTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Embed and sign ${framework.namePrefix} framework as requested by Xcode's environment variables"
@@ -184,6 +204,9 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             property("embeddedFrameworksDir", envEmbeddedFrameworksDir)
             if (envSign != null) {
                 property("sign", envSign)
+            }
+            if (userScriptSandboxingEnabled != null) {
+                property("userScriptSandboxingEnabled", userScriptSandboxingEnabled)
             }
         }
     }
