@@ -107,7 +107,7 @@ abstract class KtLightClassForScriptBase(
         return baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
     }
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
 
     override fun getSuperClass(): PsiClass? {
         return JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_LANG_OBJECT, resolveScope)
