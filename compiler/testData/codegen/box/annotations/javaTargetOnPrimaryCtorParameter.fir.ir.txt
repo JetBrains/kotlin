@@ -105,8 +105,7 @@ FILE fqName:<root> fileName:/test.kt
                         CALL 'public abstract fun <get-simpleName> (): kotlin.String? declared in kotlin.reflect.KClass' type=kotlin.String? origin=GET_PROPERTY
                           $this: CALL 'public final fun <get-annotationClass> <T> (): kotlin.reflect.KClass<out T of kotlin.jvm.<get-annotationClass>> declared in kotlin.jvm' type=kotlin.reflect.KClass<out @[FlexibleNullability] kotlin.Annotation?> origin=GET_PROPERTY
                             <T>: @[FlexibleNullability] kotlin.Annotation?
-                            $receiver: TYPE_OP type=kotlin.Annotation origin=IMPLICIT_NOTNULL typeOperand=kotlin.Annotation
-                              GET_VAR 'it: @[FlexibleNullability] kotlin.Annotation? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Annotation? origin=null
+                            $receiver: GET_VAR 'it: @[FlexibleNullability] kotlin.Annotation? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Annotation? origin=null
                       WHEN type=kotlin.String origin=null
                         BRANCH
                           if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ

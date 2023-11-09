@@ -12,7 +12,7 @@ interface Foo<T : Any?> {
 val <reified T : Any> Foo<T>.asT: T?
   inline get(): T? {
     return when {
-      <this> is T -> <this> /*as Any */
+      <this> is T -> <this>
       else -> null
     }
   }
@@ -33,3 +33,4 @@ class Bar<T : Any?> {
   }
 
 }
+

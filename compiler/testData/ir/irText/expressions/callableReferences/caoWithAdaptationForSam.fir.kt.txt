@@ -84,7 +84,7 @@ fun test4(fn: Function1<Int, Unit>) {
     fn is IFoo -> { // BLOCK
       { // BLOCK
         val tmp_6: A = A
-        val tmp_7: Any = fn /*as Any */
+        val tmp_7: Any = fn
         tmp_6.set(i = tmp_7, newValue = tmp_6.get(i = tmp_7).plus(other = 1))
       }
     }

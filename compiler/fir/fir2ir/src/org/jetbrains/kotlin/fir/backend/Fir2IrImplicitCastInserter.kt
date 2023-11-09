@@ -276,9 +276,16 @@ class Fir2IrImplicitCastInserter(
     override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: IrElement): IrElement {
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
         return if (smartCastExpression.isStable && smartCastExpression.smartcastTypeWithoutNullableNothing == null) {
-            implicitCastOrExpression(data as IrExpression, smartCastExpression.resolvedType)
+            val smartcastedType = smartCastExpression.resolvedType
+            val approximatedType = smartcastedType.approximateForIrOrNull()
+            if (approximatedType != null) {
+                if (smartCastExpression.originalExpression.resolvedType.isSubtypeOf(approximatedType, session)) {
+                    return data
+                }
+            }
+            implicitCastOrExpression(data as IrExpression, approximatedType ?: smartcastedType)
         } else {
-            data as IrExpression
+            data
         }
     }
 
@@ -409,5 +416,9 @@ class Fir2IrImplicitCastInserter(
                 if (this !is ConeFlexibleType) return false
                 return lowerBound.isMarkedNullable != upperBound.isMarkedNullable
             }
+    }
+
+    private fun ConeKotlinType.approximateForIrOrNull(): ConeKotlinType? {
+        return session.typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.FrontendToBackendTypesApproximation)
     }
 }

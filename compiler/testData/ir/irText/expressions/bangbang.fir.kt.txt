@@ -21,7 +21,7 @@ fun useString(s: String) {
 
 fun <X : Any?> test4(a: X) {
   when {
-    a is String? -> CHECK_NOT_NULL<Any>(arg0 = a /*as Any? */) /*~> Unit */
+    a is String? -> CHECK_NOT_NULL<Any>(arg0 = a) /*~> Unit */
   }
   when {
     a is String? -> useString(s = CHECK_NOT_NULL<Any>(arg0 = a /*as Any */))
