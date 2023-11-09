@@ -2967,13 +2967,12 @@ class ComposableFunctionBodyTransformer(
         }
 
         encounteredComposableCall(withGroups = true)
+        recordCallInSource(call = expression)
 
         if (calculationArg == null) {
-            recordCallInSource(call = expression)
             return expression
         }
         if (hasSpreadArgs) {
-            recordCallInSource(call = expression)
             calculationArg.transform(this, null)
             return expression
         }
@@ -3004,18 +3003,45 @@ class ComposableFunctionBodyTransformer(
             .reduceOrNull { acc, changed -> irBooleanOr(acc, changed) }
             ?: irConst(false)
 
-        val blockScope = currentFunctionScope
-        return irCache(
-            irCurrentComposer(),
-            expression.startOffset,
-            expression.endOffset,
-            expression.type,
-            invalidExpr,
-            calculationArg.transform(this, null)
-        ).wrap(
-            before = listOf(irStartReplaceableGroup(expression, blockScope)),
-            after = listOf(irEndReplaceableGroup(scope = blockScope))
-        )
+        val blockScope = object : Scope.BlockScope("<intrinsic-remember>") {
+            val rememberFunction = expression.symbol.owner
+            val currentFunction = currentFunctionScope.function
+            override fun calculateHasSourceInformation(sourceInformationEnabled: Boolean) =
+                sourceInformationEnabled
+
+            override fun calculateSourceInfo(sourceInformationEnabled: Boolean): String? =
+                // forge a source information call to fake remember function with current file
+                // location to make sure tooling can identify the following group as remember.
+                if (sourceInformationEnabled) {
+                    buildString {
+                        append(rememberFunction.callInformation())
+                        super.calculateSourceInfo(true)?.also {
+                            append(it)
+                        }
+                        append(":")
+                        append(currentFunction.file.name)
+                        append("#")
+                        // Use runtime package hash to make sure tooling can identify it as such
+                        append(rememberFunction.packageHash().toString(36))
+                    }
+                } else {
+                    null
+                }
+        }
+
+        return inScope(blockScope) {
+            irCache(
+                irCurrentComposer(),
+                expression.startOffset,
+                expression.endOffset,
+                expression.type,
+                invalidExpr,
+                calculationArg.transform(this, null)
+            ).wrap(
+                before = listOf(irStartReplaceableGroup(expression, blockScope)),
+                after = listOf(irEndReplaceableGroup(scope = blockScope))
+            )
+        }
     }
 
     private fun irChangedOrInferredChanged(arg: IrExpression): IrExpression? {
@@ -3712,93 +3738,8 @@ class ComposableFunctionBodyTransformer(
                 }
             }
 
-            // Parameter information is an index from the sorted order of the parameters to the
-            // actual order. This is used to reorder the fields of the lambda class generated for
-            // restart lambdas into parameter order. If all the parameters are in sorted order
-            // with no inline classes then no additional information is necessary. This means
-            // that parameter-less or single parameter functions with no inline classes never
-            // need additional information and two parameter functions are only 50% likely to
-            // need ordering information which is, if needed, very short ("1"). The encoding is as
-            // follows,
-            //
-            //   parameters: (parameter|run) ("," parameter | run)*
-            //   parameter: sorted-index [":" inline-class]
-            //   sorted-index: <number>
-            //   inline-class: <chars not "," or "!">
-            //   run: "!" <number>
-            //
-            //   where
-            //     sorted-index:  the index of the parameter's name in the sorted list of
-            //                    parameter names,
-            //     inline-class:  the fully qualified name of the inline class using "c#" as a
-            //                    short-hand for "androidx.compose.".
-            //     run:           The number of parameter that are in sequence assuming the
-            //                    previously selected parameters are removed from the sorted order.
-            //                    For example, "!5" at the beginning of the list is equivalent to
-            //                    "0,1,2,3,4" and "3!4" is equivalent to "3,0,1,2,4". If there
-            //                    are 9 parameters "3,4!2,6,8" is equivalent to "3,4,0,1,6,8,2,
-            //                    5,6,7".
-            //
-            // There is an implied "!n" (where n is the number of remaining parameters) at the end
-            // of the parameter information that implies the rest of the parameters are in order.
-            // If the parameter information is missing it implies "P()" which implies all the
-            // parameters are in sorted order.
-            private fun parameterInformation(): String {
-                val builder = StringBuilder("P(")
-                val parameters = function.valueParameters.filter {
-                    !it.name.asString().startsWith("$")
-                }
-                val sortIndex = mapOf(
-                    *parameters.mapIndexed { index, parameter ->
-                        Pair(index, parameter)
-                    }.sortedBy { it.second.name.asString() }
-                        .mapIndexed { sortIndex, originalIndex ->
-                            Pair(originalIndex.first, sortIndex)
-                        }.toTypedArray()
-                )
-
-                val expectedIndexes = Array(parameters.size) { it }.toMutableList()
-                var run = 0
-                var parameterEmitted = false
-
-                fun emitRun(originalIndex: Int) {
-                    if (run > 0) {
-                        builder.append('!')
-                        if (originalIndex < parameters.size - 1) {
-                            builder.append(run)
-                        }
-                        run = 0
-                    }
-                }
-
-                parameters.forEachIndexed { originalIndex, parameter ->
-                    if (expectedIndexes.first() == sortIndex[originalIndex] &&
-                        !parameter.type.isInlineClassType()
-                    ) {
-                        run++
-                        expectedIndexes.removeAt(0)
-                    } else {
-                        emitRun(originalIndex)
-                        if (originalIndex > 0) builder.append(',')
-                        val index = sortIndex[originalIndex]
-                            ?: error("missing index $originalIndex")
-                        builder.append(index)
-                        expectedIndexes.remove(index)
-                        if (parameter.type.isInlineClassType()) {
-                            parameter.type.getClass()?.fqNameWhenAvailable?.let {
-                                builder.append(':')
-                                builder.append(
-                                    it.asString()
-                                        .replacePrefix("androidx.compose.", "c#")
-                                )
-                            }
-                        }
-                        parameterEmitted = true
-                    }
-                }
-                builder.append(')')
-                return if (parameterEmitted) builder.toString() else ""
-            }
+            private fun parameterInformation(): String =
+                function.parameterInformation()
 
             override fun sourceLocationOf(call: IrElement): SourceLocation {
                 val parent = parent
@@ -3807,12 +3748,8 @@ class ComposableFunctionBodyTransformer(
                 else super.sourceLocationOf(call)
             }
 
-            private fun callInformation(): String {
-                val inlineMarker = if (function.isInline) "C" else ""
-                return if (!function.name.isSpecial)
-                    "${inlineMarker}C(${function.name.asString()})"
-                else "${inlineMarker}C"
-            }
+            private fun callInformation(): String =
+                function.callInformation()
 
             override fun calculateHasSourceInformation(sourceInformationEnabled: Boolean): Boolean {
                 return if (sourceInformationEnabled) {
@@ -3827,7 +3764,7 @@ class ComposableFunctionBodyTransformer(
                 if (sourceInformationEnabled) {
                     "${callInformation()}${parameterInformation()}${
                     super.calculateSourceInfo(sourceInformationEnabled) ?: ""
-                    }:${sourceFileInformation()}"
+                    }:${function.sourceFileInformation()}"
                 } else {
                     if (function.visibility.isPublicAPI) {
                         "${callInformation()}${parameterInformation()}"
@@ -3930,18 +3867,6 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
                 return null
-            }
-
-            private fun packageHash(): Int =
-                packageName()?.fold(0) { hash, current ->
-                    hash * 31 + current.code
-                }?.absoluteValue ?: 0
-
-            internal fun sourceFileInformation(): String {
-                val hash = packageHash()
-                if (hash != 0)
-                    return "${function.file.name}#${hash.toString(36)}"
-                return function.file.name
             }
         }
 
@@ -4187,7 +4112,7 @@ class ComposableFunctionBodyTransformer(
                 if (sourceInformationEnabled) {
                     "C${
                     super.calculateSourceInfo(sourceInformationEnabled) ?: ""
-                    }:${functionScope?.sourceFileInformation() ?: ""}"
+                    }:${functionScope?.function?.sourceFileInformation() ?: ""}"
                 } else {
                     null
                 }
@@ -4535,4 +4460,123 @@ private fun mutableStatementContainer(context: IrPluginContext): IrContainerExpr
         UNDEFINED_OFFSET,
         context.irBuiltIns.unitType
     )
+}
+
+private fun IrFunction.callInformation(): String {
+    val inlineMarker = if (isInline) "C" else ""
+    return if (!name.isSpecial)
+        "${inlineMarker}C(${name.asString()})"
+    else "${inlineMarker}C"
+}
+
+// Parameter information is an index from the sorted order of the parameters to the
+// actual order. This is used to reorder the fields of the lambda class generated for
+// restart lambdas into parameter order. If all the parameters are in sorted order
+// with no inline classes then no additional information is necessary. This means
+// that parameter-less or single parameter functions with no inline classes never
+// need additional information and two parameter functions are only 50% likely to
+// need ordering information which is, if needed, very short ("1"). The encoding is as
+// follows,
+//
+//   parameters: (parameter|run) ("," parameter | run)*
+//   parameter: sorted-index [":" inline-class]
+//   sorted-index: <number>
+//   inline-class: <chars not "," or "!">
+//   run: "!" <number>
+//
+//   where
+//     sorted-index:  the index of the parameter's name in the sorted list of
+//                    parameter names,
+//     inline-class:  the fully qualified name of the inline class using "c#" as a
+//                    short-hand for "androidx.compose.".
+//     run:           The number of parameter that are in sequence assuming the
+//                    previously selected parameters are removed from the sorted order.
+//                    For example, "!5" at the beginning of the list is equivalent to
+//                    "0,1,2,3,4" and "3!4" is equivalent to "3,0,1,2,4". If there
+//                    are 9 parameters "3,4!2,6,8" is equivalent to "3,4,0,1,6,8,2,
+//                    5,6,7".
+//
+// There is an implied "!n" (where n is the number of remaining parameters) at the end
+// of the parameter information that implies the rest of the parameters are in order.
+// If the parameter information is missing it implies "P()" which implies all the
+// parameters are in sorted order.
+private fun IrFunction.parameterInformation(): String {
+    val builder = StringBuilder("P(")
+    val parameters = valueParameters.filter {
+        !it.name.asString().startsWith("$")
+    }
+    val sortIndex = mapOf(
+        *parameters.mapIndexed { index, parameter ->
+            Pair(index, parameter)
+        }.sortedBy { it.second.name.asString() }
+            .mapIndexed { sortIndex, originalIndex ->
+                Pair(originalIndex.first, sortIndex)
+            }.toTypedArray()
+    )
+
+    val expectedIndexes = Array(parameters.size) { it }.toMutableList()
+    var run = 0
+    var parameterEmitted = false
+
+    fun emitRun(originalIndex: Int) {
+        if (run > 0) {
+            builder.append('!')
+            if (originalIndex < parameters.size - 1) {
+                builder.append(run)
+            }
+            run = 0
+        }
+    }
+
+    parameters.forEachIndexed { originalIndex, parameter ->
+        if (expectedIndexes.first() == sortIndex[originalIndex] &&
+            !parameter.type.isInlineClassType()
+        ) {
+            run++
+            expectedIndexes.removeAt(0)
+        } else {
+            emitRun(originalIndex)
+            if (originalIndex > 0) builder.append(',')
+            val index = sortIndex[originalIndex]
+                ?: error("missing index $originalIndex")
+            builder.append(index)
+            expectedIndexes.remove(index)
+            if (parameter.type.isInlineClassType()) {
+                parameter.type.getClass()?.fqNameWhenAvailable?.let {
+                    builder.append(':')
+                    builder.append(
+                        it.asString()
+                            .replacePrefix("androidx.compose.", "c#")
+                    )
+                }
+            }
+            parameterEmitted = true
+        }
+    }
+    builder.append(')')
+    return if (parameterEmitted) builder.toString() else ""
+}
+
+private fun IrFunction.packageName(): String? {
+    var parent = parent
+    while (true) {
+        when (parent) {
+            is IrPackageFragment -> return parent.packageFqName.asString()
+            is IrDeclaration -> parent = parent.parent
+            else -> break
+        }
+    }
+    return null
+}
+
+private fun IrFunction.packageHash(): Int =
+    packageName()?.fold(0) { hash, current ->
+        hash * 31 + current.code
+    }?.absoluteValue ?: 0
+
+private fun IrFunction.sourceFileInformation(): String {
+    val hash = packageHash()
+    if (hash != 0)
+        return "${file.name}#${hash.toString(36)}"
+    return file.name
 }

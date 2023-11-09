@@ -19,7 +19,7 @@ fun Test(a: Int = 1, b: Foo = Foo.B, c: Int = swizzle(1, 2) ) {
 @Composable
 fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)<rememb...>,<used(s...>:Test.kt")
   val %dirty = %changed
   if (%default and 0b0001 != 0) {
     %dirty = %dirty or 0b0110
@@ -59,7 +59,7 @@ fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default:
     }
     val s = <block>{
       %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(Test)<used(s...>:Test.kt")
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 or %dirty and 0b01110000 == 0b00100000 or %dirty and 0b001110000000 == 0b000100000000) {
         Any()
       }

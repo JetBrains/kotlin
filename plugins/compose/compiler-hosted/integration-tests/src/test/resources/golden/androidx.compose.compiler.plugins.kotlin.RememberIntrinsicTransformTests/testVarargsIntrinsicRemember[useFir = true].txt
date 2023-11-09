@@ -19,7 +19,7 @@ fun Test(vararg strings: String) {
 @Composable
 fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test):Test.kt")
+  sourceInformation(%composer, "C(Test)<rememb...>,<Text("...>:Test.kt")
   val %dirty = %changed
   %composer.startMovableGroup(<>, strings.size)
   val <iterator> = strings.iterator()
@@ -37,7 +37,7 @@ fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
     }
     val show = <block>{
       %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "C(Test)<Text("...>:Test.kt")
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(false) {
         mutableStateOf(
           value = false
