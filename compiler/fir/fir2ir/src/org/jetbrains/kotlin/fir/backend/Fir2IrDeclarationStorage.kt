@@ -334,7 +334,7 @@ class Fir2IrDeclarationStorage(
     private fun cacheIrFunction(function: FirFunction, irFunction: IrSimpleFunction, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
         when {
             irFunction.visibility == DescriptorVisibilities.LOCAL -> {
-                localStorage.putLocalFunction(function, irFunction)
+                localStorage.putLocalFunction(function, irFunction.symbol)
             }
 
             function.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag) -> {
@@ -356,7 +356,7 @@ class Fir2IrDeclarationStorage(
         val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
 
         for ((firParameter, irParameter) in function.valueParameters.zip(valueParameters.drop(contextReceivers.size))) {
-            localStorage.putParameter(firParameter, irParameter)
+            localStorage.putParameter(firParameter, irParameter.symbol)
         }
         return this
     }
@@ -638,7 +638,7 @@ class Fir2IrDeclarationStorage(
     ): IrSymbol {
         val firProperty = prepareProperty(firPropertySymbol.fir)
         if (firProperty.isLocal) {
-            return localStorage.getDelegatedProperty(firProperty)?.symbol ?: getIrVariableSymbol(firProperty)
+            return localStorage.getDelegatedProperty(firProperty) ?: getIrVariableSymbol(firProperty)
         }
         val result = getOrCreateIrProperty(
             firProperty,
@@ -744,7 +744,10 @@ class Fir2IrDeclarationStorage(
         return when (fir) {
             is FirProperty -> {
                 if (fir.isLocal) {
-                    return localStorage.getDelegatedProperty(fir)?.delegate?.symbol ?: getIrVariableSymbol(fir)
+                    // local property cannot be referenced before declaration, so it's safe to take an owner from the symbol
+                    @OptIn(UnsafeDuringIrConstructionAPI::class)
+                    val delegatedProperty = localStorage.getDelegatedProperty(fir)?.owner
+                    return delegatedProperty?.delegate?.symbol ?: getIrVariableSymbol(fir)
                 }
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
                 propertyCache[fir]?.ownerIfBound()?.let { return it.backingField!!.symbol }
@@ -850,7 +853,7 @@ class Fir2IrDeclarationStorage(
             skipDefaultParameter,
             forcedDefaultValueConversion
         ).also {
-            localStorage.putParameter(valueParameter, it)
+            localStorage.putParameter(valueParameter, it.symbol)
         }
     }
 
@@ -878,7 +881,7 @@ class Fir2IrDeclarationStorage(
         delegateVariableForPropertyCache[symbol] = irProperty.delegate.symbol
         getterForPropertyCache[symbol] = irProperty.getter.symbol
         irProperty.setter?.let { setterForPropertyCache[symbol] = it.symbol }
-        localStorage.putDelegatedProperty(property, irProperty)
+        localStorage.putDelegatedProperty(property, symbol)
         return irProperty
     }
 
@@ -899,7 +902,7 @@ class Fir2IrDeclarationStorage(
         givenOrigin: IrDeclarationOrigin? = null
     ): IrVariable {
         return callablesGenerator.createIrVariable(variable, irParent, givenOrigin).also {
-            localStorage.putVariable(variable, it)
+            localStorage.putVariable(variable, it.symbol)
         }
     }
 
@@ -919,7 +922,7 @@ class Fir2IrDeclarationStorage(
                 ).symbol
             }
             is FirValueParameter -> {
-                localStorage.getParameter(firDeclaration)?.symbol
+                localStorage.getParameter(firDeclaration)
                 // catch parameter is FirValueParameter in FIR but IrVariable in IR
                     ?: return getIrVariableSymbol(firDeclaration)
             }
@@ -930,10 +933,8 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun getIrVariableSymbol(firVariable: FirVariable): IrVariableSymbol {
-        return localStorage.getVariable(firVariable)?.symbol
-            ?: run {
-                throw IllegalArgumentException("Cannot find variable ${firVariable.render()} in local storage")
-            }
+        return localStorage.getVariable(firVariable)
+            ?: error("Cannot find variable ${firVariable.render()} in local storage")
     }
 
     // ------------------------------------ anonymous initializers ------------------------------------
