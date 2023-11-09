@@ -30,6 +30,7 @@ internal fun getBaseCompilerArgumentsFromProperty(): List<String>? =
 fun runWithKotlinc(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
+    expectedErrPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     classpath: List<File> = emptyList(),
@@ -38,7 +39,7 @@ fun runWithKotlinc(
 ) {
     runWithKotlinc(
         arrayOf("-script", scriptPath),
-        expectedOutPatterns, expectedExitCode, workDirectory, classpath, additionalEnvVars, expectErrorOnK2
+        expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, classpath, additionalEnvVars, expectErrorOnK2
     )
 }
 
@@ -46,6 +47,7 @@ fun runWithKotlinLauncherScript(
     launcherScriptName: String,
     compilerArgs: Iterable<String>,
     expectedOutPatterns: List<String> = emptyList(),
+    expectedErrPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     classpath: List<File> = emptyList(),
@@ -66,12 +68,16 @@ fun runWithKotlinLauncherScript(
         addAll(compilerArgs)
     }
 
-    runAndCheckResults(args, expectedOutPatterns, expectedExitCode, workDirectory, additionalEnvVars, expectErrorOnK2 = expectErrorOnK2)
+    runAndCheckResults(
+        args, expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, additionalEnvVars,
+        expectErrorOnK2 = expectErrorOnK2
+    )
 }
 
 fun runWithKotlinc(
     compilerArgs: Array<String>,
     expectedOutPatterns: List<String> = emptyList(),
+    expectedErrPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     classpath: List<File> = emptyList(),
@@ -79,14 +85,15 @@ fun runWithKotlinc(
     expectErrorOnK2: Boolean = false
 ) {
     runWithKotlinLauncherScript(
-        "kotlinc", compilerArgs.asIterable(), expectedOutPatterns, expectedExitCode, workDirectory, classpath,
-        additionalEnvVars, expectErrorOnK2
+        "kotlinc", compilerArgs.asIterable(), expectedOutPatterns, expectedErrPatterns,
+        expectedExitCode, workDirectory, classpath, additionalEnvVars, expectErrorOnK2
     )
 }
 
 fun runAndCheckResults(
     args: List<String>,
     expectedOutPatterns: List<String> = emptyList(),
+    expectedErrPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     additionalEnvVars: Iterable<Pair<String, String>>? = null,
@@ -143,12 +150,18 @@ fun runAndCheckResults(
                 process.exitValue() != 0 || processOut.contains("error: ")
             )
         } else {
-            Assert.assertEquals(expectedOutPatterns.size, processOut.size)
-            for ((expectedPattern, actualLine) in expectedOutPatterns.zip(processOut)) {
-                Assert.assertTrue(
-                    "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
-                    Regex(expectedPattern).matches(actualLine)
-                )
+            fun checkExpectedOutputPatterns(expectedPatterns: List<String>, actualOut: List<String>) {
+                Assert.assertEquals(expectedPatterns.size, actualOut.size)
+                for ((expectedPattern, actualLine) in expectedPatterns.zip(actualOut)) {
+                    Assert.assertTrue(
+                        "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
+                        Regex(expectedPattern).matches(actualLine)
+                    )
+                }
+            }
+            checkExpectedOutputPatterns(expectedOutPatterns, processOut)
+            if (expectedErrPatterns.isNotEmpty()) {
+                checkExpectedOutputPatterns(expectedErrPatterns, processErr)
             }
             Assert.assertEquals(expectedExitCode, process.exitValue())
         }
