@@ -7,9 +7,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dataframe.CallShapeData
-import org.jetbrains.kotlin.fir.dataframe.FlagContainer
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.callShapeData
@@ -31,11 +31,13 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpres
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildLambdaArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.extensions.FirFunctionCallRefinementExtension
+import org.jetbrains.kotlin.fir.extensions.originalCall
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -75,14 +77,11 @@ class NewCandidateInterceptor(
     session: FirSession,
     val nextFunction: (String) -> CallableId,
     val nextName: (String) -> ClassId,
-    val refinedToOriginal: MutableMap<Name, FirBasedSymbol<*>>,
-    val flag: FlagContainer,
 ) : FirFunctionCallRefinementExtension(session), KotlinTypeFacade {
     val Key = DataFramePlugin
 
     @OptIn(SymbolInternals::class)
     override fun intercept(callInfo: CallInfo, symbol: FirBasedSymbol<*>): FirBasedSymbol<*>? {
-        if (!flag.shouldIntercept) return null
         val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
         if (callSiteAnnotations.any { it.fqName(session)?.shortName()?.equals(Name.identifier("DisableInterpretation")) == true }) {
             return null
@@ -173,11 +172,6 @@ class NewCandidateInterceptor(
             this.symbol = newSymbol
             returnTypeRef = typeRef
         }.also { newSymbol.bind(it) }
-
-        refinedToOriginal.compute(generatedName.callableName) { name, it ->
-            if (it != null) error("$name is not unique")
-            symbol
-        }
         return newSymbol
     }
 
@@ -244,8 +238,7 @@ class NewCandidateInterceptor(
                 return if (element is FirResolvedNamedReference) {
                     buildResolvedNamedReference {
                         this.name = element.name
-                        val refinedName = call.calleeReference.toResolvedCallableSymbol()?.callableId?.callableName!!
-                        resolvedSymbol = refinedToOriginal[refinedName]!!
+                        resolvedSymbol = call.calleeReference.toResolvedFunctionSymbol()!!.fir.originalCall as FirNamedFunctionSymbol
                     } as E
                 } else {
                     element
@@ -277,6 +270,7 @@ class NewCandidateInterceptor(
         val argument = buildLambdaArgumentExpression {
             expression = buildAnonymousFunctionExpression {
                 val fSymbol = FirAnonymousFunctionSymbol()
+                val target = FirFunctionTarget(null, isLambda = true)
                 anonymousFunction = buildAnonymousFunction {
                     resolvePhase = FirResolvePhase.BODY_RESOLVE
                     moduleData = session.moduleData
@@ -309,6 +303,11 @@ class NewCandidateInterceptor(
                         statements += scope
 
                         statements += tokenFir
+
+                        statements += buildReturnExpression {
+                            result = call
+                            this.target = target
+                        }
                     }
                     symbol = fSymbol
                     isLambda = true
@@ -322,7 +321,10 @@ class NewCandidateInterceptor(
                     }
                     invocationKind = EventOccurrencesRange.EXACTLY_ONCE
                     inlineStatus = InlineStatus.Inline
-                }.also { fSymbol.bind(it) }
+                }.also {
+                    target.bind(it)
+                    fSymbol.bind(it)
+                }
             }
         }
 

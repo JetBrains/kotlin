@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.dataframe.extensions.*
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -106,7 +105,7 @@ class FirDataFrameExtensionRegistrar(
     override fun ExtensionRegistrarContext.configurePlugin() {
         // if input data schema for refinement is also generated schema, maybe it'll be possible to save names to a set
         val generator = Checker(GeneratedNames())
-        val refinedToOriginal = mutableMapOf<Name, FirBasedSymbol<*>>()
+//        val refinedToOriginal = mutableMapOf<Name, FirBasedSymbol<*>>()
         with(generator) {
             +::ExtensionsGenerator
             +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
@@ -116,7 +115,7 @@ class FirDataFrameExtensionRegistrar(
                 val templateCompiler = TemplateCompiler(flag)
                 templateCompiler.session = it
 //                CandidateInterceptor(it, ::nextFunction, callableState, refinedToOriginal, this::nextName, FirMetaContextImpl(it, templateCompiler), refinedToOriginal, flag)
-                NewCandidateInterceptor(it, ::nextFunction, this::nextName, refinedToOriginal, flag)
+                NewCandidateInterceptor(it, ::nextFunction, this::nextName)
             }
             +::TokenGenerator
         }
