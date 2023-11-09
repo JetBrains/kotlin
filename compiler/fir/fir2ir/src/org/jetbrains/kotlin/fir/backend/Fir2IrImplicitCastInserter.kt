@@ -446,8 +446,4 @@ class Fir2IrImplicitCastInserter(
                 return lowerBound.isMarkedNullable != upperBound.isMarkedNullable
             }
     }
-
-    private fun ConeKotlinType.approximateForIrOrNull(): ConeKotlinType? {
-        return session.typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.FrontendToBackendTypesApproximation)
-    }
 }
