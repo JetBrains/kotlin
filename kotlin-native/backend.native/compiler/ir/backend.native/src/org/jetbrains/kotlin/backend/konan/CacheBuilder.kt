@@ -50,6 +50,7 @@ class CacheBuilder(
 
     private val allLibraries by lazy { konanConfig.resolvedLibraries.getFullList(TopologicalLibraryOrder) }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
+    private val uniqueNameToHash = mutableMapOf<String, ByteArray>()
 
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
     private val cacheRootDirectories = mutableMapOf<KotlinLibrary, String>()
@@ -237,7 +238,8 @@ class CacheBuilder(
 
         val libraryCacheDirectory = when {
             library.isDefault -> konanConfig.systemCacheDirectory
-            isExternal -> CachedLibraries.computeVersionedCacheDirectory(konanConfig.autoCacheDirectory, library, uniqueNameToLibrary)
+            isExternal -> CachedLibraries.computeVersionedCacheDirectory(
+                    konanConfig.autoCacheDirectory, library, uniqueNameToLibrary, uniqueNameToHash)
             else -> konanConfig.incrementalCacheDirectory!!
         }
         val libraryCache = libraryCacheDirectory.child(

@@ -171,6 +171,7 @@ class CachedLibraries(
     }
 
     private val uniqueNameToLibrary = allLibraries.associateBy { it.uniqueName }
+    private val uniqueNameToHash = mutableMapOf<String, ByteArray>()
 
     private val allCaches: Map<KotlinLibrary, Cache> = allLibraries.mapNotNull { library ->
         val explicitPath = explicitCaches[library]
@@ -186,7 +187,7 @@ class CachedLibraries(
             }
                     ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) } }
                             ?.let {
-                                val dir = computeVersionedCacheDirectory(it, library, uniqueNameToLibrary)
+                                val dir = computeVersionedCacheDirectory(it, library, uniqueNameToLibrary, uniqueNameToHash)
                                 selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
                                         ?: selectCache(library, dir.child(getCachedLibraryName(library)))
                             }
@@ -220,13 +221,29 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
+        private fun computeLibraryHash(
+                library: KotlinLibrary,
+                librariesHashes: MutableMap<String, ByteArray>,
+        ): ByteArray = librariesHashes.getOrPut(library.uniqueName) {
+            val messageDigest = MessageDigest.getInstance("SHA-256")
+            messageDigest.digestLibrary(library)
+            messageDigest.digest()
+        }
+
         @OptIn(ExperimentalUnsignedTypes::class)
-        fun computeVersionedCacheDirectory(baseCacheDirectory: File, library: KotlinLibrary, allLibraries: Map<String, KotlinLibrary>): File {
+        fun computeVersionedCacheDirectory(
+                baseCacheDirectory: File,
+                library: KotlinLibrary,
+                allLibraries: Map<String, KotlinLibrary>,
+                librariesHashes: MutableMap<String, ByteArray>,
+        ): File {
             val dependencies = library.getAllTransitiveDependencies(allLibraries)
             val messageDigest = MessageDigest.getInstance("SHA-256")
             messageDigest.update(compilerMarker)
-            messageDigest.digestLibrary(library)
-            dependencies.sortedBy { it.uniqueName }.forEach { messageDigest.digestLibrary(it) }
+            messageDigest.update(computeLibraryHash(library, librariesHashes))
+            dependencies.sortedBy { it.uniqueName }.forEach {
+                messageDigest.update(computeLibraryHash(it, librariesHashes))
+            }
 
             val version = library.versions.libraryVersion ?: "unspecified"
             val hashString = messageDigest.digest().asUByteArray()
