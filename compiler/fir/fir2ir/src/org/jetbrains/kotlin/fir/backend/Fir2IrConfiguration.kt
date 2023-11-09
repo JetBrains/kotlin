@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 
 /**
+ * @param linkViaSignatures enables calculation of signatures for IR symbols and filling the SymbolTable with them.
+ *  This parameter should be set to true if caller will rely on the content of the symbol table in future (like for KLib generation)
+ *
  * @param allowNonCachedDeclarations
  *  Normally, FIR-to-IR caches all declarations it meets in a compiled module.
  *  It means asking for an IR element of a non-cached declaration is a sign of inconsistent state.
