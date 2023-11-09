@@ -40,10 +40,7 @@ tasks.validatePlugins.configure {
 
 sourceSets["main"].kotlin {
     srcDir("src/main/kotlin")
-    srcDir("../../shared/src/library/kotlin")
-    srcDir("../../shared/src/main/kotlin")
     srcDir("../../tools/benchmarks/shared/src/main/kotlin/report")
-    srcDir("../../../native/utils/src")
 }
 
 tasks.withType<KotlinCompile>().configureEach {
