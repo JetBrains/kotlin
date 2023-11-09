@@ -66,8 +66,8 @@ class KtPsiFactory private constructor(
     companion object {
         @JvmStatic
         @JvmOverloads
-        fun contextual(context: PsiElement, markGenerated: Boolean = true): KtPsiFactory {
-            return KtPsiFactory(context.project, markGenerated, context, eventSystemEnabled = false)
+        fun contextual(context: PsiElement, markGenerated: Boolean = true, eventSystemEnabled: Boolean = false): KtPsiFactory {
+            return KtPsiFactory(context.project, markGenerated, context, eventSystemEnabled)
         }
     }
 
