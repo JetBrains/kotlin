@@ -158,6 +158,12 @@ class MainKtsIT {
         Assert.assertTrue("Expect file '$scriptPath' to start with UTF-8 BOM", File(scriptPath).readText().startsWith(UTF8_BOM))
         runWithKotlincAndMainKts(scriptPath, listOf("Hello world"))
     }
+
+    @Test
+    fun testUseSlf4j() {
+        val scriptPath = "$TEST_DATA_ROOT/use-slf4j.main.kts"
+        runWithKotlincAndMainKts(scriptPath, expectedErrPatterns = listOf(".*test-slf4j"))
+    }
 }
 
 fun runWithKotlincAndMainKts(

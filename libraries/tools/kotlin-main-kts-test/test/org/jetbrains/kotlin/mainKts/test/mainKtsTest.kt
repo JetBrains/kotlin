@@ -274,6 +274,18 @@ class MainKtsTest {
         assertSucceeded(res)
     }
 
+    @Test
+    fun testUseSlf4j() {
+        val err = captureOutAndErr {
+            val res = evalFile(File("$TEST_DATA_ROOT/use-slf4j.main.kts"))
+            assertSucceeded(res)
+        }.second
+        Assert.assertTrue(
+            "Expect info log line with \"test-slf4j\" text, got:\n$err",
+            err.contains("INFO  - test-slf4j")
+        )
+    }
+
     private fun assertSucceeded(res: ResultWithDiagnostics<EvaluationResult>) {
         Assert.assertTrue(
             "test failed:\n  ${res.reports.joinToString("\n  ") { it.severity.name + ": " + it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
