@@ -80,7 +80,7 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getContainingClass(): PsiClass? = parent as? PsiClass
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean =
         clsDelegate.isInheritorDeep(baseClass, classToByPass)
 
     override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod?, PsiSubstitutor?>?> =

@@ -193,8 +193,8 @@ abstract class SymbolLightClassForClassLike<SType : KaClassOrObjectSymbol> prote
     abstract override fun getParent(): PsiElement?
     override fun getScope(): PsiElement? = parent
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
-        baseClass?.let { InheritanceImplUtil.isInheritorDeep(this, it, classToByPass) } ?: false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean =
+        InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
 
     abstract override fun copy(): SymbolLightClassForClassLike<*>
 }

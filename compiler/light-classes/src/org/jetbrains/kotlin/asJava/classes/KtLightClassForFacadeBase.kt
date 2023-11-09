@@ -121,7 +121,7 @@ abstract class KtLightClassForFacadeBase(
 
     override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean): PsiClass? = null
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
 
     override fun getLBrace(): PsiElement? = null
 

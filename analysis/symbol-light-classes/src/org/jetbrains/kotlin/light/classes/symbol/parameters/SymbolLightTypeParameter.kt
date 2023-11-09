@@ -133,7 +133,7 @@ internal class SymbolLightTypeParameter private constructor(
     override fun getRBrace(): PsiElement? = null
     override fun getScope(): PsiElement = parent
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean = false
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = mutableListOf()
     override fun setName(name: String): PsiElement = cannotModify()
     override fun getNameIdentifier(): PsiIdentifier? = null

@@ -171,6 +171,6 @@ internal class SymbolLightClassForScript private constructor(
 
     override fun getScope(): PsiElement = parent
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
+    override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
 
 }
