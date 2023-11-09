@@ -1,0 +1,42 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol list: R|kotlin/collections/List<kotlin/Int>|
+    Element 8
+        Scope: FirLocalScope
+    Element 9
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>|
+    Element 10
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] forLoopVariable.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun usage([ResolvedTo(BODY_RESOLVE)] list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
+         {
+            [ResolvedTo(BODY_RESOLVE)] lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>| = R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Int>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                [ResolvedTo(BODY_RESOLVE)] lval loopVar: R|kotlin/Int| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Int|>|()
+                 {
+                }
+
+            }
+
+        }
+
+    }

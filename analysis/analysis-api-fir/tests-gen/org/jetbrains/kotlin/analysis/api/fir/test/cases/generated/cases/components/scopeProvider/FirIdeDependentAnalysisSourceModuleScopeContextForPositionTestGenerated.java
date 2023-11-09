@@ -101,6 +101,12 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
+    @TestMetadata("forLoopVariable.kt")
+    public void testForLoopVariable() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/forLoopVariable.kt");
+    }
+
+    @Test
     @TestMetadata("kDocOnClass.kt")
     public void testKDocOnClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/kDocOnClass.kt");
