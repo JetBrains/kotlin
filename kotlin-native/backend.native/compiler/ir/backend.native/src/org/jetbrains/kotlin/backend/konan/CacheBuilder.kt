@@ -50,7 +50,7 @@ class CacheBuilder(
 
     private val allLibraries by lazy { konanConfig.resolvedLibraries.getFullList(TopologicalLibraryOrder) }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
-    private val uniqueNameToHash = mutableMapOf<String, ByteArray>()
+    private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
     private val caches = mutableMapOf<KotlinLibrary, CachedLibraries.Cache>()
     private val cacheRootDirectories = mutableMapOf<KotlinLibrary, String>()

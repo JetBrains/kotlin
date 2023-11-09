@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
+import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
+import org.jetbrains.kotlin.backend.common.serialization.SerializedKlibFingerprint
 import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
 import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
@@ -12,16 +15,21 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.library.uniqueName
-import java.security.MessageDigest
 
-private fun MessageDigest.digestFile(file: File) =
-        if (file.isDirectory) digestDirectory(file) else update(file.readBytes())
+private class LibraryHashComputer {
+    private val hashes = mutableListOf<FingerprintHash>()
 
-private fun MessageDigest.digestDirectory(directory: File): Unit =
-        directory.listFiles.sortedBy { it.name }.forEach { digestFile(it) }
+    fun update(hash: FingerprintHash) {
+        hashes.add(hash)
+    }
 
-private fun MessageDigest.digestLibrary(library: KotlinLibrary) = digestFile(library.libraryFile)
+    fun digest() = FingerprintHash(hashes.fold(Hash128Bits(hashes.size.toULong())) { acc, x -> acc.combineWith(x.hash) })
+}
+
+private fun LibraryHashComputer.digestLibrary(library: KotlinLibrary) =
+        update(SerializedKlibFingerprint(library.libraryFile.javaFile()).klibFingerprint)
 
 private fun getArtifactName(target: KonanTarget, baseName: String, kind: CompilerOutputKind) =
         "${kind.prefix(target)}$baseName${kind.suffix(target)}"
@@ -171,7 +179,7 @@ class CachedLibraries(
     }
 
     private val uniqueNameToLibrary = allLibraries.associateBy { it.uniqueName }
-    private val uniqueNameToHash = mutableMapOf<String, ByteArray>()
+    private val uniqueNameToHash = mutableMapOf<String, FingerprintHash>()
 
     private val allCaches: Map<KotlinLibrary, Cache> = allLibraries.mapNotNull { library ->
         val explicitPath = explicitCaches[library]
@@ -221,32 +229,28 @@ class CachedLibraries(
         fun getCachedLibraryName(library: KotlinLibrary): String = getCachedLibraryName(library.uniqueName)
         fun getCachedLibraryName(libraryName: String): String = "$libraryName-cache"
 
-        private fun computeLibraryHash(
-                library: KotlinLibrary,
-                librariesHashes: MutableMap<String, ByteArray>,
-        ): ByteArray = librariesHashes.getOrPut(library.uniqueName) {
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.digestLibrary(library)
-            messageDigest.digest()
-        }
+        private fun computeLibraryHash(library: KotlinLibrary, librariesHashes: MutableMap<String, FingerprintHash>) =
+                librariesHashes.getOrPut(library.uniqueName) {
+                    val hashComputer = LibraryHashComputer()
+                    hashComputer.digestLibrary(library)
+                    hashComputer.digest()
+                }
 
         fun computeVersionedCacheDirectory(
                 baseCacheDirectory: File,
                 library: KotlinLibrary,
                 allLibraries: Map<String, KotlinLibrary>,
-                librariesHashes: MutableMap<String, ByteArray>,
+                librariesHashes: MutableMap<String, FingerprintHash>,
         ): File {
             val dependencies = library.getAllTransitiveDependencies(allLibraries)
-            val messageDigest = MessageDigest.getInstance("SHA-256")
-            messageDigest.update(compilerMarker)
-            messageDigest.update(computeLibraryHash(library, librariesHashes))
+            val hashComputer = LibraryHashComputer()
+            hashComputer.update(computeLibraryHash(library, librariesHashes))
             dependencies.sortedBy { it.uniqueName }.forEach {
-                messageDigest.update(computeLibraryHash(it, librariesHashes))
+                hashComputer.update(computeLibraryHash(it, librariesHashes))
             }
 
             val version = library.versions.libraryVersion ?: "unspecified"
-            val hashString = messageDigest.digest()
-                    .joinToString("") { it.toUByte().toString(radix = 16).padStart(2, '0') }
+            val hashString = hashComputer.digest().toString()
             return baseCacheDirectory.child(library.uniqueName).child(version).child(hashString)
         }
 
@@ -258,8 +262,5 @@ class CachedLibraries(
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
         const val EAGER_INITIALIZED_PROPERTIES_FILE_NAME = "eager_init"
-
-        // TODO: Remove after dropping Gradle cache orchestration.
-        private val compilerMarker = "K/N orchestration".encodeToByteArray()
     }
 }
