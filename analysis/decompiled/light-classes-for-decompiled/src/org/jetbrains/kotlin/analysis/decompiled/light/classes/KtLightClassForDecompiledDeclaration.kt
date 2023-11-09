@@ -60,14 +60,13 @@ open class KtLightClassForDecompiledDeclaration(
     override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
     override fun hasModifierProperty(name: String): Boolean = clsDelegate.hasModifierProperty(name)
 
-    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
-        patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
+    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? =
+        PsiClassImplUtil.findMethodBySignature(this, patternMethod, checkBases)
 
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> = patternMethod?.let {
-        PsiClassImplUtil.findMethodsBySignature(this, it, checkBases)
-    } ?: PsiMethod.EMPTY_ARRAY
+    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean): Array<PsiMethod> =
+        PsiClassImplUtil.findMethodsBySignature(this, patternMethod, checkBases)
 
-    override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String?, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
+    override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
         PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
 
     override fun getImplementsList(): PsiReferenceList? = clsDelegate.implementsList

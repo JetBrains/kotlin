@@ -140,14 +140,14 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
 
     override fun getImplementsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getImplementsListTypes(this)
 
-    override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
-        patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
+    override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? =
+        PsiClassImplUtil.findMethodBySignature(this, patternMethod, checkBases)
 
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> =
-        patternMethod?.let { PsiClassImplUtil.findMethodsBySignature(this, it, checkBases) } ?: PsiMethod.EMPTY_ARRAY
+    override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean): Array<PsiMethod> =
+        PsiClassImplUtil.findMethodsBySignature(this, patternMethod, checkBases)
 
     override fun findMethodsAndTheirSubstitutorsByName(
-        @NonNls name: String?,
+        @NonNls name: String,
         checkBases: Boolean,
     ): List<Pair<PsiMethod?, PsiSubstitutor?>?> = PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
 
