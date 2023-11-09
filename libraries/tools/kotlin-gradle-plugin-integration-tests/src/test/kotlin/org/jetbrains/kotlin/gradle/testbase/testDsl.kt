@@ -32,6 +32,8 @@ import kotlin.test.assertTrue
  * @param [projectName] test project name in `src/test/resources/testProject` directory.
  * @param [buildOptions] common Gradle build options
  * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
+ * @param [enableKotlinDaemonMemoryLimitInMb] limit max heap size for Kotlin Daemon.
+ * `null` enables the default limit inherited from the Gradle process.
  */
 @OptIn(EnvironmentalVariablesOverride::class)
 fun KGPBaseTest.project(
@@ -42,6 +44,7 @@ fun KGPBaseTest.project(
     enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: Boolean = false,
+    enableKotlinDaemonMemoryLimitInMb: Int? = 1024,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     localRepoDir: Path? = null,
@@ -73,6 +76,7 @@ fun KGPBaseTest.project(
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
         enableGradleDebug = enableGradleDebug,
+        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
         environmentVariables = environmentVariables
     )
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
@@ -96,6 +100,8 @@ fun KGPBaseTest.project(
  * @param [projectName] test project name in 'src/test/resources/testProject` directory.
  * @param [buildOptions] common Gradle build options
  * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
+ * @param [enableKotlinDaemonMemoryLimitInMb] limit max heap size for Kotlin Daemon.
+ * `null` enables the default limit inherited from the Gradle process.
  */
 @OptIn(EnvironmentalVariablesOverride::class)
 fun KGPBaseTest.nativeProject(
@@ -106,6 +112,7 @@ fun KGPBaseTest.nativeProject(
     enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: Boolean = false,
+    enableKotlinDaemonMemoryLimitInMb: Int? = 1024,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     localRepoDir: Path? = null,
@@ -121,6 +128,7 @@ fun KGPBaseTest.nativeProject(
         enableBuildScan = enableBuildScan,
         addHeapDumpOptions = addHeapDumpOptions,
         enableGradleDebug = enableGradleDebug,
+        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
         projectPathAdditionalSuffix = projectPathAdditionalSuffix,
         buildJdk = buildJdk,
         localRepoDir = localRepoDir,
@@ -141,6 +149,7 @@ fun TestProject.build(
     kotlinDaemonDebugPort: Int? = this.kotlinDaemonDebugPort,
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
+    enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     assertions: BuildResult.() -> Unit = {},
@@ -152,6 +161,7 @@ fun TestProject.build(
         buildOptions,
         enableBuildCacheDebug,
         enableBuildScan,
+        enableKotlinDaemonMemoryLimitInMb,
         gradleVersion,
         kotlinDaemonDebugPort
     )
@@ -179,6 +189,7 @@ fun TestProject.buildAndFail(
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
+    enableKotlinDaemonMemoryLimitInMb: Int? = this.enableKotlinDaemonMemoryLimitInMb,
     environmentVariables: EnvironmentalVariables = this.environmentVariables,
     assertions: BuildResult.() -> Unit = {},
 ) {
@@ -189,6 +200,7 @@ fun TestProject.buildAndFail(
         buildOptions,
         enableBuildCacheDebug,
         enableBuildScan,
+        enableKotlinDaemonMemoryLimitInMb,
         gradleVersion,
         kotlinDaemonDebugPort
     )
@@ -221,6 +233,7 @@ internal inline fun <reified T> TestProject.getModels(
         buildOptions,
         false,
         enableBuildScan,
+        enableKotlinDaemonMemoryLimitInMb,
         gradleVersion
     )
 
@@ -333,6 +346,7 @@ class TestProject(
     val gradleVersion: GradleVersion,
     val forceOutput: Boolean,
     val enableBuildScan: Boolean,
+    val enableKotlinDaemonMemoryLimitInMb: Int?,
     /**
      * Whether the test and the Gradle build launched by the test should be executed in the same process so that we can use the same
      * debugger for both (see https://docs.gradle.org/current/javadoc/org/gradle/testkit/runner/GradleRunner.html#isDebug--).
@@ -417,6 +431,7 @@ private fun commonBuildSetup(
     buildOptions: BuildOptions,
     enableBuildCacheDebug: Boolean,
     enableBuildScan: Boolean,
+    enableKotlinDaemonMemoryLimitInMb: Int?,
     gradleVersion: GradleVersion,
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
@@ -433,6 +448,10 @@ private fun commonBuildSetup(
         // Decreasing Gradle daemon idle timeout to 1 min from default 3 hours.
         // This should help with OOM on CI when agents do not have enough free memory available.
         "-Dorg.gradle.daemon.idletimeout=60000",
+        if (enableKotlinDaemonMemoryLimitInMb != null) {
+            // Limiting Kotlin daemon heap size to reduce memory pressure on CI agents
+            "-Pkotlin.daemon.jvmargs=-Xmx${enableKotlinDaemonMemoryLimitInMb}m"
+        } else null,
         if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null,
         if (enableBuildScan) "--scan" else null,
         kotlinDaemonDebugPort?.let {

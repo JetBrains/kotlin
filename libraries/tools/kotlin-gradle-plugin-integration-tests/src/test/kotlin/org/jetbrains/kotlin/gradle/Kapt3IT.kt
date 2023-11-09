@@ -152,7 +152,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
-        project("kaptSkipped".withPrefix, gradleVersion) {
+        project("kaptSkipped".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
             build("build") {
                 assertTasksSkipped(":kaptGenerateStubsKotlin", ":kaptKotlin")
                 assertOutputContains("No annotation processors provided. Skip KAPT processing.")
@@ -196,6 +196,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
         ) {
             //language=Groovy
             buildGradle.appendText(
@@ -324,7 +325,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt tasks is up-to-date on the second run")
     @GradleTest
     fun testSimple(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion) {
+        project("simple".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
 
             build("build") {
                 assertKaptSuccessful()
@@ -538,6 +539,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "incrementalRebuild".withPrefix,
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             val generatedSrc = "build/generated/source/kapt/main"
@@ -573,6 +575,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             val internalDummyKt = javaSourcesDir().resolve("foo/InternalDummy.kt")
@@ -621,6 +624,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             val arg = "-Xsuppress-version-warnings"
@@ -645,7 +649,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("generates Kotlin code")
     @GradleTest
     fun testOutputKotlinCode(gradleVersion: GradleVersion) {
-        project("kaptOutputKotlinCode".withPrefix, gradleVersion) {
+        project("kaptOutputKotlinCode".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
             build("build") {
                 assertKaptSuccessful()
                 assertFileExists(projectPath.resolve("build/generated/source/kapt/main/example/TestClassCustomized.java"))
@@ -659,7 +663,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("location mapping is working as expected")
     @GradleTest
     fun testLocationMapping(gradleVersion: GradleVersion) {
-        project("locationMapping".withPrefix, gradleVersion) {
+        project("locationMapping".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
             val regex = "((Test\\.java)|(test\\.kt)):(\\d+): error: GenError element".toRegex()
 
             fun BuildResult.getErrorMessages(): String =
@@ -791,7 +795,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("up-to-date checks are working")
     @GradleTest
     fun testKaptAvoidance(gradleVersion: GradleVersion) {
-        project("kaptAvoidance".withPrefix, gradleVersion) {
+        project("kaptAvoidance".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
 
             subProject("app").buildGradle.modify {
                 "$it\n\nkapt.includeCompileClasspath = true"
@@ -1046,6 +1050,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "jpms-module".withPrefix,
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
         ) {
             build("assemble") {
                 assertTasksExecuted(":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileJava")
@@ -1076,6 +1081,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "incrementalRebuild".withPrefix,
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
             build("assemble")
@@ -1145,7 +1151,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Generated sources attached to KotlinSourceSet are also used by generate stubs task")
     @GradleTest
     fun testGeneratedSourcesUsedInGenerateStubsTask(gradleVersion: GradleVersion) {
-        project("generatedSources".withPrefix, gradleVersion) {
+        project("generatedSources".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
             build("assemble")
         }
     }
@@ -1178,6 +1184,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
@@ -1366,6 +1373,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
 

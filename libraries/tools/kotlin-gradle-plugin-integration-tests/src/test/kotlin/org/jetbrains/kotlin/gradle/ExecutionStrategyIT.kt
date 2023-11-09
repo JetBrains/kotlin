@@ -101,6 +101,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
             addHeapDumpOptions = false,
+            enableKotlinDaemonMemoryLimitInMb = null,
             buildOptions = defaultBuildOptions.copy(
                 useDaemonFallbackStrategy = false,
                 compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON,
@@ -123,6 +124,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         project(
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
             addHeapDumpOptions = false
         ) {
             setupProject(this)
@@ -203,6 +205,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
             addHeapDumpOptions = addHeapDumpOptions,
+            enableKotlinDaemonMemoryLimitInMb = if (shouldConfigureStrategyViaGradleProperty) null else 1024,
             buildOptions = defaultBuildOptions.copy(
                 useDaemonFallbackStrategy = testFallbackStrategy,
                 compilerExecutionStrategy = if (shouldConfigureStrategyViaGradleProperty) {

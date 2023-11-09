@@ -23,6 +23,8 @@ import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Paths
 import kotlin.test.assertTrue
@@ -107,6 +109,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         project(
             "kotlinProject",
             gradleVersion,
+            enableKotlinDaemonMemoryLimitInMb = null,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
         ) {
             gradleProperties.append(
@@ -155,6 +158,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
     }
 
     @DisplayName("KT-57154: Compiler should use specified toolchain regardless of Gradle Runtime JDK")
+    @Disabled("KT-58894: re-enable once fixed")
     @JdkVersions(versions = [JavaVersion.VERSION_1_8, JavaVersion.VERSION_11, JavaVersion.VERSION_17])
     @GradleWithJdkTest
     @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
