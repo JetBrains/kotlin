@@ -123,6 +123,7 @@ internal object CompilationServiceImpl : CompilationService {
         sources: List<File>,
         arguments: List<String>,
     ): CompilationResult {
+        loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         val compiler = K2JVMCompiler()
         val parsedArguments = compiler.createArguments()
         parseCommandLineArguments(arguments, parsedArguments)
@@ -182,6 +183,7 @@ internal object CompilationServiceImpl : CompilationService {
         sources: List<File>,
         arguments: List<String>,
     ): CompilationResult {
+        loggerAdapter.kotlinLogger.debug("Compiling using the daemon strategy")
         val compilerId = CompilerId.makeCompilerId(getCurrentClasspath())
         val sessionIsAliveFlagFile = buildIdToSessionFlagFile.computeIfAbsent(projectId) {
             createSessionIsAliveFlagFile()
