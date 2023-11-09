@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnonymousFunctionExpres
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildLambdaArgumentExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.extensions.FirFunctionCallRefinementExtension
 import org.jetbrains.kotlin.fir.extensions.originalCall
@@ -247,7 +248,7 @@ class NewCandidateInterceptor(
         }, null)
 
         rootClass.callShapeData = CallShapeData.Schema(properties)
-        val scopeId = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), FqName("Scope1"), true)
+        val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("Scope1"), true)
         val scope = buildRegularClass {
             moduleData = session.moduleData
             resolvePhase = FirResolvePhase.BODY_RESOLVE
@@ -266,6 +267,10 @@ class NewCandidateInterceptor(
 
         val tokenFir = token.toClassSymbol(session)!!.fir
         tokenFir.callShapeData = CallShapeData.RefinedType(listOf(scope.symbol))
+
+        val callExplicitReceiver = call.explicitReceiver
+        val callDispatchReceiver = call.dispatchReceiver
+        val callExtensionReceiver = call.extensionReceiver
 
         val argument = buildLambdaArgumentExpression {
             expression = buildAnonymousFunctionExpression {
@@ -305,6 +310,15 @@ class NewCandidateInterceptor(
                         statements += tokenFir
 
                         statements += buildReturnExpression {
+                            val itPropertyAccess = buildPropertyAccessExpression {
+                                coneTypeOrNull = receiverType
+                                calleeReference = buildResolvedNamedReference {
+                                    name = itName
+                                    resolvedSymbol = parameterSymbol
+                                }
+                            }
+                            call.replaceExplicitReceiver(itPropertyAccess)
+                            call.replaceExtensionReceiver(itPropertyAccess)
                             result = call
                             this.target = target
                         }
@@ -353,9 +367,9 @@ class NewCandidateInterceptor(
                 }
                 variance = Variance.INVARIANT
             }
-            dispatchReceiver = call.dispatchReceiver
-            this.explicitReceiver = call.explicitReceiver
-            extensionReceiver = call.extensionReceiver
+            dispatchReceiver = callDispatchReceiver
+            this.explicitReceiver = callExplicitReceiver
+            extensionReceiver = callExtensionReceiver
             argumentList = buildResolvedArgumentList(linkedMapOf(argument to parameter.fir))
             calleeReference = buildResolvedNamedReference {
                 this.name = Name.identifier("let")
