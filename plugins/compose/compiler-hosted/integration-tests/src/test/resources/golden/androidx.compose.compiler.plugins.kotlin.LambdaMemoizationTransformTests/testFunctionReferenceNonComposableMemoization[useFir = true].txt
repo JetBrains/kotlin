@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun Example(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Example):Test.kt")
+  sourceInformation(%composer, "C(Example)<{>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b1110 == 0) {
     %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
@@ -29,13 +29,14 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
     }
     val shouldMemoize = <block>{
       %composer.startReplaceableGroup(<>)
-      val tmpCache = %composer.cache(%composer.changed(x)) {
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
         {
           ::foo
         }
       }
       %composer.endReplaceableGroup()
-      tmpCache
+      tmp0_group
     }
     if (isTraceInProgress()) {
       traceEventEnd()

@@ -35,25 +35,29 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
   val tmp0 = Test(<block>{
     %composer.startReplaceableGroup(<>)
     sourceInformation(%composer, "<Test(>")
-    val tmp2_group = if (param == null) {
+    val tmp3_group = if (param == null) {
       Test(<block>{
         %composer.startReplaceableGroup(<>)
         sourceInformation(%composer, "<rememb...>")
-        val tmp1_group = if (param == null) {
-          remember({
+        val tmp2_group = if (param == null) {
+          %composer.startReplaceableGroup(<>)
+          sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+          val tmp1_group = %composer.cache(false) {
             ""
-          }, %composer, 0)
+          }
+          %composer.endReplaceableGroup()
+          tmp1_group
         } else {
           null
         }
         %composer.endReplaceableGroup()
-        tmp1_group
+        tmp2_group
       }, %composer, 0)
     } else {
       null
     }
     %composer.endReplaceableGroup()
-    tmp2_group
+    tmp3_group
   }, %composer, 0)
   if (isTraceInProgress()) {
     traceEventEnd()

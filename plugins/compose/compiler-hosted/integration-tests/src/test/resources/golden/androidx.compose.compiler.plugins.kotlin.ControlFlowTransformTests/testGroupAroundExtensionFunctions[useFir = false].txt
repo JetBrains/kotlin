@@ -34,9 +34,15 @@ fun Test(start: Int, end: Int, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    val a = remember({
-      A()
-    }, %composer, 0)
+    val a = <block>{
+      %composer.startReplaceableGroup(<>)
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        A()
+      }
+      %composer.endReplaceableGroup()
+      tmp0_group
+    }
     val <iterator> = start until end.iterator()
     while (<iterator>.hasNext()) {
       val i = <iterator>.next()

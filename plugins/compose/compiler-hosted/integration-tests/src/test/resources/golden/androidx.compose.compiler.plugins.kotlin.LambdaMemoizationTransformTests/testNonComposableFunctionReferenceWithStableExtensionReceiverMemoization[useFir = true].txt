@@ -4,14 +4,13 @@
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.NonRestartableComposable
+import androidx.compose.runtime.remember
 
 @NonRestartableComposable
 @Composable
-fun Example(z: Int) {
-    class Foo(val x: Int) { val y = z }
-    val lambda: () -> Any = {
-        Foo(1)
-    }
+fun Example() {
+    val x = remember { Stable() }
+    val shouldMemoize = x::foo
 }
 
 //
@@ -20,25 +19,30 @@ fun Example(z: Int) {
 
 @NonRestartableComposable
 @Composable
-fun Example(z: Int, %composer: Composer?, %changed: Int) {
+fun Example(%composer: Composer?, %changed: Int) {
   %composer.startReplaceableGroup(<>)
-  sourceInformation(%composer, "C(Example)<{>:Test.kt")
+  sourceInformation(%composer, "C(Example)<rememb...>,<foo>:Test.kt")
   if (isTraceInProgress()) {
     traceEventStart(<>, %changed, -1, <>)
   }
-  class Foo(val x: Int) {
-    val y: Int = z
-  }
-  val lambda = <block>{
+  val x = <block>{
     %composer.startReplaceableGroup(<>)
     sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
-    val tmp0_group = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(z) || %changed and 0b0110 == 0b0100) {
-      {
-        Foo(1)
-      }
+    val tmp0_group = %composer.cache(false) {
+      Stable()
     }
     %composer.endReplaceableGroup()
     tmp0_group
+  }
+  val shouldMemoize = <block>{
+    val tmp0 = x
+    %composer.startReplaceableGroup(<>)
+    sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+    val tmp1_group = %composer.cache(false) {
+      tmp0::foo
+    }
+    %composer.endReplaceableGroup()
+    tmp1_group
   }
   if (isTraceInProgress()) {
     traceEventEnd()

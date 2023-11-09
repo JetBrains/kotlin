@@ -2,16 +2,16 @@
 // Source
 // ------------------------------------------
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 
 @Composable
-private fun Test(param: String?) {
-    Test(
-        if (param == null) {
-           remember { "" }
+fun Something(param: (() -> String)?) {
+    Something(
+        if (param != null) {
+            { param() }
         } else {
             null
-        },
+        }
     )
 }
 
@@ -20,25 +20,27 @@ private fun Test(param: String?) {
 // ------------------------------------------
 
 @Composable
-private fun Test(param: String?, %composer: Composer?, %changed: Int) {
+fun Something(param: Function0<String>?, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<Test(>:Test.kt")
+  sourceInformation(%composer, "C(Something)<Someth...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b1110 == 0) {
-    %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
+    %dirty = %dirty or if (%composer.changedInstance(param)) 0b0100 else 0b0010
   }
   if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    Test(<block>{
+    Something(<block>{
       %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "<rememb...>")
-      val tmp1_group = if (param == null) {
+      sourceInformation(%composer, "<{>")
+      val tmp1_group = if (param != null) {
         %composer.startReplaceableGroup(<>)
         sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
-        val tmp0_group = %composer.cache(false) {
-          ""
+        val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
+          {
+            param()
+          }
         }
         %composer.endReplaceableGroup()
         tmp0_group
@@ -55,6 +57,6 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(param, %composer, updateChangedFlags(%changed or 0b0001))
+    Something(param, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
