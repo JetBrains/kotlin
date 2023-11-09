@@ -76,6 +76,8 @@ private object XcodeEnvironment {
 
     val sign: String? get() = System.getenv("EXPANDED_CODE_SIGN_IDENTITY")
 
+    val userScriptSandboxingEnabled: String? get() = System.getenv("ENABLE_USER_SCRIPT_SANDBOXING")
+
     override fun toString() = """
         XcodeEnvironment:
           buildType=$buildType
@@ -147,6 +149,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val envEmbeddedFrameworksDir = XcodeEnvironment.embeddedFrameworksDir
     val envFrameworkSearchDir = XcodeEnvironment.frameworkSearchDir
     val envSign = XcodeEnvironment.sign
+    val userScriptSandboxingEnabled = XcodeEnvironment.userScriptSandboxingEnabled
 
     val frameworkTaskName = lowerCamelCaseName(AppleXcodeTasks.embedAndSignTaskPrefix, framework.namePrefix, AppleXcodeTasks.embedAndSignTaskPostfix)
 
@@ -204,6 +207,16 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
                 task.execOperations.exec {
                     it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
                 }
+            }
+        }
+        if (userScriptSandboxingEnabled != null && userScriptSandboxingEnabled == "YES") {
+            task.doFirst {
+                throw IllegalStateException(
+                    "Sandboxing for user scripts is currently enabled. " +
+                            "To successfully construct $frameworkTaskName, it's necessary to disable this feature. " +
+                            "Navigate to \"Build Setting\", locate \"User script sandboxing\" (ENABLE_USER_SCRIPT_SANDBOXING) and set it to \"NO\". " +
+                            "Following this, refresh the Gradle daemon by executing \"./gradlew --stop\" "
+                )
             }
         }
     }
