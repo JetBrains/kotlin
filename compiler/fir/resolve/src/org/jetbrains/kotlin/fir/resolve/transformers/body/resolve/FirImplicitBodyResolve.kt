@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.callableCopySubstitutionForTypeUpdater
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -31,8 +30,10 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirImplicitTypeBodyResolveProcessor(
@@ -240,38 +241,18 @@ open class ReturnTypeCalculatorWithJump(
         }
 
         if (declaration.isCopyCreatedInScope) {
-            val callableCopySubstitutionForTypeUpdater = declaration.attributes.callableCopySubstitutionForTypeUpdater
-                ?: return declaration.returnTypeRef as FirResolvedTypeRef
-
-            // TODO: drop synchronized in KT-60385
-            synchronized(callableCopySubstitutionForTypeUpdater) {
-                if (declaration.attributes.callableCopySubstitutionForTypeUpdater == null) {
-                    return declaration.returnTypeRef as FirResolvedTypeRef
-                }
-
-                val (substitutor, baseSymbol) = callableCopySubstitutionForTypeUpdater
-                val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
-                val baseReturnTypeRef = tryCalculateReturnType(baseDeclaration)
-                val baseReturnType = baseReturnTypeRef.type
-                val coneType = substitutor.substituteOrSelf(baseReturnType)
-                val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
-                declaration.replaceReturnTypeRef(returnType)
-                if (declaration is FirProperty) {
-                    declaration.getter?.replaceReturnTypeRef(returnType)
-                    declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnType)
-                }
-
-                declaration.attributes.callableCopySubstitutionForTypeUpdater = null
-                return returnType
+            val resolvedTypeRef = callableCopyTypeCalculator.computeReturnType(declaration)
+            requireWithAttachment(
+                resolvedTypeRef is FirResolvedTypeRef,
+                { "Unexpected return type: ${resolvedTypeRef?.let { it::class.simpleName }}" },
+            ) {
+                withFirEntry("declaration", declaration)
             }
+
+            return resolvedTypeRef
         }
 
-        return when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
-            is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
-            is ImplicitBodyResolveComputationStatus.Computing ->
-                buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes) }
-            else -> computeReturnTypeRef(declaration)
-        }
+        return computeReturnTypeRef(declaration)
     }
 
     private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
@@ -287,7 +268,16 @@ open class ReturnTypeCalculatorWithJump(
     }
 
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
-        (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
+        val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
+            is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
+            is ImplicitBodyResolveComputationStatus.Computing -> buildErrorTypeRef {
+                diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes)
+            }
+
+            else -> null
+        }
+
+        (computedReturnType ?: declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
         val symbol = declaration.symbol
         require(!symbol.isCopyCreatedInScope) {
             "callableCopySubstitution was not calculated for callable copy: " +

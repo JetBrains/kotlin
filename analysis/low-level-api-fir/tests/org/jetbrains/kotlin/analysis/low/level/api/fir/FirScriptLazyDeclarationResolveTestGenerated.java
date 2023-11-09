@@ -217,6 +217,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     }
 
     @Test
+    @TestMetadata("explicitSubstitutionOverridePropertyScript.kts")
+    public void testExplicitSubstitutionOverridePropertyScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/explicitSubstitutionOverridePropertyScript.kts");
+    }
+
+    @Test
     @TestMetadata("fakeOverrideScript.kts")
     public void testFakeOverrideScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/fakeOverrideScript.kts");
@@ -256,6 +262,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     @TestMetadata("functionWithParameterScript.kts")
     public void testFunctionWithParameterScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithParameterScript.kts");
+    }
+
+    @Test
+    @TestMetadata("implicitSubstitutionOverridePropertyScript.kts")
+    public void testImplicitSubstitutionOverridePropertyScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitSubstitutionOverridePropertyScript.kts");
     }
 
     @Test
@@ -382,6 +394,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     @TestMetadata("primaryConstructorScript.kts")
     public void testPrimaryConstructorScript() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorScript.kts");
+    }
+
+    @Test
+    @TestMetadata("propertyDelegateWithImplicitTypeScript.kts")
+    public void testPropertyDelegateWithImplicitTypeScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyDelegateWithImplicitTypeScript.kts");
     }
 
     @Test

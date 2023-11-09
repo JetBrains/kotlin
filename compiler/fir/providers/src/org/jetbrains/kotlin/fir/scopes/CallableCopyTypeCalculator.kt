@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -41,6 +42,11 @@ abstract class CallableCopyTypeCalculator {
                 val coneType = substitutor.substituteOrSelf(baseReturnType)
                 val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
                 declaration.replaceReturnTypeRef(returnType)
+                if (declaration is FirProperty) {
+                    declaration.getter?.replaceReturnTypeRef(returnType)
+                    declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnType)
+                }
+
                 declaration.attributes.callableCopySubstitutionForTypeUpdater = null
                 return returnType
             }

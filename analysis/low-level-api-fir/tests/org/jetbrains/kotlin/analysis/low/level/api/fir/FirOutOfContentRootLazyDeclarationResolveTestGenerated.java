@@ -253,6 +253,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("explicitSubstitutionOverrideProperty.kt")
+    public void testExplicitSubstitutionOverrideProperty() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/explicitSubstitutionOverrideProperty.kt");
+    }
+
+    @Test
     @TestMetadata("fakeOverride.kt")
     public void testFakeOverride() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/fakeOverride.kt");
@@ -304,6 +310,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("functionWithWhere.kt")
     public void testFunctionWithWhere() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/functionWithWhere.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitSubstitutionOverrideProperty.kt")
+    public void testImplicitSubstitutionOverrideProperty() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/implicitSubstitutionOverrideProperty.kt");
     }
 
     @Test
@@ -448,6 +460,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("primaryConstructorProperty.kt")
     public void testPrimaryConstructorProperty() throws Exception {
         runTest("analysis/low-level-api-fir/testData/lazyResolve/primaryConstructorProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyDelegateWithImplicitType.kt")
+    public void testPropertyDelegateWithImplicitType() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/lazyResolve/propertyDelegateWithImplicitType.kt");
     }
 
     @Test
