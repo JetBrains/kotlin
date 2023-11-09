@@ -26549,6 +26549,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("PrivateSetInSuperclass.kt")
+            public void testPrivateSetInSuperclass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/PrivateSetInSuperclass.kt");
+            }
+
+            @Test
             @TestMetadata("protectedGetterWithPublicSetter.kt")
             public void testProtectedGetterWithPublicSetter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/properties/protectedGetterWithPublicSetter.kt");
