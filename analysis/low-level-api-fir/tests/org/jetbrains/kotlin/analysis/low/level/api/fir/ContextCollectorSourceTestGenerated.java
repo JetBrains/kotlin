@@ -61,6 +61,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
     }
 
     @Test
+    @TestMetadata("forLoopVariable.kt")
+    public void testForLoopVariable() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/forLoopVariable.kt");
+    }
+
+    @Test
     @TestMetadata("innerClasses.kt")
     public void testInnerClasses() throws Exception {
         runTest("analysis/low-level-api-fir/testData/contextCollector/innerClasses.kt");
