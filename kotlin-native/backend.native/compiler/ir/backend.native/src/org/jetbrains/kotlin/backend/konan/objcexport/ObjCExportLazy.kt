@@ -448,7 +448,7 @@ internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuratio
         override val topLevelNamePrefix = abbreviate(configuration.frameworkName)
 
         override fun getAdditionalPrefix(module: ModuleDescriptor): String? {
-            if (module.isStdlib()) return "Kotlin"
+            if (module.isNativeStdlib() || module.isCommonStdlibCheckSpecificallyForIDE()) return "Kotlin"
 
             // Note: incorrect for compiler since it doesn't store ModuleInfo to ModuleDescriptor.
             val moduleInfo = module.getCapability(ModuleInfo.Capability) ?: return null
@@ -463,15 +463,11 @@ internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuratio
     }
 }
 
-// TODO: find proper solution.
-private fun ModuleDescriptor.isStdlib(): Boolean =
-        this.builtIns == this || this.isCommonStdlib() || this.isNativeStdlib()
-
 private val kotlinSequenceClassId = ClassId.topLevel(FqName("kotlin.sequences.Sequence"))
 
-private fun ModuleDescriptor.isCommonStdlib() =
-        this.findClassAcrossModuleDependencies(kotlinSequenceClassId)?.module == this
-
+// This is a special workaround needed for resolve in the IDE.
+private fun ModuleDescriptor.isCommonStdlibCheckSpecificallyForIDE() =
+        findClassAcrossModuleDependencies(kotlinSequenceClassId)?.module == this
 
 private val KtModifierListOwner.isPublic: Boolean
     get() = this.visibilityModifierTypeOrDefault() == KtTokens.PUBLIC_KEYWORD

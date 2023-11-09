@@ -9,10 +9,8 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.konan.file.isBitcode
-import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.library.BaseKotlinLibrary
-import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 
@@ -64,10 +62,6 @@ internal fun produceCStubs(generationState: NativeGenerationState) {
     }
 }
 
-private val BaseKotlinLibrary.isStdlib: Boolean
-    get() = uniqueName == KONAN_STDLIB_NAME
-
-
 private data class LlvmModules(
         val runtimeModules: List<LLVMModuleRef>,
         val additionalModules: List<LLVMModuleRef>
@@ -82,7 +76,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val config = generationState.config
 
     val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.dependenciesTracker.bitcodeToLink
-            .partition { it.isStdlib && generationState.producedLlvmModuleContainsStdlib }
+            .partition { it.isNativeStdlib && generationState.producedLlvmModuleContainsStdlib }
             .toList()
             .map { libraries ->
                 libraries.flatMap { it.bitcodePaths }.filter { it.isBitcode }

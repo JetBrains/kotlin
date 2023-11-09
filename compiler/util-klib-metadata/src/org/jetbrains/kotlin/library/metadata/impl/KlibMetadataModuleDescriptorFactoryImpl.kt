@@ -16,18 +16,14 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.hasDependencies
-import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.parentOrNull
+import org.jetbrains.kotlin.library.isNativeStdlib
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
-
-private val ModuleDescriptorImpl.isStdlibModule
-    get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library?.let { !it.hasDependencies } ?: false
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
@@ -49,27 +45,22 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         val moduleName = Name.special(libraryProto.moduleName)
         val moduleOrigin = DeserializedKlibModuleOrigin(library)
 
-        val moduleDescriptor = if (builtIns != null )
+        val moduleDescriptor = if (builtIns != null)
             descriptorFactory.createDescriptor(moduleName, storageManager, builtIns, moduleOrigin)
         else
             descriptorFactory.createDescriptorAndNewBuiltIns(moduleName, storageManager, moduleOrigin)
 
-        val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
-
-        val compositePackageFragmentAddend =
-            if (moduleDescriptor.isStdlibModule) {
-                functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
-            } else null
-
         val provider = createPackageFragmentProvider(
             library,
             packageAccessHandler,
-            libraryProto.packageFragmentNameList,
+            packageFragmentNames = libraryProto.packageFragmentNameList,
             storageManager,
             moduleDescriptor,
-            deserializationConfiguration,
-            compositePackageFragmentAddend,
-            lookupTracker
+            configuration = CompilerDeserializationConfiguration(languageVersionSettings),
+            compositePackageFragmentAddend = runIf(library.isNativeStdlib) {
+                functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
+            },
+            lookupTracker = lookupTracker
         )
 
         moduleDescriptor.initialize(provider)
