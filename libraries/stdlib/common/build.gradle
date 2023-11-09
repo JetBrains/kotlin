@@ -37,7 +37,7 @@ compileKotlinCommon {
 
 compileKotlinCommon {
     kotlinOptions {
-        languageVersion = "1.9"
+        languageVersion = "2.0"
         apiVersion = "2.0"
         freeCompilerArgs = [
                 "-module-name", project.name,
@@ -46,7 +46,8 @@ compileKotlinCommon {
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xallow-kotlin-package",
                 "-Xexpect-actual-classes",
-                "-Xsuppress-api-version-greater-than-language-version-error",
+                "-Xstdlib-compilation",
+                "-Xdont-warn-on-error-suppression",
         ]
     }
 }
