@@ -180,8 +180,7 @@ FILE fqName:<root> fileName:/caoWithAdaptationForSam.kt
               VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:<root>.A [val]
                 GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
               VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Any [val]
-                TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
-                  GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test4' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
+                GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.test4' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
               CALL 'public final fun set (i: <root>.IFoo, newValue: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                 $receiver: GET_VAR 'val tmp_6: <root>.A declared in <root>.test4' type=<root>.A origin=null
                 i: GET_VAR 'val tmp_7: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null

@@ -1280,10 +1280,11 @@ class CallAndReferenceGenerator(
                         symbol.fir.receiverParameter?.typeRef?.let { receiverType ->
                             with(visitor.implicitCastInserter) {
                                 val extensionReceiver = qualifiedAccess.extensionReceiver!!
+                                val substitutor = qualifiedAccess.buildSubstitutorByCalledCallable()
                                 it.cast(
                                     extensionReceiver,
                                     extensionReceiver.resolvedType,
-                                    receiverType.coneType,
+                                    substitutor.substituteOrSelf(receiverType.coneType),
                                 )
                             }
                         } ?: it
