@@ -182,6 +182,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION,
         DECOYS_ENABLED_OPTION,
         STRONG_SKIPPING_OPTION,
+        STABLE_CONFIG_PATH_OPTION,
         TRACE_MARKERS_OPTION
     )
 
