@@ -28,7 +28,7 @@ class KotlinJavaScriptMetaFileDecompiler : KotlinMetadataDecompiler<JsMetadataVe
         val stream = ByteArrayInputStream(bytes)
 
         val version = JsMetadataVersion.readFrom(stream)
-        if (!version.isCompatible()) {
+        if (!version.isCompatibleWithCurrentCompilerVersion()) {
             return KotlinMetadataStubBuilder.FileWithMetadata.Incompatible(version)
         }
 
