@@ -53,13 +53,13 @@ fun Test(%composer: Composer?, %changed: Int) {
     }, %composer, 0b0110)
     TestMemoizedFun(<block>{
       %composer.startReplaceableGroup(<>)
-      val tmpCache = %composer.cache(%composer.changed(capture)) {
+      val tmp0_group = %composer.cache(false) {
         TestFunInterface { it: Int ->
           use(capture)
         }
       }
       %composer.endReplaceableGroup()
-      tmpCache
+      tmp0_group
     }, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()

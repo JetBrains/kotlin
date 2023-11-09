@@ -46,7 +46,7 @@ fun TestLambda(content: Function0<Unit>, %composer: Composer?, %changed: Int) {
 @Composable
 fun Test(a: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<TestLa...>:Test.kt")
+  sourceInformation(%composer, "C(Test)<{>,<TestLa...>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b1110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
@@ -57,13 +57,14 @@ fun Test(a: String, %composer: Composer?, %changed: Int) {
     }
     TestLambda(<block>{
       %composer.startReplaceableGroup(<>)
-      val tmpCache = %composer.cache(%composer.changed(a)) {
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100) {
         {
           println("Captures a" + a)
         }
       }
       %composer.endReplaceableGroup()
-      tmpCache
+      tmp0_group
     }, %composer, 0)
     if (isTraceInProgress()) {
       traceEventEnd()

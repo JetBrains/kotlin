@@ -27,13 +27,13 @@ fun Test(%composer: Composer?, %changed: Int) {
     val foo = Foo(0)
     val lambda = <block>{
       %composer.startReplaceableGroup(<>)
-      val tmpCache = %composer.cache(%composer.changedInstance(foo)) {
+      val tmp0_group = %composer.cache(%composer.changedInstance(foo)) {
         {
           foo
         }
       }
       %composer.endReplaceableGroup()
-      tmpCache
+      tmp0_group
     }
     if (isTraceInProgress()) {
       traceEventEnd()

@@ -386,7 +386,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
             )
             val intrinsicRememberEnabled = configuration.get(
                 ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-                false
+                true
             )
             val decoysEnabled = configuration.getBoolean(
                 ComposeConfiguration.DECOYS_ENABLED_KEY,

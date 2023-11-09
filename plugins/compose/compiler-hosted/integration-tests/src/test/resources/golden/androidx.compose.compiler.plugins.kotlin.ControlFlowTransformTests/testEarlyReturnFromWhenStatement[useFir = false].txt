@@ -25,17 +25,23 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %changed, -1, <>)
     }
-    val state = remember({
-      mutableStateOf(
-        value = false
-      )
-    }, %composer, 0)
+    val state = <block>{
+      %composer.startReplaceableGroup(<>)
+      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+      val tmp0_group = %composer.cache(false) {
+        mutableStateOf(
+          value = false
+        )
+      }
+      %composer.endReplaceableGroup()
+      tmp0_group
+    }
     val tmp0_subject = state.value
     when {
       tmp0_subject == true -> {
         %composer.startReplaceableGroup(<>)
         sourceInformation(%composer, "<Text(t...>")
-        val tmp0_return = Text("true", %composer, 0b0110)
+        val tmp1_return = Text("true", %composer, 0b0110)
         %composer.endReplaceableGroup()
         if (isTraceInProgress()) {
           traceEventEnd()
@@ -43,7 +49,7 @@ private fun Test(param: String?, %composer: Composer?, %changed: Int) {
         %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
           Test(param, %composer, updateChangedFlags(%changed or 0b0001))
         }
-        return tmp0_return
+        return tmp1_return
       }
       else -> {
         %composer.startReplaceableGroup(<>)
