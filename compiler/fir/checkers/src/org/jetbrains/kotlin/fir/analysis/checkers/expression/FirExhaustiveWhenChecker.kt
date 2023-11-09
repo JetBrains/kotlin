@@ -88,7 +88,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
     }
 
     private val FirWhenExpression.missingCases: List<ExtendedWhenMissingCase>
-        get() = (exhaustivenessStatus as ExhaustivenessStatus.NotExhaustive).reasons
+        get() = (exhaustivenessStatus as? ExhaustivenessStatus.NotExhaustive)?.reasons.orEmpty()
 
     private enum class AlgebraicTypeKind(val displayName: String) {
         Sealed("sealed class/interface"),
