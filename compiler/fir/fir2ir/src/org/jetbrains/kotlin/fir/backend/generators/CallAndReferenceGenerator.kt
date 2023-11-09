@@ -1043,6 +1043,8 @@ class CallAndReferenceGenerator(
                 irArgument = irArgument.insertSpecialCast(argument, argumentType, unsubstitutedParameterType)
             }
         }
+        // TODO: Applying SAM conversion should be extracted to a separate function, which will call
+        //   convertArgument with original functional type as expected type, see KT-62847, KT-63345
         with(adapterGenerator) {
             if (parameter?.returnTypeRef is FirResolvedTypeRef) {
                 // Java type case (from annotations)
