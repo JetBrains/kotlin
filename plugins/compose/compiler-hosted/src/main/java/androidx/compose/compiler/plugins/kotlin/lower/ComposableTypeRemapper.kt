@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
@@ -229,6 +230,25 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         return false
     }
 
+    override fun visitDelegatingConstructorCall(
+        expression: IrDelegatingConstructorCall
+    ): IrDelegatingConstructorCall {
+        val owner = expression.symbol.owner
+        // If we are calling an external constructor, we want to "remap" the types of its signature
+        // as well, since if it they are @Composable it will have its unmodified signature. These
+        // types won't be traversed by default by the DeepCopyIrTreeWithSymbols so we have to
+        // do it ourself here.
+        if (
+            owner.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
+                owner.needsComposableRemapping() &&
+                symbolRemapper.getReferencedConstructor(expression.symbol) == owner.symbol
+        ) {
+            symbolRemapper.visitConstructor(owner)
+            visitConstructor(owner).patchDeclarationParents(owner.parent)
+        }
+        return super.visitDelegatingConstructorCall(expression)
+    }
+
     override fun visitCall(expression: IrCall): IrCall {
         val ownerFn = expression.symbol.owner as? IrSimpleFunction
         val containingClass = ownerFn?.parentClassOrNull
@@ -335,19 +355,21 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
             ownerFn != null &&
             ownerFn.needsComposableRemapping()
         ) {
-            val newFn = visitSimpleFunction(ownerFn).also {
-                it.overriddenSymbols = ownerFn.overriddenSymbols.map { override ->
-                    if (override.isBound) {
-                        visitSimpleFunction(override.owner).apply {
-                            patchDeclarationParents(override.owner.parent)
-                        }.symbol
-                    } else {
-                        override
+            if (symbolRemapper.getReferencedSimpleFunction(ownerFn.symbol) == ownerFn.symbol) {
+                visitSimpleFunction(ownerFn).also {
+                    it.overriddenSymbols = ownerFn.overriddenSymbols.map { override ->
+                        if (override.isBound) {
+                            visitSimpleFunction(override.owner).apply {
+                                patchDeclarationParents(override.owner.parent)
+                            }.symbol
+                        } else {
+                            override
+                        }
                     }
+                    it.patchDeclarationParents(ownerFn.parent)
                 }
-                it.patchDeclarationParents(ownerFn.parent)
             }
-            val newCallee = symbolRemapper.getReferencedSimpleFunction(newFn.symbol)
+            val newCallee = symbolRemapper.getReferencedSimpleFunction(ownerFn.symbol)
             return shallowCopyCall(expression, newCallee).apply {
                 copyRemappedTypeArgumentsFrom(expression)
                 transformValueArguments(expression)

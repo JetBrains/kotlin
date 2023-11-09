@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import android.widget.TextView
 import androidx.compose.runtime.Composer
 import java.net.URLClassLoader
+import kotlin.test.assertFalse
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -1102,6 +1103,53 @@ class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                     """
                 )
             )
+        )
+    }
+
+    @Test
+    fun testComposableFunctionProperty() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    open class OpenClassWithComposableVal(
+                        val content: @Composable () -> Unit
+                    )
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import androidx.compose.runtime.Composable
+                    import base.OpenClassWithComposableVal
+
+                    class OpenClassWithComposableValImpl(
+                        kontent: @Composable () -> Unit
+                    ): OpenClassWithComposableVal(kontent)
+
+                    @Composable
+                    fun test() {
+                        val a = OpenClassWithComposableValImpl {}
+                        a.content()
+                    }
+                    """
+                )
+            ),
+            validate = {
+                assertFalse(
+                   it.contains("setContent"),
+                   message = "Property getter was resolved to a setter name"
+                )
+                assertFalse(
+                    it.contains("Lkotlin/jvm/functions/Function0"),
+                    message = "Composable function types were not remapped"
+                )
+            },
         )
     }
 
