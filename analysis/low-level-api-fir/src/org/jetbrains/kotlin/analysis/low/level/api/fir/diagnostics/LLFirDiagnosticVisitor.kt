@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -100,13 +102,18 @@ internal open class LLFirDiagnosticVisitor(
      * accessible children. For example, a file checker can report a diagnostic on a top-level class, but not its member function.
      */
     private fun commitPendingDiagnosticsOnNestedDeclarations(element: FirElement) {
-        val declarations = when (element) {
-            is FirFile -> element.declarations
-            is FirRegularClass -> element.declarations
+        val declarationContainer = when (element) {
+            // Script `FirFile`s can be checked by file checkers, which report diagnostics on the declarations inside the `FirScript`, so we
+            // have to unwrap the script from the file to commit the diagnostics on the script's declarations.
+            is FirFile -> element.declarations.singleOrNull() as? FirScript ?: element
+
+            is FirScript, is FirRegularClass -> element
             else -> return
         }
 
-        for (declaration in declarations) {
+        // Casting to `FirDeclaration` is required in K1.
+        @Suppress("USELESS_CAST")
+        (declarationContainer as FirDeclaration).forEachDeclaration { declaration ->
             withAnnotationContainer(declaration) {
                 declaration.accept(components.reportCommitter, context)
             }
