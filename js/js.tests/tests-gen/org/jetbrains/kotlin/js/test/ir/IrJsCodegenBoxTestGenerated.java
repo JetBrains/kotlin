@@ -2177,6 +2177,116 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                             runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/targetTypes/TypeParameter.kt");
                         }
                     }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class TypeInfoSinks {
+                        @Test
+                        public void testAllFilesPresentInTypeInfoSinks() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                        }
+
+                        @Test
+                        @TestMetadata("ExtensionFunctions.kt")
+                        public void testExtensionFunctions() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ExtensionFunctions.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ImmutableExtensionProperties.kt")
+                        public void testImmutableExtensionProperties() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableExtensionProperties.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ImmutableProperties.kt")
+                        public void testImmutableProperties() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ImmutableProperties.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("MutableExtensionPropertiesMaterializeCase.kt")
+                        public void testMutableExtensionPropertiesMaterializeCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesMaterializeCase.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("MutableExtensionPropertiesYieldCase.kt")
+                        public void testMutableExtensionPropertiesYieldCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutableExtensionPropertiesYieldCase.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("MutablePropertiesMaterializeCase.kt")
+                        public void testMutablePropertiesMaterializeCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesMaterializeCase.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("MutablePropertiesYieldCase.kt")
+                        public void testMutablePropertiesYieldCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/MutablePropertiesYieldCase.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ParametersOfBuilderArguments.kt")
+                        public void testParametersOfBuilderArguments() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ParametersOfBuilderArguments.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ReceiversOfBuilderArguments.kt")
+                        public void testReceiversOfBuilderArguments() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSinks/ReceiversOfBuilderArguments.kt");
+                        }
+                    }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class TypeInfoSources {
+                        @Test
+                        public void testAllFilesPresentInTypeInfoSources() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+                        }
+
+                        @Test
+                        @TestMetadata("ExtensionFunctions.kt")
+                        public void testExtensionFunctions() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionFunctions.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ExtensionProperties.kt")
+                        public void testExtensionProperties() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ExtensionProperties.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ParametersOfBuilderArguments.kt")
+                        public void testParametersOfBuilderArguments() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ParametersOfBuilderArguments.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ReceiversOfBuilderArguments.kt")
+                        public void testReceiversOfBuilderArguments() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReceiversOfBuilderArguments.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ReturnTypesOfBuilderParameters.kt")
+                        public void testReturnTypesOfBuilderParameters() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/ReturnTypesOfBuilderParameters.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt")
+                        public void testUnitReturnTypeOfBuilderParametersExplicitReturnCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/typeInfoSources/UnitReturnTypeOfBuilderParametersExplicitReturnCase.kt");
+                        }
+                    }
                 }
             }
         }
