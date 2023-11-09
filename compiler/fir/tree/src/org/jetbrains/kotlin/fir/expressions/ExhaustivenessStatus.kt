@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.ExtendedWhenMissingCase
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.WhenMissingCaseFor
@@ -25,7 +26,9 @@ sealed class ExhaustivenessStatus {
 
     class NotExhaustive(val reasons: List<ExtendedWhenMissingCase>) : ExhaustivenessStatus() {
         companion object {
-            val NO_ELSE_BRANCH = NotExhaustive(listOf(listOf(WhenMissingCaseFor(null, WhenMissingCase.Unknown))))
+            val NO_ELSE_BRANCH = unknownMissingCase(null)
+            fun unknownMissingCase(expression: KtSourceElement?) =
+                NotExhaustive(listOf(listOf(WhenMissingCaseFor(expression, WhenMissingCase.Unknown))))
         }
     }
 }
