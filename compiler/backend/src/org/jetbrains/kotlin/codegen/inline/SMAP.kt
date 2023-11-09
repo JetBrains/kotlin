@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import gnu.trove.TIntIntHashMap
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap
 import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import java.util.*
@@ -57,7 +57,7 @@ object SMAPBuilder {
 }
 
 class SourceMapCopier(val parent: SourceMapper, private val smap: SMAP, val callSite: SourcePosition? = null) {
-    private val visitedLines = TIntIntHashMap()
+    private val visitedLines = Int2IntOpenHashMap()
     private var lastVisitedRange: RangeMapping? = null
 
     fun mapLineNumber(lineNumber: Int): Int {

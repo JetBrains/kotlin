@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.at
@@ -95,14 +94,14 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
     private inner class EnumClassTransformer(private val irClass: IrClass, private val supportsEnumEntries: Boolean) {
         private val loweredEnumConstructors = hashMapOf<IrConstructorSymbol, IrConstructor>()
         private val loweredEnumConstructorParameters = hashMapOf<IrValueParameterSymbol, IrValueParameter>()
-        private val enumEntryOrdinals = TObjectIntHashMap<IrEnumEntry>()
+        private val enumEntryOrdinals = hashMapOf<IrEnumEntry, Int>()
         private val declarationToEnumEntry = mutableMapOf<IrDeclaration, IrEnumEntry>()
         private val enumArrayType = context.irBuiltIns.arrayClass.typeWith(irClass.defaultType) // Enum[]
 
         fun run() {
             // Lower IrEnumEntry into IrField and IrClass members
             irClass.declarations.asSequence().filterIsInstance<IrEnumEntry>().withIndex().forEach { (index, enumEntry) ->
-                enumEntryOrdinals.put(enumEntry, index)
+                enumEntryOrdinals[enumEntry] = index
                 enumEntry.correspondingClass?.let { entryClass -> declarationToEnumEntry[entryClass] = enumEntry }
                 declarationToEnumEntry[buildEnumEntryField(enumEntry)] = enumEntry
             }
@@ -307,7 +306,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
                 call.copyTypeArgumentsFrom(original)
                 if (enumEntry != null) {
                     call.putValueArgument(0, irString(enumEntry.name.asString()))
-                    call.putValueArgument(1, irInt(enumEntryOrdinals[enumEntry]))
+                    call.putValueArgument(1, irInt(enumEntryOrdinals[enumEntry]!!))
                 } else {
                     val constructor = currentScope!!.scope.scopeOwnerSymbol as IrConstructorSymbol
                     call.putValueArgument(0, irGet(constructor.owner.valueParameters[0]))

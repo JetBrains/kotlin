@@ -9,9 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.config.LanguageFeature
 import java.io.File
-import java.util.*
 import java.util.regex.Pattern
-import kotlin.collections.HashSet
 
 class CodeConformanceTest : TestCase() {
     companion object {
@@ -221,9 +219,6 @@ class CodeConformanceTest : TestCase() {
                 allowedFiles = listOf(
                     "analysis/light-classes-base/src/org/jetbrains/kotlin/asJava/classes/KotlinClassInnerStuffCache.kt",
                     "build-common/src/org/jetbrains/kotlin/incremental/IncrementalJvmCache.kt",
-                    "compiler/backend/src/org/jetbrains/kotlin/codegen/FrameMap.kt",
-                    "compiler/backend/src/org/jetbrains/kotlin/codegen/inline/SMAP.kt",
-                    "compiler/backend/src/org/jetbrains/kotlin/codegen/optimization/common/ControlFlowGraph.kt",
                     "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/compiler/CliVirtualFileFinder.kt",
                     "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/compiler/KotlinCliJavaFileManagerImpl.kt",
                     "compiler/cli/cli-base/src/org/jetbrains/kotlin/cli/jvm/index/JvmDependenciesIndexImpl.kt",
@@ -231,7 +226,6 @@ class CodeConformanceTest : TestCase() {
                     "compiler/frontend/src/org/jetbrains/kotlin/resolve/lazy/FileScopeFactory.kt",
                     "compiler/frontend/src/org/jetbrains/kotlin/resolve/lazy/LazyImportScope.kt",
                     "compiler/frontend/src/org/jetbrains/kotlin/types/expressions/PreliminaryLoopVisitor.kt",
-                    "compiler/ir/backend.jvm/lower/src/org/jetbrains/kotlin/backend/jvm/lower/EnumClassLowering.kt",
                     "compiler/psi/src/org/jetbrains/kotlin/psi/KotlinStringLiteralTextEscaper.kt",
                     "compiler/resolution.common.jvm/src/org/jetbrains/kotlin/load/java/structure/impl/classFiles/BinaryJavaClass.kt",
                     "compiler/resolution/src/org/jetbrains/kotlin/resolve/calls/results/OverloadingConflictResolver.kt",
