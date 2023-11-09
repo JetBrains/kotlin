@@ -63,3 +63,20 @@ A few specifics apply:
 * When merging, the choice between a squash and rebase is left to the author
     * When squashing, ensure that none of the intermediate commit messages (except for fixups) or YT references are lost.
 
+### TODOs
+
+It is well known that one leaves `TODO` comment in the code it will stay there forever (or until the sudden moment when someone visits this place in code and fix it). Such TODOs hurts the quality of the codebase for the following reasons:
+- Usually comments in those TODOs are quite small, and it's hard to understand the original intent without additional context (which becomes forgotten quite fast)
+- `TODO` in the code means that there is some problem in the code of which developers are aware. So ideally, it should be immediately fixed or tracked using regular mechanisms for that
+
+So to avoid leaving such TODOs in the code without any intention the following process is introduced: if you leave `TODO` comment or `TODO("some reason")` in the code which is going to be pushed to `master` please
+- Create a YouTrack ticket with a description of what should be done with this TODO and why
+- Add `kotlin-todo` tag to this ticket
+- Mention this ticket in the title line of the `TODO` itself. e.g. `TODO KT-XXXX description`
+- (Optional) mention this ticket in the commit where the TODO was introduced
+- (Optional) link the specific place in code with `TODO` in the ticket
+
+As a reviewer, please perform the following actions when you see some newly introduced `TODO` in the code:
+- Check if some ticket is mentioned
+- If it is, ensure that the ticket described enough to gather enough context to fix this `TODO` in the future
+- If it isn't please ask author of the code to introduce it
