@@ -53,7 +53,7 @@ internal abstract class JvmIncrementalCompilationConfigurationImpl<P : Increment
     override var rootProjectDir: File? = null,
     override var buildDir: File? = null,
     override var forcedNonIncrementalMode: Boolean = false,
-    override var outputDirs: Set<File> = emptySet(),
+    override var outputDirs: Set<File>? = null,
 ) : IncrementalJvmCompilationConfiguration<P> {
     override fun setRootProjectDir(rootProjectDir: File): IncrementalJvmCompilationConfiguration<P> {
         this.rootProjectDir = rootProjectDir
