@@ -35,10 +35,6 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
         }
     }
 
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:InputFile
-    internal abstract val podspec: Property<File>
-
     @get:Input
     internal abstract val podName: Property<String>
 

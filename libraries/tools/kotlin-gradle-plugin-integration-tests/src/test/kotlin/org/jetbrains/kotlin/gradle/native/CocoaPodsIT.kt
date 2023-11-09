@@ -65,6 +65,23 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Pod import single noPodspec")
+    @GradleTest
+    fun testPodImportSingleNoPodspec(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsSingleKtPod, gradleVersion) {
+
+            buildGradleKts.addCocoapodsBlock("noPodspec()")
+
+            buildWithCocoapodsWrapper(podImportTaskName) {
+                podImportAsserts(buildGradleKts)
+            }
+
+            buildWithCocoapodsWrapper(":kotlin-library:podImport") {
+                podImportAsserts(subProject("kotlin-library").buildGradleKts, "kotlin-library")
+            }
+        }
+    }
+
     @DisplayName("Pod import multiple")
     @GradleTest
     fun testPodImportMultiple(gradleVersion: GradleVersion) {
@@ -728,6 +745,23 @@ class CocoaPodsIT : KGPBaseTest() {
             )
             buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
                 assertHasDiagnostic(CocoapodsPluginDiagnostics.LinkOnlyUsedWithStaticFramework)
+            }
+        }
+    }
+
+    @DisplayName("Add pod-dependencies together with noPodspec")
+    @GradleTest
+    fun testPodDependenciesWithNoPodspec(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    noPodspec()
+        
+                    pod("Base64", version = "1.1.2")
+                """.trimIndent()
+            )
+            buildWithCocoapodsWrapper(":linkPodDebugFrameworkIOS") {
+                assertFileInProjectNotExists("cocoapods.podspec")
             }
         }
     }

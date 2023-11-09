@@ -489,6 +489,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             task.group = TASK_GROUP
             task.description = "Invokes `pod install` call within Podfile location directory"
             task.podfile.set(project.provider { cocoapodsExtension.podfile })
+            @Suppress("DEPRECATION") // is set for compatibility reasons
             task.podspec.set(podspecTaskProvider.map { it.outputFile })
             task.useStaticFramework.set(cocoapodsExtension.podFrameworkIsStatic)
             task.frameworkName.set(cocoapodsExtension.podFrameworkName)
@@ -504,7 +505,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     ) {
         val families = mutableSetOf<Family>()
 
-        val podspecTaskProvider = project.tasks.named<PodspecTask>(POD_SPEC_TASK_NAME)
         kotlinExtension.supportedTargets().all { target ->
             val family = target.konanTarget.family
             if (family in families) {
@@ -524,7 +524,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             val podGenTask = project.registerTask<PodGenTask>(family.toPodGenTaskName) { task ->
                 task.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
-                task.podspec.set(podspecTaskProvider.map { it.outputFile })
                 task.podName.set(project.provider { cocoapodsExtension.name })
                 task.specRepos.set(project.provider { cocoapodsExtension.specRepos })
                 task.family.set(family)

@@ -20,9 +20,8 @@ import java.io.File
 @DisableCachingByDefault
 abstract class PodInstallTask : AbstractPodInstallTask() {
 
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:Optional
-    @get:InputFile
+    @Deprecated("Use PodspecTask#outputFile")
+    @get:Internal
     abstract val podspec: Property<File?>
 
     @get:Input
