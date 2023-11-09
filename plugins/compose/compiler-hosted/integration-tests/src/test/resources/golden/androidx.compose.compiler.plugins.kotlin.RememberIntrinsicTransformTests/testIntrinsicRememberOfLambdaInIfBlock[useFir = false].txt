@@ -28,7 +28,7 @@ fun Test(a: Boolean, visible: Boolean, onDismiss: () -> Unit) {
 @Composable
 fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)P(!1,2)<someCo...>:Test.kt")
+  sourceInformation(%composer, "C(Test)P(!1,2)<someCo...>,<{>:Test.kt")
   val %dirty = %changed
   if (%changed and 0b1110 == 0) {
     %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
@@ -47,21 +47,25 @@ fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Co
       val a = someComposableValue(%composer, 0)
       used(a)
       val m = Modifier()
-      val dismissModifier = if (visible) {
-        m.pointerInput(Unit, <block>{
-          %composer.startReplaceableGroup(<>)
-          val tmpCache = %composer.cache(%composer.changedInstance(onDismiss)) {
-            {
-              detectTapGestures {
-                onDismiss()
+      val dismissModifier = <block>{
+        val tmp1_group = if (visible) {
+          m.pointerInput(Unit, <block>{
+            %composer.startReplaceableGroup(<>)
+            sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
+            val tmp0_group = %composer.cache(%dirty and 0b001110000000 == 0b000100000000) {
+              {
+                detectTapGestures {
+                  onDismiss()
+                }
               }
             }
-          }
-          %composer.endReplaceableGroup()
-          tmpCache
-        })
-      } else {
-        m
+            %composer.endReplaceableGroup()
+            tmp0_group
+          })
+        } else {
+          m
+        }
+        tmp1_group
       }
       used(dismissModifier)
     }
