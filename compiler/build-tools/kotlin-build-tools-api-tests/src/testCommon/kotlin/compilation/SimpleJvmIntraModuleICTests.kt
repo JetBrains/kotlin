@@ -1,0 +1,62 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.buildtools.api.tests.compilation
+
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.tests.buildToolsVersion
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunnerProvider
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.LogLevel
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.prepareModule
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.exists
+import kotlin.io.path.writeText
+
+@DisplayName("Smoke tests for incremental compilation within a single module via the build tools API")
+class SimpleJvmIntraModuleICTests : IncrementalBaseCompilationTest() {
+    @CompilationTest
+    fun smokeTest(buildRunnerProvider: BuildRunnerProvider) {
+        maybeSkip(buildRunnerProvider)
+        val module = prepareModule("jvm-module1", workingDirectory)
+
+        buildRunnerProvider(project).use { runner ->
+            module.compileIncrementally(runner, sourcesChanges = SourcesChanges.Unknown) {
+                assertTrue(module.outputDirectory.resolve("FooKt.class").exists())
+                assertTrue(module.outputDirectory.resolve("Bar.class").exists())
+                assertTrue(module.outputDirectory.resolve("BazKt.class").exists())
+            }
+        }
+
+        val barKt = module.sourcesDirectory.resolve("bar.kt")
+        // replace class with a function
+        barKt.writeText(
+            """
+            fun bar() {
+                foo()
+            }
+            """.trimIndent()
+        )
+
+        buildRunnerProvider(project).use { runner ->
+            module.compileIncrementally(
+                runner, sourcesChanges = SourcesChanges.Known(
+                    modifiedFiles = listOf(barKt.toFile()), removedFiles = emptyList()
+                )
+            ) { logs ->
+                assertTrue(module.outputDirectory.resolve("FooKt.class").exists())
+                assertFalse(module.outputDirectory.resolve("Bar.class").exists())
+                assertTrue(module.outputDirectory.resolve("BarKt.class").exists())
+                assertTrue(module.outputDirectory.resolve("BazKt.class").exists())
+                if (buildToolsVersion >= KotlinToolingVersion(2, 0, 0, "Beta1")) {
+                    // TODO: improve compiled files check
+                    assertTrue(logs.getValue(LogLevel.DEBUG).contains("compile iteration: jvm-module1/src/bar.kt"))
+                }
+            }
+        }
+    }
+}
