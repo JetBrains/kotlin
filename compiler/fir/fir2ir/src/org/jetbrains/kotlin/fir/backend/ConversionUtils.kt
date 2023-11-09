@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.originalConstructorIfTypeAlias
@@ -856,4 +858,19 @@ internal fun implicitCast(original: IrExpression, castType: IrType, typeOperator
         )
     }
     return implicitCast(original.argument, castType, typeOperator)
+}
+
+context(Fir2IrComponents)
+internal fun FirQualifiedAccessExpression.buildSubstitutorByCalledCallable(): ConeSubstitutor {
+    val typeParameters = when (val declaration = calleeReference.toResolvedCallableSymbol()?.fir) {
+        is FirFunction -> declaration.typeParameters
+        is FirProperty -> declaration.typeParameters
+        else -> return ConeSubstitutor.Empty
+    }
+    val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+    for ((index, typeParameter) in typeParameters.withIndex()) {
+        val typeProjection = typeArguments.getOrNull(index) as? FirTypeProjectionWithVariance ?: continue
+        map[typeParameter.symbol] = typeProjection.typeRef.coneType
+    }
+    return ConeSubstitutorByMap(map, session)
 }
