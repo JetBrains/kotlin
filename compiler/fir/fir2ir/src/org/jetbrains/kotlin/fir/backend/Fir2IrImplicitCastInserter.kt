@@ -313,7 +313,7 @@ class Fir2IrImplicitCastInserter(
                 }
                 receiver === extensionReceiver -> {
                     val extensionReceiverType = referencedDeclaration?.receiverParameter?.typeRef?.coneType ?: return null
-                    val substitutor = createSubstitutorFromTypeArguments(selector, referencedDeclaration)
+                    val substitutor = selector.buildSubstitutorByCalledCallable()
                     val substitutedType = substitutor.substituteOrSelf(extensionReceiverType)
                     // Frontend may write captured types as type arguments (by design), so we need to approximate receiver type after substitution
                     val approximatedType = session.typeApproximator.approximateToSuperType(
@@ -332,20 +332,6 @@ class Fir2IrImplicitCastInserter(
             }
         }
         return null
-    }
-
-    private fun createSubstitutorFromTypeArguments(
-        qualifiedAccessExpression: FirQualifiedAccessExpression,
-        callableDeclaration: FirCallableDeclaration,
-    ): ConeSubstitutor {
-        if (qualifiedAccessExpression.typeArguments.isEmpty() || callableDeclaration.typeParameters.isEmpty()) return ConeSubstitutor.Empty
-        val map = buildMap {
-            for ((parameter, argument) in callableDeclaration.typeParameters.zip(qualifiedAccessExpression.typeArguments)) {
-                val argumentType = argument.toConeTypeProjection().type ?: continue
-                put(parameter.symbol, argumentType)
-            }
-        }
-        return ConeSubstitutorByMap(map, session)
     }
 
     private fun implicitCastOrExpression(
