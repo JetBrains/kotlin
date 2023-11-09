@@ -27747,6 +27747,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                     runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride.kt");
                 }
 
+                @Test
+                @TestMetadata("javaInhertitedFromCommon.kt")
+                public void testJavaInhertitedFromCommon() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/javaInhertitedFromCommon.kt");
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
                 @TestDataPath("$PROJECT_ROOT")

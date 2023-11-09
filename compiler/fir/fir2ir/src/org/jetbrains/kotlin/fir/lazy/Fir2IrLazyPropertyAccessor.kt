@@ -111,7 +111,7 @@ class Fir2IrLazyPropertyAccessor(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
+    private var overriddenSymbolsOriginal: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
         if (firParentClass == null) return@lazyVar emptyList()
         // If property accessor is created then corresponding property is definitely created too
         @OptIn(UnsafeDuringIrConstructionAPI::class)
@@ -122,6 +122,23 @@ class Fir2IrLazyPropertyAccessor(
             }
         }
     }
+
+    private var overriddenSymbolsTransformed: List<IrSimpleFunctionSymbol>? = null
+    private var overriddenSymbolsMappingEpoch = 0
+
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol>
+        get() {
+            if (overriddenSymbolsTransformed == null || lazyDeclarationsGenerator.symbolMappingEpoch != overriddenSymbolsMappingEpoch) {
+                overriddenSymbolsMappingEpoch = lazyDeclarationsGenerator.symbolMappingEpoch
+                overriddenSymbolsTransformed = overriddenSymbolsOriginal.map { lazyDeclarationsGenerator.mapFunctionSymbol(it) }
+            }
+            return overriddenSymbolsTransformed!!
+        }
+        set(value) {
+            overriddenSymbolsOriginal = value
+            overriddenSymbolsTransformed = null
+        }
+
 
     override val initialSignatureFunction: IrFunction? by lazy {
         val originalFirFunction = (fir as? FirSyntheticPropertyAccessor)?.delegate ?: return@lazy null

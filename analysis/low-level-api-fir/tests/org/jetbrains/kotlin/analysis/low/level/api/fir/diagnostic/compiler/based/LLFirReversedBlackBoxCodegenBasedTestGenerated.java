@@ -34654,6 +34654,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
             }
 
             @Test
+            @TestMetadata("javaInhertitedFromCommon.kt")
+            public void testJavaInhertitedFromCommon() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/javaInhertitedFromCommon.kt");
+            }
+
+            @Test
             @TestMetadata("javaMethodWithTypeParameter.kt")
             public void testJavaMethodWithTypeParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");

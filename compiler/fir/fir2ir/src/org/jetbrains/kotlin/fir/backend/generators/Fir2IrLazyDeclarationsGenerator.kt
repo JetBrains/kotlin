@@ -13,12 +13,56 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.*
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyPublicSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
+import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+
+@RequiresOptIn(
+    level = RequiresOptIn.Level.ERROR,
+    message = "This is dangerous API without well-defined semantics. Please, use it only if you are sure you have no other options, and be ready to breaking changes"
+)
+annotation class DelicateLazyGeneratorApi
 
 class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2IrComponents by components {
+    private val functionSymbolMapping = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+    private val propertySymbolMapping = mutableMapOf<IrPropertySymbol, IrPropertySymbol>()
+    internal fun mapPropertySymbol(propertySymbol: IrPropertySymbol) = propertySymbolMapping[propertySymbol] ?: propertySymbol
+    internal fun mapFunctionSymbol(functionSymbol: IrSimpleFunctionSymbol) = functionSymbolMapping[functionSymbol] ?: functionSymbol
+    internal var symbolMappingEpoch: Int = 0
+        private set
+
+    /**
+     * Sometimes, stages after Fir2Ir are required to do some symbol remapping.
+     *
+     * If it happens, there are several problems with lazy declarations
+     * 1. It's hard to update lazy entries as they are not in the IR tree
+     * 2. It's hard to avoid triggering a load of lazy declaration content while doing remapping
+     *
+     * This mechanism exists to solve the problem.
+     * All lazy declarations would lazily apply this mapping to symbols inside them.
+     *
+     * Implementation limitation:
+     *    For now, the only supported type of "symbol inside them" is overriddenSymbols inside
+     *    function/property. This can be improved later if needed.
+     */
+    @DelicateLazyGeneratorApi
+    fun registerSymbolMapping(map: Map<IrSymbol, IrSymbol>) {
+        symbolMappingEpoch++
+        for ((k, v) in map) {
+            when {
+                k is IrSimpleFunctionSymbol -> functionSymbolMapping[k] = v as IrSimpleFunctionSymbol
+                k is IrPropertySymbol -> propertySymbolMapping[k] = v as IrPropertySymbol
+            }
+        }
+    }
+
     internal fun createIrLazyFunction(
         fir: FirSimpleFunction,
         symbol: IrSimpleFunctionSymbol,

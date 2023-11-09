@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualCheckers
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -17,7 +16,15 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 
-data class IrActualizedResult(val actualizedExpectDeclarations: List<IrDeclaration>)
+/**
+ * @property actualizedExpectDeclarations List of declarations which was removed from the modules, as they were replaced with actual ones
+ * @property symbolMapping Map from removed symbols to their replacements, for replacements done by actualizer.
+ *                         This includes both expects -> actuals, and new generated fake overrides.
+ */
+data class IrActualizedResult(
+    val actualizedExpectDeclarations: List<IrDeclaration>,
+    val symbolMapping: Map<IrSymbol, IrSymbol>
+)
 
 /**
  * IrActualizer is responsible for performing actualization.
@@ -84,12 +91,17 @@ object IrActualizer {
         //   7. Merge dependent fragments into the main one
         mergeIrFragments(mainFragment, dependentFragments)
 
-        if (useIrFakeOverrideBuilder) {
+        val fakeOverrideSymbolRemapping = if (useIrFakeOverrideBuilder) {
             //   8. Rebuild fake overrides from stretch, as they could become invalid during actualization
             FakeOverrideRebuilder(symbolTable, fakeOverrideBuilder).rebuildFakeOverrides(mainFragment)
+        } else {
+            emptyMap()
         }
 
-        return IrActualizedResult(removedExpectDeclarations)
+        return IrActualizedResult(
+            removedExpectDeclarations,
+            expectActualMap + fakeOverrideSymbolRemapping
+        )
     }
 
     private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>): List<IrDeclaration> {

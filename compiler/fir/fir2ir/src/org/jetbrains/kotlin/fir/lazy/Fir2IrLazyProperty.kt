@@ -208,7 +208,7 @@ class Fir2IrLazyProperty(
         }
     }
 
-    override var overriddenSymbols: List<IrPropertySymbol> by lazyVar(lock) {
+    private var overriddenSymbolsOriginal: List<IrPropertySymbol> by lazyVar(lock) {
         if (containingClass == null) return@lazyVar emptyList()
         if (isFakeOverride && parent is Fir2IrLazyClass) {
             fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideProperty(
@@ -221,6 +221,23 @@ class Fir2IrLazyProperty(
         }
         fir.generateOverriddenPropertySymbols(containingClass)
     }
+
+    private var overriddenSymbolsTransformed: List<IrPropertySymbol>? = null
+    private var overriddenSymbolsMappingEpoch = 0
+
+    override var overriddenSymbols: List<IrPropertySymbol>
+        get() {
+            if (overriddenSymbolsTransformed == null || lazyDeclarationsGenerator.symbolMappingEpoch != overriddenSymbolsMappingEpoch) {
+                overriddenSymbolsMappingEpoch = lazyDeclarationsGenerator.symbolMappingEpoch
+                overriddenSymbolsTransformed = overriddenSymbolsOriginal.map { lazyDeclarationsGenerator.mapPropertySymbol(it) }
+            }
+            return overriddenSymbolsTransformed!!
+        }
+        set(value) {
+            overriddenSymbolsOriginal = value
+            overriddenSymbolsTransformed = null
+        }
+
 
     override var metadata: MetadataSource?
         get() = null

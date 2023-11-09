@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
+import org.jetbrains.kotlin.backend.common.actualizer.FakeOverrideRebuilder
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.generators.DelicateLazyGeneratorApi
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -151,6 +153,8 @@ fun FirResult.convertToIrAndActualize(
                 fir2IrConfiguration.useIrFakeOverrideBuilder,
                 fir2IrConfiguration.expectActualTracker,
             )
+            @OptIn(DelicateLazyGeneratorApi::class)
+            fir2IrResult.components.lazyDeclarationsGenerator.registerSymbolMapping(actualizationResult.symbolMapping)
         }
     }
 

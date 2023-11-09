@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
+import org.jetbrains.kotlin.fir.backend.generators.DelicateLazyGeneratorApi
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.setParent
 import org.jetbrains.kotlin.fir.declarations.*
@@ -689,7 +690,9 @@ class Fir2IrConverter(
 
             if (fir2IrConfiguration.useIrFakeOverrideBuilder) {
                 val rebuilder = FakeOverrideRebuilder(commonMemberStorage.symbolTable, components.fakeOverrideBuilder)
-                rebuilder.rebuildFakeOverrides(irModuleFragment)
+                val mapping = rebuilder.rebuildFakeOverrides(irModuleFragment)
+                @OptIn(DelicateLazyGeneratorApi::class)
+                components.lazyDeclarationsGenerator.registerSymbolMapping(mapping)
             }
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)

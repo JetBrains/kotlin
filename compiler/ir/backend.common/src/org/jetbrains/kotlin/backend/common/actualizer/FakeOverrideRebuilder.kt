@@ -52,19 +52,19 @@ class FakeOverrideRebuilder(
     val symbolTable: SymbolTable,
     val fakeOverrideBuilder: IrFakeOverrideBuilder,
 ) {
-    private val removedFakeOverrides = mutableMapOf<IrClassSymbol, List<IrSymbol>>()
-    private val processedClasses = hashSetOf<IrClass>()
 
-    // Map from the old fake override symbol to the new (rebuilt) symbol.
-    private val fakeOverrideMap = hashMapOf<IrSymbol, IrSymbol>()
+    fun rebuildFakeOverrides(irModule: IrModuleFragment) : Map<IrSymbol, IrSymbol> {
+        val removedFakeOverrides = mutableMapOf<IrClassSymbol, List<IrSymbol>>()
+        val processedClasses = hashSetOf<IrClass>()
 
-
-    fun rebuildFakeOverrides(irModule: IrModuleFragment) {
+        // Map from the old fake override symbol to the new (rebuilt) symbol.
+        val fakeOverrideMap = hashMapOf<IrSymbol, IrSymbol>()
         irModule.acceptVoid(RemoveFakeOverridesVisitor(removedFakeOverrides, symbolTable))
         for (clazz in removedFakeOverrides.keys) {
-            rebuildClassFakeOverrides(clazz.owner)
+            rebuildClassFakeOverrides(removedFakeOverrides, processedClasses, fakeOverrideMap, clazz.owner)
         }
         irModule.acceptVoid(RemapFakeOverridesVisitor(fakeOverrideMap))
+        return emptyMap()// fakeOverrideMap
     }
 
     private fun collectOverriddenDeclarations(
@@ -106,12 +106,17 @@ class FakeOverrideRebuilder(
         }
     }
 
-    private fun rebuildClassFakeOverrides(irClass: IrClass) {
+    private fun rebuildClassFakeOverrides(
+        removedFakeOverrides: MutableMap<IrClassSymbol, List<IrSymbol>>,
+        processedClasses: HashSet<IrClass>,
+        fakeOverrideMap: HashMap<IrSymbol, IrSymbol>,
+        irClass: IrClass
+    ) {
         if (irClass is IrLazyDeclarationBase) return
         if (!processedClasses.add(irClass)) return
         val oldList = removedFakeOverrides[irClass.symbol] ?: return
         for (c in irClass.superTypes) {
-            c.getClass()?.let { rebuildClassFakeOverrides(it) }
+            c.getClass()?.let { rebuildClassFakeOverrides(removedFakeOverrides, processedClasses, fakeOverrideMap, it) }
         }
         fakeOverrideBuilder.buildFakeOverridesForClass(irClass, false)
 

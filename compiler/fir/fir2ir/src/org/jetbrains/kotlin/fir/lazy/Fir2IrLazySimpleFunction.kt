@@ -94,7 +94,7 @@ class Fir2IrLazySimpleFunction(
         }
     }
 
-    override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
+    private var overriddenSymbolsOriginal: List<IrSimpleFunctionSymbol> by lazyVar(lock) {
         if (firParent == null) return@lazyVar emptyList()
         val parent = parent
         if (isFakeOverride && parent is Fir2IrLazyClass) {
@@ -108,6 +108,22 @@ class Fir2IrLazySimpleFunction(
         }
         fir.generateOverriddenFunctionSymbols(firParent)
     }
+
+    private var overriddenSymbolsTransformed: List<IrSimpleFunctionSymbol>? = null
+    private var overriddenSymbolsMappingEpoch = 0
+
+    override var overriddenSymbols: List<IrSimpleFunctionSymbol>
+        get() {
+            if (overriddenSymbolsTransformed == null || lazyDeclarationsGenerator.symbolMappingEpoch != overriddenSymbolsMappingEpoch) {
+                overriddenSymbolsMappingEpoch = lazyDeclarationsGenerator.symbolMappingEpoch
+                overriddenSymbolsTransformed = overriddenSymbolsOriginal.map { lazyDeclarationsGenerator.mapFunctionSymbol(it) }
+            }
+            return overriddenSymbolsTransformed!!
+        }
+        set(value) {
+            overriddenSymbolsOriginal = value
+            overriddenSymbolsTransformed = null
+        }
 
     override val initialSignatureFunction: IrFunction? by lazy {
         val originalFunction = fir.initialSignatureAttr as? FirFunction ?: return@lazy null

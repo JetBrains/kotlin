@@ -29188,6 +29188,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/multiplatform/k2/internalOverride.kt");
             }
 
+            @TestMetadata("javaInhertitedFromCommon.kt")
+            public void testJavaInhertitedFromCommon() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/javaInhertitedFromCommon.kt");
+            }
+
             @TestMetadata("javaMethodWithTypeParameter.kt")
             public void testJavaMethodWithTypeParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");
