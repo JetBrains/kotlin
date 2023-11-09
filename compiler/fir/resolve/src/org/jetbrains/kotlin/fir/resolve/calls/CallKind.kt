@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     object VariableAccess : CallKind(
-        CheckDeprecatedSinceKotlin,
+        CheckHiddenDeclaration,
         CheckVisibility,
         DiscriminateSynthetics,
         CheckExplicitReceiverConsistency,
@@ -38,7 +38,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     )
 
     object Function : CallKind(
-        CheckDeprecatedSinceKotlin,
+        CheckHiddenDeclaration,
         CheckVisibility,
         DiscriminateSynthetics,
         MapArguments,
@@ -62,7 +62,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     )
 
     object DelegatingConstructorCall : CallKind(
-        CheckDeprecatedSinceKotlin,
+        CheckHiddenDeclaration,
         CheckVisibility,
         MapArguments,
         CheckExplicitReceiverConsistency,
@@ -80,7 +80,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
     )
 
     object CallableReference : CallKind(
-        CheckDeprecatedSinceKotlin,
+        CheckHiddenDeclaration,
         CheckVisibility,
         DiscriminateSynthetics,
         NoTypeArguments,
