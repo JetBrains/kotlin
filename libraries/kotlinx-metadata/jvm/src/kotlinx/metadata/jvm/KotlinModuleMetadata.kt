@@ -56,7 +56,7 @@ public class KotlinModuleMetadata private constructor(
     @Deprecated(
         "To avoid excessive copying, use .kmModule property instead. Note that it returns a view and not a copy.",
         ReplaceWith("kmModule"),
-        DeprecationLevel.WARNING
+        DeprecationLevel.ERROR
     )
     public fun toKmModule(): KmModule = KmModule().apply { kmModule.accept(this) }
 
@@ -262,7 +262,7 @@ public class KmModule : KmModuleVisitor() {
      *
      * Currently, Kotlin does not provide functionality to specify annotations on modules.
      */
-    @Deprecated("This list is always empty and will be removed", level = DeprecationLevel.WARNING)
+    @Deprecated("This list is always empty and will be removed", level = DeprecationLevel.ERROR)
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
 
     /**

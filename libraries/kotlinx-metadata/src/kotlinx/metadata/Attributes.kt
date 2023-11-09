@@ -298,13 +298,13 @@ public var KmProperty.isVar: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.
 /**
  * Indicates that the corresponding property has a getter.
  */
-@Deprecated("Kotlin properties always have getters", ReplaceWith("true"), DeprecationLevel.WARNING)
+@Deprecated("Kotlin properties always have getters", ReplaceWith("true"), DeprecationLevel.WARNING) // Deprecated in 0.8.0
 public var KmProperty.hasGetter: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_GETTER))
 
 /**
  * Indicates that the corresponding property has a setter.
  */
-@Deprecated("Check .setter for nullability instead", ReplaceWith("this.setter != null"), DeprecationLevel.WARNING)
+@Deprecated("Check .setter for nullability instead", ReplaceWith("this.setter != null"), DeprecationLevel.WARNING) // Deprecated in 0.8.0
 public var KmProperty.hasSetter: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_SETTER))
 
 /**

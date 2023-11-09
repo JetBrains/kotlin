@@ -72,7 +72,7 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
         @Deprecated(
             "To avoid excessive copying, use .kmClass property instead. Note that it returns a view and not a copy.",
             ReplaceWith("kmClass"),
-            DeprecationLevel.WARNING
+            DeprecationLevel.ERROR
         )
         public fun toKmClass(): KmClass = KmClass().also { newKm -> kmClass.accept(newKm) } // defensive copy
 
@@ -140,7 +140,7 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
         @Deprecated(
             "To avoid excessive copying, use .kmPackage property instead. Note that it returns a view and not a copy.",
             ReplaceWith("kmPackage"),
-            DeprecationLevel.WARNING
+            DeprecationLevel.ERROR
         )
         public fun toKmPackage(): KmPackage = KmPackage().also { newPkg -> kmPackage.accept(newPkg) }
 
@@ -216,7 +216,7 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
         @Deprecated(
             "To avoid excessive copying, use .kmLambda property instead. Note that it returns a view and not a copy.",
             ReplaceWith("kmLambda"),
-            DeprecationLevel.WARNING
+            DeprecationLevel.ERROR
         )
         public fun toKmLambda(): KmLambda? = if (isLambda) KmLambda().apply(this::accept) else null
 
@@ -374,7 +374,7 @@ public sealed class KotlinClassMetadata(internal val annotationData: Metadata) {
         @Deprecated(
             "To avoid excessive copying, use .kmPackage property instead. Note that it returns a view and not a copy.",
             ReplaceWith("kmPackage"),
-            DeprecationLevel.WARNING
+            DeprecationLevel.ERROR
         )
         public fun toKmPackage(): KmPackage = KmPackage().also { newKmp -> kmPackage.accept(newKmp) }
 

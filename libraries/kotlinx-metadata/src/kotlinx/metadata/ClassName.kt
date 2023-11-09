@@ -29,6 +29,6 @@ public fun ClassName.isLocalClassName(): Boolean = this.startsWith(".")
 @Deprecated(
     "Renamed to isLocalClassName() to avoid confusion with String properties",
     ReplaceWith("isLocalClassName()"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 public val ClassName.isLocal: Boolean get() = isLocalClassName()

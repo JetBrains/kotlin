@@ -30,7 +30,7 @@ public class KotlinCommonMetadata private constructor(proto: ProtoBuf.PackageFra
     @Deprecated(
         "To avoid excessive copying, use .kmModuleFragment property instead. Note that it returns a view and not a copy.",
         ReplaceWith("kmModuleFragment"),
-        DeprecationLevel.WARNING
+        DeprecationLevel.ERROR
     )
     public fun toKmModuleFragment(): KmModuleFragment =
         KmModuleFragment().apply { kmModuleFragment.accept(this) }

@@ -22,7 +22,7 @@ public fun ClassName.toJvmInternalName(): String =
 @Deprecated(
     "Renamed to toJvmInternalName() to avoid confusion with String properties",
     ReplaceWith("toJvmInternalName()"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 public val ClassName.jvmInternalName: String get() = toJvmInternalName()
 

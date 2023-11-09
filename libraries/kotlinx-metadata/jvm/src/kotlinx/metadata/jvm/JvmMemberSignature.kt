@@ -29,13 +29,13 @@ public sealed class JvmMemberSignature {
 
     // Two following declarations are deprecated since 0.6.1, should be error in 0.7.0+
 
-    @Deprecated("Deprecated for removal. Use descriptor instead", ReplaceWith("descriptor"), level = DeprecationLevel.WARNING)
+    @Deprecated("Deprecated for removal. Use descriptor instead", ReplaceWith("descriptor"), level = DeprecationLevel.ERROR)
     public val desc: String get() = descriptor
 
     @Deprecated(
         "asString() is deprecated as redundant. Use toString() instead",
         ReplaceWith("toString()"),
-        level = DeprecationLevel.WARNING
+        level = DeprecationLevel.ERROR
     )
     public fun asString(): String = toString()
 }
