@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunnerP
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Smoke tests for cross-module incremental compilation via the build tools API")
-class SimpleJvmCrossModuleICTests : IncrementalBaseCompilationTest() {
+class SimpleJvmCrossModuleICTests : DefaultIncrementalCompilationTest() {
     @CompilationTest
     fun compilationAvoidance(buildRunnerProvider: BuildRunnerProvider) {
         scenario(buildRunnerProvider) {

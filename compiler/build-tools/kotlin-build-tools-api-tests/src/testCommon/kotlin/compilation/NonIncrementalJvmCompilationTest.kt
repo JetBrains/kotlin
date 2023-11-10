@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.exists
 
 @DisplayName("Smoke tests for non-incremental compilation via the build tools API")
-internal class NonIncrementalJvmCompilationTest : BaseCompilationTest() {
+internal class NonIncrementalJvmCompilationTest : DefaultNonIncrementalCompilationTest() {
     @CompilationTest
     fun smokeSingleModuleTest(buildRunnerProvider: BuildRunnerProvider) {
         scenario(buildRunnerProvider) {

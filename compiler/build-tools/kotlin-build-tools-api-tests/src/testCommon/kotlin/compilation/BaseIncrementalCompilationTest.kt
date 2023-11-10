@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.tests.buildToolsVersion
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunner
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.Module
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.*
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions.assumeFalse
 import kotlin.io.path.exists
 
 /**
@@ -21,7 +20,7 @@ import kotlin.io.path.exists
  *
  * Prefer defining scenarios using the [scenario] DSL. [compileIncrementallyImpl] is a more low-level way to define tests.
  */
-abstract class IncrementalBaseCompilationTest : BaseCompilationTest() {
+abstract class BaseIncrementalCompilationTest<T : BaseIncrementalScenarioDsl> : BaseCompilationTest<T>() {
     fun Module.compileIncrementallyImpl(
         runner: BuildRunner,
         sourcesChanges: SourcesChanges,
@@ -57,6 +56,13 @@ abstract class IncrementalBaseCompilationTest : BaseCompilationTest() {
             assertions(result, logs, logs.extractCompiledSources())
         }
         assertTrue(shrunkClasspathSnapshotFile.exists())
+    }
+
+    override fun maybeSkip(buildRunnerProvider: BuildRunnerProvider) {
+        assumeFalse(
+            buildRunnerProvider.strategy == ExecutionStrategy.IN_PROCESS && buildToolsVersion < KotlinToolingVersion(2, 0, 0, "Beta1"),
+            "Skip the test for the versions when in-process IC wasn't supported"
+        )
     }
 
     private fun Map<LogLevel, Collection<String>>.extractCompiledSources() =

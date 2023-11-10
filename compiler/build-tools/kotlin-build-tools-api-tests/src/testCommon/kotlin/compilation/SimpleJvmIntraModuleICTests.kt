@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunnerP
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Smoke tests for incremental compilation within a single module via the build tools API")
-class SimpleJvmIntraModuleICTests : IncrementalBaseCompilationTest() {
+class SimpleJvmIntraModuleICTests : DefaultIncrementalCompilationTest() {
     @CompilationTest
     fun smokeTest(buildRunnerProvider: BuildRunnerProvider) {
         scenario(buildRunnerProvider) {
