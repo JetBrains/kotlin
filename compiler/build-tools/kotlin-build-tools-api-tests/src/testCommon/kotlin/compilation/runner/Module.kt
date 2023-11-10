@@ -27,9 +27,6 @@ class Module(
     val icDir: Path
         get() = buildDirectory.resolve("ic")
 
-    val snapshotFile: Path
-        get() = icDir.resolve("$moduleName.snapshot")
-
     val icCachesDir: Path
         get() = icDir.resolve("caches")
 

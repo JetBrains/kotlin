@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.runner
 
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.tests.CompilationServiceInitializationTest
 import java.io.Closeable
@@ -42,9 +43,15 @@ class BuildRunner(val project: Project) : Closeable {
     fun generateClasspathSnapshot(module: Module): Path {
         val snapshot =
             compilationService.calculateClasspathSnapshot(module.outputDirectory.toFile(), ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
-        module.snapshotFile.createParentDirectories()
-        snapshot.saveSnapshot(module.snapshotFile.toFile())
-        return module.snapshotFile
+        val hash = snapshot.classSnapshots.values
+            .filterIsInstance<AccessibleClassSnapshot>()
+            .withIndex()
+            .sumOf { (index, snapshot) -> index * 31 + snapshot.classAbiHash }
+        // see details in docs for `CachedClasspathSnapshotSerializer` for details why we can't use a fixed name
+        val snapshotFile = module.icDir.resolve("$hash.snapshot")
+        snapshotFile.createParentDirectories()
+        snapshot.saveSnapshot(snapshotFile.toFile())
+        return snapshotFile
     }
 
     fun compileModule(module: Module, dependencies: Set<Module> = emptySet()): CompilationResult {
