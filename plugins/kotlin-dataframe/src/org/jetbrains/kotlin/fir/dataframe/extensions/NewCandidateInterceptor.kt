@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.fir.dataframe.extensions
 
+import org.jetbrains.kotlin.cli.common.repl.replEscapeLineBreaks
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
@@ -13,10 +14,10 @@ import org.jetbrains.kotlin.fir.dataframe.CallShapeData
 import org.jetbrains.kotlin.fir.dataframe.InterpretationErrorReporter
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.callShapeData
-import org.jetbrains.kotlin.fir.dataframe.flatten
 import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.EmptyDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.CallInfo
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -69,6 +71,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.KotlinTypeFacade
+import org.jetbrains.kotlinx.dataframe.plugin.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleCol
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.SimpleFrameColumn
@@ -118,19 +121,7 @@ class NewCandidateInterceptor(
         }
         val tokenId = nextName("${suggestedName}I")
 
-        val token = buildRegularClass {
-            moduleData = session.moduleData
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Source
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
-            deprecationsProvider = EmptyDeprecationsProvider
-            classKind = ClassKind.CLASS
-            scopeProvider = FirKotlinScopeProvider()
-            superTypeRefs += FirImplicitAnyTypeRef(null)
-
-            name = tokenId.shortClassName
-            this.symbol = FirRegularClassSymbol(tokenId)
-        }
+        val token = buildSchema(tokenId)
 
         val dataFrameTypeId = nextName(suggestedName)
         val dataFrameType = buildRegularClass {
@@ -185,53 +176,100 @@ class NewCandidateInterceptor(
         val receiverType = explicitReceiver.coneTypeOrNull ?: return call
         val returnType = call.coneTypeOrNull ?: return call
 
-        val names = linkedMapOf<SimpleCol, String>()
-        val columns = dataFrameSchema.columns()
-
         val resolvedLet = findLet()
         val parameter = resolvedLet.valueParameterSymbols[0]
 
-        class SchemaDeclaration(/*val proposedName: ClassId, */val column: SimpleCol?, val columns: List<SimpleCol>)
-        val schemas = mutableListOf<SchemaDeclaration>()
 
-        val rootToken = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!
-        schemas.add(SchemaDeclaration(/*rootToken.classId, */null, columns))
+        val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
 
-        val flatten = dataFrameSchema.flatten()
-        flatten.distinctBy { it.column }.forEach {
-            names[it.column] = it.path.path.last()
-        }
-
-        names.mapNotNullTo(schemas) { (column, name) ->
-            when (column) {
-                is SimpleColumnGroup -> {
-                    SchemaDeclaration(/*ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier(name)),*/ column, column.columns())
-                }
-                is SimpleFrameColumn -> {
-                    SchemaDeclaration(/*ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier(name)),*/ column, column.columns())
-                }
-                is SimpleCol -> null
-                else -> error(column::class.java)
+        data class DataSchemaApi(val schema: FirRegularClass, val scope: FirRegularClass)
+        val dataSchemaApis = mutableListOf<DataSchemaApi>()
+        fun PluginDataFrameSchema.materialize(schema: FirRegularClass? = null, suggestedName: String? = null, i: Int = 0): DataSchemaApi {
+            val schema = if (schema != null) {
+                schema
+            } else {
+                requireNotNull(suggestedName)
+                val name = nextName(suggestedName)
+                buildSchema(name)
             }
+
+            val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("Scope${i}"), true)
+            val scope = buildRegularClass {
+                moduleData = session.moduleData
+                resolvePhase = FirResolvePhase.BODY_RESOLVE
+                origin = FirDeclarationOrigin.Source
+                status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
+                deprecationsProvider = EmptyDeprecationsProvider
+                classKind = ClassKind.CLASS
+                scopeProvider = FirKotlinScopeProvider()
+                superTypeRefs += FirImplicitAnyTypeRef(null)
+
+                this.name = scopeId.shortClassName
+                this.symbol = FirRegularClassSymbol(scopeId)
+            }
+
+            val properties = columns().map {
+                fun PluginDataFrameSchema.materialize(column: SimpleCol): DataSchemaApi {
+                    // TODO
+                    val name = "${column.name.titleCase().replEscapeLineBreaks()}_${abs(call.calleeReference.name.hashCode())}"
+                    return materialize(suggestedName = name, i = i + 1)
+                }
+
+                when (it) {
+                    is SimpleColumnGroup -> {
+                        val nestedSchema = PluginDataFrameSchema(it.columns()).materialize(it)
+                        val columnsContainerReturnType =
+                            ConeClassLikeTypeImpl(
+                                ConeClassLikeLookupTagImpl(Names.COLUM_GROUP_CLASS_ID),
+                                typeArguments = arrayOf(nestedSchema.schema.defaultType()),
+                                isNullable = false
+                            )
+
+                        val dataRowReturnType =
+                            ConeClassLikeTypeImpl(
+                                ConeClassLikeLookupTagImpl(Names.DATA_ROW_CLASS_ID),
+                                typeArguments = arrayOf(nestedSchema.schema.defaultType()),
+                                isNullable = false
+                            )
+
+                        SchemaProperty(schema.defaultType(), it.name, dataRowReturnType, columnsContainerReturnType)
+                    }
+
+                    is SimpleFrameColumn -> {
+                        val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize(it)
+                        val frameColumnReturnType =
+                            ConeClassLikeTypeImpl(
+                                ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID),
+                                typeArguments = arrayOf(nestedClassMarker.schema.defaultType()),
+                                isNullable = it.nullable
+                            )
+
+                        SchemaProperty(
+                            marker = schema.defaultType(),
+                            name = it.name,
+                            dataRowReturnType = frameColumnReturnType,
+                            columnContainerReturnType = frameColumnReturnType.toFirResolvedTypeRef().projectOverDataColumnType()
+                        )
+                    }
+
+                    is SimpleCol -> SchemaProperty(
+                        marker = schema.defaultType(),
+                        name = it.name,
+                        dataRowReturnType = it.type.type(),
+                        columnContainerReturnType = it.type.type().toFirResolvedTypeRef().projectOverDataColumnType()
+                    )
+
+                    else -> TODO("shouldn't happen")
+                }
+            }
+            schema.callShapeData = CallShapeData.Schema(properties)
+            scope.callShapeData = CallShapeData.Scope(schema.symbol, properties)
+            val schemaApi = DataSchemaApi(schema, scope)
+            dataSchemaApis.add(schemaApi)
+            return schemaApi
         }
 
-        val distinctBy = schemas.distinctBy { it.column }
-
-
-        val root = distinctBy[0]
-        val rest = distinctBy.drop(1)
-
-        val rootClass = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
-
-        val properties = root.columns.map {
-            SchemaProperty(
-                marker = rootToken,
-                name = it.name,
-                dataRowReturnType = it.type.type(),
-                columnContainerReturnType = it.type.type().toFirResolvedTypeRef().projectOverDataColumnType()
-            )
-        }
-
+        dataFrameSchema.materialize(firstSchema)
 
         // original call is inserted later
         call.transformCalleeReference(object : FirTransformer<Nothing?>() {
@@ -247,26 +285,8 @@ class NewCandidateInterceptor(
             }
         }, null)
 
-        rootClass.callShapeData = CallShapeData.Schema(properties)
-        val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("Scope1"), true)
-        val scope = buildRegularClass {
-            moduleData = session.moduleData
-            resolvePhase = FirResolvePhase.BODY_RESOLVE
-            origin = FirDeclarationOrigin.Source
-            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.FINAL, EffectiveVisibility.Local)
-            deprecationsProvider = EmptyDeprecationsProvider
-            classKind = ClassKind.CLASS
-            scopeProvider = FirKotlinScopeProvider()
-            superTypeRefs += FirImplicitAnyTypeRef(null)
-
-            this.name = scopeId.shortClassName
-            this.symbol = FirRegularClassSymbol(scopeId)
-        }
-        scope.callShapeData = CallShapeData.Scope(rootClass.symbol, properties)
-
-
         val tokenFir = token.toClassSymbol(session)!!.fir
-        tokenFir.callShapeData = CallShapeData.RefinedType(listOf(scope.symbol))
+        tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol })
 
         val callExplicitReceiver = call.explicitReceiver
         val callDispatchReceiver = call.dispatchReceiver
@@ -302,10 +322,10 @@ class NewCandidateInterceptor(
                     }.also { parameterSymbol.bind(it) }
                     body = buildBlock {
                         this.coneTypeOrNull = returnType
-
-                        statements += rootClass
-
-                        statements += scope
+                        dataSchemaApis.asReversed().forEach {
+                            statements += it.schema
+                            statements += it.scope
+                        }
 
                         statements += tokenFir
 
@@ -377,6 +397,23 @@ class NewCandidateInterceptor(
             }
         }
         return newCall1
+    }
+
+    private fun buildSchema(tokenId: ClassId): FirRegularClass {
+        val token = buildRegularClass {
+            moduleData = session.moduleData
+            resolvePhase = FirResolvePhase.BODY_RESOLVE
+            origin = FirDeclarationOrigin.Source
+            status = FirResolvedDeclarationStatusImpl(Visibilities.Local, Modality.ABSTRACT, EffectiveVisibility.Local)
+            deprecationsProvider = EmptyDeprecationsProvider
+            classKind = ClassKind.CLASS
+            scopeProvider = FirKotlinScopeProvider()
+            superTypeRefs += FirImplicitAnyTypeRef(null)
+
+            name = tokenId.shortClassName
+            this.symbol = FirRegularClassSymbol(tokenId)
+        }
+        return token
     }
 
     private fun findLet(): FirFunctionSymbol<*> {

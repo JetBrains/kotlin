@@ -16,20 +16,20 @@ FILE: transformReplaceFunctionCall.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class Scope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenAdd_6048346I>|.col1: R|kotlin/Int|
                     public get(): R|kotlin/Int|
 
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenAdd_6048346I>|.col1: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/Scope0|
 
             }
 
             local abstract class TokenAdd_6048346 : R|<local>/TokenAdd_6048346I| {
-                public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/TokenAdd_6048346|
 
@@ -40,5 +40,5 @@ FILE: transformReplaceFunctionCall.kt
             }
             )
         }
-        )).R|<local>/Scope1.col1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        )).R|<local>/Scope0.col1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
     }

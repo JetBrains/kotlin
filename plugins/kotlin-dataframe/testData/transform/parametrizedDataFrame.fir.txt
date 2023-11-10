@@ -19,7 +19,7 @@ FILE: parametrizedDataFrame.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class Scope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenSchema_3097929I>|.new: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -32,13 +32,13 @@ FILE: parametrizedDataFrame.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenSchema_3097929I>|.i: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/Scope0|
 
             }
 
             local abstract class TokenSchema_3097929 : R|<local>/TokenSchema_3097929I| {
-                public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/TokenSchema_3097929|
 
@@ -50,8 +50,8 @@ FILE: parametrizedDataFrame.kt
             )
         }
         )
-        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/Scope1.new|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/String|>()
-        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/Scope1.i|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/Scope0.new|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/String|>()
+        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/Scope0.i|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt

@@ -23,7 +23,7 @@ FILE: main.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class Scope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572I>|.full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -54,13 +54,13 @@ FILE: main.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_1639480572I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/Scope0|
 
             }
 
             local abstract class TokenReadCSVDefault_1639480572 : R|<local>/TokenReadCSVDefault_1639480572I| {
-                public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/TokenReadCSVDefault_1639480572|
 
@@ -69,9 +69,9 @@ FILE: main.kt
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/readCSVDefault|(String(https://raw.githubusercontent.com/Kotlin/dataframe/master/data/jetbrains_repositories.csv))
         }
         )
-        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/Scope1.stargazers_count|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
+        (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|).R|<local>/Scope0.stargazers_count|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
         R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/filter|<R|<local>/TokenReadCSVDefault_1639480572|>(<L> = filter@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
-            ^ CMP(>, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope1.stargazers_count|.R|kotlin/Int.compareTo|(Int(50)))
+            ^ CMP(>, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope0.stargazers_count|.R|kotlin/Int.compareTo|(Int(50)))
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/print|<R|<local>/TokenReadCSVDefault_1639480572|>()
         (this@R|org/jetbrains/kotlinx/dataframe/box|, R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_102151291>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_102151291>| <inline=Inline, kind=EXACTLY_ONCE>  {
@@ -98,7 +98,7 @@ FILE: main.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class Scope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_102151291I>|.full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -135,13 +135,13 @@ FILE: main.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_102151291I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/Scope0|
 
             }
 
             local abstract class TokenReadCSVDefault_102151291 : R|<local>/TokenReadCSVDefault_102151291I| {
-                public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/TokenReadCSVDefault_102151291|
 
@@ -152,7 +152,7 @@ FILE: main.kt
             }
             )
         }
-        )).R|<local>/Scope1.hello|
+        )).R|<local>/Scope0.hello|
         R|<local>/df|.R|kotlin/let|<R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>|, R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_102151291>|>(<L> = fun <anonymous>(it: R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_1639480572>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<<local>/TokenReadCSVDefault_102151291>| <inline=Inline, kind=EXACTLY_ONCE>  {
             local abstract class TokenReadCSVDefault_102151291I : R|kotlin/Any| {
                 public abstract val full_name: R|kotlin/String|
@@ -177,7 +177,7 @@ FILE: main.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class Scope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_102151291I>|.full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -214,13 +214,13 @@ FILE: main.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_102151291I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/Scope0|
 
             }
 
             local abstract class TokenReadCSVDefault_102151291 : R|<local>/TokenReadCSVDefault_102151291I| {
-                public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/TokenReadCSVDefault_102151291|
 
@@ -258,7 +258,7 @@ FILE: main.kt
 
             }
 
-            local final class Scope1 : R|kotlin/Any| {
+            local final class Scope0 : R|kotlin/Any| {
                 public final val R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1217946296I>|.full_name: R|kotlin/String|
                     public get(): R|kotlin/String|
 
@@ -301,34 +301,34 @@ FILE: main.kt
                 public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<<local>/TokenReadCSVDefault_1217946296I>|.html_url: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
                     public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/net/URL>|
 
-                public constructor(): R|<local>/Scope1|
+                public constructor(): R|<local>/Scope0|
 
             }
 
             local abstract class TokenReadCSVDefault_1217946296 : R|<local>/TokenReadCSVDefault_1217946296I| {
-                public abstract val scope1: R|<local>/Scope1|
-                    public get(): R|<local>/Scope1|
+                public abstract val scope0: R|<local>/Scope0|
+                    public get(): R|<local>/Scope0|
 
                 public constructor(): R|<local>/TokenReadCSVDefault_1217946296|
 
             }
 
             ^ R|<local>/it|.R|org/jetbrains/kotlinx/dataframe/api/add|<R|kotlin/Int|, R|<local>/TokenReadCSVDefault_102151291|>(String(hello1), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<<local>/TokenReadCSVDefault_102151291>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/AddDataRow<<local>/TokenReadCSVDefault_102151291>|): R|kotlin/Int| <inline=NoInline>  {
-                ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope1.hello|.R|kotlin/Int.plus|(Int(3))
+                ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope0.hello|.R|kotlin/Int.plus|(Int(3))
             }
             )
         }
         )
         R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/sortByDesc|<R|<local>/TokenReadCSVDefault_1639480572|, R|kotlin/Int|>(<L> = sortByDesc@fun R|org/jetbrains/kotlinx/dataframe/api/SortDsl<<local>/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/api/SortDsl<<local>/TokenReadCSVDefault_1639480572>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
-            ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope1.stargazers_count|
+            ^ (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope0.stargazers_count|
         }
         ).R|org/jetbrains/kotlinx/dataframe/api/print|<R|<local>/TokenReadCSVDefault_1639480572|>(rowsLimit = Int(10))
         R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/count|<R|<local>/TokenReadCSVDefault_1639480572|>(<L> = count@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
-            ^ CMP(>, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope1.stargazers_count|.R|kotlin/Int.compareTo|(Int(50)))
+            ^ CMP(>, (this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope0.stargazers_count|.R|kotlin/Int.compareTo|(Int(50)))
         }
         ))
         R|kotlin/io/println|(R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/count|<R|<local>/TokenReadCSVDefault_1639480572|>(<L> = count@fun R|org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572>|.<anonymous>(it: R|@R|kotlin/ParameterName|(name = String(it))  org/jetbrains/kotlinx/dataframe/DataRow<<local>/TokenReadCSVDefault_1639480572>|): R|kotlin/Boolean| <inline=NoInline>  {
-            ^ ==((this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope1.stargazers_count|, Int(0))
+            ^ ==((this@R|org/jetbrains/kotlinx/dataframe/box|, this@R|special/anonymous|).R|<local>/Scope0.stargazers_count|, Int(0))
         }
         ))
         ^box String(OK)
