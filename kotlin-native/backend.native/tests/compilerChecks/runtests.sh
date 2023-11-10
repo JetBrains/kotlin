@@ -5,9 +5,5 @@
 
 for TEST in kotlin-native/backend.native/tests/compilerChecks/*.kt; do
   echo "$TEST";
-  konanc -p library -opt-in=kotlinx.cinterop.ExperimentalForeignApi -opt-in=kotlinx.cinterop.BetaInteropApi -opt-in=kotlin.native.internal.InternalForKotlinNative -Xsuppress-version-warnings "$TEST" "$@";
-  retVal=$?
-  if [ $retVal -eq 0 ]; then
-    echo "  MISSING EXPECTED ERROR FOR $TEST"
-  fi
+  konanc -opt-in=kotlinx.cinterop.ExperimentalForeignApi -opt-in=kotlinx.cinterop.BetaInteropApi -opt-in=kotlin.native.internal.InternalForKotlinNative "$TEST" "$@";
 done

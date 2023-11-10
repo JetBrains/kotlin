@@ -136,9 +136,9 @@ kotlin-native/backend.native/tests/compilerChecks/t61.kt:8:5: error: only compan
 kotlin-native/backend.native/tests/compilerChecks/t62.kt
 kotlin-native/backend.native/tests/compilerChecks/t62.kt:7:1: error: only companion objects of subclasses of Objective-C classes can inherit from Objective-C metaclasses
 kotlin-native/backend.native/tests/compilerChecks/t63.kt
-  MISSING EXPECTED ERROR FOR kotlin-native/backend.native/tests/compilerChecks/t63.kt
+kotlin-native/backend.native/tests/compilerChecks/t63.kt:24:17: error: calling suspend functions from `autoreleasepool {}` is prohibited, see https://youtrack.jetbrains.com/issue/KT-50786
 kotlin-native/backend.native/tests/compilerChecks/t64.kt
-  MISSING EXPECTED ERROR FOR kotlin-native/backend.native/tests/compilerChecks/t64.kt
+kotlin-native/backend.native/tests/compilerChecks/t64.kt:26:17: error: calling suspend functions from `autoreleasepool {}` is prohibited, see https://youtrack.jetbrains.com/issue/KT-50786
 kotlin-native/backend.native/tests/compilerChecks/t7.kt
 kotlin-native/backend.native/tests/compilerChecks/t7.kt:4:41: error: when calling variadic C functions spread operator is supported only for *arrayOf(...)
 kotlin-native/backend.native/tests/compilerChecks/t8.kt
