@@ -31,9 +31,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
-    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
-
+object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     @OptIn(KtAnalysisApiInternals::class)
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {

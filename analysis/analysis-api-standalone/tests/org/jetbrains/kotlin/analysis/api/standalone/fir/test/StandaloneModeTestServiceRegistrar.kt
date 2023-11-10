@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.fir.test
 
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
@@ -24,9 +23,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 @OptIn(KtAnalysisApiInternals::class)
 public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
-    }
-
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KtLifetimeTokenProvider::class.java, KtAlwaysAccessibleLifetimeTokenProvider::class.java)
@@ -50,8 +46,5 @@ public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistr
                 )
             )
         }
-    }
-
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
     }
 }

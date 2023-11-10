@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve
 
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
@@ -66,10 +65,6 @@ private object ErrorResistanceConfigurator : AnalysisApiFirSourceTestConfigurato
 }
 
 private object ErrorResistanceServiceRegistrar : AnalysisApiTestServiceRegistrar() {
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {}
-    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {}
-
     @OptIn(TestInfrastructureInternals::class)
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         with(PsiElementFinder.EP.getPoint(project)) {

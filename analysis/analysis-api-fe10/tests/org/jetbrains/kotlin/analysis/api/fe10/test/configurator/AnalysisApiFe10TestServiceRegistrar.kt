@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fe10.test.configurator
 
-import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.descriptors.CliFe10AnalysisFacade
@@ -31,8 +30,6 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         AnalysisHandlerExtension.registerExtensionPoint(project)
     }
 
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {}
-
     @OptIn(KtAnalysisApiInternals::class)
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         project.apply {
@@ -49,6 +46,4 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         }
         KotlinCoreEnvironment.registerKotlinLightClassSupport(project)
     }
-
-    override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {}
 }
