@@ -28,6 +28,7 @@ class SimpleJvmCrossModuleICTests : IncrementalBaseCompilationTest() {
                 }
             }
             changeFile(module1, "bar.kt") {
+                // change the form of the bar method
                 """
                 class Bar {
                     fun bar() {
@@ -43,6 +44,47 @@ class SimpleJvmCrossModuleICTests : IncrementalBaseCompilationTest() {
                 }
                 expectSuccess(module2) {
                     compiledSources(emptySet())
+                    outputFiles("AKt.class", "BKt.class")
+                }
+            }
+        }
+    }
+
+    @CompilationTest
+    fun signatureChange(buildRunnerProvider: BuildRunnerProvider) {
+        scenario(buildRunnerProvider) {
+            val module1 = module("jvm-module1")
+            val module2 = module("jvm-module2") {
+                dependsOn(module1)
+            }
+            compileAll {
+                expectSuccess(module1) {
+                    compiledSources("foo.kt", "bar.kt", "baz.kt")
+                    outputFiles("FooKt.class", "Bar.class", "BazKt.class")
+                }
+                expectSuccess(module2) {
+                    compiledSources("a.kt", "b.kt")
+                    outputFiles("AKt.class", "BKt.class")
+                }
+            }
+            changeFile(module1, "bar.kt") {
+                // change signature of the bar method
+                """
+                class Bar {
+                    fun bar(s: String = "") {
+                        println(s)
+                        foo()
+                    }
+                }
+                """.trimIndent()
+            }
+            compileAll {
+                expectSuccess(module1) {
+                    compiledSources("bar.kt")
+                    outputFiles("FooKt.class", "Bar.class", "BazKt.class")
+                }
+                expectSuccess(module2) {
+                    compiledSources("b.kt")
                     outputFiles("AKt.class", "BKt.class")
                 }
             }

@@ -21,6 +21,7 @@ class SimpleJvmIntraModuleICTests : IncrementalBaseCompilationTest() {
                 }
             }
             changeFile(module1, "bar.kt") {
+                // change signature of the bar method
                 """
                 fun bar() {
                     foo()
