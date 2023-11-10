@@ -455,6 +455,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("annotationArgumentsWithLazyResolve.kt")
+        public void testAnnotationArgumentsWithLazyResolve() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgumentsWithLazyResolve.kt");
+        }
+
+        @Test
         @TestMetadata("annotationMatching_oldLanguageVersion.kt")
         public void testAnnotationMatching_oldLanguageVersion() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationMatching_oldLanguageVersion.kt");

@@ -1,6 +1,5 @@
 // Test for ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT diagnostic when annotations arguments are lazily resolved.
 
-// LANGUAGE: +MultiPlatformProjects
 // MODULE: common
 // TARGET_PLATFORM: Common
 @Target(AnnotationTarget.TYPE, AnnotationTarget.FUNCTION)

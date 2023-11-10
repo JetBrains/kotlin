@@ -23049,12 +23049,6 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
-            @TestMetadata("expectActualAnnotationsWithLazyResolve.kt")
-            public void testExpectActualAnnotationsWithLazyResolve() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/multimodule/expectActualAnnotationsWithLazyResolve.kt");
-            }
-
-            @Test
             @TestMetadata("friendModule.kt")
             public void testFriendModule() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multimodule/friendModule.kt");
@@ -23861,6 +23855,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 @TestMetadata("annotationArgumentsDefaults.kt")
                 public void testAnnotationArgumentsDefaults() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgumentsDefaults.kt");
+                }
+
+                @Test
+                @TestMetadata("annotationArgumentsWithLazyResolve.kt")
+                public void testAnnotationArgumentsWithLazyResolve() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/annotationArgumentsWithLazyResolve.kt");
                 }
 
                 @Test
