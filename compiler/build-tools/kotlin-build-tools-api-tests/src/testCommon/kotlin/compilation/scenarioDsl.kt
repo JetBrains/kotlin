@@ -104,13 +104,15 @@ open class CompilationResultDsl(
      * @see [outputFiles(java.lang.String...)]
      */
     fun outputFiles(compiledFiles: Set<String>) {
-        val filesLeft = compiledFiles.toMutableSet().apply {
-            add("META-INF/${module.moduleName}.kotlin_module")
-        }
-        val notDeclaredFiles = hashSetOf<String>()
+        val filesLeft = compiledFiles.map { module.outputDirectory.resolve(it).relativeTo(module.outputDirectory) }
+            .toMutableSet()
+            .apply {
+                add(module.outputDirectory.resolve("META-INF/${module.moduleName}.kotlin_module").relativeTo(module.outputDirectory))
+            }
+        val notDeclaredFiles = hashSetOf<Path>()
         for (file in module.outputDirectory.walk()) {
             if (!file.isRegularFile()) continue
-            val currentFile = file.relativeTo(module.outputDirectory).toString()
+            val currentFile = file.relativeTo(module.outputDirectory)
             filesLeft.remove(currentFile).also { wasPreviously ->
                 if (!wasPreviously) notDeclaredFiles.add(currentFile)
             }
