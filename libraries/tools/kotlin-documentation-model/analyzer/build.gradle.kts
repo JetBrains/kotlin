@@ -2,51 +2,83 @@
  * Copyright 2014-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
  */
 
-import org.jetbrains.ValidatePublications
-import org.jetbrains.publicationChannels
-
-@Suppress("DSL_SCOPE_VIOLATION") // fixed in Gradle 8.1 https://github.com/gradle/gradle/pull/23639
 plugins {
-    id("org.jetbrains.conventions.base")
-    id("org.jetbrains.conventions.dokka")
-
-    alias(libs.plugins.kotlinx.binaryCompatibilityValidator)
-    alias(libs.plugins.nexusPublish)
+    id("dokkabuild.base")
 }
 
-val dokka_version: String by project
+val publishedIncludedBuilds = listOf("runner-cli", "runner-gradle-plugin-classic", "runner-maven-plugin")
+val gradlePluginIncludedBuilds = listOf("runner-gradle-plugin-classic")
 
-group = "org.jetbrains.dokka"
-version = dokka_version
+addDependencyOnSameTasksOfIncludedBuilds("assemble", "build", "clean", "check")
 
+registerParentGroupTasks("publishing", taskNames = listOf(
+    "publishAllPublicationsToMavenCentralRepository",
+    "publishAllPublicationsToProjectLocalRepository",
+    "publishAllPublicationsToSnapshotRepository",
+    "publishAllPublicationsToSpaceDevRepository",
+    "publishAllPublicationsToSpaceTestRepository",
+    "publishToMavenLocal"
+)) {
+    it.name in publishedIncludedBuilds
+}
 
-logger.lifecycle("Publication version: $dokka_version")
-tasks.register<ValidatePublications>("validatePublications")
+registerParentGroupTasks("gradle plugin", taskNames = listOf(
+    "publishPlugins",
+    "validatePlugins"
+)) {
+    it.name in gradlePluginIncludedBuilds
+}
 
-nexusPublishing {
-    repositories {
-        sonatype {
-            username.set(System.getenv("SONATYPE_USER"))
-            password.set(System.getenv("SONATYPE_PASSWORD"))
+registerParentGroupTasks("bcv", taskNames = listOf(
+    "apiDump",
+    "apiCheck",
+    "apiBuild"
+)) {
+    it.name in publishedIncludedBuilds
+}
+
+registerParentGroupTasks("verification", taskNames = listOf(
+    "test"
+))
+
+tasks.register("integrationTest") {
+    group = "verification"
+    description = "Runs integration tests of this project. Might take a while and require additional setup."
+
+    dependsOn(includedBuildTasks("integrationTest") {
+        it.name == "dokka-integration-tests"
+    })
+}
+
+fun addDependencyOnSameTasksOfIncludedBuilds(vararg taskNames: String) {
+    taskNames.forEach { taskName ->
+        tasks.named(taskName) {
+            dependsOn(includedBuildTasks(taskName))
         }
     }
 }
 
-val dokkaPublish by tasks.registering {
-    if (publicationChannels.any { it.isMavenRepository() }) {
-        finalizedBy(tasks.named("closeAndReleaseSonatypeStagingRepository"))
+fun registerParentGroupTasks(
+    groupName: String,
+    taskNames: List<String>,
+    includedBuildFilter: (IncludedBuild) -> Boolean = { true }
+) = taskNames.forEach { taskName ->
+    tasks.register(taskName) {
+        group = groupName
+        description = "A parent task that calls tasks with the same name in all subprojects and included builds"
+
+        dependsOn(subprojectTasks(taskName), includedBuildTasks(taskName, includedBuildFilter))
     }
 }
 
-apiValidation {
-    // note that subprojects are ignored by their name, not their path https://github.com/Kotlin/binary-compatibility-validator/issues/16
-    ignoredProjects += setOf(
-        // NAME                    PATH
-        "frontend",            // :plugins:base:frontend
+fun subprojectTasks(taskName: String): List<String> =
+    subprojects
+        .filter { it.getTasksByName(taskName, false).isNotEmpty() }
+        .map { ":${it.path}:$taskName" }
 
-        "integration-tests",   // :integration-tests
-        "gradle",              // :integration-tests:gradle
-        "cli",                 // :integration-tests:cli
-        "maven",               // integration-tests:maven
-    )
-}
+
+fun includedBuildTasks(taskName: String, filter: (IncludedBuild) -> Boolean = { true }): List<TaskReference> =
+    gradle.includedBuilds
+        .filter { it.name != "build-logic" }
+        .filter(filter)
+        .mapNotNull { it.task(":$taskName") }
