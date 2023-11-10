@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.Variance
@@ -1075,7 +1076,7 @@ class CallAndReferenceGenerator(
             if (irVarargElement !is IrSpreadElement &&
                 argument.arguments[i] is FirNamedArgumentExpression &&
                 irVarargElement is IrExpression &&
-                irVarargElement.type.isArray()
+                (irVarargElement.type.isArray() || irVarargElement.type.isPrimitiveArray())
             ) {
                 elements[i] = IrSpreadElementImpl(irVarargElement.startOffset, irVarargElement.endOffset, irVarargElement)
             }

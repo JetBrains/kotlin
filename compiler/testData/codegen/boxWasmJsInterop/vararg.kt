@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND_K2: WASM
-
 // Partial copy of js/js.translator/testData/box/native/vararg.kt
 // With some additions for concrete number types, strings and function references
 
