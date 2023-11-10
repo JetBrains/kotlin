@@ -109,8 +109,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             print("${pureAbstractElementType.render()}(), ")
         }
         print(allParents.joinToString { "${it.render()}${it.kind.braces()}" })
-        println(" {")
-        withIndent {
+        printBlock {
             if (isInterface || isAbstract) {
                 allFields.forEach {
                     fieldPrinter.printField(it, override = true, modality = Modality.ABSTRACT.takeIf { isAbstract })
@@ -217,15 +216,14 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
 
             if (hasTransformChildrenMethod) {
                 printTransformChildrenMethod(
-                    this,
+                    implementation,
                     firTransformerType,
-                    this,
+                    implementation,
                     modality = Modality.ABSTRACT.takeIf { isAbstract },
                     override = true,
                 )
                 if (!isInterface && !isAbstract) {
-                    println(" {")
-                    withIndent {
+                    printBlock {
                         for (field in transformableChildren) {
                             when {
                                 field.name == "explicitReceiver" -> {
@@ -275,24 +273,21 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         }
                         println("return this")
                     }
-                    print("}")
                 }
-                println()
             }
 
             for (field in allFields) {
                 if (!field.needsSeparateTransform) continue
                 println()
-                transformFunctionDeclaration(field, this, override = true, kind!!)
+                transformFunctionDeclaration(field, implementation, override = true, kind!!)
                 if (isInterface || isAbstract) {
                     println()
                     continue
                 }
-                println(" {")
-                withIndent {
+                printBlock {
                     if (field.isMutable && field.isFirType) {
                         // TODO: replace with smth normal
-                        if (this.typeName == "FirWhenExpressionImpl" && field.name == "subject") {
+                        if (typeName == "FirWhenExpressionImpl" && field.name == "subject") {
                             println(
                                 """
                                 |if (subjectVariable != null) {
@@ -309,17 +304,15 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     }
                     println("return this")
                 }
-                println("}")
             }
 
             if (element.needTransformOtherChildren) {
                 println()
-                transformOtherChildrenFunctionDeclaration(this, override = true, kind!!)
+                transformOtherChildrenFunctionDeclaration(implementation, override = true, kind!!)
                 if (isInterface || isAbstract) {
                     println()
                 } else {
-                    println(" {")
-                    withIndent {
+                    printBlock {
                         for (field in allFields) {
                             if (!field.isMutable || !field.isFirType || field.name == "subjectVariable") continue
                             if (!field.needsSeparateTransform) {
@@ -331,7 +324,6 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         }
                         println("return this")
                     }
-                    println("}")
                 }
             }
 
@@ -396,7 +388,6 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 }
             }
         }
-        println("}")
     }
 }
 

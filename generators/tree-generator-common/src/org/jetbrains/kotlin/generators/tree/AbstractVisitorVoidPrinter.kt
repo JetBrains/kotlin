@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.generators.tree
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.utils.withIndent
 
 abstract class AbstractVisitorVoidPrinter<Element, Field>(
     printer: SmartPrinter,
@@ -50,13 +50,11 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
         )
 
         fun SmartPrinter.printBody(parentInVisitor: Element?) {
-            println(" {")
-            if (parentInVisitor != null) {
-                withIndent {
+            printBlock {
+                if (parentInVisitor != null) {
                     println(parentInVisitor.visitFunctionName, "(", element.visitorParameterName, ")")
                 }
             }
-            println("}")
         }
 
         printer.run {

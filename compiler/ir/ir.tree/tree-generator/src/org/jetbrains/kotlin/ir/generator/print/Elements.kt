@@ -60,8 +60,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
             )
 
             if (!element.isRootElement) {
-                println(" {")
-                withIndent {
+                printBlock {
                     for (child in element.walkableChildren) {
                         print(child.name)
                         if (child.nullable) {
@@ -79,9 +78,9 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                         }
                     }
                 }
-                print("}")
+            } else {
+                println()
             }
-            println()
         }
 
         if (element.hasTransformChildrenMethod) {
@@ -92,8 +91,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                 override = !element.isRootElement,
             )
             if (!element.isRootElement) {
-                println(" {")
-                withIndent {
+                printBlock {
                     for (child in element.transformableChildren) {
                         print(child.name)
                         when (child) {
@@ -125,9 +123,9 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                         }
                     }
                 }
-                print("}")
+            } else {
+                println()
             }
-            println()
         }
     }
 }

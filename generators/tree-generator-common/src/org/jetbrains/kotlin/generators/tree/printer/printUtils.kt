@@ -161,6 +161,41 @@ fun SmartPrinter.printFunctionDeclaration(
     print(typeParameters.multipleUpperBoundsList())
 }
 
+context(ImportCollector)
+inline fun SmartPrinter.printFunctionWithBlockBody(
+    name: String,
+    parameters: List<FunctionParameter>,
+    returnType: TypeRef,
+    typeParameters: List<TypeVariable> = emptyList(),
+    extensionReceiver: TypeRef? = null,
+    visibility: Visibility = Visibility.PUBLIC,
+    modality: Modality? = null,
+    override: Boolean = false,
+    isInline: Boolean = false,
+    allParametersOnSeparateLines: Boolean = false,
+    blockBody: () -> Unit,
+) {
+    printFunctionDeclaration(
+        name,
+        parameters,
+        returnType,
+        typeParameters,
+        extensionReceiver,
+        visibility,
+        modality,
+        override,
+        isInline,
+        allParametersOnSeparateLines,
+    )
+    printBlock(blockBody)
+}
+
+inline fun SmartPrinter.printBlock(body: () -> Unit) {
+    println(" {")
+    withIndent(body)
+    println("}")
+}
+
 private val dataTP = TypeVariable("D")
 private val dataParameter = FunctionParameter("data", dataTP)
 

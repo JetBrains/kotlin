@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.generators.tree.ImportCollector
 import org.jetbrains.kotlin.generators.tree.StandardTypes
 import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
+import org.jetbrains.kotlin.generators.tree.printer.printBlock
 import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
 import org.jetbrains.kotlin.generators.tree.render
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -50,8 +51,7 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
         print(builder.parents.joinToString(separator = ", ", prefix = " : ") { it.render() })
     }
     var hasRequiredFields = false
-    println(" {")
-    withIndent {
+    printBlock {
         var needNewLine = false
         for (field in builder.allFields) {
             val (newLine, requiredFields) = printFieldInBuilder(field, builder, fieldIsUseless = false)
@@ -74,8 +74,7 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
         }
         print("fun build(): $buildType")
         if (builder is LeafBuilder) {
-            println(" {")
-            withIndent {
+            printBlock {
                 println("return ${builder.implementation.render()}(")
                 withIndent {
                     for (field in builder.allFields) {
@@ -91,7 +90,6 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
                 }
                 println(")")
             }
-            println("}")
             if (hasBackingFields) {
                 println()
             }
@@ -116,7 +114,6 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
             }
         }
     }
-    println("}")
     if (builder is LeafBuilder) {
         println()
         printDslBuildFunction(builder, hasRequiredFields)
