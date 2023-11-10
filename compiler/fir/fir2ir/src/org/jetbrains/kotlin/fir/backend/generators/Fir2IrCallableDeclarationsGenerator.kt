@@ -74,9 +74,10 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         function: FirFunction,
         irParent: IrDeclarationParent?,
         symbol: IrSimpleFunctionSymbol,
-        predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
+        predefinedOrigin: IrDeclarationOrigin?,
+        isLocal: Boolean,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+        allowLazyDeclarationsCreation: Boolean
     ): IrSimpleFunction = convertCatching(function) {
         val simpleFunction = function as? FirSimpleFunction
         val isLambda = function is FirAnonymousFunction && function.isLambda
@@ -100,8 +101,13 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             )
         }
         if (irParent.isExternalParent()) {
-            // For private functions signature is null, fallback to non-lazy function
-            return lazyDeclarationsGenerator.createIrLazyFunction(function as FirSimpleFunction, symbol, irParent!!, updatedOrigin)
+            require(function is FirSimpleFunction)
+            if (!allowLazyDeclarationsCreation) {
+                error("Lazy functions should be processed in Fir2IrDeclarationStorage")
+            }
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            if (symbol.isBound) return symbol.owner
+            return lazyDeclarationsGenerator.createIrLazyFunction(function, symbol, irParent, updatedOrigin)
         }
         val name = simpleFunction?.name
             ?: if (isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
@@ -360,14 +366,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
                 }
             }
         }
-    }
-
-    @OptIn(ExperimentalContracts::class)
-    private fun IrDeclarationParent?.isExternalParent(): Boolean {
-        contract {
-            returns(true) implies (this@isExternalParent != null)
-        }
-        return this is Fir2IrLazyClass || this is IrExternalPackageFragment
     }
 
     /**
@@ -1044,4 +1042,12 @@ internal fun addDeclarationToParent(declaration: IrDeclaration, irParent: IrDecl
         }
         else -> error("Can't add declaration ${declaration.render()} to parent ${irParent.render()}")
     }
+}
+
+@OptIn(ExperimentalContracts::class)
+internal fun IrDeclarationParent?.isExternalParent(): Boolean {
+    contract {
+        returns(true) implies (this@isExternalParent != null)
+    }
+    return this is Fir2IrLazyClass || this is IrExternalPackageFragment
 }

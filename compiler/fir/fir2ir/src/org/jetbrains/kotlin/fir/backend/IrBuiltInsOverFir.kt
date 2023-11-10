@@ -696,10 +696,7 @@ class IrBuiltInsOverFir(
 
     private fun findFunction(functionSymbol: FirNamedFunctionSymbol): IrSimpleFunctionSymbol {
         functionSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-
-        val irParent = findIrParent(functionSymbol)
-        @OptIn(GetOrCreateSensitiveAPI::class)
-        return components.declarationStorage.getOrCreateIrFunction(functionSymbol.fir, irParent).symbol
+        return components.declarationStorage.getIrFunctionSymbol(functionSymbol) as IrSimpleFunctionSymbol
     }
 
     private fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> {

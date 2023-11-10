@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.GetOrCreateSensitiveAPI
 import org.jetbrains.kotlin.fir.backend.contextReceiversForFunctionOrContainingProperty
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrCallableDeclarationsGenerator
 import org.jetbrains.kotlin.fir.backend.generators.generateOverriddenFunctionSymbols
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -111,8 +111,11 @@ class Fir2IrLazySimpleFunction(
 
     override val initialSignatureFunction: IrFunction? by lazy {
         val originalFunction = fir.initialSignatureAttr as? FirFunction ?: return@lazy null
-        @OptIn(GetOrCreateSensitiveAPI::class)
-        declarationStorage.getOrCreateIrFunction(originalFunction, parent).also {
+        val lookupTag = firParent?.symbol?.toLookupTag()
+
+        // `initialSignatureFunction` is not called during fir2ir conversion
+        @OptIn(UnsafeDuringIrConstructionAPI::class)
+        declarationStorage.getIrFunctionSymbol(originalFunction.symbol, lookupTag).owner.also {
             check(it !== this) { "Initial function can not be the same as remapped function" }
         }
     }

@@ -96,7 +96,15 @@ class FakeOverrideGenerator(
             createFakeOverriddenIfNeeded(
                 firClass, irClass, isLocal, functionSymbol,
                 declarationStorage::getCachedIrFunctionSymbol,
-                declarationStorage::createAndCacheIrFunction,
+                { function, irParent, predefinedOrigin, isLocal ->
+                    declarationStorage.createAndCacheIrFunction(
+                        function,
+                        irParent,
+                        predefinedOrigin,
+                        isLocal,
+                        allowLazyDeclarationsCreation = true
+                    )
+                },
                 createFakeOverrideSymbol = { firFunction, callableSymbol ->
                     val symbol = FirFakeOverrideGenerator.createSymbolForSubstitutionOverride(callableSymbol, firClass.symbol.classId)
                     FirFakeOverrideGenerator.createSubstitutionOverrideFunction(

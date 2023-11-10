@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
     private val symbolProvider = components.session.symbolProvider
@@ -173,8 +174,7 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
                 declarationStorage.getOrCreateIrConstructor(firConstructor, parent as IrClass)
             }
             SymbolKind.FUNCTION_SYMBOL -> {
-                val firSimpleFunction = firDeclaration as FirSimpleFunction
-                declarationStorage.getOrCreateIrFunction(firSimpleFunction, parent)
+                shouldNotBeCalled()
             }
             SymbolKind.PROPERTY_SYMBOL -> {
                 val firProperty = firDeclaration as FirProperty

@@ -160,6 +160,7 @@ class Fir2IrLazyClass(
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
         val scope = fir.unsubstitutedScope()
+        val lookupTag = fir.symbol.toLookupTag()
         scope.processDeclaredConstructors {
             val constructor = it.fir
             if (shouldBuildStub(constructor)) {
@@ -197,8 +198,9 @@ class Fir2IrLazyClass(
                         symbol.containingClassLookupTag() != ownerLookupTag -> {}
                         symbol.isAbstractMethodOfAny() -> {}
                         else -> {
-                            @OptIn(GetOrCreateSensitiveAPI::class)
-                            result += declarationStorage.getOrCreateIrFunction(symbol.fir, this, origin)
+                            // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                            @OptIn(UnsafeDuringIrConstructionAPI::class)
+                            result += declarationStorage.getIrFunctionSymbol(symbol, lookupTag).owner
                         }
                     }
                 }

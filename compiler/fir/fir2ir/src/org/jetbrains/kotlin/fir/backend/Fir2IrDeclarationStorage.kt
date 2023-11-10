@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.generators.isExternalParent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
@@ -19,8 +20,10 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -264,64 +267,27 @@ class Fir2IrDeclarationStorage(
         return cachedIrCallable
     }
 
-    @GetOrCreateSensitiveAPI
-    fun getOrCreateIrFunction(
-        function: FirFunction,
-        irParent: IrDeclarationParent?,
-        predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
-    ): IrSimpleFunction {
-        return getOrCreateIrFunction(function, { irParent }, predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
-    }
-
-    @GetOrCreateSensitiveAPI
-    private fun getOrCreateIrFunction(
-        function: FirFunction,
-        irParent: () -> IrDeclarationParent?,
-        predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
-    ): IrSimpleFunction {
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.ownerIfBound()?.let { return it }
-        /*
-         * Declaration storage doesn't know how to create lazy fake-overrides, it is responsibility of
-         *   FakeOverrideGenerator. So if function to be created is potentially lazy fake-override, we
-         *   need to call FakeOverrideGenerator before checking any caches. Otherwise it will lead to
-         *   the situation when lazy fake override is created based on original FIR function, not
-         *   its f/o copy (which causes troubles with type parameters mapping)
-         */
-        if (fakeOverrideOwnerLookupTag != function.containingClassLookupTag()) {
-            generateLazyFakeOverrides(function.nameOrSpecialName, fakeOverrideOwnerLookupTag)
-            @OptIn(UnsafeDuringIrConstructionAPI::class)
-            getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.ownerIfBound()?.let { return it }
-        }
-        return createAndCacheIrFunction(function, irParent(), predefinedOrigin, isLocal, fakeOverrideOwnerLookupTag)
-    }
-
+    /**
+     * @param allowLazyDeclarationsCreation should be passed only during fake-override generation
+     */
     fun createAndCacheIrFunction(
         function: FirFunction,
         irParent: IrDeclarationParent?,
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
-        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
+        allowLazyDeclarationsCreation: Boolean = false
     ): IrSimpleFunction {
-        val signature = runIf(!isLocal && configuration.linkViaSignatures) {
-            signatureComposer.composeSignature(function, fakeOverrideOwnerLookupTag)
-        }
-
-        val irFunction = callablesGenerator.createIrFunction(
+        val symbol = getIrFunctionSymbol(function.symbol, fakeOverrideOwnerLookupTag, isLocal) as IrSimpleFunctionSymbol
+        return callablesGenerator.createIrFunction(
             function,
             irParent,
-            createFunctionSymbol(signature),
+            symbol,
             predefinedOrigin,
             isLocal = isLocal,
-            fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag
+            fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag,
+            allowLazyDeclarationsCreation
         )
-        cacheIrFunction(function, irFunction, fakeOverrideOwnerLookupTag)
-
-        return irFunction
     }
 
     internal fun createFunctionSymbol(signature: IdSignature?): IrSimpleFunctionSymbol {
@@ -331,10 +297,14 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun cacheIrFunction(function: FirFunction, irFunction: IrSimpleFunction, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
+    private fun cacheIrFunctionSymbol(
+        function: FirFunction,
+        irFunctionSymbol: IrSimpleFunctionSymbol,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+    ) {
         when {
-            irFunction.visibility == DescriptorVisibilities.LOCAL -> {
-                localStorage.putLocalFunction(function, irFunction.symbol)
+            function.visibility == Visibilities.Local || function is FirAnonymousFunction -> {
+                localStorage.putLocalFunction(function, irFunctionSymbol)
             }
 
             function.isFakeOverrideOrDelegated(fakeOverrideOwnerLookupTag) -> {
@@ -343,11 +313,11 @@ class Fir2IrDeclarationStorage(
                     originalFunction.symbol,
                     fakeOverrideOwnerLookupTag ?: function.containingClassLookupTag()!!
                 )
-                irForFirSessionDependantDeclarationMap[key] = irFunction.symbol
+                irForFirSessionDependantDeclarationMap[key] = irFunctionSymbol
             }
 
             else -> {
-                functionCache[function] = irFunction.symbol
+                functionCache[function] = irFunctionSymbol
             }
         }
     }
@@ -973,21 +943,50 @@ class Fir2IrDeclarationStorage(
         return map?.get(callableDeclaration.asFakeOverrideKey())
     }
 
+    private fun FirCallableDeclaration.computeExternalOrigin(): IrDeclarationOrigin {
+        val containingClass = containingClassLookupTag()?.toFirRegularClass(session)
+        return when (containingClass?.isJavaOrEnhancement) {
+            true -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+            else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+        }
+    }
+
     fun getIrFunctionSymbol(
         firFunctionSymbol: FirFunctionSymbol<*>,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
+        isLocal: Boolean = false
     ): IrFunctionSymbol {
-        return when (val fir = firFunctionSymbol.fir) {
+        return when (val function = firFunctionSymbol.fir) {
             is FirConstructor -> {
-                getIrConstructorSymbol(fir.symbol)
+                getIrConstructorSymbol(function.symbol)
             }
             else -> {
-                @OptIn(GetOrCreateSensitiveAPI::class)
-                getOrCreateIrFunction(
-                    fir,
-                    { findIrParent(fir, fakeOverrideOwnerLookupTag) },
-                    fakeOverrideOwnerLookupTag = fakeOverrideOwnerLookupTag
-                ).symbol
+                getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.let { return it }
+                val signature = runIf(!isLocal && configuration.linkViaSignatures) {
+                    signatureComposer.composeSignature(firFunctionSymbol.fir, fakeOverrideOwnerLookupTag)
+                }
+                val symbol = createFunctionSymbol(signature)
+                if (function is FirSimpleFunction && !isLocal) {
+                    val irParent = findIrParent(function, fakeOverrideOwnerLookupTag)
+                    if (irParent?.isExternalParent() == true) {
+                        // Return value is not used here, because creation of IR declaration binds it to the corresponding symbol
+                        // And all we want here is to bind symbol for lazy declaration
+                        callablesGenerator.createIrFunction(
+                            function,
+                            irParent,
+                            symbol,
+                            predefinedOrigin = function.computeExternalOrigin(),
+                            isLocal = false,
+                            fakeOverrideOwnerLookupTag,
+                            allowLazyDeclarationsCreation = true
+                        ).also {
+                            check(it is Fir2IrLazySimpleFunction)
+                        }
+                    }
+                }
+
+                cacheIrFunctionSymbol(function, symbol, fakeOverrideOwnerLookupTag)
+                return symbol
             }
         }
     }
