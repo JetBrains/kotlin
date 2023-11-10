@@ -74,7 +74,7 @@ internal class LibraryAbiReaderImpl(libraryFile: File, filters: List<AbiReadingF
     private fun readManifest(): LibraryManifest {
         val versions = library.versions
         return LibraryManifest(
-            platform = library.builtInsPlatform,
+            platform = library.builtInsPlatform?.name,
             nativeTargets = library.nativeTargets.sorted(),
             compilerVersion = versions.compilerVersion,
             abiVersion = versions.abiVersion?.toString(),
@@ -94,7 +94,7 @@ private class LibraryDeserializer(
     supportedSignatureVersions: Set<AbiSignatureVersion>,
     private val compositeFilter: AbiReadingFilter.Composite?
 ) {
-    private val platform: BuiltInsPlatform? = library.builtInsPlatform?.let(BuiltInsPlatform::parseFromString)
+    private val platform: BuiltInsPlatform? = library.builtInsPlatform
 
     private val interner = IrInterningService()
 

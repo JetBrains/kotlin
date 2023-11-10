@@ -10,7 +10,12 @@ import org.jetbrains.kotlin.util.suffixIfNot
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
-const val KOTLIN_STDLIB_NAME = "stdlib"
+@Deprecated("Use KOTLIN_NATIVE_STDLIB_NAME, KOTLIN_JS_STDLIB_NAME or KOTLIN_WASM_STDLIB_NAME instead", level = DeprecationLevel.HIDDEN)
+const val KOTLIN_STDLIB_NAME: String = "stdlib"
+
+const val KOTLIN_NATIVE_STDLIB_NAME: String = "stdlib"
+const val KOTLIN_JS_STDLIB_NAME: String = "kotlin"
+const val KOTLIN_WASM_STDLIB_NAME: String = "kotlin"
 
 interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     val searchRoots: List<File>
@@ -187,7 +192,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                 .asSequence()
                 .filter { it.name.startsWith(prefix) }
                 .filterNot { it.name.startsWith('.') }
-                .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_STDLIB_NAME }
+                .filterNot { it.name.removeSuffixIfPresent(KLIB_FILE_EXTENSION_WITH_DOT) == KOTLIN_NATIVE_STDLIB_NAME }
                 .map { UnresolvedLibrary(it.absolutePath, null) }
                 .map { resolve(it, isDefaultLink = true) }
         } else emptySequence()
@@ -197,7 +202,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         val result = mutableListOf<L>()
 
         if (!noStdLib) {
-            result.add(resolve(UnresolvedLibrary(KOTLIN_STDLIB_NAME, null), true))
+            result.add(resolve(UnresolvedLibrary(KOTLIN_NATIVE_STDLIB_NAME, null), true))
         }
 
         // Endorsed libraries in distHead.

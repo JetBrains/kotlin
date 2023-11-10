@@ -77,7 +77,7 @@ internal fun IdeaKotlinBinaryAttributes(attributes: AttributeContainer): IdeaKot
 
 internal fun KlibExtra(library: KotlinLibrary): KlibExtra {
     return KlibExtra(
-        builtInsPlatform = library.builtInsPlatform,
+        builtInsPlatform = library.builtInsPlatform?.name,
         uniqueName = library.uniqueName,
         shortName = library.shortName,
         packageFqName = library.packageFqName,

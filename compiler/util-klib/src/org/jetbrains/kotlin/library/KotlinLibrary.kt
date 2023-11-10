@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.library
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 
 /**
  * [org.jetbrains.kotlin.library.KotlinAbiVersion]
@@ -93,14 +94,20 @@ interface IrLibrary {
     fun bodies(fileIndex: Int): ByteArray
 }
 
+val BaseKotlinLibrary.isNativeStdlib: Boolean
+    get() = uniqueName == KOTLIN_NATIVE_STDLIB_NAME && builtInsPlatform == BuiltInsPlatform.NATIVE
+
+val BaseKotlinLibrary.isJsStdlib: Boolean
+    get() = uniqueName == KOTLIN_JS_STDLIB_NAME && builtInsPlatform == BuiltInsPlatform.JS
+
+val BaseKotlinLibrary.isWasmStdlib: Boolean
+    get() = uniqueName == KOTLIN_WASM_STDLIB_NAME && builtInsPlatform == BuiltInsPlatform.WASM
+
 val BaseKotlinLibrary.uniqueName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)!!
 
 val BaseKotlinLibrary.shortName: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_SHORT_NAME)
-
-val BaseKotlinLibrary.isNativeStdlib: Boolean
-    get() = uniqueName == KOTLIN_STDLIB_NAME
 
 val BaseKotlinLibrary.unresolvedDependencies: List<RequiredUnresolvedLibrary>
     get() = unresolvedDependencies(lenient = false).map { it as RequiredUnresolvedLibrary }
@@ -139,8 +146,12 @@ val KotlinLibrary.containsErrorCode: Boolean
 val KotlinLibrary.commonizerTarget: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_COMMONIZER_TARGET)
 
+@Deprecated("Use BaseKotlinLibrary.builtInsPlatform instead", level = DeprecationLevel.HIDDEN)
 val KotlinLibrary.builtInsPlatform: String?
-    get() = manifestProperties.getProperty(KLIB_PROPERTY_BUILTINS_PLATFORM)
+    get() = builtInsPlatform?.name
+
+val BaseKotlinLibrary.builtInsPlatform: BuiltInsPlatform?
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_BUILTINS_PLATFORM)?.let(BuiltInsPlatform::parseFromString)
 
 val BaseKotlinLibrary.commonizerNativeTargets: List<String>?
     get() = if (manifestProperties.containsKey(KLIB_PROPERTY_COMMONIZER_NATIVE_TARGETS))
