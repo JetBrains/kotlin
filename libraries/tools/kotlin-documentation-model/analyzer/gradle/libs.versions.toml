@@ -3,10 +3,12 @@
 gradlePlugin-kotlin = "1.9.20"
 # See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 gradlePlugin-android = "4.2.2"
+gradlePlugin-android-dokkatoo = "8.0.2"
 gradlePlugin-dokka = "1.9.10"
 
 kotlinx-coroutines = "1.7.3"
 kotlinx-collections-immutable = "0.3.6"
+kotlinx-serialization = "1.6.0"
 kotlinx-bcv = "0.13.2"
 
 ## Analysis
@@ -45,27 +47,37 @@ kotlinx-cli = "0.3.6"
 node = "16.13.0"
 
 ## Publishing
-gradlePlugin-shadow = "7.1.2"
-gradlePlugin-nexusPublish = "1.1.0"
-gradlePlugin-gradlePluginPublish = "0.20.0"
+gradlePlugin-shadow = "8.1.1"
+gradlePlugin-gradlePluginPublish = "1.2.1"
 gradlePlugin-gradleNode = "3.5.1"
 
 ## Test
 junit = "5.9.3"
+kotest = "5.6.2"
 eclipse-jgit = "5.13.2.202306221912-r" # jgit 6.X requires Java 11 to run
 
 [libraries]
 
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm", version.ref = "kotlinx-collections-immutable" }
+kotlinx-serialization-bom = { module = "org.jetbrains.kotlinx:kotlinx-serialization-bom", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json" }
+
+#### Dokka ####
+# TODO [structure-refactoring] Needed for Dokkatoo only, needs to be removed.
+dokka-core = { module = "org.jetbrains.dokka:dokka-core", version.ref = "gradlePlugin-dokka" }
+dokka-allModulesPagePlugin = { module = "org.jetbrains.dokka:all-modules-page-plugin", version.ref = "gradlePlugin-dokka" }
+dokka-templatingPlugin = { module = "org.jetbrains.dokka:templating-plugin", version.ref = "gradlePlugin-dokka" }
 
 #### Gradle plugins ####
 # The Maven coordinates of Gradle plugins that are either used in convention plugins, or in Dokka subprojects
 gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "gradlePlugin-kotlin" }
 gradlePlugin-kotlin-klibCommonizerApi = { module = "org.jetbrains.kotlin:kotlin-klib-commonizer-api", version.ref = "gradlePlugin-kotlin" }
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-android" }
+gradlePlugin-android-dokkatoo = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-android-dokkatoo" }
+gradlePlugin-androidApi-dokkatoo = { module = "com.android.tools.build:gradle-api", version.ref = "gradlePlugin-android-dokkatoo" }
 gradlePlugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "gradlePlugin-dokka" }
-gradlePlugin-shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
+gradlePlugin-shadow = { module = "com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
 gradlePlugin-gradlePublish= { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
 
 #### Kotlin analysis ####
@@ -82,7 +94,6 @@ kotlin-analysis-project-structure = { module = "org.jetbrains.kotlin:analysis-pr
 kotlin-analysis-api-standalone = { module = "org.jetbrains.kotlin:analysis-api-standalone-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-analysis-api-providers = { module = "org.jetbrains.kotlin:analysis-api-providers-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-symbol-light-classes = { module = "org.jetbrains.kotlin:symbol-light-classes-for-ide", version.ref = "kotlin-compiler-k2" }
-
 
 #### Java analysis ####
 intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }
@@ -124,11 +135,17 @@ junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiterApi = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junit" }
 junit-jupiterParams = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit" }
 
+kotest-bom = { module = "io.kotest:kotest-bom", version.ref = "kotest" }
+kotest-datatest = { module = "io.kotest:kotest-framework-datatest" }
+kotest-junit5Runner = { module = "io.kotest:kotest-runner-junit5" }
+kotest-assertionsCore = { module = "io.kotest:kotest-assertions-core" }
+kotest-assertionsJson = { module = "io.kotest:kotest-assertions-json" }
+
 [plugins]
 # Gradle Plugins that are applied directly to subprojects
 # (Before defining plugins here, first consider creating convention plugins instead,
 # and define the Maven coordinates above to be used in build-logic/build.gradle.kts)
 
 kotlinx-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
-nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "gradlePlugin-nexusPublish" }
 gradleNode = { id = "com.github.node-gradle.node", version.ref = "gradlePlugin-gradleNode" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradlePlugin-shadow" }
