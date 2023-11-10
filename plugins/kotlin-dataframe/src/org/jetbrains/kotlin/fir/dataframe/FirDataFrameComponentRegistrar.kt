@@ -108,7 +108,7 @@ class FirDataFrameExtensionRegistrar(
 //        val refinedToOriginal = mutableMapOf<Name, FirBasedSymbol<*>>()
         with(generator) {
             +::ExtensionsGenerator
-            +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
+//            +{ it: FirSession -> ExpressionAnalysisAdditionalChecker(it) }
             +::ReturnTypeBasedReceiverInjector
             +{ it: FirSession ->
                 val flag = FlagContainer(shouldIntercept = true)
