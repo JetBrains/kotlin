@@ -358,7 +358,9 @@ private fun mapInapplicableCandidateError(
                 isError = rootCause.isError
             )
 
-            is AdaptedCallableReferenceIsUsedWithReflection -> FirErrors.ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE.createOn(source)
+            is AdaptedCallableReferenceIsUsedWithReflection -> FirErrors.ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE.createOn(
+                qualifiedAccessSource
+            )
 
             else -> genericDiagnostic
         }

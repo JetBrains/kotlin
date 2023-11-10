@@ -381,6 +381,7 @@ class FirCallResolver(
         resolvedCallableReferenceAtom: ResolvedCallableReferenceAtom,
     ): Pair<CandidateApplicability, Boolean> {
         val callableReferenceAccess = resolvedCallableReferenceAtom.reference
+        val calleeReference = callableReferenceAccess.calleeReference
         val lhs = resolvedCallableReferenceAtom.lhs
         val coneSubstitutor = constraintSystemBuilder.buildCurrentSubstitutor() as ConeSubstitutor
         val expectedType = resolvedCallableReferenceAtom.expectedType?.let(coneSubstitutor::substituteOrSelf)
@@ -425,7 +426,7 @@ class FirCallResolver(
                         reducedCandidates.size == 1 -> createConeDiagnosticForCandidateWithError(applicability, reducedCandidates.single())
                         else -> ConeUnresolvedReferenceError(info.name)
                     },
-                    callableReferenceAccess.source
+                    calleeReference.source
                 )
                 resolvedCallableReferenceAtom.resultingReference = errorReference
                 return applicability to false
@@ -435,7 +436,7 @@ class FirCallResolver(
                     val errorReference = buildReferenceWithErrorCandidate(
                         info,
                         ConeAmbiguityError(info.name, applicability, reducedCandidates),
-                        callableReferenceAccess.source
+                        calleeReference.source
                     )
                     resolvedCallableReferenceAtom.resultingReference = errorReference
                     return applicability to false
@@ -454,7 +455,7 @@ class FirCallResolver(
         }
 
         val reference = createResolvedNamedReference(
-            callableReferenceAccess.calleeReference,
+            calleeReference,
             info.name,
             info,
             reducedCandidates,
