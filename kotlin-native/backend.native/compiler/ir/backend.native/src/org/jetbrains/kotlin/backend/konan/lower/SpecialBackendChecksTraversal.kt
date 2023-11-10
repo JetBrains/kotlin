@@ -335,6 +335,7 @@ private class BackendChecker(
     }
 
     override fun visitField(declaration: IrField) {
+        declaration.acceptChildrenVoid(this)
         if (declaration.isFakeOverride) return // Can't happen now, just trying to be future-proof here.
 
         val parent = declaration.parent

@@ -5,7 +5,7 @@ To run tests manually on MacOS,
 - run `runtests.sh` as described below. 
 
 K1: `kotlin-native/backend.native/tests/compilerChecks/runtests.sh -language-version 1.9`
-K2: `kotlin-native/backend.native/tests/compilerChecks/runtests.sh -language-version 2.0`
+K2: `kotlin-native/backend.native/tests/compilerChecks/runtests.sh`
 
 Reference output:
 ```text
@@ -108,8 +108,8 @@ kotlin-native/backend.native/tests/compilerChecks/t5.kt:4:83: error: passing Str
 kotlin-native/backend.native/tests/compilerChecks/t50.kt
 kotlin-native/backend.native/tests/compilerChecks/t50.kt:11:16: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
     kotlin-native/backend.native/tests/compilerChecks/t50.kt:11:54
-kotlin-native/backend.native/tests/compilerChecks/t51.kt
-  MISSING EXPECTED ERROR FOR kotlin-native/backend.native/tests/compilerChecks/t51.kt
+kotlin-native/backend.native/tests/compilerChecks/t51.kt:9:28: error: kotlin.native.concurrent.Worker.execute must take an unbound, non-capturing function or lambda, but captures at:
+    kotlin-native/backend.native/tests/compilerChecks/t51.kt:9:66
 kotlin-native/backend.native/tests/compilerChecks/t52.kt
 kotlin-native/backend.native/tests/compilerChecks/t52.kt:5:5: error: kotlin.native.ref.createCleaner must take an unbound, non-capturing function or lambda, but captures at:
      kotlin-native/backend.native/tests/compilerChecks/t52.kt:5:33: x
