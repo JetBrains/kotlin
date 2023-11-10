@@ -479,6 +479,7 @@ class FirRenderer(
 
         override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
             resolvePhaseRenderer?.render(anonymousInitializer)
+            annotationRenderer?.render(anonymousInitializer)
             print("init")
             bodyRenderer?.renderBody(anonymousInitializer.body)
         }
