@@ -39,6 +39,9 @@ class VerifierErrorInterpreter {
                 reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "null", context)
             is SourceRole.CallsInPlaceEffect ->
                 reportOn(source, PluginErrors.INVALID_INVOCATION_TYPE, role.paramSymbol, role.kind.asUserFriendlyMessage, context)
+            is SourceRole.ParamFunctionLeakageCheck -> with(role) {
+                reportOn(source, PluginErrors.LAMBDA_MAY_LEAK, error.reason.fetchLeakingFunction(), context)
+            }
             else -> reportVerificationErrorOriginalViper(source, error, context)
         }
     }

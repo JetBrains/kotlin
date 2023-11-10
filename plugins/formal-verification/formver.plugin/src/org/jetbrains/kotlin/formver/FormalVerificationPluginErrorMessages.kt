@@ -44,5 +44,10 @@ object FormalVerificationPluginErrorMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.SYMBOL,
             CommonRenderers.STRING
         )
+        put(
+            PluginErrors.LAMBDA_MAY_LEAK,
+            "Function ''{0}'' may leak from its in-place contract.",
+            FirDiagnosticRenderers.SYMBOL,
+        )
     }
 }

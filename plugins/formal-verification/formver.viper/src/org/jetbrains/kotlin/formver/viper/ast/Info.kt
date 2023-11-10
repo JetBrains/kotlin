@@ -40,5 +40,13 @@ inline fun <I> Info.unwrapOr(orBlock: () -> I?): I? = when (this) {
     else -> orBlock()
 }
 
+inline fun <reified I> Info.unwrap(): I = when (this) {
+    is Info.Wrapped -> {
+        check(info is I) { "The wrapped info is not of type ${I::class}." }
+        info
+    }
+    else -> error("The metadata does not contain an information of type ${I::class}.")
+}
+
 val viper.silver.ast.Node.info: viper.silver.ast.Info
     get() = prettyMetadata._2()

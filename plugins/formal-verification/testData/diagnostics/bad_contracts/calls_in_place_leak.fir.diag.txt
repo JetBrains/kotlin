@@ -1,11 +1,11 @@
 /calls_in_place_leak.kt:(607,629): info: Generated Viper text for invalid_calls_in_place:
-method global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
+method global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$h: Ref)
   returns (ret: dom$Unit)
-  requires acc(local$f.special$function_object_call_counter, write)
-  requires special$duplicable(local$f)
-  ensures acc(local$f.special$function_object_call_counter, write)
-  ensures old(local$f.special$function_object_call_counter) <=
-    local$f.special$function_object_call_counter
+  requires acc(local$h.special$function_object_call_counter, write)
+  requires special$duplicable(local$h)
+  ensures acc(local$h.special$function_object_call_counter, write)
+  ensures old(local$h.special$function_object_call_counter) <=
+    local$h.special$function_object_call_counter
 
 
 method global$fun_invalid_calls_in_place$fun_take$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref)
@@ -22,7 +22,7 @@ method global$fun_invalid_calls_in_place$fun_take$fun_take$$return$T_Unit$return
   label label$ret$0
 }
 
-/calls_in_place_leak.kt:(697,706): warning: Viper verification error: The precondition of method global$fun_escape$fun_take$fun_take$$return$T_Unit$return$T_Unit might not hold. Assertion special$duplicable(local$f) might not hold.
+/calls_in_place_leak.kt:(697,706): warning: Function 'f: () -> Unit' may leak from its in-place contract.
 
 /calls_in_place_leak.kt:(787,807): info: Generated Viper text for function_object_call:
 method global$fun_function_object_call$fun_take$fun_take$fun_take$$return$T_Unit$return$T_Unit$fun_take$$return$T_Unit$return$T_Unit(local$f: Ref,
@@ -49,4 +49,4 @@ method global$fun_function_object_call$fun_take$fun_take$fun_take$$return$T_Unit
   label label$ret$0
 }
 
-/calls_in_place_leak.kt:(906,910): warning: Viper verification error: Assert might fail. Assertion special$duplicable(local$g) might not hold.
+/calls_in_place_leak.kt:(906,910): warning: Function 'g: () -> Unit' may leak from its in-place contract.

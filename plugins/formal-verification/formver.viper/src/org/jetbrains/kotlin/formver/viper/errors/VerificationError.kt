@@ -10,24 +10,31 @@ import org.jetbrains.kotlin.formver.viper.ast.Position
 import org.jetbrains.kotlin.formver.viper.ast.info
 import org.jetbrains.kotlin.formver.viper.ast.unwrapOr
 
-interface VerificationError : VerifierError {
+/**
+ * This class acts as wrapper for Viper's [viper.silver.verifier.ErrorReason].
+ * This is necessary since extension functions on [viper.silver.verifier.ErrorReason] cannot be
+ * used outside the class' package.
+ */
+data class ErrorReason(val reason: viper.silver.verifier.ErrorReason)
+
+class VerificationError private constructor(
     val result: viper.silver.verifier.VerificationError
+) : VerifierError {
+    companion object {
+        fun fromSilver(result: viper.silicon.interfaces.VerificationResult): VerificationError {
+            check(result.isFatal) { "The verification result must contain an error to be converted." }
+            return VerificationError((result as viper.silicon.interfaces.Failure).message())
+        }
+    }
+
+    val reason: ErrorReason
+        get() = ErrorReason(result.reason())
     override val id: String
         get() = result.id()
     override val msg: String
         get() = result.readableMessage(false, false)
     override val position: Position
         get() = Position.fromSilver(result.pos())
-}
-
-object ErrorAdapter {
-    fun translate(result: viper.silicon.interfaces.VerificationResult): VerificationError {
-        check(result.isFatal) { "The verification result must contain an error to be converted." }
-        return object : VerificationError {
-            override val result: viper.silver.verifier.VerificationError =
-                (result as viper.silicon.interfaces.Failure).message()
-        }
-    }
 }
 
 /**
@@ -40,8 +47,15 @@ object ErrorAdapter {
  * as offending node result the call-site of the called method.
  * But the actual info we are interested in is on the pre-condition, contained in the reason's offending node.
  */
-inline fun <reified I> VerificationError.getInfoOrNull(): I? =
+fun <I> VerificationError.getInfoOrNull(): I? =
     Info.fromSilver(result.offendingNode().info).unwrapOr<I> {
         Info.fromSilver(result.reason().offendingNode().info).unwrapOr<I> { null }
     }
 
+/**
+ * If the reason's offending node is a function application, then fetch the info metadata from the index-th argument.
+ */
+fun ErrorReason.extractInfoFromFunctionArgument(argIndex: Int): Info = when (val node = reason.offendingNode()) {
+    is viper.silver.ast.FuncApp -> Info.fromSilver(node.args.apply(argIndex).info)
+    else -> error("The reason's offending node is not a function application.")
+}

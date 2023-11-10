@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.formver.viper
 
 import org.jetbrains.kotlin.formver.viper.ast.Program
 import org.jetbrains.kotlin.formver.viper.errors.ConsistencyError
-import org.jetbrains.kotlin.formver.viper.errors.ErrorAdapter
 import org.jetbrains.kotlin.formver.viper.errors.GenericConsistencyError
 import org.jetbrains.kotlin.formver.viper.errors.VerificationError
 import viper.silicon.Config
@@ -59,7 +58,7 @@ class Verifier {
 
         for (result in results) {
             if (result.isFatal) {
-                onFailure(ErrorAdapter.translate(result))
+                onFailure(VerificationError.fromSilver(result))
             }
         }
     }
