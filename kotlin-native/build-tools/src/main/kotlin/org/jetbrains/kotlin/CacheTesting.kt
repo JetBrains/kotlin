@@ -15,7 +15,7 @@ fun configureCacheTesting(project: Project): CacheTesting? {
     val cacheKindString = project.findProperty("test_with_cache_kind") as String? ?: return null
     val (cacheKind, makePerFileCache) = when (cacheKindString) {
         "dynamic" -> CompilerOutputKind.DYNAMIC_CACHE to false
-        "static" -> CompilerOutputKind.STATIC_CACHE to false
+        "static", "static_everywhere" -> CompilerOutputKind.STATIC_CACHE to false
         "static_per_file" -> CompilerOutputKind.STATIC_CACHE to true
         else -> error(cacheKindString)
     }
