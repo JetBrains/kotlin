@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
-        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] val <@R|Anno|[Types](position = <strcat>(String(type param ), <Unresolved name: prop>#)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), <Unresolved name: prop>#))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
+        public open [ResolvedTo(ANNOTATION_ARGUMENTS)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(ANNOTATION_ARGUMENTS)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int| {
                 ^ IntegerLiteral(1)
             }
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotations.kt
 
     }
     public abstract [ResolvedTo(STATUS)] interface OriginalInterface : R|kotlin/Any| {
-        public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), <Unresolved name: prop>#)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), <Unresolved name: prop>#))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
+        public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int| {
                 ^ Int(1)
             }
@@ -342,7 +342,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterAnnotations.kt
 
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface OriginalInterface : R|kotlin/Any| {
-        public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), <Unresolved name: prop>#)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), <Unresolved name: prop>#))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
+        public open [ResolvedTo(BODY_RESOLVE)] val <@R|Anno|[Types](position = <strcat>(String(type param ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|)) [ResolvedTo(BODY_RESOLVE)] F : R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Number|> explicitType: R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalInterface] get(): R|@R|Anno|(position = <strcat>(String(bound ), this@R|/OriginalInterface.Companion|.R|/OriginalInterface.Companion.prop|))  kotlin/Int| {
                 ^ Int(1)
             }
