@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.formver.ErrorStyle
 import org.jetbrains.kotlin.formver.PluginErrors
 import org.jetbrains.kotlin.formver.embeddings.SourceRole
-import org.jetbrains.kotlin.formver.viper.errors.*
+import org.jetbrains.kotlin.formver.viper.errors.ConsistencyError
+import org.jetbrains.kotlin.formver.viper.errors.VerificationError
+import org.jetbrains.kotlin.formver.viper.errors.VerifierError
+import org.jetbrains.kotlin.formver.viper.errors.getInfoOrNull
 
 class VerifierErrorInterpreter {
     private var isOriginalViperErrorReported = false
@@ -25,17 +28,16 @@ class VerifierErrorInterpreter {
         error: VerificationError,
         context: CheckerContext,
     ) {
-        val role = error.getInfoOrNull<SourceRole>()
-        when {
-            error is PostconditionViolated && role is SourceRole.ReturnsTrueEffect ->
+        when (val role = error.getInfoOrNull<SourceRole>()) {
+            is SourceRole.ReturnsTrueEffect ->
                 reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "false", context)
-            error is PostconditionViolated && role is SourceRole.ReturnsFalseEffect ->
+            is SourceRole.ReturnsFalseEffect ->
                 reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "true", context)
-            error is PostconditionViolated && role is SourceRole.ReturnsNullEffect ->
+            is SourceRole.ReturnsNullEffect ->
                 reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "non-null", context)
-            error is PostconditionViolated && role is SourceRole.ReturnsNotNullEffect ->
+            is SourceRole.ReturnsNotNullEffect ->
                 reportOn(source, PluginErrors.UNEXPECTED_RETURNED_VALUE, "null", context)
-            error is PostconditionViolated && role is SourceRole.CallsInPlaceEffect ->
+            is SourceRole.CallsInPlaceEffect ->
                 reportOn(source, PluginErrors.INVALID_INVOCATION_TYPE, role.paramSymbol, role.kind.asUserFriendlyMessage, context)
             else -> reportVerificationErrorOriginalViper(source, error, context)
         }

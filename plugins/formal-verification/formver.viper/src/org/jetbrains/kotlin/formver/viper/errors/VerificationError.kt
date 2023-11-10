@@ -9,10 +9,8 @@ import org.jetbrains.kotlin.formver.viper.ast.Info
 import org.jetbrains.kotlin.formver.viper.ast.Position
 import org.jetbrains.kotlin.formver.viper.ast.info
 import org.jetbrains.kotlin.formver.viper.ast.unwrapOr
-import viper.silver.verifier.errors
 
-
-sealed interface VerificationError : VerifierError {
+interface VerificationError : VerifierError {
     val result: viper.silver.verifier.VerificationError
     override val id: String
         get() = result.id()
@@ -22,30 +20,12 @@ sealed interface VerificationError : VerifierError {
         get() = Position.fromSilver(result.pos())
 }
 
-data class PreconditionInCallFalse(
-    override val result: errors.PreconditionInCallFalse,
-) : VerificationError
-
-data class PostconditionViolated(
-    override val result: errors.PostconditionViolated,
-) : VerificationError
-
-data class AssertFailed(
-    override val result: errors.AssertFailed,
-) : VerificationError
-
-data class UnknownError(
-    override val result: viper.silver.verifier.VerificationError
-) : VerificationError
-
 object ErrorAdapter {
     fun translate(result: viper.silicon.interfaces.VerificationResult): VerificationError {
-        assert(result.isFatal)
-        return when (val err = (result as viper.silicon.interfaces.Failure).message()) {
-            is errors.PreconditionInCallFalse -> PreconditionInCallFalse(err)
-            is errors.PostconditionViolated -> PostconditionViolated(err)
-            is errors.AssertFailed -> AssertFailed(err)
-            else -> UnknownError(err)
+        check(result.isFatal) { "The verification result must contain an error to be converted." }
+        return object : VerificationError {
+            override val result: viper.silver.verifier.VerificationError =
+                (result as viper.silicon.interfaces.Failure).message()
         }
     }
 }
