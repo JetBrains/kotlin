@@ -41169,6 +41169,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testValuesInsideEnum() throws Exception {
             runTest("compiler/testData/codegen/box/specialBuiltins/valuesInsideEnum.kt");
         }
+
+        @TestMetadata("weirdCharBuffers.kt")
+        public void testWeirdCharBuffers() throws Exception {
+            runTest("compiler/testData/codegen/box/specialBuiltins/weirdCharBuffers.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/statics")

@@ -58,6 +58,8 @@ private fun FirBasedSymbol<*>.isCollectable(): Boolean {
         if (typeParameterSymbols.any { it.toConeType().hasError() }) return false
         if (receiverParameter?.typeRef?.coneType?.hasError() == true) return false
         if (this is FirFunctionSymbol<*> && valueParameterSymbols.any { it.resolvedReturnType.hasError() }) return false
+        @OptIn(SymbolInternals::class)
+        if (fir.isHiddenToOvercomeSignatureClash == true) return false
     }
 
     return when (this) {

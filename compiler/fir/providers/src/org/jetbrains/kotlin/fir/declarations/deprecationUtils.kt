@@ -322,3 +322,9 @@ private object IsHiddenEverywhereBesideSuperCalls : FirDeclarationDataKey()
 var FirCallableDeclaration.isHiddenEverywhereBesideSuperCalls: Boolean? by FirDeclarationDataRegistry.data(
     IsHiddenEverywhereBesideSuperCalls
 )
+
+private object IsHiddenToOvercomeSignatureClash : FirDeclarationDataKey()
+
+var FirCallableDeclaration.isHiddenToOvercomeSignatureClash: Boolean? by FirDeclarationDataRegistry.data(
+    IsHiddenToOvercomeSignatureClash
+)

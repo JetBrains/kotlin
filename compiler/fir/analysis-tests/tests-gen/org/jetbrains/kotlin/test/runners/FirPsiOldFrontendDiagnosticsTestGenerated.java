@@ -21682,6 +21682,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 public void testSizeFromKotlinOverriddenInJava() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/sizeFromKotlinOverriddenInJava.kt");
                 }
+
+                @Test
+                @TestMetadata("weirdCharBuffers.kt")
+                public void testWeirdCharBuffers() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/collectionOverrides/weirdCharBuffers.kt");
+                }
             }
 
             @Nested

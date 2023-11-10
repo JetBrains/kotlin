@@ -715,7 +715,7 @@ fun FirDeclaration?.computeIrOrigin(
 
         this is FirCallableDeclaration -> when {
             fakeOverrideOwnerLookupTag != null && fakeOverrideOwnerLookupTag != containingClassLookupTag() -> IrDeclarationOrigin.FAKE_OVERRIDE
-            symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride -> IrDeclarationOrigin.FAKE_OVERRIDE
+            isSubstitutionOrIntersectionOverride || isHiddenToOvercomeSignatureClash == true -> IrDeclarationOrigin.FAKE_OVERRIDE
             parentOrigin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && symbol.isJavaOrEnhancement -> {
                 IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
             }

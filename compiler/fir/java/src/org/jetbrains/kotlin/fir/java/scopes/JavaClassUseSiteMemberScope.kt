@@ -407,12 +407,8 @@ class JavaClassUseSiteMemberScope(
             val explicitlyDeclaredFunctionWithNaturalName = explicitlyDeclaredFunctionsWithNaturalName.firstOrNull {
                 overrideCheckerForSpecialFunctions.isOverriddenFunction(it, someSymbolWithNaturalNameFromSuperType)
             }
-            val jvmName = resultOfIntersectionWithNaturalName.overriddenMembers.firstNotNullOfOrNull {
-                it.member.getJvmMethodNameIfSpecial(it.baseScope, session)
-            }
-            if (jvmName != null) {
-                processOverridesForFunctionsWithDifferentJvmName(
-                    jvmName,
+
+            if (processOverridesForFunctionsWithDifferentJvmName(
                     someSymbolWithNaturalNameFromSuperType,
                     explicitlyDeclaredFunctionWithNaturalName,
                     requestedName,
@@ -420,6 +416,7 @@ class JavaClassUseSiteMemberScope(
                     destination,
                     resultsOfIntersectionToSaveInCache
                 )
+            ) {
                 continue
             }
 
@@ -529,16 +526,18 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun processOverridesForFunctionsWithDifferentJvmName(
-        jvmName: Name,
+        // The JVM name of the function, e.g., byteValue or charAt
         someSymbolWithNaturalNameFromSuperType: FirNamedFunctionSymbol,
         explicitlyDeclaredFunctionWithNaturalName: FirNamedFunctionSymbol?,
+        // The Kotlin name of the function, e.g., toByte or get
         naturalName: Name,
         resultOfIntersectionWithNaturalName: ResultOfIntersection<FirNamedFunctionSymbol>,
         destination: MutableCollection<FirNamedFunctionSymbol>,
         resultsOfIntersectionToSaveInCache: MutableList<ResultOfIntersection<FirNamedFunctionSymbol>>
-    ) {
+    ): Boolean {
         /*
-         * name: toByte
+         * naturalName: toByte
+         * jvmName: byteValue
          *
          * 1. find declared byteValue (a)
          * 2. find toByte in supertypes (b)
@@ -552,7 +551,20 @@ class JavaClassUseSiteMemberScope(
          * 7.1 create renamed copies of (c): (c')
          * 7.2 save direct overrides
          */
-        val overriddenMembers = resultOfIntersectionWithNaturalName.overriddenMembers
+
+        val jvmName = resultOfIntersectionWithNaturalName.overriddenMembers.firstNotNullOfOrNull {
+            it.member.getJvmMethodNameIfSpecial(it.baseScope, session)
+        } ?: return false
+
+
+        // Among the overridden members, some can be regular members and some can be renamed from jvmName to naturalName.
+        // If we have the CharBuffer situation, the visible member will override the regular ones and the hidden member will
+        // override the renamed ones (if they exist).
+        val (overriddenByJvmName, overriddenByNaturalName) =
+            resultOfIntersectionWithNaturalName.overriddenMembers.partition {
+                it.member.getJvmMethodNameIfSpecial(it.baseScope, session) == jvmName
+            }
+
         val explicitlyDeclaredFunctionWithBuiltinJvmName = declaredMemberScope.getFunctions(jvmName).firstOrNull {
             overrideChecker.isOverriddenFunction(it, someSymbolWithNaturalNameFromSuperType)
         }
@@ -563,52 +575,110 @@ class JavaClassUseSiteMemberScope(
             )
         }
 
-        val declaredFunction = explicitlyDeclaredFunctionWithNaturalName ?: explicitlyDeclaredFunctionWithBuiltinJvmName?.let {
-            val original = it.fir as FirJavaMethod
-            buildJavaMethodCopy(original) {
-                name = naturalName
-                symbol = FirNamedFunctionSymbol(it.callableId.copy(callableName = naturalName))
-                status = original.status.copy(isOperator = true)
+        fun createCopyWithNaturalName(
+            originalSymbol: FirNamedFunctionSymbol,
+            isHidden: Boolean = false,
+            origin: FirDeclarationOrigin? = null,
+        ): FirNamedFunctionSymbol {
+            val original = originalSymbol.fir
+            val newSymbol = FirNamedFunctionSymbol(originalSymbol.callableId.copy(callableName = naturalName))
+
+            // If original is declared, it's a FirJavaMethod.
+            // If it's inherited, it's a (possibly enhanced) FirSimpleMethod.
+            return if (original is FirJavaMethod) {
+                buildJavaMethodCopy(original) {
+                    name = naturalName
+                    symbol = newSymbol
+                    dispatchReceiverType = klass.defaultType()
+
+                    // Technically, it should only be an operator if it matches an operator naming convention,
+                    // but always setting it doesn't seem to hurt.
+                    status = original.status.copy(isOperator = true)
+                }
+            } else {
+                buildSimpleFunctionCopy(original) {
+                    name = naturalName
+                    symbol = newSymbol
+                    dispatchReceiverType = klass.defaultType()
+                    origin?.let { this.origin = it }
+                }
             }.apply {
                 initialSignatureAttr = original
+                if (isHidden) {
+                    isHiddenToOvercomeSignatureClash = true
+                }
             }.symbol
         }
 
         val renamedFunctionsFromSupertypes = functionsFromSupertypesWithBuiltinJvmName?.overriddenMembers?.map {
-            val renamedFunction = buildSimpleFunctionCopy(it.member.fir) {
-                name = naturalName
-                symbol = FirNamedFunctionSymbol(it.member.callableId.copy(callableName = naturalName))
-                origin = FirDeclarationOrigin.RenamedForOverride
-            }.apply {
-                initialSignatureAttr = it.member.fir
-            }
-            it.baseScope to listOf(renamedFunction.symbol)
+            val renamedFunction = createCopyWithNaturalName(it.member, origin = FirDeclarationOrigin.RenamedForOverride)
+            it.baseScope to listOf(renamedFunction)
         }
 
-        val resultsOfIntersection = when (renamedFunctionsFromSupertypes) {
-            null -> listOf(resultOfIntersectionWithNaturalName)
+        val resultsOfIntersectionOfRenamed = when {
+            renamedFunctionsFromSupertypes == null && overriddenByNaturalName.isEmpty() -> listOf(resultOfIntersectionWithNaturalName)
             else -> {
                 val membersByScope = buildList {
-                    overriddenMembers.mapTo(this) { it.baseScope to listOf(it.member) }
-                    addAll(renamedFunctionsFromSupertypes)
+                    overriddenByJvmName.mapTo(this) { it.baseScope to listOf(it.member) }
+                    addAll(renamedFunctionsFromSupertypes.orEmpty())
                 }
                 supertypeScopeContext.convertGroupedCallablesToIntersectionResults(membersByScope)
             }
         }
 
-        if (declaredFunction != null) {
-            destination += declaredFunction
-            directOverriddenFunctions[declaredFunction] = resultsOfIntersection
-            for (resultOfIntersection in resultsOfIntersection) {
-                for (overriddenMember in resultOfIntersection.overriddenMembers) {
-                    overrideByBase[overriddenMember.member] = declaredFunction
+        val explicitlyDeclaredOrInheritedFunctionWithBuiltinJvmName =
+            // we know overriddenByJvmName is non-empty, otherwise we would have early returned in the beginning.
+            explicitlyDeclaredFunctionWithBuiltinJvmName ?: overriddenByJvmName.first().member
+
+        if (explicitlyDeclaredFunctionWithNaturalName != null || overriddenByNaturalName.isNotEmpty()) {
+            // The CharBuffer situation: both get(Int):Char and charAt(Int):Char are declared or inherited.
+
+            // CharBuffer.charAt is renamed to get, becomes hidden and overrides kotlin.CharSequence.charAt.
+            val hiddenRenamedFunction = createCopyWithNaturalName(explicitlyDeclaredOrInheritedFunctionWithBuiltinJvmName, isHidden = true)
+            destination += hiddenRenamedFunction
+            setOverrides(hiddenRenamedFunction, resultsOfIntersectionOfRenamed)
+
+            val resultOfIntersectionOfNaturalName = supertypeScopeContext.convertGroupedCallablesToIntersectionResults(
+                overriddenByNaturalName.map { it.baseScope to listOf(it.member) }
+            )
+
+            if (explicitlyDeclaredFunctionWithNaturalName != null) {
+                // CharBuffer.get is already in destination, but we need to update its overridden declarations.
+                // It mustn't override kotlin.CharSequence.charAt, but it can override different declarations with the same signature.
+                // See compiler/testData/diagnostics/tests/j+k/collectionOverrides/charBuffer.kt
+                setOverrides(explicitlyDeclaredFunctionWithNaturalName, resultOfIntersectionOfNaturalName)
+            } else {
+                // CharBuffer.get is inherited (possibly a real intersection).
+                // Add it to destination and set overridden declarations.
+                val intersectionOfNaturalName = resultOfIntersectionOfNaturalName.single()
+                destination += intersectionOfNaturalName.chosenSymbol
+                if (intersectionOfNaturalName is ResultOfIntersection.NonTrivial) {
+                    setOverrides(intersectionOfNaturalName.chosenSymbol, resultOfIntersectionOfNaturalName)
                 }
             }
         } else {
-            for (resultOfIntersection in resultsOfIntersection) {
-                destination += resultOfIntersection.chosenSymbol
+            val declaredFunction = explicitlyDeclaredFunctionWithBuiltinJvmName?.let { createCopyWithNaturalName(it) }
+
+            if (declaredFunction != null) {
+                destination += declaredFunction
+                setOverrides(declaredFunction, resultsOfIntersectionOfRenamed)
+            } else {
+                for (resultOfIntersection in resultsOfIntersectionOfRenamed) {
+                    destination += resultOfIntersection.chosenSymbol
+                }
+                resultsOfIntersectionToSaveInCache += resultsOfIntersectionOfRenamed
             }
-            resultsOfIntersectionToSaveInCache += resultsOfIntersection
+        }
+
+        return true
+    }
+
+    private fun setOverrides(override: FirNamedFunctionSymbol, overridden: List<ResultOfIntersection<FirNamedFunctionSymbol>>) {
+        directOverriddenFunctions[override] = overridden
+        for (resultOfIntersection in overridden) {
+            for (overriddenMember in resultOfIntersection.overriddenMembers) {
+                overrideByBase[overriddenMember.member] = override
+            }
         }
     }
 

@@ -1,6 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR
-//   Ignore reason: KT-61282
 // MODULE: lib
 // FILE: CharBuffer.java
 
@@ -34,6 +32,7 @@ public abstract class CharBuffer implements CharSequence {
 
 // MODULE: main(lib)
 // FILE: 1.kt
+abstract class KCB : CharBuffer()
 
 fun box(): String {
     val cb: CharBuffer = CharBuffer.impl()
