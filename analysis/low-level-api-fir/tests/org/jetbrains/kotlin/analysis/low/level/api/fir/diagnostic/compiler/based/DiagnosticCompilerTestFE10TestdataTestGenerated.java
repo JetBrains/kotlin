@@ -2197,6 +2197,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("typeParameterAnnotations.kt")
+            public void testTypeParameterAnnotations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/typeParameterAnnotations.kt");
+            }
+
+            @Test
             @TestMetadata("typeParameterAsAnnotation.kt")
             public void testTypeParameterAsAnnotation() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/typeParameterAsAnnotation.kt");

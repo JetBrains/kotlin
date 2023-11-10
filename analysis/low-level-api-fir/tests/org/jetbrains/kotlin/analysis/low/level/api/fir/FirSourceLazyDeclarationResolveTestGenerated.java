@@ -906,6 +906,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("typeParameterAnnotations.kt")
+        public void testTypeParameterAnnotations() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/typeParameterAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("typePropagationFromFunctionWithInaccessibleAnnotationArgument.kt")
         public void testTypePropagationFromFunctionWithInaccessibleAnnotationArgument() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/functions/typePropagationFromFunctionWithInaccessibleAnnotationArgument.kt");
@@ -1079,6 +1085,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         @TestMetadata("simpleLoopInOverride2.kt")
         public void testSimpleLoopInOverride2() throws Exception {
             runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/simpleLoopInOverride2.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameterAnnotations.kt")
+        public void testTypeParameterAnnotations() throws Exception {
+            runTest("analysis/low-level-api-fir/testData/lazyResolve/properties/typeParameterAnnotations.kt");
         }
 
         @Test
