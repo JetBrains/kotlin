@@ -1184,6 +1184,98 @@ TYPED_TEST_P(TracingGCTest, FreeObjectWithFreeWeakReversedOrder) {
     f1.wait();
 }
 
+TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
+    constexpr auto quant = 5;
+    constexpr auto gcNumber = 5;
+
+    std::atomic<bool> stopMutation = false;
+    std::atomic<bool> startMutation = false;
+    std::atomic<std::size_t> initializedMutators = 0;
+
+    Mutator scheduler;
+    std::future<void> schedulerFuture = scheduler.Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
+        while (initializedMutators < kDefaultThreadCount) { /* wait */ }
+        startMutation = true;
+        for (int i = 0; i < gcNumber; ++i) {
+            mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
+        }
+        stopMutation = true;
+    });
+
+    std::vector<Mutator> mutators(kDefaultThreadCount);
+    std::vector<std::future<void>> mutatorFutures;
+
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutatorFutures.emplace_back(mutators[i].Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
+            StackObjectHolder head{threadData};
+            ObjHeader* tail = head.header();
+
+            auto append = [&](int count) {
+                for (int i = 0; i < count; ++i) {
+                    auto& next = AllocateObject(threadData);
+                    auto& tailObj = test_support::Object<Payload>::FromObjHeader(tail);
+                    tailObj->field1 = next.header();
+                    tail = next.header();
+                    // sp?
+                }
+            };
+
+            auto cut = [&](ObjHeader* first, int count) {
+                ObjHeader* last = first;
+                for (int i = 0; i < count; ++i) {
+                    auto& lastObj = test_support::Object<Payload>::FromObjHeader(last);
+                    last = lastObj->field1;
+                }
+                auto& firstObj = test_support::Object<Payload>::FromObjHeader(first);
+                auto& lastObj = test_support::Object<Payload>::FromObjHeader(last);
+                firstObj->field1 = lastObj->field1;
+            };
+
+            // Initialize
+            append(quant * 2);
+            ++initializedMutators;
+            while (!startMutation.load()) { /* wait */ };
+
+            while (!stopMutation.load()) {
+                auto oldTail = tail;
+                append(quant);
+                // [head]->(a)->...->(b)->...->(oldTail)->(c)->...->(d)
+                mm::safePoint(threadData);
+
+                append(quant);
+                // [head]->(a)->...->(b)->...->(oldTail)->(c)->...->(d)->...->(tail)
+                mm::safePoint(threadData);
+
+                cut(head.header(), quant);
+                // (a)->...-+
+                //          v
+                // [head]->(b)->...->(oldTail)->(c)->...->(d)->...->(tail)
+                mm::safePoint(threadData);
+
+                cut(oldTail, quant);
+                // (a)->...-+           (c)->...-+
+                //          v                    v
+                // [head]->(b)->...->(oldTail)->(d)->...->(tail)
+                mm::safePoint(threadData);
+            }
+
+            std::size_t length = 0;
+            auto* node = &test_support::Object<Payload>::FromObjHeader(head.header());
+            while ((*node)->field1 != nullptr) {
+                node = &test_support::Object<Payload>::FromObjHeader((*node)->field1);
+                ++length;
+            }
+
+            EXPECT_THAT(length, quant * 2);
+        }));
+    }
+
+    schedulerFuture.wait();
+    for (auto& future : mutatorFutures) {
+        future.wait();
+    }
+}
+
 #define COMMON_TEST_LIST \
     RootSet, \
     InterconnectedRootSet, \
@@ -1205,7 +1297,8 @@ TYPED_TEST_P(TracingGCTest, FreeObjectWithFreeWeakReversedOrder) {
     MultipleMutatorsWeaks, \
     MultipleMutatorsWeakNewObj, \
     NewThreadsWhileRequestingCollection, \
-    FreeObjectWithFreeWeakReversedOrder
+    FreeObjectWithFreeWeakReversedOrder, \
+    MutateBetweenSafePoints
 
 // expand lists before stringization in REGISTER_TYPED_TEST_SUITE_P
 #define REGISTER_TYPED_TEST_SUITE_WITH_LISTS(SuiteName, ...) REGISTER_TYPED_TEST_SUITE_P(SuiteName, __VA_ARGS__)
