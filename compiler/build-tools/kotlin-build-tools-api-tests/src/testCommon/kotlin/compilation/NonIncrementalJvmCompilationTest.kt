@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunnerProvider
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.prepareModule
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.exists
 
 @DisplayName("Smoke tests for non-incremental compilation via the build tools API")
 internal class NonIncrementalJvmCompilationTest : DefaultNonIncrementalCompilationTest() {
@@ -31,7 +28,7 @@ internal class NonIncrementalJvmCompilationTest : DefaultNonIncrementalCompilati
         scenario(buildRunnerProvider) {
             val module1 = module("jvm-module1")
             val module2 = module("jvm-module2") {
-                dependsOn(module1)
+                implementationDependency(module1)
             }
 
             compileAll {

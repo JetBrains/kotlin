@@ -15,7 +15,7 @@ class SimpleJvmCrossModuleICTests : DefaultIncrementalCompilationTest() {
         scenario(buildRunnerProvider) {
             val module1 = module("jvm-module1")
             val module2 = module("jvm-module2") {
-                dependsOn(module1)
+                implementationDependency(module1)
             }
             compileAll {
                 expectSuccess(module1) {
@@ -55,7 +55,7 @@ class SimpleJvmCrossModuleICTests : DefaultIncrementalCompilationTest() {
         scenario(buildRunnerProvider) {
             val module1 = module("jvm-module1")
             val module2 = module("jvm-module2") {
-                dependsOn(module1)
+                implementationDependency(module1)
             }
             compileAll {
                 expectSuccess(module1) {

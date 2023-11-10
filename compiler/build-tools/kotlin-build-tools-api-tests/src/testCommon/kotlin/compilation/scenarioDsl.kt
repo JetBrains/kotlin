@@ -37,12 +37,12 @@ abstract class BaseScenarioDsl<T : CompilationResultDsl>(
          * val module1 = module("jvm-module1")
          * val module2 = module("jvm-module2")
          * module("jvm-module1") {
-         *     dependsOn(module2)
+         *     implementationDependency(module2)
          * }
          * ```
          * If you really need it for some reason, you're welcome to change [BaseScenarioDsl.compileAll], it's not hard :)
          */
-        fun dependsOn(anotherModule: Module) {
+        fun implementationDependency(anotherModule: Module) {
             moduleDependencies.computeIfAbsent(module) {
                 hashSetOf()
             }.add(anotherModule)
