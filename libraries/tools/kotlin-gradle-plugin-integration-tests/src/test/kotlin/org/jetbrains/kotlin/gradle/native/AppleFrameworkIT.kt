@@ -212,6 +212,35 @@ class AppleFrameworkIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("embedAndSignAppleFrameworkForXcode was registered with ENABLE_USER_SCRIPT_SANDBOXING=YES")
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @GradleTest
+    fun shouldFailEmbedAndSignAppleFrameworkForXcodeWithUserScriptSandboxingEnabled(
+        gradleVersion: GradleVersion,
+    ) {
+        nativeProject(
+            "sharedAppleFramework",
+            gradleVersion,
+        ) {
+            val environmentVariables = mapOf(
+                "CONFIGURATION" to "Debug",
+                "SDK_NAME" to "iphoneos",
+                "ARCHS" to "arm64",
+                "EXPANDED_CODE_SIGN_IDENTITY" to "-",
+                "TARGET_BUILD_DIR" to projectPath.absolutePathString(),
+                "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived",
+                "ENABLE_USER_SCRIPT_SANDBOXING" to "YES"
+            )
+            buildAndFail(
+                ":shared:embedAndSignAppleFrameworkForXcode",
+                environmentVariables = EnvironmentalVariables(environmentVariables)
+            ) {
+                assertTasksFailed(":shared:embedAndSignAppleFrameworkForXcode")
+                assertOutputContains("Sandboxing for user scripts is currently enabled")
+            }
+        }
+    }
+
     @DisplayName("embedAndSignAppleFrameworkForXcode was registered without required Xcode environments")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
