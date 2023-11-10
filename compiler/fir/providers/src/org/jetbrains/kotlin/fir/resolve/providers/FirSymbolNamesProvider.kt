@@ -63,8 +63,7 @@ abstract class FirSymbolNamesProvider {
     /**
      * Whether [classId] is considered a generated function type within the provider's scope and session.
      */
-    open fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean =
-        error("`mayHaveSyntheticFunctionType` needs to be implemented when `mayHaveSyntheticFunctionTypes` is true.")
+    open fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = mayHaveSyntheticFunctionTypes
 
     /**
      * Checks if the provider's scope may contain a top-level classifier (class, interface, object, or type alias) with the given [classId].
