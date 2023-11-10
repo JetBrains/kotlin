@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
-import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
-import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
-import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -100,12 +97,10 @@ private class TransformerPrinter(
                     override = true,
                 )
                 if (element.transformByChildren) {
-                    println(" {")
-                    withIndent {
+                    printBlock {
                         println(element.visitorParameterName, ".transformChildren(this, data)")
                         println("return ", element.visitorParameterName)
                     }
-                    println("}")
                 } else {
                     println(" =")
                     withIndent {
@@ -172,7 +167,7 @@ private class TransformerVoidPrinter(
     override fun SmartPrinter.printAdditionalMethods() {
         println()
         val typeParameter = TypeVariable("T", listOf(IrTree.rootElement))
-        printFunctionDeclaration(
+        printFunctionWithBlockBody(
             name = "transformPostfix",
             parameters = listOf(FunctionParameter("body", Lambda(receiver = typeParameter, returnType = StandardTypes.unit))),
             returnType = typeParameter,
@@ -180,27 +175,21 @@ private class TransformerVoidPrinter(
             extensionReceiver = typeParameter,
             visibility = Visibility.PROTECTED,
             isInline = true,
-        )
-        println(" {")
-        withIndent {
+        ) {
             println("transformChildrenVoid()")
             println("this.body()")
             println("return this")
         }
-        println("}")
         println()
-        printFunctionDeclaration(
+        printFunctionWithBlockBody(
             name = "transformChildrenVoid",
             parameters = emptyList(),
             returnType = StandardTypes.unit,
             extensionReceiver = IrTree.rootElement,
             visibility = Visibility.PROTECTED,
-        )
-        println(" {")
-        withIndent {
+        ) {
             println("transformChildrenVoid(this@", visitorType.simpleName, ")")
         }
-        println("}")
     }
 
     context(ImportCollector)
@@ -211,12 +200,10 @@ private class TransformerVoidPrinter(
             println()
             printVisitMethodDeclaration(element, hasDataParameter = false, modality = Modality.OPEN)
             if (element.transformByChildrenVoid && !element.isPackageFragmentChild) {
-                println(" {")
-                withIndent {
+                printBlock {
                     println(element.visitorParameterName, ".transformChildren(this, null)")
                     println("return ", element.visitorParameterName)
                 }
-                println("}")
             } else {
                 println(" =")
                 withIndent {
@@ -252,17 +239,14 @@ fun printTransformerVoid(generationPath: File, model: Model): GeneratedFile =
         TransformerVoidPrinter(this, elementTransformerVoidType).printVisitor(model.elements)
         println()
         val transformerParameter = FunctionParameter("transformer", elementTransformerVoidType)
-        printFunctionDeclaration(
+        printFunctionWithBlockBody(
             name = "transformChildrenVoid",
             parameters = listOf(transformerParameter),
             returnType = StandardTypes.unit,
             extensionReceiver = IrTree.rootElement,
-        )
-        println(" {")
-        withIndent {
+        ) {
             println("transformChildren(", transformerParameter.name, ", null)")
         }
-        println("}")
     }
 
 private class TypeTransformerPrinter(
@@ -350,8 +334,7 @@ private class TypeTransformerPrinter(
                 }
             }
 
-            println(" {")
-            withIndent {
+            printBlock {
                 when (element.name) {
                     IrTree.memberAccessExpression.name -> {
                         if (irTypeFields.singleOrNull()?.name != "typeArguments") {
@@ -395,7 +378,6 @@ private class TypeTransformerPrinter(
                     ", data)"
                 )
             }
-            println("}")
         }
     }
 }

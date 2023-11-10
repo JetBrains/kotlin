@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
 import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
+import org.jetbrains.kotlin.generators.tree.printer.printFunctionWithBlockBody
 import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig.Category.*
@@ -776,12 +777,9 @@ object IrTree : AbstractTreeBuilder() {
                 vararg statements: String,
             ) {
                 println()
-                printFunctionDeclaration(name, listOf(indexParam) + listOfNotNull(additionalParameter), returnType)
-                println(" {")
-                withIndent {
+                printFunctionWithBlockBody(name, listOf(indexParam) + listOfNotNull(additionalParameter), returnType) {
                     statements.forEach { println(it) }
                 }
-                println("}")
             }
 
             printFunction(

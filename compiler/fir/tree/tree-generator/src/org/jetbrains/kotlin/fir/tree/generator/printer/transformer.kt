@@ -12,13 +12,8 @@ import org.jetbrains.kotlin.fir.tree.generator.firVisitorType
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.printer.FunctionParameter
-import org.jetbrains.kotlin.generators.tree.printer.GeneratedFile
-import org.jetbrains.kotlin.generators.tree.printer.printFunctionDeclaration
-import org.jetbrains.kotlin.generators.tree.printer.printGeneratedType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
 private class TransformerPrinter(
@@ -61,7 +56,7 @@ private class TransformerPrinter(
                 )
                 println()
             } else {
-                printFunctionDeclaration(
+                printFunctionWithBlockBody(
                     name = "transform" + element.name,
                     parameters = listOf(
                         FunctionParameter(elementParameterName, element),
@@ -70,12 +65,9 @@ private class TransformerPrinter(
                     returnType = visitMethodReturnType(element),
                     typeParameters = element.params,
                     modality = Modality.OPEN,
-                )
-                println(" {")
-                withIndent {
+                ) {
                     println("return transformElement(", elementParameterName, ", data)")
                 }
-                println("}")
             }
             println()
             printVisitMethodDeclaration(
@@ -83,8 +75,7 @@ private class TransformerPrinter(
                 modality = Modality.FINAL,
                 override = true,
             )
-            println(" {")
-            withIndent {
+            printBlock {
                 println(
                     "return transform",
                     element.name,
@@ -94,7 +85,6 @@ private class TransformerPrinter(
                     "data)"
                 )
             }
-            println("}")
         }
     }
 }

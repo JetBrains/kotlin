@@ -146,8 +146,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field>,
                 print(" : ", it.render(), it.inheritanceClauseParenthesis())
             }
             print(visitorTypeParameters.multipleUpperBoundsList())
-            println(" {")
-            withIndent {
+            printBlock {
                 printAdditionalMethods()
                 for (element in elements) {
                     if (element.isRootElement && visitSuperTypeByDefault) continue
@@ -155,7 +154,6 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field>,
                     printMethodsForElement(element)
                 }
             }
-            println("}")
         }
     }
 }
