@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+#pragma once
+
 #include <array>
 #include <type_traits>
 #include <vector>
