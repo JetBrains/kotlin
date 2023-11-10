@@ -18,18 +18,6 @@ import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 internal val ConfigureFrameworkExportSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
     val project = target.project
 
-    target.compilations.all {
-        // Allow resolving api configurations directly to be able to check that
-        // all exported dependency are also added in the corresponding api configurations.
-        // The check is performed during a link task execution.
-        project.configurations.maybeCreate(it.apiConfigurationName).apply {
-            isCanBeResolved = true
-            usesPlatformOf(target)
-            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        }
-    }
-
     target.binaries.withType(AbstractNativeLibrary::class.java).all { framework ->
         project.configurations.maybeCreateResolvable(framework.exportConfigurationName).apply {
             isVisible = false
