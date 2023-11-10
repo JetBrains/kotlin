@@ -5,65 +5,32 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.tests.buildToolsVersion
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunnerProvider
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.LogLevel
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.prepareModule
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.exists
-import kotlin.io.path.writeText
 
 @DisplayName("Smoke tests for incremental compilation within a single module via the build tools API")
 class SimpleJvmIntraModuleICTests : IncrementalBaseCompilationTest() {
     @CompilationTest
     fun smokeTest(buildRunnerProvider: BuildRunnerProvider) {
-        maybeSkip(buildRunnerProvider)
-        val module = prepareModule("jvm-module1", workingDirectory)
-
-        buildRunnerProvider(project).use { runner ->
-            module.compileIncrementally(runner, sourcesChanges = SourcesChanges.Unknown) { _, compiledSources ->
-                assertTrue(module.outputDirectory.resolve("FooKt.class").exists())
-                assertTrue(module.outputDirectory.resolve("Bar.class").exists())
-                assertTrue(module.outputDirectory.resolve("BazKt.class").exists())
-                if (buildToolsVersion.reportsCompiledSources) {
-                    val expectedSources = setOf(
-                        "jvm-module1/src/foo.kt",
-                        "jvm-module1/src/bar.kt",
-                        "jvm-module1/src/baz.kt",
-                    )
-                    assertEquals(expectedSources, compiledSources)
+        scenario(buildRunnerProvider) {
+            val module1 = module("jvm-module1")
+            compileAll {
+                expectSuccess(module1) {
+                    compiledSources("foo.kt", "bar.kt", "baz.kt")
+                    outputFiles("FooKt.class", "Bar.class", "BazKt.class")
                 }
             }
-        }
-
-        val barKt = module.sourcesDirectory.resolve("bar.kt")
-        // replace class with a function
-        barKt.writeText(
-            """
-            fun bar() {
-                foo()
+            changeFile(module1, "bar.kt") {
+                """
+                fun bar() {
+                    foo()
+                }
+                """.trimIndent()
             }
-            """.trimIndent()
-        )
-
-        buildRunnerProvider(project).use { runner ->
-            module.compileIncrementally(
-                runner, sourcesChanges = SourcesChanges.Known(
-                    modifiedFiles = listOf(barKt.toFile()), removedFiles = emptyList()
-                )
-            ) { _, compiledSources ->
-                assertTrue(module.outputDirectory.resolve("FooKt.class").exists())
-                assertFalse(module.outputDirectory.resolve("Bar.class").exists())
-                assertTrue(module.outputDirectory.resolve("BarKt.class").exists())
-                assertTrue(module.outputDirectory.resolve("BazKt.class").exists())
-                if (buildToolsVersion.reportsCompiledSources) {
-                    val expectedSources = setOf(
-                        "jvm-module1/src/bar.kt",
-                    )
-                    assertEquals(expectedSources, compiledSources)
+            compileAll {
+                expectSuccess(module1) {
+                    compiledSources("bar.kt")
+                    outputFiles("FooKt.class", "BarKt.class", "BazKt.class")
                 }
             }
         }
