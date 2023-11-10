@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.konan.test.diagnostics
 
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.directives.*
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
@@ -29,6 +32,8 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.junit.jupiter.api.Assumptions
+import java.io.File
 
 abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendOutput<R>> : AbstractKotlinCompilerTest() {
     abstract val targetFrontend: FrontendKind<R>
@@ -43,6 +48,17 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
         }
         baseNativeDiagnosticTestConfiguration(frontend)
         handlersSetup(this)
+    }
+
+    override fun runTest(filePath: String) {
+        mutePlatformTestIfNecessary(filePath)
+        super.runTest(filePath)
+    }
+
+    private fun mutePlatformTestIfNecessary(filePath: String) {
+        if(HostManager.hostIsMac) return
+        if (InTextDirectivesUtils.isDirectiveDefined(File(filePath).readText(), WITH_PLATFORM_LIBS.name))
+            Assumptions.abort<Nothing>("Diagnostic tests using platform libs are not supported at non-Mac hosts. Test source: $filePath")
     }
 }
 

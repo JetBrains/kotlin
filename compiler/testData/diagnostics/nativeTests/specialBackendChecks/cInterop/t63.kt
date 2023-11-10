@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlinx.cinterop.*
 import kotlin.coroutines.*
 
@@ -17,6 +18,7 @@ fun startCoroutine(block: suspend () -> Unit) {
     block.startCoroutine(EmptyContinuation)
 }
 
+@OptIn(kotlinx.cinterop.BetaInteropApi::class)
 fun main() {
     autoreleasepool {
         startCoroutine {

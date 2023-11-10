@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import kotlinx.cinterop.*
 
 fun foo(x: Int, vararg s: String): Int {
@@ -6,6 +7,7 @@ fun foo(x: Int, vararg s: String): Int {
     return sum
 }
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 fun bar() {
     staticCFunction(::foo)
 }

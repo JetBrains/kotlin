@@ -321,7 +321,13 @@ fun main() {
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractDiagnosticsNativeTest> {
-                model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+                model(
+                    "diagnostics/nativeTests",
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                    // There are no special native-specific diagnostics in K1 frontend.
+                    // These checks happen in native backend instead, in SpecialBackendChecks class.
+                    excludeDirs = listOf("specialBackendChecks"),
+                )
             }
 
             testClass<AbstractFirPsiNativeDiagnosticsTest>(
