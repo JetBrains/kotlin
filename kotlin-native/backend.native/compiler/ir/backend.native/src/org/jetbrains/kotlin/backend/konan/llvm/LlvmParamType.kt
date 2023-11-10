@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_OBJECT_INSTAN
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.objcinterop.*
 
 /**
  * LLVM function's parameter type with its attributes.
@@ -29,7 +30,8 @@ internal fun ContextUtils.functionHasOuterStackParam(function: IrFunction): Bool
                 && !function.hasAnnotation(RuntimeNames.exportForCppRuntime) && !function.hasAnnotation(KonanFqNames.gcUnsafeCall)
                 && !function.isBuiltInOperator && !function.isStaticInitializer
                 && function.origin != DECLARATION_ORIGIN_OBJECT_INSTANCE_GETTER
-                && !function.hasObjCMethodAnnotation && !function.hasObjCFactoryAnnotation && !function.isObjCClassMethod()
+                && !function.hasAnnotation(objCMethodFqName) && !function.hasAnnotation(objCFactoryFqName)
+                && function.parentClassOrNull?.isObjCClass() != true
                 && function !in generationState.lambdasReferencedFromNative
 
 internal fun ContextUtils.getLlvmFunctionParameterTypes(function: IrFunction): List<LlvmParamType> {
