@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.utils.copyAttributes
+import org.jetbrains.kotlin.gradle.utils.createDependencyScope
+import org.jetbrains.kotlin.gradle.utils.findDependencyScope
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal fun KotlinTargetSoftwareComponent(
@@ -32,10 +34,9 @@ internal fun KotlinTargetSoftwareComponent(
             /* Explicitly typing 'Project' to avoid smart cast from 'target.project as ProjectInternal' */
             val project: Project = target.project
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
-            val configuration = project.configurations.findByName(publishedConfigurationName)
-                ?: project.configurations.create(publishedConfigurationName).also { publishedConfiguration ->
-                    publishedConfiguration.isCanBeConsumed = false
-                    publishedConfiguration.isCanBeResolved = false
+            val configuration = project.configurations.findDependencyScope(publishedConfigurationName)
+                ?: project.configurations.createDependencyScope(publishedConfigurationName).also { publishedConfiguration ->
+                    publishedConfiguration.isVisible = false
                     publishedConfiguration.extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
                     publishedConfiguration.artifacts.addAll(kotlinUsageContext.artifacts)
                     copyAttributes(from = kotlinUsageContext.attributes, to = publishedConfiguration.attributes)
