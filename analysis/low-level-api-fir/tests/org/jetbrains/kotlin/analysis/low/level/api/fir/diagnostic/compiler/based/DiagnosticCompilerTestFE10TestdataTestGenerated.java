@@ -24050,6 +24050,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("typealiasToJavaWithAnnotationArgument.kt")
+                public void testTypealiasToJavaWithAnnotationArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typealiasToJavaWithAnnotationArgument.kt");
+                }
+
+                @Test
                 @TestMetadata("typealiasToKtLibrary.kt")
                 public void testTypealiasToKtLibrary() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/actualAnnotationsNotMatchExpect/typealiasToKtLibrary.kt");
@@ -25143,12 +25149,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                         @TestMetadata("sourceRetentionAnnotationsWhenTypealias.kt")
                         public void testSourceRetentionAnnotationsWhenTypealias() throws Exception {
                             runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/sourceRetentionAnnotationsWhenTypealias.kt");
-                        }
-
-                        @Test
-                        @TestMetadata("typealiasToJavaWithAnnotationArgument.kt")
-                        public void testTypealiasToJavaWithAnnotationArgument() throws Exception {
-                            runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/annotationMatching/typealiasToJavaWithAnnotationArgument.kt");
                         }
 
                         @Test
