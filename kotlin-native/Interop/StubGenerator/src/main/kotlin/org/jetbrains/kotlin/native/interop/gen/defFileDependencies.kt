@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.prepareTool
 import org.jetbrains.kotlin.native.interop.indexer.NativeLibraryHeaders
 import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
 import org.jetbrains.kotlin.native.interop.tool.CInteropArguments
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 import java.io.File
-import java.util.stream.Collectors
 import kotlin.streams.toList
 
 fun defFileDependencies(args: Array<String>, runFromDaemon: Boolean) {
@@ -59,11 +59,14 @@ private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>
 }
 
 private fun defFileDependencies(dependencyAssigner: DependencyAssigner) {
+    val dependenciesExpander = DependenciesExpander()
+
     while (!dependencyAssigner.isDone()) {
-        val (file, depends) = dependencyAssigner.getReady().entries.sortedBy { it.key }.first()
-        dependencyAssigner.markDone(file)
-        patchDepends(file, depends.sorted())
-        println("${file.name} done.")
+        val (defFile, directDependencies) = dependencyAssigner.getReady().entries.minByOrNull { it.key }!!
+        val expandedDependencies = dependenciesExpander.expand(defFile, directDependencies)
+        dependencyAssigner.markDone(defFile)
+        patchDepends(defFile, expandedDependencies.sorted())
+        println("${defFile.name} done.")
     }
 }
 
@@ -134,10 +137,10 @@ private class SingleTargetDependencyAssigner(
     override fun getReady(): Map<File, Set<String>> {
         val result = mutableMapOf<File, Set<String>>()
 
-        defFiles@for ((defFile, headers) in pendingDefFilesToHeaders) {
+        defFiles@ for ((defFile, headers) in pendingDefFilesToHeaders) {
             val depends = mutableSetOf<String>()
 
-            headers@for (header in (headers.ownHeaders + headers.importedHeaders)) {
+            headers@ for (header in (headers.ownHeaders + headers.importedHeaders)) {
                 val dependency = processedHeadersToDefFiles[header]
                         ?: if (header in headers.ownHeaders) continue@headers else continue@defFiles
 
@@ -167,5 +170,28 @@ private class SingleTargetDependencyAssigner(
         headers.ownHeaders.forEach {
             processedHeadersToDefFiles.putIfAbsent(it, file)
         }
+    }
+}
+
+private class DependenciesExpander {
+    private class Dependency(val defFile: File, val directDependencies: Set<Dependency>) {
+        val name: String = defFile.nameWithoutExtension
+
+        val allDependencies: Set<String> by lazy {
+            buildSet {
+                directDependencies.forEach { directDependency ->
+                    this += directDependency.name
+                    addAll(directDependency.allDependencies)
+                }
+            }
+        }
+    }
+
+    private val cache = mutableMapOf<String, Dependency>()
+
+    fun expand(defFile: File, directDepends: Set<String>): Set<String> {
+        val dependency = Dependency(defFile, directDepends.mapToSetOrEmpty { cache.getValue(it) })
+        check(cache.put(dependency.name, dependency) == null)
+        return dependency.allDependencies
     }
 }
