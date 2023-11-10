@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.tests.buildToolsVersion
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunnerProvider
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.prepareModule
-import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.exists
@@ -25,8 +24,25 @@ class SimpleJvmCrossModuleICTests : IncrementalBaseCompilationTest() {
         val module2 = prepareModule("jvm-module2", workingDirectory)
 
         buildRunnerProvider(project).use { runner ->
-            module1.compileIncrementally(runner, SourcesChanges.Unknown)
-            module2.compileIncrementally(runner, SourcesChanges.Unknown, dependencies = setOf(module1))
+            module1.compileIncrementally(runner, SourcesChanges.Unknown) { _, compiledSources ->
+                if (buildToolsVersion.reportsCompiledSources) {
+                    val expectedSources = setOf(
+                        "jvm-module1/src/foo.kt",
+                        "jvm-module1/src/bar.kt",
+                        "jvm-module1/src/baz.kt",
+                    )
+                    assertEquals(expectedSources, compiledSources)
+                }
+            }
+            module2.compileIncrementally(runner, SourcesChanges.Unknown, dependencies = setOf(module1)) { _, compiledSources ->
+                if (buildToolsVersion.reportsCompiledSources) {
+                    val expectedSources = setOf(
+                        "jvm-module2/src/a.kt",
+                        "jvm-module2/src/b.kt",
+                    )
+                    assertEquals(expectedSources, compiledSources)
+                }
+            }
         }
 
         val barKt = module1.sourcesDirectory.resolve("bar.kt")
@@ -48,23 +64,21 @@ class SimpleJvmCrossModuleICTests : IncrementalBaseCompilationTest() {
                     modifiedFiles = listOf(barKt.toFile()),
                     removedFiles = emptyList()
                 )
-            ) { logs ->
-                if (buildToolsVersion >= KotlinToolingVersion(2, 0, 0, "Beta1")) {
-                    // TODO: improve compiled files check
-                    assertTrue(logs.getValue(LogLevel.DEBUG).contains("compile iteration: jvm-module1/src/bar.kt"))
+            ) { _, compiledSources ->
+                if (buildToolsVersion.reportsCompiledSources) {
+                    assertEquals(setOf("jvm-module1/src/bar.kt"), compiledSources)
                 }
             }
             module2.compileIncrementally(
                 runner,
                 SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList()),
                 dependencies = setOf(module1)
-            ) { logs ->
+            ) { _, compiledSources ->
                 // check that nothing is deleted
                 assertTrue(module2.outputDirectory.resolve("AKt.class").exists())
                 assertTrue(module2.outputDirectory.resolve("BKt.class").exists())
-                if (buildToolsVersion >= KotlinToolingVersion(2, 0, 0, "Beta1")) {
-                    // TODO: improve compiled files check
-                    assertTrue(logs.getValue(LogLevel.DEBUG).none { it.startsWith("compile iteration") })
+                if (buildToolsVersion.reportsCompiledSources) {
+                    assertEquals(emptySet<String>(), compiledSources)
                 }
             }
         }

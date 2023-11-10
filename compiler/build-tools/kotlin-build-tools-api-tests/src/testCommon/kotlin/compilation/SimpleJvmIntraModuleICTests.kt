@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunnerP
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.LogLevel
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.prepareModule
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.exists
 import kotlin.io.path.writeText
@@ -25,10 +24,18 @@ class SimpleJvmIntraModuleICTests : IncrementalBaseCompilationTest() {
         val module = prepareModule("jvm-module1", workingDirectory)
 
         buildRunnerProvider(project).use { runner ->
-            module.compileIncrementally(runner, sourcesChanges = SourcesChanges.Unknown) {
+            module.compileIncrementally(runner, sourcesChanges = SourcesChanges.Unknown) { _, compiledSources ->
                 assertTrue(module.outputDirectory.resolve("FooKt.class").exists())
                 assertTrue(module.outputDirectory.resolve("Bar.class").exists())
                 assertTrue(module.outputDirectory.resolve("BazKt.class").exists())
+                if (buildToolsVersion.reportsCompiledSources) {
+                    val expectedSources = setOf(
+                        "jvm-module1/src/foo.kt",
+                        "jvm-module1/src/bar.kt",
+                        "jvm-module1/src/baz.kt",
+                    )
+                    assertEquals(expectedSources, compiledSources)
+                }
             }
         }
 
@@ -47,14 +54,16 @@ class SimpleJvmIntraModuleICTests : IncrementalBaseCompilationTest() {
                 runner, sourcesChanges = SourcesChanges.Known(
                     modifiedFiles = listOf(barKt.toFile()), removedFiles = emptyList()
                 )
-            ) { logs ->
+            ) { _, compiledSources ->
                 assertTrue(module.outputDirectory.resolve("FooKt.class").exists())
                 assertFalse(module.outputDirectory.resolve("Bar.class").exists())
                 assertTrue(module.outputDirectory.resolve("BarKt.class").exists())
                 assertTrue(module.outputDirectory.resolve("BazKt.class").exists())
-                if (buildToolsVersion >= KotlinToolingVersion(2, 0, 0, "Beta1")) {
-                    // TODO: improve compiled files check
-                    assertTrue(logs.getValue(LogLevel.DEBUG).contains("compile iteration: jvm-module1/src/bar.kt"))
+                if (buildToolsVersion.reportsCompiledSources) {
+                    val expectedSources = setOf(
+                        "jvm-module1/src/bar.kt",
+                    )
+                    assertEquals(expectedSources, compiledSources)
                 }
             }
         }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Assumptions
+import java.util.*
 import kotlin.io.path.exists
 
 abstract class IncrementalBaseCompilationTest : BaseCompilationTest() {
@@ -21,11 +22,11 @@ abstract class IncrementalBaseCompilationTest : BaseCompilationTest() {
         runner: BuildRunner,
         sourcesChanges: SourcesChanges,
         dependencies: Set<Module> = emptySet(),
-        assertions: (Map<LogLevel, Collection<String>>) -> Unit = { _ -> },
+        assertions: (Map<LogLevel, Collection<String>>, Set<String>) -> Unit = { _, _ -> },
     ) {
-        compileIncrementallyImpl(runner, sourcesChanges, dependencies) { result, logs ->
+        compileIncrementallyImpl(runner, sourcesChanges, dependencies) { result, logs, compiledSources ->
             assertEquals(CompilationResult.COMPILATION_SUCCESS, result)
-            assertions(logs)
+            assertions(logs, compiledSources)
         }
     }
 
@@ -34,7 +35,7 @@ abstract class IncrementalBaseCompilationTest : BaseCompilationTest() {
         sourcesChanges: SourcesChanges,
         dependencies: Set<Module> = emptySet(),
         forceNonIncrementalCompilation: Boolean = false,
-        assertions: (CompilationResult, Map<LogLevel, Collection<String>>) -> Unit = { _, _ -> },
+        assertions: (CompilationResult, Map<LogLevel, Collection<String>>, Set<String>) -> Unit = { _, _, _ -> },
     ) {
         val snapshots = dependencies.map {
             runner.generateClasspathSnapshot(it).toFile()
@@ -60,9 +61,16 @@ abstract class IncrementalBaseCompilationTest : BaseCompilationTest() {
             params,
             options,
         )
-        compileImpl(runner, dependencies, assertions)
+        compileImpl(runner, dependencies) { result, logs ->
+            assertions(result, logs, logs.extractCompiledSources())
+        }
         assertTrue(shrunkClasspathSnapshotFile.exists())
     }
+
+    private fun Map<LogLevel, Collection<String>>.extractCompiledSources() =
+        getValue(LogLevel.DEBUG).filter { it.startsWith("compile iteration") }
+            .flatMap { it.replace("compile iteration: ", "").trim().split(", ") }
+            .toSet()
 
     fun maybeSkip(buildRunnerProvider: BuildRunnerProvider) {
         Assumptions.assumeFalse(
@@ -70,4 +78,7 @@ abstract class IncrementalBaseCompilationTest : BaseCompilationTest() {
             "Skip the test for the versions when in-process IC wasn't supported"
         )
     }
+
+    val KotlinToolingVersion.reportsCompiledSources
+        get() = this >= KotlinToolingVersion(2, 0, 0, "Beta1")
 }
