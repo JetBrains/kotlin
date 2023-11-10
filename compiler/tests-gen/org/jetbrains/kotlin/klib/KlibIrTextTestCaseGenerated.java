@@ -2088,6 +2088,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/InnerClassInAnonymous.kt");
         }
 
+        @TestMetadata("IntArrayAsVararg.kt")
+        public void testIntArrayAsVararg() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/IntArrayAsVararg.kt");
+        }
+
         @TestMetadata("integerLiteralWithExpectedTypealiasType.kt")
         public void testIntegerLiteralWithExpectedTypealiasType() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/integerLiteralWithExpectedTypealiasType.kt");

@@ -2401,6 +2401,12 @@ public class ClassicNativeIrTextTestGenerated extends AbstractClassicNativeIrTex
         }
 
         @Test
+        @TestMetadata("IntArrayAsVararg.kt")
+        public void testIntArrayAsVararg() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/IntArrayAsVararg.kt");
+        }
+
+        @Test
         @TestMetadata("integerLiteralWithExpectedTypealiasType.kt")
         public void testIntegerLiteralWithExpectedTypealiasType() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/integerLiteralWithExpectedTypealiasType.kt");
