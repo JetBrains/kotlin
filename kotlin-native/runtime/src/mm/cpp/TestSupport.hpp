@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+#pragma once
+
 #include "../../main/cpp/TestSupport.hpp"
 
 #include <ostream>

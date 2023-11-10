@@ -397,15 +397,15 @@ bitcode {
             testSupportModules.addAll("main", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "concurrent_ms_gc_custom", "objc")
         }
 
-        testsGroup("experimentalMM_mimalloc_runtime_tests") {
+        testsGroup("experimentalMM_stms_mimalloc_runtime_tests") {
             testedModules.addAll("main", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "same_thread_ms_gc", "mimalloc", "mimalloc_alloc", "legacy_alloc", "objc")
         }
 
-        testsGroup("experimentalMM_std_alloc_runtime_tests") {
+        testsGroup("experimentalMM_stms_std_alloc_runtime_tests") {
             testedModules.addAll("main", "mm", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "same_thread_ms_gc", "std_alloc", "legacy_alloc", "objc")
         }
 
-        testsGroup("experimentalMM_custom_alloc_runtime_tests") {
+        testsGroup("experimentalMM_stms_custom_alloc_runtime_tests") {
             testedModules.addAll("mm", "same_thread_ms_gc_custom")
             testSupportModules.addAll("main", "common_alloc", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
         }
