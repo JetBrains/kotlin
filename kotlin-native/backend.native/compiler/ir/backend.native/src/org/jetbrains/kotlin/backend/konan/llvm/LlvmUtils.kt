@@ -24,7 +24,7 @@ internal val ConstValue.llvmType: LLVMTypeRef
 
 internal interface ConstPointer : ConstValue {
     fun getElementPtr(llvm: CodegenLlvmHelpers, pointeeType: LLVMTypeRef, index: Int): ConstPointer =
-            ConstGetElementPtr2(llvm, pointeeType, this, index)
+            ConstGetElementPtr(llvm, pointeeType, this, index)
 }
 
 internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
@@ -35,7 +35,7 @@ internal fun constPointer(value: LLVMValueRef) = object : ConstPointer {
     override val llvm = value
 }
 
-private class ConstGetElementPtr2(llvm: CodegenLlvmHelpers, pointeeType: LLVMTypeRef, pointer: ConstPointer, index: Int) : ConstPointer {
+private class ConstGetElementPtr(llvm: CodegenLlvmHelpers, pointeeType: LLVMTypeRef, pointer: ConstPointer, index: Int) : ConstPointer {
     override val llvm = LLVMConstInBoundsGEP2(pointeeType, pointer.llvm, cValuesOf(llvm.int32(0), llvm.int32(index)), 2)!!
     // TODO: squash multiple GEPs
 }
