@@ -13,4 +13,6 @@ object ConfigurationDirectives : SimpleDirectivesContainer() {
     )
 
     val WITH_STDLIB by directive("Add Kotlin stdlib to classpath")
+
+    val WITH_PLATFORM_LIBS by directive("Add platform libs to classpath")
 }

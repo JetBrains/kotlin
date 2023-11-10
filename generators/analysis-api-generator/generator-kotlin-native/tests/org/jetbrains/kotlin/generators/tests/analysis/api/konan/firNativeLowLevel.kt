@@ -17,13 +17,23 @@ internal fun TestGroupSuite.generateFirNativeLowLevelTests() {
         testClass<AbstractLLFirNativeTest>(
             annotations = listOf(annotation(Tag::class.java, "llFirNative"))
         ) {
-            model("nativeTests", testMethod = "doTest", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            model(
+                "nativeTests",
+                testMethod = "doTest",
+                excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                excludeDirs = listOf("specialBackendChecks")
+            )
         }
 
         testClass<AbstractLLFirReversedNativeTest>(
             annotations = listOf(annotation(Tag::class.java, "llFirNative"))
         ) {
-            model("nativeTests", testMethod = "doTest", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            model(
+                "nativeTests",
+                testMethod = "doTest",
+                excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                excludeDirs = listOf("specialBackendChecks")
+            )
         }
     }
 }
