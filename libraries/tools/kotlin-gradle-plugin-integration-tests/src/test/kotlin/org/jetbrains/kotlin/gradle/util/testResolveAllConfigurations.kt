@@ -85,16 +85,17 @@ private fun generateResolveAllConfigurationsTask(excludes: List<String>) =
                     .matching { !excludeConfigs.contains(it.name) }
                     .each { configuration ->
                         try {
-                            println "Resolving " + configuration.path
-                            configuration.files.each { println '>> ' + configuration.path + ' --> ' + it.name }
-                            println "OK, resolved " + configuration.path + "\n"
+                            def configurationPath = (project.path == ":") ? ":" + configuration.name : project.path + ":" + configuration.name
+                            println "Resolving " + configurationPath
+                            configuration.files.each { println '>> ' + configurationPath + ' --> ' + it.name }
+                            println "OK, resolved " + configurationPath + "\n"
                         } catch (e) {
                             def ex = e
                             while (ex != null) {
                                 println ex.message
                                 ex = ex.cause
                             }
-                            println '$UNRESOLVED_MARKER' + configuration.name + "\n"
+                            println '$UNRESOLVED_MARKER' + configurationPath + "\n"
                         }
                     }
             }
@@ -115,24 +116,25 @@ private fun generateResolveAllConfigurationsTaskKts(excludes: List<String>) =
                     .filter { it.isCanBeResolved }
                     .filterNot { excludeConfigs.contains(it.name) }
                     .forEach { configuration ->
-                        val path = (configuration as org.gradle.api.internal.artifacts.configurations.ConfigurationInternal).path
+                        val configurationPath = 
+                            if (project.path == ":") ":" + configuration.name
+                            else project.path + ":" + configuration.name
                         try {
-                            println("Resolving ${'$'}path")
-                            configuration.files.forEach { println(">> ${'$'}path --> ${'$'}{it.name}") }
-                            println("OK, resolved ${'$'}path\n")
+                            println("Resolving ${'$'}configurationPath")
+                            configuration.files.forEach { println(">> ${'$'}configurationPath --> ${'$'}{it.name}") }
+                            println("OK, resolved ${'$'}configurationPath\n")
                         } catch (e: Throwable) {
                             var ex = e as Throwable?
                             while (ex != null) {
                                 println(ex.message)
                                 ex = ex.cause
                             }
-                            println("$UNRESOLVED_MARKER ${'$'}{configuration.name}\n")
+                            println("$UNRESOLVED_MARKER ${'$'}configurationPath\n")
                         }
                     }
             }
         }
     """.trimIndent()
-
 private fun computeExcludeConfigurations(excludes: List<String>): String {
     val deprecatedConfigurations = listOf("compile", "runtime", "compileOnly", "runtimeOnly")
     return """
