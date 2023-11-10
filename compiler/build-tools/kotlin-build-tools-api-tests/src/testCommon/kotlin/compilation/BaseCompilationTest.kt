@@ -19,6 +19,14 @@ import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.*
 
+/**
+ * Base class for compilation tests via the build tools API.
+ *
+ * All the tests marked by [CompilationTest] receive a [BuildRunnerProvider] as argument.
+ * Effectively, the annotation makes the test parameterized. The test will be executed both within the daemon and in-process.
+ *
+ * If you are writing incremental compilation test, consider extending [IncrementalBaseCompilationTest]
+ */
 abstract class BaseCompilationTest {
     @TempDir
     lateinit var workingDirectory: Path
@@ -55,6 +63,21 @@ abstract class BaseCompilationTest {
         private var firstBuild = true
 
         inner class ModuleDsl(private val module: Module) {
+            /**
+             * Defines a dependency from this module to another module.
+             *
+             * Please keep track of circular dependencies yourself as well as making complex ordering.
+             *
+             * While this is possible, it will lead to errors:
+             * ```
+             * val module1 = module("jvm-module1")
+             * val module2 = module("jvm-module2")
+             * module("jvm-module1") {
+             *     dependsOn(module2)
+             * }
+             * ```
+             * If you really need it for some reason, you're welcome to change [ScenarioDsl.compileAll], it's not hard :)
+             */
             fun dependsOn(anotherModule: Module) {
                 moduleDependencies.computeIfAbsent(module) {
                     hashSetOf()
@@ -62,12 +85,15 @@ abstract class BaseCompilationTest {
             }
         }
 
+        /**
+         * You must define an expected result for each module registered in the scenario in order [compileAll] to work correctly.
+         */
         inner class CompilationAssertionsDsl {
-            fun expectSuccess(module: Module, assertions: CompilationResultDsl.() -> Unit) {
+            fun expectSuccess(module: Module, assertions: CompilationResultDsl.() -> Unit = {}) {
                 resultAssertions[module] = CompilationResult.COMPILATION_SUCCESS to assertions
             }
 
-            fun expectCompilationFail(module: Module, assertions: CompilationResultDsl.() -> Unit) {
+            fun expectCompilationFail(module: Module, assertions: CompilationResultDsl.() -> Unit = {}) {
                 resultAssertions[module] = CompilationResult.COMPILATION_ERROR to assertions
             }
         }
@@ -77,6 +103,9 @@ abstract class BaseCompilationTest {
             private val logs: Map<LogLevel, Collection<String>>,
             private val compiledSources: Set<String>,
         ) {
+            /**
+             * @see [compiledSources(java.lang.String...)]
+             */
             fun compiledSources(expectedSources: Set<String>) {
                 check(this@BaseCompilationTest is IncrementalBaseCompilationTest) {
                     "Checking compiled sources within non-incremental tests is not available and doesn't make much sense"
@@ -89,10 +118,18 @@ abstract class BaseCompilationTest {
                 }
             }
 
+            /**
+             * Defines expected sources that should be compiled during incremental compilation.
+             *
+             * The expected form is a path relative to [Module.sourcesDirectory]
+             */
             fun compiledSources(vararg expectedSources: String) {
                 compiledSources(expectedSources.toSet())
             }
 
+            /**
+             * @see [outputFiles(java.lang.String...)]
+             */
             fun outputFiles(compiledFiles: Set<String>) {
                 val filesLeft = compiledFiles.toMutableSet().apply {
                     add("META-INF/${module.moduleName}.kotlin_module")
@@ -113,6 +150,11 @@ abstract class BaseCompilationTest {
                 }
             }
 
+            /**
+             * Defines expected compilation results.
+             *
+             * The expected form is a path relative to [Module.outputDirectory]
+             */
             fun outputFiles(vararg compiledFiles: String) {
                 outputFiles(compiledFiles.toSet())
             }
@@ -122,6 +164,10 @@ abstract class BaseCompilationTest {
             }
         }
 
+        /**
+         * Defines a module for this scenario.
+         * It's safe to call it several times for the same module name.
+         */
         fun module(moduleName: String, init: ModuleDsl.() -> Unit = {}): Module {
             val module = modules.computeIfAbsent(moduleName) {
                 prepareModule(moduleName, workingDirectory)
@@ -130,6 +176,10 @@ abstract class BaseCompilationTest {
             return module
         }
 
+        /**
+         * Compiles all registered modules in the order they were defined.
+         * @see CompilationAssertionsDsl
+         */
         fun compileAll(configureAssertions: CompilationAssertionsDsl.() -> Unit) {
             CompilationAssertionsDsl().configureAssertions()
             val buildRunner = buildRunnerProvider(project)
@@ -170,6 +220,9 @@ abstract class BaseCompilationTest {
             resultAssertions.clear()
         }
 
+        /**
+         * Performs registered existing file modification.
+         */
         fun changeFile(module: Module, fileName: String, transform: (String) -> String) {
             val file = module.sourcesDirectory.resolve(fileName)
             file.writeText(transform(file.readText()))
@@ -178,6 +231,9 @@ abstract class BaseCompilationTest {
             }.add(file.toFile())
         }
 
+        /**
+         * Performs registered file deletion.
+         */
         fun deleteFile(module: Module, fileName: String) {
             val file = module.sourcesDirectory.resolve(fileName)
             file.deleteExisting()
@@ -186,6 +242,9 @@ abstract class BaseCompilationTest {
             }.add(file.toFile())
         }
 
+        /**
+         * Performs registered new file creation.
+         */
         fun createFile(module: Module, fileName: String, content: String) {
             val file = module.sourcesDirectory.resolve(fileName)
             file.writeText(content)

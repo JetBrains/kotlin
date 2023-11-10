@@ -9,14 +9,18 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.tests.buildToolsVersion
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.*
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.BuildRunner
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.LogLevel
+import org.jetbrains.kotlin.buildtools.api.tests.compilation.runner.Module
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Assumptions
-import java.io.File
-import kotlin.io.path.*
+import kotlin.io.path.exists
 
+/**
+ * Base class for all the tests related to incremental compilation.
+ *
+ * Prefer defining scenarios using the [scenario] DSL. [compileIncrementallyImpl] is a more low-level way to define tests.
+ */
 abstract class IncrementalBaseCompilationTest : BaseCompilationTest() {
     fun Module.compileIncrementallyImpl(
         runner: BuildRunner,
