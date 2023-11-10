@@ -213,10 +213,10 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             task.doFirst {
                 throw IllegalStateException(
                     "Sandboxing for user scripts is currently enabled. " +
-                            "To successfully construct $frameworkTaskName, it's necessary to disable this feature. " +
-                            "Navigate to \"Build Setting\", locate \"User script sandboxing\" (ENABLE_USER_SCRIPT_SANDBOXING) and set it to \"NO\". " +
-                            "Following this, refresh the Gradle daemon by executing \"./gradlew --stop\". " +
-                            "More info in documentation https://jb.gg/ltd9e6"
+                            "\nTo successfully construct $frameworkTaskName, it's necessary to disable this feature. " +
+                            "\nNavigate to \"Build Setting\", locate \"User script sandboxing\" (ENABLE_USER_SCRIPT_SANDBOXING) and set it to \"NO\". " +
+                            "\nFollowing this, refresh the Gradle daemon by executing \"./gradlew --stop\". " +
+                            "\nMore info in documentation https://jb.gg/ltd9e6"
                 )
             }
         }
