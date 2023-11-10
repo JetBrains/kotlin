@@ -11,8 +11,8 @@ import org.gradle.api.attributes.Usage
 import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerArtifactTypeAttribute
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
-import org.jetbrains.kotlin.gradle.utils.markConsumable
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.named
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,8 +33,7 @@ class CInteropCommonizerArtifactTypeAttributeTest {
         )
 
         /* Create consumable elements configuration */
-        project.configurations.create("testElements") { configuration ->
-            configuration.markConsumable()
+        project.configurations.createConsumable("testElements").also { configuration ->
             configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named("test"))
 
             /* Add klibCollectionDir as artifact */
@@ -45,8 +44,7 @@ class CInteropCommonizerArtifactTypeAttributeTest {
         }
 
         /* Create resolvable configuration */
-        val resolvable = project.configurations.create("testDependencies") { configuration ->
-            configuration.markResolvable()
+        val resolvable = project.configurations.createResolvable("testDependencies").also { configuration ->
             configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named("test"))
             configuration.attributes.attribute(
                 CInteropCommonizerArtifactTypeAttribute.attribute, CInteropCommonizerArtifactTypeAttribute.KLIB

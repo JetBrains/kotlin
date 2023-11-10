@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGU
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.createConsumable
 
 internal val KotlinLegacyCompatibilityMetadataArtifact = KotlinTargetArtifact { target, _, _ ->
     if (target !is KotlinMetadataTarget) return@KotlinTargetArtifact
@@ -35,9 +36,7 @@ internal val KotlinLegacyCompatibilityMetadataArtifact = KotlinTargetArtifact { 
     }
 
     /* Create actual Gradle artifact */
-    target.project.configurations.create(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME).apply {
-        isCanBeConsumed = true
-        isCanBeResolved = false
+    target.project.configurations.createConsumable(COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME).apply {
         usesPlatformOf(target)
 
         attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))

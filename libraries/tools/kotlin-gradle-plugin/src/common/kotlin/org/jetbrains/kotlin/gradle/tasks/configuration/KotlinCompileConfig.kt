@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.plugin.tcs
 import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 internal typealias KotlinCompileConfig = BaseKotlinCompileConfig<KotlinCompile>
@@ -48,9 +48,9 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 registerTransformsOnce(project, jvmToolchain, runKotlinCompilerViaBuildToolsApi)
                 // Note: Creating configurations should be done during build configuration, not task configuration, to avoid issues with
                 // composite builds (e.g., https://issuetracker.google.com/183952598).
-                project.configurations.detachedConfiguration(
+                project.configurations.detachedResolvable(
                     project.dependencies.create(objectFactory.fileCollection().from(project.provider { taskProvider.get().libraries }))
-                ).markResolvable()
+                )
             } else null
 
             if (useClasspathSnapshot) {

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
@@ -244,8 +244,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
         if (sourceSet !is DefaultKotlinSourceSet) return null
         val project = sourceSet.project
 
-        val platformLikeCompileDependenciesConfiguration = project.configurations.detachedConfiguration()
-        platformLikeCompileDependenciesConfiguration.markResolvable()
+        val platformLikeCompileDependenciesConfiguration = project.configurations.detachedResolvable()
         platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
         platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
 

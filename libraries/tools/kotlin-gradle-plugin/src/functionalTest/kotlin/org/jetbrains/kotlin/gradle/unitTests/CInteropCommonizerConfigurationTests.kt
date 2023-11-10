@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.targets.native.internal.CommonizerTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCommonizedCInteropDependencyConfiguration
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.utils.markConsumable
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import kotlin.test.Test
@@ -35,8 +35,7 @@ class CInteropCommonizerConfigurationTests {
     fun `test - compatibility rule - superset is compatible`() {
         val project = buildProjectWithMPP()
 
-        val consumable = project.configurations.create("testElements") { configuration ->
-            configuration.markConsumable()
+        val consumable = project.configurations.createConsumable("testElements").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -48,8 +47,7 @@ class CInteropCommonizerConfigurationTests {
             )
         }
 
-        val resolvable = project.configurations.create("testDependencies") { configuration ->
-            configuration.markResolvable()
+        val resolvable = project.configurations.createResolvable("testDependencies").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -74,8 +72,7 @@ class CInteropCommonizerConfigurationTests {
     fun `test - disambiguation rule - chooses most specific variant`() {
         val project = buildProjectWithMPP()
 
-        project.configurations.create("testConsumableAll") { configuration ->
-            configuration.markConsumable()
+        project.configurations.createConsumable("testConsumableAll").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -90,8 +87,7 @@ class CInteropCommonizerConfigurationTests {
         }
 
         /* More specific as it does not offer macos parts */
-        val consumableSpecific = project.configurations.create("testConsumableSpecific") { configuration ->
-            configuration.markConsumable()
+        val consumableSpecific = project.configurations.createConsumable("testConsumableSpecific").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(
@@ -103,8 +99,7 @@ class CInteropCommonizerConfigurationTests {
             )
         }
 
-        val resolvable = project.configurations.create("testDependencies") { configuration ->
-            configuration.markResolvable()
+        val resolvable = project.configurations.createResolvable("testDependencies").also { configuration ->
             configuration.attributes.attribute(
                 CommonizerTargetAttribute.attribute,
                 CommonizerTarget(

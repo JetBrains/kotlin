@@ -12,7 +12,8 @@ import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
-import org.jetbrains.kotlin.gradle.utils.getOrCreate
+import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import java.io.File
 
 internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal constructor(
@@ -42,11 +43,10 @@ internal abstract class KotlinSourceSetFactory<T : KotlinSourceSet> internal con
             )
         }
         configurationNames.forEach { configurationName ->
-            maybeCreate(configurationName).apply {
-                if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
-                    isCanBeResolved = false
-                }
-                isCanBeConsumed = false
+            if (!configurationName.endsWith(METADATA_CONFIGURATION_NAME_SUFFIX)) {
+                maybeCreateDependencyScope(configurationName)
+            } else {
+                maybeCreateResolvable(configurationName)
             }
         }
     }
@@ -87,15 +87,14 @@ internal class DefaultKotlinSourceSetFactory(
         }
 
         dependencyConfigurationWithMetadata.forEach { (configurationName, metadataName) ->
-            project.configurations.getOrCreate(metadataName).apply {
+            project.configurations.maybeCreateResolvable(metadataName).apply {
                 attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
                 attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_API))
                 attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
                 isVisible = false
-                isCanBeConsumed = false
 
                 if (configurationName != null) {
-                    extendsFrom(project.configurations.maybeCreate(configurationName))
+                    extendsFrom(project.configurations.maybeCreateDependencyScope(configurationName))
                 }
 
                 if (project.isKotlinGranularMetadataEnabled) {

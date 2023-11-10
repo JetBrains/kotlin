@@ -221,10 +221,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         val outputTaskOrProvider = getLibraryOutputTask(variant) ?: return emptySet()
         val artifact = run {
             val archivesConfigurationName = lowerCamelCaseName(targetName, variantName, "archives")
-            project.configurations.maybeCreate(archivesConfigurationName).apply {
-                isCanBeConsumed = false
-                isCanBeResolved = false
-            }
+            project.configurations.maybeCreateDependencyScope(archivesConfigurationName)
             project.artifacts.add(archivesConfigurationName, outputTaskOrProvider) { artifact ->
                 artifact.classifier = artifactClassifier
             }
@@ -294,12 +291,11 @@ abstract class KotlinAndroidTarget @Inject constructor(
         val existingConfiguration = project.configurations.findByName(sourcesElementsConfigurationName)
         if (existingConfiguration != null) return existingConfiguration
 
-        val apiElementsConfiguration = project.configurations.getByName(apiElementsConfigurationName)
-        return project.configurations.create(sourcesElementsConfigurationName).apply {
+        val apiElementsConfiguration = project.configurations.findConsumable(apiElementsConfigurationName)
+            ?: error("Configuration $apiElementsConfigurationName was not found")
+        return project.configurations.createConsumable(sourcesElementsConfigurationName).apply {
             description = "Source files of Android ${variantName}."
             isVisible = false
-            isCanBeResolved = false
-            isCanBeConsumed = true
 
             copyAttributes(apiElementsConfiguration.attributes, attributes)
             configureSourcesPublicationAttributes(this@KotlinAndroidTarget)

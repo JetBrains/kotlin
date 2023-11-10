@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
+import org.jetbrains.kotlin.gradle.utils.createResolvable
+import org.jetbrains.kotlin.gradle.utils.findResolvable
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.ByteArrayOutputStream
@@ -142,10 +144,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         fun createAptConfigurationIfNeeded(project: Project, sourceSetName: String): Configuration {
             val configurationName = getKaptConfigurationName(sourceSetName)
 
-            project.configurations.findByName(configurationName)?.let { return it }
-            val aptConfiguration = project.configurations.create(configurationName).apply {
-                // Should not be available for consumption from other projects during variant-aware dependency resolution:
-                isCanBeConsumed = false
+            project.configurations.findResolvable(configurationName)?.let { return it }
+            val aptConfiguration = project.configurations.createResolvable(configurationName).apply {
                 attributes.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
             }
 
@@ -368,11 +368,9 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             kaptExtension
         )
 
-        val kaptClasspathConfiguration = project.configurations.create("kaptClasspath_$taskName")
+        val kaptClasspathConfiguration = project.configurations.createResolvable("kaptClasspath_$taskName")
             .setExtendsFrom(kaptClasspathConfigurations).also {
                 it.isVisible = false
-                it.isCanBeConsumed = false
-                it.isCanBeResolved = true
             }
         taskConfigAction.configureTaskProvider { taskProvider ->
             taskProvider.dependsOn(generateStubsTask)

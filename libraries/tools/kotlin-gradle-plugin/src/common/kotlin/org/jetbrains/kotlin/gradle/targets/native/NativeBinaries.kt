@@ -20,6 +20,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
@@ -213,9 +214,9 @@ abstract class AbstractNativeLibrary(
      */
     @ExperimentalKotlinGradlePluginApi
     var transitiveExport: Boolean
-        get() = project.configurations.maybeCreate(exportConfigurationName).isTransitive
+        get() = project.configurations.maybeCreateResolvable(exportConfigurationName).isTransitive
         set(value) {
-            project.configurations.maybeCreate(exportConfigurationName).isTransitive = value
+            project.configurations.maybeCreateResolvable(exportConfigurationName).isTransitive = value
         }
 
     /**

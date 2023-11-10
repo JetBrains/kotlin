@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
+import org.jetbrains.kotlin.gradle.utils.maybeCreateResolvable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
@@ -41,9 +43,8 @@ class ScriptingGradleSubplugin : Plugin<Project> {
         const val MISCONFIGURATION_MESSAGE_SUFFIX = "the plugin is probably applied by a mistake"
 
         fun configureForSourceSet(project: Project, sourceSetName: String) {
-            val discoveryConfiguration = project.configurations.maybeCreate(getDiscoveryClasspathConfigurationName(sourceSetName)).apply {
+            val discoveryConfiguration = project.configurations.maybeCreateDependencyScope(getDiscoveryClasspathConfigurationName(sourceSetName)).apply {
                 isVisible = false
-                isCanBeConsumed = false
                 description = "Script filename extensions discovery classpath configuration"
             }
             project.logger.info("$SCRIPTING_LOG_PREFIX created the scripting discovery configuration: ${discoveryConfiguration.name}")
@@ -111,9 +112,7 @@ private fun configureDiscoveryTransformation(
     discoveryConfiguration: Configuration,
     discoveryResultsConfigurationName: String
 ) {
-    project.configurations.maybeCreate(discoveryResultsConfigurationName).apply {
-        isCanBeConsumed = false
-        isCanBeResolved = true
+    project.configurations.maybeCreateResolvable(discoveryResultsConfigurationName).apply {
         attributes.attribute(artifactType, scriptFilesExtensions)
         extendsFrom(discoveryConfiguration)
     }

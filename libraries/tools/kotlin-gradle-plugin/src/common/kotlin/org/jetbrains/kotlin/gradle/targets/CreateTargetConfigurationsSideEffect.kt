@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttribu
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isSourcesPublishableFuture
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.utils.maybeCreateConsumable
+import org.jetbrains.kotlin.gradle.utils.maybeCreateDependencyScope
 
 internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { target ->
     val project = target.project
@@ -24,21 +26,19 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     val mainCompilation = target.compilations.maybeCreate(KotlinCompilation.MAIN_COMPILATION_NAME)
 
     val compileConfiguration = mainCompilation.internal.configurations.deprecatedCompileConfiguration
-    val implementationConfiguration = configurations.maybeCreate(mainCompilation.implementationConfigurationName)
+    val implementationConfiguration = configurations.maybeCreateDependencyScope(mainCompilation.implementationConfigurationName)
 
     val runtimeOnlyConfiguration = when (mainCompilation) {
-        is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreate(mainCompilation.runtimeOnlyConfigurationName)
+        is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreateDependencyScope(mainCompilation.runtimeOnlyConfigurationName)
         else -> null
     }
 
-    configurations.maybeCreate(target.apiElementsConfigurationName).apply {
+    configurations.maybeCreateConsumable(target.apiElementsConfigurationName).apply {
         description = "API elements for main."
         isVisible = false
-        isCanBeResolved = false
-        isCanBeConsumed = true
         attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        extendsFrom(configurations.maybeCreate(mainCompilation.apiConfigurationName))
+        extendsFrom(configurations.maybeCreateDependencyScope(mainCompilation.apiConfigurationName))
         if (mainCompilation is KotlinCompilationToRunnableFiles) {
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
             runtimeConfiguration?.let { extendsFrom(it) }
@@ -47,11 +47,9 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     }
 
     if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
-        configurations.maybeCreate(target.runtimeElementsConfigurationName).apply {
+        configurations.maybeCreateConsumable(target.runtimeElementsConfigurationName).apply {
             description = "Elements of runtime for main."
             isVisible = false
-            isCanBeConsumed = true
-            isCanBeResolved = false
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
             attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
             val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
@@ -63,11 +61,9 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
         }
     }
 
-    configurations.maybeCreate(target.sourcesElementsConfigurationName).apply {
+    configurations.maybeCreateConsumable(target.sourcesElementsConfigurationName).apply {
         description = "Source files of main compilation of ${target.name}."
         isVisible = false
-        isCanBeResolved = false
-        isCanBeConsumed = true
         configureSourcesPublicationAttributes(target)
         project.launch { isCanBeConsumed = target.internal.isSourcesPublishableFuture.await() }
     }
@@ -75,9 +71,9 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     if (target !is KotlinMetadataTarget) {
         val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
         val compileTestsConfiguration = testCompilation.internal.configurations.deprecatedCompileConfiguration
-        val testImplementationConfiguration = configurations.maybeCreate(testCompilation.implementationConfigurationName)
+        val testImplementationConfiguration = configurations.maybeCreateDependencyScope(testCompilation.implementationConfigurationName)
         val testRuntimeOnlyConfiguration = when (testCompilation) {
-            is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreate(testCompilation.runtimeOnlyConfigurationName)
+            is KotlinCompilationToRunnableFiles<*> -> configurations.maybeCreateDependencyScope(testCompilation.runtimeOnlyConfigurationName)
             else -> null
         }
 
@@ -93,13 +89,11 @@ internal val CreateTargetConfigurationsSideEffect = KotlinTargetSideEffect { tar
     }
 
     if (target is KotlinJsIrTarget && !target.isMpp!!) {
-        target.project.configurations.maybeCreate(
+        target.project.configurations.maybeCreateConsumable(
             target.commonFakeApiElementsConfigurationName
         ).apply {
             description = "Common Fake API elements for main."
             isVisible = false
-            isCanBeResolved = false
-            isCanBeConsumed = true
             attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
             attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
         }

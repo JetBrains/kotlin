@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.ST
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.utils.detachedResolvable
 import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 
 open class YarnPlugin : Plugin<Project> {
@@ -47,8 +47,7 @@ open class YarnPlugin : Plugin<Project> {
             it.description = "Download and install a local yarn version"
 
             it.configuration = provider {
-                this.project.configurations.detachedConfiguration(this.project.dependencies.create(it.ivyDependency))
-                    .markResolvable()
+                this.project.configurations.detachedResolvable(this.project.dependencies.create(it.ivyDependency))
                     .also { conf -> conf.isTransitive = false }
             }
         }

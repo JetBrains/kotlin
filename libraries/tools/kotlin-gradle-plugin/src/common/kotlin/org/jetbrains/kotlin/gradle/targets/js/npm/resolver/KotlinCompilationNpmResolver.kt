@@ -32,9 +32,8 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetadata
-import org.jetbrains.kotlin.gradle.utils.`is`
-import org.jetbrains.kotlin.gradle.utils.topRealPath
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.createResolvable
 import java.io.Serializable
 
 /**
@@ -133,15 +132,13 @@ class KotlinCompilationNpmResolver(
     }
 
     private fun createAggregatedConfiguration(): Configuration {
-        val all = project.configurations.create(compilation.npmAggregatedConfigurationName)
+        val all = project.configurations.createResolvable(compilation.npmAggregatedConfigurationName)
 
         all.usesPlatformOf(target)
         all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
         all.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         all.attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
         all.isVisible = false
-        all.isCanBeConsumed = false
-        all.isCanBeResolved = true
         all.description = "NPM configuration for $compilation."
 
         KotlinDependencyScope.values().forEach { scope ->
@@ -163,15 +160,13 @@ class KotlinCompilationNpmResolver(
     }
 
     private fun createPublicPackageJsonConfiguration(): Configuration {
-        val all = project.configurations.create(compilation.publicPackageJsonConfigurationName)
+        val all = project.configurations.createConsumable(compilation.publicPackageJsonConfigurationName)
 
         all.usesPlatformOf(target)
         all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
         all.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         all.attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
         all.isVisible = false
-        all.isCanBeConsumed = true
-        all.isCanBeResolved = false
 
         return all
     }

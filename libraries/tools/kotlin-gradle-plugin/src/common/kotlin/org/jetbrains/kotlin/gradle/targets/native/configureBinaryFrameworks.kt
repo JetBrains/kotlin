@@ -20,10 +20,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.copyAttributes
-import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.markConsumable
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
@@ -47,13 +46,13 @@ private val Framework.frameworkGroupDescription
     )
 
 internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTask: TaskProvider<KotlinNativeLink>) {
-    val frameworkConfiguration = configurations.getOrCreate(binaryFramework.binaryFrameworkConfigurationName, invokeWhenCreated = {
-        it.markConsumable()
-        it.applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
-        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
-            copyAttributes(binaryFramework.attributes, it.attributes)
+    val frameworkConfiguration = configurations.findConsumable(binaryFramework.binaryFrameworkConfigurationName)
+        ?: configurations.createConsumable(binaryFramework.binaryFrameworkConfigurationName).also {
+            it.applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
+            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
+                copyAttributes(binaryFramework.attributes, it.attributes)
+            }
         }
-    })
 
     // Can't use flatMap here because of https://github.com/gradle/gradle/issues/25645
     val linkTaskOutputProvider = linkTask.map { it.outputFile.get() }
@@ -125,10 +124,9 @@ private fun Project.createFatFramework(groupDescription: FrameworkGroupDescripti
         }
     }
 
-    val fatFrameworkConfiguration = project.configurations.getOrCreate(fatFrameworkConfigurationName, invokeWhenCreated = {
-        it.markConsumable()
+    val fatFrameworkConfiguration = project.configurations.maybeCreateConsumable(fatFrameworkConfigurationName).also {
         it.applyBinaryFrameworkGroupAttributes(project, groupDescription, targets = frameworks.map(Framework::target))
-    })
+    }
 
     addFrameworkArtifact(fatFrameworkConfiguration, fatFrameworkTask.map { it.fatFramework })
 }

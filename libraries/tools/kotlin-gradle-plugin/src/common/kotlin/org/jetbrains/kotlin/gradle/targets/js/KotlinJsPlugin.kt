@@ -71,7 +71,7 @@ open class KotlinJsPlugin: Plugin<Project> {
                     API,
                     RUNTIME_ONLY
                 ).forEach { baseConfigurationName ->
-                    configurations.maybeCreate(
+                    configurations.maybeCreateDependencyScope(
                         lowerCamelCaseName(
                             baseCompilationName,
                             baseConfigurationName

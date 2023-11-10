@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.copyAttributes
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.findConsumable
 
 internal fun createCInteropApiElementsKlibArtifact(
     target: KotlinNativeTarget,
@@ -43,15 +45,14 @@ internal fun createCInteropApiElementsKlibArtifact(
 internal fun Project.locateOrCreateCInteropDependencyConfiguration(
     compilation: KotlinNativeCompilation,
 ): Configuration {
-    configurations.findByName(compilation.cInteropDependencyConfigurationName)?.let { return it }
+    configurations.findResolvable(compilation.cInteropDependencyConfigurationName)?.let { return it }
 
     val compileOnlyConfiguration = configurations.getByName(compilation.compileOnlyConfigurationName)
     val implementationConfiguration = configurations.getByName(compilation.implementationConfigurationName)
 
-    return configurations.create(compilation.cInteropDependencyConfigurationName).apply {
+    return configurations.createResolvable(compilation.cInteropDependencyConfigurationName).apply {
         extendsFrom(compileOnlyConfiguration, implementationConfiguration)
         isVisible = false
-        markResolvable()
 
         /* Deferring attributes to wait for compilation.attributes to be configured  by user*/
         launchInStage(AfterFinaliseDsl) {
@@ -74,12 +75,9 @@ internal val SetupCInteropApiElementsConfigurationSideEffect = KotlinTargetSideE
 
 internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: KotlinTarget): Configuration {
     val configurationName = cInteropApiElementsConfigurationName(target)
-    configurations.findByName(configurationName)?.let { return it }
+    configurations.findConsumable(configurationName)?.let { return it }
 
-    return configurations.create(configurationName).apply {
-        isCanBeResolved = false
-        isCanBeConsumed = true
-
+    return configurations.createConsumable(configurationName).apply {
         /* Deferring attributes to wait for target.attributes to be configured by user */
         launchInStage(AfterFinaliseDsl) {
             usesPlatformOf(target)

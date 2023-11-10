@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompi
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
 
 internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
@@ -101,84 +100,72 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
 
     /* Support deprecated configurations */
-    val deprecatedCompileConfiguration = target.project.configurations.findByName(
+    val deprecatedCompileConfiguration = target.project.configurations.findDependencyScope(
         ConfigurationNaming.Default(target, compilationName).name(COMPILE)
     )?.apply {
-        isCanBeConsumed = false
         setupAsLocalTargetSpecificConfigurationIfSupported(target)
         isVisible = false
-        isCanBeResolved = false
         description = "Dependencies for $compilation (deprecated, use '${implementationConfigurationName} ' instead)."
     }
 
-    val deprecatedRuntimeConfiguration = if (withRuntime) target.project.configurations.findByName(
+    val deprecatedRuntimeConfiguration = if (withRuntime) target.project.configurations.findDependencyScope(
         ConfigurationNaming.Default(target, compilationName).name(RUNTIME)
     )?.apply {
-        isCanBeConsumed = false
         setupAsLocalTargetSpecificConfigurationIfSupported(target)
         deprecatedCompileConfiguration?.let { extendsFrom(it) }
         isVisible = false
-        isCanBeResolved = false
         description =
             "Runtime dependencies for $compilation (deprecated, use '${runtimeOnlyConfigurationName} ' instead)."
     } else null
 
     /* Actual configurations */
 
-    val apiConfiguration = target.project.configurations.maybeCreate(apiConfigurationName).apply {
+    val apiConfiguration = target.project.configurations.maybeCreateDependencyScope(apiConfigurationName).apply {
         deprecatedCompileConfiguration?.let { extendsFrom(it) }
 
         isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = false
         description = "API dependencies for $compilationCoordinates"
     }
 
-    val implementationConfiguration = target.project.configurations.maybeCreate(implementationConfigurationName).apply {
-        extendsFrom(apiConfiguration)
-        deprecatedCompileConfiguration?.let { extendsFrom(it) }
-        isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = false
-        description = "Implementation only dependencies for $compilationCoordinates."
-    }
+    val implementationConfiguration = target.project.configurations
+        .maybeCreateDependencyScope(implementationConfigurationName).apply {
+            extendsFrom(apiConfiguration)
+            deprecatedCompileConfiguration?.let { extendsFrom(it) }
+            isVisible = false
+            description = "Implementation only dependencies for $compilationCoordinates."
+        }
 
-    val compileOnlyConfiguration = target.project.configurations.maybeCreate(compileOnlyConfigurationName).apply {
-        isCanBeConsumed = false
-        setupAsLocalTargetSpecificConfigurationIfSupported(target)
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
-        isVisible = false
-        isCanBeResolved = false
-        description = "Compile only dependencies for $compilationCoordinates."
-    }
+    val compileOnlyConfiguration = target.project.configurations
+        .maybeCreateDependencyScope(compileOnlyConfigurationName).apply {
+            setupAsLocalTargetSpecificConfigurationIfSupported(target)
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            isVisible = false
+            description = "Compile only dependencies for $compilationCoordinates."
+        }
 
-    val runtimeOnlyConfiguration = target.project.configurations.maybeCreate(runtimeOnlyConfigurationName).apply {
+    val runtimeOnlyConfiguration = target.project.configurations.maybeCreateDependencyScope(runtimeOnlyConfigurationName).apply {
         isVisible = false
-        isCanBeConsumed = false
-        isCanBeResolved = false
         description = "Runtime only dependencies for $compilationCoordinates."
     }
 
-    val compileDependencyConfiguration = target.project.configurations.maybeCreate(compileClasspathConfigurationName).apply {
-        extendsFrom(compileOnlyConfiguration, implementationConfiguration)
-        usesPlatformOf(target)
-        isVisible = false
-        isCanBeConsumed = false
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
-        if (target.platformType != KotlinPlatformType.androidJvm) {
-            attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+    val compileDependencyConfiguration = target.project.configurations
+        .maybeCreateResolvable(compileClasspathConfigurationName).apply {
+            extendsFrom(compileOnlyConfiguration, implementationConfiguration)
+            usesPlatformOf(target)
+            isVisible = false
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerApiUsage(target))
+            if (target.platformType != KotlinPlatformType.androidJvm) {
+                attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            }
+            description = "Compile classpath for $compilationCoordinates."
         }
-        description = "Compile classpath for $compilationCoordinates."
-    }
 
     val runtimeDependencyConfiguration =
-        if (withRuntime) target.project.configurations.maybeCreate(runtimeClasspathConfigurationName).apply {
+        if (withRuntime) target.project.configurations.maybeCreateResolvable(runtimeClasspathConfigurationName).apply {
             extendsFrom(runtimeOnlyConfiguration, implementationConfiguration)
             deprecatedRuntimeConfiguration?.let { extendsFrom(it) }
             usesPlatformOf(target)
             isVisible = false
-            isCanBeConsumed = false
-            isCanBeResolved = true
             attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
             if (target.platformType != KotlinPlatformType.androidJvm) {
                 attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
@@ -187,8 +174,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         } else null
 
     val hostSpecificMetadataConfiguration =
-        if (withHostSpecificMetadata) target.project.configurations.maybeCreate(hostSpecificMetadataConfigurationName).apply {
-            markResolvable()
+        if (withHostSpecificMetadata) target.project.configurations.maybeCreateResolvable(hostSpecificMetadataConfigurationName).apply {
             isVisible = false
             description = "Host-specific Metadata dependencies for $compilationCoordinates"
             extendsFrom(compileDependencyConfiguration)
@@ -198,7 +184,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             }
         } else null
 
-    val pluginConfiguration = target.project.configurations.maybeCreate(pluginConfigurationName).apply {
+    val pluginConfiguration = target.project.configurations.maybeCreateResolvable(pluginConfigurationName).apply {
         addGradlePluginMetadataAttributes(target.project)
 
         if (target.platformType == KotlinPlatformType.native) {
@@ -208,7 +194,6 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             extendsFrom(target.project.commonKotlinPluginClasspath)
         }
         isVisible = false
-        isCanBeConsumed = false
         description = "Kotlin compiler plugins for $compilation"
     }
 

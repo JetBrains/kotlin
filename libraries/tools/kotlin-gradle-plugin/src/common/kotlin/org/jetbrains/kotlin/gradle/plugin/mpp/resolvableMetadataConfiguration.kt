@@ -19,10 +19,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.markResolvable
 
 /**
  * @see resolvableMetadataConfiguration
@@ -37,8 +35,7 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfigurationName: String
  */
 internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configuration by extrasStoredProperty {
     assert(resolvableMetadataConfigurationName !in project.configurations.names)
-    val configuration = project.configurations.maybeCreate(resolvableMetadataConfigurationName)
-    configuration.markResolvable()
+    val configuration = project.configurations.maybeCreateResolvable(resolvableMetadataConfigurationName)
 
     withDependsOnClosure.forAll { sourceSet ->
         configuration.extendsFrom(project.configurations.getByName(sourceSet.apiConfigurationName))
@@ -96,18 +93,18 @@ private fun InternalKotlinSourceSet.configureMetadataDependenciesConfigurations(
  * the [InternalKotlinSourceSet.resolvableMetadataConfiguration]
  */
 private val Project.allCompileMetadataConfiguration
-    get(): Configuration = configurations.getOrCreate("allSourceSetsCompileDependenciesMetadata", invokeWhenCreated = { configuration ->
-        configuration.markResolvable()
-        configuration.usesPlatformOf(multiplatformExtension.metadata())
-        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-        configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+    get(): Configuration = configurations.findResolvable("allSourceSetsCompileDependenciesMetadata")
+        ?: configurations.createResolvable("allSourceSetsCompileDependenciesMetadata").also { configuration ->
+            configuration.usesPlatformOf(multiplatformExtension.metadata())
+            configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 
-        kotlinExtension.sourceSets.all { sourceSet ->
-            configuration.extendsFrom(configurations.getByName(sourceSet.apiConfigurationName))
-            configuration.extendsFrom(configurations.getByName(sourceSet.implementationConfigurationName))
-            configuration.extendsFrom(configurations.getByName(sourceSet.compileOnlyConfigurationName))
+            kotlinExtension.sourceSets.all { sourceSet ->
+                configuration.extendsFrom(configurations.getByName(sourceSet.apiConfigurationName))
+                configuration.extendsFrom(configurations.getByName(sourceSet.implementationConfigurationName))
+                configuration.extendsFrom(configurations.getByName(sourceSet.compileOnlyConfigurationName))
+            }
         }
-    })
 
 private inline fun <reified T> Project.listProvider(noinline provider: () -> List<T>): Provider<List<T>> {
     return project.objects.listProperty<T>().apply {

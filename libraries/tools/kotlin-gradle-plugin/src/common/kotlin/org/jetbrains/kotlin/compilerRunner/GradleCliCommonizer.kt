@@ -16,8 +16,9 @@ import org.jetbrains.kotlin.commonizer.CliCommonizer
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.utils.createResolvable
+import org.jetbrains.kotlin.gradle.utils.findResolvable
 import org.jetbrains.kotlin.gradle.utils.named
 
 private const val KOTLIN_KLIB_COMMONIZER_EMBEDDABLE = "kotlin-klib-commonizer-embeddable"
@@ -29,9 +30,8 @@ internal fun GradleCliCommonizer(commonizerToolRunner: KotlinNativeCommonizerToo
 }
 
 internal fun Project.maybeCreateCommonizerClasspathConfiguration(): Configuration {
-    return configurations.findByName(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
-        ?: project.configurations.create(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
-            .markResolvable()
+    return configurations.findResolvable(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
+        ?: project.configurations.createResolvable(KLIB_COMMONIZER_CLASSPATH_CONFIGURATION_NAME)
             .run {
                 attributes.attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
                 attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))

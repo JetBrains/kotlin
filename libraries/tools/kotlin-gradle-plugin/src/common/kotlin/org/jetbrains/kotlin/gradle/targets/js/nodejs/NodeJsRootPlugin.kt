@@ -50,7 +50,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.description = "Download and install a local node/npm version"
             it.configuration = project.provider {
                 project.configurations.detachedConfiguration(project.dependencies.create(it.ivyDependency))
-                    .markResolvable()
                     .also { conf -> conf.isTransitive = false }
             }
         }

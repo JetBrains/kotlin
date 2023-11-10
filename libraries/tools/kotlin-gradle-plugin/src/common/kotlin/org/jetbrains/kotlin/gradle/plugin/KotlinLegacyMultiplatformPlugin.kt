@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.utils.createDependencyScope
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
@@ -53,8 +54,8 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     override fun apply(project: Project) {
         warnAboutKotlin12xMppDeprecation(project)
 
-        val implementConfig = project.configurations.create(IMPLEMENT_CONFIG_NAME)
-        val expectedByConfig = project.configurations.create(EXPECTED_BY_CONFIG_NAME)
+        val implementConfig = project.configurations.createDependencyScope(IMPLEMENT_CONFIG_NAME)
+        val expectedByConfig = project.configurations.createDependencyScope(EXPECTED_BY_CONFIG_NAME)
 
         implementConfig.dependencies.whenObjectAdded {
             if (!implementConfigurationIsUsed) {
