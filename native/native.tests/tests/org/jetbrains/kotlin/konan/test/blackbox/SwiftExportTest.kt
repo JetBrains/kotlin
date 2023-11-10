@@ -3,9 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest
+package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.runTest
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -53,13 +54,13 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
     @Test
     fun extensions() {
         val testDir = File("native/native.tests/testData/SwiftExport/extensions")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
     fun `function and property with same name should not result in conflict`() {
         val testDir = File("native/native.tests/testData/SwiftExport/conflicts")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 
     @Test
@@ -83,6 +84,6 @@ class SwiftExportTest : AbstractNativeSwiftExportTest() {
     @Test
     fun interfaces() {
         val testDir = File("native/native.tests/testData/SwiftExport/interfaces")
-        runTest(testDir.absolutePath)
+        runIntegrationTest(testDir.absolutePath)
     }
 }

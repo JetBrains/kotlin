@@ -3,28 +3,27 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest
+package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.blackboxtest.support.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestKind
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationFactory
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.DEFAULT_MODULE_NAME
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.konan.test.blackbox.support.*
+import org.jetbrains.kotlin.konan.test.blackbox.support.LoggedData
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCaseId
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestModule
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationFactory
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
+import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
+import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import java.io.File
 import java.nio.file.Files
+import kotlin.test.assertEquals
 
 /**
  * Trivial test infrastructure for Swift Export.
@@ -60,7 +59,7 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         if (swiftCompilationResult != 0) {
             error("Swift compilation failed with exit code $swiftCompilationResult")
         }
-        val testExecutable = TestExecutable(outputFile, LoggedData.NoopCompilerCall(outputFile), emptySet())
+        val testExecutable = TestExecutable(TestCompilationArtifact.Executable(outputFile), LoggedData.NoopCompilerCall(outputFile), emptySet())
         runExecutableAndVerify(testCase, testExecutable)
     }
 
@@ -80,8 +79,10 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
             "expected ${expectedSwiftAPI.count()} swift files in result, got ${resultedSwiftAPI.resultingArtifact.swiftSources.count()}"
         }
         val zipped = expectedSwiftAPI.sorted().zip(resultedSwiftAPI.resultingArtifact.swiftSources.sorted())
-        zipped.forEach {
-            assert(it.first.readBytes().contentEquals(it.second.readBytes())) { "Generated files were different" }
+        zipped.forEach { (expected, actual) ->
+            val expectedContents = expected.readLines().dropLastWhile { it.isBlank() }
+            val actualContents = actual.readLines().dropLastWhile { it.isBlank() }
+            assertEquals(expectedContents, actualContents, "Generated files were different")
         }
     }
 
