@@ -15,31 +15,32 @@ import kotlin.io.path.exists
 internal class NonIncrementalJvmCompilationTest : BaseCompilationTest() {
     @CompilationTest
     fun smokeSingleModuleTest(buildRunnerProvider: BuildRunnerProvider) {
-        val module = prepareModule("jvm-module1", workingDirectory)
+        scenario(buildRunnerProvider) {
+            val module1 = module("jvm-module1")
 
-        buildRunnerProvider(project).use { runner ->
-            module.compile(runner) {
-                assertTrue(module.outputDirectory.resolve("FooKt.class").exists())
-                assertTrue(module.outputDirectory.resolve("Bar.class").exists())
-                assertTrue(module.outputDirectory.resolve("BazKt.class").exists())
+            compileAll {
+                expectSuccess(module1) {
+                    outputFiles("FooKt.class", "Bar.class", "BazKt.class")
+                }
             }
         }
     }
 
     @CompilationTest
     fun smokeMultipleModulesTest(buildRunnerProvider: BuildRunnerProvider) {
-        val module1 = prepareModule("jvm-module1", workingDirectory)
-        val module2 = prepareModule("jvm-module2", workingDirectory)
-
-        buildRunnerProvider(project).use { runner ->
-            module1.compile(runner) {
-                assertTrue(module1.outputDirectory.resolve("FooKt.class").exists())
-                assertTrue(module1.outputDirectory.resolve("Bar.class").exists())
-                assertTrue(module1.outputDirectory.resolve("BazKt.class").exists())
+        scenario(buildRunnerProvider) {
+            val module1 = module("jvm-module1")
+            val module2 = module("jvm-module2") {
+                dependsOn(module1)
             }
-            module2.compile(runner, dependencies = setOf(module1)) {
-                assertTrue(module2.outputDirectory.resolve("AKt.class").exists())
-                assertTrue(module2.outputDirectory.resolve("BKt.class").exists())
+
+            compileAll {
+                expectSuccess(module1) {
+                    outputFiles("FooKt.class", "Bar.class", "BazKt.class")
+                }
+                expectSuccess(module2) {
+                    outputFiles("AKt.class", "BKt.class")
+                }
             }
         }
     }

@@ -12,3 +12,6 @@ const val IMPL_VERSION_SYSTEM_PROPERTY = "kotlin.build-tools-api.impl-version"
 val buildToolsVersion = System.getProperty(IMPL_VERSION_SYSTEM_PROPERTY)
     ?.let { KotlinToolingVersion(it) }
     ?: error("The build tools implementation version must be passed via the `$IMPL_VERSION_SYSTEM_PROPERTY` system property to the tests")
+
+val KotlinToolingVersion.reportsCompiledSources
+    get() = this >= KotlinToolingVersion(2, 0, 0, "Beta1")
