@@ -109,15 +109,10 @@ private fun isInFriendModules(
     toModule: ModuleDescriptor,
     friendModules: Map<String, Collection<String>>,
 ): Boolean {
-    if (friendModules.isEmpty()) return false
-
     val fromModuleName = fromModule.name.asStringStripSpecialMarkers()
-
-    val fromFriends = friendModules[fromModuleName] ?: return false
-
     val toModuleName = toModule.name.asStringStripSpecialMarkers()
 
-    return toModuleName in fromFriends
+    return fromModuleName == toModuleName || friendModules[fromModuleName]?.contains(toModuleName) == true
 }
 
 fun buildFakeOverrideMember(
