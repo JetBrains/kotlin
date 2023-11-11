@@ -6,17 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
-import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.runKotlinCompilationSideEffects
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
@@ -24,11 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.toAttribute
 import org.jetbrains.kotlin.gradle.targets.runKotlinTargetSideEffects
-import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import kotlin.reflect.KMutableProperty1
-import kotlin.reflect.full.memberProperties
 
 interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     fun configureTarget(

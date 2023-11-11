@@ -19,7 +19,7 @@ import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.test.fail
 
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_8_1)
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_8_2)
 @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_82)
 @AndroidGradlePluginTests
 class ExternalAndroidTargetIT : KGPBaseTest() {

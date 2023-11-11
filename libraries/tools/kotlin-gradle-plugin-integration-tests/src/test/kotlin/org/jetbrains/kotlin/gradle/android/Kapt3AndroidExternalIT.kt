@@ -194,7 +194,6 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
 
     @DisplayName("kapt works with androidx")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42, maxVersion = TestVersions.AGP.AGP_42)
     fun testDatabindingWithAndroidX(
         gradleVersion: GradleVersion,
         agpVersion: String,

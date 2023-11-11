@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.gradle.android
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_70
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_71
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_1
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_2
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -28,8 +24,6 @@ import kotlin.test.*
 
 @DisplayName("kotlin-android with mpp")
 @AndroidGradlePluginTests
-@GradleTestVersions(minVersion = G_7_1)
-@AndroidTestVersions(minVersion = AGP_70)
 class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("KotlinToolingMetadataArtifact is bundled into apk")
@@ -67,8 +61,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    @AndroidTestVersions(minVersion = AGP_71)
-    @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("mpp source sets are registered in AGP")
     @GradleAndroidTest
     fun testAndroidMppSourceSets(
@@ -133,8 +125,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    @AndroidTestVersions(minVersion = AGP_70)
-    @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("android mpp lib flavors publication can be configured")
     @GradleAndroidTest
     fun testMppAndroidLibFlavorsPublication(
@@ -266,17 +256,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             build("publish") {
                 listOf("fooBar", "fooBaz").forEach { flavorName ->
                     val flavor = flavorName.lowercase()
-
-                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) > AGPVersion.v7_0_0) {
-                        arrayOf(
-                            "foo" to flavorName,
-                            "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
-                        )
-                    } else {
-                        arrayOf(
-                            "foo" to flavorName
-                        )
-                    }
+                    val flavorAttributes = arrayOf(
+                        "foo" to flavorName,
+                        "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
+                    )
 
                     assertFileExists(groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0.aar"))
                     assertFileExists(groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-sources.jar"))
@@ -319,16 +302,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 listOf("fooBar", "fooBaz").forEach { flavorName ->
                     val flavor = flavorName.lowercase()
 
-                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) > AGPVersion.v7_0_0) {
-                        arrayOf(
-                            "foo" to flavorName,
-                            "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
-                        )
-                    } else {
-                        arrayOf(
-                            "foo" to flavorName
-                        )
-                    }
+                    val flavorAttributes = arrayOf(
+                        "foo" to flavorName,
+                        "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
+                    )
 
                     listOf("-debug", "").forEach { buildType ->
                         assertFileExists(groupDir.resolve("lib-androidlib-$flavor$buildType/1.0/lib-androidlib-$flavor$buildType-1.0.aar"))
@@ -587,8 +564,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    @AndroidTestVersions(minVersion = AGP_70)
-    @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("KT-27714: custom attributes are copied to android compilation configurations")
     @GradleAndroidTest
     fun testCustomAttributesInAndroidTargets(
@@ -796,10 +771,9 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
+    // TODO: improve it via KT-63409
     @DisplayName("produced artifacts are consumable by projects with various AGP versions")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testAndroidMultiplatformPublicationAGPCompatibility(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -822,30 +796,20 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
         }
 
-        val checkedConsumerAGPVersions = AGPVersion.testedVersions
-            .filter { version -> version >= AGPVersion.fromString(TestVersions.AGP.AGP_42) }
-            .filter { version -> version < AGPVersion.fromString(TestVersions.AGP.MAX_SUPPORTED) }
-            .map { it.toString() }
+        val checkedConsumerAGPVersions = TestVersions.AgpCompatibilityMatrix
+            .values()
+            .filter { agp -> AGPVersion.fromString(agp.version) < AGPVersion.fromString(TestVersions.AGP.MAX_SUPPORTED) }
 
         checkedConsumerAGPVersions.forEach { consumerAgpVersion ->
-            val agpTestVersion = TestVersions.AgpCompatibilityMatrix.values().find { it.version == consumerAgpVersion }
-                ?: fail("AGP version $consumerAgpVersion is not defined in TestVersions.AGP!")
-            val consumerGradleVersion = when {
-                gradleVersion < agpTestVersion.minSupportedGradleVersion -> agpTestVersion.minSupportedGradleVersion
-                gradleVersion > agpTestVersion.maxSupportedGradleVersion -> agpTestVersion.maxSupportedGradleVersion
-                else -> gradleVersion
-            }
-            println("Testing compatibility for AGP consumer version $consumerAgpVersion on Gradle ${consumerGradleVersion.version} (Producer: $agpVersion)")
+            println(
+                "Testing compatibility for AGP consumer version $consumerAgpVersion on Gradle" +
+                        " ${consumerAgpVersion.minSupportedGradleVersion} (Producer: $agpVersion)"
+            )
             project(
                 "new-mpp-android-agp-compatibility",
-                consumerGradleVersion,
-                buildOptions = defaultBuildOptions.copy(androidVersion = consumerAgpVersion)
-                    .suppressDeprecationWarningsOn(
-                        "AGP relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty which has been deprecated."
-                    ) { options ->
-                        consumerGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_4) && AGPVersion.fromString(options.safeAndroidVersion) < AGPVersion.v7_1_0
-                    },
-                buildJdk = jdkVersion.location,
+                consumerAgpVersion.minSupportedGradleVersion,
+                buildOptions = defaultBuildOptions.copy(androidVersion = consumerAgpVersion.version),
+                buildJdk = File(System.getProperty("jdk${consumerAgpVersion.requiredJdkVersion.majorVersion}Home")),
                 localRepoDir = tempDir
             ) {
                 /*
@@ -860,7 +824,10 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                  */
                 build(":plainAndroidConsumer:assemble")
             }
-            println("Successfully tested compatibility for AGP consumer version $consumerAgpVersion on Gradle ${consumerGradleVersion.version} (Producer: $agpVersion)")
+            println(
+                "Successfully tested compatibility for AGP consumer version $consumerAgpVersion on Gradle" +
+                        " ${consumerAgpVersion.minSupportedGradleVersion} (Producer: $agpVersion)"
+            )
         }
     }
 

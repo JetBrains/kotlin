@@ -22,6 +22,8 @@ jgit = "6.6.0.202305301015-r"
 junit4 = "4.13.2"
 junit5 = "5.10.0"
 junit-platform = "1.10.0"
+android-gradle-plugin = "7.1.3"
+android-tools = "30.3.1"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -63,6 +65,12 @@ junit-platform-commons = { module = "org.junit.platform:junit-platform-commons",
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit-platform" }
 junit-platform-runner = { module = "org.junit.platform:junit-platform-runner", version.ref = "junit-platform" }
 junit-platform-suite-api = { module = "org.junit.platform:junit-platform-suite-api", version.ref = "junit-platform" }
+
+android-gradle-plugin-gradle-api = { module = "com.android.tools.build:gradle-api", version.ref = "android-gradle-plugin" }
+android-gradle-plugin-gradle = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
+android-gradle-plugin-builder = { module = "com.android.tools.build:builder", version.ref = "android-gradle-plugin" }
+android-gradle-plugin-builder-model = { module = "com.android.tools.build:builder-model", version.ref = "android-gradle-plugin" }
+android-tools-common = { module = "com.android.tools:common", version.ref = "android-tools" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }

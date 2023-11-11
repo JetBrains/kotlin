@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinal
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.SourceSetCompatibilityHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -41,10 +42,8 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.util.concurrent.Callable
 import javax.inject.Inject
-import kotlin.reflect.full.functions
 
 abstract class KotlinJvmTarget @Inject constructor(
     project: Project,
@@ -168,8 +167,11 @@ abstract class KotlinJvmTarget @Inject constructor(
         }
 
         project.launchInStage(AfterFinaliseDsl) {
+            val sourceSetCompatibilityHelper = project
+                .variantImplementationFactory<SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory>()
+                .getInstance()
             javaSourceSets.all { javaSourceSet ->
-                copyUserDefinedAttributesToJavaConfigurations(javaSourceSet)
+                copyUserDefinedAttributesToJavaConfigurations(javaSourceSet, sourceSetCompatibilityHelper)
             }
         }
 
@@ -259,12 +261,13 @@ abstract class KotlinJvmTarget @Inject constructor(
 
         // Add the Java source set dependencies to the Kotlin compilation compile & runtime configurations:
 
+        val sourceSetCompatibilityHelper = project
+            .variantImplementationFactory<SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory>()
+            .getInstance()
+
         val compileConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            javaSourceSet::class
-                .functions
-                .find { it.name == "getCompileConfigurationName" }
-                ?.call(javaSourceSet)
-                ?.cast<String>()
+            sourceSetCompatibilityHelper
+                .getCompileConfigurationName(javaSourceSet)
                 ?.takeIf { project.configurations.findByName(it) != null }
         } else null
 
@@ -278,11 +281,8 @@ abstract class KotlinJvmTarget @Inject constructor(
         }
 
         val runtimeConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            javaSourceSet::class
-                .functions
-                .find { it.name == "getRuntimeConfigurationName" }
-                ?.call(javaSourceSet)
-                ?.cast<String>()
+            sourceSetCompatibilityHelper
+                .getRuntimeConfigurationName(javaSourceSet)
                 ?.takeIf { project.configurations.findByName(it) != null }
         } else null
 
@@ -296,22 +296,19 @@ abstract class KotlinJvmTarget @Inject constructor(
         }
     }
 
-    private fun copyUserDefinedAttributesToJavaConfigurations(javaSourceSet: SourceSet) {
+    private fun copyUserDefinedAttributesToJavaConfigurations(
+        javaSourceSet: SourceSet,
+        sourceSetCompatibilityHelper: SourceSetCompatibilityHelper
+    ) {
         val compileConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            javaSourceSet::class
-                .functions
-                .find { it.name == "getCompileConfigurationName" }
-                ?.call(javaSourceSet)
-                ?.cast<String>()
+            sourceSetCompatibilityHelper
+                .getCompileConfigurationName(javaSourceSet)
                 ?.takeIf { project.configurations.findByName(it) != null }
         } else null
 
         val runtimeConfigurationName = if (areRuntimeOrCompileConfigurationsAvailable()) {
-            javaSourceSet::class
-                .functions
-                .find { it.name == "getRuntimeConfigurationName" }
-                ?.call(javaSourceSet)
-                ?.cast<String>()
+            sourceSetCompatibilityHelper
+                .getRuntimeConfigurationName(javaSourceSet)
                 ?.takeIf { project.configurations.findByName(it) != null }
         } else null
 

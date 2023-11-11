@@ -444,8 +444,6 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
 
     @DisplayName("KT-57959: should be possible to configure module name in MPP/android")
     @GradleAndroidTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_70)
     @AndroidGradlePluginTests
     @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     fun mppAndroidModuleName(

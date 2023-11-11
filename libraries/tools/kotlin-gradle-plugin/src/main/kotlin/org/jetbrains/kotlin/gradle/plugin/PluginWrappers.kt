@@ -10,7 +10,6 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.plugin.internal.*
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessorG6
@@ -161,4 +160,6 @@ private fun Project.registerVariantImplementations() {
     factories[UnameExecutor.UnameExecutorVariantFactory::class] =
         UnameExecutorG6.UnameExecutorVariantFactoryG6()
     factories[ConfigurationCacheStartParameterAccessor.Factory::class] = ConfigurationCacheStartParameterAccessorG6.Factory()
+    factories[SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory::class] =
+        SourceSetCompatibilityHelperG6VariantFactory()
 }

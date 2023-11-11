@@ -177,13 +177,12 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
 
                 gradleVersions
                     .filter { it in agpVersion.minSupportedGradleVersion..agpVersion.maxSupportedGradleVersion }
+                    .ifEmpty {
+                        // Falling back to the minimal supported Gradle version for this AGP version
+                        listOf(agpVersion.minSupportedGradleVersion)
+                    }
                     .map {
                         AgpTestArguments(it, agpVersion.version, providedJdk)
-                    }
-                    .also {
-                        require(it.isNotEmpty()) {
-                            "Could not find suitable Gradle version for AGP $agpVersion version!"
-                        }
                     }
             }
             .asSequence()

@@ -67,25 +67,11 @@ dependencies {
     commonCompileOnly(project(":kotlin-compiler-runner-unshaded"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
-    commonCompileOnly("com.android.tools.build:gradle:4.2.2") {
-        exclude("org.ow2.asm")
-        exclude("net.sf.proguard")
-        exclude("net.sf.jopt-simple")
-        exclude("com.squareup")
-        exclude("com.google.crypto.tink")
-        exclude("com.google.guava")
-        exclude("com.google.protobuf")
-        exclude("com.google.testing.platform")
-        exclude("com.android.tools.lint")
-        exclude("androidx.databinding")
-        exclude("com.android.tools.analytics-library")
-        exclude("com.android.tools.build.jetifier")
-        exclude("com.android.tools.build", "transform-api")
-        exclude("com.android.tools.build", "builder-test-api")
-        exclude("com.android.tools.build", "bundletool")
-        exclude("com.android.tools.build", "aaptcompiler")
-        exclude("com.android.tools.build", "aapt2-proto")
-    }
+    commonCompileOnly(libs.android.gradle.plugin.gradle.api) { isTransitive = false }
+    commonCompileOnly(libs.android.gradle.plugin.gradle) { isTransitive = false }
+    commonCompileOnly(libs.android.gradle.plugin.builder) { isTransitive = false }
+    commonCompileOnly(libs.android.gradle.plugin.builder.model) { isTransitive = false }
+    commonCompileOnly(libs.android.tools.common) { isTransitive = false }
     commonCompileOnly(intellijPlatformUtil())
     commonCompileOnly(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     commonCompileOnly(libs.gradle.enterprise.gradlePlugin)
