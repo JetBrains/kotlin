@@ -19,6 +19,7 @@ fun assertFalse(x: Boolean) {
     if (x) throw Exception("")
 }
 
+@Suppress("UNUSED_PARAMETER")
 fun <T : Any> assertNotNull(actual: T?, message: String? = null): T {
     if (actual == null) throw Exception("")
     return actual

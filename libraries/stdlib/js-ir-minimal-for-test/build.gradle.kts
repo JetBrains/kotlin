@@ -131,7 +131,6 @@ val jsMainSources by task<Sync> {
         into("builtins")
     }
 
-    from("$rootDir/libraries/stdlib/js-ir-minimal-for-test/src")
     into("$buildDir/jsMainSources")
 }
 
@@ -143,6 +142,7 @@ kotlin {
         }
         named("jsMain") {
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
+            kotlin.srcDir("src")
         }
     }
 }
@@ -150,6 +150,7 @@ kotlin {
 tasks.withType<KotlinCompile<*>> {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
+        "-Xexpect-actual-classes",
         "-opt-in=kotlin.ExperimentalMultiplatform",
         "-opt-in=kotlin.contracts.ExperimentalContracts",
         "-opt-in=kotlin.RequiresOptIn",
