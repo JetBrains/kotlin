@@ -31,7 +31,7 @@ public external interface FrameworkAdapter {
      * @param ignored whether the test suite is ignored, e.g. marked with [Ignore] annotation
      * @param suiteFn defines nested suites by calling [kotlin.test.suite] and tests by calling [kotlin.test.test]
      */
-    fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
+    public fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit)
 
     /**
      * Declares a test.
@@ -40,5 +40,5 @@ public external interface FrameworkAdapter {
      * @param ignored whether the test is ignored
      * @param testFn contains test body invocation
      */
-    fun test(name: String, ignored: Boolean, testFn: () -> Any?)
+    public fun test(name: String, ignored: Boolean, testFn: () -> Any?)
 }

@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
  *
  * This keeps the code under test referenced, but doesn't actually test it until it is implemented.
  */
-actual fun todo(block: () -> Unit) {
+public actual fun todo(block: () -> Unit) {
     println("TODO at " + block)
 }
 

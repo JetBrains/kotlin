@@ -12,7 +12,7 @@ import kotlin.reflect.KClass
  *
  * This keeps the code under test referenced, but doesn't actually test it until it is implemented.
  */
-expect fun todo(block: () -> Unit)
+public expect fun todo(block: () -> Unit)
 
 /** Asserts that a [blockResult] is a failure with the specific exception type being thrown. */
 @PublishedApi
