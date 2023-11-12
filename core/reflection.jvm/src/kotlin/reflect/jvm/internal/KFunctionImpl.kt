@@ -114,7 +114,7 @@ internal class KFunctionImpl private constructor(
                     Modifier.isStatic(caller.member!!.modifiers)
                 ) {
                     val defaultValuedFunction = descriptor.overriddenTreeAsSequence(false)
-                        .singleOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
+                        .firstOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
                     if (defaultValuedFunction != null) {
                         val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultValuedFunction) as KotlinFunction
                         return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)

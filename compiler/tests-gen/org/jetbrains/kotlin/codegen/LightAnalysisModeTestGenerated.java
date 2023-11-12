@@ -36217,6 +36217,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/callBy/boundJvmStaticInObject.kt");
             }
 
+            @TestMetadata("brokenDefaultParametersFromDifferentFunctions.kt")
+            public void testBrokenDefaultParametersFromDifferentFunctions() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/brokenDefaultParametersFromDifferentFunctions.kt");
+            }
+
             @TestMetadata("companionObject.kt")
             public void testCompanionObject() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/companionObject.kt");
