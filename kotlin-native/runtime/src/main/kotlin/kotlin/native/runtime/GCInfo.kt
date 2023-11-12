@@ -24,7 +24,7 @@ import kotlin.system.*
 @NativeRuntimeApi
 @SinceKotlin("1.9")
 public class MemoryUsage(
-        val totalObjectsSizeBytes: Long,
+        public val totalObjectsSizeBytes: Long,
 )
 
 /**
@@ -36,8 +36,8 @@ public class MemoryUsage(
 @NativeRuntimeApi
 @SinceKotlin("1.9")
 public class SweepStatistics(
-    val sweptCount: Long,
-    val keptCount: Long,
+        public val sweptCount: Long,
+        public val keptCount: Long,
 )
 
 /**
@@ -57,10 +57,10 @@ public class SweepStatistics(
 @NativeRuntimeApi
 @SinceKotlin("1.9")
 public class RootSetStatistics(
-        val threadLocalReferences: Long,
-        val stackReferences: Long,
-        val globalReferences: Long,
-        val stableReferences: Long
+        public val threadLocalReferences: Long,
+        public val stackReferences: Long,
+        public val globalReferences: Long,
+        public val stableReferences: Long
 )
 
 /**
@@ -96,21 +96,21 @@ public class RootSetStatistics(
 @NativeRuntimeApi
 @SinceKotlin("1.9")
 public class GCInfo(
-        val epoch: Long,
-        val startTimeNs: Long,
-        val endTimeNs: Long,
-        val firstPauseRequestTimeNs: Long,
-        val firstPauseStartTimeNs: Long,
-        val firstPauseEndTimeNs: Long,
-        val secondPauseRequestTimeNs: Long?,
-        val secondPauseStartTimeNs: Long?,
-        val secondPauseEndTimeNs: Long?,
-        val postGcCleanupTimeNs: Long?,
-        val rootSet: RootSetStatistics,
-        val markedCount: Long,
-        val sweepStatistics: Map<String, SweepStatistics>,
-        val memoryUsageBefore: Map<String, MemoryUsage>,
-        val memoryUsageAfter: Map<String, MemoryUsage>,
+        public val epoch: Long,
+        public val startTimeNs: Long,
+        public val endTimeNs: Long,
+        public val firstPauseRequestTimeNs: Long,
+        public val firstPauseStartTimeNs: Long,
+        public val firstPauseEndTimeNs: Long,
+        public val secondPauseRequestTimeNs: Long?,
+        public val secondPauseStartTimeNs: Long?,
+        public val secondPauseEndTimeNs: Long?,
+        public val postGcCleanupTimeNs: Long?,
+        public val rootSet: RootSetStatistics,
+        public val markedCount: Long,
+        public val sweepStatistics: Map<String, SweepStatistics>,
+        public val memoryUsageBefore: Map<String, MemoryUsage>,
+        public val memoryUsageAfter: Map<String, MemoryUsage>,
 ) {
     internal companion object {
         val lastGCInfo: GCInfo?

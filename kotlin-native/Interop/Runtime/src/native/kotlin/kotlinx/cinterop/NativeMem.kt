@@ -159,8 +159,8 @@ private external fun cfree(ptr: NativePtr)
 
 @ExperimentalForeignApi
 @TypedIntrinsic(IntrinsicType.INTEROP_READ_BITS)
-external fun readBits(ptr: NativePtr, offset: Long, size: Int, signed: Boolean): Long
+public external fun readBits(ptr: NativePtr, offset: Long, size: Int, signed: Boolean): Long
 
 @ExperimentalForeignApi
 @TypedIntrinsic(IntrinsicType.INTEROP_WRITE_BITS)
-external fun writeBits(ptr: NativePtr, offset: Long, size: Int, value: Long)
+public external fun writeBits(ptr: NativePtr, offset: Long, size: Int, value: Long)

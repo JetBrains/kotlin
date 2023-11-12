@@ -51,19 +51,19 @@ public class WorkerBoundReference<out T : Any>(value: T) {
      * The referenced value.
      * @throws IncorrectDereferenceException if referred object is not frozen and current worker is different from the one created [this].
      */
-    val value: T
+    public val value: T
         get() = valueOrNull ?: throw IncorrectDereferenceException("illegal attempt to access non-shared $valueDescription bound to `$ownerName` from `${Worker.current.name}`")
 
     /**
      * The referenced value or null if referred object is not frozen and current worker is different from the one created [this].
      */
-    val valueOrNull: T?
+    public val valueOrNull: T?
         get() = valueBeforeFreezing ?: @Suppress("UNCHECKED_CAST") (derefWorkerBoundReference(ptr) as T?)
 
     /**
      * Worker that [value] is bound to.
      */
-    val worker: Worker = Worker.current
+    public val worker: Worker = Worker.current
 
     @ExportForCppRuntime("Kotlin_WorkerBoundReference_freezeHook")
     private fun freezeHook() {

@@ -23,13 +23,13 @@ import kotlinx.cinterop.ExperimentalForeignApi
  */
 @ExportTypeInfo("theThrowableTypeInfo")
 @OptIn(FreezingIsDeprecated::class)
-public open class Throwable(open val message: String?, open val cause: Throwable?) {
+public open class Throwable(public open val message: String?, public open val cause: Throwable?) {
 
-    constructor(message: String?) : this(message, null)
+    public constructor(message: String?) : this(message, null)
 
-    constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    public constructor(cause: Throwable?) : this(cause?.toString(), cause)
 
-    constructor() : this(null, null)
+    public constructor() : this(null, null)
 
     @get:ExportForCppRuntime("Kotlin_Throwable_getStackTrace")
     private val stackTrace: NativePtrArray = getCurrentStackTrace()

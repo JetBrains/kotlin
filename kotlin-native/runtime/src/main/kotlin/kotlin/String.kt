@@ -68,4 +68,4 @@ public inline operator fun kotlin.String?.plus(other: kotlin.Any?): kotlin.Strin
     (this?.toString() ?: "null").plus(other?.toString() ?: "null")
 
 
-public inline fun Any?.toString() = this?.toString() ?: "null"
+public inline fun Any?.toString(): String = this?.toString() ?: "null"

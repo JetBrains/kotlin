@@ -225,10 +225,10 @@ internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
 internal external fun <T> isSubtype(objTypeInfo: NativePtr): Boolean
 
 @PublishedApi
-internal fun checkProgressionStep(step: Int)  =
+internal fun checkProgressionStep(step: Int): Int =
         if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 @PublishedApi
-internal fun checkProgressionStep(step: Long) =
+internal fun checkProgressionStep(step: Long): Long =
         if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 
 @PublishedApi

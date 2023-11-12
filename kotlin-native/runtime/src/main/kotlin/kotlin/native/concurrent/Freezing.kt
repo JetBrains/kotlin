@@ -45,7 +45,7 @@ public fun <T> T.freeze(): T {
  * @return true if given object is null or frozen or permanent
  */
 @FreezingIsDeprecated
-public val Any?.isFrozen
+public val Any?.isFrozen: Boolean
     get() = isFrozenInternal(this)
 
 /**

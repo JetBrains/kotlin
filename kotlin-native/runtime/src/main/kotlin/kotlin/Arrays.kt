@@ -53,7 +53,7 @@ public final class ByteArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_ByteArray_get")
-    external public operator fun get(index: Int): Byte
+    public external operator fun get(index: Int): Byte
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -61,10 +61,10 @@ public final class ByteArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_ByteArray_set")
-    external public operator fun set(index: Int, value: Byte): Unit
+    public external operator fun set(index: Int, value: Byte): Unit
 
     @GCUnsafeCall("Kotlin_ByteArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): ByteIterator {
@@ -124,7 +124,7 @@ public final class CharArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_CharArray_get")
-    external public operator fun get(index: Int): Char
+    public external operator fun get(index: Int): Char
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -132,10 +132,10 @@ public final class CharArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_CharArray_set")
-    external public operator fun set(index: Int, value: Char): Unit
+    public external operator fun set(index: Int, value: Char): Unit
 
     @GCUnsafeCall("Kotlin_CharArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.CharIterator {
@@ -195,7 +195,7 @@ public final class ShortArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_ShortArray_get")
-    external public operator fun get(index: Int): Short
+    public external operator fun get(index: Int): Short
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -203,10 +203,10 @@ public final class ShortArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_ShortArray_set")
-    external public operator fun set(index: Int, value: Short): Unit
+    public external operator fun set(index: Int, value: Short): Unit
 
     @GCUnsafeCall("Kotlin_ShortArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.ShortIterator {
@@ -266,7 +266,7 @@ public final class IntArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_IntArray_get")
-    external public operator fun get(index: Int): Int
+    public external operator fun get(index: Int): Int
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -274,10 +274,10 @@ public final class IntArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_IntArray_set")
-    external public operator fun set(index: Int, value: Int): Unit
+    public external operator fun set(index: Int, value: Int): Unit
 
     @GCUnsafeCall("Kotlin_IntArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.IntIterator {
@@ -337,7 +337,7 @@ public final class LongArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_LongArray_get")
-    external public operator fun get(index: Int): Long
+    public external operator fun get(index: Int): Long
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -345,10 +345,10 @@ public final class LongArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_LongArray_set")
-    external public operator fun set(index: Int, value: Long): Unit
+    public external operator fun set(index: Int, value: Long): Unit
 
     @GCUnsafeCall("Kotlin_LongArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.LongIterator {
@@ -408,7 +408,7 @@ public final class FloatArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_FloatArray_get")
-    external public operator fun get(index: Int): Float
+    public external operator fun get(index: Int): Float
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -416,10 +416,10 @@ public final class FloatArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_FloatArray_set")
-    external public operator fun set(index: Int, value: Float): Unit
+    public external operator fun set(index: Int, value: Float): Unit
 
     @GCUnsafeCall("Kotlin_FloatArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.FloatIterator {
@@ -479,7 +479,7 @@ public final class DoubleArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_DoubleArray_get")
-    external public operator fun get(index: Int): Double
+    public external operator fun get(index: Int): Double
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -487,10 +487,10 @@ public final class DoubleArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_DoubleArray_set")
-    external public operator fun set(index: Int, value: Double): Unit
+    public external operator fun set(index: Int, value: Double): Unit
 
     @GCUnsafeCall("Kotlin_DoubleArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.DoubleIterator {
@@ -550,7 +550,7 @@ public final class BooleanArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_BooleanArray_get")
-    external public operator fun get(index: Int): Boolean
+    public external operator fun get(index: Int): Boolean
 
     /**
      * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
@@ -558,10 +558,10 @@ public final class BooleanArray {
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     @GCUnsafeCall("Kotlin_BooleanArray_set")
-    external public operator fun set(index: Int, value: Boolean): Unit
+    public external operator fun set(index: Int, value: Boolean): Unit
 
     @GCUnsafeCall("Kotlin_BooleanArray_getArrayLength")
-    external private fun getArrayLength(): Int
+    private external fun getArrayLength(): Int
 
     /** Creates an iterator over the elements of the array. */
     public operator fun iterator(): kotlin.collections.BooleanIterator {
@@ -599,52 +599,52 @@ public inline fun <T> arrayOfNulls(size: Int): Array<T?> =
 public external inline fun <T> arrayOf(vararg elements: T): Array<T>
 
 @GCUnsafeCall("Kotlin_emptyArray")
-external public fun <T> emptyArray(): Array<T>
+public external fun <T> emptyArray(): Array<T>
 
 /**
  * Returns an array containing the specified [Double] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun doubleArrayOf(vararg elements: Double) = elements
+public inline fun doubleArrayOf(vararg elements: Double): DoubleArray = elements
 
 /**
  * Returns an array containing the specified [Float] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun floatArrayOf(vararg elements: Float) = elements
+public inline fun floatArrayOf(vararg elements: Float): FloatArray = elements
 
 /**
  * Returns an array containing the specified [Long] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun longArrayOf(vararg elements: Long) = elements
+public inline fun longArrayOf(vararg elements: Long): LongArray = elements
 
 /**
  * Returns an array containing the specified [Int] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun intArrayOf(vararg elements: Int) = elements
+public inline fun intArrayOf(vararg elements: Int): IntArray = elements
 
 /**
  * Returns an array containing the specified characters.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun charArrayOf(vararg elements: Char) = elements
+public inline fun charArrayOf(vararg elements: Char): CharArray = elements
 
 /**
  * Returns an array containing the specified [Short] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun shortArrayOf(vararg elements: Short) = elements
+public inline fun shortArrayOf(vararg elements: Short): ShortArray = elements
 
 /**
  * Returns an array containing the specified [Byte] numbers.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun byteArrayOf(vararg elements: Byte) = elements
+public inline fun byteArrayOf(vararg elements: Byte): ByteArray = elements
 
 /**
  * Returns an array containing the specified boolean values.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun booleanArrayOf(vararg elements: Boolean) = elements
+public inline fun booleanArrayOf(vararg elements: Boolean): BooleanArray = elements

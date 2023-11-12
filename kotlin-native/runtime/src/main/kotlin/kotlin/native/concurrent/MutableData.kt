@@ -68,14 +68,14 @@ public class MutableData constructor(capacity: Int = 16) {
     /**
      * Reset the data buffer, makings its size 0.
      */
-    public fun reset() = locked(lock) {
+    public fun reset(): Unit = locked(lock) {
         size_ = 0
     }
 
     /**
      * Appends data to the buffer.
      */
-    public fun append(data: MutableData) = locked(lock) {
+    public fun append(data: MutableData): Unit = locked(lock) {
         val toCopy = data.size
         val where = resizeDataLocked(size + toCopy)
         data.copyInto(buffer, 0, toCopy, where)
@@ -126,7 +126,7 @@ public class MutableData constructor(capacity: Int = 16) {
      * Executes provided block under lock with raw pointer to the data stored in the buffer.
      * Block is executed under the spinlock, and must be short.
      */
-    public fun <R> withPointerLocked(block: (COpaquePointer, dataSize: Int) -> R) = locked(lock) {
+    public fun <R> withPointerLocked(block: (COpaquePointer, dataSize: Int) -> R): R = locked(lock) {
         buffer.usePinned {
             it -> block(it.addressOf(0), size)
         }
@@ -136,7 +136,7 @@ public class MutableData constructor(capacity: Int = 16) {
      * Executes provided block under lock with the raw data buffer.
      * Block is executed under the spinlock, and must be short.
      */
-    public fun <R> withBufferLocked(block: (array: ByteArray, dataSize: Int) -> R) = locked(lock) {
+    public fun <R> withBufferLocked(block: (array: ByteArray, dataSize: Int) -> R): R = locked(lock) {
         block(buffer, size)
     }
 }

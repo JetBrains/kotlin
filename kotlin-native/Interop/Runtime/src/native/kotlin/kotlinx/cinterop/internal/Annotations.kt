@@ -6,35 +6,35 @@ import kotlin.native.internal.InternalForKotlinNative
 @InternalForKotlinNative
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class CStruct(val spelling: String) {
+public annotation class CStruct(val spelling: String) {
     @Retention(AnnotationRetention.BINARY)
     @Target(
             AnnotationTarget.PROPERTY_GETTER,
             AnnotationTarget.PROPERTY_SETTER
     )
-    annotation class MemberAt(val offset: Long)
+    public annotation class MemberAt(val offset: Long)
 
     @Retention(AnnotationRetention.BINARY)
     @Target(AnnotationTarget.PROPERTY_GETTER)
-    annotation class ArrayMemberAt(val offset: Long)
+    public annotation class ArrayMemberAt(val offset: Long)
 
     @Retention(AnnotationRetention.BINARY)
     @Target(
             AnnotationTarget.PROPERTY_GETTER,
             AnnotationTarget.PROPERTY_SETTER
     )
-    annotation class BitField(val offset: Long, val size: Int)
+    public annotation class BitField(val offset: Long, val size: Int)
 
     @Retention(AnnotationRetention.BINARY)
-    annotation class VarType(val size: Long, val align: Int)
-
-    @Target(AnnotationTarget.CLASS)
-    @Retention(AnnotationRetention.BINARY)
-    annotation class CPlusPlusClass
+    public annotation class VarType(val size: Long, val align: Int)
 
     @Target(AnnotationTarget.CLASS)
     @Retention(AnnotationRetention.BINARY)
-    annotation class ManagedType
+    public annotation class CPlusPlusClass
+
+    @Target(AnnotationTarget.CLASS)
+    @Retention(AnnotationRetention.BINARY)
+    public annotation class ManagedType
 }
 
 @Target(
@@ -47,11 +47,11 @@ annotation class CStruct(val spelling: String) {
 public annotation class CCall(val id: String) {
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.BINARY)
-    annotation class CString
+    public annotation class CString
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.BINARY)
-    annotation class WCString
+    public annotation class WCString
 
     @Target(
             AnnotationTarget.FUNCTION,
@@ -59,7 +59,7 @@ public annotation class CCall(val id: String) {
             AnnotationTarget.PROPERTY_SETTER
     )
     @Retention(AnnotationRetention.BINARY)
-    annotation class ReturnsRetained
+    public annotation class ReturnsRetained
 
     @Target(
             AnnotationTarget.FUNCTION,
@@ -67,15 +67,15 @@ public annotation class CCall(val id: String) {
             AnnotationTarget.PROPERTY_SETTER
     )
     @Retention(AnnotationRetention.BINARY)
-    annotation class ConsumesReceiver
+    public annotation class ConsumesReceiver
 
     @Target(AnnotationTarget.VALUE_PARAMETER)
     @Retention(AnnotationRetention.BINARY)
-    annotation class Consumed
+    public annotation class Consumed
 
     @Target(AnnotationTarget.CONSTRUCTOR)
     @Retention(AnnotationRetention.BINARY)
-    annotation class CppClassConstructor
+    public annotation class CppClassConstructor
 }
 
 /**
@@ -85,27 +85,27 @@ public annotation class CCall(val id: String) {
 @InternalForKotlinNative
 public object ConstantValue {
     @Retention(AnnotationRetention.BINARY)
-    annotation class Byte(val value: kotlin.Byte)
+    public annotation class Byte(val value: kotlin.Byte)
     @Retention(AnnotationRetention.BINARY)
-    annotation class Short(val value: kotlin.Short)
+    public annotation class Short(val value: kotlin.Short)
     @Retention(AnnotationRetention.BINARY)
-    annotation class Int(val value: kotlin.Int)
+    public annotation class Int(val value: kotlin.Int)
     @Retention(AnnotationRetention.BINARY)
-    annotation class Long(val value: kotlin.Long)
+    public annotation class Long(val value: kotlin.Long)
     @Retention(AnnotationRetention.BINARY)
-    annotation class UByte(val value: kotlin.UByte)
+    public annotation class UByte(val value: kotlin.UByte)
     @Retention(AnnotationRetention.BINARY)
-    annotation class UShort(val value: kotlin.UShort)
+    public annotation class UShort(val value: kotlin.UShort)
     @Retention(AnnotationRetention.BINARY)
-    annotation class UInt(val value: kotlin.UInt)
+    public annotation class UInt(val value: kotlin.UInt)
     @Retention(AnnotationRetention.BINARY)
-    annotation class ULong(val value: kotlin.ULong)
+    public annotation class ULong(val value: kotlin.ULong)
     @Retention(AnnotationRetention.BINARY)
-    annotation class Float(val value: kotlin.Float)
+    public annotation class Float(val value: kotlin.Float)
     @Retention(AnnotationRetention.BINARY)
-    annotation class Double(val value: kotlin.Double)
+    public annotation class Double(val value: kotlin.Double)
     @Retention(AnnotationRetention.BINARY)
-    annotation class String(val value: kotlin.String)
+    public annotation class String(val value: kotlin.String)
 }
 
 /**

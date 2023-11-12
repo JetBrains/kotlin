@@ -35,8 +35,8 @@ import kotlinx.cinterop.*
 @Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @OptIn(FreezingIsDeprecated::class)
 @ObsoleteWorkersApi
-public value class Worker @PublishedApi internal constructor(val id: Int) {
-    companion object {
+public value class Worker @PublishedApi internal constructor(public val id: Int) {
+    public companion object {
         /**
          * Start new scheduling primitive, such as thread, to accept new tasks via `execute` interface.
          * Typically new worker may be needed for computations offload to another core, for IO it may be

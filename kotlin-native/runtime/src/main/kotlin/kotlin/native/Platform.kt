@@ -29,7 +29,7 @@ public enum class OsFamily {
  * Central Processor Unit architecture.
  */
 @ExperimentalNativeApi
-public enum class CpuArchitecture(val bitness: Int) {
+public enum class CpuArchitecture(public val bitness: Int) {
     UNKNOWN(-1),
     ARM32(32),
     ARM64(64),
@@ -182,4 +182,4 @@ private external fun Platform_getAvailableProcessors(): Int
 
 @TypedIntrinsic(IntrinsicType.IS_EXPERIMENTAL_MM)
 @ExperimentalStdlibApi
-external fun isExperimentalMM(): Boolean
+public external fun isExperimentalMM(): Boolean

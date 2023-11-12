@@ -166,7 +166,7 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
      * Atomically decrements the current value by one.
      */
     @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"), DeprecationLevel.ERROR)
-    fun decrement(): Unit {
+    public fun decrement(): Unit {
         addAndGet(-1L)
     }
 

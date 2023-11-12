@@ -38,7 +38,7 @@ import kotlin.concurrent.AtomicNativePtr
  */
 // Not @FreezingIsDeprecated: every `Worker.execute` uses this.
 @ObsoleteWorkersApi
-public enum class TransferMode(val value: Int) {
+public enum class TransferMode(public val value: Int) {
     /**
      * Reachability check is performed.
      */
@@ -59,7 +59,7 @@ public enum class TransferMode(val value: Int) {
 @ObsoleteWorkersApi
 public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
     @PublishedApi
-    internal val stable = AtomicNativePtr(pointer)
+    internal val stable: AtomicNativePtr = AtomicNativePtr(pointer)
 
     /**
      * Creates stable pointer to object, ensuring associated object subgraph is disjoint in specified mode

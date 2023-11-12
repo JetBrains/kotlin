@@ -98,7 +98,7 @@ public class Continuation2<T1, T2>(
         }
     }
 
-    fun dispose() {
+    public fun dispose() {
         assert(!singleShot)
         stable.dispose()
     }

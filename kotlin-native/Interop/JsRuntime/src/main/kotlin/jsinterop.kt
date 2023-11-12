@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION_ERROR", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "UNUSED_PARAMETER") // Everything is scheduled for removal
+@file:Suppress("DEPRECATION_ERROR", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "UNUSED_PARAMETER", "NO_EXPLICIT_VISIBILITY_IN_API_MODE", "NO_EXPLICIT_RETURN_TYPE_IN_API_MODE") // Everything is scheduled for removal
 @file:OptIn(ExperimentalForeignApi::class)
 
 package kotlinx.wasm.jsinterop

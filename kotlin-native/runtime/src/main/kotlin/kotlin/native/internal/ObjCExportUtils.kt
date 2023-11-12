@@ -271,7 +271,7 @@ internal class NSEnumeratorAsKIterator : AbstractIterator<Any?>() {
         error: Any
 ) = ObjCErrorException(message, error)
 
-class ObjCErrorException(
+public class ObjCErrorException(
         message: String?,
         internal val error: Any
 ) : Exception(message) {

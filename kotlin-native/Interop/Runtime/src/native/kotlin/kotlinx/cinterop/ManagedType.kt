@@ -8,13 +8,13 @@ package kotlinx.cinterop
 import kotlinx.cinterop.CStructVar
 
 @ExperimentalForeignApi
-interface SkiaRefCnt
+public interface SkiaRefCnt
 
 @ExperimentalForeignApi
-interface CPlusPlusClass
+public interface CPlusPlusClass
 
 @ExperimentalForeignApi
-abstract class ManagedType<T : CStructVar>(val cpp: T)
+public abstract class ManagedType<T : CStructVar>(public val cpp: T)
 
 @ExperimentalForeignApi
-val <T : CStructVar> ManagedType<T>.ptr: CPointer<T> get() = this.cpp.ptr
+public val <T : CStructVar> ManagedType<T>.ptr: CPointer<T> get() = this.cpp.ptr

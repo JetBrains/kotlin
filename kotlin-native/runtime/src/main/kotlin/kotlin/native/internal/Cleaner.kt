@@ -77,7 +77,7 @@ public interface Cleaner
 @ExperimentalStdlibApi
 @ExportForCompiler
 @OptIn(ExperimentalNativeApi::class, ObsoleteWorkersApi::class)
-fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner =
+public fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner =
         kotlin.native.ref.createCleanerImpl(argument, block) as Cleaner
 
 /**
@@ -85,7 +85,7 @@ fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner =
  */
 @InternalForKotlinNative
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
-fun performGCOnCleanerWorker() =
+public fun performGCOnCleanerWorker(): Unit =
     getCleanerWorker().execute(TransferMode.SAFE, {}) {
         GC.collect()
     }.result
@@ -95,14 +95,14 @@ fun performGCOnCleanerWorker() =
  */
 @InternalForKotlinNative
 @OptIn(ObsoleteWorkersApi::class)
-fun waitCleanerWorker() =
+public fun waitCleanerWorker(): Unit =
     getCleanerWorker().execute(TransferMode.SAFE, {}) {
         Unit
     }.result
 
 @GCUnsafeCall("Kotlin_CleanerImpl_getCleanerWorker")
 @OptIn(ObsoleteWorkersApi::class)
-external internal fun getCleanerWorker(): Worker
+internal external fun getCleanerWorker(): Worker
 
 @ExportForCppRuntime("Kotlin_CleanerImpl_shutdownCleanerWorker")
 @OptIn(ObsoleteWorkersApi::class)

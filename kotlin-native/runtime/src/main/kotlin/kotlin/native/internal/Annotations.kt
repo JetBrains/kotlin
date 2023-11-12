@@ -168,7 +168,7 @@ internal annotation class HasFreezeHook
 @Target(AnnotationTarget.FUNCTION)
 @Retention(value = AnnotationRetention.BINARY)
 @InternalForKotlinNative
-annotation class GCUnsafeCall(val callee: String)
+public annotation class GCUnsafeCall(val callee: String)
 
 /**
  * Marks a declaration that is internal for Kotlin/Native tests and shouldn't be used externally.

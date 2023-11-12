@@ -19,12 +19,12 @@ public value class StableRef<out T : Any> @PublishedApi internal constructor(
         private val stablePtr: COpaquePointer
 ) {
 
-    companion object {
+    public companion object {
 
         /**
          * Creates a handle for given object.
          */
-        fun <T : Any> create(any: T) = StableRef<T>(createStablePointer(any))
+        public fun <T : Any> create(any: T): StableRef<T> = StableRef<T>(createStablePointer(any))
 
     }
 
@@ -32,12 +32,12 @@ public value class StableRef<out T : Any> @PublishedApi internal constructor(
      * Converts the handle to C pointer.
      * @see [asStableRef]
      */
-    fun asCPointer(): COpaquePointer = this.stablePtr
+    public fun asCPointer(): COpaquePointer = this.stablePtr
 
     /**
      * Disposes the handle. It must not be used after that.
      */
-    fun dispose() {
+    public fun dispose() {
         disposeStablePointer(this.stablePtr)
     }
 
@@ -45,7 +45,7 @@ public value class StableRef<out T : Any> @PublishedApi internal constructor(
      * Returns the object this handle was [created][StableRef.create] for.
      */
     @Suppress("UNCHECKED_CAST")
-    fun get() = derefStablePointer(this.stablePtr) as T
+    public fun get(): T = derefStablePointer(this.stablePtr) as T
 
 }
 
@@ -53,4 +53,4 @@ public value class StableRef<out T : Any> @PublishedApi internal constructor(
  * Converts to [StableRef] this opaque pointer produced by [StableRef.asCPointer].
  */
 @ExperimentalForeignApi
-inline fun <reified T : Any> CPointer<*>.asStableRef(): StableRef<T> = StableRef<T>(this).also { it.get() }
+public inline fun <reified T : Any> CPointer<*>.asStableRef(): StableRef<T> = StableRef<T>(this).also { it.get() }

@@ -44,13 +44,13 @@ public object GC {
      * with [stop] operation. Even if GC is suspended, [collect] still triggers collection.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_collect")
-    external fun collect()
+    public external fun collect()
 
     /**
      * Trigger new collection without waiting for its completion.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_schedule")
-    external fun schedule()
+    public external fun schedule()
 
     /**
      * Deprecated and unused.
@@ -59,7 +59,7 @@ public object GC {
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_collectCyclic")
     @Deprecated("No-op in modern GC implementation")
-    external fun collectCyclic()
+    public external fun collectCyclic()
 
     /**
      * Deprecated and unused.
@@ -68,7 +68,7 @@ public object GC {
      * GC algorithm is not executed.
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_suspend")
-    external fun suspend()
+    public external fun suspend()
 
     /**
      * Deprecated and unused.
@@ -77,7 +77,7 @@ public object GC {
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_resume")
     @Deprecated("No-op in modern GC implementation")
-    external fun resume()
+    public external fun resume()
 
     /**
      * Deprecated and unused.
@@ -86,7 +86,7 @@ public object GC {
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_stop")
     @Deprecated("No-op in modern GC implementation")
-    external fun stop()
+    public external fun stop()
 
     /**
      * Deprecated and unused.
@@ -96,7 +96,7 @@ public object GC {
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_start")
     @Deprecated("No-op in modern GC implementation")
-    external fun start()
+    public external fun start()
 
     /**
      * Deprecated and unused.
@@ -109,7 +109,7 @@ public object GC {
      * @throws [IllegalArgumentException] when value is not positive.
      */
     @Deprecated("No-op in modern GC implementation")
-    var threshold: Int
+    public var threshold: Int
         get() = getThreshold()
         set(value) {
             require(value > 0) { "threshold must be positive: $value" }
@@ -127,7 +127,7 @@ public object GC {
      * @throws [IllegalArgumentException] when value is not positive.
      */
     @Deprecated("No-op in modern GC implementation")
-    var collectCyclesThreshold: Long
+    public var collectCyclesThreshold: Long
         get() = getCollectCyclesThreshold()
         set(value) {
             require(value > 0) { "collectCyclesThreshold must be positive: $value" }
@@ -144,7 +144,7 @@ public object GC {
      *
      * @throws [IllegalArgumentException] when value is not positive.
      */
-    var thresholdAllocations: Long
+    public var thresholdAllocations: Long
         get() = getThresholdAllocations()
         set(value) {
             require(value > 0) { "thresholdAllocations must be positive: $value" }
@@ -158,7 +158,7 @@ public object GC {
      *
      * Default: true
      */
-    var autotune: Boolean
+    public var autotune: Boolean
         get() = getTuneThreshold()
         set(value) = setTuneThreshold(value)
 
@@ -169,7 +169,7 @@ public object GC {
      * Legacy MM: If cyclic collector for atomic references to be deployed.
      */
     @Deprecated("No-op in modern GC implementation")
-    var cyclicCollectorEnabled: Boolean
+    public var cyclicCollectorEnabled: Boolean
         get() = getCyclicCollectorEnabled()
         set(value) = setCyclicCollectorEnabled(value)
 
@@ -184,7 +184,7 @@ public object GC {
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
-    var regularGCInterval: Duration
+    public var regularGCInterval: Duration
         get() = getRegularGCIntervalMicroseconds().microseconds
         set(value) {
             require(!value.isNegative()) { "regularGCInterval must not be negative: $value" }
@@ -207,7 +207,7 @@ public object GC {
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
-    var targetHeapBytes: Long
+    public var targetHeapBytes: Long
         get() = getTargetHeapBytes()
         set(value) {
             require(value >= 0) { "targetHeapBytes must not be negative: $value" }
@@ -224,7 +224,7 @@ public object GC {
      *
      * @throws [IllegalArgumentException] when value is outside (0, 1] interval.
      */
-    var targetHeapUtilization: Double
+    public var targetHeapUtilization: Double
         get() = getTargetHeapUtilization()
         set(value) {
             require(value > 0 && value <= 1) { "targetHeapUtilization must be in (0, 1] interval: $value" }
@@ -241,7 +241,7 @@ public object GC {
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
-    var minHeapBytes: Long
+    public var minHeapBytes: Long
         get() = getMinHeapBytes()
         set(value) {
             require(value >= 0) { "minHeapBytes must not be negative: $value" }
@@ -258,7 +258,7 @@ public object GC {
      *
      * @throws [IllegalArgumentException] when value is negative.
      */
-    var maxHeapBytes: Long
+    public var maxHeapBytes: Long
         get() = getMaxHeapBytes()
         set(value) {
             require(value >= 0) { "maxHeapBytes must not be negative: $value" }
@@ -272,7 +272,7 @@ public object GC {
      *
      * @throws [IllegalArgumentException] when value is outside (0, 1] interval.
      */
-    var heapTriggerCoefficient: Double
+    public var heapTriggerCoefficient: Double
         get() = getHeapTriggerCoefficient()
         set(value) {
             require(value > 0 && value <= 1) { "heapTriggerCoefficient must be in (0, 1] interval: $value" }
@@ -285,7 +285,7 @@ public object GC {
      *
      * Default: true, unless [autotune] is false or [maxHeapBytes] is less than [Long.MAX_VALUE].
      */
-    var pauseOnTargetHeapOverflow: Boolean
+    public var pauseOnTargetHeapOverflow: Boolean
         get() = getPauseOnTargetHeapOverflow()
         set(value) = setPauseOnTargetHeapOverflow(value)
 
@@ -298,7 +298,7 @@ public object GC {
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_detectCycles")
     @Deprecated("No-op in modern GC implementation")
-    external fun detectCycles(): Array<Any>?
+    public external fun detectCycles(): Array<Any>?
 
     /**
      * Returns statistics of the last finished garbage collection run.
@@ -309,7 +309,7 @@ public object GC {
      * Legacy MM: Always returns null
      */
     @ExperimentalStdlibApi
-    val lastGCInfo: GCInfo?
+    public val lastGCInfo: GCInfo?
         get() = GCInfo.lastGCInfo
 
     /**
@@ -319,7 +319,7 @@ public object GC {
      */
     @GCUnsafeCall("Kotlin_native_internal_GC_findCycle")
     @Deprecated("No-op in modern GC implementation")
-    external fun findCycle(root: Any): Array<Any>?
+    public external fun findCycle(root: Any): Array<Any>?
 
     @GCUnsafeCall("Kotlin_native_internal_GC_getThreshold")
     private external fun getThreshold(): Int

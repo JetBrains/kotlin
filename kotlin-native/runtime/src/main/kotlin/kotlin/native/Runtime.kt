@@ -32,9 +32,9 @@ external public fun deinitRuntimeIfNeeded(): Unit
  */
 @FreezingIsDeprecated
 public class IncorrectDereferenceException : RuntimeException {
-    constructor() : super()
+    public constructor() : super()
 
-    constructor(message: String) : super(message)
+    public constructor(message: String) : super(message)
 }
 
 
