@@ -90,10 +90,12 @@ sourceSets {
 }
 
 fun Test.setupWasmStdlib(target: String) {
-    dependsOn(":kotlin-stdlib:compileKotlinWasm${target.capitalize()}")
-    systemProperty("kotlin.wasm-$target.stdlib.path", "libraries/stdlib/build/classes/kotlin/wasm${target.capitalize()}/main")
-    dependsOn(":kotlin-test:kotlin-test-wasm-$target:compileKotlinWasm")
-    systemProperty("kotlin.wasm-$target.kotlin.test.path", "libraries/kotlin.test/wasm/$target/build/classes/kotlin/wasm/main")
+    @Suppress("LocalVariableName")
+    val Target = target.capitalize()
+    dependsOn(":kotlin-stdlib:compileKotlinWasm$Target")
+    systemProperty("kotlin.wasm-$target.stdlib.path", "libraries/stdlib/build/classes/kotlin/wasm$Target/main")
+    dependsOn(":kotlin-test:compileKotlinWasm$Target")
+    systemProperty("kotlin.wasm-$target.kotlin.test.path", "libraries/kotlin.test/build/classes/kotlin/wasm$Target/main")
 }
 
 fun Test.setupGradlePropertiesForwarding() {
