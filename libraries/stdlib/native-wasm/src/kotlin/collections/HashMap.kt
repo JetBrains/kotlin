@@ -9,7 +9,7 @@ import kotlin.native.concurrent.isFrozen
 import kotlin.native.FreezingIsDeprecated
 
 @OptIn(FreezingIsDeprecated::class)
-actual class HashMap<K, V> private constructor(
+public actual class HashMap<K, V> private constructor(
     // keys in insert order
     private var keysArray: Array<K>,
     // values in insert order, allocated only when actually used, always null in pure HashSet
@@ -52,7 +52,7 @@ actual class HashMap<K, V> private constructor(
     /**
      * Creates a new empty [HashMap].
      */
-    actual constructor() : this(INITIAL_CAPACITY)
+    public actual constructor() : this(INITIAL_CAPACITY)
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
@@ -66,7 +66,7 @@ actual class HashMap<K, V> private constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(
+    public actual constructor(initialCapacity: Int) : this(
             arrayOfUninitializedElements(initialCapacity),
             null,
             IntArray(initialCapacity),
@@ -77,7 +77,7 @@ actual class HashMap<K, V> private constructor(
     /**
      * Creates a new [HashMap] filled with the contents of the specified [original] map.
      */
-    actual constructor(original: Map<out K, V>) : this(original.size) {
+    public actual constructor(original: Map<out K, V>) : this(original.size) {
         putAll(original)
     }
 
@@ -95,7 +95,7 @@ actual class HashMap<K, V> private constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity) {
+    public actual constructor(initialCapacity: Int, loadFactor: Float) : this(initialCapacity) {
         require(loadFactor > 0) { "Non-positive load factor: $loadFactor" }
     }
 
@@ -770,4 +770,4 @@ internal class HashMapEntrySet<K, V> internal constructor(
 }
 
 // This hash map keeps insertion order.
-actual typealias LinkedHashMap<K, V> = HashMap<K, V>
+public actual typealias LinkedHashMap<K, V> = HashMap<K, V>

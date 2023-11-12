@@ -5,7 +5,7 @@
 
 package kotlin.collections
 
-actual class HashSet<E> internal constructor(
+public actual class HashSet<E> internal constructor(
         private val backing: HashMap<E, *>
 ) : MutableSet<E>, kotlin.native.internal.KonanSet<E>, AbstractMutableSet<E>() {
     private companion object {
@@ -15,7 +15,7 @@ actual class HashSet<E> internal constructor(
     /**
      * Creates a new empty [HashSet].
      */
-    actual constructor() : this(HashMap<E, Nothing>())
+    public actual constructor() : this(HashMap<E, Nothing>())
 
     /**
      * Creates a new empty [HashSet] with the specified initial capacity.
@@ -29,12 +29,12 @@ actual class HashSet<E> internal constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(HashMap<E, Nothing>(initialCapacity))
+    public actual constructor(initialCapacity: Int) : this(HashMap<E, Nothing>(initialCapacity))
 
     /**
      * Creates a new [HashSet] filled with the elements of the specified collection.
      */
-    actual constructor(elements: Collection<E>) : this(elements.size) {
+    public actual constructor(elements: Collection<E>) : this(elements.size) {
         addAll(elements)
     }
 
@@ -52,7 +52,7 @@ actual class HashSet<E> internal constructor(
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this(HashMap<E, Nothing>(initialCapacity, loadFactor))
+    public actual constructor(initialCapacity: Int, loadFactor: Float) : this(HashMap<E, Nothing>(initialCapacity, loadFactor))
 
     @PublishedApi
     internal fun build(): Set<E> {
@@ -68,7 +68,7 @@ actual class HashSet<E> internal constructor(
     @Deprecated("This function is not supposed to be used directly.")
     @DeprecatedSinceKotlin(warningSince = "1.9") // TODO: advance to HIDDEN eventually
     override fun getElement(element: E): E? = backing.getKey(element)
-    override actual fun clear() = backing.clear()
+    override actual fun clear(): Unit = backing.clear()
     override actual fun add(element: E): Boolean = backing.addKey(element) >= 0
     override actual fun remove(element: E): Boolean = backing.removeKey(element) >= 0
     override actual fun iterator(): MutableIterator<E> = backing.keysIterator()
@@ -90,4 +90,4 @@ actual class HashSet<E> internal constructor(
 }
 
 // This hash set keeps insertion order.
-actual typealias LinkedHashSet<V> = HashSet<V>
+public actual typealias LinkedHashSet<V> = HashSet<V>

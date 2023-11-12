@@ -5,11 +5,11 @@
 
 package kotlin.collections
 
-expect class HashSet<E> : MutableSet<E> {
+public expect class HashSet<E> : MutableSet<E> {
     /**
      * Creates a new empty [HashSet].
      */
-    constructor()
+    public constructor()
 
     /**
      * Creates a new empty [HashSet] with the specified initial capacity.
@@ -23,7 +23,7 @@ expect class HashSet<E> : MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    constructor(initialCapacity: Int)
+    public constructor(initialCapacity: Int)
 
     /**
      * Creates a new empty [HashSet] with the specified initial capacity and load factor.
@@ -39,12 +39,12 @@ expect class HashSet<E> : MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    constructor(initialCapacity: Int, loadFactor: Float)
+    public constructor(initialCapacity: Int, loadFactor: Float)
 
     /**
      * Creates a new [HashSet] filled with the elements of the specified collection.
      */
-    constructor(elements: Collection<E>)
+    public constructor(elements: Collection<E>)
 
     // From Set
 

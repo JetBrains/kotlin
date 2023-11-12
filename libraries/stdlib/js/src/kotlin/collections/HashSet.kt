@@ -31,12 +31,12 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
     /**
      * Creates a new empty [HashSet].
      */
-    actual constructor() : this(InternalHashMap())
+    public actual constructor() : this(InternalHashMap())
 
     /**
      * Creates a new [HashSet] filled with the elements of the specified collection.
      */
-    actual constructor(elements: Collection<E>) : this(InternalHashMap(elements.size)) {
+    public actual constructor(elements: Collection<E>) : this(InternalHashMap(elements.size)) {
         for (element in elements) {
             internalMap.put(element, true)
         }
@@ -56,7 +56,7 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this(InternalHashMap(initialCapacity, loadFactor))
+    public actual constructor(initialCapacity: Int, loadFactor: Float) : this(InternalHashMap(initialCapacity, loadFactor))
 
     /**
      * Creates a new empty [HashSet] with the specified initial capacity.
@@ -70,7 +70,7 @@ public actual open class HashSet<E> : AbstractMutableSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
+    public actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
     actual override fun add(element: E): Boolean {
         return internalMap.put(element, true) == null

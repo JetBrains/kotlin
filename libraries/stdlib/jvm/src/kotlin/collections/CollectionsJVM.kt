@@ -63,7 +63,7 @@ public inline fun <T> java.util.Enumeration<T>.toList(): List<T> = java.util.Col
 
 
 /**
- * Returns a new list with the elements of this list randomly shuffled.
+ * Returns a new list with the elements of this collection randomly shuffled.
  */
 @SinceKotlin("1.2")
 public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { shuffle() }

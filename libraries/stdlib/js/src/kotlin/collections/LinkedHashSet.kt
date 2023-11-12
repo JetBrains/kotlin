@@ -18,14 +18,14 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
     /**
      * Creates a new empty [LinkedHashSet].
      */
-    actual constructor() : super()
+    public actual constructor() : super()
 
     /**
      * Creates a new [LinkedHashSet] filled with the elements of the specified collection.
      *
      * The iteration order of elements in the created set is the same as in the specified collection.
      */
-    actual constructor(elements: Collection<E>) : super(elements)
+    public actual constructor(elements: Collection<E>) : super(elements)
 
     /**
      * Creates a new empty [LinkedHashSet] with the specified initial capacity and load factor.
@@ -41,7 +41,7 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : super(initialCapacity, loadFactor)
+    public actual constructor(initialCapacity: Int, loadFactor: Float) : super(initialCapacity, loadFactor)
 
     /**
      * Creates a new empty [LinkedHashSet] with the specified initial capacity.
@@ -55,7 +55,7 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
+    public actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
     internal constructor(internalMap: InternalMap<E, Boolean>) : super(internalMap)
 

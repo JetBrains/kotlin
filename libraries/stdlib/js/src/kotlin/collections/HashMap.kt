@@ -32,7 +32,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
     /**
      * Creates a new empty [HashMap].
      */
-    actual constructor() : this(InternalHashMap())
+    public actual constructor() : this(InternalHashMap())
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity and load factor.
@@ -48,7 +48,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : this(InternalHashMap(initialCapacity, loadFactor))
+    public actual constructor(initialCapacity: Int, loadFactor: Float) : this(InternalHashMap(initialCapacity, loadFactor))
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
@@ -62,12 +62,12 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
+    public actual constructor(initialCapacity: Int) : this(initialCapacity, 1.0f)
 
     /**
      * Creates a new [HashMap] filled with the contents of the specified [original] map.
      */
-    actual constructor(original: Map<out K, V>) : this(InternalHashMap(original))
+    public actual constructor(original: Map<out K, V>) : this(InternalHashMap(original))
 
     actual override fun clear() {
         internalMap.clear()
@@ -92,7 +92,7 @@ public actual open class HashMap<K, V> : AbstractMutableMap<K, V>, MutableMap<K,
 
     actual override val size: Int get() = internalMap.size
 
-    actual override fun putAll(from: Map<out K, V>) = internalMap.putAll(from)
+    actual override fun putAll(from: Map<out K, V>): Unit = internalMap.putAll(from)
 }
 
 /**

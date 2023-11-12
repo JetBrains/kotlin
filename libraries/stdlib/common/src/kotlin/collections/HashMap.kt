@@ -5,11 +5,11 @@
 
 package kotlin.collections
 
-expect class HashMap<K, V> : MutableMap<K, V> {
+public expect class HashMap<K, V> : MutableMap<K, V> {
     /**
      * Creates a new empty [HashMap].
      */
-    constructor()
+    public constructor()
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity.
@@ -23,7 +23,7 @@ expect class HashMap<K, V> : MutableMap<K, V> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    constructor(initialCapacity: Int)
+    public constructor(initialCapacity: Int)
 
     /**
      * Creates a new empty [HashMap] with the specified initial capacity and load factor.
@@ -39,12 +39,12 @@ expect class HashMap<K, V> : MutableMap<K, V> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    constructor(initialCapacity: Int, loadFactor: Float)
+    public constructor(initialCapacity: Int, loadFactor: Float)
 
     /**
      * Creates a new [HashMap] filled with the contents of the specified [original] map.
      */
-    constructor(original: Map<out K, V>)
+    public constructor(original: Map<out K, V>)
 
     // From Map
 

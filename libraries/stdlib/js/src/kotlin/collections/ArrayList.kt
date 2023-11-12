@@ -161,7 +161,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
 
     actual override fun lastIndexOf(element: E): Int = array.lastIndexOf(element)
 
-    override fun toString() = arrayToString(array)
+    override fun toString(): String = arrayToString(array)
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> toArray(array: Array<T>): Array<T> {

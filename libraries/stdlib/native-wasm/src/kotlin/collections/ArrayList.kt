@@ -5,7 +5,7 @@
 
 package kotlin.collections
 
-actual class ArrayList<E> actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
+public actual class ArrayList<E> public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
     private var backing = arrayOfUninitializedElements<E>(initialCapacity)
     private var length = 0
     private var isReadOnly = false
@@ -16,14 +16,14 @@ actual class ArrayList<E> actual constructor(initialCapacity: Int) : MutableList
     /**
      * Creates a new empty [ArrayList].
      */
-    actual constructor() : this(10)
+    public actual constructor() : this(10)
 
     /**
      * Creates a new [ArrayList] filled with the elements of the specified collection.
      *
      * The iteration order of elements in the created list is the same as in the specified collection.
      */
-    actual constructor(elements: Collection<E>) : this(elements.size) {
+    public actual constructor(elements: Collection<E>) : this(elements.size) {
         addAll(elements)
     }
 
@@ -37,7 +37,7 @@ actual class ArrayList<E> actual constructor(initialCapacity: Int) : MutableList
     override actual val size: Int
         get() = length
 
-    override actual fun isEmpty() = length == 0
+    override actual fun isEmpty(): Boolean = length == 0
 
     override actual fun get(index: Int): E {
         AbstractList.checkElementIndex(index, length)
@@ -154,13 +154,13 @@ actual class ArrayList<E> actual constructor(initialCapacity: Int) : MutableList
         return backing.copyOfRange(fromIndex = 0, toIndex = length) as Array<Any?>
     }
 
-    actual fun trimToSize() {
+    public actual fun trimToSize() {
         registerModification()
         if (length < backing.size)
             backing = backing.copyOfUninitializedElements(length)
     }
 
-    final actual fun ensureCapacity(minCapacity: Int) {
+    public final actual fun ensureCapacity(minCapacity: Int) {
         if (minCapacity <= backing.size) return
         registerModification()
         ensureCapacityInternal(minCapacity)

@@ -19,7 +19,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
     /**
      * Creates a new empty [LinkedHashMap].
      */
-    actual constructor() : super()
+    public actual constructor() : super()
 
     /**
      * Creates a new empty [LinkedHashMap] with the specified initial capacity.
@@ -33,7 +33,7 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    actual constructor(initialCapacity: Int) : super(initialCapacity)
+    public actual constructor(initialCapacity: Int) : super(initialCapacity)
 
     /**
      * Creates a new empty [LinkedHashMap] with the specified initial capacity and load factor.
@@ -49,14 +49,14 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative or [loadFactor] is non-positive.
      */
-    actual constructor(initialCapacity: Int, loadFactor: Float) : super(initialCapacity, loadFactor)
+    public actual constructor(initialCapacity: Int, loadFactor: Float) : super(initialCapacity, loadFactor)
 
     /**
      * Creates a new [LinkedHashMap] filled with the contents of the specified [original] map.
      *
      * The iteration order of entries in the created map is the same as in the [original] map.
      */
-    actual constructor(original: Map<out K, V>) : super(original)
+    public actual constructor(original: Map<out K, V>) : super(original)
 
     internal constructor(internalMap: InternalMap<K, V>) : super(internalMap)
 

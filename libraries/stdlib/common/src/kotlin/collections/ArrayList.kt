@@ -5,12 +5,12 @@
 
 package kotlin.collections
 
-expect class ArrayList<E> : MutableList<E>, RandomAccess {
+public expect class ArrayList<E> : MutableList<E>, RandomAccess {
 
     /**
      * Creates a new empty [ArrayList].
      */
-    constructor()
+    public constructor()
 
     /**
      * Creates a new empty [ArrayList] with the specified initial capacity.
@@ -24,17 +24,17 @@ expect class ArrayList<E> : MutableList<E>, RandomAccess {
      *
      * @throws IllegalArgumentException if [initialCapacity] is negative.
      */
-    constructor(initialCapacity: Int)
+    public constructor(initialCapacity: Int)
 
     /**
      * Creates a new [ArrayList] filled with the elements of the specified collection.
      *
      * The iteration order of elements in the created list is the same as in the specified collection.
      */
-    constructor(elements: Collection<E>)
+    public constructor(elements: Collection<E>)
 
-    fun trimToSize()
-    fun ensureCapacity(minCapacity: Int)
+    public fun trimToSize()
+    public fun ensureCapacity(minCapacity: Int)
 
     // From List
 
