@@ -513,7 +513,7 @@ public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all {
  * @param otherOffset the start offset in the other char sequence of the substring to compare.
  * @param length the length of the substring to compare.
  */
-actual fun CharSequence.regionMatches(
+public actual fun CharSequence.regionMatches(
     thisOffset: Int,
     other: CharSequence,
     otherOffset: Int,

@@ -13,13 +13,13 @@ import kotlin.wasm.internal.wasm_f32_demote_f64
  *
  * There are also strict versions of the function available on non-nullable String, [toBooleanStrict] and [toBooleanStrictOrNull].
  */
-actual fun String?.toBoolean(): Boolean = this != null && this.lowercase() == "true"
+public actual fun String?.toBoolean(): Boolean = this != null && this.lowercase() == "true"
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-actual fun String.toByte(): Byte = toByteOrNull() ?: numberFormatError(this)
+public actual fun String.toByte(): Byte = toByteOrNull() ?: numberFormatError(this)
 
 /**
  * Parses the string as a signed [Byte] number and returns the result.
@@ -119,7 +119,7 @@ public actual fun Short.toString(radix: Int): String = this.toLong().toString(ra
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-actual fun Int.toString(radix: Int): String = toLong().toString(radix)
+public actual fun Int.toString(radix: Int): String = toLong().toString(radix)
 
 /**
  * Returns a string representation of this [Long] value in the specified [radix].
@@ -127,7 +127,7 @@ actual fun Int.toString(radix: Int): String = toLong().toString(radix)
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
 @SinceKotlin("1.2")
-actual fun Long.toString(radix: Int): String {
+public actual fun Long.toString(radix: Int): String {
     checkRadix(radix)
 
     fun Long.getChar() = toInt().let { if (it < 10) '0' + it else 'a' + (it - 10) }

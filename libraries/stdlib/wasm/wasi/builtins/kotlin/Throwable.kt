@@ -13,12 +13,12 @@ import kotlin.wasm.internal.getSimpleName
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
-public open class Throwable(open val message: String?, open val cause: kotlin.Throwable?) {
-    constructor(message: String?) : this(message, null)
+public open class Throwable(public open val message: String?, public open val cause: kotlin.Throwable?) {
+    public constructor(message: String?) : this(message, null)
 
-    constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    public constructor(cause: Throwable?) : this(cause?.toString(), cause)
 
-    constructor() : this(null, null)
+    public constructor() : this(null, null)
 
     //TODO: Investigate possibility to make WASI stack discoverable (KT-60965)
     internal val stack: String get() = ""

@@ -20,7 +20,7 @@ public external class Promise<out T : JsAny?>(executor: (resolve: (T) -> Unit, r
     public fun <S : JsAny?> catch(onRejected: (JsAny) -> S): Promise<S>
     public fun finally(onFinally: () -> Unit): Promise<T>
 
-    companion object {
+    public companion object {
         public fun <S : JsAny?> all(promise: JsArray<out Promise<S>>): Promise<JsArray<out S>>
         public fun <S : JsAny?> race(promise: JsArray<out Promise<S>>): Promise<S>
         public fun reject(e: JsAny): Promise<Nothing>

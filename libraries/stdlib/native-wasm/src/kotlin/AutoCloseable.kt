@@ -35,7 +35,7 @@ public actual inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
 @PublishedApi
-internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
+internal fun AutoCloseable?.closeFinally(cause: Throwable?): Unit = when {
     this == null -> {}
     cause == null -> close()
     else ->

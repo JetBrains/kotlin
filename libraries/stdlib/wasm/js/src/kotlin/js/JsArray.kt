@@ -8,7 +8,7 @@ package kotlin.js
 /** JavaScript Array */
 @JsName("Array")
 public external class JsArray<T : JsAny?> : JsAny {
-    val length: Int
+    public val length: Int
 }
 
 public operator fun <T : JsAny?> JsArray<T>.get(index: Int): T? =
