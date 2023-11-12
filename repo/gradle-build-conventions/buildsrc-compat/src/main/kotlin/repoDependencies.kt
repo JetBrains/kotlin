@@ -74,7 +74,7 @@ fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): An
  */
 @JvmOverloads
 fun Project.kotlinTest(suffix: String? = null, classifier: String? = null): Any {
-    return if (kotlinBuildProperties.isJpsBuildEnabled) {
+    return if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         kotlinDep(listOfNotNull("test", suffix?.lowercase()).joinToString("-"), bootstrapKotlinVersion, classifier)
     } else {
         val elementsType = when (classifier) {
