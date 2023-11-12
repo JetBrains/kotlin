@@ -54,6 +54,11 @@ object FirNativeErrors {
     val UNCHECKED_CAST_TO_FORWARD_DECLARATION: KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
     val FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT: KtDiagnosticFactory1<ConeKotlinType> by error1<KtElement, ConeKotlinType>()
     val FORWARD_DECLARATION_AS_CLASS_LITERAL: KtDiagnosticFactory1<ConeKotlinType> by error1<KtElement, ConeKotlinType>()
+    val TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE: KtDiagnosticFactory0 by error0<KtElement>()
+    val PROPERTY_MUST_BE_VAR: KtDiagnosticFactory1<FqName> by error1<KtElement, FqName>()
+    val MUST_NOT_HAVE_EXTENSION_RECEIVER: KtDiagnosticFactory1<String> by error1<KtElement, String>()
+    val MUST_BE_OBJC_OBJECT_TYPE: KtDiagnosticFactory2<String, ConeKotlinType> by error2<KtElement, String, ConeKotlinType>()
+    val MUST_BE_UNIT_TYPE: KtDiagnosticFactory2<String, ConeKotlinType> by error2<KtElement, String, ConeKotlinType>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)

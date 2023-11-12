@@ -79,5 +79,20 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val FORWARD_DECLARATION_AS_CLASS_LITERAL by error<KtElement> {
             parameter<ConeKotlinType>("type")
         }
+        val TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE by error<KtElement>()
+        val PROPERTY_MUST_BE_VAR by error<KtElement>() {
+            parameter<FqName>("annotationName")
+        }
+        val MUST_NOT_HAVE_EXTENSION_RECEIVER by error<KtElement> {
+            parameter<String>("annotationKind")
+        }
+        val MUST_BE_OBJC_OBJECT_TYPE by error<KtElement>() {
+            parameter<String>("annotationName")
+            parameter<ConeKotlinType>("unexpectedType")
+        }
+        val MUST_BE_UNIT_TYPE by error<KtElement>() {
+            parameter<String>("annotationKind")
+            parameter<ConeKotlinType>("unexpectedType")
+        }
     }
 }

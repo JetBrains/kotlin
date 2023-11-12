@@ -14,6 +14,7 @@ dependencies {
      */
     implementation(project(":compiler:frontend"))
     implementation(project(":compiler:psi"))
+    implementation(project(":compiler:fir:native"))
 
     compileOnly(project(":core:compiler.common.native"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
