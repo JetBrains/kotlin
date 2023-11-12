@@ -1,0 +1,1 @@
+val valueInImportedModule = 1

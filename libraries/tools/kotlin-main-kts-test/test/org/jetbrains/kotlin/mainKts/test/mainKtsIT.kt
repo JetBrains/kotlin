@@ -139,6 +139,35 @@ class MainKtsIT {
     }
 
     @Test
+    fun testCacheIfContentOfImportedFileChanges() {
+        val script = File("$TEST_DATA_ROOT/import-and-cache-called.main.kts").absolutePath
+        val importedScript = File("$TEST_DATA_ROOT/import-and-cache-imported.main.kts")
+        val cache = createTempDirectory("main.kts.test")
+        var importedFileContentsBackup: String? = null
+
+        try {
+            // Run for the first time - populate the cache.
+            runWithKotlinRunner(script, listOf("Value from imported module: 1"), cacheDir = cache)
+
+            // Modify imported file.
+            importedScript.apply {
+                importedFileContentsBackup = readText()
+                writeText("val valueInImportedModule = 2")
+            }
+
+            // Run the script again.
+            // TODO: this test displays current undesired behavior.
+            //  This value should be 2. It's 1 because changes in imported files don't cause recompilation taking into account the changes,
+            //  and a stale compiled JAR is used.
+            //  See https://youtrack.jetbrains.com/issue/KT-42101
+            runWithKotlinRunner(script, listOf("Value from imported module: 1"), cacheDir = cache)
+        } finally {
+            importedFileContentsBackup?.let { importedScript.writeText(it) }
+            cache.toFile().deleteRecursively()
+        }
+    }
+
+    @Test
     fun testHelloSerialization() {
         val paths = PathUtil.kotlinPathsForDistDirectory
         val serializationPlugin = paths.jar(KotlinPaths.Jar.SerializationPlugin)
