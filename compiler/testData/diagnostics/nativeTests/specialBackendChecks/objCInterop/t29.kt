@@ -6,7 +6,7 @@ import platform.Foundation.*
 
 @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 class Zzz : NSAssertionHandler() {
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!PROPERTY_MUST_BE_VAR!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @ObjCOutlet
-    val x: NSObject get() = this
+    val x: NSObject get() = this<!>
 }

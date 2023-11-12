@@ -7,7 +7,7 @@ import platform.Foundation.*
 class Zzz : NSAssertionHandler() {
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @ObjCOutlet
-    var NSObject.x: NSObject
+    var <!MUST_NOT_HAVE_EXTENSION_RECEIVER!>NSObject<!>.x: NSObject
         get() = this
         set(value: NSObject) { }
 }

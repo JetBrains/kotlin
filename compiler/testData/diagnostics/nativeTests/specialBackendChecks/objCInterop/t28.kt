@@ -5,7 +5,7 @@ import platform.darwin.*
 import platform.Foundation.*
 
 class Zzz : NSAssertionHandler() {
-    @OptIn(kotlinx.cinterop.BetaInteropApi::class)
+    <!MUST_BE_UNIT_TYPE!>@OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @ObjCAction
-    fun foo() = 42
+    fun foo() = 42<!>
 }

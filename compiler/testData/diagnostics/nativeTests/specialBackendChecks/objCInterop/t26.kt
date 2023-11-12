@@ -8,5 +8,5 @@ import platform.Foundation.*
 class Zzz : NSAssertionHandler() {
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @ObjCAction
-    fun String.foo() = println(this)
+    fun <!MUST_NOT_HAVE_EXTENSION_RECEIVER!>String<!>.foo() = println(this)
 }

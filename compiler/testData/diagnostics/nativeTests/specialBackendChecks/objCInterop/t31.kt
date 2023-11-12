@@ -7,7 +7,7 @@ import platform.Foundation.*
 class Zzz : NSAssertionHandler() {
     @OptIn(kotlinx.cinterop.BetaInteropApi::class)
     @ObjCOutlet
-    var x: String 
+    var x: <!MUST_BE_OBJC_OBJECT_TYPE!>String<!>
         get() = "zzz"
         set(value: String) { }
 }
