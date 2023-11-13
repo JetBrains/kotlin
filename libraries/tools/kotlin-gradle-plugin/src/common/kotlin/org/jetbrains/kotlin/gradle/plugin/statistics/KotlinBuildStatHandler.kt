@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.statistics.MetricValueValidationFailed
-import java.io.File
 import java.lang.management.ManagementFactory
 import javax.management.MBeanServer
 import javax.management.ObjectName
@@ -180,12 +179,30 @@ class KotlinBuildStatHandler {
 
             configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
 
-            val taskNames = project.tasks.names.toList()
 
             configurationTimeMetrics.put(
                 BooleanMetrics.KOTLIN_KTS_USED,
                 project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
             )
+
+            addTaskMetrics(project, configurationTimeMetrics)
+
+            if (project.name == "buildSrc") {
+                configurationTimeMetrics.put(NumericalMetrics.BUILD_SRC_COUNT, 1)
+                configurationTimeMetrics.put(BooleanMetrics.BUILD_SRC_EXISTS, true)
+            }
+        }
+        sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
+
+        return configurationTimeMetrics
+    }
+
+    private fun addTaskMetrics(
+        project: Project,
+        configurationTimeMetrics: MetricContainer,
+    ) {
+        try {
+            val taskNames = project.tasks.names.toList()
             configurationTimeMetrics.put(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
             configurationTimeMetrics.put(
                 NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
@@ -197,15 +214,9 @@ class KotlinBuildStatHandler {
                     }
                 }.toLong()
             )
-
-            if (project.name == "buildSrc") {
-                configurationTimeMetrics.put(NumericalMetrics.BUILD_SRC_COUNT, 1)
-                configurationTimeMetrics.put(BooleanMetrics.BUILD_SRC_EXISTS, true)
-            }
+        } catch (e: Exception) {
+            //ignore exceptions for KT-62131.
         }
-        sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
-
-        return configurationTimeMetrics
     }
 
     private fun collectAppliedPluginsStatistics(
