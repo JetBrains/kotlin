@@ -223,27 +223,16 @@ abstract class KotlinJsIrSubTarget(
 
                 val mode = binary.mode
 
-                val prepareJsLibrary = registerSubTargetTask<Copy>(
+                val distributionTask = registerSubTargetTask<Copy>(
                     disambiguateCamelCased(
                         binary.name,
-                        PREPARE_JS_LIBRARY_TASK_NAME
+                        DISTRIBUTION_TASK_NAME
                     )
                 ) {
                     it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
                     it.from(binary.linkSyncTask)
 
                     it.into(binary.distribution.directory)
-                }
-
-                val distributionTask = registerSubTargetTask<Task>(
-                    disambiguateCamelCased(
-                        binary.name,
-                        DISTRIBUTION_TASK_NAME
-                    )
-                ) {
-                    it.dependsOn(prepareJsLibrary)
-
-                    it.outputs.dir(project.newFileProperty { binary.distribution.directory })
                 }
 
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {
@@ -265,9 +254,6 @@ abstract class KotlinJsIrSubTarget(
     companion object {
         const val RUN_TASK_NAME = "run"
 
-        const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         const val DISTRIBUTION_TASK_NAME = "distribution"
-
-        const val PREPARE_JS_LIBRARY_TASK_NAME = "prepare"
     }
 }

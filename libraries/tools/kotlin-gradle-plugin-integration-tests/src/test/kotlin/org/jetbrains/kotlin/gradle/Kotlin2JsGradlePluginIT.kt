@@ -617,7 +617,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 }
             }
 
-            build("browserProductionWebpack") {
+            build("browserDistribution") {
                 assertTasksExecuted(":app:browserProductionWebpack")
                 assertFileExists(subProject("app").projectPath.resolve("build/${Distribution.DIST}/js/productionExecutable/app.js"))
             }
@@ -730,7 +730,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 }
             }
 
-            build("browserProductionWebpack") {
+            build("browserDistribution") {
                 assertTasksExecuted(":browserProductionWebpack")
                 assertFileExists(projectPath.resolve("build/${Distribution.DIST}/js/productionExecutable/CORRECT_NAME.js"))
             }
@@ -1142,7 +1142,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             build("clean", "browserDistribution") {
                 assertTasksExecuted(
                     ":app:processResources",
-                    ":app:browserProductionExecutableDistributeResources"
+                    ":app:browserDistribution"
                 )
 
                 assertFileInProjectExists("app/build/${Distribution.DIST}/js/productionExecutable/index.html")
