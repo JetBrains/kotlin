@@ -316,6 +316,7 @@ kotlin {
             )
             project.sourceSets["main"].java.srcDirs(*jvmSrcDirs.toTypedArray())
             kotlin.setSrcDirs(jvmSrcDirs)
+            kotlin.exclude("kotlin/internal/InternalAnnotations.kt")
         }
 
         val jvmMainJdk7 by getting {
