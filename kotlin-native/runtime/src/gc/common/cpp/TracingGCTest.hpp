@@ -179,13 +179,10 @@ std::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     return alloc::test_support::allocatedObjects(threadData);
 }
 
-
 template <typename FixtureImpl>
 class TracingGCTest : public testing::Test {
 public:
-    void SetUp() override {
-        impl_.SetUp();
-    }
+    void SetUp() override { impl_.SetUp(); }
 
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
 private:
@@ -930,106 +927,6 @@ TYPED_TEST_P(TracingGCTest, CrossThreadReference) {
     }
 }
 
-TYPED_TEST_P(TracingGCTest, MultipleMutatorsWeaks) {
-    std::vector<Mutator> mutators(kDefaultThreadCount);
-    ObjHeader* globalRoot = nullptr;
-    test_support::RegularWeakReferenceImpl* weak = nullptr;
-
-    mutators[0]
-            .Execute([&weak, &globalRoot](mm::ThreadData& threadData, Mutator& mutator) {
-                auto& global = mutator.AddGlobalRoot();
-
-                auto& object = AllocateObject(threadData);
-                auto& objectWeak = ([&threadData, &object]() -> test_support::RegularWeakReferenceImpl& {
-                    ObjHolder holder;
-                    return test_support::InstallWeakReference(threadData, object.header(), holder.slot());
-                })();
-                global->field1 = objectWeak.header();
-                weak = &objectWeak;
-                globalRoot = global.header();
-            })
-            .wait();
-
-    // Make sure all mutators are initialized.
-    for (int i = 1; i < kDefaultThreadCount; ++i) {
-        mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {}).wait();
-    }
-
-    std::vector<std::future<void>> gcFutures;
-    auto epoch = mm::GlobalData::Instance().gc().Schedule();
-    std::atomic<bool> gcDone = false;
-
-    // Spin until thread suspension is requested.
-    while (!mm::IsThreadSuspensionRequested()) {
-    }
-
-    for (auto& mutator : mutators) {
-        gcFutures.emplace_back(mutator.Execute([&](mm::ThreadData& threadData, Mutator& mutator) noexcept {
-            while (!gcDone.load(std::memory_order_relaxed)) {
-                mm::safePoint(threadData);
-                EXPECT_THAT(weak->get(), nullptr);
-            }
-        }));
-    }
-
-    mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
-    gcDone.store(true, std::memory_order_relaxed);
-
-    for (auto& future : gcFutures) {
-        future.wait();
-    }
-
-    for (auto& mutator : mutators) {
-        EXPECT_THAT(mutator.Alive(), testing::UnorderedElementsAre(globalRoot, weak->header()));
-    }
-}
-
-TYPED_TEST_P(TracingGCTest, MultipleMutatorsWeakNewObj) {
-    std::vector<Mutator> mutators(kDefaultThreadCount);
-
-    // Make sure all mutators are initialized.
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {}).wait();
-    }
-
-    std::vector<std::future<void>> gcFutures;
-    auto epoch = mm::GlobalData::Instance().gc().Schedule();
-    std::atomic<bool> gcDone = false;
-
-    // Spin until thread suspension is requested.
-    while (!mm::IsThreadSuspensionRequested()) {
-    }
-
-    for (auto& mutator : mutators) {
-        gcFutures.emplace_back(mutator.Execute([&](mm::ThreadData& threadData, Mutator& mutator) noexcept {
-            mm::safePoint(threadData);
-
-            auto& object = AllocateObject(threadData);
-            auto& objectWeak = ([&threadData, &object]() -> test_support::RegularWeakReferenceImpl& {
-                ObjHolder holder;
-                return test_support::InstallWeakReference(threadData, object.header(), holder.slot());
-            })();
-            EXPECT_NE(objectWeak.get(), nullptr);
-
-            auto& extraObj = *mm::ExtraObjectData::Get(object.header());
-            extraObj.ClearRegularWeakReferenceImpl();
-            extraObj.Uninstall();
-            alloc::destroyExtraObjectData(extraObj);
-
-            while (!gcDone.load(std::memory_order_relaxed)) {
-                mm::safePoint(threadData);
-            }
-        }));
-    }
-
-    mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
-    gcDone.store(true, std::memory_order_relaxed);
-
-    for (auto& future : gcFutures) {
-        future.wait();
-    }
-}
-
 TYPED_TEST_P(TracingGCTest, NewThreadsWhileRequestingCollection) {
     std::vector<Mutator> mutators(kDefaultThreadCount);
     std::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
@@ -1265,7 +1162,7 @@ TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
     }
 }
 
-#define COMMON_TEST_LIST \
+#define TRACING_GC_TEST_LIST \
     RootSet, \
     InterconnectedRootSet, \
     FreeObjects, \
@@ -1283,11 +1180,118 @@ TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
     MultipleMutatorsAllCollect, \
     MultipleMutatorsAddToRootSetAfterCollectionRequested, \
     CrossThreadReference, \
-    MultipleMutatorsWeaks, \
-    MultipleMutatorsWeakNewObj, \
     NewThreadsWhileRequestingCollection, \
     FreeObjectWithFreeWeakReversedOrder, \
     MutateBetweenSafePoints
+
+template <typename FixtureImpl>
+class STWMarkGCTest : public TracingGCTest<FixtureImpl> {};
+
+TYPED_TEST_SUITE_P(STWMarkGCTest);
+
+TYPED_TEST_P(STWMarkGCTest, MultipleMutatorsWeaks) {
+    std::vector<Mutator> mutators(kDefaultThreadCount);
+    ObjHeader* globalRoot = nullptr;
+    test_support::RegularWeakReferenceImpl* weak = nullptr;
+
+    mutators[0]
+            .Execute([&weak, &globalRoot](mm::ThreadData& threadData, Mutator& mutator) {
+                auto& global = mutator.AddGlobalRoot();
+
+                auto& object = AllocateObject(threadData);
+                auto& objectWeak = ([&threadData, &object]() -> test_support::RegularWeakReferenceImpl& {
+                    ObjHolder holder;
+                    return test_support::InstallWeakReference(threadData, object.header(), holder.slot());
+                })();
+                global->field1 = objectWeak.header();
+                weak = &objectWeak;
+                globalRoot = global.header();
+            })
+            .wait();
+
+    // Make sure all mutators are initialized.
+    for (int i = 1; i < kDefaultThreadCount; ++i) {
+        mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {}).wait();
+    }
+
+    std::vector<std::future<void>> gcFutures;
+    auto epoch = mm::GlobalData::Instance().gc().Schedule();
+    std::atomic<bool> gcDone = false;
+
+    // Spin until thread suspension is requested.
+    while (!mm::IsThreadSuspensionRequested()) {
+    }
+
+    for (auto& mutator : mutators) {
+        gcFutures.emplace_back(mutator.Execute([&](mm::ThreadData& threadData, Mutator& mutator) noexcept {
+            while (!gcDone.load(std::memory_order_relaxed)) {
+                mm::safePoint(threadData);
+                EXPECT_THAT(weak->get(), nullptr);
+            }
+        }));
+    }
+
+    mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
+    gcDone.store(true, std::memory_order_relaxed);
+
+    for (auto& future : gcFutures) {
+        future.wait();
+    }
+
+    for (auto& mutator : mutators) {
+        EXPECT_THAT(mutator.Alive(), testing::UnorderedElementsAre(globalRoot, weak->header()));
+    }
+}
+
+TYPED_TEST_P(STWMarkGCTest, MultipleMutatorsWeakNewObj) {
+    std::vector<Mutator> mutators(kDefaultThreadCount);
+
+    // Make sure all mutators are initialized.
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {}).wait();
+    }
+
+    std::vector<std::future<void>> gcFutures;
+    auto epoch = mm::GlobalData::Instance().gc().Schedule();
+    std::atomic<bool> gcDone = false;
+
+    // Spin until thread suspension is requested.
+    while (!mm::IsThreadSuspensionRequested()) {
+    }
+
+    for (auto& mutator : mutators) {
+        gcFutures.emplace_back(mutator.Execute([&](mm::ThreadData& threadData, Mutator& mutator) noexcept {
+            mm::safePoint(threadData);
+
+            auto& object = AllocateObject(threadData);
+            auto& objectWeak = ([&threadData, &object]() -> test_support::RegularWeakReferenceImpl& {
+                ObjHolder holder;
+                return test_support::InstallWeakReference(threadData, object.header(), holder.slot());
+            })();
+            EXPECT_NE(objectWeak.get(), nullptr);
+
+            auto& extraObj = *mm::ExtraObjectData::Get(object.header());
+            extraObj.ClearRegularWeakReferenceImpl();
+            extraObj.Uninstall();
+            alloc::destroyExtraObjectData(extraObj);
+
+            while (!gcDone.load(std::memory_order_relaxed)) {
+                mm::safePoint(threadData);
+            }
+        }));
+    }
+
+    mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
+    gcDone.store(true, std::memory_order_relaxed);
+
+    for (auto& future : gcFutures) {
+        future.wait();
+    }
+}
+
+#define STW_MARK_GC_TEST_LIST \
+    MultipleMutatorsWeaks, \
+    MultipleMutatorsWeakNewObj
 
 // expand lists before stringization in REGISTER_TYPED_TEST_SUITE_P
 #define REGISTER_TYPED_TEST_SUITE_WITH_LISTS(SuiteName, ...) REGISTER_TYPED_TEST_SUITE_P(SuiteName, __VA_ARGS__)

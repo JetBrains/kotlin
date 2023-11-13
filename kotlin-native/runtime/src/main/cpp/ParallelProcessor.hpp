@@ -224,6 +224,11 @@ public:
         return registeredWorkers_.load(std::memory_order_relaxed);
     }
 
+    void undo() noexcept {
+        // FIXME very carefully here
+        allDone_ = false;
+    }
+
 private:
     bool releaseBatch(Batch&& batch) {
         RuntimeAssert(!batch.empty(), "A batch to release into shared pool must be non-empty");

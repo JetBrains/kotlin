@@ -187,14 +187,9 @@ void gc::barriers::BarriersThreadData::beforeHeapRefUpdateSlowPath(mm::DirectRef
         //       Yet at the moment there is now efficient way to distinguish black and gray objects.
 
         auto& objectData = alloc::objectDataForObject(prev);
-
-        // TODO This is just a dummy. Replace with enqueueing when thread-local mark queues will be implemented.
-        bool marked = objectData.tryMark();
-
-        if (marked) {
-            // TODO maybe we could go branch-less?
-            markHandle_.addObject();
-        }
+        base_.gc().impl().gc().mark().markQueue()->tryPush(objectData);
+        // No need to add the marked object in statistics here.
+        // Objects will be counted on dequeue.
     }
 }
 

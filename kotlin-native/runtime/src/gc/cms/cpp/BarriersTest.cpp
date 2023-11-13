@@ -7,6 +7,9 @@
 #include "gtest/gtest.h"
 
 #include "Barriers.hpp"
+#include "ConcurrentMark.hpp"
+#include "GCImpl.hpp"
+#include "ManuallyScoped.hpp"
 #include "ObjectTestSupport.hpp"
 #include "ObjectOps.hpp"
 #include "ReferenceOps.hpp"
@@ -48,6 +51,13 @@ public:
         mm::GlobalData::Instance().allocator().clearForTests();
     }
 
+    void initMutatorMarkQueue(mm::ThreadData& thread) {
+        auto& markData = thread.gc().impl().gc().mark();
+        markData.markQueue().construct(parProc_);
+    }
+
+private:
+    gc::mark::ConcurrentMark::ParallelProcessor parProc_;
 };
 
 } // namespace
@@ -55,7 +65,9 @@ public:
 TEST_F(BarriersTest, Deletion) {
     gc::barriers::beginMarkingEpoch(gcHandle);
 
-    RunInNewThread([](mm::ThreadData& threadData) {
+    RunInNewThread([this](mm::ThreadData& threadData) {
+        initMutatorMarkQueue(threadData);
+
         auto& prevObj = AllocateObject(threadData);
         auto& newObj = AllocateObject(threadData);
 
@@ -85,6 +97,9 @@ TEST_F(BarriersTest, Deletion) {
 }
 
 TEST_F(BarriersTest, WeakRefRead) {
+    if (!compiler::concurrentWeakSweep()) {
+        GTEST_SKIP() << "Concurrent weak sweep is disabled";
+    }
     gc::barriers::beginMarkingEpoch(gcHandle);
 
     RunInNewThread([](mm::ThreadData& threadData) {
@@ -134,7 +149,8 @@ TEST_F(BarriersTest, AllocationDuringMarkBarreirs) {
     gc::barriers::beginMarkingEpoch(gcHandle);
     gc::barriers::enableMarkBarriers();
 
-    RunInNewThread([](mm::ThreadData& threadData) {
+    RunInNewThread([this](mm::ThreadData& threadData) {
+        initMutatorMarkQueue(threadData);
         auto& obj = AllocateObject(threadData);
         EXPECT_THAT(gc::isMarked(obj.header()), true);
     });
@@ -180,6 +196,7 @@ TEST_F(BarriersTest, ConcurrentDeletion) {
         threads.emplace_back([&]() noexcept {
             ScopedMemoryInit memory;
             mm::ThreadData& threadData = *memory.memoryState()->GetThreadData();
+            initMutatorMarkQueue(threadData);
 
             while (!canStart.load()) std::this_thread::yield();
 

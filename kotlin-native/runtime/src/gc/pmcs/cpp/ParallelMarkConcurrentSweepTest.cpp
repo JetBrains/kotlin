@@ -60,8 +60,6 @@ private:
 
 } // namespace
 
-REGISTER_TYPED_TEST_SUITE_WITH_LISTS(TracingGCTest, COMMON_TEST_LIST);
-
 using ParallelismConfigs = ::testing::Types<
         ParallelMarkConcurrentSweepTest<kDefaultThreadCount * 3, false, 0>,
         ParallelMarkConcurrentSweepTest<kDefaultThreadCount * 3, true, 0>
@@ -78,4 +76,9 @@ struct NameGenerator {
         return T::getName();
     }
 };
+
+REGISTER_TYPED_TEST_SUITE_WITH_LISTS(TracingGCTest, TRACING_GC_TEST_LIST);
 INSTANTIATE_TYPED_TEST_SUITE_P(PMCS, TracingGCTest, ParallelismConfigs, NameGenerator);
+
+REGISTER_TYPED_TEST_SUITE_WITH_LISTS(STWMarkGCTest, STW_MARK_GC_TEST_LIST);
+INSTANTIATE_TYPED_TEST_SUITE_P(PMCS, STWMarkGCTest, ParallelismConfigs, NameGenerator);
