@@ -188,6 +188,9 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
             if (envSign != null) {
                 property("sign", envSign)
             }
+            if (userScriptSandboxingEnabled != null) {
+                property("userScriptSandboxingEnabled", userScriptSandboxingEnabled)
+            }
         }
     }
 
@@ -215,7 +218,6 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
                     "Sandboxing for user scripts is currently enabled. " +
                             "\nTo successfully construct $frameworkTaskName, it's necessary to disable this feature. " +
                             "\nNavigate to \"Build Setting\", locate \"User script sandboxing\" (ENABLE_USER_SCRIPT_SANDBOXING) and set it to \"NO\". " +
-                            "\nFollowing this, refresh the Gradle daemon by executing \"./gradlew --stop\". " +
                             "\nMore info in documentation https://jb.gg/ltd9e6"
                 )
             }
