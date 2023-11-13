@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
-class Element(override val name: String, override val propertyName: String, kind: Kind) : AbstractElement<Element, Field>() {
+class Element(name: String, override val propertyName: String, kind: Kind) : AbstractElement<Element, Field>(name) {
     companion object {
         private val allowedKinds = setOf(
             ImplementationKind.Interface,
@@ -78,9 +78,6 @@ class Element(override val name: String, override val propertyName: String, kind
 
     var baseTransformerType: Element? = null
     val transformerClass: Element get() = baseTransformerType ?: this
-
-    override val visitFunctionName: String
-        get() = "visit$name"
 
     override val visitorParameterName: String
         get() = safeDecapitalizedName
