@@ -27,7 +27,7 @@ class BirSetFieldImpl(
     superQualifierSymbol: BirClassSymbol?,
     receiver: BirExpression?,
     origin: IrStatementOrigin?,
-    value: BirExpression,
+    value: BirExpression?,
 ) : BirSetField() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -130,10 +130,10 @@ class BirSetFieldImpl(
 
     private var _value: BirExpression? = value
 
-    override var value: BirExpression
+    override var value: BirExpression?
         get() {
             recordPropertyRead(2)
-            return _value ?: throwChildElementRemoved("value")
+            return _value
         }
         set(value) {
             if (_value != value) {

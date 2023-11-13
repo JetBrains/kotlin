@@ -18,14 +18,14 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.try]
  */
 abstract class BirTry : BirExpression() {
-    abstract var tryResult: BirExpression
+    abstract var tryResult: BirExpression?
 
     abstract val catches: BirChildElementList<BirCatch>
 
     abstract var finallyExpression: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        tryResult.accept(data, visitor)
+        tryResult?.accept(data, visitor)
         catches.acceptChildren(visitor, data)
         finallyExpression?.accept(data, visitor)
     }

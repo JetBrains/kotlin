@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 class BirConstantPrimitiveImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-    value: BirConst<*>,
+    value: BirConst<*>?,
 ) : BirConstantPrimitive() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -66,10 +66,10 @@ class BirConstantPrimitiveImpl(
 
     private var _value: BirConst<*>? = value
 
-    override var value: BirConst<*>
+    override var value: BirConst<*>?
         get() {
             recordPropertyRead(1)
-            return _value ?: throwChildElementRemoved("value")
+            return _value
         }
         set(value) {
             if (_value != value) {

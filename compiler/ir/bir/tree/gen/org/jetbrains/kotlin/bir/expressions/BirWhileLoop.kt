@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.bir.accept
 abstract class BirWhileLoop : BirLoop() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         body?.accept(data, visitor)
-        condition.accept(data, visitor)
+        condition?.accept(data, visitor)
     }
 
     companion object

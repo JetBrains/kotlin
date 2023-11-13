@@ -28,11 +28,11 @@ abstract class BirAnonymousInitializer : BirImplElementBase(), BirDeclaration,
 
     abstract var isStatic: Boolean
 
-    abstract var body: BirBlockBody
+    abstract var body: BirBlockBody?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)
-        body.accept(data, visitor)
+        body?.accept(data, visitor)
     }
 
     companion object

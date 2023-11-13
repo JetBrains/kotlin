@@ -49,6 +49,7 @@ private val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhas
 
 private val excludedPhases = setOf<String>(
     //"Bir2Ir",
+    "Terminate",
 
     // This phase removes annotation constructors, but they are still being used,
     // which causes an exception in BIR. It works in IR because removed constructors
