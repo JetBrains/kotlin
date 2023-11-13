@@ -106,9 +106,11 @@ internal class ReflectiveAccessLowering(
         if (callee.isAccessible(withSuper = superQualifier != null)) {
             return expression
         }
-        return if (expression.origin == IrStatementOrigin.GET_PROPERTY) {
+
+        val isAccessToProperty = expression.symbol.owner.correspondingPropertySymbol != null
+        return if (isAccessToProperty && expression.origin == IrStatementOrigin.GET_PROPERTY) {
             generateReflectiveAccessForGetter(expression)
-        } else if (expression.origin?.isAssignmentOperator() == true) {
+        } else if (isAccessToProperty && expression.origin?.isAssignmentOperator() == true) {
             generateReflectiveAccessForSetter(expression)
         } else if (expression.dispatchReceiver == null && expression.extensionReceiver == null) {
             generateReflectiveStaticCall(expression)
@@ -325,7 +327,7 @@ internal class ReflectiveAccessLowering(
         arguments.addAll(call.getValueArguments())
 
         return generateReflectiveMethodInvocation(
-            call.superQualifierSymbol?.defaultType ?: call.dispatchReceiver?.type ?: call.symbol.owner.parentAsClass.defaultType,
+            call.superQualifierSymbol?.defaultType ?: call.symbol.owner.resolveFakeOverrideOrFail().parentAsClass.defaultType,
             call.symbol.owner.name.asString(),
             parameterTypes,
             call.dispatchReceiver,
