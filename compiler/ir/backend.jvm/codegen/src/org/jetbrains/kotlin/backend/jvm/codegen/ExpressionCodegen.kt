@@ -582,7 +582,10 @@ class ExpressionCodegen(
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
         val intrinsic = classCodegen.context.getIntrinsic(expression.symbol) as IntrinsicMethod?
-        intrinsic?.invoke(expression, this, data)?.let { return it }
+        if (intrinsic != null) {
+            expression.markLineNumber(true)
+            intrinsic.invoke(expression, this, data)?.let { return it }
+        }
 
         val callee = expression.symbol.owner
         require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
