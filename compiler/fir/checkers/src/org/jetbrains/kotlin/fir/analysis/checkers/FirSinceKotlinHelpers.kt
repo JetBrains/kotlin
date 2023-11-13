@@ -11,14 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
@@ -60,40 +53,13 @@ fun FirDeclaration.checkSinceKotlinVersionAccessibility(context: CheckerContext)
 }
 
 private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSinceKotlinValue? {
-    var result: FirSinceKotlinValue? = null
-
-    fun FirDeclaration.consider() {
-        val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin, session)?.findArgumentByName(
-            StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion
-        )
-        val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
-        if (apiVersion != null) {
-            if (result == null || apiVersion > result!!.apiVersion) {
-                result = FirSinceKotlinValue(apiVersion, loadWasExperimentalMarkerClasses(session))
-            }
-        }
-    }
-
-    fun FirClassLikeSymbol<*>.consider() {
-        lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-        @OptIn(SymbolInternals::class)
-        this.fir.consider()
-    }
-
-    this.consider()
-    if (this is FirConstructor) {
-        val classId = symbol.callableId.classId
-        if (classId != null) {
-            val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
-            classSymbol?.consider()
-        }
-    }
-
-    if (this is FirTypeAlias) {
-        (this.expandedTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)?.consider()
-    }
-
-    return result
+    val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin, session)?.findArgumentByName(
+        StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion
+    )
+    val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)?.let(ApiVersion.Companion::parse)
+    return if (apiVersion != null) {
+        FirSinceKotlinValue(apiVersion, loadWasExperimentalMarkerClasses(session))
+    } else null
 }
 
 private fun FirDeclaration.loadWasExperimentalMarkerClasses(session: FirSession): List<FirRegularClassSymbol> {
