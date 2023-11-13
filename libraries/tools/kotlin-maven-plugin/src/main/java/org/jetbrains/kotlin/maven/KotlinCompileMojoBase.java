@@ -77,9 +77,6 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     @Parameter
     private List<String> pluginOptions;
 
-    @Parameter
-    private boolean multiPlatform = false;
-
     protected List<String> getSourceFilePaths() {
         List<String> sourceFilePaths = new ArrayList<>();
         if (sourceDirs != null && !sourceDirs.isEmpty()) sourceFilePaths.addAll(sourceDirs);
@@ -96,27 +93,6 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         for (String source : sources) {
             addSourceRoots(result, source);
-        }
-
-        Map<String, MavenProject> projectReferences = project.getProjectReferences();
-        if (projectReferences != null) {
-            iterateDependencies:
-            for (Dependency dependency : project.getDependencies()) {
-                MavenProject sibling = projectReferences.get(dependency.getGroupId() + ":" + dependency.getArtifactId() + ":" + dependency.getVersion());
-                if (sibling != null) {
-                    Plugin plugin = sibling.getPlugin("org.jetbrains.kotlin:kotlin-maven-plugin");
-                    if (plugin != null) {
-                        for (PluginExecution pluginExecution : plugin.getExecutions()) {
-                            if (pluginExecution.getGoals() != null && pluginExecution.getGoals().contains("metadata")) {
-                                for (String sourceRoot : orEmpty(getRelatedSourceRoots(sibling))) {
-                                    addSourceRoots(result, sourceRoot);
-                                    continue iterateDependencies;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
 
         return result;
@@ -457,7 +433,6 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         arguments.setSuppressWarnings(nowarn);
         arguments.setLanguageVersion(languageVersion);
         arguments.setApiVersion(apiVersion);
-        arguments.setMultiPlatform(multiPlatform);
 
         configureSpecificCompilerArguments(arguments, sourceRoots);
 
