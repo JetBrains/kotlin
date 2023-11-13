@@ -9,6 +9,54 @@
 package kotlin.text
 
 /**
+ * Appends the string representation of the specified byte [value] to this string builder and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was appended to this string builder.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.append(value: Byte): StringBuilder = this.append(value.toInt())
+
+/**
+ * Appends the string representation of the specified short [value] to this string builder and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was appended to this string builder.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.append(value: Short): StringBuilder = this.append(value.toInt())
+
+/**
+ * Inserts the string representation of the specified byte [value] into this string builder at the specified [index] and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was inserted into this string builder at the specified [index].
+ *
+ * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.insert(index: Int, value: Byte): StringBuilder = this.insert(index, value.toInt())
+
+/**
+ * Inserts the string representation of the specified short [value] into this string builder at the specified [index] and returns this instance.
+ *
+ * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+ * and then that string was inserted into this string builder at the specified [index].
+ *
+ * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+ */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
+@SinceKotlin("1.9")
+@kotlin.internal.InlineOnly
+public actual inline fun StringBuilder.insert(index: Int, value: Short): StringBuilder = this.insert(index, value.toInt())
+
+/**
  * Clears the content of this string builder making it empty and returns this instance.
  *
  * @sample samples.text.Strings.clearStringBuilder
