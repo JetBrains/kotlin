@@ -11,22 +11,19 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
-import org.jetbrains.kotlin.utils.DFS
 
 
 @OptIn(SymbolInternals::class)
@@ -119,19 +116,10 @@ private fun FirClassSymbol<*>.isObjCClass(session: FirSession) = classId.package
             it.classId == NativeStandardInteropNames.objCObjectClassId
         }
 
-/**
- * almost mimics `IrClass.selfOrAnySuperClass()` apart from using of classsymbol instead of class itself, to use `classId.toSymbol()`
- */
-private fun FirClassSymbol<*>.selfOrAnySuperClass(session: FirSession, pred: (FirClassSymbol<*>) -> Boolean): Boolean =
-        DFS.ifAny(
-                listOf(this),
-                { current ->
-                    current.resolvedSuperTypes.mapNotNull {
-                        (it.classId?.toSymbol(session) as? FirClassLikeSymbol)?.fullyExpandedClass(session)
-                    }
-                },
-                pred
-        )
+private fun FirClassSymbol<*>.selfOrAnySuperClass(session: FirSession, predicate: (ConeClassLikeLookupTag) -> Boolean): Boolean =
+    predicate(toLookupTag()) ||
+            lookupSuperTypes(listOf(this), lookupInterfaces = true, deep = true, session, substituteTypes = false)
+                .any { predicate(it.lookupTag) }
 
 internal fun FirFunction.getInitMethodIfObjCConstructor(session: FirSession, scopeSession: ScopeSession): FirFunction? =
         if (this is FirConstructor && isObjCConstructor(session))
