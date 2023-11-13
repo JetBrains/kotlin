@@ -485,7 +485,7 @@ class Ir2BirConverter(
     private fun copyFile(old: IrFile): BirFile = copyReferencedElement(old, files, {
         BirFileImpl(
             sourceSpan = SourceSpan(old.startOffset, old.endOffset),
-            descriptor = mapDescriptor { old.packageFragmentDescriptor },
+            descriptor = mapDescriptor(old),
             packageFqName = old.packageFqName,
             fileEntry = old.fileEntry,
             signature = old.symbol.signature,
