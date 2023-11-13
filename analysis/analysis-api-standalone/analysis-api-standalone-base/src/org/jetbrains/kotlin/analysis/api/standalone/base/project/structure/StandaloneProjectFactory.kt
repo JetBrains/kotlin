@@ -69,14 +69,15 @@ object StandaloneProjectFactory {
     fun createProjectEnvironment(
         projectDisposable: Disposable,
         applicationDisposable: Disposable,
-        unitTestMode: Boolean = false,
+        applicationEnvironmentMode: KotlinCoreApplicationEnvironmentMode,
         compilerConfiguration: CompilerConfiguration = CompilerConfiguration(),
         classLoader: ClassLoader = MockProject::class.java.classLoader,
     ): KotlinCoreProjectEnvironment {
-        val applicationEnvironment = if (unitTestMode)
-            KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForTests(applicationDisposable, compilerConfiguration)
-        else
-            KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(applicationDisposable, compilerConfiguration)
+        val applicationEnvironment = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(
+            applicationDisposable,
+            compilerConfiguration,
+            applicationEnvironmentMode,
+        )
 
         registerApplicationExtensionPoints(applicationEnvironment, applicationDisposable)
 

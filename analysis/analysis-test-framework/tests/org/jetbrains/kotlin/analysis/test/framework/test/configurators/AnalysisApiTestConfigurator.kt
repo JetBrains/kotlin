@@ -36,6 +36,15 @@ abstract class AnalysisApiTestConfigurator {
 
     abstract val serviceRegistrars: List<AnalysisApiTestServiceRegistrar>
 
+    /**
+     * Whether the associated [core application environment][org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment] should
+     * permit write access.
+     *
+     * Write access is disabled by default because the Analysis API should not be used during write actions. Nevertheless, some tests may
+     * need write access, for example to modify PSI.
+     */
+    open val isWriteAccessAllowed get() = false
+
     open fun prepareFilesInModule(files: List<PsiFile>, module: TestModule, testServices: TestServices) {}
 
     open fun doGlobalModuleStateModification(project: Project) {

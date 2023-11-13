@@ -24,13 +24,31 @@ import org.jetbrains.kotlin.cli.jvm.compiler.IdeaExtensionPoints.registerVersion
 import org.jetbrains.kotlin.cli.jvm.compiler.jarfs.FastJarFileSystem
 import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 
+sealed interface KotlinCoreApplicationEnvironmentMode {
+    val isWriteAccessAllowed: Boolean
+
+    object Production : KotlinCoreApplicationEnvironmentMode {
+        override val isWriteAccessAllowed: Boolean get() = true
+    }
+
+    class UnitTest(override val isWriteAccessAllowed: Boolean) : KotlinCoreApplicationEnvironmentMode
+
+    companion object {
+        fun fromUnitTestModeFlag(isUnitTestMode: Boolean): KotlinCoreApplicationEnvironmentMode =
+            if (isUnitTestMode) UnitTest(isWriteAccessAllowed = false) else Production
+    }
+}
+
 class KotlinCoreApplicationEnvironment private constructor(
-    parentDisposable: Disposable, unitTestMode: Boolean
-) : JavaCoreApplicationEnvironment(parentDisposable, unitTestMode) {
+    parentDisposable: Disposable,
+    private val environmentMode: KotlinCoreApplicationEnvironmentMode,
+) : JavaCoreApplicationEnvironment(parentDisposable, environmentMode is KotlinCoreApplicationEnvironmentMode.UnitTest) {
 
     init {
+        application.initializeEnvironmentMode(environmentMode)
+
         registerApplicationService(JavaFileCodeStyleFacadeFactory::class.java, DummyJavaFileCodeStyleFacadeFactory())
-        registerFileType(JavaClassFileType.INSTANCE, "sig");
+        registerFileType(JavaClassFileType.INSTANCE, "sig")
     }
 
     override fun createJrtFileSystem(): VirtualFileSystem {
@@ -41,15 +59,11 @@ class KotlinCoreApplicationEnvironment private constructor(
         val mock = super.createApplication(parentDisposable)
 
         /**
-         * We can't use just [unitTestMode] from constructor, because at this moment
-         * the corresponding property is not yet initialized, so [unitTestMode] is effectively always false,
-         * because this function called from super class constructor
+         * We can't use [environmentMode] from the constructor to decide whether we're in unit test mode, because the corresponding property
+         * is not yet initialized when this function is called from the superclass constructor.
          */
         return if (mock.isUnitTestMode) {
-            object : MockApplication(parentDisposable) {
-                override fun isUnitTestMode(): Boolean = true
-                override fun isWriteAccessAllowed(): Boolean = false
-            }
+            MockUnitTestApplication(parentDisposable)
         } else {
             mock
         }
@@ -80,10 +94,22 @@ class KotlinCoreApplicationEnvironment private constructor(
     }
 
     companion object {
+        @Deprecated(
+            message = "The `unitTestMode` flag is deprecated in favor of `KotlinCoreApplicationEnvironmentMode` configuration.",
+            replaceWith = ReplaceWith("create(parentDisposable, KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode))"),
+        )
         fun create(
-            parentDisposable: Disposable, unitTestMode: Boolean
+            parentDisposable: Disposable,
+            unitTestMode: Boolean,
         ): KotlinCoreApplicationEnvironment {
-            val environment = KotlinCoreApplicationEnvironment(parentDisposable, unitTestMode)
+            return create(parentDisposable, KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode))
+        }
+
+        fun create(
+            parentDisposable: Disposable,
+            environmentMode: KotlinCoreApplicationEnvironmentMode,
+        ): KotlinCoreApplicationEnvironment {
+            val environment = KotlinCoreApplicationEnvironment(parentDisposable, environmentMode)
             registerExtensionPoints()
             return environment
         }
@@ -100,5 +126,28 @@ class KotlinCoreApplicationEnvironment private constructor(
             registerApplicationExtensionPoint(SmartPointerAnchorProvider.EP_NAME, SmartPointerAnchorProvider::class.java)
             registerVersionSpecificAppExtensionPoints(ApplicationManager.getApplication().extensionArea)
         }
+    }
+}
+
+private class MockUnitTestApplication(parentDisposable: Disposable) : MockApplication(parentDisposable) {
+    /**
+     * We can't use [KotlinCoreApplicationEnvironment.environmentMode] in [KotlinCoreApplicationEnvironment.createApplication], because the
+     * corresponding property is not yet initialized when `createApplication` is called from the superclass constructor. So we have to
+     * initialize it later.
+     */
+    lateinit var environmentMode: KotlinCoreApplicationEnvironmentMode
+
+    override fun isUnitTestMode(): Boolean = true
+
+    override fun isWriteAccessAllowed(): Boolean = environmentMode.isWriteAccessAllowed
+}
+
+private fun MockApplication.initializeEnvironmentMode(environmentMode: KotlinCoreApplicationEnvironmentMode) {
+    if (this !is MockUnitTestApplication) return
+
+    this.environmentMode = environmentMode
+
+    require(isWriteAccessAllowed == environmentMode.isWriteAccessAllowed) {
+        "The mock application's `isWriteAccessAllowed` should correspond to the environment mode configuration."
     }
 }

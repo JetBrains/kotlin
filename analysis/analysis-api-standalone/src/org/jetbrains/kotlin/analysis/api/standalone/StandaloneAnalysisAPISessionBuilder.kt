@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
 import org.jetbrains.kotlin.analysis.project.structure.impl.getSourceFilePaths
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -61,7 +62,7 @@ public class StandaloneAnalysisAPISessionBuilder(
         StandaloneProjectFactory.createProjectEnvironment(
             projectDisposable,
             applicationDisposable,
-            unitTestMode,
+            KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode),
             classLoader = classLoader
         )
 

@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtSta
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreApplicationEnvironmentMode
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -38,12 +40,13 @@ abstract class AnalysisApiEnvironmentManager : TestService {
 class AnalysisApiEnvironmentManagerImpl(
     override val testServices: TestServices,
     override val testRootDisposable: Disposable,
+    private val configurator: AnalysisApiTestConfigurator,
 ) : AnalysisApiEnvironmentManager() {
     private val _projectEnvironment: KotlinCoreProjectEnvironment by lazy {
         StandaloneProjectFactory.createProjectEnvironment(
             testRootDisposable,
             testServices.applicationDisposableProvider.getApplicationRootDisposable(),
-            unitTestMode = true
+            KotlinCoreApplicationEnvironmentMode.UnitTest(configurator.isWriteAccessAllowed),
         )
     }
 
