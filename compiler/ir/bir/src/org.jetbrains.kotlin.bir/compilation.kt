@@ -31,35 +31,20 @@ import kotlin.system.exitProcess
 import kotlin.time.DurationUnit
 import kotlin.time.measureTimedValue
 
-private val birPhases = listOf<(JvmBirBackendContext) -> BirLoweringPhase>(
-    ::BirJvmNameLowering,
-    ::BirJvmStaticInObjectLowering,
-    ::BirRepeatedAnnotationLowering,
-    ::BirTypeAliasAnnotationMethodsLowering,
-    ::BirProvisionalFunctionExpressionLowering,
-    ::BirJvmOverloadsAnnotationLowering,
-    ::BirMainMethodGenerationLowering,
-    ::BirPolymorphicSignatureLowering,
-    ::BirVarargLowering,
-    ::BirJvmLateinitLowering,
-    ::BirJvmInventNamesForLocalClassesLowering,
-    ::BirInlineCallableReferenceToLambdaLowering,
-    ::BirAnnotationLowering,
-)
-
-private val irPhasesReimplementedInBir = setOf<String>(
-    "JvmStaticInObject",
-    "RepeatedAnnotation",
-    "TypeAliasAnnotationMethodsLowering",
-    "FunctionExpression",
-    "JvmOverloadsAnnotation",
-    "MainMethodGeneration",
-    "Annotation",
-    "PolymorphicSignature",
-    "VarargLowering",
-    "JvmLateinitLowering",
-    "InventNamesForLocalClasses",
-    "InlineCallableReferenceToLambdaPhase",
+private val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhase, List<String>>>(
+    ::BirJvmNameLowering to listOf(),
+    ::BirJvmStaticInObjectLowering to listOf("JvmStaticInObject"),
+    ::BirRepeatedAnnotationLowering to listOf("RepeatedAnnotation"),
+    ::BirTypeAliasAnnotationMethodsLowering to listOf("TypeAliasAnnotationMethodsLowering"),
+    ::BirProvisionalFunctionExpressionLowering to listOf("FunctionExpression"),
+    ::BirJvmOverloadsAnnotationLowering to listOf("JvmOverloadsAnnotation"),
+    ::BirMainMethodGenerationLowering to listOf("MainMethodGeneration"),
+    ::BirPolymorphicSignatureLowering to listOf("PolymorphicSignature"),
+    ::BirVarargLowering to listOf("VarargLowering"),
+    ::BirJvmLateinitLowering to listOf("JvmLateinitLowering"),
+    ::BirJvmInventNamesForLocalClassesLowering to listOf("InventNamesForLocalClasses"),
+    ::BirInlineCallableReferenceToLambdaLowering to listOf("InlineCallableReferenceToLambdaPhase"),
+    ::BirAnnotationLowering to listOf("Annotation"),
 )
 
 private val excludedPhases = setOf<String>(
@@ -86,11 +71,11 @@ fun lowerWithBir(
             "Convert IR to BIR",
             context.phaseConfig.needProfiling,
         ),
-        /*NamedCompilerPhase(
+        NamedCompilerPhase(
             "Lower Bir",
             "Experimental phase to test alternative IR architecture",
             lower = BirLowering,
-        ),*/
+        ),
         ConvertBirToIrPhase(
             "Bir2Ir",
             "Convert lowered BIR back to IR",
@@ -101,9 +86,11 @@ fun lowerWithBir(
         birPhases as List<NamedCompilerPhase<JvmBackendContext, IrModuleFragment>>
     )
 
+    val allExcludedPhases = excludedPhases + allBirPhases.flatMap { it.second }
+
     val compoundPhase = newPhases.reduce { result, phase -> result then phase }
     val phaseConfig = PhaseConfigBuilder(compoundPhase).apply {
-        enabled += compoundPhase.toPhaseMap().values.filter { it.name !in excludedPhases }.toSet()
+        enabled += compoundPhase.toPhaseMap().values.filter { it.name !in allExcludedPhases }.toSet()
         verbose += context.phaseConfig.verbose
         toDumpStateBefore += context.phaseConfig.toDumpStateBefore
         toDumpStateAfter += context.phaseConfig.toDumpStateAfter
@@ -256,14 +243,13 @@ private class ConvertIrToBirPhase(name: String, description: String, private val
                 externalModulesBir,
                 ir2BirConverter,
                 dynamicPropertyManager,
-                birPhases,
+                allBirPhases.map { it.first },
             )
 
             birModule = ir2BirConverter.remapElement<BirModuleFragment>(input)
         }
 
         val size = birModule.countAllElementsInTree()
-        //measureElementDistribution(birModule)
 
         return BirCompilationBundle(
             birModule,
