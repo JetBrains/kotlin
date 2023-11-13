@@ -40569,6 +40569,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             public void testIfWithCallableReferenceInLazy() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/delegateInference/ifWithCallableReferenceInLazy.kt");
             }
+
+            @Test
+            @TestMetadata("resolveGetValueWithWholeDelegate.kt")
+            public void testResolveGetValueWithWholeDelegate() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/delegateInference/resolveGetValueWithWholeDelegate.kt");
+            }
         }
 
         @Nested
