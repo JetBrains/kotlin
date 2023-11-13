@@ -203,7 +203,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         }
     }
 
-    fun <E : BirElement> getBackReferences(key: BirElementBackReferencesKey<E>): List<E> {
+    final override fun <E : BirElement> getBackReferences(key: BirElementBackReferencesKey<E>): List<E> {
         root?.flushElementsWithInvalidatedIndexBuffer()
         require(attachedToTree) { "Element must be attached to tree" }
 
