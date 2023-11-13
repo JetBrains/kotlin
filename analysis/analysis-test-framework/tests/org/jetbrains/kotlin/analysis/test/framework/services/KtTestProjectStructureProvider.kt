@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.test.framework.services
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.*
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtDanglingFileModuleImpl
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
@@ -22,37 +23,35 @@ class KtTestProjectStructureProvider(
     private val builtinsModule: KtBuiltinsModule,
     private val projectStructure: KtModuleProjectStructure,
 ) : KtStaticProjectStructureProvider() {
+    override fun getNotUnderContentRootModule(project: Project, file: PsiFile?): KtNotUnderContentRootModule {
+        error("Not-under content root modules most be initialized explicitly in tests")
+    }
+
     @OptIn(KtModuleStructureInternals::class)
     override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
         // Unwrap context-dependent file copies coming from dependent sessions
-        val containingPsiFile = element.containingFile.originalFile
+        val containingFile = element.containingFile.originalFile
 
-        if (containingPsiFile is KtCodeFragment) {
-            val contextElement = containingPsiFile.context
-                ?: throw KotlinExceptionWithAttachments("Context not found for a code fragment")
-                    .withAttachment("codeFragment.kt", containingPsiFile.text)
+        val virtualFile = containingFile.virtualFile
 
-            val contextModule = getModule(contextElement, contextualModule)
-            return KtDanglingFileModuleImpl(containingPsiFile, contextModule)
+        if (virtualFile != null) {
+            if (virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+                return builtinsModule
+            }
+
+            projectStructure.binaryModules
+                .firstOrNull { binaryModule -> virtualFile in binaryModule.contentScope }
+                ?.let { return it }
         }
 
-        val containingVirtualFile = containingPsiFile.virtualFile
-        if (containingVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
-            return builtinsModule
-        }
-
-        containingVirtualFile.analysisExtensionFileContextModule?.let { return it }
-
-        projectStructure.binaryModules.firstOrNull { binaryModule ->
-            containingVirtualFile in binaryModule.contentScope
-        }?.let { return it }
+        computeSpecialModule(containingFile)?.let { return it }
 
         return projectStructure.mainModules.firstOrNull { module ->
             element in module.ktModule.contentScope
         }?.ktModule
             ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
                 .withAttachment(
-                    containingVirtualFile.path,
+                    virtualFile?.path ?: containingFile.name,
                     allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
                 )
     }
