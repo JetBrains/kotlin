@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.sir
 
-import org.junit.Test
-import kotlin.test.assertTrue
+import org.junit.jupiter.api.*
+import kotlin.test.*
 
 class SirTest {
-
     // TODO: Just a fake test to validate that everything is working. Feel free to delete.
     @Test
     fun exampleTest() {
