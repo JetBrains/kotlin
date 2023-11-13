@@ -37193,6 +37193,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("outerTypeParameterAsSupertype.kt")
+            public void testOuterTypeParameterAsSupertype() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/outerTypeParameterAsSupertype.kt");
+            }
+
+            @Test
             @TestMetadata("propertyTypeParameters.kt")
             public void testPropertyTypeParameters() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/propertyTypeParameters.kt");
