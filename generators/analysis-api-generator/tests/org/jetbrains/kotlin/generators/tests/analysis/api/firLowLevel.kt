@@ -117,6 +117,18 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KTS)
         }
 
+        testClass<AbstractSourceDanglingFileInBlockModificationTest> {
+            model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractOutOfContentRootDanglingFileInBlockModificationTest> {
+            model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptDanglingFileInBlockModificationTest> {
+            model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KTS)
+        }
+
         testClass<AbstractCodeFragmentInBlockModificationTest> {
             model("inBlockModification/codeFragments", recursive = false, pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }

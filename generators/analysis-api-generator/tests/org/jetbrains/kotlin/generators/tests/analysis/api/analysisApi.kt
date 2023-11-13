@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.contain
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCodeFragmentCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractDanglingFileCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
@@ -87,6 +88,14 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                 model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
             }
         }
+    }
+
+    test(
+        AbstractDanglingFileReferenceResolveTest::class,
+        filter = frontendIs(FrontendKind.Fir)
+                and testModuleKindIs(TestModuleKind.Source, TestModuleKind.LibrarySource)
+    ) {
+        model("danglingFileReferenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
     }
 
     component(
@@ -321,6 +330,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
     component("diagnosticsProvider", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractCollectDiagnosticsTest::class) {
+            model(it, "diagnostics")
+        }
+
+        test(AbstractDanglingFileCollectDiagnosticsTest::class, filter = frontendIs(FrontendKind.Fir)) {
             model(it, "diagnostics")
         }
 
