@@ -86,12 +86,10 @@ abstract class BirImplElementBase : BirElementBase() {
     internal fun replacedWithInternal(new: BirImplElementBase?): Int {
         val parent = _parent
         if (parent is BirImplElementBase) {
-            val containingListId = containingListId
-            val containingList = if (containingListId == 0) null
-            else (parent as? BirElementBase)?.getChildrenListById(containingListId)
-
+            val containingList = getContainingList()
             if (containingList != null) {
                 containingList as BirImplChildElementList<*>
+
                 val found = if (new == null && !containingList.isNullable) {
                     containingList.removeInternal(this)
                 } else {
@@ -103,7 +101,8 @@ abstract class BirImplElementBase : BirElementBase() {
                 if (!found) {
                     containingList.parent.throwChildForReplacementNotFound(this)
                 }
-                return containingListId
+
+                return containingList.id
             } else {
                 return parent.replaceChildProperty(this, new)
             }
