@@ -41119,6 +41119,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("wasExperimentalCombined.kt")
+            public void testWasExperimentalCombined() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/wasExperimentalCombined.kt");
+            }
+
+            @Test
             @TestMetadata("wrongTargetsWithoutExplicitTarget.kt")
             public void testWrongTargetsWithoutExplicitTarget() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/experimental/wrongTargetsWithoutExplicitTarget.kt");
