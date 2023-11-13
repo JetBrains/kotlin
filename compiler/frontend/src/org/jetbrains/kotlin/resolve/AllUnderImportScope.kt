@@ -82,9 +82,9 @@ class AllUnderImportScope private constructor(
 
     override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
         if (name in excludedNames) return emptyList()
-        val classifier1 = scope1.getContributedClassifiers(name, location).singleOrNull()
-        val classifier2 = scope2?.getContributedClassifiers(name, location)?.singleOrNull()
-        return if (classifier1 != null && classifier2 != null) emptyList() else listOfNotNull(classifier1 ?: classifier2)
+        val classifier1 = scope1.getContributedClassifiers(name, location).takeIf { it.isNotEmpty() }
+        val classifier2 = scope2?.getContributedClassifiers(name, location)?.takeIf { it.isNotEmpty() }
+        return if (classifier1 != null && classifier2 != null) emptyList() else (classifier1 ?: classifier2 ?: emptyList())
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {

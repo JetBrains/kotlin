@@ -366,9 +366,8 @@ abstract class LazyJavaScope(
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             for (name in computeClassNames(kindFilter, nameFilter)) {
                 if (nameFilter(name)) {
-                    // Null signifies that a class found in Java is not present in Kotlin (e.g. package class)
-                    // or that there was ambiguity
-                    result.addIfNotNull(getContributedClassifiers(name, location).singleOrNull())
+                    // Emptiness signifies that a class found in Java is not present in Kotlin (e.g. package class)
+                    result.addAll(getContributedClassifiers(name, location))
                 }
             }
         }

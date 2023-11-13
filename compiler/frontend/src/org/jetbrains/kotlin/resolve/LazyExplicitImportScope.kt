@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.CallOnceFunction
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class LazyExplicitImportScope(
     private val languageVersionSettings: LanguageVersionSettings,
@@ -68,7 +67,7 @@ class LazyExplicitImportScope(
         val descriptors = SmartList<DeclarationDescriptor>()
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
-            descriptors.addIfNotNull(getContributedClassifiers(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS).singleOrNull())
+            descriptors.addAll(getContributedClassifiers(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))
         }
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
             descriptors.addAll(getContributedFunctions(aliasName, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS))

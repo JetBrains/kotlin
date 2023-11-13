@@ -136,7 +136,7 @@ internal class KtFe10ScopeProvider(
         override fun getClassifierNames(): Set<Name>? {
             if (forDelegatedMembersOnly) return null
             return allMemberScope.getClassifierNames()?.filterTo(mutableSetOf()) { name ->
-                getContributedClassifiers(name, NoLookupLocation.FROM_IDE).singleOrNull() != null
+                getContributedClassifiers(name, NoLookupLocation.FROM_IDE).isNotEmpty()
             }
         }
 

@@ -205,9 +205,8 @@ class CompositePrioritizedImportingScope(
     }
 
     override fun getContributedClassifiers(name: Name, location: LookupLocation): List<ClassifierDescriptor> {
-        return primaryScope.getContributedClassifiers(name, location).takeIf { it.size == 1 }
-            ?: secondaryScope.getContributedClassifiers(name, location).takeIf { it.size == 1 }
-            ?: emptyList()
+        return primaryScope.getContributedClassifiers(name, location).takeIf { it.isNotEmpty() }
+            ?: secondaryScope.getContributedClassifiers(name, location)
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {

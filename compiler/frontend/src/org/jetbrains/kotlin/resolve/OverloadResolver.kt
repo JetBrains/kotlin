@@ -115,8 +115,8 @@ class OverloadResolver(
 
         collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values, overloadFilter) { scope, name ->
             val variables = scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
-            val classifier = scope.getContributedClassifiers(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS).singleOrNull()
-            variables + listOfNotNull(classifier)
+            val classifiers = scope.getContributedClassifiers(name, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
+            variables + classifiers
         }
 
         return packageMembersByName

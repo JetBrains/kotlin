@@ -188,7 +188,7 @@ class LazyImportResolverForKtImportDirective(
             val alias = importInfo.importedName
             if (alias != null) {
                 val lookupLocation = KotlinLookupLocation(importInfo)
-                if (scope.getContributedClassifiers(alias, lookupLocation).singleOrNull() != null) {
+                if (scope.getContributedClassifiers(alias, lookupLocation).isNotEmpty()) {
                     explicitClassImports.put(alias.asString(), importInfo)
                 }
             }

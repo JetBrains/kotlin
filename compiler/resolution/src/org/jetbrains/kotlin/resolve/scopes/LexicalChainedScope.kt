@@ -50,19 +50,28 @@ class LexicalChainedScope private constructor(
         getFirstClassifierDiscriminateHeaders(memberScopes) { it.getContributedClassifiers(name, location) }.let(::listOfNotNull)
 
     override fun getContributedClassifiersIncludeDeprecated(name: Name, location: LookupLocation): List<DescriptorWithDeprecation<ClassifierDescriptor>> {
-        val (firstClassifier, isFirstDeprecated) = memberScopes.firstNotNullOfOrNull {
-            it.getContributedClassifiersIncludeDeprecated(name, location).singleOrNull()
+        val classifiers = memberScopes.firstNotNullOfOrNull {
+            it.getContributedClassifiersIncludeDeprecated(name, location).takeIf { classifiers -> classifiers.isNotEmpty() }
         } ?: return emptyList()
 
-        if (!isFirstDeprecated) return listOf(DescriptorWithDeprecation.createNonDeprecated(firstClassifier))
+        for ((firstClassifier, isFirstDeprecated) in classifiers) {
+            if (!isFirstDeprecated) return listOf(DescriptorWithDeprecation.createNonDeprecated(firstClassifier))
 
-        // Slow-path: try to find the same classifier, but without deprecation
-        for (scope in memberScopes) {
-            val (descriptor, isDeprecated) = scope.getContributedClassifierIncludeDeprecated(name, location) ?: continue
-            if (descriptor == firstClassifier && !isDeprecated) return listOf(DescriptorWithDeprecation.createNonDeprecated(descriptor))
+            // Slow-path: try to find the same classifier, but without deprecation
+            for (scope in memberScopes) {
+                val classifiersWithDeprecation = scope.getContributedClassifiersIncludeDeprecated(name, location)
+
+                for ((descriptor, isDeprecated) in classifiersWithDeprecation) {
+                    if (descriptor == firstClassifier && !isDeprecated) {
+                        return listOf(DescriptorWithDeprecation.createNonDeprecated(descriptor))
+                    }
+                }
+            }
+
+            return listOf(DescriptorWithDeprecation.createDeprecated(firstClassifier))
         }
 
-        return listOf(DescriptorWithDeprecation.createDeprecated(firstClassifier))
+        return emptyList()
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation) =
