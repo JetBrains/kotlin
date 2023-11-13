@@ -46,19 +46,30 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    final override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val mainModule = moduleStructure.modules.singleOrNull() ?: findMainModule(moduleStructure)
+    override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val mainModule = findMainModule(moduleStructure)
         val ktFiles = testServices.ktModuleProvider.getModuleFiles(mainModule).filterIsInstance<KtFile>()
-        doTestByFileStructure(ktFiles, mainModule, testServices)
+        val mainKtFile = findMainFile(ktFiles)
+        val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainKtFile)
+        doTestByFileStructure(mainKtFile, caretPosition, mainModule, testServices)
     }
 
-    private fun findMainModule(moduleStructure: TestModuleStructure): TestModule =
-        moduleStructure.modules.find { it.name == "main" } ?: error("There should be a module named 'main' in the multi-module test.")
+    protected fun findMainModule(moduleStructure: TestModuleStructure): TestModule {
+        val modules = moduleStructure.modules
 
-    fun doTestByFileStructure(ktFiles: List<KtFile>, mainModule: TestModule, testServices: TestServices) {
-        val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.firstOrNull { it.name == "main.kt" } ?: ktFiles.first()
-        val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainKtFile)
-        val ktReferences = findReferencesAtCaret(mainKtFile, caretPosition)
+        return modules.singleOrNull()
+            ?: modules.find { it.name == "main" }
+            ?: error("There should be a module named 'main' in the multi-module test.")
+    }
+
+    protected fun findMainFile(ktFiles: List<KtFile>): KtFile {
+        return ktFiles.singleOrNull()
+            ?: ktFiles.firstOrNull { it.name == "main.kt" }
+            ?: ktFiles.first()
+    }
+
+    protected fun doTestByFileStructure(ktFile: KtFile, caretPosition: Int, mainModule: TestModule, testServices: TestServices) {
+        val ktReferences = findReferencesAtCaret(ktFile, caretPosition)
         if (ktReferences.isEmpty()) {
             testServices.assertions.fail { "No references at caret found" }
         }

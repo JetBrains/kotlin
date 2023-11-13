@@ -47,6 +47,10 @@ abstract class AbstractInBlockModificationTest : AbstractLowLevelApiSingleFileTe
             module = moduleStructure.modules.last(),
         )
 
+        doTest(ktFile, selectedElement, moduleStructure, testServices)
+    }
+
+    protected fun doTest(ktFile: KtFile, selectedElement: PsiElement, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val actual = testInBlockModification(
             file = ktFile,
             elementToModify = selectedElement,
