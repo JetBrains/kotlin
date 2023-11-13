@@ -1303,7 +1303,11 @@ class IrSourcePrinterVisitor(
 
     override fun visitFunctionReference(expression: IrFunctionReference) {
         val function = expression.symbol.owner
+
         expression.printExplicitReceiver("::")
+        if (expression.dispatchReceiver == null && expression.extensionReceiver == null) {
+            print("::")
+        }
 
         val prop = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
 

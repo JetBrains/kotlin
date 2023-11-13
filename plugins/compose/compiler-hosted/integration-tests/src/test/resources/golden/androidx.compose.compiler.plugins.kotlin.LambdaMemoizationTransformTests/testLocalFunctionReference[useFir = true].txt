@@ -3,12 +3,13 @@
 // ------------------------------------------
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-
 
 @Composable
-fun Test(a: Int) {
-    used(remember(a, ::effect))
+fun Something(param: String) {
+    fun method() {
+        println(param)
+    }
+    val x = ::method
 }
 
 //
@@ -16,24 +17,28 @@ fun Test(a: Int) {
 // ------------------------------------------
 
 @Composable
-fun Test(a: Int, %composer: Composer?, %changed: Int) {
+fun Something(param: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
-  sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")
+  sourceInformation(%composer, "C(Something):Test.kt")
   val %dirty = %changed
   if (%changed and 0b1110 == 0) {
-    %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+    %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
   }
   if (%dirty and 0b1011 != 0b0010 || !%composer.skipping) {
     if (isTraceInProgress()) {
       traceEventStart(<>, %dirty, -1, <>)
     }
-    used(<block>{
+    fun method() {
+      println(param)
+    }
+    val x = <block>{
       %composer.startReplaceableGroup(<>)
-      sourceInformation(%composer, "CC(remember):Test.kt#9igjgp")
-      val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100, ::effect)
+      val tmpCache = %composer.cache(%composer.changed(param)) {
+        ::method
+      }
       %composer.endReplaceableGroup()
-      tmp0_group
-    })
+      tmpCache
+    }
     if (isTraceInProgress()) {
       traceEventEnd()
     }
@@ -41,6 +46,6 @@ fun Test(a: Int, %composer: Composer?, %changed: Int) {
     %composer.skipToGroupEnd()
   }
   %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
-    Test(a, %composer, updateChangedFlags(%changed or 0b0001))
+    Something(param, %composer, updateChangedFlags(%changed or 0b0001))
   }
 }
