@@ -462,24 +462,36 @@ class ComposerLambdaMemoization(
         }
         val result = super.visitFunctionReference(expression)
         val functionContext = currentFunctionContext ?: return result
-        if (expression.valueArgumentsCount != 0) {
-            // If this syntax is as a curry syntax in the future, don't memoize.
-            // The syntax <expr>::<method>(<params>) and ::<function>(<params>) is reserved for
-            // future use. This ensures we don't try to memoize this syntax without knowing
-            // its meaning.
 
-            // The most likely correct implementation is to treat the parameters exactly as the
-            // receivers are treated below.
+        // The syntax <expr>::<method>(<params>) and ::<function>(<params>) is reserved for
+        // future use. Revisit implementation if this syntax is as a curry syntax in the future.
+        // The most likely correct implementation is to treat the parameters exactly as the
+        // receivers are treated below.
+
+        // Do not attempt memoization if the referenced function has context receivers.
+        if (expression.symbol.owner.contextReceiverParametersCount > 0) {
             return result
         }
+
+        // Do not attempt memoization if value parameters are not null. This is to guard against
+        // unexpected IR shapes.
+        for (i in 0 until expression.valueArgumentsCount) {
+            if (expression.getValueArgument(i) != null) {
+                return result
+            }
+        }
+
         if (functionContext.canRemember) {
             // Memoize the reference for <expr>::<method>
             val dispatchReceiver = expression.dispatchReceiver
             val extensionReceiver = expression.extensionReceiver
-            if ((dispatchReceiver != null || extensionReceiver != null) &&
+
+            val hasReceiver = dispatchReceiver != null || extensionReceiver != null
+            val receiverIsStable =
                 dispatchReceiver.isNullOrStable() &&
                 extensionReceiver.isNullOrStable()
-            ) {
+
+            if (hasReceiver && (strongSkippingModeEnabled || receiverIsStable)) {
                 // Save the receivers into a temporaries and memoize the function reference using
                 // the resulting temporaries
                 val builder = DeclarationIrBuilder(
