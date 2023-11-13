@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.bir.accept
 abstract class BirDynamicMemberExpression : BirDynamicExpression() {
     abstract var memberName: String
 
-    abstract var receiver: BirExpression
+    abstract var receiver: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        receiver.accept(data, visitor)
+        receiver?.accept(data, visitor)
     }
 
     companion object

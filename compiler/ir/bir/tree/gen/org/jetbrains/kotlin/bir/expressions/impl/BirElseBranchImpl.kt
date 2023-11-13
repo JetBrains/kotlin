@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.bir.expressions.BirExpression
 
 class BirElseBranchImpl(
     sourceSpan: SourceSpan,
-    condition: BirExpression,
-    result: BirExpression,
+    condition: BirExpression?,
+    result: BirExpression?,
 ) : BirElseBranch() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -36,10 +36,10 @@ class BirElseBranchImpl(
 
     private var _condition: BirExpression? = condition
 
-    override var condition: BirExpression
+    override var condition: BirExpression?
         get() {
             recordPropertyRead(1)
-            return _condition ?: throwChildElementRemoved("condition")
+            return _condition
         }
         set(value) {
             if (_condition != value) {
@@ -51,10 +51,10 @@ class BirElseBranchImpl(
 
     private var _result: BirExpression? = result
 
-    override var result: BirExpression
+    override var result: BirExpression?
         get() {
             recordPropertyRead(2)
-            return _result ?: throwChildElementRemoved("result")
+            return _result
         }
         set(value) {
             if (_result != value) {

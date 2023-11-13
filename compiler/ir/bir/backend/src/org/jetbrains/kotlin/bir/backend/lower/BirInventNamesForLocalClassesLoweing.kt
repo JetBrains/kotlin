@@ -61,7 +61,7 @@ abstract class BirInventNamesForLocalClassesLowering(
         }
 
         compiledBir.getElementsWithIndex(functionExpressions).forEach { expression ->
-            val internalName = (if (isLocalFunctionToBeNamed(expression.function))
+            val internalName = (if (isLocalFunctionToBeNamed(expression.function!!))
                 getLocalNameScopeIfApplicable(expression.function)?.enclosingName
             else null)
                 ?: inventName(null, getLocalNameScopeIfApplicable(expression) ?: return@forEach)

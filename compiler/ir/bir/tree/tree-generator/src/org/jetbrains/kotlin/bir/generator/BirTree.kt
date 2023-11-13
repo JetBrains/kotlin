@@ -245,7 +245,7 @@ object BirTree : AbstractTreeBuilder() {
         +descriptor("ClassDescriptor") // TODO special descriptor for anonymous initializer blocks
         +symbol(SymbolTypes.anonymousInitializer)
         +field("isStatic", boolean)
-        +field("body", blockBody, isChild = true)
+        +field("body", blockBody, nullable = true, isChild = true)
     }
     val declarationContainer: ElementConfig by element(Declaration) {
         parent(declarationParent)
@@ -349,8 +349,8 @@ object BirTree : AbstractTreeBuilder() {
         +symbol(SymbolTypes.localDelegatedProperty)
         +field("type", irTypeType)
         +field("isVar", boolean)
-        +field("delegate", variable, isChild = true)
-        +field("getter", simpleFunction, isChild = true)
+        +field("delegate", variable, nullable = true, isChild = true)
+        +field("getter", simpleFunction, nullable = true, isChild = true)
         +field("setter", simpleFunction, nullable = true, isChild = true)
     }
     val moduleFragment: ElementConfig by element(Declaration) {
@@ -493,7 +493,7 @@ object BirTree : AbstractTreeBuilder() {
     val expressionBody: ElementConfig by element(Expression) {
         parent(body)
 
-        +field("expression", expression, isChild = true)
+        +field("expression", expression, nullable = true, isChild = true)
     }
     val blockBody: ElementConfig by element(Expression) {
         parent(body)
@@ -657,7 +657,7 @@ object BirTree : AbstractTreeBuilder() {
     val constantPrimitive: ElementConfig by element(Expression) {
         parent(constantValue)
 
-        +field("value", const.withArgs("T" to TypeRef.Star), isChild = true)
+        +field("value", const.withArgs("T" to TypeRef.Star), nullable = true, isChild = true)
     }
     val constantObject: ElementConfig by element(Expression) {
         parent(constantValue)
@@ -683,14 +683,14 @@ object BirTree : AbstractTreeBuilder() {
         parent(dynamicExpression)
 
         +field("operator", type("org.jetbrains.kotlin.ir.expressions", "IrDynamicOperator"))
-        +field("receiver", expression, isChild = true)
+        +field("receiver", expression, nullable = true, isChild = true)
         +listField("arguments", expression, mutability = List, isChild = true)
     }
     val dynamicMemberExpression: ElementConfig by element(Expression) {
         parent(dynamicExpression)
 
         +field("memberName", string)
-        +field("receiver", expression, isChild = true)
+        +field("receiver", expression, nullable = true, isChild = true)
     }
     val enumConstructorCall: ElementConfig by element(Expression) {
         parent(functionAccessExpression)
@@ -724,18 +724,18 @@ object BirTree : AbstractTreeBuilder() {
     val setField: ElementConfig by element(Expression) {
         parent(fieldAccessExpression)
 
-        +field("value", expression, isChild = true)
+        +field("value", expression, nullable = true, isChild = true)
     }
     val functionExpression: ElementConfig by element(Expression) {
         parent(expression)
 
         +field("origin", statementOriginType)
-        +field("function", simpleFunction, isChild = true)
+        +field("function", simpleFunction, nullable = true, isChild = true)
     }
     val getClass: ElementConfig by element(Expression) {
         parent(expression)
 
-        +field("argument", expression, isChild = true)
+        +field("argument", expression, nullable = true, isChild = true)
     }
     val instanceInitializerCall: ElementConfig by element(Expression) {
         parent(expression)
@@ -747,7 +747,7 @@ object BirTree : AbstractTreeBuilder() {
 
         +field("origin", statementOriginType, nullable = true)
         +field("body", expression, nullable = true, isChild = true)
-        +field("condition", expression, isChild = true)
+        +field("condition", expression, nullable = true, isChild = true)
         +field("label", string, nullable = true)
     }
     val whileLoop: ElementConfig by element(Expression) {
@@ -761,7 +761,7 @@ object BirTree : AbstractTreeBuilder() {
     val `return`: ElementConfig by element(Expression) {
         parent(expression)
 
-        +field("value", expression, isChild = true)
+        +field("value", expression, nullable = true, isChild = true)
         +field("returnTargetSymbol", SymbolTypes.returnTarget)
     }
     val stringConcatenation: ElementConfig by element(Expression) {
@@ -772,37 +772,37 @@ object BirTree : AbstractTreeBuilder() {
     val suspensionPoint: ElementConfig by element(Expression) {
         parent(expression)
 
-        +field("suspensionPointIdParameter", variable, isChild = true)
-        +field("result", expression, isChild = true)
-        +field("resumeResult", expression, isChild = true)
+        +field("suspensionPointIdParameter", variable, nullable = true, isChild = true)
+        +field("result", expression, nullable = true, isChild = true)
+        +field("resumeResult", expression, nullable = true, isChild = true)
     }
     val suspendableExpression: ElementConfig by element(Expression) {
         parent(expression)
 
-        +field("suspensionPointId", expression, isChild = true)
-        +field("result", expression, isChild = true)
+        +field("suspensionPointId", expression, nullable = true, isChild = true)
+        +field("result", expression, nullable = true, isChild = true)
     }
     val `throw`: ElementConfig by element(Expression) {
         parent(expression)
 
-        +field("value", expression, isChild = true)
+        +field("value", expression, nullable = true, isChild = true)
     }
     val `try`: ElementConfig by element(Expression) {
         parent(expression)
 
-        +field("tryResult", expression, isChild = true)
+        +field("tryResult", expression, nullable = true, isChild = true)
         +listField("catches", catch, mutability = List, isChild = true)
         +field("finallyExpression", expression, nullable = true, isChild = true)
     }
     val catch: ElementConfig by element(Expression) {
-        +field("catchParameter", variable, isChild = true)
-        +field("result", expression, isChild = true)
+        +field("catchParameter", variable, nullable = true, isChild = true)
+        +field("result", expression, nullable = true, isChild = true)
     }
     val typeOperatorCall: ElementConfig by element(Expression) {
         parent(expression)
 
         +field("operator", type("org.jetbrains.kotlin.ir.expressions", "IrTypeOperator"))
-        +field("argument", expression, isChild = true)
+        +field("argument", expression, nullable = true, isChild = true)
         +field("typeOperand", irTypeType)
     }
     val valueAccessExpression: ElementConfig by element(Expression) {
@@ -817,7 +817,7 @@ object BirTree : AbstractTreeBuilder() {
     val setValue: ElementConfig by element(Expression) {
         parent(valueAccessExpression)
 
-        +field("value", expression, isChild = true)
+        +field("value", expression, nullable = true, isChild = true)
     }
     val varargElement: ElementConfig by element(Expression)
     val vararg: ElementConfig by element(Expression) {
@@ -829,7 +829,7 @@ object BirTree : AbstractTreeBuilder() {
     val spreadElement: ElementConfig by element(Expression) {
         parent(varargElement)
 
-        +field("expression", expression, isChild = true)
+        +field("expression", expression, nullable = true, isChild = true)
     }
     val `when`: ElementConfig by element(Expression) {
         parent(expression)
@@ -840,8 +840,8 @@ object BirTree : AbstractTreeBuilder() {
     val branch: ElementConfig by element(Expression) {
         isForcedLeaf = true
 
-        +field("condition", expression, isChild = true)
-        +field("result", expression, isChild = true)
+        +field("condition", expression, nullable = true, isChild = true)
+        +field("result", expression, nullable = true, isChild = true)
     }
     val elseBranch: ElementConfig by element(Expression) {
         parent(branch)

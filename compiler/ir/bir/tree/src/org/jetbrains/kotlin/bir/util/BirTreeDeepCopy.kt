@@ -29,6 +29,8 @@ fun <E : BirElement> E.deepCopy(
     return copier.copyTree(this)
 }
 
+// todo: Could be adjusted for the change that all child fields are now nullable
+// todo: Autogenerate
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 @Suppress("NAME_SHADOWING")
 open class BirTreeDeepCopier {

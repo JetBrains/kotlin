@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.bir.symbols.BirReturnTargetSymbol
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.return]
  */
 abstract class BirReturn : BirExpression() {
-    abstract var value: BirExpression
+    abstract var value: BirExpression?
 
     abstract var returnTargetSymbol: BirReturnTargetSymbol
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        value.accept(data, visitor)
+        value?.accept(data, visitor)
     }
 
     companion object

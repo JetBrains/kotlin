@@ -24,7 +24,7 @@ class BirDynamicOperatorExpressionImpl(
     sourceSpan: SourceSpan,
     type: BirType,
     operator: IrDynamicOperator,
-    receiver: BirExpression,
+    receiver: BirExpression?,
 ) : BirDynamicOperatorExpression() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -84,10 +84,10 @@ class BirDynamicOperatorExpressionImpl(
 
     private var _receiver: BirExpression? = receiver
 
-    override var receiver: BirExpression
+    override var receiver: BirExpression?
         get() {
             recordPropertyRead(2)
-            return _receiver ?: throwChildElementRemoved("receiver")
+            return _receiver
         }
         set(value) {
             if (_receiver != value) {

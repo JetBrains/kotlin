@@ -23,7 +23,7 @@ class BirWhileLoopImpl(
     type: BirType,
     origin: IrStatementOrigin?,
     body: BirExpression?,
-    condition: BirExpression,
+    condition: BirExpression?,
     label: String?,
 ) : BirWhileLoop() {
     private var _sourceSpan: SourceSpan = sourceSpan
@@ -99,10 +99,10 @@ class BirWhileLoopImpl(
 
     private var _condition: BirExpression? = condition
 
-    override var condition: BirExpression
+    override var condition: BirExpression?
         get() {
             recordPropertyRead(2)
-            return _condition ?: throwChildElementRemoved("condition")
+            return _condition
         }
         set(value) {
             if (_condition != value) {
