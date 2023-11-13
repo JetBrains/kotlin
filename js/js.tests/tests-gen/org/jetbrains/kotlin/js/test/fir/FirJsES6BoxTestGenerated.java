@@ -10315,9 +10315,21 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         }
 
         @Test
+        @TestMetadata("kClassCompanion.kt")
+        public void testKClassCompanion() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/kClassCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("kClassIsInstance.kt")
         public void testKClassIsInstance() throws Exception {
             runTest("js/js.translator/testData/box/reflection/kClassIsInstance.kt");
+        }
+
+        @Test
+        @TestMetadata("kClassLambda.kt")
+        public void testKClassLambda() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/kClassLambda.kt");
         }
 
         @Test
@@ -10348,6 +10360,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         @TestMetadata("kClassSimpleName.kt")
         public void testKClassSimpleName() throws Exception {
             runTest("js/js.translator/testData/box/reflection/kClassSimpleName.kt");
+        }
+
+        @Test
+        @TestMetadata("kClassSuspendFunction.kt")
+        public void testKClassSuspendFunction() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/kClassSuspendFunction.kt");
         }
 
         @Test
