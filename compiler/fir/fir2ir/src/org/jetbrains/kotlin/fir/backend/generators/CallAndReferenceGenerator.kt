@@ -1065,20 +1065,14 @@ class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?,
     ): IrExpression {
-        if (this !is IrVarargImpl ||
-            parameter?.isVararg != true ||
-            argument !is FirVarargArgumentsExpression ||
-            argument.arguments.none { it is FirNamedArgumentExpression }
-        ) {
-            return this
-        }
-        elements.forEachIndexed { i, irVarargElement ->
-            if (irVarargElement !is IrSpreadElement &&
-                argument.arguments[i] is FirNamedArgumentExpression &&
+        if (this is IrVararg && parameter?.isVararg == true && argument is FirVarargArgumentsExpression && elements.size == 1) {
+            val irVarargElement = elements[0]
+            if (argument.arguments[0] is FirNamedArgumentExpression &&
+                // IrVarargElement can be either IrSpreadElement (then nothing to do) or IrExpression
                 irVarargElement is IrExpression &&
                 (irVarargElement.type.isArray() || irVarargElement.type.isPrimitiveArray())
             ) {
-                elements[i] = IrSpreadElementImpl(irVarargElement.startOffset, irVarargElement.endOffset, irVarargElement)
+                elements[0] = IrSpreadElementImpl(irVarargElement.startOffset, irVarargElement.endOffset, irVarargElement)
             }
         }
         return this
