@@ -468,8 +468,8 @@ internal class KtSymbolByFirBuilder(
                 }
 
                 is ConeTypeVariableType -> {
-                    val diagnostic = when ( val typeParameter = coneType.lookupTag.originalTypeParameter) {
-                        null -> ConeSimpleDiagnostic("Cannot infer parameter type for ${coneType.lookupTag.debugName}")
+                    val diagnostic = when ( val typeParameter = coneType.typeConstructor.originalTypeParameter) {
+                        null -> ConeSimpleDiagnostic("Cannot infer parameter type for ${coneType.typeConstructor.debugName}")
                         else -> ConeCannotInferTypeParameterType((typeParameter as ConeTypeParameterLookupTag).typeParameterSymbol)
                     }
                     buildKtType(ConeErrorType(diagnostic, isUninferredParameter = true, attributes = coneType.attributes))

@@ -74,7 +74,7 @@ open class ConeTypeRenderer(
         when (type) {
             is ConeTypeVariableType -> {
                 builder.append("TypeVariable(")
-                builder.append(type.lookupTag.name)
+                builder.append(type.typeConstructor.name)
                 builder.append(")")
             }
 

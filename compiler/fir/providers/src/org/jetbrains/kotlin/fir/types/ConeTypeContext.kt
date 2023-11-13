@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexi
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker {
     override fun toString(): String = reason
@@ -156,7 +155,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeClassLikeType -> lookupTag
             is ConeTypeParameterType -> lookupTag
             is ConeCapturedType -> constructor
-            is ConeTypeVariableType -> lookupTag
+            is ConeTypeVariableType -> typeConstructor
             is ConeIntersectionType -> this
             is ConeStubType -> constructor
             is ConeDefinitelyNotNullType -> original.typeConstructor()
@@ -492,7 +491,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             // And while it seems reasonable to have similar semantics as for stub types, it would make some diagnostic test failing
             // Thus, we leave the same semantics only for stubs (similar to TypeUtils.isNullableType)
             is ConeStubType -> {
-                val symbol = (this.constructor.variable.defaultType.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol
+                val symbol = (this.constructor.variable.defaultType.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol
                 symbol == null || symbol.allBoundsAreNullableOrUnresolved()
             }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }

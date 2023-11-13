@@ -236,7 +236,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeRawType -> ConeRawType.create(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeDynamicType -> ConeDynamicType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
-        is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag, attributes)
+        is ConeTypeVariableType -> ConeTypeVariableType(nullability, typeConstructor, attributes)
         is ConeCapturedType -> ConeCapturedType(
             captureStatus, lowerType, nullability, constructor, attributes, isProjectionNotNull,
         )
@@ -285,7 +285,7 @@ fun <T : ConeKotlinType> T.withNullability(
             )
         }
 
-        is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag, theAttributes)
+        is ConeTypeVariableType -> ConeTypeVariableType(nullability, typeConstructor, theAttributes)
         is ConeCapturedType -> ConeCapturedType(captureStatus, lowerType, nullability, constructor, theAttributes)
         is ConeIntersectionType -> when (nullability) {
             ConeNullability.NULLABLE -> this.mapTypes {

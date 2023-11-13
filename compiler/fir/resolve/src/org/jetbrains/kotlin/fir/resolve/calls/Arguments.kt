@@ -353,7 +353,7 @@ private fun checkApplicabilityForArgumentType(
 
         fun tryGetConeTypeThatCompatibleWithKtType(type: ConeKotlinType): ConeKotlinType {
             if (type is ConeTypeVariableType) {
-                val lookupTag = type.lookupTag
+                val lookupTag = type.typeConstructor
 
                 val constraints = csBuilder.currentStorage().notFixedTypeVariables[lookupTag]?.constraints
                 val constraintTypes = constraints?.mapNotNull { it.type as? ConeKotlinType }

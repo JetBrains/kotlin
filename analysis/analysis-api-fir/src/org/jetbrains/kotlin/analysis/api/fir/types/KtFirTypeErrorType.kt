@@ -30,7 +30,7 @@ internal class KtFirTypeErrorType(
     override fun tryRenderAsNonErrorType(): String? = withValidityAssertion {
         when (val diagnostic = coneType.diagnostic) {
             is ConeCannotInferTypeParameterType -> diagnostic.typeParameter.name.asString()
-            is ConeTypeVariableTypeIsNotInferred -> diagnostic.typeVariableType.lookupTag.debugName
+            is ConeTypeVariableTypeIsNotInferred -> diagnostic.typeVariableType.typeConstructor.debugName
             else -> null
         }
     }

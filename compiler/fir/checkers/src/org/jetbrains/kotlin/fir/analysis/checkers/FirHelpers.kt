@@ -839,7 +839,7 @@ fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
                 else -> error("missing branch for ${javaClass.name}")
             }
             is ConeTypeVariableType -> {
-                val symbol = (type.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol ?: return
+                val symbol = (type.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol ?: return
                 symbol.resolvedBounds.forEach { collect(it.coneType) }
             }
             is ConeDefinitelyNotNullType -> collect(type.original)

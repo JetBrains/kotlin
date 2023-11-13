@@ -43,7 +43,7 @@ class ConeCannotInferReceiverParameterType(
 
 class ConeTypeVariableTypeIsNotInferred(
     val typeVariableType: ConeTypeVariableType,
-    override val reason: String = "Type for ${typeVariableType.lookupTag.debugName} is not inferred"
+    override val reason: String = "Type for ${typeVariableType.typeConstructor.debugName} is not inferred"
 ) : ConeDiagnostic
 
 class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnosticWithSource(source) {

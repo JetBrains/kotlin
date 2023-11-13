@@ -84,7 +84,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             val position = ConeArgumentConstraintPosition(callInfo.callSite)
 
             if (expectedType != null && !resultingType.contains {
-                    it is ConeTypeVariableType && it.lookupTag !in outerCsBuilder.currentStorage().allTypeVariables
+                    it is ConeTypeVariableType && it.typeConstructor !in outerCsBuilder.currentStorage().allTypeVariables
                 }
             ) {
                 addSubtypeConstraint(resultingType, expectedType, position)

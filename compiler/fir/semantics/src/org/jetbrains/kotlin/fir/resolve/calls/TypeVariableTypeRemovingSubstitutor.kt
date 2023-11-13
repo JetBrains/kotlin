@@ -23,7 +23,7 @@ private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext) 
     }
 
     private fun convertTypeVariableType(type: ConeTypeVariableType): ConeKotlinType {
-        val originalTypeParameter = type.lookupTag.originalTypeParameter
+        val originalTypeParameter = type.typeConstructor.originalTypeParameter
         if (originalTypeParameter != null) {
             check(originalTypeParameter is ConeTypeParameterLookupTag)
             return ConeTypeParameterTypeImpl(originalTypeParameter, type.isNullable, type.attributes)

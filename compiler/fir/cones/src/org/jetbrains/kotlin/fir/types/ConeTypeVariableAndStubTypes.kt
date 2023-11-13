@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.model.*
 
 class ConeTypeVariableType(
     override val nullability: ConeNullability,
-    val lookupTag: ConeTypeVariableTypeConstructor,
+    val typeConstructor: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeSimpleKotlinType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
@@ -21,7 +21,7 @@ class ConeTypeVariableType(
         if (other !is ConeTypeVariableType) return false
 
         if (nullability != other.nullability) return false
-        if (lookupTag != other.lookupTag) return false
+        if (typeConstructor != other.typeConstructor) return false
 
         return true
     }
@@ -29,7 +29,7 @@ class ConeTypeVariableType(
     override fun hashCode(): Int {
         var result = 0
         result = 31 * result + nullability.hashCode()
-        result = 31 * result + lookupTag.hashCode()
+        result = 31 * result + typeConstructor.hashCode()
         return result
     }
 }

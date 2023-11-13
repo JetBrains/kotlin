@@ -449,7 +449,7 @@ open class FirDeclarationsResolveTransformer(
                 // Substitut type parameter to type variable
                 .let(candidate.substitutor::substituteOrSelf)
                 .unwrapTopLevelVariableType() ?: return null
-        val typeVariable = returnTypeBasedOnVariable.lookupTag
+        val typeVariable = returnTypeBasedOnVariable.typeConstructor
 
         val candidateSystem = candidate.system
         val candidateStorage = candidateSystem.currentStorage()

@@ -849,7 +849,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     simpleName(type.lookupTag.name)
                 }
             }
-            is ConeTypeVariableType -> resolved { +type.lookupTag.name.asString() }
+            is ConeTypeVariableType -> resolved { +type.typeConstructor.name.asString() }
             is ConeFlexibleType -> resolved { generate(type) }
             is ConeCapturedType -> inlineUnsupported(type)
             is ConeDefinitelyNotNullType -> resolved {
