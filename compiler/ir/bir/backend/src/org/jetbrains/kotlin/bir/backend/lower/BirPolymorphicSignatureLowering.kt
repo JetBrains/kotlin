@@ -37,7 +37,6 @@ class BirPolymorphicSignatureLowering : BirLoweringPhase() {
 
             val parent = newCall.parent
             if (parent is BirTypeOperatorCall && parent.argument == newCall && parent.isCast()) {
-                parent.unsafeDispose()
                 parent.replaceWith(newCall)
             }
         }
