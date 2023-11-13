@@ -217,15 +217,6 @@ abstract class AbstractKotlinNativeCompile<
         get() = compilation.compilerOptions.options.progressiveMode.get()
     // endregion.
 
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated(
-        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
-        level = DeprecationLevel.ERROR
-    )
-    @get:Input
-    val enableEndorsedLibs: Boolean
-        get() = false
-
     @get:Input
     val kotlinNativeVersion: String = project.konanVersion
 

@@ -329,15 +329,6 @@ constructor(
             objectFactory.property(it.file(filename).asFile)
         }
 
-    @Suppress("unused", "DeprecatedCallableAddReplaceWith")
-    @Deprecated(
-        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
-        level = DeprecationLevel.ERROR
-    )
-    @get:Input
-    val enableEndorsedLibs: Boolean
-        get() = false
-
     @Internal
     val compilerPluginOptions = CompilerPluginOptions()
 

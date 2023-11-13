@@ -54,14 +54,6 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
 
     internal val useGenericPluginArtifact: Boolean
         get() = project.nativeUseEmbeddableCompilerJar
-
-    // Endorsed library controller.
-    @Suppress("unused")
-    @Deprecated(
-        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
-        level = DeprecationLevel.ERROR
-    )
-    var enableEndorsedLibs: Boolean = false
 }
 
 open class KotlinNativeCompilation @Inject internal constructor(

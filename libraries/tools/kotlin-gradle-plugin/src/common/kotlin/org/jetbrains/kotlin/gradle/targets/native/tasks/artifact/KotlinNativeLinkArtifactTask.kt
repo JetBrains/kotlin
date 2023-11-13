@@ -69,13 +69,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     abstract val debuggable: Property<Boolean>
 
-    @Deprecated(
-        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
-        level = DeprecationLevel.ERROR
-    )
-    @get:Input
-    abstract val enableEndorsedLibs: Property<Boolean>
-
     @get:Input
     abstract val processTests: Property<Boolean>
 
@@ -189,8 +182,6 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
         baseName.convention(project.name)
         debuggable.convention(true)
         optimized.convention(false)
-        @Suppress("DEPRECATION_ERROR")
-        enableEndorsedLibs.value(false).finalizeValue()
         processTests.convention(false)
         staticFramework.convention(false)
         destinationDir.convention(debuggable.flatMap {
