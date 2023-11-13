@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 class Element(
-    override val name: String,
+    name: String,
     override val propertyName: String,
     category: Category,
-) : AbstractElement<Element, Field>() {
+) : AbstractElement<Element, Field>(name) {
 
     enum class Category(private val packageDir: String, val defaultVisitorParam: String) {
         Expression("expressions", "expression"),
@@ -67,18 +67,12 @@ class Element(
 
     override var kind: ImplementationKind? = null
 
-    override val typeName
-        get() = "Ir" + name.replaceFirstChar(Char::uppercaseChar)
+    override val typeName = "Ir$name"
 
     var isLeaf = false
     var childrenOrderOverride: List<String>? = null
     override var walkableChildren: List<Field> = emptyList()
     override val transformableChildren get() = walkableChildren.filter { it.transformable }
-
-    var visitorName: String? = null
-
-    override val visitFunctionName: String
-        get() = "visit" + (visitorName ?: name).replaceFirstChar(Char::uppercaseChar)
 
     override var visitorParameterName = category.defaultVisitorParam
 

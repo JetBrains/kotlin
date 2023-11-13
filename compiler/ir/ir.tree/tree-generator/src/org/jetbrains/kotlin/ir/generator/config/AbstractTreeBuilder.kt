@@ -122,7 +122,7 @@ class ElementDelegate(
 
     override fun provideDelegate(thisRef: AbstractTreeBuilder, property: KProperty<*>): ElementDelegate {
         val path = thisRef.javaClass.name + "." + property.name
-        element = Element(name ?: property.name, path, category)
+        element = Element(name ?: property.name.replaceFirstChar(Char::uppercaseChar), path, category)
         return this
     }
 }

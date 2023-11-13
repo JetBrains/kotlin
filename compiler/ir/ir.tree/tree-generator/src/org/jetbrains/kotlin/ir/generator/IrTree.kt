@@ -71,7 +71,7 @@ object IrTree : AbstractTreeBuilder() {
         skipInIrFactory()
     }
 
-    override val rootElement: Element by element(Other, name = "element") {
+    override val rootElement: Element by element(Other, name = "Element") {
         hasAcceptMethod = true
         hasTransformMethod = true
         transformByChildren = true
@@ -111,7 +111,7 @@ object IrTree : AbstractTreeBuilder() {
         transformByChildren = true
         transformerReturnType = statement
         parentInVisitor = rootElement
-        visitorName = "declaration"
+        nameInVisitorMethod = "Declaration"
 
         parent(declaration)
     }
@@ -731,7 +731,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val memberAccessExpression: Element by element(Expression) {
         parentInVisitor = declarationReference
-        visitorName = "memberAccess"
+        nameInVisitorMethod = "MemberAccess"
         transformerReturnType = rootElement
         val s = +param("S", symbolType)
 
@@ -813,7 +813,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val functionAccessExpression: Element by element(Expression) {
         parentInVisitor = memberAccessExpression
-        visitorName = "functionAccess"
+        nameInVisitorMethod = "FunctionAccess"
         transformerReturnType = rootElement
 
         parent(memberAccessExpression.withArgs("S" to functionSymbolType))
@@ -834,7 +834,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val getSingletonValue: Element by element(Expression) {
         parentInVisitor = declarationReference
-        visitorName = "SingletonReference"
+        nameInVisitorMethod = "SingletonReference"
 
         parent(declarationReference)
     }
@@ -1092,7 +1092,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val fieldAccessExpression: Element by element(Expression) {
         parentInVisitor = declarationReference
-        visitorName = "fieldAccess"
+        nameInVisitorMethod = "FieldAccess"
         ownsChildren = false
 
         parent(declarationReference)
@@ -1228,7 +1228,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val typeOperatorCall: Element by element(Expression) {
         parentInVisitor = expression
-        visitorName = "typeOperator"
+        nameInVisitorMethod = "TypeOperator"
 
         parent(expression)
 
@@ -1238,7 +1238,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val valueAccessExpression: Element by element(Expression) {
         parentInVisitor = declarationReference
-        visitorName = "valueAccess"
+        nameInVisitorMethod = "ValueAccess"
 
         parent(declarationReference)
 

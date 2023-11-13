@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.generators.tree
 /**
  * A class representing a FIR or IR tree element.
  */
-abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, FieldContainer, ImplementationKindOwner
+abstract class AbstractElement<Element, Field>(
+    val name: String,
+) : ElementOrRef<Element, Field>, FieldContainer, ImplementationKindOwner
         where Element : AbstractElement<Element, Field>,
               Field : AbstractField {
-
-    abstract val name: String
 
     /**
      * The fully-qualified name of the property in the tree generator that is used to configure this element.
@@ -39,9 +39,17 @@ abstract class AbstractElement<Element, Field> : ElementOrRef<Element, Field>, F
         get() = false
 
     /**
+     * The value of this property will be used to name a `visit*` method for this element in visitor classes.
+     *
+     * In `visit*`, the `*` will be replaced with the value of this property.
+     */
+    var nameInVisitorMethod: String = name
+
+    /**
      * The name of the method in visitors used to visit this element.
      */
-    abstract val visitFunctionName: String
+    val visitFunctionName: String
+        get() = "visit$nameInVisitorMethod"
 
     /**
      * The name of the parameter representing this element in the visitor method used to visit this element.
