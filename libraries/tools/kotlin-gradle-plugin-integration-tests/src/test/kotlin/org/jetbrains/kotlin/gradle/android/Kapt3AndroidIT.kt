@@ -225,6 +225,10 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
                 android.applicationVariants.all {
                     it.javaCompileOptions.annotationProcessorOptions.compilerArgumentProviders.add(nested)
                 }
+                     
+                dependencies {
+                    kapt 'org.jetbrains.kotlin:annotation-processor-example'
+                }
                 """.trimIndent()
             )
 
