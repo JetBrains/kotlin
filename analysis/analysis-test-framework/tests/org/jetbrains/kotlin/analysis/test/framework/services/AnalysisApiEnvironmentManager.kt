@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticModuleProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
@@ -68,7 +67,7 @@ class AnalysisApiEnvironmentManagerImpl(
 
         StandaloneProjectFactory.registerServicesForProjectEnvironment(
             _projectEnvironment,
-            KtStaticModuleProvider(globalLanguageVersionSettings, builtinsModule, ktModuleProjectStructure),
+            KtTestProjectStructureProvider(globalLanguageVersionSettings, builtinsModule, ktModuleProjectStructure),
             useSiteCompilerConfiguration.languageVersionSettings,
             useSiteCompilerConfiguration.get(JVMConfigurationKeys.JDK_HOME)?.toPath(),
         )
