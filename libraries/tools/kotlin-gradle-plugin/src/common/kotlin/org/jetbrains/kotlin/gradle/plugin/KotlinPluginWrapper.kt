@@ -207,12 +207,18 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     ) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(this, isKotlinGranularMetadata)
-        KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-        KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
         ProjectLocalConfigurations.setupAttributesMatchingStrategy(this)
-        CInteropKlibLibraryElements.setupAttributesMatchingStrategy(this)
-        CommonizerTargetAttribute.setupAttributesMatchingStrategy(this)
-        CInteropCommonizerArtifactTypeAttribute.setupTransform(project)
+
+        project.whenJsOrMppEnabled {
+            KotlinJsCompilerAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
+            KotlinWasmTargetAttribute.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
+        }
+
+        project.whenMppEnabled {
+            CInteropKlibLibraryElements.setupAttributesMatchingStrategy(this)
+            CommonizerTargetAttribute.setupAttributesMatchingStrategy(this)
+            CInteropCommonizerArtifactTypeAttribute.setupTransform(project)
+        }
     }
 
     open fun whenBuildEvaluated(project: Project) {
