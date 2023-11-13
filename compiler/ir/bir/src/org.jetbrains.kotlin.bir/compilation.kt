@@ -44,6 +44,7 @@ private val allBirPhases = listOf<Pair<(JvmBirBackendContext) -> BirLoweringPhas
     ::BirJvmLateinitLowering to listOf("JvmLateinitLowering"),
     ::BirJvmInventNamesForLocalClassesLowering to listOf("InventNamesForLocalClasses"),
     ::BirInlineCallableReferenceToLambdaLowering to listOf("InlineCallableReferenceToLambdaPhase"),
+    ::BirDirectInvokeLowering to listOf("DirectInvokes"),
     ::BirAnnotationLowering to listOf("Annotation"),
 )
 
