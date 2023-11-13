@@ -62,7 +62,6 @@ fun FirDeclaration.checkSinceKotlinVersionAccessibility(context: CheckerContext)
 private fun FirDeclaration.getOwnSinceKotlinVersion(session: FirSession): FirSinceKotlinValue? {
     var result: FirSinceKotlinValue? = null
 
-    // TODO, KT-59824: use-site targeted annotations
     fun FirDeclaration.consider() {
         val sinceKotlinSingleArgument = getAnnotationByClassId(StandardClassIds.Annotations.SinceKotlin, session)?.findArgumentByName(
             StandardClassIds.Annotations.ParameterNames.sinceKotlinVersion
