@@ -11615,6 +11615,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("EnumWOParenthesesConsistencyNestedScope.kt")
+            public void testEnumWOParenthesesConsistencyNestedScope() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/EnumWOParenthesesConsistencyNestedScope.kt");
+            }
+
+            @Test
+            @TestMetadata("EnumWOParenthesesConsistencyTopLevel.kt")
+            public void testEnumWOParenthesesConsistencyTopLevel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/EnumWOParenthesesConsistencyTopLevel.kt");
+            }
+
+            @Test
             @TestMetadata("enumWithAnnotationKeyword.kt")
             public void testEnumWithAnnotationKeyword() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/enumWithAnnotationKeyword.kt");
