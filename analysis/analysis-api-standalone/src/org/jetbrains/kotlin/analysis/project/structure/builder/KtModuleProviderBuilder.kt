@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtModuleProviderImpl
+import org.jetbrains.kotlin.analysis.project.structure.impl.KtStandaloneProjectStructureProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.platform.TargetPlatform
 import kotlin.contracts.ExperimentalContracts
@@ -27,7 +27,7 @@ public class KtModuleProviderBuilder(
     public lateinit var platform: TargetPlatform
 
     public fun build(): KtStaticProjectStructureProvider {
-        return KtModuleProviderImpl(
+        return KtStandaloneProjectStructureProvider(
             platform,
             kotlinCoreProjectEnvironment.project,
             mainModules,

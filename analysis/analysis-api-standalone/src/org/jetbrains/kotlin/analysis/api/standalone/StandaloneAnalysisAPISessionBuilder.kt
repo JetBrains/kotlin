@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLi
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildProjectStructureProvider
-import org.jetbrains.kotlin.analysis.project.structure.impl.KtModuleProviderImpl
+import org.jetbrains.kotlin.analysis.project.structure.impl.KtStandaloneProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtSourceModuleImpl
 import org.jetbrains.kotlin.analysis.project.structure.impl.buildKtModuleProviderByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.project.structure.impl.getPsiFilesFromPaths
@@ -161,13 +161,13 @@ public class StandaloneAnalysisAPISessionBuilder(
     }
 
     private fun registerPsiDeclarationFromBinaryModuleProvider() {
-        val ktModuleProviderImpl = projectStructureProvider as KtModuleProviderImpl
+        val standaloneProjectStructureProvider = projectStructureProvider as KtStandaloneProjectStructureProvider
         kotlinCoreProjectEnvironment.project.apply {
             registerService(
                 KotlinPsiDeclarationProviderFactory::class.java,
                 KotlinStaticPsiDeclarationProviderFactory(
                     this,
-                    ktModuleProviderImpl.binaryModules,
+                    standaloneProjectStructureProvider.binaryModules,
                     kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 )
             )
