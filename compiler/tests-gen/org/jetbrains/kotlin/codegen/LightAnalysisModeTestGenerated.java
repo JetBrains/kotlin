@@ -40711,6 +40711,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/smartCasts/falseSmartCast.kt");
         }
 
+        @TestMetadata("genericInheritanceWithNonGenericNoAmbiguity.kt")
+        public void testGenericInheritanceWithNonGenericNoAmbiguity() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/genericInheritanceWithNonGenericNoAmbiguity.kt");
+        }
+
         @TestMetadata("genericIntersection.kt")
         public void testGenericIntersection() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/genericIntersection.kt");

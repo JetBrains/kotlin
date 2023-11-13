@@ -34996,6 +34996,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         }
 
         @Test
+        @TestMetadata("genericInheritanceWithNonGenericNoAmbiguity.kt")
+        public void testGenericInheritanceWithNonGenericNoAmbiguity() throws Exception {
+            runTest("compiler/testData/codegen/box/smartCasts/genericInheritanceWithNonGenericNoAmbiguity.kt");
+        }
+
+        @Test
         @TestMetadata("genericIntersection.kt")
         public void testGenericIntersection() throws Exception {
             runTest("compiler/testData/codegen/box/smartCasts/genericIntersection.kt");
