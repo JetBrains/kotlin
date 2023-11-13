@@ -14854,6 +14854,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/extensionClasses/multiple.kt");
         }
 
+        @TestMetadata("noRedeclaration.kt")
+        public void testNoRedeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/noRedeclaration.kt");
+        }
+
         @TestMetadata("propertyWithContext.kt")
         public void testPropertyWithContext() throws Exception {
             runTest("compiler/testData/codegen/box/extensionClasses/propertyWithContext.kt");

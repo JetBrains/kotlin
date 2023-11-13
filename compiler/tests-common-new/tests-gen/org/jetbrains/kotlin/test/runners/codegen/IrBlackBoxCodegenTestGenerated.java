@@ -17914,6 +17914,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("noRedeclaration.kt")
+        public void testNoRedeclaration() throws Exception {
+            runTest("compiler/testData/codegen/box/extensionClasses/noRedeclaration.kt");
+        }
+
+        @Test
         @TestMetadata("propertyWithContext.kt")
         public void testPropertyWithContext() throws Exception {
             runTest("compiler/testData/codegen/box/extensionClasses/propertyWithContext.kt");
