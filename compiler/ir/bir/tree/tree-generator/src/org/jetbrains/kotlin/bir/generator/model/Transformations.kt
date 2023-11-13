@@ -62,14 +62,17 @@ fun config2model(config: Config): Model {
 }
 
 private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
-    is SimpleFieldConfig -> SingleField(
-        fc,
-        fc.name,
-        fc.type?.copy(fc.nullable) ?: InferredOverriddenType,
-        fc.mutable,
-        fc.isChild,
-        fc.baseDefaultValue,
-    )
+    is SimpleFieldConfig -> {
+        if (fc.isChild) check(fc.nullable) { "All single child properties must be nullable" }
+        SingleField(
+            fc,
+            fc.name,
+            fc.type?.copy(fc.nullable) ?: InferredOverriddenType,
+            fc.mutable,
+            fc.isChild,
+            fc.baseDefaultValue,
+        )
+    }
     is ListFieldConfig -> {
         val listType = when {
             fc.isChild -> childElementList

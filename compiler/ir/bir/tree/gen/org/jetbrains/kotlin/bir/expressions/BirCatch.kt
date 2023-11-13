@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.bir.declarations.BirVariable
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.catch]
  */
 abstract class BirCatch : BirImplElementBase(), BirElement {
-    abstract var catchParameter: BirVariable
+    abstract var catchParameter: BirVariable?
 
-    abstract var result: BirExpression
+    abstract var result: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        catchParameter.accept(data, visitor)
-        result.accept(data, visitor)
+        catchParameter?.accept(data, visitor)
+        result?.accept(data, visitor)
     }
 
     companion object

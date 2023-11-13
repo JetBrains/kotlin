@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 class BirReturnImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-    value: BirExpression,
+    value: BirExpression?,
     returnTargetSymbol: BirReturnTargetSymbol,
 ) : BirReturn() {
     private var _sourceSpan: SourceSpan = sourceSpan
@@ -68,10 +68,10 @@ class BirReturnImpl(
 
     private var _value: BirExpression? = value
 
-    override var value: BirExpression
+    override var value: BirExpression?
         get() {
             recordPropertyRead(1)
-            return _value ?: throwChildElementRemoved("value")
+            return _value
         }
         set(value) {
             if (_value != value) {

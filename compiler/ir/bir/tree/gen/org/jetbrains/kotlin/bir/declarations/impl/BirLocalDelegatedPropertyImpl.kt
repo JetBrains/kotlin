@@ -34,8 +34,8 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
     name: Name,
     type: BirType,
     isVar: Boolean,
-    delegate: BirVariable,
-    getter: BirSimpleFunction,
+    delegate: BirVariable?,
+    getter: BirSimpleFunction?,
     setter: BirSimpleFunction?,
 ) : BirLocalDelegatedProperty() {
     override val owner: BirLocalDelegatedPropertyImpl
@@ -130,10 +130,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     private var _delegate: BirVariable? = delegate
 
-    override var delegate: BirVariable
+    override var delegate: BirVariable?
         get() {
             recordPropertyRead(2)
-            return _delegate ?: throwChildElementRemoved("delegate")
+            return _delegate
         }
         set(value) {
             if (_delegate != value) {
@@ -145,10 +145,10 @@ class BirLocalDelegatedPropertyImpl @ObsoleteDescriptorBasedAPI constructor(
 
     private var _getter: BirSimpleFunction? = getter
 
-    override var getter: BirSimpleFunction
+    override var getter: BirSimpleFunction?
         get() {
             recordPropertyRead(3)
-            return _getter ?: throwChildElementRemoved("getter")
+            return _getter
         }
         set(value) {
             if (_getter != value) {

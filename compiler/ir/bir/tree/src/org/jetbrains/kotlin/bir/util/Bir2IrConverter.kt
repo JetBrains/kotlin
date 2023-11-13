@@ -910,7 +910,6 @@ class Bir2IrConverter(
         }) {
             copyAttributes(old)
             copyDynamicProperties(old)
-
         }
 
     private fun copyGetClass(old: BirGetClass): IrGetClass = copyNotReferencedElement(old, {

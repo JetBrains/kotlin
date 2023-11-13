@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.bir.expressions.BirSpreadElement
 
 class BirSpreadElementImpl(
     sourceSpan: SourceSpan,
-    expression: BirExpression,
+    expression: BirExpression?,
 ) : BirSpreadElement() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -35,10 +35,10 @@ class BirSpreadElementImpl(
 
     private var _expression: BirExpression? = expression
 
-    override var expression: BirExpression
+    override var expression: BirExpression?
         get() {
             recordPropertyRead(1)
-            return _expression ?: throwChildElementRemoved("expression")
+            return _expression
         }
         set(value) {
             if (_expression != value) {

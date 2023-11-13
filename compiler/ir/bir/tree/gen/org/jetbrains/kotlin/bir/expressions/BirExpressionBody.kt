@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.expressionBody]
  */
 abstract class BirExpressionBody : BirBody() {
-    abstract var expression: BirExpression
+    abstract var expression: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        expression.accept(data, visitor)
+        expression?.accept(data, visitor)
     }
 
     companion object

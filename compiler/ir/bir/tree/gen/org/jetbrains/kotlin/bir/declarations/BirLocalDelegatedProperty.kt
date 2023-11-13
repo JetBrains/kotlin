@@ -31,16 +31,16 @@ abstract class BirLocalDelegatedProperty : BirImplElementBase(), BirDeclaration,
 
     abstract var isVar: Boolean
 
-    abstract var delegate: BirVariable
+    abstract var delegate: BirVariable?
 
-    abstract var getter: BirSimpleFunction
+    abstract var getter: BirSimpleFunction?
 
     abstract var setter: BirSimpleFunction?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         annotations.acceptChildren(visitor, data)
-        delegate.accept(data, visitor)
-        getter.accept(data, visitor)
+        delegate?.accept(data, visitor)
+        getter?.accept(data, visitor)
         setter?.accept(data, visitor)
     }
 

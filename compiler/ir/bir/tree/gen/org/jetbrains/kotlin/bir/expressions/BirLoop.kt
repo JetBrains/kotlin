@@ -20,7 +20,7 @@ abstract class BirLoop : BirExpression() {
 
     abstract var body: BirExpression?
 
-    abstract var condition: BirExpression
+    abstract var condition: BirExpression?
 
     abstract var label: String?
 

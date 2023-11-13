@@ -17,11 +17,11 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.setField]
  */
 abstract class BirSetField : BirFieldAccessExpression() {
-    abstract var value: BirExpression
+    abstract var value: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         receiver?.accept(data, visitor)
-        value.accept(data, visitor)
+        value?.accept(data, visitor)
     }
 
     companion object

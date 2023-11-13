@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.bir.symbols.*
 import org.jetbrains.kotlin.bir.types.*
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -22,9 +24,11 @@ import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.*
@@ -36,9 +40,11 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
+import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -55,6 +61,15 @@ abstract class Bir2IrConverterBase(
     protected fun <Ir : IrElement> IrElement.copyChildElement(old: BirElement): Ir = copyElement<Ir>(old)
 
     protected fun <Ir : IrElement> copyChildElement(old: BirElement): Ir = copyElement(old)
+
+    @JvmName("copyChildElementNullable")
+    protected inline fun <Ir : IrElement, reified Bir : BirElement?> copyChildElement(old: Bir): Ir {
+        return if (old != null) {
+            copyElement(old)
+        } else {
+            DummyIrElements.createForClass(Bir::class.java) as Ir
+        }
+    }
 
 
     fun <Ir : IrElement> remapElement(old: BirElement): Ir = copyElement(old)
@@ -234,4 +249,18 @@ abstract class Bir2IrConverterBase(
             }
         }
     }*/
+
+    protected object DummyIrElements {
+        fun createForClass(birClass: Class<*>): IrElement {
+            return when (birClass) {
+                BirSimpleFunction::class.java -> DummyIrElements.irSimpleFunction
+                else -> TODO(birClass.simpleName)
+            }
+        }
+
+        val irSimpleFunction = IrFunctionImpl(
+            0, 0, IrDeclarationOrigin.DEFINED, IrSimpleFunctionSymbolImpl(), Name.identifier(""), DescriptorVisibilities.PUBLIC,
+            Modality.FINAL, IrUninitializedType, false, false, false, false, false, false, false, false
+        )
+    }
 }

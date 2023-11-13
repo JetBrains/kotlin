@@ -39,7 +39,7 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
             }
         }
 
-        val function = expression.function
+        val function = expression.function!!
         val block = BirBlock.build {
             this.sourceSpan = sourceSpan
             type = expression.type

@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.bir.expressions.BirExpression
 
 class BirCatchImpl(
     sourceSpan: SourceSpan,
-    catchParameter: BirVariable,
-    result: BirExpression,
+    catchParameter: BirVariable?,
+    result: BirExpression?,
 ) : BirCatch() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -37,10 +37,10 @@ class BirCatchImpl(
 
     private var _catchParameter: BirVariable? = catchParameter
 
-    override var catchParameter: BirVariable
+    override var catchParameter: BirVariable?
         get() {
             recordPropertyRead(1)
-            return _catchParameter ?: throwChildElementRemoved("catchParameter")
+            return _catchParameter
         }
         set(value) {
             if (_catchParameter != value) {
@@ -52,10 +52,10 @@ class BirCatchImpl(
 
     private var _result: BirExpression? = result
 
-    override var result: BirExpression
+    override var result: BirExpression?
         get() {
             recordPropertyRead(2)
-            return _result ?: throwChildElementRemoved("result")
+            return _result
         }
         set(value) {
             if (_result != value) {

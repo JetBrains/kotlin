@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 class BirGetClassImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-    argument: BirExpression,
+    argument: BirExpression?,
 ) : BirGetClass() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -66,10 +66,10 @@ class BirGetClassImpl(
 
     private var _argument: BirExpression? = argument
 
-    override var argument: BirExpression
+    override var argument: BirExpression?
         get() {
             recordPropertyRead(1)
-            return _argument ?: throwChildElementRemoved("argument")
+            return _argument
         }
         set(value) {
             if (_argument != value) {

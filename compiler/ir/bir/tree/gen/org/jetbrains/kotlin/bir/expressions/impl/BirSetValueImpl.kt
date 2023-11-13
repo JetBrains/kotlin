@@ -24,7 +24,7 @@ class BirSetValueImpl(
     type: BirType,
     symbol: BirValueDeclaration,
     origin: IrStatementOrigin?,
-    value: BirExpression,
+    value: BirExpression?,
 ) : BirSetValue() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -98,10 +98,10 @@ class BirSetValueImpl(
 
     private var _value: BirExpression? = value
 
-    override var value: BirExpression
+    override var value: BirExpression?
         get() {
             recordPropertyRead(1)
-            return _value ?: throwChildElementRemoved("value")
+            return _value
         }
         set(value) {
             if (_value != value) {

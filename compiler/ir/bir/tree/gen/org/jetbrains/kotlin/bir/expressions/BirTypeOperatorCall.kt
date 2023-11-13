@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 abstract class BirTypeOperatorCall : BirExpression() {
     abstract var operator: IrTypeOperator
 
-    abstract var argument: BirExpression
+    abstract var argument: BirExpression?
 
     abstract var typeOperand: BirType
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        argument.accept(data, visitor)
+        argument?.accept(data, visitor)
     }
 
     companion object

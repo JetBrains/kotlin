@@ -21,12 +21,12 @@ import org.jetbrains.kotlin.ir.expressions.IrDynamicOperator
 abstract class BirDynamicOperatorExpression : BirDynamicExpression() {
     abstract var operator: IrDynamicOperator
 
-    abstract var receiver: BirExpression
+    abstract var receiver: BirExpression?
 
     abstract val arguments: BirChildElementList<BirExpression>
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        receiver.accept(data, visitor)
+        receiver?.accept(data, visitor)
         arguments.acceptChildren(visitor, data)
     }
 

@@ -29,7 +29,7 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
     signature: IdSignature?,
     origin: IrDeclarationOrigin,
     isStatic: Boolean,
-    body: BirBlockBody,
+    body: BirBlockBody?,
 ) : BirAnonymousInitializer() {
     override val owner: BirAnonymousInitializerImpl
         get() = this
@@ -95,10 +95,10 @@ class BirAnonymousInitializerImpl @ObsoleteDescriptorBasedAPI constructor(
 
     private var _body: BirBlockBody? = body
 
-    override var body: BirBlockBody
+    override var body: BirBlockBody?
         get() {
             recordPropertyRead(2)
-            return _body ?: throwChildElementRemoved("body")
+            return _body
         }
         set(value) {
             if (_body != value) {

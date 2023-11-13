@@ -22,7 +22,7 @@ class BirFunctionExpressionImpl(
     sourceSpan: SourceSpan,
     type: BirType,
     origin: IrStatementOrigin,
-    function: BirSimpleFunction,
+    function: BirSimpleFunction?,
 ) : BirFunctionExpression() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -82,10 +82,10 @@ class BirFunctionExpressionImpl(
 
     private var _function: BirSimpleFunction? = function
 
-    override var function: BirSimpleFunction
+    override var function: BirSimpleFunction?
         get() {
             recordPropertyRead(1)
-            return _function ?: throwChildElementRemoved("function")
+            return _function
         }
         set(value) {
             if (_function != value) {

@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.bir.accept
  */
 abstract class BirElseBranch : BirBranch() {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        condition.accept(data, visitor)
-        result.accept(data, visitor)
+        condition?.accept(data, visitor)
+        result?.accept(data, visitor)
     }
 
     companion object

@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 abstract class BirFunctionExpression : BirExpression() {
     abstract var origin: IrStatementOrigin
 
-    abstract var function: BirSimpleFunction
+    abstract var function: BirSimpleFunction?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        function.accept(data, visitor)
+        function?.accept(data, visitor)
     }
 
     companion object

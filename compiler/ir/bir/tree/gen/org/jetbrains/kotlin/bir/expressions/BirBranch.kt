@@ -19,13 +19,13 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.branch]
  */
 abstract class BirBranch : BirImplElementBase(), BirElement {
-    abstract var condition: BirExpression
+    abstract var condition: BirExpression?
 
-    abstract var result: BirExpression
+    abstract var result: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        condition.accept(data, visitor)
-        result.accept(data, visitor)
+        condition?.accept(data, visitor)
+        result?.accept(data, visitor)
     }
 
     companion object

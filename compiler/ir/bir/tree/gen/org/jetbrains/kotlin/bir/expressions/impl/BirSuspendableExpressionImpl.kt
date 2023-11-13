@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.bir.types.BirType
 class BirSuspendableExpressionImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-    suspensionPointId: BirExpression,
-    result: BirExpression,
+    suspensionPointId: BirExpression?,
+    result: BirExpression?,
 ) : BirSuspendableExpression() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -67,10 +67,10 @@ class BirSuspendableExpressionImpl(
 
     private var _suspensionPointId: BirExpression? = suspensionPointId
 
-    override var suspensionPointId: BirExpression
+    override var suspensionPointId: BirExpression?
         get() {
             recordPropertyRead(1)
-            return _suspensionPointId ?: throwChildElementRemoved("suspensionPointId")
+            return _suspensionPointId
         }
         set(value) {
             if (_suspensionPointId != value) {
@@ -82,10 +82,10 @@ class BirSuspendableExpressionImpl(
 
     private var _result: BirExpression? = result
 
-    override var result: BirExpression
+    override var result: BirExpression?
         get() {
             recordPropertyRead(2)
-            return _result ?: throwChildElementRemoved("result")
+            return _result
         }
         set(value) {
             if (_result != value) {

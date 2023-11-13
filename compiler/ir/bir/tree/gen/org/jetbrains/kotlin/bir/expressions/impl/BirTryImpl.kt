@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.bir.types.BirType
 class BirTryImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-    tryResult: BirExpression,
+    tryResult: BirExpression?,
     finallyExpression: BirExpression?,
 ) : BirTry() {
     private var _sourceSpan: SourceSpan = sourceSpan
@@ -70,10 +70,10 @@ class BirTryImpl(
 
     private var _tryResult: BirExpression? = tryResult
 
-    override var tryResult: BirExpression
+    override var tryResult: BirExpression?
         get() {
             recordPropertyRead(2)
-            return _tryResult ?: throwChildElementRemoved("tryResult")
+            return _tryResult
         }
         set(value) {
             if (_tryResult != value) {
