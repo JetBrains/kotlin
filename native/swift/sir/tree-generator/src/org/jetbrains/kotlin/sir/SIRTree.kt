@@ -3,11 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.sir
+package org.jetbrains.kotlin.sir.generator
 
-/**
- * A marker interface that denotes Swift IR elements.
- */
-interface SirElement {
+import org.jetbrains.kotlin.generators.tree.*
+
+object SIRTree {
 
 }
