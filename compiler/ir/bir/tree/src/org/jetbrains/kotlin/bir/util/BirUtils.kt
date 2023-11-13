@@ -583,3 +583,11 @@ fun BirMemberAccessExpression<*>.putArgument(parameter: BirValueParameter, argum
         else -> valueArguments[parameter.index] = argument
     }
 }
+
+val BirBody.statements: List<BirStatement>
+    get() = when (this) {
+        is BirBlockBody -> statements
+        is BirExpressionBody -> listOf(expression!!)
+        is BirSyntheticBody -> error("Synthetic body contains no statements: $this")
+        else -> error("Unknown subclass of BirBody: $this")
+    }

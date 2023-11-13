@@ -8,6 +8,8 @@
 
 package org.jetbrains.kotlin.bir
 
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames.replaceWith
+
 
 sealed interface BirElementOrChildList {
     fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D)
@@ -19,6 +21,7 @@ interface BirElement : BirElementOrChildList {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
 
+    fun <E : BirElement> getBackReferences(key: BirElementBackReferencesKey<E>): List<E>
     fun replaceWith(new: BirElement?)
 }
 
