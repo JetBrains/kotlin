@@ -145,24 +145,16 @@ class KotlinBuildStatHandler {
                         // log?
                     }
                 }
-                val taskNames = project.tasks.names.toList()
 
                 configurationTimeMetrics.put(NumericalMetrics.NUMBER_OF_SUBPROJECTS, 1)
+
+
                 configurationTimeMetrics.put(
                     BooleanMetrics.KOTLIN_KTS_USED,
                     project.buildscript.sourceFile?.name?.endsWith(".kts") ?: false
                 )
-                configurationTimeMetrics.put(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
-                configurationTimeMetrics.put(
-                    NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
-                    taskNames.count { name ->
-                        try {
-                            project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
-                        } catch (_: Exception) {
-                            true
-                        }
-                    }.toLong()
-                )
+
+                addTaskMetrics(project, configurationTimeMetrics)
 
                 if (project.name == "buildSrc") {
                     configurationTimeMetrics.put(NumericalMetrics.BUILD_SRC_COUNT, 1)
@@ -171,8 +163,29 @@ class KotlinBuildStatHandler {
             }
         }
         sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
-
         return configurationTimeMetrics
+    }
+
+    private fun addTaskMetrics(
+        project: Project,
+        configurationTimeMetrics: MetricContainer,
+    ) {
+        try {
+            val taskNames = project.tasks.names.toList()
+            configurationTimeMetrics.put(NumericalMetrics.GRADLE_NUMBER_OF_TASKS, taskNames.size.toLong())
+            configurationTimeMetrics.put(
+                NumericalMetrics.GRADLE_NUMBER_OF_UNCONFIGURED_TASKS,
+                taskNames.count { name ->
+                    try {
+                        project.tasks.named(name).javaClass.name.contains("TaskCreatingProvider")
+                    } catch (_: Exception) {
+                        true
+                    }
+                }.toLong()
+            )
+        } catch (e: Exception) {
+            //ignore exceptions for KT-62131.
+        }
     }
 
     private fun collectAppliedPluginsStatistics(
