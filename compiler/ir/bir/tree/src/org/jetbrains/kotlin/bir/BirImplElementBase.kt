@@ -253,15 +253,6 @@ abstract class BirImplElementBase : BirElementBase() {
         }
     }
 
-
-    fun unsafeDispose() {
-        acceptChildrenLite {
-            (it as BirImplElementBase).setParentWithInvalidation(null)
-            //childDetached(it)
-        }
-        // todo: mark as disposed
-    }
-
     companion object {
         private const val PARENT_PROPERTY_ID = 0
         private const val DYNAMIC_PROPERTY_ID = 15
