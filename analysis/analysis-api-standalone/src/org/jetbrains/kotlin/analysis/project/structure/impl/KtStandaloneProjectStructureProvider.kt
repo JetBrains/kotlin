@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBu
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
@@ -40,38 +39,39 @@ internal class KtStandaloneProjectStructureProvider(
         LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform).ktModule as KtBuiltinsModule
     }
 
+    override fun getNotUnderContentRootModule(project: Project, file: PsiFile?): KtNotUnderContentRootModule {
+        if (file == null) {
+            return ktNotUnderContentRootModuleWithoutPsiFile
+        }
+
+        return notUnderContentRootModuleCache.getOrPut(file) {
+            KtNotUnderContentRootModuleImpl(
+                name = file.name,
+                moduleDescription = "Standalone-not-under-content-root-module-for-$file",
+                file = file,
+                project = project,
+            )
+        }
+    }
+
     @OptIn(KtModuleStructureInternals::class)
     override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
-        val containingFileAsPsiFile = element.containingFile
+        val containingFile = element.containingFile
             ?: return ktNotUnderContentRootModuleWithoutPsiFile
-        // If an [element] is created on the fly, e.g., via [KtPsiFactory],
-        // its containing [PsiFile] may not have [VirtualFile].
-        // We can attempt to use an associated [analysisContext] (from [KtPsiFactory]) if any.
-        // If both fail, the [element] is not bound to any [KtModule], and we bail out early
-        // by returning a [KtNotUnderContentRootModule] (for that specific unbound file).
-        val containingFileAsVirtualFile = containingFileAsPsiFile.virtualFile
-            ?: (containingFileAsPsiFile as? KtFile)?.analysisContext?.containingFile?.virtualFile
-            ?: return notUnderContentRootModuleCache.getOrPut(containingFileAsPsiFile) {
-                KtNotUnderContentRootModuleImpl(
-                    name = containingFileAsPsiFile.name,
-                    moduleDescription = "Standalone-not-under-content-root-module-for-$containingFileAsPsiFile",
-                    file = containingFileAsPsiFile,
-                    project = project,
-                )
-            }
 
-        if (containingFileAsVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+        val virtualFile = containingFile.virtualFile
+            ?: error("${containingFile.name} is not a physical file")
+
+        if (virtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
             return builtinsModule
         }
 
-        containingFileAsVirtualFile.analysisExtensionFileContextModule?.let { return it }
+        computeSpecialModule(containingFile)?.let { return it }
 
-        return allKtModules.firstOrNull { module ->
-            containingFileAsVirtualFile in module.contentScope
-        }
+        return allKtModules.firstOrNull { module -> virtualFile in module.contentScope }
             ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
                 .withAttachment(
-                    containingFileAsVirtualFile.path,
+                    virtualFile.path,
                     allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
                 )
     }

@@ -7,8 +7,14 @@ package org.jetbrains.kotlin.analysis.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.project.structure.impl.KtDanglingFileModuleImpl
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.analysisContext
+import org.jetbrains.kotlin.psi.doNotAnalyze
 
 public abstract class ProjectStructureProvider {
     /**
@@ -34,6 +40,39 @@ public abstract class ProjectStructureProvider {
      */
     public abstract fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule
 
+    protected abstract fun getNotUnderContentRootModule(project: Project, file: PsiFile?): KtNotUnderContentRootModule
+
+    @OptIn(KtModuleStructureInternals::class)
+    protected fun computeSpecialModule(file: PsiFile): KtModule? {
+        val virtualFile = file.virtualFile
+        if (virtualFile != null) {
+            val contextModule = virtualFile.analysisExtensionFileContextModule
+            if (contextModule != null) {
+                return contextModule
+            }
+        }
+
+        if (file is KtFile && file.isDangling) {
+            val contextModule = computeContextModule(file)
+            return KtDanglingFileModuleImpl(file, contextModule)
+        }
+
+        return null
+    }
+
+    @OptIn(KtModuleStructureInternals::class)
+    private fun computeContextModule(file: KtFile): KtModule {
+        val contextElement = file.context
+            ?: file.analysisContext
+            ?: file.originalFile.takeIf { it !== file }
+
+        if (contextElement != null) {
+            return getModule(contextElement, contextualModule = null)
+        }
+
+        return getNotUnderContentRootModule(file.project, file = null)
+    }
+
     /**
      * Project-global [LanguageVersionSettings] for source modules lacking explicit settings (such as [KtNotUnderContentRootModule]).
      */
@@ -56,3 +95,10 @@ public abstract class ProjectStructureProvider {
         }
     }
 }
+
+@OptIn(KtModuleStructureInternals::class)
+private val KtFile.isDangling: Boolean
+    get() = this is KtCodeFragment
+            || !isPhysical
+            || analysisContext != null
+            || doNotAnalyze != null
