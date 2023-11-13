@@ -308,6 +308,12 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
     }
 
     @Test
+    @TestMetadata("jsExportReexport")
+    public void testJsExportReexport() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsExportReexport/");
+    }
+
+    @Test
     @TestMetadata("jsExportWithMultipleFiles")
     public void testJsExportWithMultipleFiles() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsExportWithMultipleFiles/");
