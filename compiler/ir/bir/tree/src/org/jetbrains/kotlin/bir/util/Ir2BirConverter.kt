@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
+// todo: Could be adjusted for the change that all child fields are now nullable
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class Ir2BirConverter(
     dynamicPropertyManager: BirElementDynamicPropertyManager,

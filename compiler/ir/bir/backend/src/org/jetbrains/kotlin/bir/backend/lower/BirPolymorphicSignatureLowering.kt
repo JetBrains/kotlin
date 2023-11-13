@@ -87,7 +87,7 @@ class BirPolymorphicSignatureLowering : BirLoweringPhase() {
             values.forEachIndexed { i, value ->
                 valueParameters += BirValueParameter.build {
                     name = Name.identifier("\$$i")
-                    type = value.type
+                    type = value!!.type
                     origin = JvmLoweredDeclarationOrigin.POLYMORPHIC_SIGNATURE_INSTANTIATION
                     index = i
                 }

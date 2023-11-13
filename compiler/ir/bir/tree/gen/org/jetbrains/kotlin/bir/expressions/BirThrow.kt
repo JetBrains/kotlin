@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.throw]
  */
 abstract class BirThrow : BirExpression() {
-    abstract var value: BirExpression
+    abstract var value: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        value.accept(data, visitor)
+        value?.accept(data, visitor)
     }
 
     companion object

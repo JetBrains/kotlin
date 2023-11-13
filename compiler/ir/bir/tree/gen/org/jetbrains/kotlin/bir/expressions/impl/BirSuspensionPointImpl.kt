@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.bir.types.BirType
 class BirSuspensionPointImpl(
     sourceSpan: SourceSpan,
     type: BirType,
-    suspensionPointIdParameter: BirVariable,
-    result: BirExpression,
-    resumeResult: BirExpression,
+    suspensionPointIdParameter: BirVariable?,
+    result: BirExpression?,
+    resumeResult: BirExpression?,
 ) : BirSuspensionPoint() {
     private var _sourceSpan: SourceSpan = sourceSpan
 
@@ -69,11 +69,10 @@ class BirSuspensionPointImpl(
 
     private var _suspensionPointIdParameter: BirVariable? = suspensionPointIdParameter
 
-    override var suspensionPointIdParameter: BirVariable
+    override var suspensionPointIdParameter: BirVariable?
         get() {
             recordPropertyRead(1)
-            return _suspensionPointIdParameter ?:
-                    throwChildElementRemoved("suspensionPointIdParameter")
+            return _suspensionPointIdParameter
         }
         set(value) {
             if (_suspensionPointIdParameter != value) {
@@ -85,10 +84,10 @@ class BirSuspensionPointImpl(
 
     private var _result: BirExpression? = result
 
-    override var result: BirExpression
+    override var result: BirExpression?
         get() {
             recordPropertyRead(2)
-            return _result ?: throwChildElementRemoved("result")
+            return _result
         }
         set(value) {
             if (_result != value) {
@@ -100,10 +99,10 @@ class BirSuspensionPointImpl(
 
     private var _resumeResult: BirExpression? = resumeResult
 
-    override var resumeResult: BirExpression
+    override var resumeResult: BirExpression?
         get() {
             recordPropertyRead(3)
-            return _resumeResult ?: throwChildElementRemoved("resumeResult")
+            return _resumeResult
         }
         set(value) {
             if (_resumeResult != value) {

@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.bir.accept
  * Generated from: [org.jetbrains.kotlin.bir.generator.BirTree.suspendableExpression]
  */
 abstract class BirSuspendableExpression : BirExpression() {
-    abstract var suspensionPointId: BirExpression
+    abstract var suspensionPointId: BirExpression?
 
-    abstract var result: BirExpression
+    abstract var result: BirExpression?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
-        suspensionPointId.accept(data, visitor)
-        result.accept(data, visitor)
+        suspensionPointId?.accept(data, visitor)
+        result?.accept(data, visitor)
     }
 
     companion object

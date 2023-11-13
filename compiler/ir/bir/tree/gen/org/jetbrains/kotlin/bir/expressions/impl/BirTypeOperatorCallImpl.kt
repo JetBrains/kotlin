@@ -22,7 +22,7 @@ class BirTypeOperatorCallImpl(
     sourceSpan: SourceSpan,
     type: BirType,
     operator: IrTypeOperator,
-    argument: BirExpression,
+    argument: BirExpression?,
     typeOperand: BirType,
 ) : BirTypeOperatorCall() {
     private var _sourceSpan: SourceSpan = sourceSpan
@@ -83,10 +83,10 @@ class BirTypeOperatorCallImpl(
 
     private var _argument: BirExpression? = argument
 
-    override var argument: BirExpression
+    override var argument: BirExpression?
         get() {
             recordPropertyRead(1)
-            return _argument ?: throwChildElementRemoved("argument")
+            return _argument
         }
         set(value) {
             if (_argument != value) {

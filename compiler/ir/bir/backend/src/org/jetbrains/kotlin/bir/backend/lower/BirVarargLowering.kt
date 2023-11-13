@@ -66,7 +66,7 @@ class BirVarargLowering : BirLoweringPhase() {
             when (element) {
                 is BirExpression -> +element
                 is BirSpreadElement -> {
-                    val spread = element.expression
+                    val spread = element.expression!!
                     if (spread is BirFunctionAccessExpression && spread.symbol.owner in primitiveArrayOfFunctions) {
                         // Skip empty arrays and don't copy immediately created arrays
                         val argument = spread.valueArguments[0] ?: continue
