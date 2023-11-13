@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.bir.declarations.BirModuleFragment
 import org.jetbrains.kotlin.bir.declarations.BirVariable
 import org.jetbrains.kotlin.bir.expressions.*
 import org.jetbrains.kotlin.bir.expressions.impl.BirFunctionReferenceImpl
+import org.jetbrains.kotlin.bir.resetWithNulls
 
 import org.jetbrains.kotlin.bir.util.ancestors
 import org.jetbrains.kotlin.bir.util.copyAttributes
@@ -56,6 +57,7 @@ class BirProvisionalFunctionExpressionLowering : BirLoweringPhase() {
                 typeArguments = emptyList(),
                 reflectionTarget = null,
             ).apply {
+                valueArguments.resetWithNulls(function.valueParameters.size)
                 copyAttributes(expression)
             }
         }
