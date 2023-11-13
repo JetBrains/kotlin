@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
-internal class KtModuleProviderImpl(
+internal class KtStandaloneProjectStructureProvider(
     private val platform: TargetPlatform,
     private val project: Project,
     override val allKtModules: List<KtModule>,
