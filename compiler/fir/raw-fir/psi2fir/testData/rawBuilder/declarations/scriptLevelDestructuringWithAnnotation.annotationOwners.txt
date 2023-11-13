@@ -1,0 +1,23 @@
+@DestrAnno(<strcat>(String(destr 1 ), prop#))
+owner -> FirScriptSymbol util.<script-scriptLevelDestructuringWithAnnotation.kts>
+context -> FirPropertySymbol <local>/<destruct> from FirScriptSymbol util.<script-scriptLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptLevelDestructuringWithAnnotation.kts
+
+@LeftAnno(<strcat>(String(a ), prop#))
+owner -> FirPropertySymbol <local>/a
+context -> FirPropertySymbol <local>/a from FirScriptSymbol util.<script-scriptLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptLevelDestructuringWithAnnotation.kts
+
+@RightAnno(<strcat>(String(b ), prop#))
+owner -> FirPropertySymbol <local>/b
+context -> FirPropertySymbol <local>/b from FirScriptSymbol util.<script-scriptLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptLevelDestructuringWithAnnotation.kts
+
+@Destr2Anno(<strcat>(String(destr 1 ), prop#))
+owner -> FirScriptSymbol util.<script-scriptLevelDestructuringWithAnnotation.kts>
+context -> FirPropertySymbol <local>/<destruct> from FirScriptSymbol util.<script-scriptLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptLevelDestructuringWithAnnotation.kts
+
+@SecondLeftAnno(<strcat>(String(c ), prop#))
+owner -> FirPropertySymbol <local>/c
+context -> FirPropertySymbol <local>/c from FirScriptSymbol util.<script-scriptLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptLevelDestructuringWithAnnotation.kts
+
+@SecondRightAnno(<strcat>(String(d ), prop#))
+owner -> FirPropertySymbol <local>/d
+context -> FirPropertySymbol <local>/d from FirScriptSymbol util.<script-scriptLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptLevelDestructuringWithAnnotation.kts

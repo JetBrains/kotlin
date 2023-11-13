@@ -1,0 +1,33 @@
+@SuperType(String(nested nested super type))
+owner -> FirPropertySymbol /prop
+context -> FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+context -> FirConstructorSymbol <local>/<anonymous>.<anonymous> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+context -> FirConstructorSymbol <local>/<anonymous>.<anonymous> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+
+@SuperType(String(nested super type))
+owner -> FirPropertySymbol /prop
+context -> FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+context -> FirConstructorSymbol <local>/<anonymous>.<anonymous> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+context -> FirConstructorSymbol <local>/<anonymous>.<anonymous> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+
+@SuperType(String(super type))
+owner -> FirPropertySymbol /prop
+context -> FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+context -> FirConstructorSymbol <local>/<anonymous>.<anonymous> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+context -> FirConstructorSymbol <local>/<anonymous>.<anonymous> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+
+@Anno(String(init))
+owner -> FirAnonymousInitializerSymbol <init>
+context -> FirAnonymousInitializerSymbol <init> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+
+@Expression(String(expr))
+owner -> FirAnonymousInitializerSymbol <init>
+context -> FirAnonymousInitializerSymbol <init> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+
+@Anno(String(lambda param type))
+owner -> FirAnonymousInitializerSymbol <init>
+context -> FirValueParameterSymbol <local>/it from FirAnonymousFunctionSymbol special/anonymous from FirAnonymousInitializerSymbol <init> from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop
+
+@Anno(String(object annotation))
+owner -> FirPropertySymbol /prop
+context -> FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol /prop

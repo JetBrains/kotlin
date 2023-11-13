@@ -824,6 +824,11 @@ class CallAndReferenceGenerator(
                 name = symbol.classId.shortClassName
                 resolvedSymbol = constructorSymbol
             }
+
+            /**
+             * This is not right, but it doesn't make sense as [FirAnnotationCall.containingDeclarationSymbol] uses only in FIR
+             */
+            containingDeclarationSymbol = constructorSymbol
         }
     }
 

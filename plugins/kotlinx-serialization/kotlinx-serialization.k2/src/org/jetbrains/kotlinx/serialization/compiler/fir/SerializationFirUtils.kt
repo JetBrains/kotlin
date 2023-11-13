@@ -258,7 +258,7 @@ val ConeKotlinType.isAbstractOrSealedOrInterface: Boolean
 
 
 context(FirExtension)
-fun FirAnnotationContainer.excludeFromJsExport() {
+fun FirDeclaration.excludeFromJsExport() {
     if (!session.moduleData.platform.isJs()) {
         return
     }
@@ -275,6 +275,8 @@ fun FirAnnotationContainer.excludeFromJsExport() {
             name = jsExportIgnoreAnnotation.name
             resolvedSymbol = jsExportIgnoreConstructor
         }
+
+        containingDeclarationSymbol = this@excludeFromJsExport.symbol
     }
 
     replaceAnnotations(annotations + jsExportIgnoreAnnotationCall)

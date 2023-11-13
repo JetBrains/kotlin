@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class RawFirNonLocalDeclarationBuilder private constructor(
@@ -76,16 +77,17 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 else -> null
             }
 
-            return build(session, scopeProvider, designation, rootNonLocalDeclaration, functionsToRebind)
+            return build(session, scopeProvider, designation, rootNonLocalDeclaration, functionsToRebind, rebindContainingSymbol = true)
         }
 
-        fun build(
+        private fun build(
             session: FirSession,
             scopeProvider: FirScopeProvider,
             designation: FirDesignation,
             rootNonLocalDeclaration: KtElement,
             functionsToRebind: Set<FirFunction>? = null,
-            replacementApplier: RawFirReplacement.Applier? = null
+            replacementApplier: RawFirReplacement.Applier? = null,
+            rebindContainingSymbol: Boolean = false,
         ): FirDeclaration {
             check(rootNonLocalDeclaration is KtDeclaration || rootNonLocalDeclaration is KtCodeFragment)
 
@@ -98,6 +100,11 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 replacementApplier = replacementApplier
             )
             builder.context.packageFqName = rootNonLocalDeclaration.containingKtFile.packageFqName
+            if (rebindContainingSymbol) {
+                @OptIn(PrivateForInline::class)
+                builder.context.forcedContainerSymbol = designation.target.symbol
+            }
+
             return builder.moveNext(designation.path.iterator(), containingClass = null)
         }
     }
@@ -299,10 +306,9 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 if (superTypeListEntry is KtDelegatedSuperTypeEntry) {
                     val expectedName = NameUtils.delegateFieldName(index)
                     if (originalDeclaration.name == expectedName) {
-                        return buildFieldForSupertypeDelegate(
-                            superTypeListEntry, superTypeListEntry.typeReference.toFirOrErrorType(), index
-                        )
+                        return buildFieldForSupertypeDelegate(superTypeListEntry, type = null, index)
                     }
+
                     index++
                 }
             }

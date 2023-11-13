@@ -1,0 +1,23 @@
+@DestrAnno(<strcat>(String(destr 1 ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts>
+context -> FirPropertySymbol <local>/<destruct> from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotation.kts
+
+@LeftAnno(<strcat>(String(a ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts>
+context -> FirPropertySymbol <local>/a from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotation.kts
+
+@RightAnno(<strcat>(String(b ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts>
+context -> FirPropertySymbol <local>/b from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotation.kts
+
+@Destr2Anno(<strcat>(String(destr 1 ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts>
+context -> FirPropertySymbol <local>/<destruct> from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotation.kts
+
+@SecondLeftAnno(<strcat>(String(c ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts>
+context -> FirPropertySymbol <local>/c from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotation.kts
+
+@SecondRightAnno(<strcat>(String(d ), prop#))
+owner -> FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts>
+context -> FirPropertySymbol <local>/d from FirScriptSymbol util.<script-scriptStatementLevelDestructuringWithAnnotation.kts> from FirFileSymbol scriptStatementLevelDestructuringWithAnnotation.kts

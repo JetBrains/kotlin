@@ -81,7 +81,7 @@ internal object FirLazyBodiesCalculator {
         val builder = PsiRawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
         val ktAnnotationEntry = annotationCall.psi as KtAnnotationEntry
         builder.context.packageFqName = ktAnnotationEntry.containingKtFile.packageFqName
-        val newAnnotationCall = builder.buildAnnotationCall(ktAnnotationEntry)
+        val newAnnotationCall = builder.buildAnnotationCall(ktAnnotationEntry, annotationCall.containingDeclarationSymbol)
         return newAnnotationCall.argumentList
     }
 

@@ -12,19 +12,23 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isNonLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.session.FirSessionFactoryHelper
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionWithoutNameSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
@@ -38,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtParsingTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.addToStdlib.joinToWithBuffer
 import java.io.File
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -65,9 +70,99 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
         val firFileDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
-        val expectedPath = filePath.replace(".${myFileExt}", ".txt")
+        val expectedPath = expectedPath(filePath, ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
+        checkAnnotationOwners(filePath, firFile)
     }
+
+    protected fun expectedPath(originalPath: String, newExtension: String): String {
+        return originalPath.replace(".${myFileExt}", newExtension)
+    }
+
+    protected fun checkAnnotationOwners(filePath: String, firFile: FirFile) {
+        val expectedPath = expectedPath(filePath, ".annotationOwners.txt")
+        val expectedFile = File(expectedPath)
+        val annotations = firFile.collectAnnotations()
+        if (annotations.isEmpty() && !expectedFile.exists()) {
+            return
+        }
+
+        val actual = annotations.groupBy(AnnotationWithContext::annotation)
+            .entries
+            .joinToString(separator = "\n\n") { (annotation, contexts) ->
+                buildString {
+                    appendLine(annotation.render().trim())
+                    append("owner -> ")
+                    appendLine(annotation.containingDeclarationSymbol)
+
+                    contexts.joinToWithBuffer(buffer = this, separator = "\n") {
+                        append("context -> ")
+                        append(it.context)
+                    }
+                }
+            }
+
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
+    }
+
+    private fun FirElementWithResolveState.collectAnnotations(): Collection<AnnotationWithContext> {
+        val result = mutableListOf<AnnotationWithContext>()
+        val contextStack = ContextStack()
+
+        this.accept(object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {
+                contextStack.withStack(element) {
+                    if (element is FirAnnotationCall) {
+                        result += AnnotationWithContext(element, contextStack.dumpContext())
+                    }
+
+                    element.acceptChildren(this)
+                }
+            }
+        })
+
+        return result
+    }
+
+    private class AnnotationWithContext(val annotation: FirAnnotationCall, val context: String)
+
+    private class ContextStack {
+        val stack = mutableListOf<FirDeclaration>()
+
+        inline fun withStack(element: FirElement, action: () -> Unit) {
+            if (element !is FirDeclaration) {
+                action()
+                return
+            }
+
+            stack += element
+            try {
+                action()
+            } finally {
+                val last = stack.removeLast()
+                if (last != element) {
+                    error("Stack is corrupted")
+                }
+            }
+        }
+
+        fun dumpContext(): String {
+            val reversedStack = stack.asReversed().iterator()
+            return buildString {
+                var declaration = reversedStack.next()
+                append(declaration.symbol)
+
+                while (declaration.shouldAddParentContext() && reversedStack.hasNext()) {
+                    declaration = reversedStack.next()
+                    append(" from ")
+                    append(declaration.symbol)
+                }
+            }
+        }
+
+        private fun FirDeclaration.shouldAddParentContext(): Boolean = symbol is FirFunctionWithoutNameSymbol || !isNonLocal
+    }
+
 
     protected fun createKtFile(filePath: String): KtFile {
         myFileExt = FileUtilRt.getExtension(PathUtil.getFileName(filePath))

@@ -249,10 +249,9 @@ object LowLevelFirApiFacadeForResolveOnAir {
         firResolveSession: LLFirResolvableResolveSession,
     ): FirAnnotation {
         val annotationCall = buildFileFirAnnotation(
-            session = firFile.moduleData.session,
-            baseScopeProvider = firFile.moduleData.session.kotlinScopeProvider,
+            firFile = firFile,
             fileAnnotation = annotationEntry,
-            replacement = replacement
+            replacement = replacement,
         )
 
         val fileAnnotationsContainer = buildFileAnnotationsContainer {

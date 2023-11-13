@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,7 +14,7 @@ abstract class AbstractRawFirBuilderLazyBodiesTestCase : AbstractRawFirBuilderTe
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.LAZY_BODIES)
         val firFileDump = FirRenderer().renderElementAsString(firFile)
-        val expectedPath = filePath.replace(".${myFileExt}", ".lazyBodies.txt")
+        val expectedPath = expectedPath(filePath, ".lazyBodies.txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
     }
 }

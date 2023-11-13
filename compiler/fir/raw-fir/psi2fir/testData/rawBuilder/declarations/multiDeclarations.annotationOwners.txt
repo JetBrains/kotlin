@@ -1,0 +1,35 @@
+@ForAnno(<strcat>(String(for anno ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirNamedFunctionSymbol util/foo
+
+@ForParameter(<strcat>(String(for ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirPropertySymbol <local>/i from FirNamedFunctionSymbol util/foo
+
+@ForParameter(<strcat>(String(second for ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol util/foo
+
+@NestedParam(<strcat>(String(destructuring in for ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirPropertySymbol <local>/y from FirNamedFunctionSymbol util/foo
+
+@LeftLambda(<strcat>(String(lambda a ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirPropertySymbol <local>/a from FirAnonymousFunctionSymbol special/anonymous from FirNamedFunctionSymbol util/foo
+
+@RightLambda(<strcat>(String(lambda b ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirPropertySymbol <local>/b from FirAnonymousFunctionSymbol special/anonymous from FirNamedFunctionSymbol util/foo
+
+@Destructuring(<strcat>(String(destr ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirPropertySymbol <local>/<destruct> from FirNamedFunctionSymbol util/foo
+
+@LeftDestructuring(<strcat>(String(a ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirPropertySymbol <local>/a from FirNamedFunctionSymbol util/foo
+
+@RightDestructuring(<strcat>(String(b ), prop#))
+owner -> FirNamedFunctionSymbol util/foo
+context -> FirPropertySymbol <local>/b from FirNamedFunctionSymbol util/foo

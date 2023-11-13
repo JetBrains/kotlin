@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -119,7 +119,7 @@ internal fun generateTemporaryVariable(
         extractAnnotationsTo,
     )
 
-context(DestructuringContext<KtDestructuringDeclarationEntry>)
+context(AbstractRawFirBuilder<*>, DestructuringContext<KtDestructuringDeclarationEntry>)
 internal fun generateDestructuringBlock(
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,
@@ -139,7 +139,7 @@ internal fun generateDestructuringBlock(
     }
 }
 
-context(DestructuringContext<KtDestructuringDeclarationEntry>)
+context(AbstractRawFirBuilder<*>, DestructuringContext<KtDestructuringDeclarationEntry>)
 internal fun MutableList<FirStatement>.addDestructuringStatements(
     moduleData: FirModuleData,
     multiDeclaration: KtDestructuringDeclaration,

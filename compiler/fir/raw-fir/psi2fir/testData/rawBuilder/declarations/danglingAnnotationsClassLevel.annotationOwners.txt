@@ -1,0 +1,39 @@
+@Suppress(String())
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol A
+
+@MustBeDocumented()
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol A
+
+@Suppress(String())
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol B
+
+@MustBeDocumented()
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol B
+
+@Suppress(String())
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol Outer.Inner
+
+@MustBeDocumented()
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol Outer.Inner
+
+@Suppress(String())
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /Outer.withLocal
+
+@MustBeDocumented()
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirRegularClassSymbol <local>/Local from FirNamedFunctionSymbol /Outer.withLocal
+
+@Suppress(String())
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol <local>/r from FirNamedFunctionSymbol /Outer.withLocal
+
+@MustBeDocumented()
+owner -> FirDanglingModifierSymbol
+context -> FirDanglingModifierSymbol from FirAnonymousObjectSymbol <anonymous> from FirPropertySymbol <local>/r from FirNamedFunctionSymbol /Outer.withLocal
