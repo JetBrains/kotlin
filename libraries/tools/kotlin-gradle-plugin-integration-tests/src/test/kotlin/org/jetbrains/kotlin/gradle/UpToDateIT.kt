@@ -179,11 +179,16 @@ class UpToDateIT : KGPBaseTest() {
 
         override fun initProject(project: TestProject) = with(project) {
             buildGradle.appendText(
-                "\n" + """
-                apply plugin: 'kotlin-kapt'
-                plugins.apply("org.jetbrains.kotlin.plugin.allopen")
-                allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
-            """.trimIndent()
+                """
+                |
+                |apply plugin: 'kotlin-kapt'
+                |plugins.apply("org.jetbrains.kotlin.plugin.allopen")
+                |allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
+                |
+                |dependencies {
+                |    kapt 'org.jetbrains.kotlin:annotation-processor-example'
+                |}
+                """.trimMargin()
             )
         }
 

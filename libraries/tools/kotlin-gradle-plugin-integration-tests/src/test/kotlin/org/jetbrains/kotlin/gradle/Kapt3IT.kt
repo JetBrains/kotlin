@@ -155,6 +155,33 @@ open class Kapt3IT : Kapt3BaseIT() {
         project("kaptSkipped".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
             build("build") {
                 assertTasksSkipped(":kaptGenerateStubsKotlin", ":kaptKotlin")
+                assertOutputContains("No annotation processors provided. Skip KAPT processing.")
+            }
+        }
+    }
+
+    @DisplayName("KT-63366: Adding kapt AP dependency in afterEvaluate for custom SourceSet")
+    @GradleTest
+    fun testKaptCustomSourceSetDependencyAfterEvaluate(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |sourceSets.create("custom")
+                |
+                |afterEvaluate {
+                |    configurations.getByName("kaptCustom").dependencies.add(
+                |        dependencies.create("org.jetbrains.kotlin:annotation-processor-example")
+                |    )
+                |}
+                """.trimMargin()
+            )
+
+            build(":kaptCustomKotlin", forceOutput = true) {
+                assertTasksExecuted(":kaptCustomKotlin")
+                assertOutputDoesNotContain("No annotation processors provided. Skip KAPT processing.")
+                assertOutputContains("Annotation processors: example.ExampleAnnotationProcessor, example.KotlinFilerGeneratingProcessor")
             }
         }
     }

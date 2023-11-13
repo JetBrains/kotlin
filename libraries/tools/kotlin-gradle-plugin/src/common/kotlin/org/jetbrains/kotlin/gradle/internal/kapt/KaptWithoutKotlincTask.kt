@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -12,6 +13,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -63,6 +65,17 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     @get:Input
     val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listPropertyWithConvention(emptyList())
+
+    init {
+        // Skip annotation processing if no annotation processors were provided.
+        onlyIf { task ->
+            with(task as KaptWithoutKotlincTask) {
+                val isRunTask = !(annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty())
+                if (!isRunTask) task.logger.info("No annotation processors provided. Skip KAPT processing.")
+                isRunTask
+            }
+        }
+    }
 
     private fun getAnnotationProcessorOptions(): Map<String, String> {
         val result = mutableMapOf<String, String>()
@@ -132,12 +145,6 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
             disableClassloaderCacheForProcessors
         )
-
-        // Skip annotation processing if no annotation processors were provided.
-        if (annotationProcessorFqNames.get().isEmpty() && kaptClasspath.isEmpty()) {
-            logger.info("No annotation processors provided. Skip KAPT processing.")
-            return
-        }
 
         val kaptClasspath = kaptJars
         val isolationMode = getWorkerIsolationMode()

@@ -277,13 +277,16 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
 
-        val nonEmptyKaptConfigurations = kaptConfigurations.filter { it.allDependencies.isNotEmpty() }
-
         val javaCompileOrNull = findJavaTaskForKotlinCompilation(kotlinCompilation)
 
         val context = Kapt3SubpluginContext(
-            project, javaCompileOrNull,
-            androidVariantData, sourceSetName, kotlinCompilation, kaptExtension, nonEmptyKaptConfigurations
+            project,
+            javaCompileOrNull,
+            androidVariantData,
+            sourceSetName,
+            kotlinCompilation,
+            kaptExtension,
+            kaptConfigurations,
         )
 
         val kaptGenerateStubsTaskProvider: TaskProvider<KaptGenerateStubsTask> = context.createKaptGenerateStubsTask()
@@ -369,6 +372,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             .setExtendsFrom(kaptClasspathConfigurations).also {
                 it.isVisible = false
                 it.isCanBeConsumed = false
+                it.isCanBeResolved = true
             }
         taskConfigAction.configureTaskProvider { taskProvider ->
             taskProvider.dependsOn(generateStubsTask)
