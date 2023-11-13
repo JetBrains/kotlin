@@ -44,6 +44,8 @@ ext.testOutputRoot = rootProject.file("test.output").absolutePath
 ext.platformManager = project.project(":kotlin-native").platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
+ext.buildNumber = rootProject.property("kotlinVersion")
+
 // Add executor to run tests depending on a target
 // NOTE: If this persists in a gradle daemon, environment update (e.g. an Xcode update) may lead to execution failures.
 project.extensions.executor = ExecutorServiceKt.create(project)

@@ -79,6 +79,8 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     val apiVersion      : String?
         @Optional @Input get() = project.konanExtension.apiVersion
 
+    @Input var buildNumber = project.properties.get("kotlinVersion") ?: error("kotlinVersion property is not specified in the project")
+
     /**
      * Is the two-stage compilation enabled.
      *

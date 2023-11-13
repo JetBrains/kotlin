@@ -28,6 +28,7 @@ import kotlin.collections.HashSet
  * Copy-pasted from [org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS]
  */
 private const val KLIB_PROPERTY_NATIVE_TARGETS = "native_targets"
+private const val KLIB_PROPERTY_COMPILER_VERSION = "compiler_version"
 
 //region Project properties.
 
@@ -346,7 +347,7 @@ fun Project.mergeManifestsByTargets(source: File, destination: File) {
     val mismatchedProperties = (sourceProperties.keys + destinationProperties.keys)
         .asSequence()
         .map { it.toString() }
-        .filter { it != KLIB_PROPERTY_NATIVE_TARGETS }
+        .filterNot { it == KLIB_PROPERTY_NATIVE_TARGETS || it == KLIB_PROPERTY_COMPILER_VERSION }
         .sorted()
         .mapNotNull { propertyKey: String ->
             val sourceProperty: String? = sourceProperties.getProperty(propertyKey)
@@ -386,6 +387,10 @@ fun Project.mergeManifestsByTargets(source: File, destination: File) {
 
     destinationProperties[KLIB_PROPERTY_NATIVE_TARGETS] = mergedNativeTargets.joinToString(" ")
 
+    // Get KLIB_PROPERTY_COMPILER_VERSION source property and override the version
+    destinationProperties[KLIB_PROPERTY_COMPILER_VERSION] = sourceProperties.getProperty(KLIB_PROPERTY_COMPILER_VERSION)
+
+    // Now save the properties to the destination file
     destinationFile.saveProperties(destinationProperties)
 }
 
