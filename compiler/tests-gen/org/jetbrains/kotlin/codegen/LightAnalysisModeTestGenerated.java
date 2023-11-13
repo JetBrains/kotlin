@@ -15169,6 +15169,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt58476.kt");
             }
 
+            @TestMetadata("kt63430.kt")
+            public void testKt63430() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt63430.kt");
+            }
+
             @TestMetadata("overload.kt")
             public void testOverload() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/overload.kt");

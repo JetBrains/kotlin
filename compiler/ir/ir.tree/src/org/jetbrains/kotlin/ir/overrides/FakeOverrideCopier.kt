@@ -35,6 +35,7 @@ class FakeOverrideCopier(
             isInfix = declaration.isInfix,
             isExternal = declaration.isExternal,
         ).apply {
+            contextReceiverParametersCount = declaration.contextReceiverParametersCount
             transformAnnotations(declaration)
             copyTypeParametersFrom(declaration)
             typeRemapper.withinScope(this) {

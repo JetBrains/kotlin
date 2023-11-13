@@ -18352,6 +18352,12 @@ public class LLFirBlackBoxCodegenBasedTestGenerated extends AbstractLLFirBlackBo
             }
 
             @Test
+            @TestMetadata("kt63430.kt")
+            public void testKt63430() throws Exception {
+                runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/kt63430.kt");
+            }
+
+            @Test
             @TestMetadata("overload.kt")
             public void testOverload() throws Exception {
                 runTest("compiler/testData/codegen/box/extensionFunctions/contextReceivers/overload.kt");
