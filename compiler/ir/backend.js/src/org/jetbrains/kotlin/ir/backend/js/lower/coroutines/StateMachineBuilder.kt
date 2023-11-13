@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.backend.common.lower.FINALLY_EXPRESSION
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
@@ -396,6 +397,13 @@ class StateMachineBuilder(
     private fun wrap(expression: IrExpression, variable: IrVariableSymbol) =
         JsIrBuilder.buildSetVariable(variable, expression, unit)
 
+    override fun visitComposite(expression: IrComposite) {
+        if (expression.origin == FINALLY_EXPRESSION) {
+            catchBlockStack.peek()?.let(::setupExceptionState)
+        }
+        super.visitComposite(expression)
+    }
+
     override fun visitWhen(expression: IrWhen) {
 
         if (expression !in suspendableNodes) return addStatement(expression)
@@ -709,7 +717,6 @@ class StateMachineBuilder(
         catchBlockStack.pop()
 
         updateState(tryState.catchState)
-
         setupExceptionState(enclosingCatch)
 
         var rethrowNeeded = true
