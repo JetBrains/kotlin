@@ -297,9 +297,10 @@ fun KtNamedFunction.isContractPresentPsiCheck(isAllowedOnMembers: Boolean): Bool
 fun KtExpression.isContractDescriptionCallPsiCheck(): Boolean =
     (this is KtCallExpression && calleeExpression?.text == "contract") || (this is KtQualifiedExpression && isContractDescriptionCallPsiCheck())
 
+@OptIn(KtPsiInconsistencyHandling::class)
 fun KtQualifiedExpression.isContractDescriptionCallPsiCheck(): Boolean {
     val expression = selectorExpression ?: return false
-    return receiverExpression.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
+    return receiverExpressionOrNull?.text == "kotlin.contracts" && expression.isContractDescriptionCallPsiCheck()
 }
 
 fun KtElement.isFirstStatement(): Boolean {

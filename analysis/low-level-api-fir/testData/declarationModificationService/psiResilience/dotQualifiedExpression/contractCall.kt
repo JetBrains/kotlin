@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 import kotlin.contracts.InvocationKind
 
 inline fun foo(block: () -> Unit) {

@@ -34,15 +34,15 @@ class KtDotQualifiedExpression : KtExpressionImplStub<KotlinPlaceHolderStub<KtDo
     }
 
     override val receiverExpression: KtExpression
-        get() {
-            val stub = stub
-            if (stub != null) {
-                val childExpressionsByStub = getChildExpressionsByStub(stub)
-                if (childExpressionsByStub != null) {
-                    return childExpressionsByStub[0]
-                }
-            }
-            return super.receiverExpression
+        get() = stubReceiverExpression ?: super.receiverExpression
+
+    @KtPsiInconsistencyHandling
+    override val receiverExpressionOrNull: KtExpression?
+        get() = stubReceiverExpression ?: super.receiverExpressionOrNull
+
+    private val stubReceiverExpression: KtExpression?
+        get() = stub?.let { stub ->
+            getChildExpressionsByStub(stub)?.getOrNull(0)
         }
 
     override val selectorExpression: KtExpression?
