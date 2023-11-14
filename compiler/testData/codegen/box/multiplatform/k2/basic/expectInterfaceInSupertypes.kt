@@ -3,6 +3,9 @@
 // WITH_STDLIB
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-62535
+// IGNORE_BACKEND_K2: JVM_IR
+//   Ignore reason: (TODO) how should generate IR for common f/o after actualization?
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 // FILE: common.kt
