@@ -244,7 +244,7 @@ fun case_12(x: TypealiasNullableString, y: TypealiasNullableString, z1: Nothing?
 
 // TESTCASE NUMBER: 13
 fun case_13(x: EmptyClass12_48?, z: Nothing?) =
-    if (x == z || <!SENSELESS_COMPARISON!>x === z<!> && <!SENSELESS_COMPARISON!>x <!UNREACHABLE_CODE!>== z<!><!>) {
+    if (x == z || <!SENSELESS_COMPARISON!>x === z<!> && <!SENSELESS_COMPARISON!>x == z<!>) {
         throw Exception()
     } else {
         <!DEBUG_INFO_EXPRESSION_TYPE("othertypes.EmptyClass12_48? & othertypes.EmptyClass12_48")!>x<!>
@@ -289,7 +289,7 @@ fun case_14() {
 // TESTCASE NUMBER: 15
 fun case_15(x: TypealiasNullableString) {
     val y = null
-    val <!UNUSED_VARIABLE!>z<!> = if (x === null || <!SENSELESS_COMPARISON!>y == x<!> && <!SENSELESS_COMPARISON!>x <!UNREACHABLE_CODE!>=== y<!><!> || <!SENSELESS_COMPARISON!>null === x<!>) "" else {
+    val <!UNUSED_VARIABLE!>z<!> = if (x === null || <!SENSELESS_COMPARISON!>y == x<!> && <!SENSELESS_COMPARISON!>x === y<!> || <!SENSELESS_COMPARISON!>null === x<!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.String")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.String")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString & kotlin.String")!>x<!>.propT
@@ -310,7 +310,7 @@ fun case_16() {
 
     if (<!SENSELESS_COMPARISON!>x !== y<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing & kotlin.Nothing")!>x<!>
-        <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing & kotlin.Nothing")!>x<!>.hashCode()<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing & kotlin.Nothing")!>x<!>.hashCode()
     }
 }
 
@@ -722,7 +722,7 @@ fun case_36(x: Any) {
 
     if (<!SENSELESS_COMPARISON!>x == z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>
-        <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!><!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Nothing")!>x<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
     }
 }
 
@@ -744,7 +744,7 @@ fun case_38() {
     if (<!SENSELESS_COMPARISON!>Object.prop_2 != z<!>)
     else {
         Object.prop_2
-        <!UNREACHABLE_CODE!>Object.prop_2.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!><!>
+        Object.prop_2.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
     }
 }
 
@@ -918,7 +918,7 @@ fun case_51() {
     val x: TypealiasNullableNothing = null
     val z: Nothing? = null
 
-    if (<!SENSELESS_COMPARISON!>x === z<!> || <!SENSELESS_COMPARISON!>z <!UNREACHABLE_CODE!>==<!> x<!> && <!SENSELESS_COMPARISON, UNREACHABLE_CODE!>x == z<!> || false || false || false) {
+    if (<!SENSELESS_COMPARISON!>x === z<!> || <!SENSELESS_COMPARISON!>z == x<!> && <!SENSELESS_COMPARISON!>x == z<!> || false || false || false) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>.hashCode()
     }
@@ -1002,7 +1002,7 @@ fun case_57(a: (() -> Unit)) {
 
     if (<!SENSELESS_COMPARISON!>a == z<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit> & kotlin.Nothing")!>a<!>
-        <!UNREACHABLE_CODE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit> & kotlin.Nothing")!>a<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!><!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function0<kotlin.Unit> & kotlin.Nothing")!>a<!>.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>java<!>
     }
 }
 

@@ -1159,13 +1159,8 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitSmartCastExpression(smartCastExpression: FirSmartCastExpression): SmartCastExpressionExitNode {
-        val returnsNothing = smartCastExpression.hasNothingType
         val node = createSmartCastExitNode(smartCastExpression)
-        if (returnsNothing) {
-            addNonSuccessfullyTerminatingNode(node)
-        } else {
-            addNewSimpleNode(node)
-        }
+        addNewSimpleNode(node)
         return node
     }
 

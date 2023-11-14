@@ -359,17 +359,16 @@ digraph smartcastToNothing_kt {
                     134 [label="Enter block"];
                     135 [label="Access variable R|<local>/a|"];
                     136 [label="Smart cast: R|<local>/a|"];
-                    137 [label="Stub" style="filled" fillcolor=gray];
-                    138 [label="Access variable R|kotlin/String.length|" style="filled" fillcolor=gray];
-                    139 [label="Variable declaration: lval b: R|kotlin/Int|" style="filled" fillcolor=gray];
-                    140 [label="Exit block" style="filled" fillcolor=gray];
+                    137 [label="Access variable R|kotlin/String.length|"];
+                    138 [label="Variable declaration: lval b: R|kotlin/Int|"];
+                    139 [label="Exit block"];
                 }
-                141 [label="Exit when branch result" style="filled" fillcolor=gray];
-                142 [label="Exit when"];
+                140 [label="Exit when branch result"];
+                141 [label="Exit when"];
             }
-            143 [label="Exit block"];
+            142 [label="Exit block"];
         }
-        144 [label="Exit function test_1" style="filled" fillcolor=red];
+        143 [label="Exit function test_1" style="filled" fillcolor=red];
     }
     108 -> {109};
     109 -> {110};
@@ -395,17 +394,16 @@ digraph smartcastToNothing_kt {
     129 -> {130};
     130 -> {131};
     131 -> {132 133};
-    132 -> {142};
+    132 -> {141};
     133 -> {134};
     134 -> {135};
     135 -> {136};
-    136 -> {137} [style=dotted];
-    137 -> {138} [style=dotted];
-    138 -> {139} [style=dotted];
-    139 -> {140} [style=dotted];
-    140 -> {141} [style=dotted];
-    141 -> {142} [style=dotted];
+    136 -> {137};
+    137 -> {138};
+    138 -> {139};
+    139 -> {140};
+    140 -> {141};
+    141 -> {142};
     142 -> {143};
-    143 -> {144};
 
 }

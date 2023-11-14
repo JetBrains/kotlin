@@ -78,7 +78,7 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasString) {
-    if (<!SENSELESS_COMPARISON!>x == null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!> == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString")!>x<!>
+    if (<!SENSELESS_COMPARISON!>x == null<!> && <!SENSELESS_COMPARISON!><!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!> == null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasString & kotlin.Nothing")!>x<!>
 }
 
 // TESTCASE NUMBER: 9
