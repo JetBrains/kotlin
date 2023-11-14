@@ -91,6 +91,9 @@ abstract class IrSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), S
     )
     val hasQuestionMark: Boolean
         get() = nullability == SimpleTypeNullability.MARKED_NULLABLE
+
+    override val variance: Variance
+        get() = Variance.INVARIANT
 }
 
 /**

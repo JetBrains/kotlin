@@ -90,7 +90,7 @@ class IrTypeSubstitutor(
     override fun isEmptySubstitution(): Boolean = substitution.isEmpty()
 }
 
-class IrCapturedTypeSubstitutor(
+internal class IrCapturedTypeSubstitutor(
     typeParameters: List<IrTypeParameterSymbol>,
     typeArguments: List<IrTypeArgument>,
     capturedTypes: List<IrCapturedType?>,

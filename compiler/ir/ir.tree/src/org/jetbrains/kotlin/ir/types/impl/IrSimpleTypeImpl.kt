@@ -10,15 +10,11 @@ import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.compactIfPossible
 
 abstract class IrAbstractSimpleType(kotlinType: KotlinType?) : IrSimpleType(kotlinType) {
-
-    override val variance: Variance
-        get() = Variance.INVARIANT
-
     abstract override val classifier: IrClassifierSymbol
     abstract override val nullability: SimpleTypeNullability
     abstract override val arguments: List<IrTypeArgument>
