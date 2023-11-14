@@ -64,7 +64,7 @@ internal fun PhaseContext.firSerializerBase(
         }
     }
 
-    val actualizedFirDeclarations = fir2IrInput?.irActualizedResult?.extractFirDeclarations()
+    val actualizedFirDeclarations = fir2IrInput?.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
     return serializeNativeModule(
             configuration = configuration,
             messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,

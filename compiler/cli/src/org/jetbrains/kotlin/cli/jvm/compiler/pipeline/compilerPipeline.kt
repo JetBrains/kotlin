@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -262,7 +263,10 @@ fun generateCodeFromIr(
         input.components.symbolTable,
         input.components.irProviders,
         input.extensions,
-        FirJvmBackendExtension(input.components, input.irActualizedResult),
+        FirJvmBackendExtension(
+            input.components,
+            input.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
+        ),
         input.pluginContext
     ) {
         performanceManager?.notifyIRLoweringFinished()

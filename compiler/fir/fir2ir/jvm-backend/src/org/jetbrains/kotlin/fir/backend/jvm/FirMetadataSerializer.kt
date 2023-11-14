@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
-import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -46,7 +44,7 @@ fun makeFirMetadataSerializerForIrClass(
     serializationBindings: JvmSerializationBindings,
     components: Fir2IrComponents,
     parent: MetadataSerializer?,
-    irActualizedResult: IrActualizedResult?
+    actualizedExpectDeclarations: Set<FirDeclaration>?
 ): FirMetadataSerializer {
     val approximator = TypeApproximatorForMetadataSerializer(session)
     val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId]?.mapNotNull {
@@ -64,7 +62,7 @@ fun makeFirMetadataSerializerForIrClass(
             irClass.metadata, components.session, components.scopeSession, firSerializerExtension, approximator, parent,
             context.config.languageVersionSettings,
         ),
-        irActualizedResult
+        actualizedExpectDeclarations
     )
 }
 
@@ -76,7 +74,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     parent: MetadataSerializer?,
     targetId: TargetId,
     configuration: CompilerConfiguration,
-    irActualizedResult: IrActualizedResult?
+    actualizedExpectDeclarations: Set<FirDeclaration>?
 ): FirMetadataSerializer {
     val serializationBindings = JvmSerializationBindings()
     val approximator = TypeApproximatorForMetadataSerializer(session)
@@ -110,7 +108,7 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
             metadata, session, scopeSession, firSerializerExtension, approximator, parent,
             configuration.languageVersionSettings
         ),
-        irActualizedResult
+        actualizedExpectDeclarations
     )
 }
 
@@ -119,9 +117,8 @@ class FirMetadataSerializer(
     private val serializationBindings: JvmSerializationBindings,
     private val approximator: AbstractTypeApproximator,
     internal val serializer: FirElementSerializer?,
-    irActualizedResult: IrActualizedResult?
+    private val actualizedExpectDeclarations: Set<FirDeclaration>?
 ) : MetadataSerializer {
-    private val actualizedExpectDeclarations = irActualizedResult.extractFirDeclarations()
 
     override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
         val message = when (metadata) {

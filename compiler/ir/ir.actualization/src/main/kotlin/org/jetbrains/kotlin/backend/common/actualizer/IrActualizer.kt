@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualCheckers
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.overrides.FakeOverrideRebuilder
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext

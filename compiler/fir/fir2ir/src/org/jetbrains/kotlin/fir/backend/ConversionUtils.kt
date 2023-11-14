@@ -9,7 +9,6 @@ import com.intellij.psi.PsiCompiledElement
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
@@ -770,8 +769,8 @@ fun FirCallableDeclaration.contextReceiversForFunctionOrContainingProperty(): Li
     else
         this.contextReceivers
 
-fun IrActualizedResult?.extractFirDeclarations(): Set<FirDeclaration>? {
-    return this?.actualizedExpectDeclarations?.mapNotNullTo(mutableSetOf()) { ((it as IrMetadataSourceOwner).metadata as FirMetadataSource).fir }
+fun List<IrDeclaration>.extractFirDeclarations(): Set<FirDeclaration> {
+    return this.mapNotNullTo(mutableSetOf()) { ((it as IrMetadataSourceOwner).metadata as FirMetadataSource).fir }
 }
 
 // This method is intended to be used for default values of annotation parameters (compile-time strings, numbers, enum values, KClasses)

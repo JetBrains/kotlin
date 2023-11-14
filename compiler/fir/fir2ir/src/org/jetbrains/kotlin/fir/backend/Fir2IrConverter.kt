@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
-import org.jetbrains.kotlin.backend.common.actualizer.FakeOverrideRebuilder
+import org.jetbrains.kotlin.ir.overrides.FakeOverrideRebuilder
 import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature

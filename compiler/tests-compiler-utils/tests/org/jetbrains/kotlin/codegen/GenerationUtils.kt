@@ -176,7 +176,7 @@ object GenerationUtils {
         generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, components.symbolTable, components.irProviders,
-            fir2IrExtensions, FirJvmBackendExtension(components, irActualizedResult = null), pluginContext,
+            fir2IrExtensions, FirJvmBackendExtension(components, actualizedExpectDeclarations = null), pluginContext,
         ) {}
 
         generationState.factory.done()

@@ -132,7 +132,7 @@ class Fir2IrWasmResultsConverter(
             val (firFile, components) = firFilesAndComponentsBySourceFile[file]
                 ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
             if (actualizedExpectDeclarations == null && irActualizedResult != null) {
-                actualizedExpectDeclarations = irActualizedResult.extractFirDeclarations()
+                actualizedExpectDeclarations = irActualizedResult.actualizedExpectDeclarations.extractFirDeclarations()
             }
             serializeSingleFirFile(
                 firFile,

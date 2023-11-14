@@ -280,7 +280,7 @@ private class Fir2KlibSerializer(
     }
 
     private val actualizedExpectDeclarations by lazy {
-        fir2IrActualizedResult.irActualizedResult.extractFirDeclarations()
+        fir2IrActualizedResult.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
     }
 
     private val metadataVersion = moduleStructure.compilerConfiguration.metadataVersion()
