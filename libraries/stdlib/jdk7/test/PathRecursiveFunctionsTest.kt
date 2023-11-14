@@ -1053,18 +1053,13 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         }
     }
 
-    private fun testCopyToRecursivelyFails(source: Path, target: Path, expectedErrorSrc: String, expectedErrorDst: String) {
-        var wasError = false
-        source.copyToRecursively(target, followLinks = false, onError = { src, dst, exception ->
-            assertFalse(wasError)
-            wasError = true
-            assertIs<IllegalFileNameException>(exception)
-            assertEquals(source.resolve(expectedErrorSrc), src)
-            assertEquals(target.resolve(expectedErrorDst), dst)
+    private fun testCopyToRecursivelyFails(source: Path, target: Path, expectedErrorFile: String) {
+        assertFailsWith<IllegalFileNameException> {
+            source.copyToRecursively(target, followLinks = false)
+        }.also { exception ->
+            assertEquals(expectedErrorFile, exception.file)
             assertContains(exception.message!!, "Illegal file name")
-            OnErrorResult.SKIP_SUBTREE
-        })
-        assertTrue(wasError)
+        }
     }
 
     private fun testDeleteRecursivelyFails(path: Path, expectedErrorFile: String) {
@@ -1086,7 +1081,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/.")
 
             val target = root.resolve("UnzipArchive1")
-            testCopyToRecursivelyFails(zipRoot, target, ".", "")
+            testCopyToRecursivelyFails(zipRoot, target, "/.")
 
             testDeleteRecursivelyFails(zipRoot, "/.")
         }
@@ -1095,7 +1090,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/./")
 
             val target = root.resolve("UnzipArchive2")
-            testCopyToRecursivelyFails(zipRoot, target, "./", ".")
+            testCopyToRecursivelyFails(zipRoot, target, "/./")
 
             testDeleteRecursivelyFails(zipRoot, "/./")
         }
@@ -1106,8 +1101,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(a, "/a/.")
 
             val target = root.resolve("UnzipArchive3")
-            testCopyToRecursivelyFails(zipRoot, target, "a/.", "a")
-            testCopyToRecursivelyFails(a, target, ".", "")
+            testCopyToRecursivelyFails(zipRoot, target, "/a/.")
+            testCopyToRecursivelyFails(a, target, "/a/.")
 
             testDeleteRecursivelyFails(zipRoot, "/a/.")
             testDeleteRecursivelyFails(a, "/a/.")
@@ -1119,8 +1114,8 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(a, "/a/./")
 
             val target = root.resolve("UnzipArchive4")
-            testCopyToRecursivelyFails(zipRoot, target, "a/./", "a/.")
-            testCopyToRecursivelyFails(a, target, "./", ".")
+            testCopyToRecursivelyFails(zipRoot, target, "/a/./")
+            testCopyToRecursivelyFails(a, target, "/a/./")
 
             testDeleteRecursivelyFails(zipRoot, "/a/./")
             testDeleteRecursivelyFails(a, "/a/./")
@@ -1135,7 +1130,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/")
 
             val target = root.resolve("UnzipArchive1")
-            testCopyToRecursivelyFails(zipRoot, target, "", "")
+            testCopyToRecursivelyFails(zipRoot, target, "/")
 
             testDeleteRecursivelyFails(zipRoot, "/")
         }
@@ -1144,7 +1139,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/")
 
             val target = root.resolve("UnzipArchive2")
-            testCopyToRecursivelyFails(zipRoot, target, "", "")
+            testCopyToRecursivelyFails(zipRoot, target, "/")
 
             testDeleteRecursivelyFails(zipRoot, "/")
         }
@@ -1162,17 +1157,13 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
                 assertEquals("/a", exception.file)
             }
 
-            // "/a" is infinitely copied to UnzipArchive3/a
-            // Leads to OutOfMemoryError. Files.walkFileTree does not detect such a cycle
-//            val target = root.resolve("UnzipArchive3")
-//            zipRoot.copyToRecursively(target, followLinks = false)
-            // "/a" is infinitely copied to UnzipArchive3
-//            a.copyToRecursively(target, followLinks = false)
+            val zipRootTarget = root.resolve("UnzipArchive3")
+            testCopyToRecursivelyFails(zipRoot, zipRootTarget, "/a")
+            val aTarget = root.resolve("UnzipArchive4")
+            testCopyToRecursivelyFails(a, aTarget, "/a")
 
-            // "/a" is entered again and again.
-            // Leads to StackOverflowError, because deleteRecursively uses recursion.
-//            zipRoot.deleteRecursively()
-//            a.deleteRecursively()
+            testDeleteRecursivelyFails(zipRoot, "/a")
+            testDeleteRecursivelyFails(a, "/a")
         }
     }
 
@@ -1186,7 +1177,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/../")
 
             val target = root.resolve("UnzipArchive1")
-            testCopyToRecursivelyFails(zipRoot, target, "../", "../")
+            testCopyToRecursivelyFails(zipRoot, target, "/../")
 
             testDeleteRecursivelyFails(zipRoot, "/../")
         }
@@ -1194,7 +1185,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/../")
 
             val target = root.resolve("UnzipArchive2")
-            testCopyToRecursivelyFails(zipRoot, target, "../", "../")
+            testCopyToRecursivelyFails(zipRoot, target, "/../")
 
             testDeleteRecursivelyFails(zipRoot, "/../")
         }
@@ -1203,7 +1194,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/../")
 
             val target = root.resolve("UnzipArchive3")
-            testCopyToRecursivelyFails(zipRoot, target, "../", "../")
+            testCopyToRecursivelyFails(zipRoot, target, "/../")
 
             testDeleteRecursivelyFails(zipRoot, "/../")
         }
@@ -1212,7 +1203,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/..")
 
             val target = root.resolve("UnzipArchive4")
-            testCopyToRecursivelyFails(zipRoot, target, "..", "")
+            testCopyToRecursivelyFails(zipRoot, target, "/..")
 
             testDeleteRecursivelyFails(zipRoot, "/..")
         }
@@ -1221,7 +1212,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(zipRoot, "/../")
 
             val target = root.resolve("UnzipArchive5")
-            testCopyToRecursivelyFails(zipRoot, target, "../", "../")
+            testCopyToRecursivelyFails(zipRoot, target, "/../")
 
             testDeleteRecursivelyFails(zipRoot, "/../")
         }
@@ -1267,7 +1258,7 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
             testWalkFails(a, "/a/../")
 
             val target = root.resolve("UnzipArchive8")
-            testCopyToRecursivelyFails(a, target, "../", "../")
+            testCopyToRecursivelyFails(a, target, "/a/../")
 
             testDeleteRecursivelyFails(a, "/a/../")
         }

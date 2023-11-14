@@ -197,13 +197,9 @@ public fun Path.copyToRecursively(
         return onError(source, destination(source), exception).toFileVisitResult()
     }
 
-    var isStartPath = true
-
     @Suppress("UNUSED_PARAMETER")
     fun copy(source: Path, attributes: BasicFileAttributes): FileVisitResult {
         return try {
-            source.checkFileName(isStartPath)
-            isStartPath = false
             DefaultCopyActionContext.copyAction(source, destination(source)).toFileVisitResult()
         } catch (exception: Exception) {
             error(source, exception)
@@ -214,6 +210,7 @@ public fun Path.copyToRecursively(
 
     visitFileTree(followLinks = followLinks) {
         onPreVisitDirectory { directory, attributes ->
+            directory.checkFileName(isStartPath = stack.isEmpty())
             if (stack.isNotEmpty()) {
                 directory.checkNotSameAs(stack.last())
             }
