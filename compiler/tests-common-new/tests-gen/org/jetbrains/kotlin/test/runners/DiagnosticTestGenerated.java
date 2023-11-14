@@ -20066,6 +20066,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("inAnnotation.kt")
+                public void testInAnnotation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/inAnnotation.kt");
+                }
+
+                @Test
                 @TestMetadata("inNonPublicClass.kt")
                 public void testInNonPublicClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/inNonPublicClass.kt");
