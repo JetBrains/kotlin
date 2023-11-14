@@ -50,6 +50,22 @@ abstract class AbstractTreeBuilder {
         elementParents.add(ElementRef(type.element, type.args, type.nullable))
     }
 
+    protected fun Element.needAcceptMethod() {
+        customHasAcceptMethod = true
+    }
+
+    protected fun Element.noAcceptMethod() {
+        customHasAcceptMethod = false
+    }
+
+    protected fun Element.needTransformMethod() {
+        hasTransformMethod = true
+    }
+
+    protected fun Element.noMethodInVisitor() {
+        generateVisitorMethod = false
+    }
+
     protected fun param(name: String, vararg bounds: TypeRef, variance: Variance = Variance.INVARIANT): TypeVariable {
         return TypeVariable(name, bounds.toList(), variance)
     }

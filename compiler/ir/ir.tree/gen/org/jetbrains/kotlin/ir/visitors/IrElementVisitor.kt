@@ -124,6 +124,12 @@ interface IrElementVisitor<out R, in D> {
     fun visitComposite(expression: IrComposite, data: D): R =
         visitContainerExpression(expression, data)
 
+    fun visitReturnableBlock(expression: IrReturnableBlock, data: D): R =
+        visitBlock(expression, data)
+
+    fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: D): R =
+        visitBlock(inlinedBlock, data)
+
     fun visitSyntheticBody(body: IrSyntheticBody, data: D): R =
         visitBody(body, data)
 

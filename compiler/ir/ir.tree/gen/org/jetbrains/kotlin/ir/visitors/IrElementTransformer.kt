@@ -140,6 +140,12 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitComposite(expression: IrComposite, data: D): IrExpression =
         visitContainerExpression(expression, data)
 
+    override fun visitReturnableBlock(expression: IrReturnableBlock, data: D): IrExpression =
+        visitBlock(expression, data)
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: D): IrExpression =
+        visitBlock(inlinedBlock, data)
+
     override fun visitSyntheticBody(body: IrSyntheticBody, data: D): IrBody =
         visitBody(body, data)
 

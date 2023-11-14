@@ -11,7 +11,7 @@ fun <Element : AbstractElement<Element, *>> Element.traverseParents(block: (Elem
 }
 
 /**
- * For each tree element, sets its [AbstractElement.baseTransformerType] to one of it parents if that parent type is used at least once as
+ * For each tree element, sets its [AbstractElement.baseTransformerType] to one of its parents if that parent type is used at least once as
  * a type of a field, except when that field is explicitly opted out of it via
  * [AbstractField.useInBaseTransformerDetection].
  */

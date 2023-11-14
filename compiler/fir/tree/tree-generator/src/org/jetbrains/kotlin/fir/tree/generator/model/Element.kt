@@ -79,11 +79,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     override val visitorParameterName: String
         get() = safeDecapitalizedName
 
-    var customParentInVisitor: Element? = null
-
-    override val parentInVisitor: Element?
-        get() = customParentInVisitor ?: elementParents.singleOrNull()?.element?.takeIf { !it.isRootElement }
-
     var doesNotNeedImplementation: Boolean = false
 
     val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || elementParents.any { it.element.needTransformOtherChildren }

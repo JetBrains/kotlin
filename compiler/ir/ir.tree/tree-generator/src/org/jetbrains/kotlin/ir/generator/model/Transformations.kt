@@ -37,9 +37,6 @@ internal fun markLeaves(elements: List<Element>) {
 
     for (el in leaves) {
         el.isLeaf = true
-        if (el.parentInVisitor != null) {
-            el.hasAcceptMethod = true
-        }
     }
 }
 

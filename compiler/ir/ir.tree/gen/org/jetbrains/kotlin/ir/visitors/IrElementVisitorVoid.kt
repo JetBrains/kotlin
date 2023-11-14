@@ -304,6 +304,22 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
         visitContainerExpression(expression)
     }
 
+    override fun visitReturnableBlock(expression: IrReturnableBlock, data: Nothing?) {
+        visitReturnableBlock(expression)
+    }
+
+    fun visitReturnableBlock(expression: IrReturnableBlock) {
+        visitBlock(expression)
+    }
+
+    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Nothing?) {
+        visitInlinedFunctionBlock(inlinedBlock)
+    }
+
+    fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock) {
+        visitBlock(inlinedBlock)
+    }
+
     override fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?) {
         visitSyntheticBody(body)
     }

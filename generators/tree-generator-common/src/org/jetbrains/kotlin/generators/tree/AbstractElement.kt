@@ -57,9 +57,15 @@ abstract class AbstractElement<Element, Field>(
     abstract val visitorParameterName: String
 
     /**
+     * @see parentInVisitor
+     */
+    var customParentInVisitor: Element? = null
+
+    /**
      * The default element to visit if the method for visiting this element is not overridden.
      */
-    abstract val parentInVisitor: Element?
+    open val parentInVisitor: Element?
+        get() = customParentInVisitor ?: elementParents.singleOrNull()?.element?.takeIf { !it.isRootElement }
 
     override val allParents: List<Element>
         get() = elementParents.map { it.element }
@@ -92,7 +98,7 @@ abstract class AbstractElement<Element, Field>(
     /**
      * The return type of the corresponding transformer method for this element.
      *
-     * By default, computed using [org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes], but can be customizaed via
+     * By default, computed using [org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes], but can be customized via
      * [transformerReturnType]
      */
     val transformerClass: Element

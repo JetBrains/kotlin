@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.generator.model
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ListField as AbstractListField
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
+import org.jetbrains.kotlin.ir.generator.IrTree
+import org.jetbrains.kotlin.ir.generator.elementBaseType
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
@@ -53,7 +55,19 @@ class Element(
     override val args: Map<NamedTypeParameterRef, TypeRef>
         get() = emptyMap()
 
-    override var parentInVisitor: Element? = null
+    /**
+     * Allows to forcibly skip generation of the method for this element in visitors.
+     */
+    var generateVisitorMethod = true
+
+    override val parentInVisitor: Element?
+        get() {
+            if (!generateVisitorMethod) return null
+            return customParentInVisitor
+                ?: elementParents.singleOrNull { it.typeKind == TypeKind.Class }?.element
+                ?: IrTree.rootElement.takeIf { elementBaseType in otherParents }
+        }
+
 
     var typeKind: TypeKind? = null
         set(value) {
@@ -86,7 +100,11 @@ class Element(
 
     override var visitorParameterName = category.defaultVisitorParam
 
-    override var hasAcceptMethod = false // By default, accept is generated only for leaves.
+    var customHasAcceptMethod: Boolean? = null
+
+    override val hasAcceptMethod: Boolean
+        get() = customHasAcceptMethod ?: (isLeaf && parentInVisitor != null)
+
 
     override var hasTransformMethod = false
 

@@ -256,6 +256,18 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     final override fun visitComposite(expression: IrComposite, data: Nothing?): IrExpression =
         visitComposite(expression)
 
+    open fun visitReturnableBlock(expression: IrReturnableBlock): IrExpression =
+        visitBlock(expression)
+
+    final override fun visitReturnableBlock(expression: IrReturnableBlock, data: Nothing?): IrExpression =
+        visitReturnableBlock(expression)
+
+    open fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression =
+        visitBlock(inlinedBlock)
+
+    final override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: Nothing?): IrExpression =
+        visitInlinedFunctionBlock(inlinedBlock)
+
     open fun visitSyntheticBody(body: IrSyntheticBody): IrBody =
         visitBody(body)
 
