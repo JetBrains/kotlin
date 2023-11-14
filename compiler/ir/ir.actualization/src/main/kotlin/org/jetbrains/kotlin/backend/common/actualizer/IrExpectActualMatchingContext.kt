@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.backend.common.actualizer.checker.areIrExpressionConstValuesEqual
-import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -540,7 +539,7 @@ internal abstract class IrExpectActualMatchingContext(
     override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
         get() {
             val ir = asIr()
-            return ir.sourceElement() == null && ir.origin !is IrDeclarationOrigin.GeneratedByPlugin
+            return ir.startOffset < 0 && ir.origin !is IrDeclarationOrigin.GeneratedByPlugin
         }
 
     // IR checker traverses member scope itself and collects mappings

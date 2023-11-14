@@ -5,16 +5,12 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.backend.common.lower.actualize
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
-import org.jetbrains.kotlin.ir.util.SymbolRemapper
-import org.jetbrains.kotlin.ir.util.TypeRemapper
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.*
 
 internal class FunctionDefaultParametersActualizer(
     symbolRemapper: ActualizerSymbolRemapper,
@@ -46,9 +42,9 @@ private class FunctionDefaultParametersActualizerVisitor(private val symbolRemap
     override fun visitGetValue(expression: IrGetValue): IrGetValue {
         // It performs actualization of dispatch/extension receivers
         // It's actual only for default parameter values of expect functions because expect functions don't have bodies
-        return expression.actualize(
-            classActualizer = { symbolRemapper.getReferencedClass(it.symbol).owner },
-            functionActualizer = { symbolRemapper.getReferencedFunction(it.symbol).owner }
+        return expression.remapSymbolParent(
+            classRemapper = { symbolRemapper.getReferencedClass(it.symbol).owner },
+            functionRemapper = { symbolRemapper.getReferencedFunction(it.symbol).owner }
         ).copyAttributes(expression)
     }
 }

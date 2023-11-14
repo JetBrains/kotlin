@@ -249,34 +249,3 @@ fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index
     )
     else -> throw Error("Unexpected parameter descriptor: $this")
 }
-
-fun IrGetValue.actualize(classActualizer: (IrClass) -> IrClass, functionActualizer: (IrFunction) -> IrFunction): IrGetValue {
-    val symbol = symbol
-    if (symbol !is IrValueParameterSymbol) {
-        return this
-    }
-
-    val parameter = symbol.owner
-    val newSymbol = when (val parent = parameter.parent) {
-        is IrClass -> {
-            assert(parameter == parent.thisReceiver)
-            classActualizer(parent).thisReceiver!!
-        }
-
-        is IrFunction -> {
-            val actualizedFunction = functionActualizer(parent)
-            when (parameter) {
-                parent.dispatchReceiverParameter -> actualizedFunction.dispatchReceiverParameter!!
-                parent.extensionReceiverParameter -> actualizedFunction.extensionReceiverParameter!!
-                else -> {
-                    assert(parent.valueParameters[parameter.index] == parameter)
-                    actualizedFunction.valueParameters[parameter.index]
-                }
-            }
-        }
-
-        else -> error(parent)
-    }
-
-    return IrGetValueImpl(startOffset, endOffset, newSymbol.type, newSymbol.symbol, origin)
-}

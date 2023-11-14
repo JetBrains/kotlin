@@ -788,6 +788,37 @@ fun IrExpression.remapReceiver(oldReceiver: IrValueParameter?, newReceiver: IrVa
     else -> shallowCopy()
 }
 
+fun IrGetValue.remapSymbolParent(classRemapper: (IrClass) -> IrClass, functionRemapper: (IrFunction) -> IrFunction): IrGetValue {
+    val symbol = symbol
+    if (symbol !is IrValueParameterSymbol) {
+        return this
+    }
+
+    val parameter = symbol.owner
+    val newSymbol = when (val parent = parameter.parent) {
+        is IrClass -> {
+            assert(parameter == parent.thisReceiver)
+            classRemapper(parent).thisReceiver!!
+        }
+
+        is IrFunction -> {
+            val remappedFunction = functionRemapper(parent)
+            when (parameter) {
+                parent.dispatchReceiverParameter -> remappedFunction.dispatchReceiverParameter!!
+                parent.extensionReceiverParameter -> remappedFunction.extensionReceiverParameter!!
+                else -> {
+                    assert(parent.valueParameters[parameter.index] == parameter)
+                    remappedFunction.valueParameters[parameter.index]
+                }
+            }
+        }
+
+        else -> error(parent)
+    }
+
+    return IrGetValueImpl(startOffset, endOffset, newSymbol.type, newSymbol.symbol, origin)
+}
+
 val IrDeclarationParent.isFacadeClass: Boolean
     get() = this is IrClass &&
             (origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS ||

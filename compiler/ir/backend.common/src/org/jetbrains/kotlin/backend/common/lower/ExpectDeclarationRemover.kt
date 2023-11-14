@@ -172,9 +172,9 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
             .transform(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid()
-                    return expression.actualize(
-                        classActualizer = { symbolTable.descriptorExtension.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
-                        functionActualizer = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
+                    return expression.remapSymbolParent(
+                        classRemapper = { symbolTable.descriptorExtension.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
+                        functionRemapper = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
                     )
                 }
             }, data = null)
