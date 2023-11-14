@@ -763,7 +763,7 @@ class FunctionInlining(
                 // in case of recursive call, we can get a situation there the same type parameter will be mapped on different type arguments.
                 // (see compiler/testData/codegen/boxInline/complex/use.kt test file)
                 val newTypeParameter = copy.typeParameters[typeClassifier.index].defaultType.substituteSuperTypes()
-                return if (useTypeParameterUpperBound) typeClassifier.firstRealUpperBound() else newTypeParameter
+                return if (useTypeParameterUpperBound) typeClassifier.firstRealUpperBound().mergeNullability(type) else newTypeParameter
             }
 
             return when (this) {

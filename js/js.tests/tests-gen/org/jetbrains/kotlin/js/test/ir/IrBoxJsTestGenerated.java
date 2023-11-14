@@ -5897,6 +5897,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("requireNotNull.kt")
+        public void testRequireNotNull() throws Exception {
+            runTest("js/js.translator/testData/box/inline/requireNotNull.kt");
+        }
+
+        @Test
         @TestMetadata("rootConstructor.kt")
         public void testRootConstructor() throws Exception {
             runTest("js/js.translator/testData/box/inline/rootConstructor.kt");
