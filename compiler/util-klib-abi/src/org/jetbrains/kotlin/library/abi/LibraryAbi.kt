@@ -171,21 +171,27 @@ data class AbiQualifiedName(val packageName: AbiCompoundName, val relativeName: 
 }
 
 /**
+ * The common interface for entities that can have annotations.
+ */
+@ExperimentalLibraryAbiReader
+interface AbiAnnotatedEntity {
+    /**
+     * Annotations are not a part of ABI. But sometimes it is useful to have the ability to check if some declaration
+     * has a specific annotation. See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
+     */
+    fun hasAnnotation(annotationClassName: AbiQualifiedName): Boolean
+}
+
+/**
  * The common interface for all declarations.
  *
  * @property qualifiedName The declaration qualified name.
  * @property signatures The set of signatures of the declaration.
  */
 @ExperimentalLibraryAbiReader
-sealed interface AbiDeclaration {
+sealed interface AbiDeclaration : AbiAnnotatedEntity {
     val qualifiedName: AbiQualifiedName
     val signatures: AbiSignatures
-
-    /**
-     * Annotations are not a part of ABI. But sometimes it is useful to have the ability to check if some declaration
-     * has a specific annotation. See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
-     */
-    fun hasAnnotation(annotationClassName: AbiQualifiedName): Boolean
 }
 
 /**
@@ -302,15 +308,26 @@ interface AbiValueParameter {
  * An [AbiDeclaration] that represents a property.
  *
  * @property kind The property kind.
- * @property getter The getter accessor, fi any.
- * @property setter The setter accessor, fi any.
+ * @property getter The getter accessor, if any.
+ * @property setter The setter accessor, if any.
+ * @property backingField The backing field, if any.
  */
 @ExperimentalLibraryAbiReader
 interface AbiProperty : AbiDeclarationWithModality {
     val kind: AbiPropertyKind
     val getter: AbiFunction?
     val setter: AbiFunction?
+    val backingField: AbiField?
 }
+
+/**
+ * An entity that represents a field.
+ *
+ * Since fields are not a part of ABI, [AbiField] is not inherited from [AbiDeclaration]. And consequently don't have
+ * such attributes as [AbiDeclaration.qualifiedName] or [AbiDeclaration.signatures].
+ */
+@ExperimentalLibraryAbiReader
+interface AbiField : AbiAnnotatedEntity
 
 /** All known kinds of properties. */
 @ExperimentalLibraryAbiReader

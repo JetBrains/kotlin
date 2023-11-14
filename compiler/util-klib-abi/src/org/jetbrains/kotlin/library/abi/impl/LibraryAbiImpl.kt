@@ -190,7 +190,8 @@ internal class AbiPropertyImpl(
     modality: AbiModality,
     kind: AbiPropertyKind,
     override val getter: AbiFunction?,
-    override val setter: AbiFunction?
+    override val setter: AbiFunction?,
+    override val backingField: AbiField?
 ) : AbiProperty {
     private val flags = MODALITY.toFlags(modality) or PROPERTY_KIND.toFlags(kind)
 
@@ -202,6 +203,11 @@ internal class AbiPropertyImpl(
         private val MODALITY = FlagFieldEx.first<AbiModality>()
         private val PROPERTY_KIND = FlagFieldEx.after<AbiPropertyKind>(MODALITY)
     }
+}
+
+@ExperimentalLibraryAbiReader
+internal class AbiFieldImpl(private val annotations: Set<AbiQualifiedName>) : AbiField {
+    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
 }
 
 @ExperimentalLibraryAbiReader

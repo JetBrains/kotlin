@@ -117,3 +117,8 @@ var propertySetterMarkedWithBar: String get() = ""
     @Bar set(_) = Unit
 var propertySetterMarkedWithAnotherBar: String get() = ""
     @Another.Bar set(_) = Unit
+
+@field:Foo var propertyFieldMarkedWithFoo: String = ""
+@field:Another.Foo var propertyFieldMarkedWithAnotherFoo: String = ""
+@field:Bar var propertyFieldMarkedWithBar: String = ""
+@field:Another.Bar var propertyFieldMarkedWithAnotherBar: String = ""

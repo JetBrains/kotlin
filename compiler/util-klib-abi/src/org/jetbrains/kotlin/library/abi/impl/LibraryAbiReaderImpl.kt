@@ -423,6 +423,9 @@ private class LibraryDeserializer(
                         containingEntity = thisPropertyEntity,
                         parentTypeParameterResolver = typeParameterResolver
                     ).discardIfExcluded()
+                },
+                backingField = proto.hasBackingField().ifTrue {
+                    AbiFieldImpl(deserializeAnnotations(proto.backingField.base))
                 }
             )
         }

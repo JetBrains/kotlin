@@ -41,7 +41,7 @@ class LibraryAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<
         )
 
         for ((abiSignatureVersion, dumper) in dumpers) {
-             LibraryAbiRenderer.render(libraryAbi, dumper.builderForModule(module), AbiRenderingSettings(abiSignatureVersion))
+            LibraryAbiRenderer.render(libraryAbi, dumper.builderForModule(module), AbiRenderingSettings(abiSignatureVersion))
         }
     }
 
