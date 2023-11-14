@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.backend.common.actualizer.checker.IrExpectActualCheckers
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
@@ -30,15 +27,13 @@ object IrActualizer {
     fun actualize(
         mainFragment: IrModuleFragment,
         dependentFragments: List<IrModuleFragment>,
-        diagnosticReporter: DiagnosticReporter,
+        ktDiagnosticReporter: IrDiagnosticReporter,
         typeSystemContext: IrTypeSystemContext,
-        languageVersionSettings: LanguageVersionSettings,
         symbolTable: SymbolTable,
         fakeOverrideBuilder: IrFakeOverrideBuilder,
         useIrFakeOverrideBuilder: Boolean,
         expectActualTracker: ExpectActualTracker?
     ): IrActualizedResult {
-        val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
         // The ir modules processing is performed phase-to-phase:
         //   1. Collect expect-actual links for classes and their members from dependent fragments
@@ -67,7 +62,6 @@ object IrActualizer {
             ActualFakeOverridesAdder(
                 expectActualMap,
                 actualDeclarations.actualClasses,
-                ktDiagnosticReporter,
                 typeSystemContext
             ).apply { dependentFragments.forEach { visitModuleFragment(it) } }
         }

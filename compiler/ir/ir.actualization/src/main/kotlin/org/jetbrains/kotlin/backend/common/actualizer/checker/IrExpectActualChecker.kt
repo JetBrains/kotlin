@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer.checker
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.backend.common.actualizer.ClassActualizationInfo
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMatchingContext
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -16,7 +16,7 @@ internal interface IrExpectActualChecker {
         val matchedExpectToActual: Map<IrSymbol, IrSymbol>
         val classActualizationInfo: ClassActualizationInfo
         val typeSystemContext: IrTypeSystemContext
-        val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
+        val diagnosticsReporter: IrDiagnosticReporter
         val matchingContext: IrExpectActualMatchingContext
     }
 

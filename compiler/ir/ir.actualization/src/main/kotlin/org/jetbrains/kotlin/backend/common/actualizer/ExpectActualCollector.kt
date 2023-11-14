@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.ir.IrElement
@@ -47,7 +47,7 @@ internal class ExpectActualCollector(
     private val mainFragment: IrModuleFragment,
     private val dependentFragments: List<IrModuleFragment>,
     private val typeSystemContext: IrTypeSystemContext,
-    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
+    private val diagnosticsReporter: IrDiagnosticReporter,
     private val expectActualTracker: ExpectActualTracker?,
 ) {
     data class Result(val expectToActualMap: MutableMap<IrSymbol, IrSymbol>, val classActualizationInfo: ClassActualizationInfo)
@@ -246,7 +246,7 @@ private class ExpectActualLinkCollector : IrElementVisitor<Unit, ExpectActualLin
     class MatchingContext(
         typeSystemContext: IrTypeSystemContext,
         private val destination: MutableMap<IrSymbol, IrSymbol>,
-        private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
+        private val diagnosticsReporter: IrDiagnosticReporter,
         private val expectActualTracker: ExpectActualTracker?,
         internal val classActualizationInfo: ClassActualizationInfo,
         private val currentExpectFile: IrFile?,

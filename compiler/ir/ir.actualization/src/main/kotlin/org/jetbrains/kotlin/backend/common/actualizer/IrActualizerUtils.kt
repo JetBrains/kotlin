@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
@@ -94,12 +94,12 @@ private fun recordTypeParametersMapping(
         }
 }
 
-internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(expectSymbol: IrSymbol) {
+internal fun IrDiagnosticReporter.reportMissingActual(expectSymbol: IrSymbol) {
     reportMissingActual(expectSymbol.owner as IrDeclaration)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(irDeclaration: IrDeclaration) {
+internal fun IrDiagnosticReporter.reportMissingActual(irDeclaration: IrDeclaration) {
     at(irDeclaration).report(
         CommonBackendErrors.NO_ACTUAL_FOR_EXPECT,
         (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
@@ -107,7 +107,7 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(
     )
 }
 
-internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportExpectActualIncompatibility(
+internal fun IrDiagnosticReporter.reportExpectActualIncompatibility(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
     incompatibility: ExpectActualCheckingCompatibility.Incompatible<*>,
@@ -122,7 +122,7 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportExpectActualIn
     )
 }
 
-internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportExpectActualMismatch(
+internal fun IrDiagnosticReporter.reportExpectActualMismatch(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
     incompatibility: ExpectActualMatchingCompatibility.Mismatch,
@@ -137,7 +137,7 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportExpectActualMi
     )
 }
 
-internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportActualAnnotationsNotMatchExpect(
+internal fun IrDiagnosticReporter.reportActualAnnotationsNotMatchExpect(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
     incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>,
@@ -151,7 +151,7 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportActualAnnotati
     )
 }
 
-internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportActualAnnotationConflictingDefaultArgumentValue(
+internal fun IrDiagnosticReporter.reportActualAnnotationConflictingDefaultArgumentValue(
     reportOn: IrElement,
     file: IrFile,
     actualParam: IrValueParameter,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
@@ -32,9 +33,11 @@ class IrActualizerAndPluginsFacade(
             val result = IrActualizer.actualize(
                 inputArtifact.irModuleFragment,
                 inputArtifact.dependentIrModuleFragments,
-                inputArtifact.diagnosticReporter,
+                KtDiagnosticReporterWithImplicitIrBasedContext(
+                    inputArtifact.diagnosticReporter,
+                    testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings,
+                ),
                 typeSystemContext,
-                testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings,
                 inputArtifact.fir2IrComponents!!.symbolTable,
                 inputArtifact.fir2IrComponents!!.fakeOverrideBuilder,
                 useIrFakeOverrideBuilder = CodegenTestDirectives.ENABLE_IR_FAKE_OVERRIDE_GENERATION in module.directives,

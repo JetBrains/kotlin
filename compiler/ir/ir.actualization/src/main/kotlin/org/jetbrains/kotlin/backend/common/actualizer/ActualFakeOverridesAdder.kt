@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -16,7 +14,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -35,7 +32,6 @@ import org.jetbrains.kotlin.resolve.OverridingUtil
 internal class ActualFakeOverridesAdder(
     private val expectActualMap: Map<IrSymbol, IrSymbol>,
     private val expectToActualClassMap: Map<ClassId, IrClassSymbol>,
-    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext,
     private val typeSystemContext: IrTypeSystemContext
 ) : IrElementVisitorVoid {
     private val overrideChecker = IrOverrideChecker(typeSystemContext, emptyList())

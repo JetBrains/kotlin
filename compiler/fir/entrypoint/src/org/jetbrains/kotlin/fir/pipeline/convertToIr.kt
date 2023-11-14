@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
@@ -143,9 +144,11 @@ fun FirResult.convertToIrAndActualize(
             actualizationResult = IrActualizer.actualize(
                 fir2IrResult.irModuleFragment,
                 commonIrOutputs.map { it.irModuleFragment },
-                fir2IrConfiguration.diagnosticReporter,
+                KtDiagnosticReporterWithImplicitIrBasedContext(
+                    fir2IrConfiguration.diagnosticReporter,
+                    fir2IrConfiguration.languageVersionSettings
+                ),
                 actualizerTypeContextProvider(fir2IrResult.irModuleFragment.irBuiltins),
-                fir2IrConfiguration.languageVersionSettings,
                 commonMemberStorage.symbolTable,
                 fir2IrResult.components.fakeOverrideBuilder,
                 fir2IrConfiguration.useIrFakeOverrideBuilder,
