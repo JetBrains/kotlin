@@ -229,9 +229,10 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             context: CheckerContext,
             reporter: DiagnosticReporter,
         ) {
-            if (
-                calledDeclaration == null ||
-                calledDeclaration.callableId.callableName == BACKING_FIELD
+            if (calledDeclaration == null ||
+                calledDeclaration.callableId.callableName == BACKING_FIELD ||
+                calledDeclaration is FirPropertySymbol && calledDeclaration.isConst &&
+                context.callsOrAssignments.any { it is FirAnnotationCall }
             ) {
                 return
             }
