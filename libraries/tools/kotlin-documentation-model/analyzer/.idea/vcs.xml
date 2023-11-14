@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="IssueNavigationConfiguration">
+    <option name="links">
+      <list>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="#(\d+)" />
+          <option name="linkRegexp" value="https://github.com/Kotlin/dokka/issues/$1" />
+        </IssueNavigationLink>
+      </list>
+    </option>
+  </component>
+  <component name="VcsDirectoryMappings">
+    <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/dokka-integration-tests/gradle/projects/coroutines/kotlinx-coroutines" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/dokka-integration-tests/gradle/projects/serialization/kotlinx-serialization" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/dokka-integration-tests/maven/projects/biojava/biojava" vcs="Git" />
+  </component>
+</project>
