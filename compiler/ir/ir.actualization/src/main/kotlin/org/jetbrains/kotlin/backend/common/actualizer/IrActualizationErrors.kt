@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompa
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCheckingCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibility
 
-object IrActualizationErrors {
+internal object IrActualizationErrors {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>()
     val EXPECT_ACTUAL_MISMATCH by error3<PsiElement, String, String, ExpectActualMatchingCompatibility.Mismatch>()
     val EXPECT_ACTUAL_INCOMPATIBILITY by error3<PsiElement, String, String, ExpectActualCheckingCompatibility.Incompatible<*>>()
@@ -30,7 +30,7 @@ object IrActualizationErrors {
     }
 }
 
-object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFactory() {
+internal object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("KT").also { map ->
         map.put(
             IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
@@ -69,7 +69,7 @@ object KtDefaultIrActualizationErrorMessages : BaseDiagnosticRendererFactory() {
     }
 }
 
-object IrActualizationDiagnosticRenderers {
+internal object IrActualizationDiagnosticRenderers {
     val MISMATCH = Renderer<ExpectActualMatchingCompatibility.Mismatch> {
         it.reason ?: "<unknown>"
     }
