@@ -37,7 +37,7 @@ data class KarmaClient(
     val args: MutableList<String> = mutableListOf()
 )
 
-class CustomLauncher(var base: String) {
+data class CustomLauncher(var base: String) {
     val flags = mutableListOf<String>()
     var debug: Boolean? = null
 }

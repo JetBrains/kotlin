@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Files
+import kotlin.io.path.writeText
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
@@ -26,6 +28,10 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":wasmWasiNodeTest")
             }
 
+            build(":wasmWasiTest") {
+                assertTasksUpToDate(":kotlinNodeJsSetup", ":compileKotlinWasmWasi", ":wasmWasiNodeTest")
+            }
+
             projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
                 it.replace(
                     "fun test2() = assertEquals(foo(), 2)",
@@ -40,6 +46,46 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
             buildAndFail(":wasmWasiTest") {
                 assertTasksUpToDate(":compileKotlinWasmWasi")
                 assertTasksFailed(":wasmWasiNodeTest")
+            }
+        }
+    }
+
+    @DisplayName("Check js target")
+    @GradleTest
+    fun jsTarget(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-test", gradleVersion) {
+            buildGradleKts.modify {
+                transformBuildScriptWithPluginsDsl(it)
+                    .replace("<JsEngine>", "nodejs")
+                    .replace("<ApplyBinaryen>", "")
+            }
+
+            kotlinSourcesDir("wasmJsTest").resolve("Test.kt").writeText(
+                """
+                    package my.pack.name
+
+                    import kotlin.test.Test
+                    import kotlin.test.assertEquals
+
+                    class WasmTest {
+                        @Test
+                        fun test1() = assertEquals(foo(), 2)
+                    }
+                """.trimIndent()
+            )
+
+            projectPath.resolve(".yarnrc").toFile().writeText(
+                "--ignore-engines true"
+            )
+
+            build("build") {
+                assertTasksExecuted(":kotlinNodeJsSetup")
+                assertTasksExecuted(":compileKotlinWasmJs")
+                assertTasksExecuted(":wasmJsNodeTest")
+            }
+
+            build(":wasmJsTest") {
+                assertTasksUpToDate(":kotlinNodeJsSetup", ":compileKotlinWasmJs", ":wasmJsNodeTest")
             }
         }
     }
@@ -72,7 +118,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Check wasi target")
+    @DisplayName("Check wasi target with binaryen")
     @GradleTest
     fun wasiTargetWithBinaryen(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
@@ -96,7 +142,7 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Check js target")
+    @DisplayName("Check js target with binaryen")
     @GradleTest
     fun jsTargetWithBinaryen(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-js", gradleVersion) {

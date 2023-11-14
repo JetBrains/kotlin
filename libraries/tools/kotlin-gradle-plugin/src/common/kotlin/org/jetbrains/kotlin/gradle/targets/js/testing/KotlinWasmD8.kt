@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJv
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.writeWasmUnitTestRunner
-import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.nio.file.Path
 
@@ -35,10 +34,6 @@ internal class KotlinWasmD8(private val kotlinJsTest: KotlinJsTest) : KotlinJsTe
 
     override val workingDir: Path
         get() = npmProjectDir.toPath()
-
-    init {
-        kotlinJsTest.doNotTrackStateCompat("Should always re-run for WASM")
-    }
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
