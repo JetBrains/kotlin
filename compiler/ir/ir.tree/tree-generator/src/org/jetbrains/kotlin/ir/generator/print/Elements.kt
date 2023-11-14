@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.*
+import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File

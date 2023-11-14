@@ -22,7 +22,7 @@ internal object InferredOverriddenType : TypeRefWithNullability {
     override fun copy(nullable: Boolean) = this
 }
 
-data class Model(val elements: List<Element>, val rootElement: Element)
+typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 
 internal fun markLeaves(elements: List<Element>) {
     val leaves = elements.toMutableSet()
