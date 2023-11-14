@@ -21,8 +21,8 @@ import java.io.File
 private class VisitorPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
-    visitSuperTypeByDefault: Boolean,
-) : AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault) {
+    private val visitSuperTypeByDefault: Boolean,
+) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = listOf(resultTypeVariable, dataTypeVariable)
@@ -37,6 +37,8 @@ private class VisitorPrinter(
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = true
+
+    override fun skipElement(element: Element): Boolean = visitSuperTypeByDefault && element.isRootElement
 
     override fun parentInVisitor(element: Element): Element? = when {
         element.isRootElement -> null
@@ -57,7 +59,7 @@ fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeBy
 private class VisitorVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
-) : AbstractVisitorVoidPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+) : AbstractVisitorVoidPrinter<Element, Field>(printer) {
 
     override val visitorSuperClass: ClassRef<PositionTypeParameterRef>
         get() = firVisitorType
@@ -80,7 +82,7 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File) =
 private class DefaultVisitorVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
-) : AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault = true) {
+) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = emptyList()
@@ -98,13 +100,14 @@ private class DefaultVisitorVoidPrinter(
 
     context(ImportCollector)
     override fun printMethodsForElement(element: Element) {
+        val parentInVisitor = element.parentInVisitor ?: return
         printer.run {
             printVisitMethodDeclaration(
                 element,
                 hasDataParameter = false,
                 override = true,
             )
-            println(" = ", element.parentInVisitor!!.visitFunctionName, "(", element.visitorParameterName, ")")
+            println(" = ", parentInVisitor.visitFunctionName, "(", element.visitorParameterName, ")")
             println()
         }
     }
