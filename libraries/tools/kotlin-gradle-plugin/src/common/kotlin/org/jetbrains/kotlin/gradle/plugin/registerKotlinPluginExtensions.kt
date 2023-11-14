@@ -104,6 +104,9 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, CInteropCommonizedCInteropApiElementsConfigurationsSetupAction)
             register(project, AddBuildListenerForXCodeSetupAction)
             register(project, CreateFatFrameworksSetupAction)
+
+            register(project, KotlinAndroidCopyHashedResourcesAction)
+            register(project, KotlinJvmCopyHashedResourcesAction)
         }
     }
 
@@ -132,6 +135,7 @@ internal fun Project.registerKotlinPluginExtensions() {
         register(project, KotlinJvmJarArtifact)
         register(project, KotlinJsKlibArtifact)
         register(project, KotlinNativeKlibArtifact)
+        register(project, KotlinResourcesForNativeKlibArtifact)
         register(project, KotlinNativeHostSpecificMetadataArtifact)
     }
 

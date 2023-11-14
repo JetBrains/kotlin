@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSet
 import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
+import java.io.File
 
 abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
     private val dependsOnImpl = MutableObservableSetImpl<KotlinSourceSet>()
@@ -30,6 +31,8 @@ abstract class AbstractKotlinSourceSet : InternalKotlinSourceSet {
         get() = withDependsOnClosureImpl
 
     override val compilations: MutableObservableSet<KotlinCompilation<*>> = MutableObservableSetImpl()
+
+    override val shaResources: MutableSet<File> = mutableSetOf()
 
     final override fun dependsOn(other: KotlinSourceSet) {
         if (other == this) return
