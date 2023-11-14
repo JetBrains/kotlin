@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-interface FieldContainer {
-    val allFields: List<AbstractField>
-    operator fun get(fieldName: String): AbstractField?
+interface FieldContainer<out Field : AbstractField<*>> {
+    val allFields: List<Field>
+    operator fun get(fieldName: String): Field?
 
     val hasAcceptMethod: Boolean
         get() = false
@@ -24,12 +24,12 @@ interface FieldContainer {
     /**
      * The fields on which to run the visitor in generated `acceptChildren` methods.
      */
-    val walkableChildren: List<AbstractField>
+    val walkableChildren: List<Field>
         get() = allFields.filter { it.containsElement && !it.withGetter && it.needAcceptAndTransform }
 
     /**
      * The fields on which to run the transformer in generated `transformChildren` methods.
      */
-    val transformableChildren: List<AbstractField>
+    val transformableChildren: List<Field>
         get() = walkableChildren.filter { it.isMutable || it is ListField }
 }

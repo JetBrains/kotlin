@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.generators.tree.*
 
 private const val DEFAULT_BUILDER_PACKAGE = "org.jetbrains.kotlin.fir.tree.builder"
 
-sealed class Builder : FieldContainer, TypeRef, Importable {
+sealed class Builder : FieldContainer<FieldWithDefault>, TypeRef, Importable {
     val parents: MutableList<IntermediateBuilder> = mutableListOf()
     val usedTypes: MutableList<Importable> = mutableListOf()
     abstract override val allFields: List<FieldWithDefault>

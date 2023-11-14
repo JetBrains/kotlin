@@ -13,7 +13,7 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
     printer: SmartPrinter,
 ) : AbstractVisitorPrinter<Element, Field>(printer)
         where Element : AbstractElement<Element, Field>,
-              Field : AbstractField {
+              Field : AbstractField<Field> {
 
     final override val visitorTypeParameters: List<TypeVariable>
         get() = emptyList()
