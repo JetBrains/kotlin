@@ -99,7 +99,7 @@ internal suspend fun Project.locateOrCreateCommonizedCInteropDependencyConfigura
     val commonizerTarget = sourceSet.commonizerTarget.await() ?: return null
     if (commonizerTarget !is SharedCommonizerTarget) return null
 
-    val configurationName = commonizerTarget.identityString + "CInterop"
+    val configurationName = sourceSet.name + "CInterop"
     configurations.findByName(configurationName)?.let { return it }
 
     val configuration = configurations.create(configurationName) { configuration ->
@@ -116,7 +116,7 @@ internal suspend fun Project.locateOrCreateCommonizedCInteropDependencyConfigura
          * has to happen that will resolve the exact list of klibs.
          */
         configuration.attributes.attribute(CInteropCommonizerArtifactTypeAttribute.attribute, CInteropCommonizerArtifactTypeAttribute.KLIB)
-        description = "Commonized CInterop dependencies for targets: '$commonizerTarget'."
+        description = "Commonized CInterop dependencies for $sourceSet with targets: '$commonizerTarget'."
     }
 
     return configuration
