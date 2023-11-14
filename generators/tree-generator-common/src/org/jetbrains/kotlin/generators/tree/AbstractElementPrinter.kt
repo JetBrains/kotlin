@@ -27,6 +27,8 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field>,
     protected open val separateFieldsWithBlankLine: Boolean
         get() = false
 
+    protected open fun filterFields(element: Element): Collection<Field> = element.allFields
+
     context(ImportCollector)
     fun printElement(element: Element) {
         printer.run {
@@ -49,11 +51,9 @@ abstract class AbstractElementPrinter<Element : AbstractElement<Element, Field>,
             val body = SmartPrinter(StringBuilder()).apply {
                 val fieldPrinter = makeFieldPrinter(this)
                 withIndent {
-                    for (field in element.allFields) {
-                        if (
-                            !field.withGetter && field.defaultValueInImplementation == null && field.isFinal && field.fromParent ||
-                            field.isParameter
-                        ) {
+                    for (field in filterFields(element)) {
+                        if (field.isParameter) continue
+                        if (!field.withGetter && field.defaultValueInImplementation == null && field.isFinal && field.fromParent) {
                             continue
                         }
                         if (separateFieldsWithBlankLine) println()

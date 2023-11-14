@@ -11,11 +11,12 @@ import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
-import org.jetbrains.kotlin.ir.generator.model.*
+import org.jetbrains.kotlin.ir.generator.model.Element
+import org.jetbrains.kotlin.ir.generator.model.Field
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.Model
+import org.jetbrains.kotlin.ir.generator.model.SingleField
 import org.jetbrains.kotlin.utils.SmartPrinter
-import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
@@ -33,6 +34,16 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
 
     override val separateFieldsWithBlankLine: Boolean
         get() = true
+
+    // In IR classes we only print fields that are either declared in this element, or refine the type of a parent field
+    // and thus need an override.
+    override fun filterFields(element: Element): Collection<Field> = element.fields.map { field ->
+        field.copy().apply {
+            if (field in element.parentFields) {
+                fromParent = true
+            }
+        }
+    }
 
     context(ImportCollector)
     override fun SmartPrinter.printAdditionalMethods(element: Element) {

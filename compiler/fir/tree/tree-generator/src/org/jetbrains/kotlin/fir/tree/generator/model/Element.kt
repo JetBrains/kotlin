@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.fir.tree.generator.printer.BASE_PACKAGE
 import org.jetbrains.kotlin.fir.tree.generator.printer.safeDecapitalizedName
-import org.jetbrains.kotlin.fir.tree.generator.util.set
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
@@ -80,8 +79,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     var doesNotNeedImplementation: Boolean = false
 
     val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || elementParents.any { it.element.needTransformOtherChildren }
-    val overridenFields: MutableMap<Field, MutableMap<Field, Boolean>> = mutableMapOf()
-    val useNullableForReplace: MutableSet<Field> = mutableSetOf()
     val allImplementations: List<Implementation> by lazy {
         if (doesNotNeedImplementation) {
             emptyList()
@@ -90,66 +87,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
             defaultImplementation?.let { implementations += it }
             implementations
         }
-    }
-
-    override val allFields: List<Field> by lazy {
-        val result = LinkedHashSet<Field>()
-        result.addAll(fields.toList().asReversed())
-        result.forEach { overridenFields[it, it] = false }
-        for (parentField in parentFields.asReversed()) {
-            val overrides = !result.add(parentField)
-            if (overrides) {
-                val existingField = result.first { it == parentField }
-                existingField.fromParent = true
-                existingField.needsSeparateTransform = existingField.needsSeparateTransform || parentField.needsSeparateTransform
-                existingField.needTransformInOtherChildren = existingField.needTransformInOtherChildren || parentField.needTransformInOtherChildren
-                existingField.withReplace = parentField.withReplace || existingField.withReplace
-                existingField.parentHasSeparateTransform = parentField.needsSeparateTransform
-                if (parentField.typeRef.copy(nullable = false) != existingField.typeRef.copy(nullable = false) && parentField.withReplace) {
-                    existingField.overridenTypes += parentField.typeRef
-                    overridenFields[existingField, parentField] = false
-                } else {
-                    overridenFields[existingField, parentField] = true
-                    if (parentField.nullable != existingField.nullable) {
-                        existingField.useNullableForReplace = true
-                    }
-                }
-            } else {
-                overridenFields[parentField, parentField] = true
-            }
-        }
-        result.toList().asReversed()
-    }
-
-    val parentFields: List<Field> by lazy {
-        val result = LinkedHashMap<String, Field>()
-        elementParents.forEach { parentRef ->
-            val parent = parentRef.element
-            val fields = parent.allFields.map { field ->
-                val copy = (field as? SimpleField)?.let { simpleField ->
-                    simpleField.replaceType(simpleField.typeRef.substitute(parentRef.args) as TypeRefWithNullability)
-                } ?: field.copy()
-                copy.apply {
-                    fromParent = true
-                }
-            }
-            fields.forEach {
-                result.merge(it.name, it) { previousField, thisField ->
-                    val resultField = previousField.copy()
-                    if (thisField.withReplace) {
-                        resultField.withReplace = true
-                    }
-                    if (thisField.useNullableForReplace) {
-                        resultField.useNullableForReplace = true
-                    }
-                    if (thisField.isMutable) {
-                        resultField.isMutable = true
-                    }
-                    resultField
-                }
-            }
-        }
-        result.values.toList()
     }
 
     override fun toString(): String {

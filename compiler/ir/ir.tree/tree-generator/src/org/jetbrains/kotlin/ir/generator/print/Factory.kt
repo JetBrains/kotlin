@@ -255,7 +255,7 @@ private class FactoryMethod(val element: Element) {
 
     val name = "create" + element.name.capitalizeAsciiOnly()
 
-    val parameters = (element.allFieldsRecursively() + element.additionalIrFactoryMethodParameters)
+    val parameters = (element.allFields + element.additionalIrFactoryMethodParameters)
         .filterNot { it.name in element.fieldsToSkipInIrFactoryMethod }
         .mapNotNull { field ->
             (field.useInIrFactoryStrategy as? Field.UseFieldAsParameterInIrFactoryStrategy.Yes)?.let {

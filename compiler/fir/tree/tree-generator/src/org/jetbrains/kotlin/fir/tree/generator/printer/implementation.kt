@@ -380,7 +380,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     }
                 }
 
-                for (overridenType in field.overridenTypes) {
+                for (overridenType in field.overriddenTypes) {
                     generateReplace(field, overridenType) {
                         println("require($newValue is ${field.typeRef.render()})")
                         println("replace$capitalizedFieldName($newValue)")

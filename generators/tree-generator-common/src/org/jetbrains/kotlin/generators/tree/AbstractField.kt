@@ -28,7 +28,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
 
     open var optInAnnotation: ClassRef<*>? = null
 
-    abstract val isMutable: Boolean
+    abstract var isMutable: Boolean
     open val withGetter: Boolean get() = false
     open val customSetter: String? get() = null
 
@@ -58,6 +58,10 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      */
     var needAcceptAndTransform: Boolean = true
 
+    open val overriddenTypes: MutableSet<TypeRefWithNullability> = mutableSetOf()
+
+    open fun updatePropertiesFromOverriddenField(parentField: Field, haveSameClass: Boolean) {}
+
     override fun toString(): String {
         return name
     }
@@ -73,4 +77,14 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     override fun hashCode(): Int {
         return name.hashCode()
     }
+
+    /**
+     * Returns a copy of this field with its [typeRef] set to [newType] (if it's possible).
+     */
+    abstract fun replaceType(newType: TypeRefWithNullability): Field
+
+    /**
+     * Returns a copy of this field.
+     */
+    abstract fun copy(): Field
 }

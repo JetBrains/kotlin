@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.tree.generator.*
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.fir.tree.generator.model.Field
-import org.jetbrains.kotlin.fir.tree.generator.util.get
+import org.jetbrains.kotlin.generators.tree.get
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -43,9 +43,9 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
             }
 
             allFields.filter { it.withReplace }.forEach {
-                val override = overridenFields[it, it] && !(it.name == "source" && element == FirTreeBuilder.qualifiedAccessExpression)
+                val override = overriddenFieldsHaveSameClass[it, it] && !(it.name == "source" && element == FirTreeBuilder.qualifiedAccessExpression)
                 it.replaceDeclaration(override, forceNullable = it.useNullableForReplace)
-                for (overriddenType in it.overridenTypes) {
+                for (overriddenType in it.overriddenTypes) {
                     it.replaceDeclaration(true, overriddenType)
                 }
             }

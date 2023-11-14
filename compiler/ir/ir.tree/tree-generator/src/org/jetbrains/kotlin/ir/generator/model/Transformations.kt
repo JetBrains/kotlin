@@ -7,21 +7,6 @@ package org.jetbrains.kotlin.ir.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
 
-internal object InferredOverriddenType : TypeRefWithNullability {
-
-    context(ImportCollector)
-    override fun renderTo(appendable: Appendable) {
-        renderingIsNotSupported()
-    }
-
-    override fun substitute(map: TypeParameterSubstitutionMap) = this
-
-    override val nullable: Boolean
-        get() = false
-
-    override fun copy(nullable: Boolean) = this
-}
-
 typealias Model = org.jetbrains.kotlin.generators.tree.Model<Element>
 
 internal fun markLeaves(elements: List<Element>) {
@@ -40,39 +25,6 @@ internal fun markLeaves(elements: List<Element>) {
     }
 }
 
-internal fun processFieldOverrides(elements: List<Element>) {
-    for (element in iterateElementsParentFirst(elements)) {
-        for (field in element.fields) {
-            fun visitParents(visited: Element) {
-                for (parent in visited.elementParents) {
-                    val overriddenField = parent.element.fields.singleOrNull { it.name == field.name }
-                    if (overriddenField != null) {
-                        field.fromParent = true
-                        field.optInAnnotation = field.optInAnnotation ?: overriddenField.optInAnnotation
-
-                        fun transformInferredType(type: TypeRef, overriddenType: TypeRef) =
-                            type.takeUnless { it is InferredOverriddenType } ?: overriddenType
-                        when (field) {
-                            is SingleField -> {
-                                field.typeRef =
-                                    transformInferredType(field.typeRef, (overriddenField as SingleField).typeRef) as TypeRefWithNullability
-                            }
-                            is ListField -> {
-                                field.baseType = transformInferredType(field.baseType, (overriddenField as ListField).baseType)
-                            }
-                        }
-
-                        break
-                    }
-
-                    visitParents(parent.element)
-                }
-            }
-
-            visitParents(element)
-        }
-    }
-}
 
 internal fun addWalkableChildren(elements: List<Element>) {
     for (element in elements) {

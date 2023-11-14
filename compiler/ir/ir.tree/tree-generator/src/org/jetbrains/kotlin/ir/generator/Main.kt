@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.collectPreviously
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil.removeExtraFilesFromPreviousGeneration
 import org.jetbrains.kotlin.ir.generator.model.addWalkableChildren
 import org.jetbrains.kotlin.ir.generator.model.markLeaves
-import org.jetbrains.kotlin.ir.generator.model.processFieldOverrides
 import org.jetbrains.kotlin.ir.generator.print.*
 import java.io.File
 
@@ -29,7 +28,6 @@ fun main(args: Array<String>) {
     InterfaceAndAbstractClassConfigurator(model.elements).configureInterfacesAndAbstractClasses()
     addPureAbstractElement(model.elements, elementBaseType)
     markLeaves(model.elements)
-    processFieldOverrides(model.elements)
     addWalkableChildren(model.elements)
 
     val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)

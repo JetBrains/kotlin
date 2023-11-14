@@ -6,7 +6,12 @@
 package org.jetbrains.kotlin.generators.tree
 
 interface FieldContainer<out Field : AbstractField<*>> {
+
+    /**
+     * All the fields of this element, including the fields of all its parents.
+     */
     val allFields: List<Field>
+
     operator fun get(fieldName: String): Field?
 
     val hasAcceptMethod: Boolean

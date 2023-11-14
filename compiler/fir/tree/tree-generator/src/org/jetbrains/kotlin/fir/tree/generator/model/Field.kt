@@ -22,7 +22,6 @@ sealed class Field : AbstractField<Field>() {
     open var isMutableInInterface: Boolean = false
     open val fromDelegate: Boolean get() = false
 
-    open val overridenTypes: MutableSet<TypeRefWithNullability> = mutableSetOf()
     open var useNullableForReplace: Boolean = false
     open var notNull: Boolean = false
 
@@ -38,7 +37,9 @@ sealed class Field : AbstractField<Field>() {
 
     abstract override var isMutable: Boolean
 
-    fun copy(): Field = internalCopy().also {
+    override fun replaceType(newType: TypeRefWithNullability): Field = copy()
+
+    override fun copy(): Field = internalCopy().also {
         updateFieldsInCopy(it)
     }
 
@@ -48,7 +49,7 @@ sealed class Field : AbstractField<Field>() {
             copy.needTransformInOtherChildren = needTransformInOtherChildren
             copy.useInBaseTransformerDetection = useInBaseTransformerDetection
             copy.isMutable = isMutable
-            copy.overridenTypes += overridenTypes
+            copy.overriddenTypes += overriddenTypes
             copy.arbitraryImportables += arbitraryImportables
             copy.useNullableForReplace = useNullableForReplace
             copy.customInitializationCall = customInitializationCall
@@ -61,6 +62,15 @@ sealed class Field : AbstractField<Field>() {
 
     protected abstract fun internalCopy(): Field
 
+    override fun updatePropertiesFromOverriddenField(parentField: Field, haveSameClass: Boolean) {
+        needsSeparateTransform = needsSeparateTransform || parentField.needsSeparateTransform
+        needTransformInOtherChildren = needTransformInOtherChildren || parentField.needTransformInOtherChildren
+        withReplace = withReplace || parentField.withReplace
+        parentHasSeparateTransform = parentField.needsSeparateTransform
+        if (parentField.nullable != nullable && haveSameClass) {
+            useNullableForReplace = true
+        }
+    }
 }
 
 // ----------- Field with default -----------
@@ -112,8 +122,8 @@ class FieldWithDefault(val origin: Field) : Field() {
     override var withGetter: Boolean = false
     override var customSetter: String? = null
     override var fromDelegate: Boolean = false
-    override val overridenTypes: MutableSet<TypeRefWithNullability>
-        get() = origin.overridenTypes
+    override val overriddenTypes: MutableSet<TypeRefWithNullability>
+        get() = origin.overriddenTypes
 
     override val arbitraryImportables: MutableList<Importable>
         get() = origin.arbitraryImportables
@@ -158,7 +168,7 @@ class SimpleField(
         }
     }
 
-    fun replaceType(newType: TypeRefWithNullability) = SimpleField(
+    override fun replaceType(newType: TypeRefWithNullability) = SimpleField(
         name = name,
         typeRef = newType,
         withReplace = withReplace,

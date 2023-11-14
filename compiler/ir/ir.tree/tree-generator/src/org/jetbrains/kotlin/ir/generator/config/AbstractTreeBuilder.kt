@@ -72,19 +72,19 @@ abstract class AbstractTreeBuilder {
 
     protected fun field(
         name: String,
-        type: TypeRefWithNullability?,
+        type: TypeRefWithNullability,
         nullable: Boolean = false,
         mutable: Boolean = true,
         isChild: Boolean = false,
         initializer: SingleField.() -> Unit = {}
     ): SingleField {
         checkChildType(isChild, type, name)
-        return SingleField(name, type?.copy(nullable) ?: InferredOverriddenType, mutable, isChild).apply(initializer)
+        return SingleField(name, type.copy(nullable), mutable, isChild).apply(initializer)
     }
 
     protected fun listField(
         name: String,
-        elementType: TypeRef?,
+        elementType: TypeRef,
         nullable: Boolean = false,
         mutability: ListField.Mutability,
         isChild: Boolean = false,
@@ -98,7 +98,7 @@ abstract class AbstractTreeBuilder {
         }
         return ListField(
             name = name,
-            baseType = elementType ?: InferredOverriddenType,
+            baseType = elementType,
             listType = listType,
             isNullable = nullable,
             mutable = mutability == ListField.Mutability.Var,
