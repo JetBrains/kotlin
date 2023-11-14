@@ -38,11 +38,24 @@ enum class EnumClassWithoutEntryClasses {
 }
 
 enum class EnumClassWithEntryClasses {
-    FOO_HAS_CLASS { override fun function() = "" },
+    FOO_HAS_CLASS {
+        override val overriddenProperty get() = ""
+        override fun overriddenFunction() = ""
+        val fooOwnProperty get() = ""
+        fun fooOwnFunction() = ""
+        inner class FooInner
+    },
     BAR_NO_CLASS,
-    BAZ_HAS_CLASS { override fun function() = "" };
+    BAZ_HAS_CLASS {
+        override val overriddenProperty get() = ""
+        override fun overriddenFunction() = ""
+        val bazOwnProperty get() = ""
+        fun bazOwnFunction() = ""
+        inner class BazInner
+    };
 
-    open fun function(): String = ""
+    open val overriddenProperty: String get() = ""
+    open fun overriddenFunction(): String = ""
 }
 
 class CompanionHolder1 {
