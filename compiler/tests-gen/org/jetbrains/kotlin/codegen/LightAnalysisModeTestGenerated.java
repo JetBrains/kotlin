@@ -24770,6 +24770,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/charOperations.kt");
         }
 
+        @TestMetadata("complexBooleanConstant.kt")
+        public void testComplexBooleanConstant() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/complexBooleanConstant.kt");
+        }
+
         @TestMetadata("doubleOperations.kt")
         public void testDoubleOperations() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/doubleOperations.kt");

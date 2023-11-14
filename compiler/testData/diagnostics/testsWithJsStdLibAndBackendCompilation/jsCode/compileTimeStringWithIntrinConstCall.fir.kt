@@ -76,11 +76,11 @@ fun testArithmeticOperations() {
 fun testLogicOperations() {
     js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>!true<!>}; }")
     js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>true or false<!>}; }")
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${true || false}; }"<!>)
+    js("{ var a = ${true || false}; }")
     js("{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>true and false<!>}; }")
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${true && false}; }"<!>)
+    js("{ var a = ${true && false}; }")
 
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${TRUE && false}; }"<!>)
+    js("{ var a = ${TRUE && false}; }")
     js("{ var a = ${TRUE or false}; }")
 }
 

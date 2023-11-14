@@ -59,6 +59,8 @@ enum class EvaluationMode {
             BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
         ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
 
+        private val allowedOriginsForWhen = setOf(IrStatementOrigin.ANDAND, IrStatementOrigin.OROR)
+
         override fun canEvaluateFunction(function: IrFunction): Boolean {
             if (function.property.isConst) return true
 
@@ -80,13 +82,12 @@ enum class EvaluationMode {
 
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.statements.size == 1
         override fun canEvaluateExpression(expression: IrExpression): Boolean {
-            if (expression !is IrCall) return false
-
-            if (expression.hasUnsignedArgs()) {
-                return expression.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.String.plus"
+            return when {
+                expression is IrWhen -> expression.origin in allowedOriginsForWhen
+                expression !is IrCall -> false
+                expression.hasUnsignedArgs() -> expression.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.String.plus"
+                else -> true
             }
-
-            return true
         }
 
         private fun IrCall.hasUnsignedArgs(): Boolean {
