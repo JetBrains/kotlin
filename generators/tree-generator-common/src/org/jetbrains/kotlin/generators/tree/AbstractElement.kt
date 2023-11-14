@@ -80,10 +80,6 @@ abstract class AbstractElement<Element, Field>(
 
     abstract override val allFields: List<Field>
 
-    abstract override val walkableChildren: List<Field>
-
-    abstract override val transformableChildren: List<Field>
-
     /**
      * A custom return type of the corresponding transformer method for this element.
      */

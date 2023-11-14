@@ -112,7 +112,6 @@ class FieldWithDefault(val origin: Field) : Field() {
     override var withGetter: Boolean = false
     override var customSetter: String? = null
     override var fromDelegate: Boolean = false
-    var needAcceptAndTransform: Boolean = true
     override val overridenTypes: MutableSet<TypeRefWithNullability>
         get() = origin.overridenTypes
 

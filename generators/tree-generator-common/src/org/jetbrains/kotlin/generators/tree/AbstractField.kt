@@ -51,6 +51,13 @@ abstract class AbstractField {
      */
     var useInBaseTransformerDetection = true
 
+    /**
+     * Whether a visitor should be run on this field in the generated `acceptChildren` in `transformChildren` method.
+     *
+     * Only has effect if [containsElement] is `true`.
+     */
+    var needAcceptAndTransform: Boolean = true
+
     override fun toString(): String {
         return name
     }

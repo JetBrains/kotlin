@@ -159,6 +159,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     println()
                     withIndent {
                         for (field in walkableFields) {
+                            check(field is FieldWithDefault)
                             when (field.name) {
                                 "explicitReceiver" -> {
                                     val explicitReceiver = implementation["explicitReceiver"]!!
@@ -225,6 +226,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 if (!isInterface && !isAbstract) {
                     printBlock {
                         for (field in transformableChildren) {
+                            check(field is FieldWithDefault)
                             when {
                                 field.name == "explicitReceiver" -> {
                                     val explicitReceiver = implementation["explicitReceiver"]!!
