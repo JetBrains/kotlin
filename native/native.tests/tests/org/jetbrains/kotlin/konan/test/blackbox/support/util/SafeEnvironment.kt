@@ -43,7 +43,12 @@ internal object SafeEnvVars : Iterable<NameAndSafeValue> {
 internal class SafeProperties : Iterable<NameAndSafeValue> {
     // Properties are mutable. So, need to capture the current values.
     private val properties: Map<String, String> = TreeMap<String, String>().apply {
-        System.getProperties().forEach { (name, value) ->
+        // Cloning properties to protect from ConcurrentModificationException
+        // if another threads modifies them while we iterate through:
+        val systemProperties = System.getProperties().clone() as Properties
+        // (clone() is synchronized).
+
+        systemProperties.forEach { (name, value) ->
             this[name.toString()] = value.toString()
         }
     }
