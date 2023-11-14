@@ -169,6 +169,11 @@ internal class SourceSetVisibilityProvider(
                         ?.singleOrNull()
                         ?: return@mapNotNull null
 
+                    // It can happen that host-specific artifact is mentioned in resolve but it doesn't exist physically
+                    // then again gracefully return null
+                    val metadataArtifactFile = metadataArtifact.file
+                    if (!metadataArtifactFile.exists()) return@mapNotNull null
+
                     sourceSetName to metadataArtifact.file
                 }.toMap()
             }
