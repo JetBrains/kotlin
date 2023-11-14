@@ -1571,3 +1571,8 @@ val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
 
 val IrDeclaration.parents: Sequence<IrDeclarationParent>
     get() = generateSequence(parent) { (it as? IrDeclaration)?.parent }
+
+val IrDeclaration.isExpect
+    get() = this is IrClass && isExpect ||
+            this is IrFunction && isExpect ||
+            this is IrProperty && isExpect

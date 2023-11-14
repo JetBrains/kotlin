@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
-import org.jetbrains.kotlin.backend.common.ir.isExpect
+import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode

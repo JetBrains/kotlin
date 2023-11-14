@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
-import org.jetbrains.kotlin.backend.common.ir.isExpect
+import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
