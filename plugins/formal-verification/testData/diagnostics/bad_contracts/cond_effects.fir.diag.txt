@@ -1,0 +1,85 @@
+/cond_effects.kt:(121,137): info: Generated Viper text for mayReturnNonNull:
+method global$fun_mayReturnNonNull$fun_take$NT_Any$return$NT_Any(local$x: dom$Nullable[dom$Any])
+  returns (ret$0: dom$Nullable[dom$Any])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  ensures ret$0 == (dom$Nullable$null(): dom$Nullable[dom$Any]) ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  ret$0 := local$x
+  goto label$ret$0
+  label label$ret$0
+}
+
+/cond_effects.kt:(178,210): warning: Viper verification error: Postcondition of global$fun_mayReturnNonNull$fun_take$NT_Any$return$NT_Any might not hold. Assertion ret$0 == (dom$Nullable$null(): dom$Nullable[dom$Any]) ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int()) might not hold.
+
+/cond_effects.kt:(274,287): info: Generated Viper text for mayReturnNull:
+method global$fun_mayReturnNull$fun_take$NT_Any$return$NT_Any(local$x: dom$Nullable[dom$Any])
+  returns (ret$0: dom$Nullable[dom$Any])
+  ensures dom$Type$isSubtype((dom$TypeOf$typeOf(ret$0): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  ensures ret$0 != (dom$Nullable$null(): dom$Nullable[dom$Any]) ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  ret$0 := local$x
+  goto label$ret$0
+  label label$ret$0
+}
+
+/cond_effects.kt:(328,363): warning: Viper verification error: Postcondition of global$fun_mayReturnNull$fun_take$NT_Any$return$NT_Any might not hold. Assertion ret$0 != (dom$Nullable$null(): dom$Nullable[dom$Any]) ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int()) might not hold.
+
+/cond_effects.kt:(573,591): info: Generated Viper text for isNullOrEmptyWrong:
+method global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean(local$seq: dom$Nullable[Ref])
+  returns (ret$0: Bool)
+  ensures ret$0 == false ==>
+    local$seq != (dom$Nullable$null(): dom$Nullable[Ref])
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$seq): dom$Type), dom$Type$special$Nullable(dom$Type$pkg$kotlin$global$class_CharSequence()))
+  if (!(local$seq == (dom$Nullable$null(): dom$Nullable[Ref]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ==
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) ||
+  local$seq != (dom$Nullable$null(): dom$Nullable[Ref]) &&
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) !=
+  (dom$Nullable$null(): dom$Nullable[dom$Unit]) &&
+  (dom$Casting$cast(local$seq, dom$Type$pkg$kotlin$global$class_CharSequence()): Ref) ==
+  (dom$Casting$cast((dom$Nullable$null(): dom$Nullable[dom$Unit]), dom$Type$pkg$kotlin$global$class_CharSequence()): Ref))) {
+    var anonymous$0: Int
+    anonymous$0 := pkg$kotlin$class_CharSequence$getter_length((dom$Casting$cast(local$seq,
+      dom$Type$pkg$kotlin$global$class_CharSequence()): Ref))
+    ret$0 := !(anonymous$0 == 0)
+  } else {
+    ret$0 := false}
+  goto label$ret$0
+  label label$ret$0
+}
+
+method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
+
+/cond_effects.kt:(646,682): warning: Viper verification error: Postcondition of global$fun_isNullOrEmptyWrong$fun_take$NT_class_pkg$kotlin$global$class_CharSequence$return$T_Boolean might not hold. Assertion ret$0 == false ==> local$seq != (dom$Nullable$null(): dom$Nullable[Ref]) might not hold.
+
+/cond_effects.kt:(775,792): info: Generated Viper text for recursiveContract:
+field pkg$kotlin$class_String$member_length: Int
+
+method global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean(local$n: Int,
+  local$x: dom$Nullable[dom$Any])
+  returns (ret$0: Bool)
+  ensures ret$0 == true ==>
+    dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$kotlin$global$class_String())
+{
+  inhale dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$special$Nullable(dom$Type$Any()))
+  if (local$n == 0) {
+    ret$0 := dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$Int())
+  } else {
+    ret$0 := global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean(local$n -
+      1, local$x)}
+  goto label$ret$0
+  label label$ret$0
+}
+
+method pkg$kotlin$class_CharSequence$getter_length(this: Ref)
+  returns (ret: Int)
+
+
+/cond_effects.kt:(844,879): warning: Viper verification error: Postcondition of global$fun_recursiveContract$fun_take$T_Int$NT_Any$return$T_Boolean might not hold. Assertion ret$0 == true ==> dom$Type$isSubtype((dom$TypeOf$typeOf(local$x): dom$Type), dom$Type$pkg$kotlin$global$class_String()) might not hold.
