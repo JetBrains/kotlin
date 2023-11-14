@@ -290,8 +290,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (this is ErrorTypeConstructor) return emptyList()
         return when (this) {
             is ConeStubTypeConstructor -> listOf(session.builtinTypes.nullableAnyType.type)
-            // ???
-            is ConeTypeVariableTypeConstructor -> listOf(session.builtinTypes.nullableAnyType.type)
+            is ConeTypeVariableTypeConstructor -> listOf()
             is ConeTypeParameterLookupTag -> bounds().map { it.coneType }
             is ConeClassLikeLookupTag -> {
                 when (val symbol = toClassLikeSymbol().also { it?.lazyResolveToPhase(FirResolvePhase.TYPES) }) {
