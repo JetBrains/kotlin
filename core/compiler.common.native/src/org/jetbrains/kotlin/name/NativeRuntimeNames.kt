@@ -14,5 +14,11 @@ object NativeRuntimeNames {
         val exportForCppRuntimeClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCppRuntime"))
         val exportForCompilerClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("ExportForCompiler"))
         val gcUnsafeCallClassId = ClassId(kotlinNativeInternalPackage, Name.identifier("GCUnsafeCall"))
+        val Throws = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("Throws"))
+        val ThrowsAlias = ClassId(kotlinNativePackage, Name.identifier("Throws"))
+        val SharedImmutable = ClassId(kotlinNativePackage.child(Name.identifier("concurrent")), Name.identifier("SharedImmutable"))
+        val SharedImmutableAlias = ClassId(kotlinNativePackage, Name.identifier("SharedImmutable"))
+        val ThreadLocal = ClassId(kotlinNativePackage.child(Name.identifier("concurrent")), Name.identifier("ThreadLocal"))
+        val ThreadLocalAlias = ClassId(kotlinNativePackage, Name.identifier("ThreadLocal"))
     }
 }

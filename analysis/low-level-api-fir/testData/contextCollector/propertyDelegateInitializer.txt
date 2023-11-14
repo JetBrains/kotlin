@@ -2,22 +2,20 @@ Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
     Element 1
-        Scope: FirDefaultSimpleImportingScope
-    Element 2
         Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
     Element 3
         Scope: FirDefaultSimpleImportingScope
     Element 4
-        Scope: FirDefaultSimpleImportingScope
-    Element 5
         Scope: FirPackageMemberScope
-    Element 6
+    Element 5
         Scope: FirExplicitSimpleImportingScope
-    Element 7
+    Element 6
         Implicit receiver:
             FirRegularClassSymbol public final class Foo : R|kotlin/Any|
                 Type: test.Foo
-    Element 8
+    Element 7
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol constructorParam: R|test/MyInterface|

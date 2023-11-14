@@ -7,6 +7,7 @@ dependencies {
     api(project(":core:descriptors.jvm"))
     api(project(":compiler:frontend.java"))
     api(project(":compiler:fir:java"))
+    api(project(":compiler:fir:native"))
     api(project(":compiler:fir:raw-fir:psi2fir"))
     api(project(":compiler:fir:raw-fir:light-tree2fir"))
     api(project(":compiler:fir:fir2ir"))

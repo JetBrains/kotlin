@@ -2,18 +2,16 @@ Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
     Element 1
-        Scope: FirDefaultSimpleImportingScope
-    Element 2
         Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
     Element 3
         Scope: FirDefaultSimpleImportingScope
     Element 4
-        Scope: FirDefaultSimpleImportingScope
-    Element 5
         Scope: FirPackageMemberScope
-    Element 6
+    Element 5
         Scope: FirExplicitSimpleImportingScope
-    Element 7
+    Element 6
         Scope: FirScriptDeclarationsScope
             Classifiers:
                 FirRegularClassSymbol public? final? class ScriptClass : R|kotlin/Any|
@@ -24,11 +22,11 @@ Tower Data Context:
             Properties:
                 FirPropertySymbol public final val $$result: R|kotlin/Unit|
                     public get(): R|kotlin/Unit|
-    Element 8
+    Element 7
         Scope: FirLocalScope
             Properties:
                 FirPropertySymbol lval args: R|kotlin/Array<kotlin/String>|
-    Element 9
+    Element 8
         Context receivers:
             FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
             SCRIPT: <script-scriptInsideLastStatement.kts>
@@ -43,9 +41,9 @@ Tower Data Context:
                     public get(): R|kotlin/Unit|
                 Type: kotlin.script.templates.standard.ScriptTemplateWithArgs
                 Label: <script>
-    Element 10
+    Element 9
         Scope: FirLocalScope
             Properties:
                 FirValueParameterSymbol it: R|kotlin/Int|
-    Element 11
+    Element 10
         Scope: FirLocalScope

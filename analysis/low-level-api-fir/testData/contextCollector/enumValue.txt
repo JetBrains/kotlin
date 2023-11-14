@@ -2,27 +2,25 @@ Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
     Element 1
-        Scope: FirDefaultSimpleImportingScope
-    Element 2
         Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
     Element 3
         Scope: FirDefaultSimpleImportingScope
     Element 4
-        Scope: FirDefaultSimpleImportingScope
-    Element 5
         Scope: FirPackageMemberScope
-    Element 6
+    Element 5
         Scope: FirExplicitSimpleImportingScope
-    Element 7
+    Element 6
         Implicit receiver:
             FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
                 Type: kotlin.Enum.Companion
-    Element 8
+    Element 7
         Scope: FirNestedClassifierScopeWithSubstitution
             Classifiers:
                 FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
         Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
-    Element 9
+    Element 8
         Scope: FirNameAwareOnlyCallablesScope
             Functions
                 FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
@@ -34,15 +32,15 @@ Tower Data Context:
                 FirEnumEntrySymbol public final static enum entry WEST: R|Direction| = LAZY_EXPRESSION
                 FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
                     public get(): R|kotlin/enums/EnumEntries<Direction>|
-    Element 10
+    Element 9
         Implicit receiver:
             FirAnonymousObjectSymbol object : R|Direction|
                 Type: <anonymous>
-    Element 11
+    Element 10
         Scope: FirLocalScope
             Properties:
                 FirBackingFieldSymbol private <explicit backing field>: R|kotlin/Int|
-    Element 12
+    Element 11
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] enumValue.kt

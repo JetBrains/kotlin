@@ -72,7 +72,7 @@ package abc4
 import kotlin.<!CONFLICTING_IMPORT!>Throws<!>
 import <!DEPRECATION!>kotlin.native.<!CONFLICTING_IMPORT!>Throws<!><!>
 
-@<!OVERLOAD_RESOLUTION_AMBIGUITY!>Throws<!>(Throwable::class)
+@Throws(Throwable::class)
 fun foo1() {}
 
 @kotlin.Throws(Throwable::class)
@@ -81,7 +81,7 @@ fun foo2() {}
 @<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
 fun foo3() {}
 
-fun foo5(x: <!OVERLOAD_RESOLUTION_AMBIGUITY!>Throws<!>) {}
+fun foo5(x: Throws) {}
 fun foo6(x: kotlin.Throws) {}
 fun foo7(x: <!DEPRECATION!>kotlin.native.Throws<!>) {}
 
@@ -127,7 +127,7 @@ package abc7
 import kotlin.*
 import kotlin.native.*
 
-@<!OVERLOAD_RESOLUTION_AMBIGUITY!>Throws<!>(Throwable::class)
+@Throws(Throwable::class)
 fun foo1() {}
 
 @kotlin.Throws(Throwable::class)
@@ -136,7 +136,7 @@ fun foo2() {}
 @<!DEPRECATION!>kotlin.native.Throws<!>(Throwable::class)
 fun foo3() {}
 
-fun foo5(x: <!OVERLOAD_RESOLUTION_AMBIGUITY!>Throws<!>) {}
+fun foo5(x: Throws) {}
 fun foo6(x: kotlin.Throws) {}
 fun foo7(x: <!DEPRECATION!>kotlin.native.Throws<!>) {}
 

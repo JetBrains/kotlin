@@ -2,20 +2,18 @@ Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
     Element 1
-        Scope: FirDefaultSimpleImportingScope
-    Element 2
         Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
     Element 3
         Scope: FirDefaultSimpleImportingScope
     Element 4
-        Scope: FirDefaultSimpleImportingScope
-    Element 5
         Scope: FirPackageMemberScope
-    Element 6
+    Element 5
         Scope: FirExplicitSimpleImportingScope
-    Element 7
+    Element 6
         Scope: FirLocalScope
-    Element 8
+    Element 7
         Context receivers:
             FirNamedFunctionSymbol context(R|Foo|, R|Bar|)
             public final fun test(): R|kotlin/Unit|
@@ -25,7 +23,7 @@ Tower Data Context:
             public final fun test(): R|kotlin/Unit|
                 Type: Bar
                 Label: Bar
-    Element 9
+    Element 8
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] contextReceivers.kt

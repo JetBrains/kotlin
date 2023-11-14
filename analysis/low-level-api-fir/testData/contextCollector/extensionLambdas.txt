@@ -2,36 +2,34 @@ Tower Data Context:
     Element 0
         Scope: FirDefaultStarImportingScope
     Element 1
-        Scope: FirDefaultSimpleImportingScope
-    Element 2
         Scope: FirExplicitStarImportingScope
+    Element 2
+        Scope: FirDefaultSimpleImportingScope
     Element 3
         Scope: FirDefaultSimpleImportingScope
     Element 4
-        Scope: FirDefaultSimpleImportingScope
-    Element 5
         Scope: FirPackageMemberScope
-    Element 6
+    Element 5
         Scope: FirExplicitSimpleImportingScope
+    Element 6
+        Scope: FirLocalScope
     Element 7
         Scope: FirLocalScope
     Element 8
         Scope: FirLocalScope
     Element 9
-        Scope: FirLocalScope
-    Element 10
         Implicit receiver:
             FirAnonymousFunctionSymbol foo@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>
                 Type: kotlin.String
+    Element 10
+        Scope: FirLocalScope
     Element 11
         Scope: FirLocalScope
     Element 12
-        Scope: FirLocalScope
-    Element 13
         Implicit receiver:
             FirAnonymousFunctionSymbol num@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>
                 Type: kotlin.Int
-    Element 14
+    Element 13
         Scope: FirLocalScope
 
 FILE: [ResolvedTo(IMPORTS)] extensionLambdas.kt

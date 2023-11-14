@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
+import org.jetbrains.kotlin.fir.scopes.platformClassMapper
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -134,6 +135,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
+        filterOutAmbiguousTypealiases(candidates)
+
         val candidateCount = candidates.size
         return when {
             candidateCount == 1 -> {
@@ -147,6 +150,24 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 TypeResolutionResult.Unresolved
             }
             else -> error("Unexpected")
+        }
+    }
+
+    private fun filterOutAmbiguousTypealiases(candidates: MutableSet<TypeCandidate>) {
+        if (candidates.size <= 1) return
+
+        val aliasesToRemove = mutableSetOf<ClassId>()
+        val classTypealiasesThatDontCauseAmbiguity = session.platformClassMapper.classTypealiasesThatDontCauseAmbiguity
+        for (candidate in candidates) {
+            val symbol = candidate.symbol
+            if (symbol is FirClassLikeSymbol<*>) {
+                classTypealiasesThatDontCauseAmbiguity[symbol.classId]?.let { aliasesToRemove.add(it) }
+            }
+        }
+        if (aliasesToRemove.isNotEmpty()) {
+            candidates.removeAll {
+                (it.symbol as? FirClassLikeSymbol)?.classId?.let { classId -> aliasesToRemove.contains(classId) } == true
+            }
         }
     }
 

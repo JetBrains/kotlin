@@ -2,21 +2,19 @@ implicit receivers:
 scopes:
   DefaultStarImportingScope, index = 0
 
-  DefaultSimpleImportingScope, index = 1
-
-  ExplicitStarImportingScope, index = 2
+  ExplicitStarImportingScope, index = 1
     packages: 0
     classifiers: 0
     callables: 0
     constructors: 0
 
+  DefaultSimpleImportingScope, index = 2
+
   DefaultSimpleImportingScope, index = 3
 
-  DefaultSimpleImportingScope, index = 4
+  PackageMemberScope, index = 4
 
-  PackageMemberScope, index = 5
-
-  ExplicitSimpleImportingScope, index = 6
+  ExplicitSimpleImportingScope, index = 5
     packages: 0
     classifiers: 1
       KtNamedClassOrObjectSymbol:
@@ -46,3 +44,4 @@ scopes:
         visibility: Public
     callables: 0
     constructors: 0
+

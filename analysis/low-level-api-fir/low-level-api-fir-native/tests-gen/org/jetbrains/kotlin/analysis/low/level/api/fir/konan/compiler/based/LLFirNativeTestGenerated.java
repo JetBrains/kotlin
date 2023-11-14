@@ -87,6 +87,12 @@ public class LLFirNativeTestGenerated extends AbstractLLFirNativeTest {
     }
 
     @Test
+    @TestMetadata("stdClassAndTypealiasAmbiguity.kt")
+    public void testStdClassAndTypealiasAmbiguity() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/stdClassAndTypealiasAmbiguity.kt");
+    }
+
+    @Test
     @TestMetadata("threadLocal.kt")
     public void testThreadLocal() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/threadLocal.kt");

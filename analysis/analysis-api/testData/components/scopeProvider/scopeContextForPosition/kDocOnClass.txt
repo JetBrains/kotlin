@@ -400,7 +400,5 @@ scopes:
     callables: 0
     constructors: 0
 
-  DefaultSimpleImportingScope, index = 7
-
-  DefaultStarImportingScope, index = 8
+  DefaultStarImportingScope, index = 7
 

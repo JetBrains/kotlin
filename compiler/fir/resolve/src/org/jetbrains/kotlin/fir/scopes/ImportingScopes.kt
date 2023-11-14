@@ -70,10 +70,6 @@ internal fun computeImportingScopes(
                     FirSingleLevelDefaultStarImportingScope(session, scopeSession, DefaultImportPriority.LOW, excludedImportNames)
                 },
             )
-
-            this += scopeSession.getOrBuild(DefaultSimpleImportKey(DefaultImportPriority.KOTLIN_THROWS, excludedImportNames), DEFAULT_SIMPLE_IMPORT) {
-                FirDefaultSimpleImportingScope(session, scopeSession, priority = DefaultImportPriority.KOTLIN_THROWS, excludedImportNames)
-            }
         }
 
         this += FirExplicitStarImportingScope(file.imports, session, scopeSession, excludedImportNames)
