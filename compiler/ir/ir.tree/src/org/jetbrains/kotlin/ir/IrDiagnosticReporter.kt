@@ -7,12 +7,23 @@ package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticReporterWithContext.DiagnosticContextImpl
+import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 
 interface IrDiagnosticReporter {
     val languageVersionSettings: LanguageVersionSettings
     fun at(irDeclaration: IrDeclaration): DiagnosticContextImpl
     fun at(irElement: IrElement, containingIrFile: IrFile): DiagnosticContextImpl
     fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl
+}
+
+object IrDiagnosticRenderers {
+    val SYMBOL_OWNER_DECLARATION_FQ_NAME = Renderer<IrSymbol> {
+        (it.owner as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "unknown name"
+    }
+    val DECLARATION_NAME = Renderer<IrDeclarationWithName> { it.name.asString() }
 }

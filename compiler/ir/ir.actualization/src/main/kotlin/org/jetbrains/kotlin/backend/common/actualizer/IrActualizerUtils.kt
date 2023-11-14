@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
-import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -101,7 +100,7 @@ internal fun IrDiagnosticReporter.reportMissingActual(expectSymbol: IrSymbol) {
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun IrDiagnosticReporter.reportMissingActual(irDeclaration: IrDeclaration) {
     at(irDeclaration).report(
-        CommonBackendErrors.NO_ACTUAL_FOR_EXPECT,
+        IrActualizationErrors.NO_ACTUAL_FOR_EXPECT,
         (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
         irDeclaration.module
     )
@@ -115,7 +114,7 @@ internal fun IrDiagnosticReporter.reportExpectActualIncompatibility(
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     at(expectDeclaration).report(
-        CommonBackendErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
+        IrActualizationErrors.EXPECT_ACTUAL_INCOMPATIBILITY,
         expectDeclaration.getNameWithAssert().asString(),
         actualDeclaration.getNameWithAssert().asString(),
         incompatibility
@@ -130,7 +129,7 @@ internal fun IrDiagnosticReporter.reportExpectActualMismatch(
     val expectDeclaration = expectSymbol.owner as IrDeclaration
     val actualDeclaration = actualSymbol.owner as IrDeclaration
     at(expectDeclaration).report(
-        CommonBackendErrors.EXPECT_ACTUAL_MISMATCH,
+        IrActualizationErrors.EXPECT_ACTUAL_MISMATCH,
         expectDeclaration.getNameWithAssert().asString(),
         actualDeclaration.getNameWithAssert().asString(),
         incompatibility
@@ -144,7 +143,7 @@ internal fun IrDiagnosticReporter.reportActualAnnotationsNotMatchExpect(
     reportOn: IrSymbol,
 ) {
     at(reportOn.owner as IrDeclaration).report(
-        CommonBackendErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
+        IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
         expectSymbol,
         actualSymbol,
         incompatibilityType,
@@ -157,7 +156,7 @@ internal fun IrDiagnosticReporter.reportActualAnnotationConflictingDefaultArgume
     actualParam: IrValueParameter,
 ) {
     at(reportOn, file).report(
-        CommonBackendErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
+        IrActualizationErrors.ACTUAL_ANNOTATION_CONFLICTING_DEFAULT_ARGUMENT_VALUE,
         actualParam,
     )
 }
