@@ -10,14 +10,10 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.generators.tree.ImplementationKindOwner
 import org.jetbrains.kotlin.generators.tree.InterfaceAndAbstractClassConfigurator
 
-private class FirInterfaceAndAbstractClassConfigurator(builder: AbstractFirTreeBuilder) : InterfaceAndAbstractClassConfigurator() {
-
-    override val elements: List<ImplementationKindOwner> = (builder.elements + builder.elements.flatMap { it.allImplementations })
-
+internal class FirInterfaceAndAbstractClassConfigurator(builder: AbstractFirTreeBuilder) : InterfaceAndAbstractClassConfigurator(
+    elements = (builder.elements + builder.elements.flatMap { it.allImplementations })
+) {
     override fun shouldBeFinalClass(element: ImplementationKindOwner, allParents: Set<ImplementationKindOwner>): Boolean =
         element is Implementation && element !in allParents
 }
 
-fun configureInterfacesAndAbstractClasses(builder: AbstractFirTreeBuilder) {
-    FirInterfaceAndAbstractClassConfigurator(builder).configureInterfacesAndAbstractClasses()
-}
