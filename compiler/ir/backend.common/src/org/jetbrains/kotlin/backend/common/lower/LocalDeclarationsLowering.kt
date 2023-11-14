@@ -53,12 +53,6 @@ interface VisibilityPolicy {
     }
 }
 
-val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
-    get() = generateSequence(this as? IrDeclarationParent) { (it as? IrDeclaration)?.parent }
-
-val IrDeclaration.parents: Sequence<IrDeclarationParent>
-    get() = generateSequence(parent) { (it as? IrDeclaration)?.parent }
-
 val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl
 
 val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl

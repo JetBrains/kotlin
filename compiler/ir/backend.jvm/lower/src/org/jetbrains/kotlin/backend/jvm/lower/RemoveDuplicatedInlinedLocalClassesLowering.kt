@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.getDefaultAdditionalStatementsFrom
 import org.jetbrains.kotlin.backend.common.ir.getNonDefaultAdditionalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.ir.getOriginalStatementsFromInlinedBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.ir.IrElement

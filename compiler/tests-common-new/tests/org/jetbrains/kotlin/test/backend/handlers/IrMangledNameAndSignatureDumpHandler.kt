@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import com.intellij.rt.execution.junit.FileComparisonFailure
-import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.builtins.StandardNames

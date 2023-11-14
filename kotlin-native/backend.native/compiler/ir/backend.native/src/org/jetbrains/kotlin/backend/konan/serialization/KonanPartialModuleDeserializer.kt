@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAndType
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData

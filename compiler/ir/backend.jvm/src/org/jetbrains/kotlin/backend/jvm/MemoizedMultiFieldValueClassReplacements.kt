@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
-import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
 import org.jetbrains.kotlin.backend.jvm.ir.*

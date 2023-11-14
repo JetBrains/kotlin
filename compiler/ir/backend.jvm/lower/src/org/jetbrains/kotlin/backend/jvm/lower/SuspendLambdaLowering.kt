@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin

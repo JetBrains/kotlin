@@ -1565,3 +1565,9 @@ private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OF
 fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst<*> =
     toIrConstOrNull(irType, startOffset, endOffset)
         ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
+
+val IrDeclaration.parentsWithSelf: Sequence<IrDeclarationParent>
+    get() = generateSequence(this as? IrDeclarationParent) { (it as? IrDeclaration)?.parent }
+
+val IrDeclaration.parents: Sequence<IrDeclarationParent>
+    get() = generateSequence(parent) { (it as? IrDeclaration)?.parent }

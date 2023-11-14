@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.ir.util.parents
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
