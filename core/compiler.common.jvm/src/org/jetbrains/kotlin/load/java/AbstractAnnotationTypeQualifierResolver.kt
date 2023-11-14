@@ -185,6 +185,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
             in NULLABLE_ANNOTATIONS -> NullabilityQualifier.NULLABLE
             in NOT_NULL_ANNOTATIONS -> NullabilityQualifier.NOT_NULL
             JSPECIFY_OLD_NULLABLE, JSPECIFY_NULLABLE -> NullabilityQualifier.NULLABLE
+            JSPECIFY_NON_NULL -> NullabilityQualifier.NOT_NULL
             JSPECIFY_OLD_NULLNESS_UNKNOWN, JSPECIFY_NULLNESS_UNKNOWN -> NullabilityQualifier.FORCE_FLEXIBILITY
             JAVAX_NONNULL_ANNOTATION ->
                 when (annotation.enumArguments(onlyValue = false).firstOrNull()) {

@@ -743,6 +743,12 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
                 }
 
                 @Test
+                @TestMetadata("DerivedAsNullableOrNotNull.kt")
+                public void testDerivedAsNullableOrNotNull() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/DerivedAsNullableOrNotNull.kt");
+                }
+
+                @Test
                 @TestMetadata("IgnoreAnnotations.kt")
                 public void testIgnoreAnnotations() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/IgnoreAnnotations.kt");
@@ -852,6 +858,12 @@ public class ForeignAnnotationsCompiledJavaWithPsiClassReadingTestGenerated exte
                 @TestMetadata("Defaults.kt")
                 public void testDefaults() throws Exception {
                     runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Defaults.kt");
+                }
+
+                @Test
+                @TestMetadata("DerivedAsNullableOrNotNull.kt")
+                public void testDerivedAsNullableOrNotNull() throws Exception {
+                    runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/DerivedAsNullableOrNotNull.kt");
                 }
 
                 @Test
