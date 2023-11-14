@@ -28,6 +28,7 @@ object NativeDeclarationCheckers : DeclarationCheckers() {
             FirNativeObjCNameOverridesChecker,
             FirNativeObjCOutletChecker,
             FirNativeObjCActionChecker,
+            FirNativeObjCOverrideInitChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
