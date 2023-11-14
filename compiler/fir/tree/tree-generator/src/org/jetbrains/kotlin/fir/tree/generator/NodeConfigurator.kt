@@ -540,6 +540,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         annotationCall.configure {
             +field("argumentMapping", annotationArgumentMapping, withReplace = true)
             +field("annotationResolvePhase", annotationResolvePhaseType, withReplace = true)
+            +field("containingDeclarationSymbol", firBasedSymbolType.withArgs(TypeRef.Star)).apply {
+                withBindThis = false
+            }
         }
 
         errorAnnotationCall.configure {

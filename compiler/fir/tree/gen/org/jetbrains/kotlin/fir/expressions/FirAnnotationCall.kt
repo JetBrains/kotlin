@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -33,6 +34,7 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override val calleeReference: FirReference
     abstract override val argumentMapping: FirAnnotationArgumentMapping
     abstract val annotationResolvePhase: FirAnnotationResolvePhase
+    abstract val containingDeclarationSymbol: FirBasedSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnnotationCall(this, data)

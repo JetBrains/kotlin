@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -32,6 +33,7 @@ internal class FirErrorAnnotationCallImpl(
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirReference,
+    override val containingDeclarationSymbol: FirBasedSymbol<*>,
     override val diagnostic: ConeDiagnostic,
     override var argumentMapping: FirAnnotationArgumentMapping,
 ) : FirErrorAnnotationCall() {

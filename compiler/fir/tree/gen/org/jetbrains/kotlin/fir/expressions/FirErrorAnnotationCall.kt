@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -34,6 +35,7 @@ abstract class FirErrorAnnotationCall : FirAnnotationCall(), FirDiagnosticHolder
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
     abstract override val annotationResolvePhase: FirAnnotationResolvePhase
+    abstract override val containingDeclarationSymbol: FirBasedSymbol<*>
     abstract override val diagnostic: ConeDiagnostic
     abstract override val argumentMapping: FirAnnotationArgumentMapping
 

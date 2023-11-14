@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnnotationCallImpl
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -35,6 +36,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
     lateinit var calleeReference: FirReference
     var argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping
     var annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Unresolved
+    lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
 
     override fun build(): FirAnnotationCall {
         return FirAnnotationCallImpl(
@@ -46,6 +48,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
             calleeReference,
             argumentMapping,
             annotationResolvePhase,
+            containingDeclarationSymbol,
         )
     }
 
@@ -83,5 +86,6 @@ inline fun buildAnnotationCallCopy(original: FirAnnotationCall, init: FirAnnotat
     copyBuilder.calleeReference = original.calleeReference
     copyBuilder.argumentMapping = original.argumentMapping
     copyBuilder.annotationResolvePhase = original.annotationResolvePhase
+    copyBuilder.containingDeclarationSymbol = original.containingDeclarationSymbol
     return copyBuilder.apply(init).build()
 }
