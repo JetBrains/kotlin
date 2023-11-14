@@ -82,14 +82,14 @@ fun serializeTask(name: String, sourcesTask: TaskProvider<*>, inDirs: List<File>
 
         classpath(rootProject.buildscript.configurations["bootstrapCompilerClasspath"])
         mainClass.set("org.jetbrains.kotlin.serialization.builtins.RunKt")
-        jvmArgs(listOfNotNull(
-            "-Didea.io.use.nio2=true",
-            "-Dkotlin.builtins.serializer.log=true".takeIf { logger.isInfoEnabled }
-        ))
+        jvmArguments.add("-Didea.io.use.nio2=true")
         args(
             pathRelativeToWorkingDir(outDir),
             *inDirs.map(::pathRelativeToWorkingDir).toTypedArray()
         )
+        doFirst {
+            if (logger.isInfoEnabled) jvmArguments.add("-Dkotlin.builtins.serializer.log=true")
+        }
     }
 
 val serialize = serializeTask("serialize", prepareSources, listOf(builtinsSrc, builtinsNative, builtinsCherryPicked, rangesCherryPicked))
