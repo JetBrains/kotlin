@@ -130,13 +130,13 @@ data class TypeRefWithVariance<out T : TypeRef>(val variance: Variance, val type
 
 interface ElementOrRef<Element, Field> : ParametrizedTypeRef<ElementOrRef<Element, Field>, NamedTypeParameterRef>, ClassOrElementRef
         where Element : AbstractElement<Element, Field>,
-              Field : AbstractField {
+              Field : AbstractField<Field> {
     val element: Element
 
     override fun copy(nullable: Boolean): ElementRef<Element, Field>
 }
 
-data class ElementRef<Element : AbstractElement<Element, Field>, Field : AbstractField>(
+data class ElementRef<Element : AbstractElement<Element, Field>, Field : AbstractField<Field>>(
     override val element: Element,
     override val args: Map<NamedTypeParameterRef, TypeRef> = emptyMap(),
     override val nullable: Boolean = false,
