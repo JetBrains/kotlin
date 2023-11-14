@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.Model
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
@@ -28,7 +27,7 @@ private fun printVisitorCommon(
     }
 
 private open class VisitorPrinter(printer: SmartPrinter, override val visitorType: ClassRef<*>) :
-    AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+    AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = listOf(resultTypeVariable, dataTypeVariable)
@@ -50,7 +49,7 @@ fun printVisitor(generationPath: File, model: Model) = printVisitorCommon(genera
 private class VisitorVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
-) : AbstractVisitorVoidPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+) : AbstractVisitorVoidPrinter<Element, Field>(printer) {
 
     override val visitorSuperClass: ClassRef<PositionTypeParameterRef>
         get() = elementVisitorType
@@ -72,7 +71,7 @@ private class TransformerPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
     val rootElement: Element,
-) : AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorSuperType: ClassRef<PositionTypeParameterRef>
         get() = elementVisitorType.withArgs(rootElement, dataTypeVariable)
@@ -122,7 +121,7 @@ fun printTransformer(generationPath: File, model: Model): GeneratedFile =
 private class TransformerVoidPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
-) : AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorTypeParameters: List<TypeVariable>
         get() = emptyList()
@@ -245,7 +244,7 @@ private class TypeTransformerPrinter(
     printer: SmartPrinter,
     override val visitorType: ClassRef<*>,
     val rootElement: Element,
-) : AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorSuperType: ClassRef<PositionTypeParameterRef>
         get() = elementTransformerType.withArgs(dataTypeVariable)

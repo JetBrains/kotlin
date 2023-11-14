@@ -18,7 +18,7 @@ import java.io.File
 
 private class TransformerPrinter(
     printer: SmartPrinter,
-) : AbstractVisitorPrinter<Element, Field>(printer, visitSuperTypeByDefault = false) {
+) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorType: ClassRef<*>
         get() = firTransformerType
