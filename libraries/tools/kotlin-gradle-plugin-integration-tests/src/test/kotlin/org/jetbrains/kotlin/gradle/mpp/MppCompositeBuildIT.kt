@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regu
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertEquals
@@ -238,6 +239,41 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
                 assertTasksUpToDate(":consumerA:compileKotlinIosX64")
                 assertTasksUpToDate(":consumerA:compileKotlinJvm")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test - sample2-withHostSpecificTargets - import cinterop dependencies`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample2-withHostSpecificTargets/producerBuild", gradleVersion) {
+            if (HostManager.hostIsMac) {
+                subProject("producerA").buildGradleKts.append(
+                    """                      
+                        tasks.configureEach {
+                            if (name == "iosArm64MetadataJar" || name == "iosX64MetadataJar") {
+                                enabled = false
+                            }
+                        }
+                    """.trimIndent()
+                )
+            }
+        }
+
+        project("mpp-composite-build/sample2-withHostSpecificTargets/consumerBuild", gradleVersion) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            gradleProperties.append("kotlin.mpp.enableCInteropCommonization=true")
+
+            build("cleanNativeDistributionCommonization")
+            build(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde") {
+                if (HostManager.hostIsMac) {
+                    assertTasksSkipped(":producerBuild:producerA:iosArm64MetadataJar")
+                    assertTasksSkipped(":producerBuild:producerA:iosX64MetadataJar")
+                } else {
+                    assertTasksNotExecuted(":producerBuild:producerA:iosArm64MetadataJar")
+                    assertTasksNotExecuted(":producerBuild:producerA:iosX64MetadataJar")
+                }
+                assertTasksExecuted(":consumerA:transformNativeMainCInteropDependenciesMetadataForIde")
+
             }
         }
     }
