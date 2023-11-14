@@ -585,7 +585,7 @@ class Fir2IrConverter(
                 classifierStorage.getOrCreateIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
-                declarationStorage.getOrCreateIrAnonymousInitializer(declaration, parent as IrClass)
+                declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)
             }
             is FirTypeAlias -> {
                 classifierStorage.getCachedTypeAlias(declaration)?.let { irTypeAlias ->

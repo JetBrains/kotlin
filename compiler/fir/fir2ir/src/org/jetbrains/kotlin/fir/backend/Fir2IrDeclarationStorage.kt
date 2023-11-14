@@ -933,13 +933,20 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ anonymous initializers ------------------------------------
 
-    fun getOrCreateIrAnonymousInitializer(
+    fun createIrAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         containingIrClass: IrClass,
     ): IrAnonymousInitializer {
-        return initializerCache.computeIfAbsent(anonymousInitializer) {
-            callablesGenerator.createIrAnonymousInitializer(anonymousInitializer, containingIrClass)
+        val irInitializer = callablesGenerator.createIrAnonymousInitializer(anonymousInitializer, containingIrClass)
+        val alreadyContained = initializerCache.put(anonymousInitializer, irInitializer)
+        require(alreadyContained == null) {
+            "IR for anonymous initializer already exits: ${anonymousInitializer.render()}"
         }
+        return irInitializer
+    }
+
+    fun getIrAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer): IrAnonymousInitializer {
+        return initializerCache.getValue(anonymousInitializer)
     }
 
     // ------------------------------------ callables ------------------------------------
