@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.generator.model.Element
 import org.jetbrains.kotlin.ir.generator.model.Element.Category.*
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.*
 import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.Array
-import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.List
+import org.jetbrains.kotlin.ir.generator.model.ListField.Mutability.MutableList
 import org.jetbrains.kotlin.ir.generator.model.SingleField
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -338,7 +338,7 @@ object IrTree : AbstractTreeBuilder() {
 
         parent(declarationParent)
 
-        +listField("declarations", declaration, mutability = List, isChild = true) {
+        +listField("declarations", declaration, mutability = MutableList, isChild = true) {
             kDoc = """
                  Accessing list of declaration may trigger lazy declaration list computation for lazy class,
                    which requires computation of fake-overrides for this class. So it's unsafe to access it
@@ -482,7 +482,7 @@ object IrTree : AbstractTreeBuilder() {
         }
         +field("name", type<Name>(), mutable = false)
         +field("irBuiltins", type(Packages.tree, "IrBuiltIns"), mutable = false)
-        +listField("files", file, mutability = List, isChild = true)
+        +listField("files", file, mutability = MutableList, isChild = true)
         usedTypes += ArbitraryImportable(Packages.tree, "UNDEFINED_OFFSET")
         +field("startOffset", int, mutable = false) {
             baseGetter = "UNDEFINED_OFFSET"
@@ -661,7 +661,7 @@ object IrTree : AbstractTreeBuilder() {
     val statementContainer: Element by element(Expression) {
         ownsChildren = false
 
-        +listField("statements", statement, mutability = List, isChild = true)
+        +listField("statements", statement, mutability = MutableList, isChild = true)
     }
     val body: Element by element(Expression) {
         needTransformMethod()
@@ -831,7 +831,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(statementContainer)
 
         +field("origin", statementOriginType, nullable = true)
-        +listField("statements", statement, mutability = List, isChild = true) {
+        +listField("statements", statement, mutability = MutableList, isChild = true) {
             baseDefaultValue = "ArrayList(2)"
         }
     }
@@ -965,13 +965,13 @@ object IrTree : AbstractTreeBuilder() {
         parent(constantValue)
 
         +field("constructor", constructorSymbolType)
-        +listField("valueArguments", constantValue, mutability = List, isChild = true)
-        +listField("typeArguments", irTypeType, mutability = List)
+        +listField("valueArguments", constantValue, mutability = MutableList, isChild = true)
+        +listField("typeArguments", irTypeType, mutability = MutableList)
     }
     val constantArray: Element by element(Expression) {
         parent(constantValue)
 
-        +listField("elements", constantValue, mutability = List, isChild = true)
+        +listField("elements", constantValue, mutability = MutableList, isChild = true)
     }
     val delegatingConstructorCall: Element by element(Expression) {
         parent(functionAccessExpression)
@@ -986,7 +986,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +field("operator", type(Packages.exprs, "IrDynamicOperator"))
         +field("receiver", expression, isChild = true)
-        +listField("arguments", expression, mutability = List, isChild = true)
+        +listField("arguments", expression, mutability = MutableList, isChild = true)
     }
     val dynamicMemberExpression: Element by element(Expression) {
         parent(dynamicExpression)
@@ -1010,7 +1010,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(errorExpression)
 
         +field("explicitReceiver", expression, nullable = true, isChild = true)
-        +listField("arguments", expression, mutability = List, isChild = true)
+        +listField("arguments", expression, mutability = MutableList, isChild = true)
     }
     val fieldAccessExpression: Element by element(Expression) {
         nameInVisitorMethod = "FieldAccess"
@@ -1086,7 +1086,7 @@ object IrTree : AbstractTreeBuilder() {
     val stringConcatenation: Element by element(Expression) {
         parent(expression)
 
-        +listField("arguments", expression, mutability = List, isChild = true)
+        +listField("arguments", expression, mutability = MutableList, isChild = true)
     }
     val suspensionPoint: Element by element(Expression) {
         parent(expression)
@@ -1112,7 +1112,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("tryResult", expression, isChild = true)
-        +listField("catches", catch, mutability = List, isChild = true)
+        +listField("catches", catch, mutability = MutableList, isChild = true)
         +field("finallyExpression", expression, nullable = true, isChild = true)
     }
     val catch: Element by element(Expression) {
@@ -1153,7 +1153,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("varargElementType", irTypeType)
-        +listField("elements", varargElement, mutability = List, isChild = true)
+        +listField("elements", varargElement, mutability = MutableList, isChild = true)
     }
     val spreadElement: Element by element(Expression) {
         visitorParameterName = "spread"
@@ -1168,7 +1168,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(expression)
 
         +field("origin", statementOriginType, nullable = true)
-        +listField("branches", branch, mutability = List, isChild = true)
+        +listField("branches", branch, mutability = MutableList, isChild = true)
     }
     val branch: Element by element(Expression) {
         visitorParameterName = "branch"

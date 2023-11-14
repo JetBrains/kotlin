@@ -86,13 +86,13 @@ abstract class AbstractTreeBuilder {
         name: String,
         elementType: TypeRef?,
         nullable: Boolean = false,
-        mutability: ListField.Mutability = ListField.Mutability.Immutable,
+        mutability: ListField.Mutability,
         isChild: Boolean = false,
         initializer: ListField.() -> Unit = {}
     ): ListField {
         checkChildType(isChild, elementType, name)
         val listType = when (mutability) {
-            ListField.Mutability.List -> StandardTypes.mutableList
+            ListField.Mutability.MutableList -> StandardTypes.mutableList
             ListField.Mutability.Array -> StandardTypes.array
             else -> StandardTypes.list
         }
@@ -103,7 +103,6 @@ abstract class AbstractTreeBuilder {
             isNullable = nullable,
             mutable = mutability == ListField.Mutability.Var,
             isChild = isChild,
-            transformable = mutability != ListField.Mutability.Immutable,
         ).apply(initializer)
     }
 

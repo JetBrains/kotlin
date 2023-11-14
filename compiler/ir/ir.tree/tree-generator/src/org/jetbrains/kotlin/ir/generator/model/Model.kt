@@ -96,7 +96,6 @@ class Element(
 
     var childrenOrderOverride: List<String>? = null
     override var walkableChildren: List<Field> = emptyList()
-    override val transformableChildren get() = walkableChildren.filter { it.transformable }
 
     override var visitorParameterName = category.defaultVisitorParam
 
@@ -168,8 +167,6 @@ sealed class Field(
     var baseDefaultValue: String? = null
     var baseGetter: String? = null
 
-    abstract val transformable: Boolean
-
     sealed class UseFieldAsParameterInIrFactoryStrategy {
 
         data object No : UseFieldAsParameterInIrFactoryStrategy()
@@ -208,10 +205,7 @@ class SingleField(
     override var typeRef: TypeRefWithNullability,
     mutable: Boolean,
     isChild: Boolean,
-) : Field(name, mutable, isChild) {
-    override val transformable: Boolean
-        get() = isMutable
-}
+) : Field(name, mutable, isChild)
 
 class ListField(
     name: String,
@@ -220,16 +214,14 @@ class ListField(
     override val listType: ClassRef<PositionTypeParameterRef>,
     mutable: Boolean,
     isChild: Boolean,
-    override val transformable: Boolean,
 ) : Field(name, mutable, isChild), AbstractListField {
 
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = listType.withArgs(baseType).copy(isNullable)
 
     enum class Mutability {
-        Immutable,
         Var,
-        List,
+        MutableList,
         Array
     }
 }

@@ -21,9 +21,15 @@ interface FieldContainer {
     val hasTransformChildrenMethod: Boolean
         get() = false
 
+    /**
+     * The fields on which to run the visitor in generated `acceptChildren` methods.
+     */
     val walkableChildren: List<AbstractField>
-        get() = emptyList()
+        get() = allFields.filter { it.containsElement && !it.withGetter && it.needAcceptAndTransform }
 
+    /**
+     * The fields on which to run the transformer in generated `transformChildren` methods.
+     */
     val transformableChildren: List<AbstractField>
-        get() = emptyList()
+        get() = walkableChildren.filter { it.isMutable || it is ListField }
 }
