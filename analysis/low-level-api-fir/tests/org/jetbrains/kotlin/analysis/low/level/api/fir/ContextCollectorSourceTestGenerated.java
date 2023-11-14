@@ -108,6 +108,18 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
         runTest("analysis/low-level-api-fir/testData/contextCollector/simple.kt");
     }
 
+    @Test
+    @TestMetadata("wholeDeclaration_class.kt")
+    public void testWholeDeclaration_class() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/wholeDeclaration_class.kt");
+    }
+
+    @Test
+    @TestMetadata("wholeDeclaration_fun.kt")
+    public void testWholeDeclaration_fun() throws Exception {
+        runTest("analysis/low-level-api-fir/testData/contextCollector/wholeDeclaration_fun.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/low-level-api-fir/testData/contextCollector/classHeaderPositions")
     @TestDataPath("$PROJECT_ROOT")

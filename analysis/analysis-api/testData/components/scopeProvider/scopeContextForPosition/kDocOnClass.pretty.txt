@@ -1,0 +1,54 @@
+element: param1
+implicit receivers:
+  type: test.MyClass<TypeParam>
+  owner symbol: KtFirNamedClassOrObjectSymbol
+
+scopes:
+  TypeScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 5
+      val property: kotlin.Int
+      fun member(): kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor(param1: test.Param1, param2: test.Param2)
+
+  TypeParameterScope, index = 1
+    packages: 0
+    classifiers: 1
+      TypeParam
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 3
+    packages: 0
+    classifiers: 3
+      class Param1
+      class Param2
+      class MyClass<TypeParam>(param1: test.Param1, param2: test.Param2)
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  ExplicitStarImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 7
+
+  DefaultStarImportingScope, index = 8
+

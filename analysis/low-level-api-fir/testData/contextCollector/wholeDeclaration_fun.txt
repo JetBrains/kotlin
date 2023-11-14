@@ -1,0 +1,51 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol T
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol param: R|kotlin/String|
+    Element 9
+        Context receivers:
+            FirNamedFunctionSymbol context(R|test/ContextReceiver|)
+            public final fun <T> R|test/Receiver|.test(param: R|kotlin/String|): R|T|
+                Type: test.ContextReceiver
+                Label: ContextReceiver
+    Element 10
+        Implicit receiver:
+            FirNamedFunctionSymbol context(R|test/ContextReceiver|)
+            public final fun <T> R|test/Receiver|.test(param: R|kotlin/String|): R|T|
+                Type: test.Receiver
+
+FILE: [ResolvedTo(IMPORTS)] wholeDeclaration_fun.kt
+    public final [ResolvedTo(STATUS)] class ContextReceiver : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|test/ContextReceiver| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class Receiver : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|test/Receiver| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    context(R|test/ContextReceiver|)
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> R|test/Receiver|.test([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|T| {
+    }
