@@ -64,12 +64,6 @@ class Implementation(val element: Element, val name: String?) : FieldContainer, 
     override val hasTransformChildrenMethod: Boolean
         get() = true
 
-    override val walkableChildren: List<FieldWithDefault>
-        get() = allFields.filter { it.containsElement && !it.withGetter && it.needAcceptAndTransform }
-
-    override val transformableChildren: List<FieldWithDefault>
-        get() = walkableChildren.filter { it.isMutable }
-
     override fun get(fieldName: String): FieldWithDefault? {
         return allFields.firstOrNull { it.name == fieldName }
     }
