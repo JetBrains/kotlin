@@ -71,7 +71,10 @@ class IrCapturedType(
     val captureStatus: CaptureStatus,
     val lowerType: IrType?,
     projection: IrTypeArgument,
-    typeParameter: IrTypeParameter
+    typeParameter: IrTypeParameter,
+    override val nullability: SimpleTypeNullability,
+    override val annotations: List<IrConstructorCall>,
+    override val abbreviation: IrTypeAbbreviation?,
 ) : IrSimpleType(null), CapturedTypeMarker {
     class Constructor(val argument: IrTypeArgument, val typeParameter: IrTypeParameter) : CapturedTypeConstructorMarker {
         var superTypes: List<IrType> = emptyList()
@@ -85,10 +88,8 @@ class IrCapturedType(
     val constructor: Constructor = Constructor(projection, typeParameter)
 
     override val classifier: IrClassifierSymbol get() = error("Captured Type does not have a classifier")
+
     override val arguments: List<IrTypeArgument> get() = emptyList()
-    override val abbreviation: IrTypeAbbreviation? get() = null
-    override val nullability: SimpleTypeNullability get() = SimpleTypeNullability.DEFINITELY_NOT_NULL
-    override val annotations: List<IrConstructorCall> get() = emptyList()
 
     override fun equals(other: Any?): Boolean = this === other
 

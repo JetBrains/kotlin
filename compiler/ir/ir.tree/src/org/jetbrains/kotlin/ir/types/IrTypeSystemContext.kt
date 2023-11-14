@@ -262,7 +262,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
                     argument.type
                 } else null
 
-                IrCapturedType(status, lowerType, argument, typeParameters[index])
+                IrCapturedType(
+                    status, lowerType, argument, typeParameters[index], SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), null
+                )
             }
         }
 

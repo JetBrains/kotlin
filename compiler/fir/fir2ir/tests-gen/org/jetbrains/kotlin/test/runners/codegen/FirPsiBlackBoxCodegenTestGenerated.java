@@ -30170,6 +30170,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("inheritanceWithWildcard.kt")
+        public void testInheritanceWithWildcard() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
+        }
+
+        @Test
         @TestMetadata("javaInterfaceFieldDirectAccess.kt")
         public void testJavaInterfaceFieldDirectAccess() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/javaInterfaceFieldDirectAccess.kt");

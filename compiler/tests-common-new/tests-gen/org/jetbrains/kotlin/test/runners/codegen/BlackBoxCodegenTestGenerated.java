@@ -28472,6 +28472,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("inheritanceWithWildcard.kt")
+        public void testInheritanceWithWildcard() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
+        }
+
+        @Test
         @TestMetadata("javaOuterClassDependsOnInner.kt")
         public void testJavaOuterClassDependsOnInner() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/javaOuterClassDependsOnInner.kt");

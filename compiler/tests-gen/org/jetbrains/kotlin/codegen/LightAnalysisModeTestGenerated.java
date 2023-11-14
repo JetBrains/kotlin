@@ -25530,6 +25530,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/genericSamSmartcast.kt");
         }
 
+        @TestMetadata("inheritanceWithWildcard.kt")
+        public void testInheritanceWithWildcard() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/inheritanceWithWildcard.kt");
+        }
+
         @TestMetadata("javaInterfaceFieldDirectAccess.kt")
         public void testJavaInterfaceFieldDirectAccess() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/javaInterfaceFieldDirectAccess.kt");
