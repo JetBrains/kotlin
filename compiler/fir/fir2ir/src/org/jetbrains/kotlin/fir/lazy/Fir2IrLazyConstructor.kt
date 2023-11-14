@@ -36,6 +36,7 @@ class Fir2IrLazyConstructor(
     override var origin: IrDeclarationOrigin,
     override val fir: FirConstructor,
     override val symbol: IrConstructorSymbol,
+    override var parent: IrDeclarationParent
 ) : IrConstructor(), AbstractFir2IrLazyDeclaration<FirConstructor>, Fir2IrTypeParametersContainer,
     Fir2IrComponents by components {
     init {
@@ -45,7 +46,6 @@ class Fir2IrLazyConstructor(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
     override lateinit var typeParameters: List<IrTypeParameter>
-    override lateinit var parent: IrDeclarationParent
 
     override var isPrimary: Boolean
         get() = fir.isPrimary

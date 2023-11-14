@@ -37,12 +37,12 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
+    override var parent: IrDeclarationParent,
     override var isFakeOverride: Boolean
 ) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
     Fir2IrComponents by components {
 
     override lateinit var typeParameters: List<IrTypeParameter>
-    override lateinit var parent: IrDeclarationParent
 
     override var isTailrec: Boolean
         get() = fir.isTailRec

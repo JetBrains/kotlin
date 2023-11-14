@@ -30,9 +30,8 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
             val isFakeOverride = fir.isFakeOverride(firContainingClass)
             Fir2IrLazySimpleFunction(
                 components, startOffset, endOffset, declarationOrigin,
-                fir, firContainingClass, symbol, isFakeOverride
+                fir, firContainingClass, symbol, lazyParent, isFakeOverride
             ).apply {
-                this.parent = lazyParent
                 prepareTypeParameters()
             }
         }
@@ -54,10 +53,8 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         val originForProperty = if (isPropertyForField) IrDeclarationOrigin.DEFINED else declarationOrigin
         return fir.convertWithOffsets { startOffset, endOffset ->
             Fir2IrLazyProperty(
-                components, startOffset, endOffset, originForProperty, fir, firContainingClass, symbols, isFakeOverride
-            ).apply {
-                this.parent = lazyParent
-            }
+                components, startOffset, endOffset, originForProperty, fir, firContainingClass, symbols, lazyParent, isFakeOverride
+            )
         }
     }
 
@@ -67,9 +64,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         declarationOrigin: IrDeclarationOrigin,
         lazyParent: IrDeclarationParent,
     ): IrConstructor = fir.convertWithOffsets { startOffset, endOffset ->
-        Fir2IrLazyConstructor(components, startOffset, endOffset, declarationOrigin, fir, symbol).apply {
-            parent = lazyParent
-        }
+        Fir2IrLazyConstructor(components, startOffset, endOffset, declarationOrigin, fir, symbol, lazyParent)
     }
 
     fun createIrLazyClass(
@@ -78,9 +73,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         symbol: IrClassSymbol
     ): Fir2IrLazyClass = firClass.convertWithOffsets { startOffset, endOffset ->
         val firClassOrigin = firClass.irOrigin(session.firProvider)
-        Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol).apply {
-            parent = irParent
-        }
+        Fir2IrLazyClass(components, startOffset, endOffset, firClassOrigin, firClass, symbol, irParent)
     }
 
     fun createIrLazyField(

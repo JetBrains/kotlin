@@ -40,6 +40,7 @@ class Fir2IrLazyClass(
     override var origin: IrDeclarationOrigin,
     override val fir: FirRegularClass,
     override val symbol: IrClassSymbol,
+    override var parent: IrDeclarationParent,
 ) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass>, Fir2IrTypeParametersContainer,
     IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by components {
     init {
@@ -49,7 +50,6 @@ class Fir2IrLazyClass(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
     override lateinit var typeParameters: List<IrTypeParameter>
-    override lateinit var parent: IrDeclarationParent
 
     override val source: SourceElement
         get() = fir.sourceElement ?: SourceElement.NO_SOURCE
