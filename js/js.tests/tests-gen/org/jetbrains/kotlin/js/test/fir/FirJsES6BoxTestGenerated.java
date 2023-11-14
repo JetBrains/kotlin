@@ -1845,6 +1845,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
         }
 
         @Test
+        @TestMetadata("enumEntriesOnExportedEnum.kt")
+        public void testEnumEntriesOnExportedEnum() throws Exception {
+            runTest("js/js.translator/testData/box/enum/enumEntriesOnExportedEnum.kt");
+        }
+
+        @Test
         @TestMetadata("enumInheritedFromTrait.kt")
         public void testEnumInheritedFromTrait() throws Exception {
             runTest("js/js.translator/testData/box/enum/enumInheritedFromTrait.kt");
