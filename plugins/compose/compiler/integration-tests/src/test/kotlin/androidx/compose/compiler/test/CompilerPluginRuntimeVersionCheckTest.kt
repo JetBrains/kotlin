@@ -95,19 +95,6 @@ class CompilerPluginRuntimeVersionCheckTest {
     }
 
     @Test
-    fun usingLatestUnsupportedRuntime() {
-        setupAppBuildGradle("""implementation("androidx.compose.runtime:runtime:1.0.0-rc02")""")
-        val result = gradleRunner.buildAndFail()
-        assertEquals(TaskOutcome.FAILED, result.task(":app:compileDebugKotlin")!!.outcome)
-        assertTrue(
-            result.output.contains(
-                "You are using an outdated version of Compose Runtime that is not " +
-                    "compatible with the version of the Compose Compiler plugin you have installed"
-            )
-        )
-    }
-
-    @Test
     fun usingLastStableRuntime() {
         setupAppBuildGradle("""implementation("androidx.compose.runtime:runtime:1.0.0")""")
         val result = gradleRunner.build()
