@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.printer.generateElements
-import org.jetbrains.kotlin.fir.tree.generator.util.configureInterfacesAndAbstractClasses
+import org.jetbrains.kotlin.fir.tree.generator.util.FirInterfaceAndAbstractClassConfigurator
 import org.jetbrains.kotlin.generators.tree.Model
 import org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes
 import org.jetbrains.kotlin.generators.tree.addPureAbstractElement
@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
     val model = Model(FirTreeBuilder.elements, AbstractFirTreeBuilder.baseFirElement)
     detectBaseTransformerTypes(model)
     ImplementationConfigurator.configureImplementations()
-    configureInterfacesAndAbstractClasses(FirTreeBuilder)
+    FirInterfaceAndAbstractClassConfigurator(FirTreeBuilder).configureInterfacesAndAbstractClasses()
     addPureAbstractElement(FirTreeBuilder.elements, pureAbstractElementType)
     BuilderConfigurator.configureBuilders()
     val previouslyGeneratedFiles = collectPreviouslyGeneratedFiles(generationPath)
