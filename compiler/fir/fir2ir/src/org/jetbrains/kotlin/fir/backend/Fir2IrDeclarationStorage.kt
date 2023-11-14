@@ -122,7 +122,25 @@ class Fir2IrDeclarationStorage(
     private val irForFirSessionDependantDeclarationMap: MutableMap<FakeOverrideIdentifier, IrSymbol> =
         commonMemberStorage.irForFirSessionDependantDeclarationMap
 
-    data class FakeOverrideIdentifier(val originalSymbol: FirCallableSymbol<*>, val dispatchReceiverLookupTag: ConeClassLikeLookupTag)
+    data class FakeOverrideIdentifier(
+        val originalSymbol: FirCallableSymbol<*>,
+        val dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+        val parentIsExpect: Boolean,
+    ) {
+        companion object {
+            context(Fir2IrComponents)
+            operator fun invoke(
+                originalSymbol: FirCallableSymbol<*>,
+                dispatchReceiverLookupTag: ConeClassLikeLookupTag,
+            ): FakeOverrideIdentifier {
+                return FakeOverrideIdentifier(
+                    originalSymbol,
+                    dispatchReceiverLookupTag,
+                    dispatchReceiverLookupTag.toFirRegularClass(session)?.isExpect == true
+                )
+            }
+        }
+    }
 
     sealed class FirOverrideKey {
         data class Signature(val signature: IdSignature) : FirOverrideKey()
