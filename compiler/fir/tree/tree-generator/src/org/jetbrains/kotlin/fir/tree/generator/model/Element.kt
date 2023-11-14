@@ -76,9 +76,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
     override val transformableChildren: List<Field>
         get() = emptyList() // Use Implementation#transformableChildren instead
 
-    var baseTransformerType: Element? = null
-    val transformerClass: Element get() = baseTransformerType ?: this
-
     override val visitorParameterName: String
         get() = safeDecapitalizedName
 
@@ -160,10 +157,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
             }
         }
         result.values.toList()
-    }
-
-    val allFirFields: List<Field> by lazy {
-        allFields.filter { it.isFirType }
     }
 
     override fun toString(): String {

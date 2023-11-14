@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.generator.TREE_GENERATOR_README
 import org.jetbrains.kotlin.ir.generator.elementTransformerType
 import org.jetbrains.kotlin.ir.generator.elementVisitorType
 import org.jetbrains.kotlin.ir.generator.model.*
+import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.withIndent
@@ -71,7 +72,7 @@ private class ElementPrinter(printer: SmartPrinter) : AbstractElementPrinter<Ele
                             is SingleField -> println(".accept(visitor, data)")
                             is ListField -> {
                                 print(".forEach { it")
-                                if (child.elementType.nullable) {
+                                if (child.baseType.nullable) {
                                     print("?")
                                 }
                                 println(".accept(visitor, data) }")
