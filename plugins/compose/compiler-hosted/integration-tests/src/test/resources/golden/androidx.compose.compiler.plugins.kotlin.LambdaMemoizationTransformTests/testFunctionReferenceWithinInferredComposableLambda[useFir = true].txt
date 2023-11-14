@@ -23,7 +23,7 @@ fun Problem() {
       if (isTraceInProgress()) {
         traceEventStart(<>, %changed, -1, <>)
       }
-      foo
+      ::foo
       if (isTraceInProgress()) {
         traceEventEnd()
       }

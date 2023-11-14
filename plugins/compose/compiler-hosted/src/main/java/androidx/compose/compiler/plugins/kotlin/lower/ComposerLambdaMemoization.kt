@@ -145,7 +145,9 @@ private fun List<DeclarationContext>.recordLocalDeclaration(local: DeclarationCo
     }
 }
 
-private fun List<DeclarationContext>.recordLocalCapture(local: IrSymbolOwner) {
+private fun List<DeclarationContext>.recordLocalCapture(
+    local: IrSymbolOwner
+): Set<IrValueDeclaration>? {
     val capturesForLocal = reversed().firstNotNullOfOrNull { it.localDeclarationCaptures[local] }
     if (capturesForLocal != null) {
         capturesForLocal.forEach { recordCapture(it) }
@@ -158,6 +160,7 @@ private fun List<DeclarationContext>.recordLocalCapture(local: IrSymbolOwner) {
             }
         }
     }
+    return capturesForLocal
 }
 
 private class SymbolOwnerContext(override val declaration: IrSymbolOwner) : DeclarationContext() {
@@ -455,10 +458,14 @@ class ComposerLambdaMemoization(
         return super.visitValueAccess(expression)
     }
 
+    // Memoize the instance created by using the :: operator
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-        // Memoize the instance created by using the :: operator
-        if (expression.symbol.owner.isLocal) {
+        // Get the local captures for local function ref, to make sure we invalidate memoized
+        // reference if its capture is different.
+        val localCaptures = if (expression.symbol.owner.isLocal) {
             declarationContextStack.recordLocalCapture(expression.symbol.owner)
+        } else {
+            null
         }
         val result = super.visitFunctionReference(expression)
         val functionContext = currentFunctionContext ?: return result
@@ -491,6 +498,11 @@ class ComposerLambdaMemoization(
                 dispatchReceiver.isNullOrStable() &&
                 extensionReceiver.isNullOrStable()
 
+            val captures = mutableListOf<IrValueDeclaration>()
+            if (localCaptures != null) {
+                captures.addAll(localCaptures)
+            }
+
             if (hasReceiver && (strongSkippingModeEnabled || receiverIsStable)) {
                 // Save the receivers into a temporaries and memoize the function reference using
                 // the resulting temporaries
@@ -503,8 +515,6 @@ class ComposerLambdaMemoization(
                 return builder.irBlock(
                     resultType = expression.type
                 ) {
-                    val captures = mutableListOf<IrValueDeclaration>()
-
                     val tempDispatchReceiver = dispatchReceiver?.let {
                         val tmp = irTemporary(it)
                         captures.add(tmp)
@@ -534,7 +544,7 @@ class ComposerLambdaMemoization(
                     )
                 }
             } else if (dispatchReceiver == null && extensionReceiver == null) {
-                return rememberExpression(functionContext, result, emptyList())
+                return rememberExpression(functionContext, result, captures)
             }
         }
         return result

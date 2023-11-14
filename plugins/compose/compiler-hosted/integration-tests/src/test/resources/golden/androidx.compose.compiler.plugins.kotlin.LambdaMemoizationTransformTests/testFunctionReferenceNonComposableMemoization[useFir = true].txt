@@ -31,7 +31,7 @@ fun Example(x: Int, %composer: Composer?, %changed: Int) {
       %composer.startReplaceableGroup(<>)
       val tmpCache = %composer.cache(%composer.changed(x)) {
         {
-          foo
+          ::foo
         }
       }
       %composer.endReplaceableGroup()

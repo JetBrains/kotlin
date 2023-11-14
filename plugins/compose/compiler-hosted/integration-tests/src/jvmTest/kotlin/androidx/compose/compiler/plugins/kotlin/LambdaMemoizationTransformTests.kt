@@ -743,7 +743,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
     @Test
     fun testUnstableExtensionReceiverFunctionReferenceNotMemoized() =
         verifyGoldenComposeIrTransform(
-        """
+            """
             import androidx.compose.runtime.Composable
 
             @Composable
@@ -751,10 +751,40 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 val x = unstable::method
             }
         """,
-        """
+            """
             class Unstable(var foo: Int = 0)
             fun Unstable.method(arg1: Int) {}
             val unstable = Unstable()
+        """
+        )
+
+    @Test
+    fun testLocalFunctionReference() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Something(param: String) {
+                fun method() {
+                    println(param)
+                }
+                val x = ::method
+            }
+        """
+    )
+
+    @Test
+    fun testLocalFunctionReferenceWReceiver() = verifyGoldenComposeIrTransform(
+        """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Something(param: String, rcvr: Int) {
+                fun Int.method() {
+                    println(param)
+                }
+                val x = rcvr::method
+            }
         """
     )
 }
