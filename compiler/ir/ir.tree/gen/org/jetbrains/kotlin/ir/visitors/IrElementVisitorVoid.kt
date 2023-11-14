@@ -96,6 +96,22 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
         visitDeclaration(declaration)
     }
 
+    override fun visitFunctionWithLateBinding(declaration: IrFunctionWithLateBinding, data: Nothing?) {
+        visitFunctionWithLateBinding(declaration)
+    }
+
+    fun visitFunctionWithLateBinding(declaration: IrFunctionWithLateBinding) {
+        visitSimpleFunction(declaration)
+    }
+
+    override fun visitPropertyWithLateBinding(declaration: IrPropertyWithLateBinding, data: Nothing?) {
+        visitPropertyWithLateBinding(declaration)
+    }
+
+    fun visitPropertyWithLateBinding(declaration: IrPropertyWithLateBinding) {
+        visitProperty(declaration)
+    }
+
     override fun visitField(declaration: IrField, data: Nothing?) {
         visitField(declaration)
     }
@@ -302,6 +318,22 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
 
     fun visitComposite(expression: IrComposite) {
         visitContainerExpression(expression)
+    }
+
+    override fun visitReturnableBlock(expression: IrReturnableBlock, data: Nothing?) {
+        visitReturnableBlock(expression)
+    }
+
+    fun visitReturnableBlock(expression: IrReturnableBlock) {
+        visitBlock(expression)
+    }
+
+    override fun visitInlinedFunctionBlock(expression: IrInlinedFunctionBlock, data: Nothing?) {
+        visitInlinedFunctionBlock(expression)
+    }
+
+    fun visitInlinedFunctionBlock(expression: IrInlinedFunctionBlock) {
+        visitBlock(expression)
     }
 
     override fun visitSyntheticBody(body: IrSyntheticBody, data: Nothing?) {

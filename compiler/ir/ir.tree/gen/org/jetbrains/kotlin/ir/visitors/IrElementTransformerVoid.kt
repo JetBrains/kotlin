@@ -92,6 +92,18 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     final override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): IrStatement =
         visitErrorDeclaration(declaration)
 
+    open fun visitFunctionWithLateBinding(declaration: IrFunctionWithLateBinding): IrStatement =
+        visitSimpleFunction(declaration)
+
+    final override fun visitFunctionWithLateBinding(declaration: IrFunctionWithLateBinding, data: Nothing?): IrStatement =
+        visitFunctionWithLateBinding(declaration)
+
+    open fun visitPropertyWithLateBinding(declaration: IrPropertyWithLateBinding): IrStatement =
+        visitProperty(declaration)
+
+    final override fun visitPropertyWithLateBinding(declaration: IrPropertyWithLateBinding, data: Nothing?): IrStatement =
+        visitPropertyWithLateBinding(declaration)
+
     open fun visitField(declaration: IrField): IrStatement =
         visitDeclaration(declaration)
 
@@ -255,6 +267,18 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
 
     final override fun visitComposite(expression: IrComposite, data: Nothing?): IrExpression =
         visitComposite(expression)
+
+    open fun visitReturnableBlock(expression: IrReturnableBlock): IrExpression =
+        visitBlock(expression)
+
+    final override fun visitReturnableBlock(expression: IrReturnableBlock, data: Nothing?): IrExpression =
+        visitReturnableBlock(expression)
+
+    open fun visitInlinedFunctionBlock(expression: IrInlinedFunctionBlock): IrExpression =
+        visitBlock(expression)
+
+    final override fun visitInlinedFunctionBlock(expression: IrInlinedFunctionBlock, data: Nothing?): IrExpression =
+        visitInlinedFunctionBlock(expression)
 
     open fun visitSyntheticBody(body: IrSyntheticBody): IrBody =
         visitBody(body)

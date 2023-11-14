@@ -52,6 +52,12 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D): IrStatement =
         visitDeclaration(declaration, data)
 
+    override fun visitFunctionWithLateBinding(declaration: IrFunctionWithLateBinding, data: D): IrStatement =
+        visitSimpleFunction(declaration, data)
+
+    override fun visitPropertyWithLateBinding(declaration: IrPropertyWithLateBinding, data: D): IrStatement =
+        visitProperty(declaration, data)
+
     override fun visitField(declaration: IrField, data: D): IrStatement =
         visitDeclaration(declaration, data)
 
@@ -139,6 +145,12 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
 
     override fun visitComposite(expression: IrComposite, data: D): IrExpression =
         visitContainerExpression(expression, data)
+
+    override fun visitReturnableBlock(expression: IrReturnableBlock, data: D): IrExpression =
+        visitBlock(expression, data)
+
+    override fun visitInlinedFunctionBlock(expression: IrInlinedFunctionBlock, data: D): IrExpression =
+        visitBlock(expression, data)
 
     override fun visitSyntheticBody(body: IrSyntheticBody, data: D): IrBody =
         visitBody(body, data)
