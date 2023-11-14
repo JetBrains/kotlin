@@ -278,7 +278,8 @@ internal object VirtualTablesLookup {
         val canCallViaVtable = !owner.isInterface
         val layoutBuilder = generationState.context.getLayoutBuilder(owner)
 
-        val functionPtrType = pointerType(codegen.getLlvmFunctionType(irFunction))
+        val functionType = codegen.getLlvmFunctionType(irFunction)
+        val functionPtrType = pointerType(functionType)
         val functionPtrPtrType = pointerType(functionPtrType)
         val llvmMethod = when {
             canCallViaVtable -> {
@@ -299,6 +300,7 @@ internal object VirtualTablesLookup {
             }
         }
         return LlvmCallable(
+                functionType,
                 bitcast(functionPtrType, llvmMethod),
                 LlvmFunctionSignature(irFunction, this)
         )

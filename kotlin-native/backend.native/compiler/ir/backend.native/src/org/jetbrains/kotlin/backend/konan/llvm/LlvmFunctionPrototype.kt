@@ -178,7 +178,7 @@ internal class LlvmFunctionProto(
         addTargetCpuAndFeaturesAttributes(context, function)
         signature.addFunctionAttributes(function)
         LLVMSetLinkage(function, linkage)
-        return LlvmCallable(function, signature)
+        return LlvmCallable(signature.llvmFunctionType, function, signature)
     }
 }
 

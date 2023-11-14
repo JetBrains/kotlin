@@ -125,9 +125,10 @@ private fun FunctionGenerationContext.loadBlockInvoke(
 ): LlvmCallable {
     val invokePtr = structGep(codegen.runtime.blockLiteralType, bitcast(pointerType(codegen.runtime.blockLiteralType), blockPtr), 3)
     val signature = bridge.blockType.toBlockInvokeLlvmType(llvm)
-    val functionPointerType = pointerType(signature.llvmFunctionType)
+    val functionType = signature.llvmFunctionType
+    val functionPointerType = pointerType(functionType)
     val functionPointer = load(functionPointerType, bitcast(pointerType(functionPointerType), invokePtr))
-    return LlvmCallable(functionPointer, signature)
+    return LlvmCallable(functionType, functionPointer, signature)
 }
 
 private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(

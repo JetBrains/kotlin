@@ -151,12 +151,12 @@ internal fun LLVMValueRef.getAsCString() : String {
 }
 
 
-internal fun getFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
+internal fun getGlobalFunctionType(ptrToFunction: LLVMValueRef): LLVMTypeRef {
     return getGlobalType(ptrToFunction)
 }
 
 internal fun getGlobalType(ptrToGlobal: LLVMValueRef): LLVMTypeRef {
-    return LLVMGetElementType(ptrToGlobal.type)!!
+    return LLVMGlobalGetValueType(ptrToGlobal)!!
 }
 
 internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported: Boolean): LLVMValueRef {
