@@ -275,10 +275,10 @@ open class PsiRawFirBuilder(
             this?.toFirOrErrorType() ?: FirImplicitTypeRefImplWithoutSource
 
         private fun KtTypeReference?.toFirOrUnitType(): FirTypeRef =
-            convertSafe() ?: implicitUnitType
+            this?.toFirType() ?: implicitUnitType
 
         protected fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
-            convertSafe() ?: buildErrorTypeRef {
+            this?.toFirType() ?: buildErrorTypeRef {
                 source = this@toFirOrErrorType?.toFirSourceElement()
                 diagnostic = ConeSyntaxDiagnostic(
                     if (this@toFirOrErrorType == null) "Incomplete code" else "Conversion failed"
@@ -506,7 +506,7 @@ open class PsiRawFirBuilder(
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = if (isGetter) {
-                            returnTypeReference?.convertSafe() ?: propertyTypeRefToUse
+                            returnTypeReference?.toFirType() ?: propertyTypeRefToUse
                         } else {
                             returnTypeReference.toFirOrUnitType()
                         }
@@ -703,7 +703,7 @@ open class PsiRawFirBuilder(
 
             val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
             // We can't just reuse a type from firParameter to avoid annotation leak.
-            val type = (typeReference.convertSafe<FirTypeRef>() ?: createNoTypeForParameterTypeRef(propertySource)).let {
+            val type = (typeReference?.toFirType() ?: createNoTypeForParameterTypeRef(propertySource)).let {
                 if (it is FirErrorTypeRef && firParameter.isVararg) {
                     it.wrapIntoArray()
                 } else {
@@ -1385,7 +1385,7 @@ open class PsiRawFirBuilder(
                     this.customLabelName = contextReceiverElement.labelNameAsName()
                     this.labelNameFromTypeRef = contextReceiverElement.typeReference()?.nameForReceiverLabel()?.let(Name::identifier)
 
-                    contextReceiverElement.typeReference().convertSafe<FirTypeRef>()?.let {
+                    contextReceiverElement.typeReference()?.toFirType()?.let {
                         this.typeRef = it
                     }
                 }
@@ -1637,8 +1637,8 @@ open class PsiRawFirBuilder(
             } else {
                 typeReference.toFirOrImplicitType()
             }
-            val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
 
+            val receiverType = function.receiverTypeReference?.toFirType()
             val labelName: String?
             val isAnonymousFunction = function.isAnonymous
             val isLocalFunction = function.isLocal
@@ -1782,7 +1782,7 @@ open class PsiRawFirBuilder(
                             containingFunctionSymbol = this@buildAnonymousFunction.symbol
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Source
-                            returnTypeRef = valueParameter.typeReference?.convertSafe() ?: FirImplicitTypeRefImplWithoutSource
+                            returnTypeRef = valueParameter.typeReference.toFirOrImplicitType()
                             this.name = name
                             symbol = FirValueParameterSymbol(name)
                             isCrossinline = false
@@ -1798,7 +1798,7 @@ open class PsiRawFirBuilder(
                         )
                         multiParameter
                     } else {
-                        val typeRef = valueParameter.typeReference?.convertSafe() ?: FirImplicitTypeRefImplWithoutSource
+                        val typeRef = valueParameter.typeReference.toFirOrImplicitType()
                         convertValueParameter(valueParameter, symbol, typeRef, ValueParameterDeclaration.LAMBDA)
                     }
                 }
@@ -1972,7 +1972,7 @@ open class PsiRawFirBuilder(
                 name = propertyName
                 this.isVar = isVar
 
-                receiverParameter = receiverTypeReference.convertSafe<FirTypeRef>()?.convertToReceiverParameter()
+                receiverParameter = receiverTypeReference?.toFirType()?.convertToReceiverParameter()
                 initializer = propertyInitializer
 
                 val propertyAnnotations = mutableListOf<FirAnnotationCall>()
@@ -2125,8 +2125,12 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitTypeReference(typeReference: KtTypeReference, data: FirElement?): FirElement {
-            val typeElement = typeReference.typeElement
-            val source = typeReference.toFirSourceElement()
+            return typeReference.toFirType()
+        }
+
+        private fun KtTypeReference.toFirType(): FirTypeRef {
+            val typeElement = typeElement
+            val source = toFirSourceElement()
             val isNullable = typeElement is KtNullableType
 
             // There can be KtDeclarationModifierLists in the KtTypeReference AND the descendant KtNullableTypes.
@@ -2147,7 +2151,7 @@ open class PsiRawFirBuilder(
             fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
                 getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
 
-            val allModifierLists = mutableListOf<KtModifierList>(*typeReference.getAllModifierLists())
+            val allModifierLists = mutableListOf<KtModifierList>(*getAllModifierLists())
 
             fun KtTypeElement?.unwrapNullable(): KtTypeElement? =
                 when (this) {
@@ -2190,7 +2194,7 @@ open class PsiRawFirBuilder(
                         this.source = source
                         isMarkedNullable = isNullable
                         isSuspend = allModifierLists.any { it.hasSuspendModifier() }
-                        receiverTypeRef = unwrappedElement.receiverTypeReference.convertSafe()
+                        receiverTypeRef = unwrappedElement.receiverTypeReference?.toFirType()
                         // TODO: probably implicit type should not be here
                         returnTypeRef = unwrappedElement.returnTypeReference.toFirOrErrorType()
                         for (valueParameter in unwrappedElement.parameters) {
@@ -2207,7 +2211,7 @@ open class PsiRawFirBuilder(
 
                         contextReceiverTypeRefs.addAll(
                             unwrappedElement.contextReceiversTypeReferences.mapNotNull {
-                                it.convertSafe()
+                                it.toFirType()
                             }
                         )
                     }
@@ -2222,7 +2226,9 @@ open class PsiRawFirBuilder(
                     this.source = source
                     diagnostic = ConeSyntaxDiagnostic("Incomplete code")
                 }
-                else -> throw AssertionError("Unexpected type element: ${unwrappedElement.text}")
+                else -> errorWithAttachment("Unexpected type element: ${unwrappedElement::class.simpleName}") {
+                    withPsiEntry("unwrappedElement", unwrappedElement)
+                }
             }
 
             for (modifierList in allModifierLists) {
@@ -2230,7 +2236,8 @@ open class PsiRawFirBuilder(
                     firTypeBuilder.annotations += annotationEntry.convert<FirAnnotation>()
                 }
             }
-            return firTypeBuilder.build()
+
+            return firTypeBuilder.build() as FirTypeRef
         }
 
         private fun convertKtTypeElement(
