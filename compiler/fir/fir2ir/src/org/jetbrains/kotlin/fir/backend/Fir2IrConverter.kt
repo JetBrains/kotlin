@@ -116,6 +116,12 @@ class Fir2IrConverter(
             }
         }
 
+        if (components.session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+            // See the comment to generateUnboundFakeOverrides function itself
+            @OptIn(LeakedDeclarationCaches::class)
+            declarationStorage.generateUnboundFakeOverrides()
+        }
+
         evaluateConstants(irModuleFragment, components)
     }
 

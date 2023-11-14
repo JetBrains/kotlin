@@ -1141,6 +1141,61 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    // ------------------------------------ binding unbound symbols ------------------------------------
+
+    /**
+     * This function iterates over all f/o symbols created in declaration storage and binds all unbound symbols
+     *
+     * Usually all symbols are bound after fir2ir conversion is over, but there is a case in MPP scenario when some fake-override
+     *   for common classes appears only during conversion of platform session:
+     *
+     * // MODULE: common
+     * expect interface A
+     *
+     * interface B : A {
+     *     // f/o fun foo() // (1)
+     * }
+     *
+     * // MODULE: platform()()(common)
+     * actual interface A {
+     *     fun foo() // (2)
+     * }
+     *
+     * fun test(b: B) {
+     *     b.foo() // (3)
+     * }
+     *
+     * Here during common module conversion there is no `foo` function in scope of class B, so (1) is not generated
+     * During conversion of function test we reference symbol for (1) at line (3), so this symbol is created. But
+     *   there is no code which generate actual IR for this symbol, because IR for f/o is generated only during
+     *   conversion of corresponing class (and `B` is already converted)
+     *
+     * So to fix this issue we need to call this method after conversion of platform module
+     */
+    @LeakedDeclarationCaches
+    internal fun generateUnboundFakeOverrides() {
+        for ((identifier, symbol) in irForFirSessionDependantDeclarationMap) {
+            if (symbol.isBound) continue
+            val (originalSymbol, dispatchReceiverLookupTag, _) = identifier
+            val irParent = findIrParent(originalSymbol.fir, dispatchReceiverLookupTag)
+            when (originalSymbol) {
+                is FirPropertySymbol -> createAndCacheIrProperty(
+                    originalSymbol.fir,
+                    irParent,
+                    fakeOverrideOwnerLookupTag = dispatchReceiverLookupTag
+                )
+
+                is FirNamedFunctionSymbol -> createAndCacheIrFunction(
+                    originalSymbol.fir,
+                    irParent,
+                    fakeOverrideOwnerLookupTag = dispatchReceiverLookupTag
+                )
+
+                else -> error("Unexpected declaration: $originalSymbol")
+            }
+        }
+    }
+
     // ------------------------------------ scripts ------------------------------------
 
     fun getCachedIrScript(script: FirScript): IrScript? {
