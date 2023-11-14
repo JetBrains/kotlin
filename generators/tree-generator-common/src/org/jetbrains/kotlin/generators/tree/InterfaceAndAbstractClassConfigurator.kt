@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.generators.util.solveGraphForClassVsInterface
 
 /**
  * Decides which element in the tree must be an (abstract) class, and which must be an interface.
+ *
+ * @property elements The list of elements of the tree to infer their [ImplementationKind].
  */
-abstract class InterfaceAndAbstractClassConfigurator {
+open class InterfaceAndAbstractClassConfigurator(val elements: List<ImplementationKindOwner>) {
 
     private inner class NodeImpl(val element: ImplementationKindOwner) : Node {
         override val parents: List<NodeImpl>
@@ -24,11 +26,6 @@ abstract class InterfaceAndAbstractClassConfigurator {
 
         override fun hashCode(): Int = element.hashCode()
     }
-
-    /**
-     * The list of elements of the tree to infer their [ImplementationKind].
-     */
-    protected abstract val elements: List<ImplementationKindOwner>
 
     /**
      * If [element]'s kind was inferred as abstract class, allows to forcibly make that element a final class instead.
