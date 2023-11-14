@@ -21706,6 +21706,12 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("annotationClassWithInner.kt")
+        public void testAnnotationClassWithInner() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/annotationClassWithInner.kt");
+        }
+
+        @Test
         @TestMetadata("kt55912.kt")
         public void testKt55912() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55912.kt");

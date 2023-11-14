@@ -24755,6 +24755,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("annotationClassWithInner.kt")
+        public void testAnnotationClassWithInner() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/annotationClassWithInner.kt");
+        }
+
         @TestMetadata("booleanOperations.kt")
         public void testBooleanOperations() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/booleanOperations.kt");

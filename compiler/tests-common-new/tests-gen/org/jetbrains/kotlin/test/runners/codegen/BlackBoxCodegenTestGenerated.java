@@ -27988,6 +27988,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("annotationClassWithInner.kt")
+        public void testAnnotationClassWithInner() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/annotationClassWithInner.kt");
+        }
+
+        @Test
         @TestMetadata("kt55866.kt")
         public void testKt55866() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55866.kt");

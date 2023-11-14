@@ -24790,6 +24790,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("annotationClassWithInner.kt")
+            public void testAnnotationClassWithInner() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/annotationClassWithInner.kt");
+            }
+
+            @Test
             @TestMetadata("booleanOperations.kt")
             public void testBooleanOperations() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/booleanOperations.kt");
