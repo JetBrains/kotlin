@@ -210,11 +210,21 @@ public fun Path.copyToRecursively(
         }
     }
 
+    val stack = arrayListOf<Path>()
+
     visitFileTree(followLinks = followLinks) {
-        onPreVisitDirectory(::copy)
+        onPreVisitDirectory { directory, attributes ->
+            if (stack.isNotEmpty()) {
+                directory.checkNotSameAs(stack.last())
+            }
+            copy(directory, attributes).also {
+                if (it == FileVisitResult.CONTINUE) stack.add(directory)
+            }
+        }
         onVisitFile(::copy)
         onVisitFileFailed(::error)
         onPostVisitDirectory { directory, exception ->
+            stack.removeLast()
             if (exception == null) {
                 FileVisitResult.CONTINUE
             } else {
@@ -427,6 +437,7 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
             Files.newDirectoryStream(path)
         }?.use { directoryStream ->
             for (entry in directoryStream) {
+                entry.checkNotSameAs(path)
                 insecureHandleEntry(entry, false, collector)
             }
         }
@@ -445,6 +456,18 @@ internal fun Path.checkFileName(isStartPath: Boolean) {
     if (name == ".." || name == "../" ||
         name == "." || name == "./" ||
         name == "" || name == "/") throw IllegalFileNameException(this)
+}
+
+/**
+ * Checks that this entry is not the same as [parent].
+ * When entries of a directory is read, sometimes the directory itself is returned as well.
+ * This happens when a zip entry name is '/'.
+ * Having a directory itself in list of its entries causes traversal to cycle.
+ * See KT-63103.
+ */
+internal fun Path.checkNotSameAs(parent: Path) {
+    if (!isSymbolicLink() && !parent.isSymbolicLink() && isSameFileAs(parent))
+        throw IllegalFileNameException(this)
 }
 
 internal class IllegalFileNameException(file: Path) : FileSystemException(file.toString(), null, "Illegal file name")
