@@ -164,7 +164,6 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
         val firDeclaration = findDeclarationByHash(firCandidates, signature.id) ?: return null
         val parent = parentClass ?: declarationStorage.getIrExternalPackageFragment(packageFqName, firDeclaration.moduleData)
 
-        @OptIn(GetOrCreateSensitiveAPI::class)
         return when (kind) {
             SymbolKind.CLASS_SYMBOL -> {
                 classifierStorage.getOrCreateIrClass((firDeclaration as FirRegularClass).symbol)
@@ -173,8 +172,7 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
                 firDeclaration as FirEnumEntry, parent as IrClass
             )
             SymbolKind.CONSTRUCTOR_SYMBOL -> {
-                val firConstructor = firDeclaration as FirConstructor
-                declarationStorage.getOrCreateIrConstructor(firConstructor, parent as IrClass)
+                shouldNotBeCalled()
             }
             SymbolKind.FUNCTION_SYMBOL -> {
                 shouldNotBeCalled()

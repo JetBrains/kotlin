@@ -164,8 +164,9 @@ class Fir2IrLazyClass(
         scope.processDeclaredConstructors {
             val constructor = it.fir
             if (shouldBuildStub(constructor)) {
-                @OptIn(GetOrCreateSensitiveAPI::class)
-                result += declarationStorage.getOrCreateIrConstructor(constructor, this, origin)
+                // Lazy declarations are created together with their symbol, so it's safe to take the owner here
+                @OptIn(UnsafeDuringIrConstructionAPI::class)
+                result += declarationStorage.getIrConstructorSymbol(constructor.symbol).owner
             }
         }
 

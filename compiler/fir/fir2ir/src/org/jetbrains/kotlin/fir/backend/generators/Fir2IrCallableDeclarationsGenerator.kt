@@ -45,10 +45,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
@@ -176,15 +173,15 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         irParent: IrClass,
         symbol: IrConstructorSymbol,
         predefinedOrigin: IrDeclarationOrigin? = null,
+        allowLazyDeclarationsCreation: Boolean
     ): IrConstructor = convertCatching(constructor) {
         val origin = constructor.computeIrOrigin(predefinedOrigin, irParent.origin)
         val isPrimary = constructor.isPrimary
         if (irParent is Fir2IrLazyClass) {
-            val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent) as Fir2IrLazyConstructor
-            // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
-            // with the annotation itself.
-            @OptIn(LeakedDeclarationCaches::class)
-            declarationStorage.cacheIrConstructor(constructor, lazyConstructor)
+            if (!allowLazyDeclarationsCreation) {
+                error("Lazy constructors should be processed in Fir2IrDeclarationStorage")
+            }
+            val lazyConstructor = lazyDeclarationsGenerator.createIrLazyConstructor(constructor, symbol, origin, irParent)
             lazyConstructor.prepareTypeParameters()
             return lazyConstructor
         }
@@ -206,10 +203,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             ).apply {
                 metadata = FirMetadataSource.Function(constructor)
                 annotationGenerator.generate(this, constructor)
-                // Add to cache before generating parameters to prevent an infinite loop when an annotation value parameter is annotated
-                // with the annotation itself.
-                @OptIn(LeakedDeclarationCaches::class)
-                declarationStorage.cacheIrConstructor(constructor, this)
                 declarationStorage.withScope(symbol) {
                     setParent(irParent)
                     addDeclarationToParent(this, irParent)

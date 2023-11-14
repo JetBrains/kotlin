@@ -463,19 +463,27 @@ class CallAndReferenceGenerator(
                     explicitReceiver = qualifiedAccess.explicitReceiver
                 )
                 when (symbol) {
-                    is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, irType, symbol)
+                    is IrConstructorSymbol -> {
+                        require(firSymbol is FirConstructorSymbol)
+                        val constructor = firSymbol.unwrapCallRepresentative().fir as FirConstructor
+                        val totalTypeParametersCount = constructor.typeParameters.size
+                        val constructorTypeParametersCount = constructor.typeParameters.count { it is FirTypeParameter }
+                        IrConstructorCallImpl(
+                            startOffset,
+                            endOffset,
+                            irType,
+                            symbol,
+                            typeArgumentsCount = totalTypeParametersCount,
+                            valueArgumentsCount = firSymbol.valueParametersSize(),
+                            constructorTypeArgumentsCount = constructorTypeParametersCount,
+                        )
+                    }
                     is IrSimpleFunctionSymbol -> {
                         require(firSymbol is FirCallableSymbol<*>) { "Illegal symbol: ${firSymbol!!::class}" }
-                        val valueParametersNumber = when (firSymbol) {
-                            is FirSyntheticPropertySymbol -> 0
-                            is FirNamedFunctionSymbol -> firSymbol.valueParameterSymbols.size + firSymbol.resolvedContextReceivers.size
-                            is FirFunctionSymbol<*> -> firSymbol.valueParameterSymbols.size
-                            else -> error("Illegal symbol: ${firSymbol::class}")
-                        }
                         IrCallImpl(
                             startOffset, endOffset, irType, symbol,
                             typeArgumentsCount = firSymbol.typeParameterSymbols.size,
-                            valueArgumentsCount = valueParametersNumber,
+                            valueArgumentsCount = firSymbol.valueParametersSize(),
                             origin = calleeReference.statementOrigin(),
                             superQualifierSymbol = dispatchReceiver?.superQualifierSymbol()
                         )
@@ -550,6 +558,16 @@ class CallAndReferenceGenerator(
                 "Error while translating ${qualifiedAccess.render()} " +
                         "from file ${conversionScope.containingFileIfAny()?.name ?: "???"} to BE IR", e
             )
+        }
+    }
+
+    private fun FirCallableSymbol<*>.valueParametersSize(): Int {
+        return when (this) {
+            is FirSyntheticPropertySymbol -> 0
+            is FirNamedFunctionSymbol -> fir.valueParameters.size + fir.contextReceivers.size
+            is FirConstructorSymbol -> fir.valueParameters.size + fir.contextReceivers.size
+            is FirFunctionSymbol<*> -> fir.valueParameters.size
+            else -> error("Illegal symbol: ${this::class}")
         }
     }
 

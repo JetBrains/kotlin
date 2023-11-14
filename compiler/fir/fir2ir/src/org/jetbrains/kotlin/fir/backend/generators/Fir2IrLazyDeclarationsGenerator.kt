@@ -63,7 +63,7 @@ class Fir2IrLazyDeclarationsGenerator(val components: Fir2IrComponents) : Fir2Ir
         symbol: IrConstructorSymbol,
         declarationOrigin: IrDeclarationOrigin,
         lazyParent: IrDeclarationParent,
-    ): IrConstructor = fir.convertWithOffsets { startOffset, endOffset ->
+    ): Fir2IrLazyConstructor = fir.convertWithOffsets { startOffset, endOffset ->
         Fir2IrLazyConstructor(components, startOffset, endOffset, declarationOrigin, fir, symbol, lazyParent)
     }
 

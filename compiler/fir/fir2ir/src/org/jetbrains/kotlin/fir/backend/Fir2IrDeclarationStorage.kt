@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazySimpleFunction
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -29,10 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.resolvedType
-import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
@@ -46,6 +44,7 @@ import org.jetbrains.kotlin.ir.util.createParameterDeclarations
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
@@ -364,37 +363,8 @@ class Fir2IrDeclarationStorage(
 
     // ------------------------------------ constructors ------------------------------------
 
-    fun getCachedIrConstructorSymbol(
-        constructor: FirConstructor,
-        signatureCalculator: () -> IdSignature? = { null }
-    ): IrConstructorSymbol? {
-        return constructorCache[constructor] ?: signatureCalculator()?.let { signature ->
-            symbolTable.referenceConstructorIfAny(signature)?.also { irConstructorSymbol ->
-                constructorCache[constructor] = irConstructorSymbol
-            }
-        }
-    }
-
-    @GetOrCreateSensitiveAPI
-    fun getOrCreateIrConstructor(
-        constructor: FirConstructor,
-        irParent: IrClass,
-        predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false,
-    ): IrConstructor {
-        return getOrCreateIrConstructor(constructor, { irParent }, predefinedOrigin, isLocal)
-    }
-
-    @GetOrCreateSensitiveAPI
-    private fun getOrCreateIrConstructor(
-        constructor: FirConstructor,
-        irParent: () -> IrClass,
-        predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false,
-    ): IrConstructor {
-        @OptIn(UnsafeDuringIrConstructionAPI::class)
-        getCachedIrConstructorSymbol(constructor)?.ownerIfBound()?.let { return it }
-        return createAndCacheIrConstructor(constructor, irParent, predefinedOrigin, isLocal)
+    fun getCachedIrConstructorSymbol(constructor: FirConstructor): IrConstructorSymbol? {
+        return constructorCache[constructor]
     }
 
     fun createAndCacheIrConstructor(
@@ -403,15 +373,13 @@ class Fir2IrDeclarationStorage(
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
     ): IrConstructor {
-        // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
-        val signature = runIf(!isLocal && configuration.linkViaSignatures) {
-            signatureComposer.composeSignature(constructor)
-        }
+        val symbol = getIrConstructorSymbol(constructor.symbol, isLocal)
         return callablesGenerator.createIrConstructor(
             constructor,
             irParent(),
-            createConstructorSymbol(signature),
-            predefinedOrigin
+            symbol,
+            predefinedOrigin,
+            allowLazyDeclarationsCreation = false
         )
     }
 
@@ -422,17 +390,39 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    @LeakedDeclarationCaches
-    internal fun cacheIrConstructor(constructor: FirConstructor, irConstructor: IrConstructor) {
-        constructorCache[constructor] = irConstructor.symbol
+    private fun cacheIrConstructorSymbol(constructor: FirConstructor, irConstructorSymbol: IrConstructorSymbol) {
+        constructorCache[constructor] = irConstructorSymbol
     }
 
-    @OptIn(GetOrCreateSensitiveAPI::class)
-    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
-        val fir = firConstructorSymbol.fir
-        return getOrCreateIrConstructor(fir, { findIrParent(fir, fakeOverrideOwnerLookupTag = null) as IrClass }).symbol
-    }
+    fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol, isLocal: Boolean = false): IrConstructorSymbol {
+        val constructor = firConstructorSymbol.fir
+        getCachedIrConstructorSymbol(constructor)?.let { return it }
 
+        // caching of created constructor is not called here, because `callablesGenerator` calls `cacheIrConstructor` by itself
+        val signature = runIf(!isLocal && configuration.linkViaSignatures) {
+            signatureComposer.composeSignature(constructor)
+        }
+        val symbol = createConstructorSymbol(signature)
+        if (!isLocal) {
+            val irParent = findIrParent(constructor, fakeOverrideOwnerLookupTag = null)
+            val isIntrinsicConstEvaluation =
+                constructor.returnTypeRef.coneType.classId == StandardClassIds.Annotations.IntrinsicConstEvaluation
+            if (irParent.isExternalParent() || isIntrinsicConstEvaluation) {
+                callablesGenerator.createIrConstructor(
+                    constructor,
+                    irParent as IrClass,
+                    symbol,
+                    constructor.computeExternalOrigin(),
+                    allowLazyDeclarationsCreation = true
+                ).also {
+                    check(it is Fir2IrLazyConstructor || isIntrinsicConstEvaluation)
+                }
+            }
+        }
+        cacheIrConstructorSymbol(constructor, symbol)
+
+        return symbol
+    }
 
     // ------------------------------------ properties ------------------------------------
 
@@ -987,39 +977,38 @@ class Fir2IrDeclarationStorage(
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
         isLocal: Boolean = false
     ): IrFunctionSymbol {
-        return when (val function = firFunctionSymbol.fir) {
-            is FirConstructor -> {
-                getIrConstructorSymbol(function.symbol)
-            }
-            else -> {
-                getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.let { return it }
-                val signature = runIf(!isLocal && configuration.linkViaSignatures) {
-                    signatureComposer.composeSignature(firFunctionSymbol.fir, fakeOverrideOwnerLookupTag)
-                }
-                val symbol = createFunctionSymbol(signature)
-                if (function is FirSimpleFunction && !isLocal) {
-                    val irParent = findIrParent(function, fakeOverrideOwnerLookupTag)
-                    if (irParent?.isExternalParent() == true) {
-                        // Return value is not used here, because creation of IR declaration binds it to the corresponding symbol
-                        // And all we want here is to bind symbol for lazy declaration
-                        callablesGenerator.createIrFunction(
-                            function,
-                            irParent,
-                            symbol,
-                            predefinedOrigin = function.computeExternalOrigin(),
-                            isLocal = false,
-                            fakeOverrideOwnerLookupTag,
-                            allowLazyDeclarationsCreation = true
-                        ).also {
-                            check(it is Fir2IrLazySimpleFunction)
-                        }
-                    }
-                }
+        val function = firFunctionSymbol.fir
 
-                cacheIrFunctionSymbol(function, symbol, fakeOverrideOwnerLookupTag)
-                return symbol
+        if (function is FirConstructor) {
+            return getIrConstructorSymbol(function.symbol)
+        }
+
+        getCachedIrFunctionSymbol(function, fakeOverrideOwnerLookupTag)?.let { return it }
+        val signature = runIf(!isLocal && configuration.linkViaSignatures) {
+            signatureComposer.composeSignature(firFunctionSymbol.fir, fakeOverrideOwnerLookupTag)
+        }
+        val symbol = createFunctionSymbol(signature)
+        if (function is FirSimpleFunction && !isLocal) {
+            val irParent = findIrParent(function, fakeOverrideOwnerLookupTag)
+            if (irParent?.isExternalParent() == true) {
+                // Return value is not used here, because creation of IR declaration binds it to the corresponding symbol
+                // And all we want here is to bind symbol for lazy declaration
+                callablesGenerator.createIrFunction(
+                    function,
+                    irParent,
+                    symbol,
+                    predefinedOrigin = function.computeExternalOrigin(),
+                    isLocal = false,
+                    fakeOverrideOwnerLookupTag,
+                    allowLazyDeclarationsCreation = true
+                ).also {
+                    check(it is Fir2IrLazySimpleFunction)
+                }
             }
         }
+
+        cacheIrFunctionSymbol(function, symbol, fakeOverrideOwnerLookupTag)
+        return symbol
     }
 
     private inline fun <reified FC : FirCallableDeclaration, reified IS : IrSymbol> getCachedIrCallableSymbol(
@@ -1323,13 +1312,6 @@ internal var FirProperty.isStubPropertyForPureField: Boolean? by FirDeclarationD
  */
 @RequiresOptIn
 annotation class LeakedDeclarationCaches
-
-/**
- * This annotation indicates that an annotated method can create a declaration in ad-hock way, so it should be used with caution
- * In most cases, it's recommended to use method which return symbol or which forcefully creates a declaration
- */
-@RequiresOptIn
-annotation class GetOrCreateSensitiveAPI
 
 /**
  * This function is introduced as preparation to publishing unbound symbols in fir2ir

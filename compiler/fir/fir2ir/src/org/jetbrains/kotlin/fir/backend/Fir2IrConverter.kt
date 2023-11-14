@@ -238,13 +238,7 @@ class Fir2IrConverter(
         irClass.declarations.addAll(classifierStorage.getFieldsWithContextReceiversForClass(irClass, klass))
 
         val irConstructor = klass.primaryConstructorIfAny(session)?.let {
-            if (klass.classKind == ClassKind.ANNOTATION_CLASS) {
-                // TODO: this branch should be removed after fix of KT-62856
-                @OptIn(GetOrCreateSensitiveAPI::class)
-                declarationStorage.getOrCreateIrConstructor(it.fir, irClass, isLocal = klass.isLocal)
-            } else {
-                declarationStorage.createAndCacheIrConstructor(it.fir, { irClass }, isLocal = klass.isLocal)
-            }
+            declarationStorage.createAndCacheIrConstructor(it.fir, { irClass }, isLocal = klass.isLocal)
         }
 
         val delegateFieldToPropertyMap = MultiMap<FirProperty, FirField>()
@@ -573,13 +567,7 @@ class Fir2IrConverter(
             }
             is FirConstructor -> if (!declaration.isPrimary) {
                 // the primary constructor was already created in `processClassMembers` function
-                if (containingClass?.classKind == ClassKind.ANNOTATION_CLASS) {
-                    // TODO: this branch should be removed after fix of KT-62856
-                    @OptIn(GetOrCreateSensitiveAPI::class)
-                    declarationStorage.getOrCreateIrConstructor(declaration, parent as IrClass, isLocal = isInLocalClass)
-                } else {
-                    declarationStorage.createAndCacheIrConstructor(declaration, { parent as IrClass }, isLocal = isInLocalClass)
-                }
+                declarationStorage.createAndCacheIrConstructor(declaration, { parent as IrClass }, isLocal = isInLocalClass)
             }
             is FirEnumEntry -> {
                 classifierStorage.getOrCreateIrEnumEntry(declaration, parent as IrClass)
