@@ -6,20 +6,13 @@
 package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
-import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
 
 sealed class Field : AbstractField() {
     open var withReplace: Boolean = false
-    abstract val isFirType: Boolean
 
     open var needsSeparateTransform: Boolean = false
     var parentHasSeparateTransform: Boolean = true
     open var needTransformInOtherChildren: Boolean = false
-
-    /**
-     * @see org.jetbrains.kotlin.fir.tree.generator.util.detectBaseTransformerTypes
-     */
-    var useInBaseTransformerDetection = true
 
     open var customInitializationCall: String? = null
 
@@ -79,7 +72,8 @@ class FieldWithDefault(val origin: Field) : Field() {
     override var withReplace: Boolean
         get() = origin.withReplace
         set(_) {}
-    override val isFirType: Boolean get() = origin.isFirType
+    override val containsElement: Boolean
+        get() = origin.containsElement
     override var needsSeparateTransform: Boolean
         get() = origin.needsSeparateTransform
         set(_) {}
@@ -149,7 +143,6 @@ class SimpleField(
     override var isLateinit: Boolean = false,
     override var isParameter: Boolean = false,
 ) : Field() {
-    override val isFirType: Boolean = false
     override var isMutable: Boolean = withReplace
 
     override fun internalCopy(): Field {
@@ -186,11 +179,10 @@ class FirField(
     override var withReplace: Boolean,
 ) : Field() {
 
-    override val typeRef: TypeRefWithNullability
+    override val typeRef: ElementRef
         get() = element
     override var isVolatile: Boolean = false
     override var isFinal: Boolean = false
-    override val isFirType: Boolean = true
 
     override var isMutable: Boolean = true
     override var isLateinit: Boolean = false
@@ -211,13 +203,17 @@ class FirField(
 
 class FieldList(
     override val name: String,
-    val baseType: TypeRef,
+    override val baseType: TypeRef,
     override var withReplace: Boolean,
     useMutableOrEmpty: Boolean = false
-) : Field() {
+) : Field(), ListField {
     override var defaultValueInImplementation: String? = null
+
     override val typeRef: ClassRef<PositionTypeParameterRef>
-        get() = StandardTypes.list.withArgs(baseType)
+        get() = super.typeRef
+
+    override val listType: ClassRef<PositionTypeParameterRef>
+        get() = StandardTypes.list
 
     override var isVolatile: Boolean = false
     override var isFinal: Boolean = false
@@ -234,6 +230,4 @@ class FieldList(
             isMutableOrEmptyList
         )
     }
-
-    override val isFirType: Boolean = baseType is GenericElementOrRef<*, *> && baseType.element is Element
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.printer.*
 import org.jetbrains.kotlin.ir.generator.*
 import org.jetbrains.kotlin.ir.generator.model.*
+import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.SmartPrinter
@@ -270,7 +271,7 @@ private class TypeTransformerPrinter(
             .filter {
                 val type = when (it) {
                     is SingleField -> it.typeRef
-                    is ListField -> it.elementType
+                    is ListField -> it.baseType
                 }
                 type.toString() == irTypeType.toString()
             }

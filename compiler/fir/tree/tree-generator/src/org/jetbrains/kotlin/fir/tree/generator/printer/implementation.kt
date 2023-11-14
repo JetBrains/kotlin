@@ -285,7 +285,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     continue
                 }
                 printBlock {
-                    if (field.isMutable && field.isFirType) {
+                    if (field.isMutable && field.containsElement) {
                         // TODO: replace with smth normal
                         if (typeName == "FirWhenExpressionImpl" && field.name == "subject") {
                             println(
@@ -314,7 +314,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 } else {
                     printBlock {
                         for (field in allFields) {
-                            if (!field.isMutable || !field.isFirType || field.name == "subjectVariable") continue
+                            if (!field.isMutable || !field.containsElement || field.name == "subjectVariable") continue
                             if (!field.needsSeparateTransform) {
                                 field.transform()
                             }

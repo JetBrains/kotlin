@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.generator.config
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.ir.generator.model.ElementRef
+import org.jetbrains.kotlin.ir.generator.model.ListField
 import org.jetbrains.kotlin.ir.generator.model.Model
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
@@ -81,7 +82,7 @@ abstract class AbstractTreeBuilder {
         }
         return ListField(
             name = name,
-            elementType = elementType ?: InferredOverriddenType,
+            baseType = elementType ?: InferredOverriddenType,
             listType = listType,
             isNullable = nullable,
             mutable = mutability == ListField.Mutability.Var,

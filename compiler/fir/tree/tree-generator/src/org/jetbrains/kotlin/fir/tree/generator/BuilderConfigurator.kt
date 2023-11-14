@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation
 import org.jetbrains.kotlin.fir.tree.generator.model.LeafBuilder
 import org.jetbrains.kotlin.fir.tree.generator.printer.invisibleField
-import org.jetbrains.kotlin.fir.tree.generator.util.traverseParents
+import org.jetbrains.kotlin.generators.tree.traverseParents
 
 object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTreeBuilder) {
     fun configureBuilders() = with(firTreeBuilder) {

@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.util
 
-import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
 import java.io.File
-
-fun Element.traverseParents(block: (Element) -> Unit) {
-    block(this)
-    elementParents.forEach { it.element.traverseParents(block) }
-}
 
 operator fun <K, V, U> MutableMap<K, MutableMap<V, U>>.set(k1: K, k2: V, value: U) {
     this.putIfAbsent(k1, mutableMapOf())

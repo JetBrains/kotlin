@@ -79,6 +79,25 @@ abstract class AbstractElement<Element, Field>(
 
     abstract override val transformableChildren: List<Field>
 
+    /**
+     * A custom return type of the corresponding transformer method for this element.
+     */
+    var transformerReturnType: Element? = null
+
+    /**
+     * @see org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes
+     */
+    internal var baseTransformerType: Element? = null
+
+    /**
+     * The return type of the corresponding transformer method for this element.
+     *
+     * By default, computed using [org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes], but can be customizaed via
+     * [transformerReturnType]
+     */
+    val transformerClass: Element
+        get() = transformerReturnType ?: baseTransformerType ?: element
+
     final override fun get(fieldName: String): Field? {
         return allFields.firstOrNull { it.name == fieldName }
     }

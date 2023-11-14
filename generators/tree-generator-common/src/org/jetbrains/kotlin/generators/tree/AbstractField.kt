@@ -38,7 +38,18 @@ abstract class AbstractField {
 
     var fromParent: Boolean = false
 
+    /**
+     * Whether this field can contain an element either directly or e.g. in a list.
+     */
+    open val containsElement: Boolean
+        get() = typeRef is ElementOrRef<*, *> || this is ListField && baseType is ElementOrRef<*, *>
+
     open val defaultValueInImplementation: String? get() = null
+
+    /**
+     * @see org.jetbrains.kotlin.generators.tree.detectBaseTransformerTypes
+     */
+    var useInBaseTransformerDetection = true
 
     override fun toString(): String {
         return name

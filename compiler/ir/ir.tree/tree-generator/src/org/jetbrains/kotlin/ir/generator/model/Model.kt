@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
+import org.jetbrains.kotlin.generators.tree.ListField as AbstractListField
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.topologicalSort
@@ -53,7 +54,6 @@ class Element(
         get() = emptyMap()
 
     override var parentInVisitor: Element? = null
-    var transformerReturnType: Element? = null
 
     var typeKind: TypeKind? = null
         set(value) {
@@ -197,16 +197,16 @@ class SingleField(
 
 class ListField(
     name: String,
-    var elementType: TypeRef,
+    override var baseType: TypeRef,
     private val isNullable: Boolean,
-    private val listType: ClassRef<PositionTypeParameterRef>,
+    override val listType: ClassRef<PositionTypeParameterRef>,
     mutable: Boolean,
     isChild: Boolean,
     override val transformable: Boolean,
-) : Field(name, mutable, isChild) {
+) : Field(name, mutable, isChild), AbstractListField {
 
-    override val typeRef: TypeRefWithNullability
-        get() = listType.withArgs(elementType).copy(isNullable)
+    override val typeRef: ClassRef<PositionTypeParameterRef>
+        get() = listType.withArgs(baseType).copy(isNullable)
 
     enum class Mutability {
         Immutable,
