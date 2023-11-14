@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-// TODO: Implement in K2: KT-56849
 object WasmImportAnnotationChecker : DeclarationChecker {
     private val wasmImportFqName = FqName("kotlin.wasm.WasmImport")
 

@@ -23,6 +23,17 @@ object FirWasmErrors {
     val CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION by error0<PsiElement>()
     val WRONG_JS_INTEROP_TYPE by error2<KtElement, String, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
+    // Wasm interop
+    val NESTED_WASM_EXPORT by error0<KtElement>()
+    val WASM_EXPORT_ON_EXTERNAL_DECLARATION by error0<KtElement>()
+    val JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION by error0<KtElement>()
+    val NESTED_WASM_IMPORT by error0<KtElement>()
+    val WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION by error0<KtElement>()
+    val WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE by error0<KtElement>()
+    val WASM_IMPORT_EXPORT_VARARG_PARAMETER by error0<KtElement>()
+    val WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+
     init {
         RootDiagnosticRendererFactory.registerFactory(FirWasmErrorsDefaultMessages)
     }

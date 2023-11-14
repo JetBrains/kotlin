@@ -26,6 +26,9 @@ object WasmStandardClassIds {
 
         @JvmField
         val WasmImport = "WasmImport".wasmId()
+
+        @JvmField
+        val WasmExport = "WasmExport".wasmId()
     }
 
     object Callables {

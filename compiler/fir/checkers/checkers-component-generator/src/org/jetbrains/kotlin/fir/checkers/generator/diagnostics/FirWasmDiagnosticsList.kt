@@ -28,4 +28,20 @@ object WASM_DIAGNOSTICS_LIST : DiagnosticList("FirWasmErrors") {
             parameter<ConeKotlinType>("type")
         }
     }
+
+    val WASM_INTEROP by object : DiagnosticGroup("Wasm interop") {
+        val NESTED_WASM_EXPORT by error<KtElement>()
+        val WASM_EXPORT_ON_EXTERNAL_DECLARATION by error<KtElement>()
+        val JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION by error<KtElement>()
+        val NESTED_WASM_IMPORT by error<KtElement>()
+        val WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION by error<KtElement>()
+        val WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE by error<KtElement>()
+        val WASM_IMPORT_EXPORT_VARARG_PARAMETER by error<KtElement>()
+        val WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("type")
+        }
+        val WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("type")
+        }
+    }
 }

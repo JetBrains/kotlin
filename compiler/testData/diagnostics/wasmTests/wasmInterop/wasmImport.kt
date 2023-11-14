@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 import kotlin.wasm.WasmImport
 
 @WasmImport("a", "b")

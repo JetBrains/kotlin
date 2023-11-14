@@ -17,5 +17,7 @@ object WasmDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             FirWasmJsInteropTypesChecker,
+            FirWasmImportAnnotationChecker,
+            FirWasmExportAnnotationChecker,
         )
 }
