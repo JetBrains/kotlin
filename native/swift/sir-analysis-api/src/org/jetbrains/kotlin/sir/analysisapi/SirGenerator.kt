@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.sir.analysisapi
 
-import org.jetbrains.kotlin.sir.SirElement
+import org.jetbrains.kotlin.sir.SIR
 
 /**
  * A root interface for classes that produce Swift IR elements.
  */
 interface SirFactory {
-    fun build(): SirElement
+    fun build(): SIR
 }

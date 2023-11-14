@@ -12,11 +12,6 @@ class SirTest {
     // TODO: Just a fake test to validate that everything is working. Feel free to delete.
     @Test
     fun exampleTest() {
-        val fakeElement = produceSwiftElement()
-        assertTrue(fakeElement is SirElement)
-    }
-
-    private fun produceSwiftElement(): Any {
-        return object : SirElement {}
+        //
     }
 }

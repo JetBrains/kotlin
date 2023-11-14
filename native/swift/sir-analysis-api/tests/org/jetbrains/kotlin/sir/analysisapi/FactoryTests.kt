@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.sir.analysisapi
 
-import org.jetbrains.kotlin.sir.SirElement
+import org.jetbrains.kotlin.sir.SIR
 import org.junit.Test
 import kotlin.test.assertEquals
 
@@ -14,8 +14,8 @@ class FactoryTests {
     fun smoke() {
         val expectedString = "Element from factory"
         val myFactory = object : SirFactory {
-            override fun build(): SirElement {
-                return object : SirElement {
+            override fun build(): SIR {
+                return object : SIR {
                     override fun toString(): String {
                         return expectedString
                     }

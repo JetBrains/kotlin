@@ -5,7 +5,7 @@
 
 package org.jetbrains.sir.passes
 
-import org.jetbrains.kotlin.sir.SirElement
+import org.jetbrains.kotlin.sir.SIR
 
 /**
  * Swift IR is supposed to be transformed by a series of passes.
@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.sir.SirElement
 interface SirPass<out R, in T> {
 
     /**
-     * Executes the pass over the given [SirElement].
+     * Executes the pass over the given [SIR].
      *
      * @param element SIR element to be processed.
      * @param data Additional data that is required to run the pass.
      * @return The result of the pass.
      */
-    fun run(element: SirElement, data: T): R
+    fun run(element: SIR, data: T): R
 }

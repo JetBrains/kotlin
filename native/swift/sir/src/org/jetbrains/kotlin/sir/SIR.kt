@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.sir
 
-interface SirElement
-
-sealed interface SwiftIR {
-    val owner: SwiftIR?
+sealed interface SIR {
+    val owner: SIR?
     val properties: Map<String, Any?> get() = linkedMapOf("owner" to owner)
 
     fun <D, R> accept(visitor: Visitor<D, R>, data: D): R = visitor.visit(this, data)
 
-    sealed class Impl(override val owner: SwiftIR? = null) : SwiftIR {
+    sealed class Impl(override val owner: SIR? = null) : SIR {
         override fun toString(): String {
             val name = this::class.simpleName
             val properties = this.properties.toList()
@@ -31,7 +29,7 @@ sealed interface SwiftIR {
     }
 
     interface Visitor<D, R> {
-        fun visit(node: SwiftIR, data: D): R = when (node) {
+        fun visit(node: SIR, data: D): R = when (node) {
             is Module -> visit(node, data)
             is Declaration -> visit(node, data)
         }
@@ -40,9 +38,9 @@ sealed interface SwiftIR {
         fun visit(declaration: Declaration, data: D): R
     }
 
-    data class Origin(val fqName: Unit) // TODO: Realistic origin?
+    data class Origin(val fqName: Unit) // TODO: Realistic origin
 
-    data class FqName(val path: List<String>)
+    data class FqName(val path: List<String>) // TODO: Unqualified names
 
     data class Attribute(val name: String, val arguments: List<Pair<String, Expression>>? = null)
 
@@ -50,32 +48,32 @@ sealed interface SwiftIR {
 
     data class TypeConstraint(val type: Type, val constraint: Type, val isExact: Boolean = false)
 
-    sealed interface Container<Element : SwiftIR> : SwiftIR {
+    sealed interface Container<Element : SIR> : SIR {
         val body: Body<Element>
     }
 
-    sealed interface Namespace<Element : SwiftIR> : Container<Element> {
+    sealed interface Namespace<Element : SIR> : Container<Element> {
         override val owner: Namespace<*>?
     }
 
-    sealed interface Named : SwiftIR {
+    sealed interface Named : SIR {
         val name: FqName
     }
 
     interface Builder
 
-    class ListBuilder<Element : SwiftIR>(private val elements: MutableList<Element> = mutableListOf()) : Builder {
+    class ListBuilder<Element : SIR>(private val elements: MutableList<Element> = mutableListOf()) : Builder {
         operator fun <T : Element> T.unaryPlus(): T = this.also(elements::add)
         fun build(): List<Element> = elements.toList()
     }
 
-    abstract class Body<Element : SwiftIR>(val elements: List<Element> = emptyList()) : (ListBuilder<Element>) -> Unit {
+    abstract class Body<Element : SIR>(val elements: List<Element> = emptyList()) : (ListBuilder<Element>) -> Unit {
         constructor(block: ListBuilder<Element>.() -> Unit) : this(ListBuilder<Element>().apply(block).build())
 
         override fun invoke(builder: ListBuilder<Element>) = builder.run { elements.forEach { +it } }
     }
 
-    sealed interface FileScopeInhabitant : SwiftIR
+    sealed interface FileScopeInhabitant : SIR
 
     class FileBody : Body<FileScopeInhabitant> {
         constructor(body: ListBuilder<FileScopeInhabitant>.() -> Unit) : super(body)
@@ -89,14 +87,14 @@ sealed interface SwiftIR {
         constructor(elements: List<TypeScopeInhabitant> = emptyList()) : super(elements)
     }
 
-    sealed interface EnumScopeInhabitant : SwiftIR
+    sealed interface EnumScopeInhabitant : SIR
 
     class EnumBody : Body<EnumScopeInhabitant> {
         constructor(body: ListBuilder<EnumScopeInhabitant>.() -> Unit) : super(body)
         constructor(elements: List<EnumScopeInhabitant> = emptyList()) : super(elements)
     }
 
-    sealed interface ProtocolScopeInhabitant : SwiftIR
+    sealed interface ProtocolScopeInhabitant : SIR
 
     class ProtocolBody : Body<ProtocolScopeInhabitant> {
         constructor(body: ListBuilder<ProtocolScopeInhabitant>.() -> Unit) : super(body)
@@ -104,7 +102,7 @@ sealed interface SwiftIR {
     }
 
     sealed class Expression(
-        owner: SwiftIR?,
+        owner: SIR?,
     ) : Impl(owner) {
         // TODO: class Verbatim?
     }
@@ -117,7 +115,7 @@ sealed interface SwiftIR {
         override val owner: Namespace<*>? get() = null
     }
 
-    sealed interface Declaration : SwiftIR {
+    sealed interface Declaration : SIR {
         val origin: Origin
         val attributes: List<Attribute>
         val visibility: Visibility
@@ -125,11 +123,11 @@ sealed interface SwiftIR {
         fun <D, R> accept(visitor: Visitor<D, R>, data: D): R = visitor.visit(this, data)
 
         sealed class Impl(
-            owner: SwiftIR?,
+            owner: SIR?,
             override val origin: Origin,
             override val attributes: List<Attribute>,
             override val visibility: Visibility,
-        ) : SwiftIR.Impl(owner), Declaration {
+        ) : SIR.Impl(owner), Declaration {
             override val properties: Map<String, Any?>
                 get() = super<Declaration>.properties + linkedMapOf(
                     "origin" to origin,
@@ -138,7 +136,7 @@ sealed interface SwiftIR {
                 )
         }
 
-        interface Visitor<D, R> : SwiftIR.Visitor<D, R> {
+        interface Visitor<D, R> : SIR.Visitor<D, R> {
             override fun visit(declaration: Declaration, data: D): R = when (declaration) {
                 is TypeAlias -> visit(declaration, data)
                 is NominalType -> visit(declaration, data)
@@ -440,7 +438,7 @@ sealed interface SwiftIR {
         }
 
         class Protocol(
-            owner: SwiftIR?,
+            owner: SIR?,
             origin: Origin,
             attributes: List<Attribute> = emptyList(),
             visibility: Visibility = Visibility.PUBLIC,
@@ -460,7 +458,7 @@ sealed interface SwiftIR {
                 origin: Origin,
                 attributes: List<Attribute> = emptyList(),
                 val name: String,
-                val inheritedTypes: List<SwiftIR.Type.Nominal> = emptyList(),
+                val inheritedTypes: List<SIR.Type.Nominal> = emptyList(),
                 val defaultValue: Type? = null,
                 val typeConstraints: List<TypeConstraint> = emptyList(),
             ) : Impl(
@@ -889,7 +887,7 @@ sealed interface SwiftIR {
     }
 }
 
-fun <T : SwiftIR, D, R> SwiftIR.Container<T>.acceptContents(visitor: SwiftIR.Visitor<D, R>, data: D): List<R> =
+fun <T : SIR, D, R> SIR.Container<T>.acceptContents(visitor: SIR.Visitor<D, R>, data: D): List<R> =
     body.acceptContents(visitor, data)
 
-fun <D, R> SwiftIR.Body<*>.acceptContents(visitor: SwiftIR.Visitor<D, R>, data: D): List<R> = elements.map { it.accept(visitor, data) }
+fun <D, R> SIR.Body<*>.acceptContents(visitor: SIR.Visitor<D, R>, data: D): List<R> = elements.map { it.accept(visitor, data) }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.sir.passes
 
-import org.jetbrains.kotlin.sir.SirElement
+import org.jetbrains.kotlin.sir.SIR
 import org.jetbrains.sir.passes.SirPass
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -14,13 +14,13 @@ class SirPassTests {
     @Test
     fun smoke() {
         val elementDescription = "mySirElement"
-        val mySirElement = object : SirElement {
+        val mySirElement = object : SIR {
             override fun toString(): String {
                 return elementDescription
             }
         }
         val myPass = object : SirPass<String, Unit> {
-            override fun run(element: SirElement, data: Unit): String {
+            override fun run(element: SIR, data: Unit): String {
                 return element.toString()
             }
         }
