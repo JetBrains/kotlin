@@ -56,8 +56,6 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
         }
     var _needTransformOtherChildren: Boolean = false
 
-    override var isSealed: Boolean = false
-
     override val hasAcceptMethod: Boolean
         get() = true
 

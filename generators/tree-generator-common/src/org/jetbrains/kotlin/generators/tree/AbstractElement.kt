@@ -35,8 +35,7 @@ abstract class AbstractElement<Element, Field>(
     val isRootElement: Boolean
         get() = elementParents.isEmpty()
 
-    open val isSealed: Boolean
-        get() = false
+    var isSealed: Boolean = false
 
     /**
      * The value of this property will be used to name a `visit*` method for this element in visitor classes.
