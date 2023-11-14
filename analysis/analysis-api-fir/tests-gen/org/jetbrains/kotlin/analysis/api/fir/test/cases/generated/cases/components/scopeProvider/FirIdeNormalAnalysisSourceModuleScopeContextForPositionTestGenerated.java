@@ -89,6 +89,18 @@ public class FirIdeNormalAnalysisSourceModuleScopeContextForPositionTestGenerate
     }
 
     @Test
+    @TestMetadata("kDocOnClass.kt")
+    public void testKDocOnClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/kDocOnClass.kt");
+    }
+
+    @Test
+    @TestMetadata("kDocOnFunction.kt")
+    public void testKDocOnFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/kDocOnFunction.kt");
+    }
+
+    @Test
     @TestMetadata("kDocWithoutDeclaration.kt")
     public void testKDocWithoutDeclaration() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/kDocWithoutDeclaration.kt");

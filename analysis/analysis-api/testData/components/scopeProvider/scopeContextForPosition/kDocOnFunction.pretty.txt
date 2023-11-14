@@ -1,0 +1,60 @@
+element: param1
+implicit receivers:
+  type: test.Receiver
+  owner symbol: KtFirFunctionSymbol
+
+scopes:
+  TypeScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 2
+      param1: test.Param1
+      param2: test.Param2
+    constructors: 0
+
+  TypeParameterScope, index = 2
+    packages: 0
+    classifiers: 1
+      TypeParam
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 4
+    packages: 0
+    classifiers: 3
+      class Receiver
+      class Param1
+      class Param2
+    callables: 1
+      fun <TypeParam> test.Receiver.function(param1: test.Param1, param2: test.Param2): TypeParam
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 8
+
+  DefaultStarImportingScope, index = 9
