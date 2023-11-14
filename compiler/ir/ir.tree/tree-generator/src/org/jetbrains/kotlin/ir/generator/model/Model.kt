@@ -101,29 +101,6 @@ class Element(
 
     override fun toString() = name
 
-    fun elementParentsRecursively(): List<ElementRef> {
-        val linkedSet = buildSet {
-            fun recurse(element: Element) {
-                addAll(element.elementParents)
-                element.elementParents.forEach { recurse(it.element) }
-            }
-            recurse(this@Element)
-        }
-        return topologicalSort(linkedSet) {
-            element.elementParents
-        }
-    }
-
-    fun allFieldsRecursively(): List<Field> {
-        val parentFields = elementParentsRecursively()
-            .reversed()
-            .flatMap { it.element.fields }
-        return (parentFields + fields)
-            .asReversed()
-            .distinctBy { it.name }
-            .asReversed()
-    }
-
     operator fun TypeVariable.unaryPlus() = apply {
         params.add(this)
     }
@@ -175,6 +152,22 @@ sealed class Field(
 
     override val isParameter: Boolean
         get() = false
+
+    override fun copy() = internalCopy().also(::updateFieldsInCopy)
+
+    protected fun updateFieldsInCopy(copy: Field) {
+        copy.useInBaseTransformerDetection = useInBaseTransformerDetection
+        copy.isMutable = isMutable
+        copy.optInAnnotation = optInAnnotation
+        copy.baseDefaultValue = baseDefaultValue
+        copy.baseGetter = baseGetter
+        copy.useInIrFactoryStrategy = useInIrFactoryStrategy
+        copy.fromParent = fromParent
+        copy.customSetter = customSetter
+        copy.kDoc = kDoc
+    }
+
+    protected abstract fun internalCopy(): Field
 }
 
 class SingleField(
@@ -182,7 +175,13 @@ class SingleField(
     override var typeRef: TypeRefWithNullability,
     mutable: Boolean,
     isChild: Boolean,
-) : Field(name, mutable, isChild)
+) : Field(name, mutable, isChild) {
+
+    override fun replaceType(newType: TypeRefWithNullability) =
+        SingleField(name, newType, isMutable, isChild).also(::updateFieldsInCopy)
+
+    override fun internalCopy() = SingleField(name, typeRef, isMutable, isChild)
+}
 
 class ListField(
     name: String,
@@ -195,6 +194,10 @@ class ListField(
 
     override val typeRef: ClassRef<PositionTypeParameterRef>
         get() = listType.withArgs(baseType).copy(isNullable)
+
+    override fun replaceType(newType: TypeRefWithNullability) = copy()
+
+    override fun internalCopy() = ListField(name, baseType, isNullable, listType, isMutable, isChild)
 
     enum class Mutability {
         Var,
