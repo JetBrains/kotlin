@@ -31,5 +31,10 @@ declare namespace JS_TESTS {
         }
         function processInterface(test: foo.TestInterface): string;
         function processOptionalInterface(a: foo.OptionalFieldsInterface): string;
+        interface InterfaceWithCompanion {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.InterfaceWithCompanion": unique symbol;
+            };
+        }
     }
 }
