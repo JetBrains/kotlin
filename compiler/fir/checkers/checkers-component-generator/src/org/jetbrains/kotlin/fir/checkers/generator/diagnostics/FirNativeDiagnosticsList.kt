@@ -94,5 +94,14 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
             parameter<String>("annotationKind")
             parameter<ConeKotlinType>("unexpectedType")
         }
+        val CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER by error<KtElement>() {
+            parameter<FqName>("annotation")
+        }
+        val CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR by error<KtElement>() {
+            parameter<FqName>("annotation")
+        }
+        val CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS by error<KtElement>() {
+            parameter<FqName>("annotation")
+        }
     }
 }

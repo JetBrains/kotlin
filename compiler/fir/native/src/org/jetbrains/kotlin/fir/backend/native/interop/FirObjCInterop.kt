@@ -53,7 +53,7 @@ internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
  * mimics ConstructorDescriptor.getObjCInitMethod()
  */
 @OptIn(SymbolInternals::class)
-private fun FirConstructor.getObjCInitMethod(session: FirSession, scopeSession: ScopeSession): FirFunction? {
+fun FirConstructor.getObjCInitMethod(session: FirSession, scopeSession: ScopeSession): FirFunction? {
     this.annotations.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
         val initSelector: String = annotation.constStringArgument("initSelector")
         val classSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>

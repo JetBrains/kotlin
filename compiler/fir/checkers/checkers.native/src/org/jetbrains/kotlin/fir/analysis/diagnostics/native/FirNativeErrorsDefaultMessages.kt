@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CANNOT_CHECK_FOR_FORWARD_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPTY_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_CLASS_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT
@@ -126,6 +129,21 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Unexpected {0}: {1}\nOnly \"Unit\" is supported here",
             TO_STRING,
             FirDiagnosticRenderers.RENDER_TYPE
+        )
+        map.put(
+            CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER,
+            "Constructor with @{0} overrides initializer that is already overridden explicitly",
+            TO_STRING
+        )
+        map.put(
+            CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR,
+            "Constructor with @{0} doesn''t override any super class constructor.\nIt must completely match by parameter names and types.",
+            TO_STRING
+        )
+        map.put(
+            CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS,
+            "Constructor with @{0} matches more than one of super constructors",
+            TO_STRING
         )
     }
 }

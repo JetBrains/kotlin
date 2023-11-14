@@ -59,6 +59,9 @@ object FirNativeErrors {
     val MUST_NOT_HAVE_EXTENSION_RECEIVER: KtDiagnosticFactory1<String> by error1<KtElement, String>()
     val MUST_BE_OBJC_OBJECT_TYPE: KtDiagnosticFactory2<String, ConeKotlinType> by error2<KtElement, String, ConeKotlinType>()
     val MUST_BE_UNIT_TYPE: KtDiagnosticFactory2<String, ConeKotlinType> by error2<KtElement, String, ConeKotlinType>()
+    val CONSTRUCTOR_OVERRIDES_ALREADY_OVERRIDDEN_OBJC_INITIALIZER: KtDiagnosticFactory1<FqName> by error1<KtElement, FqName>()
+    val CONSTRUCTOR_DOES_NOT_OVERRIDE_ANY_SUPER_CONSTRUCTOR: KtDiagnosticFactory1<FqName> by error1<KtElement, FqName>()
+    val CONSTRUCTOR_MATCHES_SEVERAL_SUPER_CONSTRUCTORS: KtDiagnosticFactory1<FqName> by error1<KtElement, FqName>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)
