@@ -116,6 +116,7 @@ val irCompilerModules = arrayOf(
     ":compiler:ir.serialization.native",
     ":compiler:ir.objcinterop",
     ":compiler:ir.backend.common",
+    ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":wasm:wasm.ir"
 ).also { extra["irCompilerModules"] = it }
@@ -126,6 +127,7 @@ val irCompilerModulesForIDE = arrayOf(
     ":compiler:ir.serialization.jvm",
     ":compiler:ir.serialization.js", // used in IJ android plugin in `ComposeIrGenerationExtension`
     ":compiler:ir.backend.common",
+    ":compiler:ir.actualization",
     ":compiler:ir.interpreter",
     ":compiler:ir.objcinterop",
 ).also { extra["irCompilerModulesForIDE"] = it }

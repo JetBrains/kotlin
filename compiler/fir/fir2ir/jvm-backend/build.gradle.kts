@@ -17,6 +17,7 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:backend"))
     compileOnly(project(":compiler:backend.jvm"))
+    implementation(project(":compiler:ir.actualization"))
     api(project(":compiler:ir.serialization.common"))
 
     compileOnly(intellijCore())

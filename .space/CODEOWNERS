@@ -77,6 +77,7 @@
 /compiler/ir/backend.js/ "Kotlin JS"
 /compiler/ir/backend.jvm/ "Kotlin JVM"
 /compiler/ir/backend.wasm/ "Kotlin Wasm"
+/compiler/ir/ir.actualization/ "Kotlin Compiler Core" "Kotlin Common Backend"
 /compiler/ir/ir.interpreter/ "Kotlin Common Backend"
 /compiler/ir/ir.ir2cfg/ Mikhail.Glukhikh
 /compiler/ir/ir.psi2ir/ "Kotlin JVM"
