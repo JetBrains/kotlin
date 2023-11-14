@@ -140,14 +140,15 @@ abstract class BirImplElementBase : BirElementBase() {
             return value
         }
 
-        val keyIndex = findDynamicPropertyIndex(arrayMap, token)
-        if (keyIndex >= 0) {
+        val foundIndex = findDynamicPropertyIndex(arrayMap, token.key)
+        if (foundIndex >= 0) {
             @Suppress("UNCHECKED_CAST")
-            return arrayMap[keyIndex + 1] as T
+            return arrayMap[foundIndex + 1] as T
         } else {
             val value = compute()
-            val valueIndex = -keyIndex + 1
-            arrayMap[valueIndex] = value
+            val entryIndex = -(foundIndex + 1)
+            arrayMap[entryIndex] = token.key
+            arrayMap[entryIndex + 1] = value
             invalidate(DYNAMIC_PROPERTY_ID)
             return value
         }

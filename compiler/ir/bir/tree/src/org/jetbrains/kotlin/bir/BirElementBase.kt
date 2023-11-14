@@ -108,7 +108,7 @@ abstract class BirElementBase : BirElementParent(), BirElement {
 
     internal open fun <T> getDynamicProperty(token: BirElementDynamicPropertyToken<*, T>): T? {
         val arrayMap = dynamicProperties ?: return null
-        val keyIndex = findDynamicPropertyIndex(arrayMap, token)
+        val keyIndex = findDynamicPropertyIndex(arrayMap, token.key)
         if (keyIndex < 0) return null
         @Suppress("UNCHECKED_CAST")
         return arrayMap[keyIndex + 1] as T
@@ -120,27 +120,28 @@ abstract class BirElementBase : BirElementParent(), BirElement {
             if (value == null) {
                 // optimization: next read will return null if the array is null, so no need to initialize it
                 return false
+            } else {
+                initializeDynamicProperties(token, value)
+                return true
             }
-
-            initializeDynamicProperties(token, value)
-            return true
         } else {
-            val keyIndex = findDynamicPropertyIndex(arrayMap, token)
-            if (keyIndex >= 0) {
-                val valueIndex = keyIndex + 1
+            val foundIndex = findDynamicPropertyIndex(arrayMap, token.key)
+            if (foundIndex >= 0) {
+                val valueIndex = foundIndex + 1
                 val old = arrayMap[valueIndex]
                 if (old != value) {
                     arrayMap[valueIndex] = value
                     return true
+                } else {
+                    return false
                 }
             } else {
-                val valueIndex = -keyIndex + 1
-                arrayMap[valueIndex] = value
-                return true
+                val entryIndex = -(foundIndex + 1)
+                arrayMap[entryIndex] = token.key
+                arrayMap[entryIndex + 1] = value
+                return value != null
             }
         }
-
-        return false
     }
 
     protected fun <T> initializeDynamicProperties(token: BirElementDynamicPropertyToken<*, T>, value: T?) {
@@ -148,17 +149,20 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         require(size != 0) { "This element is not supposed to store any dynamic properties" }
 
         val arrayMap = arrayOfNulls<Any?>(size * 2)
-        arrayMap[0] = token
+        arrayMap[0] = token.key
         arrayMap[1] = value
         this.dynamicProperties = arrayMap
     }
 
-    protected fun findDynamicPropertyIndex(arrayMap: Array<Any?>, token: BirElementDynamicPropertyToken<*, *>): Int {
-        for (i in arrayMap.indices step 2) {
-            val key = arrayMap[i] ?: return -i
-            if (key === token) return i
+    protected fun findDynamicPropertyIndex(arrayMap: Array<Any?>, propertyKey: BirElementDynamicPropertyKey<*, *>): Int {
+        var i = 0
+        while (i < arrayMap.size) {
+            val key = arrayMap[i]
+            if (key == null) return -i - 1
+            if (key === propertyKey) return i
+            i += 2
         }
-        return -1
+        return -i - 1
     }
 
 
