@@ -509,7 +509,7 @@ class Fir2IrConverter(
             }
             is FirScript -> {
                 require(parent is IrFile)
-                val irScript = declarationStorage.getOrCreateIrScript(declaration)
+                val irScript = declarationStorage.createIrScript(declaration)
                 addDeclarationToParentIfNeeded(irScript)
                 declarationStorage.withScope(irScript.symbol) {
                     irScript.parent = parent
