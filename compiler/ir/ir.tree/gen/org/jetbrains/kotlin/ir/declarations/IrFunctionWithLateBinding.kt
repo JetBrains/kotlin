@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
@@ -19,4 +20,7 @@ abstract class IrFunctionWithLateBinding : IrSimpleFunction() {
     abstract val isBound: Boolean
 
     abstract fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrFunctionWithLateBinding
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitFunctionWithLateBinding(this, data)
 }

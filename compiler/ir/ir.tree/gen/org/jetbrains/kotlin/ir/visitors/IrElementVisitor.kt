@@ -46,6 +46,12 @@ interface IrElementVisitor<out R, in D> {
     fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D): R =
         visitDeclaration(declaration, data)
 
+    fun visitFunctionWithLateBinding(declaration: IrFunctionWithLateBinding, data: D): R =
+        visitSimpleFunction(declaration, data)
+
+    fun visitPropertyWithLateBinding(declaration: IrPropertyWithLateBinding, data: D): R =
+        visitProperty(declaration, data)
+
     fun visitField(declaration: IrField, data: D): R =
         visitDeclaration(declaration, data)
 
@@ -123,6 +129,12 @@ interface IrElementVisitor<out R, in D> {
 
     fun visitComposite(expression: IrComposite, data: D): R =
         visitContainerExpression(expression, data)
+
+    fun visitReturnableBlock(expression: IrReturnableBlock, data: D): R =
+        visitBlock(expression, data)
+
+    fun visitInlinedFunctionBlock(expression: IrInlinedFunctionBlock, data: D): R =
+        visitBlock(expression, data)
 
     fun visitSyntheticBody(body: IrSyntheticBody, data: D): R =
         visitBody(body, data)

@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
@@ -19,4 +20,7 @@ abstract class IrInlinedFunctionBlock : IrBlock() {
     abstract var inlineCall: IrFunctionAccessExpression
 
     abstract var inlinedElement: IrElement
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitInlinedFunctionBlock(this, data)
 }

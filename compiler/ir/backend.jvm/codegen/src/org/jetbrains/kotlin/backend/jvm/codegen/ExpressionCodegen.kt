@@ -461,7 +461,7 @@ class ExpressionCodegen(
         }
     }
 
-    private fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
+    private fun visitInlinedFunctionBlock2(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
         val inlineCall = inlinedBlock.inlineCall
         val callee = inlinedBlock.inlineDeclaration as? IrFunction
 
@@ -559,7 +559,7 @@ class ExpressionCodegen(
 
     private fun visitStatementContainer(container: IrStatementContainer, data: BlockInfo): PromisedValue {
         if (container is IrInlinedFunctionBlock) {
-            return visitInlinedFunctionBlock(container, data)
+            return visitInlinedFunctionBlock2(container, data)
         }
         return container.statements.fold(unitValue) { prev, exp ->
             prev.discard()

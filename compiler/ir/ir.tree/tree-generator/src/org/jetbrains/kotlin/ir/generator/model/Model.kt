@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.generator.model
 import org.jetbrains.kotlin.generators.tree.*
 import org.jetbrains.kotlin.generators.tree.ListField as AbstractListField
 import org.jetbrains.kotlin.ir.generator.BASE_PACKAGE
+import org.jetbrains.kotlin.ir.generator.IrTree
+import org.jetbrains.kotlin.ir.generator.elementBaseType
 import org.jetbrains.kotlin.utils.SmartPrinter
 import org.jetbrains.kotlin.utils.topologicalSort
 import org.jetbrains.kotlin.generators.tree.ElementOrRef as GenericElementOrRef
@@ -53,7 +55,10 @@ class Element(
     override val args: Map<NamedTypeParameterRef, TypeRef>
         get() = emptyMap()
 
-    override var parentInVisitor: Element? = null
+    override val parentInVisitor: Element?
+        get() = customParentInVisitor
+            ?: elementParents.singleOrNull { it.typeKind == TypeKind.Class }?.element
+            ?: IrTree.rootElement.takeIf { elementBaseType in otherParents }
 
     var typeKind: TypeKind? = null
         set(value) {
