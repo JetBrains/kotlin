@@ -16,14 +16,14 @@ To enable compiler metrics for a build target include `-Pandroidx.enableComposeC
 prior to the build target such as:
 
 ```
-.gradlew -Pandroidx.enableComposeCompilerMetrics=true :compose:runtime:runtime:compileKotlin
+./gradlew -Pandroidx.enableComposeCompilerMetrics=true :compose:runtime:runtime:compileKotlin
 ```
 
 To enable compiler reports for a build target include `-Pandroidx.enableComposeCompilerReports=true`
 prior to the build target such as:
 
 ```
-.gradlew -Pandroidx.enableComposeCompilerReports=true :compose:runtime:runtime:compileKotlin
+./gradlew -Pandroidx.enableComposeCompilerReports=true :compose:runtime:runtime:compileKotlin
 ```
 
 ### Other Gradle projects
