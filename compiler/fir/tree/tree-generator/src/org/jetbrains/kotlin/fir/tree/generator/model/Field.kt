@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.tree.generator.model
 
 import org.jetbrains.kotlin.generators.tree.*
 
-sealed class Field : AbstractField() {
+sealed class Field : AbstractField<Field>() {
     open var withReplace: Boolean = false
 
     open var needsSeparateTransform: Boolean = false

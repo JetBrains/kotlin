@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-abstract class AbstractField {
+abstract class AbstractField<Field : AbstractField<Field>> {
 
     abstract val name: String
 
@@ -66,7 +66,7 @@ abstract class AbstractField {
         if (this === other) return true
         if (other == null) return false
         if (javaClass != other.javaClass) return false
-        other as AbstractField
+        other as AbstractField<*>
         return name == other.name
     }
 

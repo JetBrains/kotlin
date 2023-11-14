@@ -10,9 +10,9 @@ package org.jetbrains.kotlin.generators.tree
  */
 abstract class AbstractElement<Element, Field>(
     val name: String,
-) : ElementOrRef<Element, Field>, FieldContainer, ImplementationKindOwner
+) : ElementOrRef<Element, Field>, FieldContainer<Field>, ImplementationKindOwner
         where Element : AbstractElement<Element, Field>,
-              Field : AbstractField {
+              Field : AbstractField<Field> {
 
     /**
      * The fully-qualified name of the property in the tree generator that is used to configure this element.

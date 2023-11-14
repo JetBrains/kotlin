@@ -140,7 +140,7 @@ sealed class Field(
     override val name: String,
     override var isMutable: Boolean,
     val isChild: Boolean,
-) : AbstractField() {
+) : AbstractField<Field>() {
     var baseDefaultValue: String? = null
     var baseGetter: String? = null
 

@@ -280,7 +280,7 @@ fun SmartPrinter.printTransformMethod(
 
 context(ImportCollector)
 fun SmartPrinter.printAcceptChildrenMethod(
-    element: FieldContainer,
+    element: FieldContainer<*>,
     visitorClass: ClassRef<PositionTypeParameterRef>,
     visitorResultType: TypeRef,
     modality: Modality? = null,
@@ -315,7 +315,7 @@ fun SmartPrinter.printAcceptChildrenMethod(
 
 context(ImportCollector)
 fun SmartPrinter.printTransformChildrenMethod(
-    element: FieldContainer,
+    element: FieldContainer<*>,
     transformerClass: ClassRef<PositionTypeParameterRef>,
     returnType: TypeRef,
     modality: Modality? = null,
