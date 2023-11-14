@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.*
@@ -27,8 +28,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.isNullable
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -92,6 +95,13 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             }
         }
         bodiesInfo.clear()
+    }
+
+    fun generateWithBodiesIfNeeded(firField: FirField, irField: IrField, firSubClass: FirClass, subClass: IrClass) {
+        delegatedMemberGenerator.generate(irField, firField, firSubClass, subClass)
+        if (firSubClass.isLocalClassOrAnonymousObject()) {
+            delegatedMemberGenerator.generateBodies()
+        }
     }
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
@@ -345,7 +355,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         firSubClass: FirClass,
         firDelegateProperty: FirProperty
     ): IrProperty {
-        val delegateProperty = declarationStorage.getOrCreateIrProperty(
+        val delegateProperty = declarationStorage.createAndCacheIrProperty(
             firDelegateProperty, subClass, predefinedOrigin = IrDeclarationOrigin.DELEGATED_MEMBER,
             fakeOverrideOwnerLookupTag = firSubClass.symbol.toLookupTag()
         )

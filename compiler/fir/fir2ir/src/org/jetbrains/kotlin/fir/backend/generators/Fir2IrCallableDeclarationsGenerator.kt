@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.isKFunctionInvoke
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -228,8 +226,8 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         irParent: IrDeclarationParent?,
         symbols: PropertySymbols,
         predefinedOrigin: IrDeclarationOrigin? = null,
-        isLocal: Boolean = false,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
+        allowLazyDeclarationsCreation: Boolean
     ): IrProperty = convertCatching(property) {
         val origin = when {
             !predefinedOrigin.isExternal &&
@@ -245,16 +243,12 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
         }
         // See similar comments in createIrFunction above
         val parentIsExternal = irParent.isExternalParent()
-        val signature =
-            runUnless(
-                isLocal ||
-                        !configuration.linkViaSignatures && !parentIsExternal &&
-                        property.dispatchReceiverType?.isPrimitive != true && property.containerSource == null &&
-                        origin != IrDeclarationOrigin.FAKE_OVERRIDE && !property.isOverride
-            ) {
-                signatureComposer.composeSignature(property, fakeOverrideOwnerLookupTag)
+        if (parentIsExternal) {
+            if (!allowLazyDeclarationsCreation) {
+                error("Lazy properties should be processed in Fir2IrDeclarationStorage")
             }
-        if (parentIsExternal && signature != null) {
+            @OptIn(UnsafeDuringIrConstructionAPI::class)
+            if (symbols.propertySymbol.isBound) return symbols.propertySymbol.owner
             // For private functions signature is null, fallback to non-lazy property
             return lazyDeclarationsGenerator.createIrLazyProperty(property, irParent!!, symbols, origin)
         }
@@ -531,18 +525,6 @@ class Fir2IrCallableDeclarationsGenerator(val components: Fir2IrComponents) : Fi
             origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility
             else -> Visibilities.Private
         }
-
-    fun createIrFieldAndDelegatedMembers(field: FirField, owner: FirClass, irClass: IrClass): IrField? {
-        // Either take a corresponding constructor property backing field,
-        // or create a separate delegate field
-        val irField = declarationStorage.getOrCreateDelegateIrField(field, owner, irClass)
-        delegatedMemberGenerator.generate(irField, field, owner, irClass)
-        if (owner.isLocalClassOrAnonymousObject()) {
-            delegatedMemberGenerator.generateBodies()
-        }
-        // If it's a property backing field, it should not be added to the class in Fir2IrConverter, so it's not returned
-        return irField.takeIf { it.correspondingPropertySymbol == null }
-    }
 
     internal fun createIrField(
         field: FirField,

@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -705,16 +703,7 @@ class IrBuiltInsOverFir(
 
     private fun findProperty(propertySymbol: FirPropertySymbol): IrPropertySymbol {
         propertySymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-
-        val irParent = findIrParent(propertySymbol)
-        return components.declarationStorage.getOrCreateIrProperty(propertySymbol.fir, irParent).symbol
-    }
-
-    private fun findIrParent(firSymbol: FirCallableSymbol<*>): IrDeclarationParent? {
-        return when (val containingClassLookupTag = firSymbol.containingClassLookupTag()) {
-            null -> components.declarationStorage.getIrExternalPackageFragment(firSymbol.callableId.packageName, firSymbol.moduleData)
-            else -> components.classifierStorage.findIrClass(containingClassLookupTag)
-        }
+        return components.declarationStorage.getIrPropertySymbol(propertySymbol) as IrPropertySymbol
     }
 
     private val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType

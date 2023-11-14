@@ -14,9 +14,12 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -177,8 +180,7 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
                 shouldNotBeCalled()
             }
             SymbolKind.PROPERTY_SYMBOL -> {
-                val firProperty = firDeclaration as FirProperty
-                declarationStorage.getOrCreateIrProperty(firProperty, parent)
+                shouldNotBeCalled()
             }
             SymbolKind.FIELD_SYMBOL -> {
                 val firField = firDeclaration as FirField

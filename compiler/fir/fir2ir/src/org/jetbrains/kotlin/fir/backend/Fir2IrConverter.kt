@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
@@ -23,16 +24,19 @@ import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
 import org.jetbrains.kotlin.fir.backend.generators.addDeclarationToParent
 import org.jetbrains.kotlin.fir.backend.generators.setParent
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.correspondingValueParameterFromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.java.javaElementFinder
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
+import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -51,9 +55,9 @@ import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
 import org.jetbrains.kotlin.ir.overrides.IrFakeOverrideBuilder
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
-import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -198,7 +202,7 @@ class Fir2IrConverter(
     private fun processFileAndClassMembers(file: FirFile) {
         val irFile = declarationStorage.getIrFile(file)
         for (declaration in file.declarations) {
-            processMemberDeclaration(declaration, null, irFile)
+            processMemberDeclaration(declaration, containingClass = null, irFile, delegateFieldToPropertyMap = null)
         }
     }
 
@@ -242,9 +246,12 @@ class Fir2IrConverter(
                 declarationStorage.createAndCacheIrConstructor(it.fir, { irClass }, isLocal = klass.isLocal)
             }
         }
+
+        val delegateFieldToPropertyMap = MultiMap<FirProperty, FirField>()
+
         // At least on enum entry creation we may need a default constructor, so ctors should be converted first
         for (declaration in syntheticPropertiesLast(allDeclarations)) {
-            processMemberDeclaration(declaration, klass, irClass)
+            processMemberDeclaration(declaration, klass, irClass, delegateFieldToPropertyMap)
         }
         // Add delegated members *before* fake override generations.
         // Otherwise, fake overrides for delegated members, which are redundant, will be added.
@@ -467,11 +474,17 @@ class Fir2IrConverter(
 
     /**
      * This function creates IR declarations for callable members without filling their body
+     *
+     * @param delegateFieldToPropertyMap is needed to avoid problems with delegation to properties from primary constructor.
+     * The thing is that FirFields for delegates are declared before properties from the primary constructor, but in IR we don't
+     *   create separate IrField for such fields and reuse the backing field of corresponding property.
+     *   So, this map is used to postpone generation of delegated members until IR for corresponding property will be created
      */
     private fun processMemberDeclaration(
         declaration: FirDeclaration,
         containingClass: FirClass?,
-        parent: IrDeclarationParent
+        parent: IrDeclarationParent,
+        delegateFieldToPropertyMap: MultiMap<FirProperty, FirField>?
     ) {
         /*
          * This function is needed to preserve the source order of declaration in file
@@ -512,7 +525,7 @@ class Fir2IrConverter(
                     }
                     for (scriptStatement in declaration.statements) {
                         if (scriptStatement is FirDeclaration) {
-                            processMemberDeclaration(scriptStatement, null, irScript)
+                            processMemberDeclaration(scriptStatement, containingClass = null, irScript, delegateFieldToPropertyMap = null)
                         }
                     }
                 }
@@ -528,14 +541,34 @@ class Fir2IrConverter(
                 ) {
                     // Note: we have to do it, because backend without the feature
                     // cannot process Enum.entries properly
-                    declarationStorage.getOrCreateIrProperty(declaration, parent, isLocal = isInLocalClass)
+                    val irProperty = declarationStorage.createAndCacheIrProperty(declaration, parent)
+                    delegateFieldToPropertyMap?.remove(declaration)?.let { delegateFields ->
+                        val backingField = irProperty.backingField!!
+                        for (delegateField in delegateFields) {
+                            declarationStorage.recordDelegateFieldMappedToBackingField(delegateField, backingField.symbol)
+                            delegatedMemberGenerator.generateWithBodiesIfNeeded(
+                                firField = delegateField,
+                                irField = backingField,
+                                containingClass!!,
+                                parent as IrClass
+                            )
+                        }
+                    }
                 }
             }
             is FirField -> {
-                if (declaration.isSynthetic) {
-                    callablesGenerator.createIrFieldAndDelegatedMembers(declaration, containingClass!!, parent as IrClass)
-                } else {
+                if (!declaration.isSynthetic) {
                     error("Unexpected non-synthetic field: ${declaration::class}")
+                }
+                requireNotNull(containingClass)
+                requireNotNull(delegateFieldToPropertyMap)
+                require(parent is IrClass)
+                val correspondingClassProperty = declaration.findCorrespondingDelegateProperty(containingClass)
+                if (correspondingClassProperty == null) {
+                    val irField = declarationStorage.createDelegateIrField(declaration, parent)
+                    delegatedMemberGenerator.generateWithBodiesIfNeeded(declaration, irField, containingClass, parent)
+                } else {
+                    delegateFieldToPropertyMap.putValue(correspondingClassProperty, declaration)
                 }
             }
             is FirConstructor -> if (!declaration.isPrimary) {
@@ -568,6 +601,16 @@ class Fir2IrConverter(
             else -> {
                 error("Unexpected member: ${declaration::class}")
             }
+        }
+    }
+
+    private fun FirField.findCorrespondingDelegateProperty(owner: FirClass): FirProperty? {
+        val initializer = this.initializer
+        if (initializer !is FirQualifiedAccessExpression) return null
+        if (initializer.explicitReceiver != null) return null
+        val resolvedSymbol = initializer.calleeReference.toResolvedValueParameterSymbol() ?: return null
+        return owner.declarations.filterIsInstance<FirProperty>().find {
+            it.correspondingValueParameterFromPrimaryConstructor == resolvedSymbol
         }
     }
 

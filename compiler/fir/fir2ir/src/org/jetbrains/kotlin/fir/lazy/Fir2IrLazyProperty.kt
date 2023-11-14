@@ -109,70 +109,67 @@ class Fir2IrLazyProperty(
         }
     }
 
-    override var backingField: IrField? by lazyVar(lock) {
-        when {
-            fir.hasExplicitBackingField -> {
-                val backingFieldType = with(typeConverter) {
-                    fir.backingField?.returnTypeRef?.toIrType()
-                }
-                val initializer = fir.backingField?.initializer ?: fir.initializer
-                val visibility = fir.backingField?.visibility ?: fir.visibility
-                callablesGenerator.createBackingField(
-                    this@Fir2IrLazyProperty,
-                    fir,
-                    IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                    symbols.backingFieldSymbol!!,
-                    components.visibilityConverter.convertToDescriptorVisibility(visibility),
-                    fir.name,
-                    fir.isVal,
-                    initializer,
-                    backingFieldType
-                ).also { field ->
-                    field.initializer = toIrInitializer(initializer)
-                }
+    override var backingField: IrField? = when {
+        fir.hasExplicitBackingField -> {
+            val backingFieldType = with(typeConverter) {
+                fir.backingField?.returnTypeRef?.toIrType()
             }
-            extensions.hasBackingField(fir, session) && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
-                callablesGenerator.createBackingField(
-                    this@Fir2IrLazyProperty,
-                    fir,
-                    IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-                    symbols.backingFieldSymbol!!,
-                    components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                    fir.name,
-                    fir.isVal,
-                    fir.initializer,
-                    type
-                ).also { field ->
-                    field.initializer = toIrInitializer(fir.initializer)
-                }
+            val initializer = fir.backingField?.initializer ?: fir.initializer
+            val visibility = fir.backingField?.visibility ?: fir.visibility
+            callablesGenerator.createBackingField(
+                this@Fir2IrLazyProperty,
+                fir,
+                IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                symbols.backingFieldSymbol!!,
+                components.visibilityConverter.convertToDescriptorVisibility(visibility),
+                fir.name,
+                fir.isVal,
+                initializer,
+                backingFieldType
+            ).also { field ->
+                field.initializer = toIrInitializer(initializer)
             }
-            fir.delegate != null -> {
-                callablesGenerator.createBackingField(
-                    this@Fir2IrLazyProperty,
-                    fir,
-                    IrDeclarationOrigin.PROPERTY_DELEGATE,
-                    symbols.backingFieldSymbol!!,
-                    components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
-                    NameUtils.propertyDelegateName(fir.name),
-                    true,
-                    fir.delegate
-                )
-            }
-            else -> {
-                null
-            }
-        }?.apply {
-            this.parent = this@Fir2IrLazyProperty.parent
-            this.annotations = fir.backingField?.annotations?.mapNotNull {
-                callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
-            }.orEmpty()
         }
+        extensions.hasBackingField(fir, session) && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
+            callablesGenerator.createBackingField(
+                this@Fir2IrLazyProperty,
+                fir,
+                IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+                symbols.backingFieldSymbol!!,
+                components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                fir.name,
+                fir.isVal,
+                fir.initializer,
+                type
+            ).also { field ->
+                field.initializer = toIrInitializer(fir.initializer)
+            }
+        }
+        fir.delegate != null -> {
+            callablesGenerator.createBackingField(
+                this@Fir2IrLazyProperty,
+                fir,
+                IrDeclarationOrigin.PROPERTY_DELEGATE,
+                symbols.backingFieldSymbol!!,
+                components.visibilityConverter.convertToDescriptorVisibility(fir.visibility),
+                NameUtils.propertyDelegateName(fir.name),
+                true,
+                fir.delegate
+            )
+        }
+        else -> {
+            null
+        }
+    }?.apply {
+        this.parent = this@Fir2IrLazyProperty.parent
+        this.annotations = fir.backingField?.annotations?.mapNotNull {
+            callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+        }.orEmpty()
     }
 
-    override var getter: IrSimpleFunction? by lazyVar(lock) {
-        Fir2IrLazyPropertyAccessor(
-            components, startOffset, endOffset,
-            origin = when {
+    override var getter: IrSimpleFunction? = Fir2IrLazyPropertyAccessor(
+        components, startOffset, endOffset,
+        origin =when {
             origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
             fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
             origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
@@ -185,16 +182,15 @@ class Fir2IrLazyProperty(
         firParentProperty = fir,
         firParentClass = containingClass,
         symbol = symbols.getterSymbol,
-            parent = this@Fir2IrLazyProperty.parent,
+        parent = this@Fir2IrLazyProperty.parent,
         isFakeOverride = isFakeOverride,
-            correspondingPropertySymbol = this.symbol
+        correspondingPropertySymbol = this.symbol
     ).apply {
-            classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT)
-        }
+        classifiersGenerator.setTypeParameters(this, this@Fir2IrLazyProperty.fir, ConversionTypeOrigin.DEFAULT)
     }
 
-    override var setter: IrSimpleFunction? by lazyVar(lock) {
-        if (!fir.isVar) return@lazyVar null
+    override var setter: IrSimpleFunction? = run {
+        if (!fir.isVar) return@run null
         Fir2IrLazyPropertyAccessor(
             components, startOffset, endOffset,
             origin = when {
