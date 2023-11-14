@@ -22,10 +22,12 @@ data class Identifier(
     }
 }
 
-sealed class DataFlowVariable(private val variableIndexForDebug: Int) {
+sealed class DataFlowVariable(private val variableIndexForDebug: Int) : Comparable<DataFlowVariable> {
     final override fun toString(): String {
         return "d$variableIndexForDebug"
     }
+
+    override fun compareTo(other: DataFlowVariable): Int = variableIndexForDebug.compareTo(other.variableIndexForDebug)
 }
 
 enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?) {

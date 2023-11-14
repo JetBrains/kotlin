@@ -10,15 +10,18 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.dfa.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.Printer
-import java.util.*
 
 class FirControlFlowGraphRenderVisitor(
     builder: StringBuilder,
-    private val renderLevels: Boolean = false
+    private val renderLevels: Boolean = false,
+    private val renderFlow: Boolean = false,
 ) : FirVisitorVoid() {
     companion object {
         private const val EDGE = " -> "
@@ -59,13 +62,33 @@ class FirControlFlowGraphRenderVisitor(
                 color = BLUE
             }
             val attributes = mutableListOf<String>()
-            val label = buildString {
-                append(node.render().replace("\"", ""))
-                if (renderLevels) {
-                    append(" [${node.level}]")
+            if (renderFlow) {
+                // To maintain compatibility with existing CFG renders, only use HTML-like rendering if flow details are enabled.
+                val label = buildString {
+                    append("<TABLE BORDER=\"0\">")
+                    append("<TR><TD><B>")
+                    append(node.render().toHtmlLikeString())
+                    if (renderLevels) {
+                        append(" [${node.level}]")
+                    }
+                    append("</B></TD></TR>")
+                    if (node.flowInitialized) {
+                        append("<TR><TD ALIGN=\"LEFT\" BALIGN=\"LEFT\">")
+                        append(node.renderFlowHtmlLike())
+                        append("</TD></TR>")
+                    }
+                    append("</TABLE>")
                 }
+                attributes += "label=< $label >"
+            } else {
+                val label = buildString {
+                    append(node.render().replace("\"", ""))
+                    if (renderLevels) {
+                        append(" [${node.level}]")
+                    }
+                }
+                attributes += "label=\"$label\""
             }
-            attributes += "label=\"$label\""
 
             when {
                 node.isDead -> "gray"
@@ -142,4 +165,73 @@ class FirControlFlowGraphRenderVisitor(
         popIndent()
         println("}")
     }
+
+    private fun CFGNode<*>.renderFlowHtmlLike(): String {
+        val flow = flow
+        val variables = flow.knownVariables + flow.implications.keys +
+                flow.implications.flatMap { it.value }.map { it.condition.variable } +
+                flow.implications.flatMap { it.value }.map { it.effect.variable }
+        return variables.sorted().joinToString(separator = "<BR/><BR/>") { variable ->
+            buildString {
+                append(variable.renderHtmlLike())
+                if (variable is RealVariable) {
+                    flow.getTypeStatement(variable)?.let {
+                        append("<BR/><B>types</B> ")
+                        append(it.exactType.toHtmlLikeString())
+                    }
+                    flow.implications[flow.unwrapVariable(variable)]?.let {
+                        for (implication in it) {
+                            append("<BR/><B>implication</B> ")
+                            append(implication.toHtmlLikeString())
+                        }
+                    }
+                }
+                flow.implications[variable]?.let {
+                    for (implication in it) {
+                        append("<BR/><B>implication</B> ")
+                        append(implication.toHtmlLikeString())
+                    }
+                }
+            }
+        }
+    }
+
+    private fun DataFlowVariable.renderHtmlLike(): String {
+        val variable = this
+        return buildString {
+            append("<B>")
+            append(variable)
+            append("</B>")
+
+            val callableId = variable.callableId
+            if (variable is RealVariable && callableId != null) {
+                append(" = ")
+                val receivers = listOfNotNull(
+                    variable.identifier.dispatchReceiver?.callableId?.toHtmlLikeString(),
+                    variable.identifier.extensionReceiver?.callableId?.toHtmlLikeString(),
+                )
+                when (receivers.size) {
+                    2 -> append(receivers.joinToString(prefix = "(", postfix = ")."))
+                    1 -> append(receivers.joinToString(postfix = "."))
+                }
+                append(callableId.toHtmlLikeString())
+            }
+            if (variable is SyntheticVariable) {
+                append(" = '")
+                append(variable.fir.render().toHtmlLikeString())
+                append("'")
+            }
+        }
+    }
+
+    private val DataFlowVariable.callableId: CallableId?
+        get() = ((this as? RealVariable)?.identifier?.symbol as? FirCallableSymbol<*>)?.callableId
+
+    /**
+     * Sanitize string for rendering with HTML-like syntax.
+     */
+    private fun Any.toHtmlLikeString(): String = toString()
+        .replace("&", "&amp;")
+        .replace(">", "&gt;")
+        .replace("<", "&lt;")
 }

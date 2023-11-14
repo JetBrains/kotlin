@@ -14,17 +14,16 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 
 object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
-    val DUMP_CFG by directive(
+    val DUMP_CFG by stringDirective(
         description = """
             Dumps control flow graphs of all declarations to `testName.dot` file
-            This directive may be applied only to all modules
+            This directive may be applied only to all modules.
+            Syntax: DUMP_CFG(: [OPTIONS])
+            
+            Additional options may be enabled :
+             - ${DumpCfgOption.LEVELS}: Render levels of nodes in CFG dump.
+             - ${DumpCfgOption.FLOW}: Include data analysis variable information in CFG dump for debugging purposes.
         """.trimIndent(),
-        applicability = Global
-    )
-
-    val RENDERER_CFG_LEVELS by directive(
-        description = "Render leves of nodes in CFG dump",
-        applicability = Global
     )
 
     val FIR_DUMP by directive(
@@ -94,6 +93,11 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Prints declaration attributes to dumps in load compiled kotlin tests
         """
     )
+}
+
+object DumpCfgOption {
+    const val LEVELS = "LEVELS"
+    const val FLOW = "FLOW"
 }
 
 fun TestConfigurationBuilder.configureFirParser(parser: FirParser) {

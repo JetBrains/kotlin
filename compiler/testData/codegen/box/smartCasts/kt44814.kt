@@ -1,8 +1,7 @@
 // ISSUE: KT-44814
 // WITH_STDLIB
 // DUMP_IR
-// DUMP_CFG
-// RENDERER_CFG_LEVELS
+// DUMP_CFG: LEVELS
 
 class FlyweightCapableTreeStructure
 
