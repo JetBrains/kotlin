@@ -19,15 +19,18 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.util.*
 
 interface KtQualifiedExpression : KtExpression {
     val receiverExpression: KtExpression
         @OptIn(KtPsiInconsistencyHandling::class)
-        get() = receiverExpressionOrNull ?: throw AssertionError("No receiver found: ${getElementTextWithContext()}")
+        get() = receiverExpressionOrNull ?: errorWithAttachment("No receiver found in qualified expression") {
+            withPsiEntry("qualifiedExpression", this@KtQualifiedExpression)
+        }
 
     /**
      * A consistent [KtQualifiedExpression] should always have a receiver, so [receiverExpression] should be preferred if possible. Only use
