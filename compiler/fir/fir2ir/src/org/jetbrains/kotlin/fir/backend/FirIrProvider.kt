@@ -118,7 +118,11 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
                     scope.processFunctionsByName(lastName) { functionSymbol ->
                         val dispatchReceiverClassId = (functionSymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.classId
                         val function = if (dispatchReceiverClassId != null && dispatchReceiverClassId != classId) {
-                            fakeOverrideGenerator.createFirFunctionFakeOverride(firClass, parentClass, functionSymbol, scope)!!.first
+                            fakeOverrideGenerator.createFirFunctionFakeOverrideIfNeeded(
+                                functionSymbol.fir,
+                                firClass.symbol.toLookupTag(),
+                                parentClass
+                            )!!
                         } else functionSymbol.fir
                         functions.add(function)
                     }
@@ -135,7 +139,11 @@ class FirIrProvider(val components: Fir2IrComponents) : IrProvider {
                         propertySymbol as FirPropertySymbol
                         val dispatchReceiverClassId = (propertySymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.classId
                         val property = if (dispatchReceiverClassId != null && dispatchReceiverClassId != classId) {
-                            fakeOverrideGenerator.createFirPropertyFakeOverride(firClass, parentClass, propertySymbol, scope)!!.first
+                            fakeOverrideGenerator.createFirPropertyFakeOverrideIfNeeded(
+                                propertySymbol.fir,
+                                firClass.symbol.toLookupTag(),
+                                parentClass
+                            )!!
                         } else propertySymbol.fir
                         properties.add(property)
                     }

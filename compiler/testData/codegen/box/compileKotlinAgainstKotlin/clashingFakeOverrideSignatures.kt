@@ -1,7 +1,8 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// KT-59609
+// IGNORE_BACKEND_K2: JS_IR
 // IGNORE_BACKEND: NATIVE
-// FIR status: Validation failed. TODO decide if we want to fix KT-42020 for FIR as well
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION
+// Reason: KT-42020
+
 // MODULE: lib
 // FILE: a.kt
 package a

@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: validation failed. TODO decide if we want to fix KT-42020 for FIR as well
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION
+// Reason: KT-42020
 
 open class Base<T> {
     fun foo(x: T) = "x:$x"

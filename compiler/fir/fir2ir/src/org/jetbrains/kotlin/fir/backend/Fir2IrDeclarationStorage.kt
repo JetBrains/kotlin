@@ -615,11 +615,16 @@ class Fir2IrDeclarationStorage(
         val symbols = createPropertySymbols(signature, property, fakeOverrideOwnerLookupTag)
         val irParent = findIrParent(property, fakeOverrideOwnerLookupTag)
         if (irParent?.isExternalParent() == true) {
+            val firForLazyProperty = calculateFirForLazyDeclaration(
+                property, fakeOverrideOwnerLookupTag, irParent,
+                fakeOverrideGenerator::createFirPropertyFakeOverrideIfNeeded
+            )
+
             callablesGenerator.createIrProperty(
-                property,
+                firForLazyProperty,
                 irParent,
                 symbols,
-                predefinedOrigin = property.computeExternalOrigin(),
+                predefinedOrigin = firForLazyProperty.computeExternalOrigin(),
                 allowLazyDeclarationsCreation = true
             ).also {
                 check(it is Fir2IrLazyProperty)
@@ -991,13 +996,17 @@ class Fir2IrDeclarationStorage(
         if (function is FirSimpleFunction && !isLocal) {
             val irParent = findIrParent(function, fakeOverrideOwnerLookupTag)
             if (irParent?.isExternalParent() == true) {
+                val firForLazyFunction = calculateFirForLazyDeclaration(
+                    function, fakeOverrideOwnerLookupTag, irParent,
+                    fakeOverrideGenerator::createFirFunctionFakeOverrideIfNeeded
+                )
                 // Return value is not used here, because creation of IR declaration binds it to the corresponding symbol
                 // And all we want here is to bind symbol for lazy declaration
                 callablesGenerator.createIrFunction(
-                    function,
+                    firForLazyFunction,
                     irParent,
                     symbol,
-                    predefinedOrigin = function.computeExternalOrigin(),
+                    predefinedOrigin = firForLazyFunction.computeExternalOrigin(),
                     isLocal = false,
                     fakeOverrideOwnerLookupTag,
                     allowLazyDeclarationsCreation = true
@@ -1129,6 +1138,16 @@ class Fir2IrDeclarationStorage(
         }
 
         return null
+    }
+
+    private inline fun <T : FirCallableDeclaration> calculateFirForLazyDeclaration(
+        originalDeclaration: T,
+        fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
+        irParent: IrDeclarationParent,
+        createFakeOverrideIfNeeded: (T, ConeClassLikeLookupTag, IrClass) -> T?
+    ): T {
+        if (irParent !is IrClass || fakeOverrideOwnerLookupTag == null) return originalDeclaration
+        return createFakeOverrideIfNeeded(originalDeclaration, fakeOverrideOwnerLookupTag, irParent) ?: originalDeclaration
     }
 
     private fun generateLazyFakeOverrides(name: Name, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
