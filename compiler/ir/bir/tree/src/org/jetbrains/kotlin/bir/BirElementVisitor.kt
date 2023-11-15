@@ -60,14 +60,14 @@ inline fun BirElement.acceptChildren(noinline visitor: BirElementVisitorVoid) {
     }
 }
 
-internal typealias BirElementVisitorLite = BirElementVisitorScopeLite.(element: BirElementBase) -> Unit
+typealias BirElementVisitorLite = BirElementVisitorScopeLite.(element: BirElementBase) -> Unit
 /*internal fun interface BirElementVisitorLite {
     context(BirElementVisitorScopeLite)
     operator fun invoke(element: BirElementBase): Unit
 }*/
 
 @JvmInline
-internal value class BirElementVisitorScopeLite(
+value class BirElementVisitorScopeLite(
     @PublishedApi internal val currentVisitor: BirElementVisitorLite,
 ) {
     inline fun BirElementBase.walkInto() {

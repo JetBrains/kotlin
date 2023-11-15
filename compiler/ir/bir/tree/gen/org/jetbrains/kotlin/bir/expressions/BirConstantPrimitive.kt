@@ -9,7 +9,9 @@
 package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.acceptLite
 
 /**
  * A leaf IR tree element.
@@ -21,6 +23,10 @@ abstract class BirConstantPrimitive : BirConstantValue() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         value?.accept(data, visitor)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        value?.acceptLite(visitor)
     }
 
     companion object

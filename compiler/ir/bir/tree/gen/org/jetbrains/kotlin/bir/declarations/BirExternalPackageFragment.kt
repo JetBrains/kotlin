@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.symbols.BirExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
@@ -23,6 +24,10 @@ abstract class BirExternalPackageFragment : BirPackageFragment(),
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         declarations.acceptChildren(visitor, data)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        declarations.acceptChildrenLite(visitor)
     }
 
     companion object
