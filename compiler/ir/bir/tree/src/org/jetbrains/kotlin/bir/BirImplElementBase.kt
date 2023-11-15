@@ -44,9 +44,9 @@ abstract class BirImplElementBase : BirElementBase() {
         }
 
         if (new != null) {
-            new as BirImplElementBase
+            new as BirElementBase
 
-            val oldParent = new._parent
+            val oldParent = (new as? BirImplElementBase)?._parent
             if (oldParent != null) {
                 val propertyId = new.replacedWithInternal(null)
                 new.setParentWithInvalidation(this)
