@@ -18,7 +18,12 @@ private const val DOMAIN_NAME = "kotlin-build-properties.labs.jb.gg"
 private const val SETUP_JSON_URL = "https://$DOMAIN_NAME/setup.json"
 
 private const val PLUGIN_SWITCH_PROPERTY = "kotlin.build.internal.gradle.setup"
-private const val CONSENT_GRADLE_PROPERTY = "kotlin.build.internal.gradle.setup.consent"
+private const val GLOBAL_CONSENT_GRADLE_PROPERTY = "kotlin.build.internal.gradle.setup.consent"
+
+private val isInIdea
+    get() = System.getProperty("idea.active").toBoolean()
+
+internal const val CONSENT_DECISION_GRADLE_PROPERTY = "kotlin.build.internal.gradle.setup.consent.give"
 
 abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
     private val log = Logging.getLogger(javaClass)
@@ -34,7 +39,8 @@ abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
         }
         try {
             val modifier = LocalPropertiesModifier(target.rootDir.resolve("local.properties"))
-            val consentManager = ConsentManager(modifier, target.providers.gradleProperty(CONSENT_GRADLE_PROPERTY).orNull?.toBoolean())
+            val consentManager =
+                ConsentManager(modifier, target.providers.gradleProperty(GLOBAL_CONSENT_GRADLE_PROPERTY).orNull?.toBoolean())
             val initialDecision = consentManager.getUserDecision()
             if (initialDecision == false) {
                 log.debug("Skipping automatic local.properties configuration as you've opted out")
@@ -44,12 +50,25 @@ abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
             val setupFile = connection.getInputStream().buffered().use {
                 parseSetupFile(it)
             }
-            if (initialDecision == null && !consentManager.askForConsent(setupFile.consentDetailsLink)) {
-                log.debug("Skipping automatic local.properties configuration as the consent wasn't given")
-                return
+            if (initialDecision == null) {
+                val nonInteractiveDecision = target.providers.gradleProperty(CONSENT_DECISION_GRADLE_PROPERTY).map { it.toBoolean() }
+                if (isInIdea && !nonInteractiveDecision.isPresent) {
+                    throw CannotRequestConsentWithinIdeException(setupFile.consentDetailsLink)
+                }
+                val consentReceived = if (nonInteractiveDecision.isPresent) {
+                    consentManager.applyConsentDecision(nonInteractiveDecision.get(), setupFile.consentDetailsLink)
+                } else {
+                    consentManager.askForConsent(setupFile.consentDetailsLink)
+                }
+                if (!consentReceived) {
+                    log.debug("Skipping automatic local.properties configuration as the consent wasn't given")
+                    return
+                }
             }
             modifier.applySetup(setupFile)
             log.info("Automatic local.properties setup has been applied.")
+        } catch (e: CannotRequestConsentWithinIdeException) {
+            throw e
         } catch (e: UnknownHostException) {
             log.debug("Cannot connect to the internal properties storage", e)
         } catch (e: SocketTimeoutException) {

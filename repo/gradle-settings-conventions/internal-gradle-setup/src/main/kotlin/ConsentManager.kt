@@ -25,10 +25,9 @@ internal val USER_CONSENT_REQUEST = """
     ! ATTENTION REQUIRED !
     Most probably you're a developer from the Kotlin team. We are asking for your consent for automatic configuration of local.properties file
     for providing some optimizations and collecting additional debug information.
-
 """.trimIndent()
 
-internal val USER_CONSENT_DETAILS_LINK_TEMPLATE = "You can read more details here: $linkPlaceholder"
+internal const val USER_CONSENT_DETAILS_LINK_TEMPLATE = "You can read more details here: $linkPlaceholder"
 
 internal const val PROMPT_REQUEST = "Do you agree with this? Please answer with 'yes' or 'no': "
 
@@ -53,30 +52,40 @@ internal class ConsentManager(
         }
     }
 
-    fun askForConsent(consentDetailsLink: String? = null): Boolean {
+    private fun printConsentRequest(consentDetailsLink: String? = null) {
+        output.println()
         output.println(USER_CONSENT_REQUEST)
         if (consentDetailsLink != null) {
             output.println(USER_CONSENT_DETAILS_LINK_TEMPLATE.formatWithLink(consentDetailsLink))
         }
+        output.println()
+    }
+
+    fun applyConsentDecision(consentGiven: Boolean, consentDetailsLink: String? = null): Boolean {
+        if (consentGiven) {
+            output.println("You've given the consent for the automatic configuration of local.properties")
+            modifier.putLine(
+                if (consentDetailsLink != null) {
+                    USER_CONSENT_MARKER_WITH_DETAILS_LINK.formatWithLink(consentDetailsLink)
+                } else {
+                    USER_CONSENT_MARKER
+                }
+            )
+        } else {
+            output.println("You've refused to give the consent for the automatic configuration of local.properties")
+            modifier.putLine(USER_REFUSAL_MARKER)
+        }
+        return consentGiven
+    }
+
+    fun askForConsent(consentDetailsLink: String? = null): Boolean {
+        printConsentRequest(consentDetailsLink)
         repeat(MAX_REQUEST_ATTEMPTS) {
             output.println(PROMPT_REQUEST)
-            when (input.readLine()) {
-                "yes" -> {
-                    output.println("You've given the consent")
-                    modifier.putLine(
-                        if (consentDetailsLink != null) {
-                            USER_CONSENT_MARKER_WITH_DETAILS_LINK.formatWithLink(consentDetailsLink)
-                        } else {
-                            USER_CONSENT_MARKER
-                        }
-                    )
-                    return true
-                }
-                "no" -> {
-                    output.println("You've refused to give the consent")
-                    modifier.putLine(USER_REFUSAL_MARKER)
-                    return false
-                }
+            return when (input.readLine()) {
+                "yes" -> applyConsentDecision(true, consentDetailsLink)
+                "no" -> applyConsentDecision(false, consentDetailsLink)
+                else -> return@repeat
             }
         }
         // we didn't receive an answer, let's ask next time
