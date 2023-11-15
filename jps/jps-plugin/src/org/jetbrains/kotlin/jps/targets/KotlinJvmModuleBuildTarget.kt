@@ -381,6 +381,9 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             val className = generatedClass.outputClass.className
             if (!cache.isMultifileFacade(className)) return emptySet()
 
+            // In case of graph implementation of JPS
+            if (previousMappings == null) return emptySet()
+
             val name = previousMappings.getName(className.internalName)
             return previousMappings.getClassSources(name).toSet()
         }
