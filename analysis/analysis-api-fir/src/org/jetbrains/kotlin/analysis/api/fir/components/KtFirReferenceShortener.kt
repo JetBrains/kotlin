@@ -398,11 +398,13 @@ private class ShortenQualifier(
     override val importAllInParent: Boolean = false
 ) : ElementToShorten()
 
+/**
+ * N.B. Does not subclass [ElementToShorten] because currently
+ * there's no reason to do that.
+ */
 private class ShortenKDocQualifier(
     val element: KDocName,
-    override val nameToImport: FqName? = null,
-    override val importAllInParent: Boolean = false
-) : ElementToShorten()
+)
 
 private class CollectingVisitor(private val collector: ElementsToShortenCollector) : FirVisitorVoid() {
     private val visitedProperty = mutableSetOf<FirProperty>()
@@ -1257,9 +1259,6 @@ private class ElementsToShortenCollector(
             )
             is ShortenQualifier -> addElementToShorten(
                 elementInfoToShorten.element, elementInfoToShorten.shortenedRef, nameToImport, isImportWithStar
-            )
-            is ShortenKDocQualifier -> addElementToShorten(
-                elementInfoToShorten.element, shortenedRef = null, nameToImport, isImportWithStar
             )
         }
     }
