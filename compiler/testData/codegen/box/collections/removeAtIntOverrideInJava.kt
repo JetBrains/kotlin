@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_CODEGEN_WITH_IR_FAKE_OVERRIDE_GENERATION: KT-63489
 
 // FILE: A.java
 abstract public class A extends B {
