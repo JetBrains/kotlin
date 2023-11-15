@@ -205,6 +205,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Proper Gradle plugin variant is used")
     @GradleTestVersions(
+        maxVersion = TestVersions.Gradle.G_8_2,
         additionalVersions = [
             TestVersions.Gradle.G_7_0,
             TestVersions.Gradle.G_7_1,
@@ -213,6 +214,8 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             TestVersions.Gradle.G_7_5,
             TestVersions.Gradle.G_7_6,
             TestVersions.Gradle.G_8_0,
+            TestVersions.Gradle.G_8_1,
+            TestVersions.Gradle.G_8_2,
         ],
     )
     @GradleTest
@@ -220,7 +223,8 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         project("kotlinProject", gradleVersion) {
             build("help") {
                 val expectedVariant = when (gradleVersion) {
-                    in GradleVersion.version(TestVersions.Gradle.G_8_1)..GradleVersion.version(TestVersions.Gradle.G_8_2) -> "gradle81"
+                    GradleVersion.version(TestVersions.Gradle.G_8_2) -> "gradle82"
+                    GradleVersion.version(TestVersions.Gradle.G_8_1) -> "gradle81"
                     GradleVersion.version(TestVersions.Gradle.G_8_0) -> "gradle80"
                     GradleVersion.version(TestVersions.Gradle.G_7_6) -> "gradle76"
                     GradleVersion.version(TestVersions.Gradle.G_7_5) -> "gradle75"
@@ -322,7 +326,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @Disabled
     @DisplayName("KT-63499: source sets conventions are not registered since Gradle 8.2")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_2)
     @GradleTest
