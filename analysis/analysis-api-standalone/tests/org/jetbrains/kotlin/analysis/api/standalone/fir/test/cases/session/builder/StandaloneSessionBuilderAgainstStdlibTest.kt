@@ -20,6 +20,7 @@ class StandaloneSessionBuilderAgainstStdlibTest : AbstractStandaloneSessionBuild
 
     @Test
     fun testKotlinStdLibCommon() {
+        // KT-63493 to avoid using a hardcoded path
         doTestKotlinStdLibResolve(CommonPlatforms.defaultCommonPlatform, Paths.get("dist/common/kotlin-stdlib-common.jar"))
     }
 
