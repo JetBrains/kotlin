@@ -404,16 +404,25 @@ internal class KtFirCallResolver(
             // the `invoke` member function. In this case, we use the `calleeExpression` in the `KtCallExpression` as the PSI
             // representation of this receiver. Caller can then use this PSI for further call resolution, which is implemented by the
             // parameter `resolveCalleeExpressionOfFunctionCall` in `toKtCallInfo`.
-            val explicitReceiverPsi = when (psi) {
-                is KtQualifiedExpression -> (psi.selectorExpression as KtCallExpression).calleeExpression
-                is KtCallExpression -> psi.calleeExpression
+            var explicitReceiverPsi = when (psi) {
+                is KtQualifiedExpression -> {
+                    psi.selectorExpression
+                        ?: errorWithAttachment("missing selectorExpression in PSI ${psi::class} for FirImplicitInvokeCall") {
+                            withPsiEntry("psi", psi, analysisSession::getModule)
+                        }
+                }
+                is KtExpression -> psi
                 else -> errorWithAttachment("unexpected PSI ${psi::class} for FirImplicitInvokeCall") {
                     withPsiEntry("psi", psi, analysisSession::getModule)
                 }
             }
-                ?: errorWithAttachment("missing calleeExpression in PSI ${psi::class} for FirImplicitInvokeCall") {
-                    withPsiEntry("psi", psi, analysisSession::getModule)
-                }
+
+            if (explicitReceiverPsi is KtCallExpression) {
+                explicitReceiverPsi = explicitReceiverPsi.calleeExpression
+                    ?: errorWithAttachment("missing calleeExpression in PSI ${psi::class} for FirImplicitInvokeCall") {
+                        withPsiEntry("psi", psi, analysisSession::getModule)
+                    }
+            }
 
             // Specially handle @ExtensionFunctionType
             if (dispatchReceiver?.resolvedType?.isExtensionFunctionType == true) {
@@ -434,10 +443,14 @@ internal class KtFirCallResolver(
                     }
                     dispatchReceiverValue =
                         KtExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.resolvedType.asKtType(), false, token)
-                    if (firstArgIsExtensionReceiver) {
-                        extensionReceiverValue = (fir as FirFunctionCall).arguments.firstOrNull()?.toKtReceiverValue()
+                    extensionReceiverValue = if (firstArgIsExtensionReceiver) {
+                        when (fir) {
+                            is FirFunctionCall -> fir.arguments.firstOrNull()?.toKtReceiverValue()
+                            is FirPropertyAccessExpression -> fir.explicitReceiver?.toKtReceiverValue()
+                            else -> null
+                        }
                     } else {
-                        extensionReceiverValue = extensionReceiver?.toKtReceiverValue()
+                        extensionReceiver?.toKtReceiverValue()
                     }
                 }
 
@@ -557,7 +570,7 @@ internal class KtFirCallResolver(
                             partiallyAppliedSymbol as KtPartiallyAppliedFunctionSymbol<KtFunctionLikeSymbol>,
                             LinkedHashMap(),
                             fir.toTypeArgumentsMapping(partiallyAppliedSymbol),
-                            _isImplicitInvoke = false,
+                            isImplicitInvoke,
                         )
                     }
                 }

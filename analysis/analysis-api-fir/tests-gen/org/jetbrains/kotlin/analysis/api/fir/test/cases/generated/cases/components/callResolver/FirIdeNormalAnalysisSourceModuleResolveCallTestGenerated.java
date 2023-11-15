@@ -1020,6 +1020,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
         }
 
         @Test
+        @TestMetadata("invalidImplicitInvoke.kt")
+        public void testInvalidImplicitInvoke() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/invalidImplicitInvoke.kt");
+        }
+
+        @Test
         @TestMetadata("typeParameterAsValue.kt")
         public void testTypeParameterAsValue() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/typeParameterAsValue.kt");
