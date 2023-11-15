@@ -1,52 +1,58 @@
-apply plugin: 'kotlin'
+plugins {
+    kotlin("jvm")
+}
+
+val copyrightDirectory = project.layout.buildDirectory.dir("copyright")
 
 sourceSets {
-    main {
-        kotlin.srcDir 'src'
-        resources.srcDir "$buildDir/copyright"
+    "main" {
+        kotlin.srcDir("src")
+        resources.srcDir(copyrightDirectory)
     }
 }
 
 dependencies {
-    api "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion"
-    api "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion"
+    api("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion")
+    api("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion")
 }
 
-compileKotlin {
-    kotlinOptions {
-        freeCompilerArgs = ["-version", "-Xdont-warn-on-error-suppression"]
+tasks {
+    compileKotlin {
+        compilerOptions {
+            freeCompilerArgs.addAll(listOf("-version", "-Xdont-warn-on-error-suppression"))
+        }
     }
-}
 
-tasks.register("copyCopyrightProfile", Copy) {
-    from "$rootDir/.idea/copyright"
-    into "$buildDir/copyright"
-    include 'apache.xml'
-}
+    val copyCopyrightProfile by registering(Copy::class) {
+        from("$rootDir/.idea/copyright")
+        into(copyrightDirectory)
+        include("apache.xml")
+    }
 
-processResources {
-    dependsOn(copyCopyrightProfile)
-}
+    processResources {
+        dependsOn(copyCopyrightProfile)
+    }
 
-tasks.register("run", JavaExec) {
-    group 'application'
-    mainClass = 'generators.GenerateStandardLibKt'
-    classpath sourceSets.main.runtimeClasspath
-    args = ["${rootDir}"]
-    systemProperty 'line.separator', '\n'
-}
+    register<JavaExec>("run") {
+        group = "application"
+        mainClass = "generators.GenerateStandardLibKt"
+        classpath = sourceSets.main.get().runtimeClasspath
+        args = listOf("$rootDir")
+        systemProperty("line.separator", "\n")
+    }
 
-tasks.register("generateStdlibTests", JavaExec) {
-    group 'application'
-    mainClass = 'generators.GenerateStandardLibTestsKt'
-    classpath sourceSets.main.runtimeClasspath
-    args = ["${rootDir}"]
-    systemProperty 'line.separator', '\n'
-}
+    register<JavaExec>("generateStdlibTests") {
+        group = "application"
+        mainClass = "generators.GenerateStandardLibTestsKt"
+        classpath = sourceSets.main.get().runtimeClasspath
+        args = listOf("$rootDir")
+        systemProperty("line.separator", "\n")
+    }
 
-tasks.register("generateUnicodeData", JavaExec) {
-    group 'application'
-    mainClass = 'generators.unicode.GenerateUnicodeDataKt'
-    classpath sourceSets.main.runtimeClasspath
-    args = ["${rootDir}"]
+    register<JavaExec>("generateUnicodeData") {
+        group = "application"
+        mainClass = "generators.unicode.GenerateUnicodeDataKt"
+        classpath = sourceSets.main.get().runtimeClasspath
+        args = listOf("$rootDir")
+    }
 }
