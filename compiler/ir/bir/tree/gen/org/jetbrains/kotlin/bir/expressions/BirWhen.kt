@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 
 /**
@@ -24,6 +25,10 @@ abstract class BirWhen : BirExpression() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         branches.acceptChildren(visitor, data)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        branches.acceptChildrenLite(visitor)
     }
 
     companion object

@@ -210,6 +210,6 @@ fun printElementImpls(generationPath: File, model: Model) = sequence {
 }
 
 private val descriptorApiAnnotation = ClassName("org.jetbrains.kotlin.ir", "ObsoleteDescriptorBasedAPI")
-private val elementVisitorLite = ClassName(Packages.tree, "BirElementVisitorLite")
-private val elementAcceptLite = MemberName(Packages.tree, "acceptLite", true)
 private val childElementListImpl = MemberName(Packages.tree, "BirImplChildElementList")
+val elementVisitorLite = ClassName(Packages.tree, "BirElementVisitorLite")
+val elementAcceptLite = MemberName(Packages.tree, "acceptLite", true)

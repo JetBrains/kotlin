@@ -59,8 +59,6 @@ abstract class BirElementBase : BirElementParent(), BirElement {
         }
 
 
-    internal open fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
-
     fun isAncestorOf(other: BirElementBase): Boolean {
         root?.realizeTreeMovements()
         other.root?.realizeTreeMovements()
