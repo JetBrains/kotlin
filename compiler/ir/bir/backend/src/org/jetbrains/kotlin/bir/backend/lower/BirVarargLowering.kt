@@ -87,8 +87,9 @@ class BirVarargLowering : BirLoweringPhase() {
 
     private val primitiveArrayOfFunctions by lz {
         (PrimitiveType.entries.map { type -> type.name } + UnsignedType.entries.map { type -> type.typeName.asString() })
-            .map { name -> Name.identifier(name.toLowerCaseAsciiOnly() + "ArrayOf") }
-            .flatMap { name -> birBuiltIns.findFunctions(name, StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString()) }
+            .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }
+            .plus("arrayOf")
+            .flatMap { name -> birBuiltIns.findFunctions(Name.identifier(name), StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString()) }
             .filter {
                 it.extensionReceiverParameter == null &&
                         it.dispatchReceiverParameter == null &&

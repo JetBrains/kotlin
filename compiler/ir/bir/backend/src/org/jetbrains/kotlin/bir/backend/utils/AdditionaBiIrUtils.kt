@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.bir.backend.utils
 
 import org.jetbrains.kotlin.bir.backend.BirBackendContext
+import org.jetbrains.kotlin.bir.declarations.BirClass
 import org.jetbrains.kotlin.bir.declarations.BirConstructor
 import org.jetbrains.kotlin.bir.declarations.BirFunction
+import org.jetbrains.kotlin.bir.declarations.BirSymbolOwner
 import org.jetbrains.kotlin.bir.symbols.BirClassifierSymbol
 import org.jetbrains.kotlin.bir.util.constructedClass
 
 context(BirBackendContext)
-fun BirClassifierSymbol?.isArrayOrPrimitiveArray(): Boolean =
-    this == birBuiltIns.arrayClass || this in birBuiltIns.primitiveArraysToPrimitiveTypes
+fun BirClass?.isArrayOrPrimitiveArray(): Boolean =
+    /*this == birBuiltIns.arrayClass*/
+    this?.name?.asString() == "Array"
+            || this in birBuiltIns.primitiveArraysToPrimitiveTypes
 
 // Constructors can't be marked as inline in metadata, hence this check.
 context(BirBackendContext)
