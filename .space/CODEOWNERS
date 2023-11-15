@@ -329,7 +329,6 @@
 /libraries/tools/kotlin-noarg/ "Kotlin Build Tools"
 /libraries/tools/kotlin-prepush-hook/ "Kotlin Build Infrastructure"
 /libraries/tools/kotlin-sam-with-receiver/ "Kotlin Build Tools"
-/libraries/tools/kotlin-script-util/ "Kotlin Compiler Core"
 /libraries/tools/kotlin-serialization/ "Kotlin Build Tools"
 /libraries/tools/kotlin-serialization-unshaded/ "Kotlin Build Tools"
 /libraries/tools/kotlin-stdlib-docs/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Filipp.Zhinkin

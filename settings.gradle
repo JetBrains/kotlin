@@ -226,7 +226,6 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-assignment",
         ":kotlin-gradle-subplugin-example",
         ":examples:annotation-processor-example",
-        ":kotlin-script-util",
         ":kotlin-annotation-processing",
         ":kotlin-annotation-processing-cli",
         ":kotlin-annotation-processing-base",
@@ -762,7 +761,6 @@ project(':kotlin-assignment').projectDir = "$rootDir/libraries/tools/kotlin-assi
 project(':kotlin-lombok').projectDir = "$rootDir/libraries/tools/kotlin-lombok" as File
 project(':kotlin-gradle-subplugin-example').projectDir = "$rootDir/libraries/examples/kotlin-gradle-subplugin-example" as File
 project(':examples:annotation-processor-example').projectDir = "$rootDir/libraries/examples/annotation-processor-example" as File
-project(':kotlin-script-util').projectDir = "$rootDir/libraries/tools/kotlin-script-util" as File
 project(':kotlin-annotation-processing-embeddable').projectDir = "$rootDir/plugins/kapt3/kotlin-annotation-processing-embeddable" as File
 project(':kotlin-daemon-embeddable').projectDir = "$rootDir/prepare/kotlin-daemon-embeddable" as File
 project(':kotlin-annotation-processing-compiler').projectDir = "$rootDir/plugins/kapt3/kapt3-compiler" as File
