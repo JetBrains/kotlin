@@ -50353,6 +50353,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
+        @TestMetadata("noConversionFromSamToSam.kt")
+        public void testNoConversionFromSamToSam() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/noConversionFromSamToSam.kt");
+        }
+
+        @Test
         @TestMetadata("nonInlinedSamWrapper.kt")
         public void testNonInlinedSamWrapper() throws Exception {
             runTest("compiler/testData/codegen/box/sam/nonInlinedSamWrapper.kt");

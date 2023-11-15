@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/genericSamSmartcast.kt
                 CALL 'public open fun call (block: @[FlexibleNullability] <root>.A.I<@[FlexibleNullability] T of <root>.A?>?): @[FlexibleNullability] kotlin.String? declared in <root>.A' type=@[FlexibleNullability] kotlin.String? origin=null
                   $this: TYPE_OP type=<root>.A<*> origin=IMPLICIT_CAST typeOperand=<root>.A<*>
                     GET_VAR 'x: kotlin.Any declared in <root>.f' type=kotlin.Any origin=null
-                  block: TYPE_OP type=@[FlexibleNullability] <root>.A.I<out @[FlexibleNullability] kotlin.Any?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.A.I<out @[FlexibleNullability] kotlin.Any?>?
+                  block: TYPE_OP type=<root>.A.I<out @[FlexibleNullability] kotlin.Any?> origin=SAM_CONVERSION typeOperand=<root>.A.I<out @[FlexibleNullability] kotlin.Any?>
                     FUN_EXPR type=kotlin.Function1<kotlin.Any?, @[FlexibleNullability] kotlin.String?> origin=LAMBDA
                       FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (y:kotlin.Any?) returnType:@[FlexibleNullability] kotlin.String?
                         VALUE_PARAMETER name:y index:0 type:kotlin.Any?

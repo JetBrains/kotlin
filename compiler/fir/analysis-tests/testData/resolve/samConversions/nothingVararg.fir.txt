@@ -1,7 +1,7 @@
 FILE: main.kt
     public final fun test(x: R|A<*>|): R|kotlin/Unit| {
-        R|<local>/x|.R|SubstitutionOverride</A.call: R|kotlin/Unit|>|(vararg(call@fun <anonymous>(y: R|kotlin/Any?|): R|kotlin/Unit| <inline=Unknown>  {
+        R|<local>/x|.R|SubstitutionOverride</A.call: R|kotlin/Unit|>|(vararg(SAM(call@fun <anonymous>(y: R|kotlin/Any?|): R|kotlin/Unit| <inline=Unknown>  {
             Q|kotlin/Unit|
         }
-        ))
+        )))
     }

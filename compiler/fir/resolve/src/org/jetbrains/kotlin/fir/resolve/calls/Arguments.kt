@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
@@ -23,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
-import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
@@ -39,7 +36,6 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 val SAM_LOOKUP_NAME = Name.special("<SAM-CONSTRUCTOR>")
 
@@ -496,16 +492,29 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     scopeSession: ScopeSession,
     argument: FirExpression,
     candidateExpectedType: ConeKotlinType,
-    context: ResolutionContext
+    context: ResolutionContext,
 ): ConeKotlinType? {
     if (candidateExpectedType.isSomeFunctionType(session)) return null
 
     val expectedFunctionType = context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
         ?: return null
-    return runIf(argument.isFunctional(session, scopeSession, expectedFunctionType, context.returnTypeCalculator)) {
-        usesSAM = true
-        expectedFunctionType
+
+    if (!argument.shouldUseSamConversion(
+            session,
+            scopeSession,
+            candidateExpectedType = candidateExpectedType,
+            expectedFunctionType = expectedFunctionType,
+            context.returnTypeCalculator
+        )
+    ) {
+        return null
     }
+
+    val samConversions = functionTypesOfSamConversions
+        ?: hashMapOf<FirExpression, ConeKotlinType>().also { functionTypesOfSamConversions = it }
+
+    samConversions[argument.unwrapArgument()] = expectedFunctionType
+    return expectedFunctionType
 }
 
 private fun getExpectedTypeWithImplicitIntegerCoercion(
@@ -531,10 +540,11 @@ private fun getExpectedTypeWithImplicitIntegerCoercion(
     return argumentType?.withNullability(candidateExpectedType.nullability, session.typeContext)
 }
 
-fun FirExpression.isFunctional(
+fun FirExpression.shouldUseSamConversion(
     session: FirSession,
     scopeSession: ScopeSession,
-    expectedFunctionType: ConeKotlinType?,
+    candidateExpectedType: ConeKotlinType,
+    expectedFunctionType: ConeKotlinType,
     returnTypeCalculator: ReturnTypeCalculator,
 ): Boolean {
     when (unwrapArgument()) {
@@ -542,10 +552,15 @@ fun FirExpression.isFunctional(
         else -> {
             // Either a functional type or a subtype of a class that has a contributed `invoke`.
             val coneType = resolvedType
+            // Argument might have an intersection type between FunctionN and the SAM type from a smart cast, in which case we don't want to use
+            // SAM conversion.
+            if (coneType.isSubtypeOf(candidateExpectedType, session)) {
+                return false
+            }
             if (coneType.isSomeFunctionType(session)) {
                 return true
             }
-            val classLikeExpectedFunctionType = expectedFunctionType?.lowerBoundIfFlexible() as? ConeClassLikeType
+            val classLikeExpectedFunctionType = expectedFunctionType.lowerBoundIfFlexible() as? ConeClassLikeType
             if (classLikeExpectedFunctionType == null || coneType is ConeIntegerLiteralType) {
                 return false
             }

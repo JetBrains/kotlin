@@ -1062,8 +1062,6 @@ class CallAndReferenceGenerator(
                 irArgument = irArgument.insertSpecialCast(argument, argumentType, unsubstitutedParameterType)
             }
         }
-        // TODO: Applying SAM conversion should be extracted to a separate function, which will call
-        //   convertArgument with original functional type as expected type, see KT-62847, KT-63345
         with(adapterGenerator) {
             if (parameter?.returnTypeRef is FirResolvedTypeRef) {
                 // Java type case (from annotations)
@@ -1071,7 +1069,7 @@ class CallAndReferenceGenerator(
                 val unwrappedParameterType = if (parameter.isVararg) parameterType.arrayElementType()!! else parameterType
                 val samFunctionType = getFunctionTypeForPossibleSamType(unwrappedParameterType)
                 irArgument = irArgument.applySuspendConversionIfNeeded(argument, samFunctionType ?: unwrappedParameterType)
-                irArgument = irArgument.applySamConversionIfNeeded(argument, parameter, substitutor)
+                irArgument = irArgument.applySamConversionIfNeeded(argument, parameter)
             }
         }
         return irArgument

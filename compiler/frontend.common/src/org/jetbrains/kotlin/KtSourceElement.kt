@@ -288,6 +288,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     // For provided parameters inside a script
     object ScriptParameter : KtFakeSourceElementKind()
+
+    // When a lambda is converted to a SAM type, the expression is wrapped in an extra node
+    object SamConversion : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

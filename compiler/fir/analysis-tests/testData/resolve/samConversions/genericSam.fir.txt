@@ -1,23 +1,23 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.R|/JavaUsage.foo1*s|(<L> = foo1@fun <anonymous>(x: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
+        Q|JavaUsage|.R|/JavaUsage.foo1*s|(<L> = SAM(foo1@fun <anonymous>(x: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Int.toString|()
         }
-        )
-        Q|JavaUsage|.R|/JavaUsage.foo2*s|(<L> = foo2@fun <anonymous>(x: R|kotlin/Number!|): R|kotlin/CharSequence!| <inline=NoInline>  {
+        ))
+        Q|JavaUsage|.R|/JavaUsage.foo2*s|(<L> = SAM(foo2@fun <anonymous>(x: R|kotlin/Number!|): R|kotlin/CharSequence!| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Int.toString|()
         }
-        )
+        ))
         Q|JavaUsage|.R|/JavaUsage.foo2*s<Inapplicable(INAPPLICABLE): /JavaUsage.foo2>#|(<L> = foo2@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/CharSequence!| <inline=Unknown>  {
             ^ R|<local>/x|.R|kotlin/Int.toString|()
         }
         )
-        Q|JavaUsage|.R|/JavaUsage.foo3*s|<R|kotlin/Int!|, R|kotlin/String!|>(foo3@fun <anonymous>(x: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
+        Q|JavaUsage|.R|/JavaUsage.foo3*s|<R|kotlin/Int!|, R|kotlin/String!|>(SAM(foo3@fun <anonymous>(x: R|kotlin/Int!|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.toString|()
         }
-        , Int(1))
-        Q|JavaUsage|.R|/JavaUsage.foo3*s|<R|kotlin/Int!|, R|kotlin/String!|>(foo3@fun <anonymous>(x: R|kotlin/Number|): R|kotlin/String!| <inline=NoInline>  {
+        ), Int(1))
+        Q|JavaUsage|.R|/JavaUsage.foo3*s|<R|kotlin/Int!|, R|kotlin/String!|>(SAM(foo3@fun <anonymous>(x: R|kotlin/Number|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Int.toString|()
         }
-        , Int(2))
+        ), Int(2))
     }

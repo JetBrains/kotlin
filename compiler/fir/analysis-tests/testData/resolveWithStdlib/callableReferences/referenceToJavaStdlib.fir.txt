@@ -1,6 +1,6 @@
 FILE: referenceToJavaStdlib.kt
     public final fun detectDirsWithTestsMapFileOnly(file: R|java/io/File|): R|kotlin/collections/List<kotlin/String>| {
-        Q|java/nio/file/Files|.R|java/nio/file/Files.walk*s|(R|<local>/file|.R|java/io/File.toPath|()).R|SubstitutionOverride<java/util/stream/Stream.filter: R|ft<java/util/stream/Stream<java/nio/file/Path!>, java/util/stream/Stream<java/nio/file/Path!>?>|>|(Q|java/nio/file/Files|::R|java/nio/file/Files.isRegularFile*s|)
+        Q|java/nio/file/Files|.R|java/nio/file/Files.walk*s|(R|<local>/file|.R|java/io/File.toPath|()).R|SubstitutionOverride<java/util/stream/Stream.filter: R|ft<java/util/stream/Stream<java/nio/file/Path!>, java/util/stream/Stream<java/nio/file/Path!>?>|>|(SAM(Q|java/nio/file/Files|::R|java/nio/file/Files.isRegularFile*s|))
     }
     public abstract interface A : R|kotlin/Any| {
     }

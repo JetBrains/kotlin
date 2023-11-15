@@ -40003,6 +40003,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/sam/kt59858.kt");
         }
 
+        @TestMetadata("noConversionFromSamToSam.kt")
+        public void testNoConversionFromSamToSam() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/noConversionFromSamToSam.kt");
+        }
+
         @TestMetadata("nonInlinedSamWrapper.kt")
         public void testNonInlinedSamWrapper() throws Exception {
             runTest("compiler/testData/codegen/box/sam/nonInlinedSamWrapper.kt");

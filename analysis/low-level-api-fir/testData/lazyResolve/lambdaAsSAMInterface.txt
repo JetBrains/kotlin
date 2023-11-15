@@ -193,10 +193,10 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
     public final [ResolvedTo(CONTRACTS)] fun testMe([ResolvedTo(CONTRACTS)] f: R|foo/Foo|): R|kotlin/Unit| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        R|foo/testMe|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+        R|foo/testMe|(<L> = SAM([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
             ^ R|<local>/b|
         }
-        )
+        ))
     }
 
 FILE RAW TO BODY:
@@ -214,8 +214,8 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lambdaAsSAMInterface.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun testMe([ResolvedTo(BODY_RESOLVE)] f: R|foo/Foo|): R|kotlin/Unit| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        R|foo/testMe|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+        R|foo/testMe|(<L> = SAM([ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
             ^ R|<local>/b|
         }
-        )
+        ))
     }

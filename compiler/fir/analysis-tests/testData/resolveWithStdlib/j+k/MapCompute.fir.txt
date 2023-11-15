@@ -1,9 +1,9 @@
 FILE: MapCompute.kt
     public final fun <D> R|kotlin/collections/MutableMap<kotlin/String, kotlin/collections/MutableSet<D>>|.initAndAdd(key: R|kotlin/String|, value: R|D|): R|kotlin/Unit| {
-        this@R|/initAndAdd|.R|SubstitutionOverride<kotlin/collections/MutableMap.compute: R|kotlin/collections/MutableSet<D>?|>|(R|<local>/key|, <L> = compute@fun <anonymous>(<unused var>: R|@EnhancedNullability kotlin/String|, maybeValues: R|@EnhancedNullability kotlin/collections/MutableSet<D>?|): R|@EnhancedNullability kotlin/collections/MutableSet<D>?| <inline=NoInline>  {
+        this@R|/initAndAdd|.R|SubstitutionOverride<kotlin/collections/MutableMap.compute: R|kotlin/collections/MutableSet<D>?|>|(R|<local>/key|, <L> = SAM(compute@fun <anonymous>(<unused var>: R|@EnhancedNullability kotlin/String|, maybeValues: R|@EnhancedNullability kotlin/collections/MutableSet<D>?|): R|@EnhancedNullability kotlin/collections/MutableSet<D>?| <inline=NoInline>  {
             lval setOfValues: R|kotlin/collections/MutableSet<D>| = R|<local>/maybeValues| ?: R|kotlin/collections/mutableSetOf|<R|D|>()
             R|<local>/setOfValues|.R|SubstitutionOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|<local>/value|)
             ^ R|<local>/setOfValues|
         }
-        )
+        ))
     }

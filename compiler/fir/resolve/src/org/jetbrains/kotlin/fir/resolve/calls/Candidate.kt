@@ -84,7 +84,7 @@ class Candidate(
     lateinit var freshVariables: List<ConeTypeVariable>
     var resultingTypeForCallableReference: ConeKotlinType? = null
     var outerConstraintBuilderEffect: (ConstraintSystemOperation.() -> Unit)? = null
-    var usesSAM: Boolean = false
+    val usesSAM: Boolean get() = functionTypesOfSamConversions != null
 
     internal var callableReferenceAdaptation: CallableReferenceAdaptation? = null
         set(value) {
@@ -99,6 +99,7 @@ class Candidate(
 
     var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
     var numDefaults: Int = 0
+    var functionTypesOfSamConversions: HashMap<FirExpression, ConeKotlinType>? = null
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 

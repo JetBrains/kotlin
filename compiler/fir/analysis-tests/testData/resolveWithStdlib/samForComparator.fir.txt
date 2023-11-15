@@ -2,8 +2,8 @@ FILE: samForComparator.kt
     public final fun foo(x: R|kotlin/Comparator<in kotlin/CharSequence>|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/foo|(<L> = foo@fun <anonymous>(x: R|kotlin/CharSequence!|, y: R|kotlin/CharSequence!|): R|kotlin/Int| <inline=NoInline>  {
+        R|/foo|(<L> = SAM(foo@fun <anonymous>(x: R|kotlin/CharSequence!|, y: R|kotlin/CharSequence!|): R|kotlin/Int| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/CharSequence.length|.R|kotlin/Int.minus|(R|<local>/y|.R|kotlin/CharSequence.length|)
         }
-        )
+        ))
     }

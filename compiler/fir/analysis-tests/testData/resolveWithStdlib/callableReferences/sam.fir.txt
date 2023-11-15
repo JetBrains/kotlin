@@ -16,5 +16,5 @@ FILE: sam.kt
     }
     public final fun main(): R|kotlin/Unit| {
         lval a: R|A| = R|/A.A|()
-        R|/foo|(R|<local>/a|::R|/A.bar|)
+        R|/foo|(SAM(R|<local>/a|::R|/A.bar|))
     }

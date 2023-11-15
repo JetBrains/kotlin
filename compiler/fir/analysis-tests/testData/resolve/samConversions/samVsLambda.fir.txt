@@ -14,8 +14,8 @@ FILE: package2.kt
     }
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        R|p1/bar|(String(), String(), <L> = bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        R|p1/bar|(String(), String(), <L> = SAM(bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             ^@bar Unit
         }
-        )
+        ))
     }

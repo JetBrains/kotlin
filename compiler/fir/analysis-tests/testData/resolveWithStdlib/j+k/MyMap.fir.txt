@@ -6,12 +6,12 @@ FILE: test.kt
         )
         lval otherResult: R|kotlin/String!| = R|<local>/map|.R|SubstitutionOverride</MyMap.getOrDefault: R|kotlin/String!|>|(String(key), String(value))
         lval anotherResult: R|kotlin/String?| = R|<local>/map|.R|SubstitutionOverride</MyMap.replace: R|kotlin/String?|>|(String(key), String(value))
-        R|<local>/map|.R|SubstitutionOverride</MyMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|@EnhancedNullability kotlin/String!|, value: R|@EnhancedNullability kotlin/String!|): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/map|.R|SubstitutionOverride</MyMap.forEach: R|kotlin/Unit|>|(<L> = SAM(forEach@fun <anonymous>(key: R|@EnhancedNullability kotlin/String!|, value: R|@EnhancedNullability kotlin/String!|): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
             R|<local>/key|.R|kotlin/String.length|
             R|<local>/value|.R|kotlin/String.length|
         }
-        )
+        ))
         R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String!|, R|kotlin/String!|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String!, kotlin/String!>|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             lval key: R|kotlin/String!| = R|<local>/<destruct>|.R|kotlin/collections/component1|<R|kotlin/String!|, R|kotlin/String!|>()
             lval value: R|kotlin/String!| = R|<local>/<destruct>|.R|kotlin/collections/component2|<R|kotlin/String!|, R|kotlin/String!|>()
@@ -31,12 +31,12 @@ FILE: test.kt
         )
         lval otherResult: R|kotlin/String| = R|<local>/map|.R|SubstitutionOverride<kotlin/collections/MutableMap.getOrDefault: R|kotlin/String|>|(String(key), String(value))
         lval anotherResult: R|kotlin/String?| = R|<local>/map|.R|SubstitutionOverride<kotlin/collections/MutableMap.replace: R|kotlin/String?|>|(String(key), String(value))
-        R|<local>/map|.R|SubstitutionOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|@EnhancedNullability kotlin/String|, value: R|@EnhancedNullability kotlin/String|): R|kotlin/Unit| <inline=NoInline>  {
+        R|<local>/map|.R|SubstitutionOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = SAM(forEach@fun <anonymous>(key: R|@EnhancedNullability kotlin/String|, value: R|@EnhancedNullability kotlin/String|): R|kotlin/Unit| <inline=NoInline>  {
             R|kotlin/io/println|(<strcat>(R|<local>/key|, String(: ), R|<local>/value|))
             R|<local>/key|.R|kotlin/String.length|
             R|<local>/value|.R|kotlin/String.length|
         }
-        )
+        ))
         R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             lval key: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component1|<R|kotlin/String|, R|kotlin/String|>()
             lval value: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component2|<R|kotlin/String|, R|kotlin/String|>()

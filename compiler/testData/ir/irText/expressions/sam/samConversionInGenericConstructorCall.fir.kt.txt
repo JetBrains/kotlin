@@ -1,5 +1,5 @@
 fun test3(f1: Function1<String, String>, f2: Function1<Int, String>): D<@FlexibleNullability Int?, @FlexibleNullability String?> {
-  return C<@FlexibleNullability String?>(jxx = f1 /*-> @FlexibleNullability J<@FlexibleNullability String?, @FlexibleNullability String?>? */).D<@FlexibleNullability Int?>(jxy = f2 /*-> @FlexibleNullability J<@FlexibleNullability String?, @FlexibleNullability Int?>? */)
+  return C<@FlexibleNullability String?>(jxx = f1 /*-> J<@FlexibleNullability String?, @FlexibleNullability String?> */).D<@FlexibleNullability Int?>(jxy = f2 /*-> J<@FlexibleNullability String?, @FlexibleNullability Int?> */)
 }
 
 class Outer<T1 : Any?> {
@@ -33,11 +33,10 @@ fun test4(f: Function1<String, String>, g: Function1<Any, String>): Inner<@Flexi
 }
 
 fun testGenericJavaCtor1(f: Function1<String, Int>): G<@FlexibleNullability String?> {
-  return G<@FlexibleNullability String?, @FlexibleNullability Int?>(x = f /*-> @FlexibleNullability J<@FlexibleNullability Int?, @FlexibleNullability String?>? */)
+  return G<@FlexibleNullability String?, @FlexibleNullability Int?>(x = f /*-> J<@FlexibleNullability Int?, @FlexibleNullability String?> */)
 }
 
 fun testGenericJavaCtor2(x: Any) {
   x as Function1<String, Int> /*~> Unit */
-  G<@FlexibleNullability String?, @FlexibleNullability Int?>(x = x /*as Function1<String, Int> */ /*-> @FlexibleNullability J<@FlexibleNullability Int?, @FlexibleNullability String?>? */) /*~> Unit */
+  G<@FlexibleNullability String?, @FlexibleNullability Int?>(x = x /*as Function1<String, Int> */ /*-> J<@FlexibleNullability Int?, @FlexibleNullability String?> */) /*~> Unit */
 }
-

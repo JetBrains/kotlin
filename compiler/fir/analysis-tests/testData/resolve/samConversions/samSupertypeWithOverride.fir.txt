@@ -2,17 +2,17 @@ FILE: main.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.R|/JavaUsage.foo*s|(<L> = foo@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean!| <inline=NoInline>  {
+        Q|JavaUsage|.R|/JavaUsage.foo*s|(<L> = SAM(foo@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean!| <inline=NoInline>  {
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
-        )
-        Q|JavaUsage|.R|/JavaUsage.foo*s|(foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean!| <inline=NoInline>  {
+        ))
+        Q|JavaUsage|.R|/JavaUsage.foo*s|(SAM(foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean!| <inline=NoInline>  {
             ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(1)))
         }
-        )
+        ))
         lval x: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=Unknown>  {
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
 
-        Q|JavaUsage|.R|/JavaUsage.foo*s|(R|<local>/x|)
+        Q|JavaUsage|.R|/JavaUsage.foo*s|(SAM(R|<local>/x|))
     }
