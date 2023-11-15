@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.bir.lazy
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementBase
+import org.jetbrains.kotlin.bir.BirElementVisitorScopeLite
 import org.jetbrains.kotlin.ir.IrElement
 import kotlin.concurrent.Volatile
 
@@ -116,6 +117,15 @@ class BirLazyChildElementList<E : BirElement?>(
         BirLazyElementBase.mutationNotSupported()
     }
 
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorScopeLite.(BirElementBase) -> Unit) {
+        val scope = BirElementVisitorScopeLite(visitor)
+        for (element in this) {
+            if (element != null) {
+                visitor.invoke(scope, element as BirElementBase)
+            }
+        }
+    }
 
     override fun iterator(): MutableIterator<E> {
         queryUpstreamList()

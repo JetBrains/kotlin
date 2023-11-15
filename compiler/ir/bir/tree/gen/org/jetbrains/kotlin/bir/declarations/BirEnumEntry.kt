@@ -9,8 +9,10 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.expressions.BirExpressionBody
 import org.jetbrains.kotlin.bir.symbols.BirEnumEntrySymbol
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -34,6 +36,12 @@ abstract class BirEnumEntry : BirImplElementBase(), BirDeclaration, BirDeclarati
         annotations.acceptChildren(visitor, data)
         initializerExpression?.accept(data, visitor)
         correspondingClass?.accept(data, visitor)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
+        initializerExpression?.acceptLite(visitor)
+        correspondingClass?.acceptLite(visitor)
     }
 
     companion object

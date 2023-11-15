@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 
 /**
  * A leaf IR tree element.
@@ -21,6 +22,10 @@ abstract class BirStringConcatenation : BirExpression() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         arguments.acceptChildren(visitor, data)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        arguments.acceptChildrenLite(visitor)
     }
 
     companion object

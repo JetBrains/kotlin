@@ -20,6 +20,7 @@ interface BirElement : BirElementOrChildList {
     val parent: BirElementBase?
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {}
+    fun acceptChildrenLite(visitor: BirElementVisitorLite) {}
 
     fun <E : BirElement> getBackReferences(key: BirElementBackReferencesKey<E>): List<E>
     fun replaceWith(new: BirElement?)

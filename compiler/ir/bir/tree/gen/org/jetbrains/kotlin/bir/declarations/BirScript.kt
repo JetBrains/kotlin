@@ -10,8 +10,10 @@ package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.expressions.BirStatementContainer
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.symbols.BirPropertySymbol
@@ -57,6 +59,16 @@ abstract class BirScript : BirImplElementBase(), BirDeclaration, BirDeclarationW
         implicitReceiversParameters.acceptChildren(visitor, data)
         providedPropertiesParameters.acceptChildren(visitor, data)
         earlierScriptsParameter?.accept(data, visitor)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
+        statements.acceptChildrenLite(visitor)
+        thisReceiver?.acceptLite(visitor)
+        explicitCallParameters.acceptChildrenLite(visitor)
+        implicitReceiversParameters.acceptChildrenLite(visitor)
+        providedPropertiesParameters.acceptChildrenLite(visitor)
+        earlierScriptsParameter?.acceptLite(visitor)
     }
 
     companion object

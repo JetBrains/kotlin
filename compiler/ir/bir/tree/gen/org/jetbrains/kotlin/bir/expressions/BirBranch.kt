@@ -10,8 +10,10 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirElement
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.BirImplElementBase
 import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.acceptLite
 
 /**
  * A leaf IR tree element.
@@ -26,6 +28,11 @@ abstract class BirBranch : BirImplElementBase(), BirElement {
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         condition?.accept(data, visitor)
         result?.accept(data, visitor)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        condition?.acceptLite(visitor)
+        result?.acceptLite(visitor)
     }
 
     companion object

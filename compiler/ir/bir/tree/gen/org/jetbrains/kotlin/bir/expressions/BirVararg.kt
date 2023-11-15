@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.bir.expressions
 
 import org.jetbrains.kotlin.bir.BirChildElementList
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.types.BirType
 
 /**
@@ -24,6 +25,10 @@ abstract class BirVararg : BirExpression() {
 
     override fun <D> acceptChildren(visitor: BirElementVisitor<D>, data: D) {
         elements.acceptChildren(visitor, data)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        elements.acceptChildrenLite(visitor)
     }
 
     companion object
