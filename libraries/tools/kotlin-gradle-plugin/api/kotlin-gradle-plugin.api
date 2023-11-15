@@ -34,6 +34,8 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun applyHierarchyTemplate (Lkotlin/jvm/functions/Function1;)V
 	public fun applyHierarchyTemplate (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;)V
 	public fun applyHierarchyTemplate (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;Lkotlin/jvm/functions/Function1;)V
+	public final fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
+	public final fun compilerOptions (Lorg/gradle/api/Action;)V
 	public fun dependencies (Lorg/gradle/api/NamedDomainObjectProvider;Lkotlin/jvm/functions/Function1;)V
 	public fun getAndroidMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getAndroidNativeMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
@@ -728,6 +730,8 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKo
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget$Delegate;)V
 	public fun attributes (Lkotlin/jvm/functions/Function1;)V
 	public fun attributes (Lorg/gradle/api/Action;)V
+	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
+	public fun compilerOptions (Lorg/gradle/api/Action;)V
 	public final fun getApiElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
 	public fun getApiElementsConfigurationName ()Ljava/lang/String;
 	public final fun getApiElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;

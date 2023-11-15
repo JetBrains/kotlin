@@ -30,11 +30,11 @@ open class KotlinJvmAndroidCompilation @Inject internal constructor(
     override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
         compilation.compilerOptions.castCompilerOptionsType()
 
-    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+    internal fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
         compilerOptions.configure(configure)
     }
 
-    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+    internal fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions.options)
     }
 

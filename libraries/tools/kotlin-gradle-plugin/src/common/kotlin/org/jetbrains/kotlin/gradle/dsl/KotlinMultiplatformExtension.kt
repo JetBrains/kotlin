@@ -252,12 +252,12 @@ abstract class KotlinMultiplatformExtension
         }
 
     @ExperimentalKotlinGradlePluginApi
-    internal fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
+    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
         configure(compilerOptions)
     }
 
     @ExperimentalKotlinGradlePluginApi
-    internal fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
+    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
         configure.execute(compilerOptions)
     }
 }

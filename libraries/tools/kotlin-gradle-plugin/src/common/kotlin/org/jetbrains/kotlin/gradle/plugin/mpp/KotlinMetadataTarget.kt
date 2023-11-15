@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
@@ -42,15 +41,5 @@ abstract class KotlinMetadataTarget @Inject constructor(
     @ExperimentalKotlinGradlePluginApi
     internal override val compilerOptions: KotlinCommonCompilerOptions = project.objects
         .newInstance<KotlinCommonCompilerOptionsDefault>()
-
-    @ExperimentalKotlinGradlePluginApi
-    internal fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
-        configure(compilerOptions)
-    }
-
-    @ExperimentalKotlinGradlePluginApi
-    internal fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
-        configure.execute(compilerOptions)
-    }
 }
 

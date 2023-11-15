@@ -56,6 +56,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
         }
     }
 
+    @Disabled("DSL was demoted to 'internal'; Design is planned for 2.0")
     @GradleTest
     @DisplayName("Jvm project target compiler options DSL override project level options")
     @JvmGradlePluginTests

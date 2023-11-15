@@ -15,6 +15,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -57,6 +58,21 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
     val compileKotlinTaskName: String
 
     val compilerOptions: HasCompilerOptions<*>
+
+    @Deprecated(
+        "Kotlin compilation level compiler options DSL is not available in this release!",
+        level = DeprecationLevel.ERROR
+    )
+    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
+        throw UnsupportedOperationException("Kotlin compilation level compiler options DSL is not available in this release!")
+    }
+    @Deprecated(
+        "Kotlin compilation level compiler options DSL is not available in this release!",
+        level = DeprecationLevel.ERROR
+    )
+    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
+        throw UnsupportedOperationException("Kotlin compilation level compiler options DSL is not available in this release!")
+    }
 
     @Deprecated(
         message = "Accessing task instance directly is deprecated",
