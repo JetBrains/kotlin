@@ -153,7 +153,14 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
 
         val libraries = if (extraSpecAttributes.get().containsKey("libraries")) "" else "|    spec.libraries                = 'c++'"
 
-        val xcConfig = if (publishing.get() || extraSpecAttributes.get().containsKey("pod_target_xcconfig")) "" else
+        val xcConfig = if (publishing.get() || extraSpecAttributes.get().containsKey("xcconfig")) "" else
+            """ |
+                |    spec.xcconfig = {
+                |        'ENABLE_USER_SCRIPT_SANDBOXING' => 'NO',
+                |    }
+            """.trimMargin()
+
+        val podXcConfig = if (publishing.get() || extraSpecAttributes.get().containsKey("pod_target_xcconfig")) "" else
             """ |
                 |    spec.pod_target_xcconfig = {
                 |        'KOTLIN_PROJECT_PATH' => '${projectPath.get()}',
@@ -203,6 +210,7 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
                 $dependencies
                 $vendoredFrameworkExistenceCheck
                 $xcConfig
+                $podXcConfig
                 $scriptPhase
                 $customSpec
                 |end
