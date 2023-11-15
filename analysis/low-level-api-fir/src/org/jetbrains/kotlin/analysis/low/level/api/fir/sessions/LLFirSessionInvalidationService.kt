@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
@@ -19,6 +20,10 @@ import org.jetbrains.kotlin.analysis.providers.topics.*
  * sessions in [LLFirSessionCache] and the cache has to be kept consistent.
  */
 class LLFirSessionInvalidationService(private val project: Project) : Disposable {
+    private val sessionCache: LLFirSessionCache by lazy {
+        LLFirSessionCache.getInstance(project)
+    }
+
     /**
      * Subscribes to all [modification events][KotlinTopics] via the [analysisMessageBus].
      *
@@ -53,7 +58,11 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         )
         busConnection.subscribe(
             KotlinTopics.CODE_FRAGMENT_CONTEXT_MODIFICATION,
-            KotlinCodeFragmentContextModificationListener { module -> invalidateCodeFragments(module) }
+            KotlinCodeFragmentContextModificationListener { module -> invalidateContextualDanglingFileSessions(module) }
+        )
+        busConnection.subscribe(
+            PsiModificationTracker.TOPIC,
+            PsiModificationTracker.Listener { invalidateUnstableDanglingFileSessions() }
         )
     }
 
@@ -65,7 +74,6 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
     fun invalidate(module: KtModule) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        val sessionCache = LLFirSessionCache.getInstance(project)
         val didSessionExist = sessionCache.removeSession(module)
 
         // We don't have to invalidate dependent sessions if the root session does not exist in the cache. It is true that sessions can be
@@ -105,11 +113,15 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
             anchorModules?.forEach(::invalidate)
         }
 
-        LLFirSessionCache.getInstance(project).removeAllSessions(includeLibraryModules)
+        sessionCache.removeAllSessions(includeLibraryModules)
     }
 
-    private fun invalidateCodeFragments(contextModule: KtModule) {
-        LLFirSessionCache.getInstance(project).removeContextualDanglingFileSessions(contextModule)
+    private fun invalidateContextualDanglingFileSessions(contextModule: KtModule) {
+        sessionCache.removeContextualDanglingFileSessions(contextModule)
+    }
+
+    private fun invalidateUnstableDanglingFileSessions() {
+        sessionCache.removeUnstableDanglingFileSessions()
     }
 
     override fun dispose() {

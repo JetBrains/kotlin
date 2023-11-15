@@ -466,14 +466,16 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
         contextSession: LLFirSession,
         additionalSessionConfiguration: context(DanglingFileSessionCreationContext) LLFirDanglingFileSession.() -> Unit,
     ): LLFirSession {
+        val danglingFile = module.file
         val platform = module.platform
+
         val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
         val languageVersionSettings = wrapLanguageVersionSettings(contextSession.languageVersionSettings)
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
 
         val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
 
-        val session = LLFirDanglingFileSession(module, components, builtinsSession.builtinTypes)
+        val session = LLFirDanglingFileSession(module, components, builtinsSession.builtinTypes, danglingFile.modificationStamp)
         components.session = session
 
         val moduleData = createModuleData(session)
@@ -490,7 +492,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 this,
                 components,
                 canContainKotlinPackage = true,
-                declarationProviderFactory = { scope -> scope.createScopedDeclarationProviderForFile(module.file) }
+                declarationProviderFactory = { scope -> scope.createScopedDeclarationProviderForFile(danglingFile) }
             )
 
             register(FirProvider::class, firProvider)
@@ -575,8 +577,15 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
         fun getOrCreateSessionForDependency(dependency: KtModule): LLFirSession? = when (dependency) {
             is KtBuiltinsModule -> null // Built-ins are already added
+
             is KtBinaryModule -> llFirSessionCache.getSession(dependency, preferBinary = true)
-            is KtSourceModule, is KtDanglingFileModule -> llFirSessionCache.getSession(dependency)
+
+            is KtSourceModule -> llFirSessionCache.getSession(dependency)
+
+            is KtDanglingFileModule -> {
+                require(dependency.isStable) { "Unstable dangling modules cannot be used as a dependency" }
+                llFirSessionCache.getSession(dependency)
+            }
 
             is KtScriptModule,
             is KtScriptDependencyModule,
