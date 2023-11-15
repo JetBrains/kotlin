@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.constant.KClassValue
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.ConstValueProviderImpl
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
@@ -25,11 +26,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassId
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.serialization.FirAdditionalMetadataProvider
-import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
-import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
-import org.jetbrains.kotlin.fir.serialization.LocalClassIdOracle
-import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
+import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -135,6 +132,8 @@ open class FirJvmSerializerExtension(
                 )
             )
         }
+
+        serializeAnnotations(klass, proto::addAnnotation)
     }
 
     override fun serializeScript(
@@ -241,6 +240,8 @@ open class FirJvmSerializerExtension(
                 proto.setExtension(JvmProtoBuf.constructorSignature, signature)
             }
         }
+
+        serializeAnnotations(constructor, proto::addAnnotation)
     }
 
     override fun serializeFunction(
@@ -260,6 +261,8 @@ open class FirJvmSerializerExtension(
         if (function.needsInlineParameterNullCheckRequirement()) {
             versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
         }
+
+        serializeAnnotations(function, proto::addAnnotation)
     }
 
     private fun MutableVersionRequirementTable.writeInlineParameterNullCheckRequirement(add: (Int) -> Unit) {
@@ -314,6 +317,10 @@ open class FirJvmSerializerExtension(
         if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {
             versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
         }
+
+        serializeAnnotations(getter, proto::addGetterAnnotation)
+        serializeAnnotations(setter, proto::addSetterAnnotation)
+        serializeAnnotations(property, proto::addAnnotation)
     }
 
     private fun FirProperty.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
@@ -345,6 +352,10 @@ open class FirJvmSerializerExtension(
         return super.getClassSupertypes(klass)
     }
 
+    override fun serializeValueParameter(parameter: FirValueParameter, proto: ProtoBuf.ValueParameter.Builder) {
+        serializeAnnotations(parameter, proto::addAnnotation)
+    }
+
     override fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
         if (classBuilderMode === ClassBuilderMode.KAPT3) {
             builder.className = stringTable.getStringIndex(NON_EXISTENT_CLASS_NAME)
@@ -356,6 +367,14 @@ open class FirJvmSerializerExtension(
 
     private fun <K : Any, V : Any> getBinding(slice: JvmSerializationBindings.SerializationMappingSlice<K, V>, key: K): V? =
         bindings.get(slice, key) ?: globalBindings.get(slice, key)
+
+    private inline fun serializeAnnotations(declaration: FirAnnotationContainer?, addAnnotation: (ProtoBuf.Annotation) -> Unit) {
+        if (metadataVersion.isAtLeast(2, 2, 0)) {
+            for (annotation in declaration?.allRequiredAnnotations(session, additionalMetadataProvider).orEmpty()) {
+                addAnnotation(annotationSerializer.serializeAnnotation(annotation))
+            }
+        }
+    }
 
     companion object {
         val METHOD_FOR_FIR_FUNCTION: JvmSerializationBindings.SerializationMappingSlice<FirFunction, Method> =
