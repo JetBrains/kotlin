@@ -98,19 +98,7 @@ abstract class BirChildElementList<E : BirElement?>(
         }
     }
 
-    internal fun acceptChildrenLite(visitor: BirElementVisitorLite) {
-        val size = _size
-        if (size == 0) return
-
-        val elementArray = elementArray
-        val scope = BirElementVisitorScopeLite(visitor)
-        for (i in 0..<size) {
-            val element = elementArray[i]
-            if (element != null) {
-                visitor.invoke(scope, element)
-            }
-        }
-    }
+    internal abstract fun acceptChildrenLite(visitor: BirElementVisitorLite)
 
     abstract override fun iterator(): MutableIterator<E>
     abstract override fun listIterator(): MutableListIterator<E>

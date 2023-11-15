@@ -9,7 +9,9 @@
 package org.jetbrains.kotlin.bir.declarations
 
 import org.jetbrains.kotlin.bir.BirElementVisitor
+import org.jetbrains.kotlin.bir.BirElementVisitorLite
 import org.jetbrains.kotlin.bir.accept
+import org.jetbrains.kotlin.bir.acceptLite
 import org.jetbrains.kotlin.bir.symbols.BirClassSymbol
 import org.jetbrains.kotlin.bir.types.BirSimpleType
 import org.jetbrains.kotlin.bir.types.BirType
@@ -71,6 +73,13 @@ interface BirClass : BirDeclaration, BirPossiblyExternalDeclaration,
         typeParameters.acceptChildren(visitor, data)
         declarations.acceptChildren(visitor, data)
         thisReceiver?.accept(data, visitor)
+    }
+
+    override fun acceptChildrenLite(visitor: BirElementVisitorLite) {
+        annotations.acceptChildrenLite(visitor)
+        typeParameters.acceptChildrenLite(visitor)
+        declarations.acceptChildrenLite(visitor)
+        thisReceiver?.acceptLite(visitor)
     }
 
     companion object
