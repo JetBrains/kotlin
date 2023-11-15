@@ -8,6 +8,15 @@ package org.jetbrains.kotlin.backend.common.phaser
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import kotlin.system.measureTimeMillis
 
+/**
+ * Represents global compilation context and stores information about phases that were executed.
+ *
+ * @property alreadyDone A set of already executed phases.
+ * @property depth shows The index of the currently running phase.
+ * @property phaseCount A unique ID that can show the order in which phases were executed.
+ * @property stickyPostconditions A set of conditions that must be checked after each phase.
+ * When a condition is added into [stickyPostconditions], it will be executed each time some phase is executed, until we change [Data].
+ */
 class PhaserState<Data>(
     val alreadyDone: MutableSet<AnyNamedPhase> = mutableSetOf(),
     var depth: Int = 0,
@@ -27,7 +36,17 @@ inline fun <R, D> PhaserState<D>.downlevel(nlevels: Int, block: () -> R): R {
     return result
 }
 
+/**
+ * Represents some compiler phase that can be executed.
+ */
 interface CompilerPhase<in Context : LoggingContext, Input, Output> {
+    /**
+     * Executes this compiler phase. It accepts some parameter of type [Input] and transforms it into [Output].
+     *
+     * @param phaseConfig Controls which parts of the compilation pipeline are enabled and how the compiler should validate their invariants.
+     * @param phaserState The global context.
+     * @param context The local context in which the compiler stores all the necessary information for the given phase.
+     */
     fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output
 
     fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, AbstractNamedCompilerPhase<Context, *, *>>> = emptyList()
