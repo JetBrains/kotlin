@@ -210,7 +210,7 @@ public fun Path.copyToRecursively(
 
     visitFileTree(followLinks = followLinks) {
         onPreVisitDirectory { directory, attributes ->
-            directory.checkFileName(isStartPath = stack.isEmpty())
+            directory.checkFileName()
             if (stack.isNotEmpty()) {
                 directory.checkNotSameAs(stack.last())
             }
@@ -347,7 +347,7 @@ private fun Path.deleteRecursivelyImpl(): List<Exception> {
     }
 
     if (useInsecure) {
-        insecureHandleEntry(this, true, collector)
+        insecureHandleEntry(this, collector)
     }
 
     return collector.collectedExceptions
@@ -409,9 +409,8 @@ private fun SecureDirectoryStream<Path>.isDirectory(entryName: Path, vararg opti
 
 // insecure walk
 
-private fun insecureHandleEntry(entry: Path, isStartPath: Boolean, collector: ExceptionsCollector) {
+private fun insecureHandleEntry(entry: Path, collector: ExceptionsCollector) {
     collectIfThrows(collector) {
-        entry.checkFileName(isStartPath)
         if (entry.isDirectory(LinkOption.NOFOLLOW_LINKS)) {
             val preEnterTotalExceptions = collector.totalExceptions
 
@@ -434,8 +433,9 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
             Files.newDirectoryStream(path)
         }?.use { directoryStream ->
             for (entry in directoryStream) {
+                entry.checkFileName() // test when traversal is started with a directory with an illegal name
                 entry.checkNotSameAs(path)
-                insecureHandleEntry(entry, false, collector)
+                insecureHandleEntry(entry, collector)
             }
         }
     }
@@ -448,11 +448,9 @@ private fun insecureEnterDirectory(path: Path, collector: ExceptionsCollector) {
  * Some names are illegal because they cause traversal to cycle.
  * See KT-63103.
  */
-internal fun Path.checkFileName(isStartPath: Boolean) {
-    if (isStartPath) return
+internal fun Path.checkFileName() {
     if (name == ".." || name == "../" ||
-        name == "." || name == "./" ||
-        name == "" || name == "/") throw IllegalFileNameException(this)
+        name == "." || name == "./") throw IllegalFileNameException(this)
 }
 
 /**
@@ -460,11 +458,19 @@ internal fun Path.checkFileName(isStartPath: Boolean) {
  * When entries of a directory is read, sometimes the directory itself is returned as well.
  * This happens when a zip entry name is '/'.
  * Having a directory itself in list of its entries causes traversal to cycle.
+ * Unfortunately, [Files.walkFileTree], which is used in [copyToRecursively],
+ * does not detect such a cycle when links are not followed.
+ * [deleteRecursively] doesn't have cycle detection capability because it always doesn't follow links.
  * See KT-63103.
  */
-internal fun Path.checkNotSameAs(parent: Path) {
-    if (!isSymbolicLink() && !parent.isSymbolicLink() && isSameFileAs(parent))
-        throw IllegalFileNameException(this)
+private fun Path.checkNotSameAs(parent: Path) {
+    // Symlinks are skipped:
+    //   If this path is a symlink pointing to [parent] and links are not followed, the path is perfectly fine for traversal.
+    //   However, [Path.isSameFileAs] always follows links.
+    // [parent] can't be a symlink:
+    //   Otherwise, it would mean links are followed and [Files.walkFileTree] would have already detected the cycle.
+    if (!isSymbolicLink() && isSameFileAs(parent))
+        throw FileSystemLoopException(this.toString())
 }
 
-internal class IllegalFileNameException(file: Path) : FileSystemException(file.toString(), null, "Illegal file name")
+internal class IllegalFileNameException(file: Path) : FileSystemException(file.toString())
