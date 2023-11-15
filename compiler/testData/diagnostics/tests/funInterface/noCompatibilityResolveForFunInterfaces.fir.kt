@@ -12,7 +12,7 @@ object Test1 {
         fun foo(r: KRunnable) {}
 
         fun test(f: () -> Unit) {
-            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!>foo(f)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.Scope.foo; typeCall: function")!>foo(f)<!>
         }
     }
 }
@@ -35,7 +35,7 @@ object Test3 {
 
     fun test(f: () -> Unit) {
         val result = foo(1, f)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
     }
 }
 

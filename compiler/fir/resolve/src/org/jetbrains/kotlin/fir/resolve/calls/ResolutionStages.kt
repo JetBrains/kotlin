@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isFun
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -486,8 +487,17 @@ internal object CheckArguments : CheckerStage() {
                 sink.yieldDiagnostic(InapplicableCandidate)
             }
 
+            // Logic description: only candidates from Kotlin, but using Java SAM types, are discriminated
             candidate.usesSAM && !candidate.isJavaApplicableCandidate() -> {
-                sink.markCandidateForCompatibilityResolve(context)
+                if (argumentMapping.values.any {
+                        val coneType = it.returnTypeRef.coneType
+                        context.bodyResolveComponents.samResolver.isSamType(coneType) &&
+                                // Candidate is not from Java, so no flexible types are possible here
+                                coneType.toRegularClassSymbol(context.session)?.isJavaOrEnhancement == true
+                    }
+                ) {
+                    sink.markCandidateForCompatibilityResolve(context)
+                }
             }
         }
     }
