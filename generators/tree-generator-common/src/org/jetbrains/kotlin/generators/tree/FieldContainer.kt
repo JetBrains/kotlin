@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tree
 
-interface FieldContainer<out Field : AbstractField<Field>> {
+interface FieldContainer<out Field : AbstractField<*>> {
     val allFields: List<Field>
     operator fun get(fieldName: String): Field?
 
