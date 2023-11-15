@@ -115,7 +115,7 @@ class ProjectProperties(val project: Project) : PropertiesProvider {
 
     override fun getProperty(key: String): Any? = project.findProperty(key)
 
-    override fun getSystemProperty(key: String) = project.providers.systemProperty(key).forUseAtConfigurationTime().orNull
+    override fun getSystemProperty(key: String) = project.providers.systemProperty(key).orNull
 }
 
 val Project.kotlinBuildProperties: KotlinBuildProperties
@@ -133,7 +133,7 @@ class SettingsProperties(val settings: Settings) : PropertiesProvider {
         return if (obj.hasProperty(key)) obj.getProperty(key) else null
     }
 
-    override fun getSystemProperty(key: String) = settings.providers.systemProperty(key).forUseAtConfigurationTime().orNull
+    override fun getSystemProperty(key: String) = settings.providers.systemProperty(key).orNull
 }
 
 fun getKotlinBuildPropertiesForSettings(settings: Any) = (settings as Settings).kotlinBuildProperties
