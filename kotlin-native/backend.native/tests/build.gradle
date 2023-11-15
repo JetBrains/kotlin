@@ -135,7 +135,7 @@ konanArtifacts {
 }
 
 void konanc(String[] args) {
-    String kotlincNative = isWindows() ? "kotlinc-native.bat" : "kotlinc-native"
+    String kotlincNative = PlatformInfo.isWindows() ? "kotlinc-native.bat" : "kotlinc-native"
     String allArgs = args.join(" ")
     String commandWithArguments = "$kotlinNativeDist/bin/$kotlincNative $allArgs"
 
@@ -2058,60 +2058,60 @@ tasks.register("extend_exception", KonanLocalTest) {
 }
 
 standaloneTest("check_stacktrace_format_coresymbolication") {
-    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
     arguments = ['coresymbolication']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
 standaloneTest("stack_trace_inline") {
-    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=sourceInfoType=coresymbolication']
     source = "runtime/exceptions/stack_trace_inline.kt"
     arguments = ['coresymbolication']
 }
 
 standaloneTest("kt-49240-stack-trace-completeness") {
-    disabled = !supportsExceptions(project) || project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsExceptions(project) || project.globalTestArgs.contains('-opt')
     source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
 }
 
 standaloneTest("kt-37572") {
-    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
     arguments = ['coresymbolication']
     source = "runtime/exceptions/kt-37572.kt"
 }
 
 standaloneTest("check_stacktrace_format_libbacktrace") {
-    disabled = !supportsLibBacktrace(project)|| project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsLibBacktrace(project)|| project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
     arguments = ['libbacktrace']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
 standaloneTest("stack_trace_inline_libbacktrace") {
-    disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
     arguments = ['libbacktrace']
     source = "runtime/exceptions/stack_trace_inline.kt"
 }
 
 standaloneTest("kt-37572-libbacktrace") {
-    disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
     arguments = ['libbacktrace']
     source = "runtime/exceptions/kt-37572.kt"
 }
 
 standaloneTest("except_constr_w_default") {
-    disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
     source = "runtime/exceptions/except_constr_w_default.kt"
 }
 
 standaloneTest("throw_from_except_constr") {
-    disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
+    disabled = !PlatformInfo.supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
     source = "runtime/exceptions/throw_from_except_constr.kt"
 }
@@ -3013,7 +3013,7 @@ KotlinNativeTestKt.createTest(project, "kt39548", KonanStandaloneTest) { task ->
     // Test infrastructure doesn't support generated source;
     // workaround by specifying dummy source:
     task.source = "does/not/exist/kt39548.dummy.kt"
-    task.enabled = isWindowsTarget(project)
+    task.enabled = PlatformInfo.isWindowsTarget(project)
 
     if (task.enabled) {
         def ktFile = project.layout.buildDirectory.file("kt39548/kt39548.kt").get().asFile
@@ -3314,9 +3314,9 @@ linkTest("inline_innerInlineFunCapturesOuter_linkTest") {
 def generateWithSpaceDefFile() {
     def buildDirectory = project.layout.buildDirectory.get().asFile
     def mapOption = "--Map \"$buildDirectory/cutom map.map\""
-    if (isAppleTarget(project)) {
+    if (PlatformInfo.isAppleTarget(project)) {
         mapOption = "-map \"$buildDirectory/cutom map.map\""
-    } else if (isWindowsTarget(project)) {
+    } else if (PlatformInfo.isWindowsTarget(project)) {
         mapOption = "\"-Wl,--Map,$buildDirectory/cutom map.map\""
     }
 
@@ -3722,7 +3722,7 @@ Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosur
 }
 
 standaloneTest("interop_objc_allocException") {
-    disabled = !isAppleTarget(project)
+    disabled = !PlatformInfo.isAppleTarget(project)
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
     UtilsKt.dependsOnPlatformLibs(it)
@@ -3889,7 +3889,7 @@ interopTest("interop_kt51925") {
 }
 
 interopTestBase("interop_forwardDeclarationsCast", false, true) {
-    enabled = isAppleTarget(project)
+    enabled = PlatformInfo.isAppleTarget(project)
     interop = 'forwardDeclarationsCastA'
     interop2 = 'forwardDeclarationsCastB'
     lib = 'interop/forwardDeclarationsCast/lib.kt'
@@ -3929,13 +3929,13 @@ standaloneTest("isExperimentalMM") {
 }
 
 interopTest("interop_cppClass") {
-    disabled = isAppleTarget(project) // KT-58422
+    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
     source = "interop/cpp/cppClass.kt"
     interop = 'cppClass'
 }
 
 interopTest("interop_cppTypes") {
-    disabled = isAppleTarget(project) // KT-58422
+    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
     source = "interop/cpp/types.kt"
     interop = 'cppTypes'
 }
@@ -3949,7 +3949,7 @@ interopTest("interop_cppSkia") {
 }
 
 interopTest("interop_cppSkiaSignature") {
-    disabled = isAppleTarget(project) // KT-58422
+    disabled = PlatformInfo.isAppleTarget(project) // KT-58422
     source = "interop/cpp/skiaSignature.kt"
     interop = "cppSkiaSignature"
     useGoldenData = true
@@ -3971,7 +3971,7 @@ interopTest("interop_forwardDeclarationsTwoLibs") {
 /*
 TODO: This test isn't run automatically
 tasks.register("interop_echo_server", RunInteropKonanTest) {
-    disabled = isWasmTarget(project) || isWindowsTarget(project)
+    disabled = PlatformInfo.isWasmTarget(project) || PlatformInfo.isWindowsTarget(project)
     run = false
     source = "interop/basics/echo_server.kt"
     interop = 'sockets'
@@ -3981,7 +3981,7 @@ tasks.register("interop_echo_server", RunInteropKonanTest) {
 /*
 TODO: This test isn't run automatically
 standaloneTest("interop_opengl_teapot") {
-    enabled = isAppleTarget(project) && project.testTarget != 'ios_x64'  // No GLUT in iOS
+    enabled = PlatformInfo.isAppleTarget(project) && project.testTarget != 'ios_x64'  // No GLUT in iOS
     dependsOnPlatformLibs(it as Task)
     run = false
     source = "interop/basics/opengl_teapot.kt"
@@ -4457,7 +4457,7 @@ standaloneTest("interop_zlib") {
 }
 
 standaloneTest("interop_objc_illegal_sharing") {
-    disabled = !isAppleTarget(project)
+    disabled = !PlatformInfo.isAppleTarget(project)
     source = "interop/objc/illegal_sharing.kt"
     UtilsKt.dependsOnPlatformLibs(it)
     outputChecker = {
@@ -4752,7 +4752,7 @@ Task objcExportTest(
         Boolean isStaticFramework,
         Boolean needLazyHeaderCheck
 ) {
-    needLazyHeaderCheck = needLazyHeaderCheck && !isK2(project)  // generating lazy headers is NYI in K2
+    needLazyHeaderCheck = needLazyHeaderCheck && !PlatformInfo.isK2(project)  // generating lazy headers is NYI in K2
     final String name = "testObjCExport$suffix"
     final String frameworkName = "Kt$suffix"
     final String expectedLazyHeaderName = "expectedLazy${suffix}.h"
@@ -4854,7 +4854,7 @@ Task objcExportTest(
 
 
 
-if (isAppleTarget(project)) {
+if (PlatformInfo.isAppleTarget(project)) {
     final Task ObjCExportAllTask = tasks.create("testObjCExportAll")
     objcExportTest(
             ObjCExportAllTask,
@@ -5124,7 +5124,7 @@ tasks.register("override_konan_properties0", KonanDriverTest) {
 tasks.register("llvm_variant_dev", KonanDriverTest) {
     // We use clang from Xcode on macOS for apple targets,
     // so it is hard to reliably detect LLVM variant for these targets.
-    disabled = isAppleTarget(project)
+    disabled = PlatformInfo.isAppleTarget(project)
         || isAggressiveGC // No need to test with different GC schedulers
     flags = [
             "-Xllvm-variant=dev",
@@ -5305,7 +5305,7 @@ if (HostManager.@Companion.hostIsMac) {
 fileCheckTest("filecheck_redundant_safepoints_removal") {
     enabled = !isNoopGC && !isSTWMSGC &&
             project.globalTestArgs.contains("-opt") &&
-            !needSmallBinary(project)
+            !PlatformInfo.needSmallBinary(project)
     annotatedSource = project.file('filecheck/redundant_safepoints.kt')
     phaseToCheck = "RemoveRedundantSafepoints"
 }

@@ -44,10 +44,8 @@ buildscript {
 
 defaultTasks 'clean', 'dist'
 
-convention.plugins.platformInfo = PlatformInfo
-
-if (isMac()) {
-    checkXcodeVersion(project)
+if (PlatformInfo.isMac()) {
+    PlatformInfo.checkXcodeVersion(project)
 }
 
 apply plugin: "kotlin.native.build-tools-conventions"
@@ -503,7 +501,7 @@ def sbomBundleRegularForPublish = tasks.register("sbomBundleRegularForPublish", 
     }
 }
 
-tasks.register("bundleRegular", (isWindows()) ? Zip : Tar) {
+tasks.register("bundleRegular", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundleRegularForPublish)
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-$simpleOsName")
@@ -531,7 +529,7 @@ def sbomBundlePrebuiltForPublish = tasks.register("sbomBundlePrebuiltForPublish"
     }
 }
 
-tasks.register("bundlePrebuilt", (isWindows()) ? Zip : Tar) {
+tasks.register("bundlePrebuilt", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn(sbomBundlePrebuiltForPublish)
     dependsOn("crossDistPlatformLibs")
     def simpleOsName = HostManager.platformName()
@@ -548,7 +546,7 @@ tasks.register("bundlePrebuilt", (isWindows()) ? Zip : Tar) {
 void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean containsPlatformLibraries) {
     task.from(project.projectDir) {
         include 'licenses/**'
-        if (!containsPlatformLibraries || !isMac()) {
+        if (!containsPlatformLibraries || !PlatformInfo.isMac()) {
             exclude '**/xcode_license.pdf'
         }
         if (!containsPlatformLibraries) {
@@ -581,7 +579,7 @@ configure([bundleRegular, bundlePrebuilt]) {
 
     destinationDirectory.set(file('.'))
 
-    if (isWindows()) {
+    if (PlatformInfo.isWindows()) {
         zip64 true
     } else {
         archiveExtension.set('tar.gz')
@@ -589,7 +587,7 @@ configure([bundleRegular, bundlePrebuilt]) {
     }
 }
 
-tasks.register("tc-dist", (isWindows()) ? Zip : Tar) {
+tasks.register("tc-dist", (PlatformInfo.isWindows()) ? Zip : Tar) {
     dependsOn('dist')
     dependsOn('distSources')
     def simpleOsName = HostManager.platformName()
@@ -603,7 +601,7 @@ tasks.register("tc-dist", (isWindows()) ? Zip : Tar) {
 
     destinationDirectory.set(file('.'))
 
-    if (isWindows()) {
+    if (PlatformInfo.isWindows()) {
         zip64 true
     } else {
         archiveExtension.set('tar.gz')
@@ -778,7 +776,7 @@ publishing {
             } else {
                 mvn.artifact(bundleRegular) {
                     classifier = HostManager.platformName()
-                    extension = (isWindows()) ? 'zip' : 'tar.gz'
+                    extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
                 }
             }
 
@@ -811,7 +809,7 @@ publishing {
             } else {
                 mvn.artifact(bundlePrebuilt) {
                     classifier = HostManager.platformName()
-                    extension = (isWindows()) ? 'zip' : 'tar.gz'
+                    extension = (PlatformInfo.isWindows()) ? 'zip' : 'tar.gz'
                 }
             }
             KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(
