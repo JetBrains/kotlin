@@ -16171,6 +16171,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/SamWithReceiverMavenProjectImportHandler.kt");
         }
 
+        @TestMetadata("smartCastToInvisibleClassMember.kt")
+        public void testSmartCastToInvisibleClassMember() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/smartCastToInvisibleClassMember.kt");
+        }
+
         @TestMetadata("StackOverflowInAnnotationLoader.kt")
         public void testStackOverflowInAnnotationLoader() throws Exception {
             runTest("compiler/testData/codegen/box/fir/StackOverflowInAnnotationLoader.kt");

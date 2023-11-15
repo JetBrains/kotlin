@@ -19398,6 +19398,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("smartCastToInvisibleClassMember.kt")
+        public void testSmartCastToInvisibleClassMember() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/smartCastToInvisibleClassMember.kt");
+        }
+
+        @Test
         @TestMetadata("StackOverflowInAnnotationLoader.kt")
         public void testStackOverflowInAnnotationLoader() throws Exception {
             runTest("compiler/testData/codegen/box/fir/StackOverflowInAnnotationLoader.kt");

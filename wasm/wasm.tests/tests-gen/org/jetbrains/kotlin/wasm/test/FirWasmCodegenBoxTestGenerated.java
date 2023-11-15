@@ -14268,6 +14268,12 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
         }
 
         @Test
+        @TestMetadata("smartCastToInvisibleClassMember.kt")
+        public void testSmartCastToInvisibleClassMember() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/smartCastToInvisibleClassMember.kt");
+        }
+
+        @Test
         @TestMetadata("suppressedInvisibleReferenceQualifier.kt")
         public void testSuppressedInvisibleReferenceQualifier() throws Exception {
             runTest("compiler/testData/codegen/box/fir/suppressedInvisibleReferenceQualifier.kt");
