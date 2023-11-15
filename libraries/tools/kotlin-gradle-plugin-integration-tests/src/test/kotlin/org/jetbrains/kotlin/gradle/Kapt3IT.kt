@@ -22,13 +22,16 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.project as testBaseProject
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.appendText
@@ -61,6 +64,38 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
             "Kapt hasn't done any processing"
         }
     }
+
+    // All Kapt projects require around 3g of heap size for Kotlin daemon
+    @OptIn(EnvironmentalVariablesOverride::class)
+    protected fun Kapt3BaseIT.project(
+        projectName: String,
+        gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
+        forceOutput: Boolean = false,
+        enableBuildScan: Boolean = false,
+        addHeapDumpOptions: Boolean = true,
+        enableGradleDebug: Boolean = false,
+        enableKotlinDaemonMemoryLimitInMb: Int? = 3072,
+        projectPathAdditionalSuffix: String = "",
+        buildJdk: File? = null,
+        localRepoDir: Path? = null,
+        environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+        test: TestProject.() -> Unit = {},
+    ): TestProject = testBaseProject(
+        projectName = projectName,
+        gradleVersion = gradleVersion,
+        buildOptions = buildOptions,
+        forceOutput = forceOutput,
+        enableBuildScan = enableBuildScan,
+        addHeapDumpOptions = addHeapDumpOptions,
+        enableGradleDebug = enableGradleDebug,
+        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
+        projectPathAdditionalSuffix = projectPathAdditionalSuffix,
+        buildJdk = buildJdk,
+        localRepoDir = localRepoDir,
+        environmentVariables = environmentVariables,
+        test = test,
+    )
 
     protected val String.withPrefix get() = "kapt2/$this"
 }
@@ -152,7 +187,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
-        project("kaptSkipped".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
+        project("kaptSkipped".withPrefix, gradleVersion) {
             build("build") {
                 assertTasksSkipped(":kaptGenerateStubsKotlin", ":kaptKotlin")
                 assertOutputContains("No annotation processors provided. Skip KAPT processing.")
@@ -178,7 +213,7 @@ open class Kapt3IT : Kapt3BaseIT() {
                 """.trimMargin()
             )
 
-            build(":kaptCustomKotlin", forceOutput = true) {
+            build(":kaptCustomKotlin") {
                 assertTasksExecuted(":kaptCustomKotlin")
                 assertOutputDoesNotContain("No annotation processors provided. Skip KAPT processing.")
                 assertOutputContains("Annotation processors: example.ExampleAnnotationProcessor, example.KotlinFilerGeneratingProcessor")
@@ -196,7 +231,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = 2048,
         ) {
             //language=Groovy
             buildGradle.appendText(
@@ -325,7 +359,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt tasks is up-to-date on the second run")
     @GradleTest
     fun testSimple(gradleVersion: GradleVersion) {
-        project("simple".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
+        project("simple".withPrefix, gradleVersion) {
 
             build("build") {
                 assertKaptSuccessful()
@@ -539,7 +573,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "incrementalRebuild".withPrefix,
             gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             val generatedSrc = "build/generated/source/kapt/main"
@@ -575,7 +608,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(incremental = true)
         ) {
             val internalDummyKt = javaSourcesDir().resolve("foo/InternalDummy.kt")
@@ -624,7 +656,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             val arg = "-Xsuppress-version-warnings"
@@ -649,7 +680,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("generates Kotlin code")
     @GradleTest
     fun testOutputKotlinCode(gradleVersion: GradleVersion) {
-        project("kaptOutputKotlinCode".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
+        project("kaptOutputKotlinCode".withPrefix, gradleVersion) {
             build("build") {
                 assertKaptSuccessful()
                 assertFileExists(projectPath.resolve("build/generated/source/kapt/main/example/TestClassCustomized.java"))
@@ -663,7 +694,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("location mapping is working as expected")
     @GradleTest
     fun testLocationMapping(gradleVersion: GradleVersion) {
-        project("locationMapping".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
+        project("locationMapping".withPrefix, gradleVersion) {
             val regex = "((Test\\.java)|(test\\.kt)):(\\d+): error: GenError element".toRegex()
 
             fun BuildResult.getErrorMessages(): String =
@@ -795,7 +826,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("up-to-date checks are working")
     @GradleTest
     fun testKaptAvoidance(gradleVersion: GradleVersion) {
-        project("kaptAvoidance".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
+        project("kaptAvoidance".withPrefix, gradleVersion) {
 
             subProject("app").buildGradle.modify {
                 "$it\n\nkapt.includeCompileClasspath = true"
@@ -1050,7 +1081,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "jpms-module".withPrefix,
             gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = 2048,
         ) {
             build("assemble") {
                 assertTasksExecuted(":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileJava")
@@ -1081,7 +1111,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "incrementalRebuild".withPrefix,
             gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.withConfigurationCache
         ) {
             build("assemble")
@@ -1151,7 +1180,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Generated sources attached to KotlinSourceSet are also used by generate stubs task")
     @GradleTest
     fun testGeneratedSourcesUsedInGenerateStubsTask(gradleVersion: GradleVersion) {
-        project("generatedSources".withPrefix, gradleVersion, enableKotlinDaemonMemoryLimitInMb = 2048) {
+        project("generatedSources".withPrefix, gradleVersion) {
             build("assemble")
         }
     }
@@ -1184,7 +1213,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
@@ -1373,7 +1401,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
-            enableKotlinDaemonMemoryLimitInMb = 2048,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
 
