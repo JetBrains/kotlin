@@ -293,10 +293,6 @@ enum class MemoryModel {
 // Controls the current memory model, is compile-time constant.
 extern const MemoryModel CurrentMemoryModel;
 
-// Sets stack location.
-void SetStackRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
-// Sets heap location.
-void SetHeapRef(ObjHeader** location, const ObjHeader* object) RUNTIME_NOTHROW;
 // Zeroes heap location.
 void ZeroHeapRef(ObjHeader** location) RUNTIME_NOTHROW;
 // Zeroes an array.
@@ -421,7 +417,7 @@ class ObjHolder {
 
    explicit ObjHolder(const ObjHeader* obj) {
      EnterFrame(frame(), 0, sizeof(*this)/sizeof(void*));
-     ::SetStackRef(slot(), obj);
+     ::UpdateStackRef(slot(), obj);
    }
 
    ~ObjHolder() {

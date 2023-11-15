@@ -145,19 +145,11 @@ extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, cons
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
     // Null `initialValue` means that the appropriate value was already set by static initialization.
     if (initialValue != nullptr) {
-        SetHeapRef(location, const_cast<ObjHeader*>(initialValue));
+        UpdateHeapRef(location, const_cast<ObjHeader*>(initialValue));
     }
 }
 
 extern "C" const MemoryModel CurrentMemoryModel = MemoryModel::kExperimental;
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void SetStackRef(ObjHeader** location, const ObjHeader* object) {
-    UpdateStackRef(location, object);
-}
-
-extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
-    mm::RefAccessor<false>{location} = const_cast<ObjHeader*>(object);
-}
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void ZeroHeapRef(ObjHeader** location) {
     mm::RefAccessor<false>{location} = nullptr;
@@ -206,7 +198,7 @@ extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateHeapRefsInsideOneArray(const
 }
 
 extern "C" ALWAYS_INLINE RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
-    SetStackRef(returnSlot, object);
+    UpdateStackRef(returnSlot, object);
 }
 
 
@@ -498,7 +490,7 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
     AssertThreadState(ThreadState::kRunnable);
     mm::StableRef stableRef(static_cast<mm::RawSpecialRef*>(pointer));
     auto* obj = *stableRef;
-    SetStackRef(OBJ_RESULT, obj);
+    UpdateStackRef(OBJ_RESULT, obj);
     std::move(stableRef).dispose();
     return obj;
 }
