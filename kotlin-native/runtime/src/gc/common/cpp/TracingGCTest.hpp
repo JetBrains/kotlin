@@ -1071,18 +1071,21 @@ TYPED_TEST_P(TracingGCTest, FreeObjectWithFreeWeakReversedOrder) {
 }
 
 TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
-    constexpr auto quant = 5;
-    constexpr auto gcNumber = 5;
+    constexpr auto kQuant = 5;
+    constexpr auto kGcNumber = 5;
+    constexpr auto kMaxItersPerGC = 10;
 
     std::atomic<bool> stopMutation = false;
     std::atomic<bool> startMutation = false;
     std::atomic<std::size_t> initializedMutators = 0;
+    std::atomic<int> gcEpoch = 0;
 
     Mutator scheduler;
     std::future<void> schedulerFuture = scheduler.Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
         while (initializedMutators < kDefaultThreadCount) { /* wait */ }
         startMutation = true;
-        for (int i = 0; i < gcNumber; ++i) {
+        for (int i = 0; i < kGcNumber; ++i) {
+            gcEpoch = i;
             mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
         }
         stopMutation = true;
@@ -1118,31 +1121,38 @@ TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
             };
 
             // Initialize
-            append(quant * 2);
+            append(kQuant * 2);
             ++initializedMutators;
             while (!startMutation.load()) { /* wait */ };
 
+            int iter = 0;
             while (!stopMutation.load()) {
+                // do not let mutator outpace gc to much
+                while (iter > (gcEpoch.load() * kMaxItersPerGC) && !stopMutation.load()) {
+                    mm::safePoint(threadData);
+                }
+
                 auto oldTail = tail;
-                append(quant);
+                append(kQuant);
                 // [head]->(a)->...->(b)->...->(oldTail)->(c)->...->(d)
                 mm::safePoint(threadData);
 
-                append(quant);
+                append(kQuant);
                 // [head]->(a)->...->(b)->...->(oldTail)->(c)->...->(d)->...->(tail)
                 mm::safePoint(threadData);
 
-                cut(head.header(), quant);
+                cut(head.header(), kQuant);
                 // (a)->...-+
                 //          v
                 // [head]->(b)->...->(oldTail)->(c)->...->(d)->...->(tail)
                 mm::safePoint(threadData);
 
-                cut(oldTail, quant);
+                cut(oldTail, kQuant);
                 // (a)->...-+           (c)->...-+
                 //          v                    v
                 // [head]->(b)->...->(oldTail)->(d)->...->(tail)
                 mm::safePoint(threadData);
+                ++iter;
             }
 
             std::size_t length = 0;
@@ -1152,7 +1162,7 @@ TYPED_TEST_P(TracingGCTest, MutateBetweenSafePoints) {
                 ++length;
             }
 
-            EXPECT_THAT(length, quant * 2);
+            EXPECT_THAT(length, kQuant * 2);
         }));
     }
 
