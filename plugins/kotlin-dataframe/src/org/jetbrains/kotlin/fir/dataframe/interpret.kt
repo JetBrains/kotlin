@@ -243,9 +243,9 @@ internal fun KotlinTypeFacade.pluginDataFrameSchema(coneClassLikeType: ConeClass
     val symbol = coneClassLikeType.toSymbol(session) as FirRegularClassSymbol
     val declarationSymbols = if (symbol.isLocal && symbol.resolvedSuperTypes.isNotEmpty()) {
         val rootSchemaSymbol = symbol.resolvedSuperTypes.first().toSymbol(session) as FirRegularClassSymbol
-        rootSchemaSymbol.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE)
+        rootSchemaSymbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
     } else {
-        symbol.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE)
+        symbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
     }.let { scope ->
         val names = scope.getCallableNames()
         names.flatMap { scope.getProperties(it) }
@@ -283,7 +283,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
         shouldBeConvertedToFrameColumn(it) -> {
                 val nestedColumns = it.resolvedReturnType.typeArguments[0].type
                     ?.toRegularClassSymbol(session)
-                    ?.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE)
+                    ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                     ?.collectAllProperties()
                     ?.filterIsInstance<FirPropertySymbol>()
                     ?.map { columnOf(it) }
@@ -295,7 +295,7 @@ private fun KotlinTypeFacade.columnOf(it: FirPropertySymbol): SimpleCol =
             val type = if (isDataRow(it)) it.resolvedReturnType.typeArguments[0].type!! else it.resolvedReturnType
             val nestedColumns = type
                 .toRegularClassSymbol(session)
-                ?.declaredMemberScope(session, FirResolvePhase.BODY_RESOLVE)
+                ?.declaredMemberScope(session, FirResolvePhase.DECLARATIONS)
                 ?.collectAllProperties()
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.map { columnOf(it) }

@@ -182,9 +182,14 @@ class NewCandidateInterceptor(
 
         val firstSchema = token.toClassSymbol(session)?.resolvedSuperTypes?.get(0)!!.toRegularClassSymbol(session)?.fir!!
 
-        data class DataSchemaApi(val schema: FirRegularClass, val scope: FirRegularClass)
+        data class DataSchemaApi(val schema: FirRegularClass, val scope: FirRegularClass) {
+            val scopeCallShapeData get() = scope.callShapeData
+            val schemaCallShapeData get() = schema.callShapeData
+        }
+
+        var i = 0
         val dataSchemaApis = mutableListOf<DataSchemaApi>()
-        fun PluginDataFrameSchema.materialize(schema: FirRegularClass? = null, suggestedName: String? = null, i: Int = 0): DataSchemaApi {
+        fun PluginDataFrameSchema.materialize(schema: FirRegularClass? = null, suggestedName: String? = null): DataSchemaApi {
             val schema = if (schema != null) {
                 schema
             } else {
@@ -193,7 +198,7 @@ class NewCandidateInterceptor(
                 buildSchema(name)
             }
 
-            val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("Scope${i}"), true)
+            val scopeId = ClassId(CallableId.PACKAGE_FQ_NAME_FOR_LOCAL, FqName("Scope${i++}"), true)
             val scope = buildRegularClass {
                 moduleData = session.moduleData
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
@@ -212,7 +217,7 @@ class NewCandidateInterceptor(
                 fun PluginDataFrameSchema.materialize(column: SimpleCol): DataSchemaApi {
                     // TODO
                     val name = "${column.name.titleCase().replEscapeLineBreaks()}_${abs(call.calleeReference.name.hashCode())}"
-                    return materialize(suggestedName = name, i = i + 1)
+                    return materialize(suggestedName = name)
                 }
 
                 when (it) {
