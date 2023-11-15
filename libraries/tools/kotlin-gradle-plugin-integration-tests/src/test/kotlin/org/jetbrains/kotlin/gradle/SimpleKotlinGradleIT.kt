@@ -5,6 +5,8 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -286,6 +288,31 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
                                 jar.entries().asSequence().map { it.name }.joinToString()
                     }
                 }
+            }
+        }
+    }
+
+    @Disabled
+    @DisplayName("KT-63499: source sets conventions are not registered since Gradle 8.2")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_2)
+    @GradleTest
+    fun sourceSetsConventionsAreNotRegistered(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            // project's buildscript has to be in Groovy
+            buildGradle.append(
+                //language=Gradle
+                """
+                sourceSets {
+                    main {
+                        customSourceFilesExtensions // try using a property of KotlinSourceSet through the source set convention
+                    }
+                }
+                """.trimIndent()
+            )
+            @Suppress("UNUSED_EXPRESSION") // ensure the accessed property is available on KotlinSourceSet
+            KotlinSourceSet::customSourceFilesExtensions
+            buildAndFail("help") {
+                assertOutputContains("Could not get unknown property 'customSourceFilesExtensions' for source set 'main' ")
             }
         }
     }
