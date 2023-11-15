@@ -46,7 +46,6 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
      * */
     KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY("kotlin.environment.keepalive"),
     COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS("kotlin.daemon.custom.run.files.path.for.tests"),
-    COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM("kotlin.incremental.useClasspathSnapshot"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
     LANGUAGE_VERSION_SETTINGS("kotlin.language.settings"),
 
