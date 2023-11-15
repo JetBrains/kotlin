@@ -5,7 +5,7 @@ import org.gradle.kotlin.dsl.support.serviceOf
 
 description = "Shaded Maven dependencies resolver"
 
-val jarBaseName = property("archivesBaseName") as String
+val jarBaseName = the<BasePluginExtension>().archivesName
 
 val embedded by configurations
 
@@ -123,7 +123,7 @@ val proguard by task<CacheableProguardTask> {
 
     injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), normalizedJar.get().outputs.files)
 
-    outjars(layout.buildDirectory.file("libs/$jarBaseName-$version-after-proguard.jar"))
+    outjars(layout.buildDirectory.file(jarBaseName.map { "libs/$it-$version-after-proguard.jar" }))
 
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8))
 

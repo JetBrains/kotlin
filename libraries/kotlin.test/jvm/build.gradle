@@ -2,7 +2,9 @@ description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
 
-archivesBaseName = 'kotlin-test'
+base {
+    archivesName = 'kotlin-test'
+}
 
 JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_8)
 
@@ -32,12 +34,14 @@ RepoArtifacts.sourcesJar(project)
 RepoArtifacts.javadocJar(project)
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = [
-        "-Xallow-kotlin-package",
-        "-opt-in=kotlin.contracts.ExperimentalContracts",
-        "-opt-in=kotlin.RequiresOptIn",
-    ]
-    kotlinOptions.moduleName = project.archivesBaseName
+    compilerOptions {
+        freeCompilerArgs = [
+                "-Xallow-kotlin-package",
+                "-opt-in=kotlin.contracts.ExperimentalContracts",
+                "-opt-in=kotlin.RequiresOptIn",
+        ]
+        moduleName = base.archivesName
+    }
 }
 
 compileTestKotlin {
